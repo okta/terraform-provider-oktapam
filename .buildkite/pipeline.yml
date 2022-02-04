@@ -1,0 +1,5 @@
+steps:
+  - name: ":test_tube: Placeholder"
+    command: "echo 'Hello world'"
+    agents:
+      queue=dev-elastic-ci

@@ -1,0 +1,6 @@
+.idea
+.vscode
+.DS_Store
+*.swp
+
+terraform-provider-oktaasa
