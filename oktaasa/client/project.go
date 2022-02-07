@@ -112,10 +112,10 @@ func (c OktaASAClient) ListProjects(ctx context.Context, parameters ListProjects
 		resp, err := c.CreateBaseRequest(ctx).SetQueryParams(parameters.toMap()).SetResult(&ProjectsListResponse{}).Get(requestURL)
 		if err != nil {
 			logging.Errorf("received error while making request to %s", requestURL)
-			return []Project{}, err
+			return nil, err
 		}
 		if _, err := checkStatusCode(resp, 200); err != nil {
-			return []Project{}, err
+			return nil, err
 		}
 
 		projectsListResponse := resp.Result().(*ProjectsListResponse)

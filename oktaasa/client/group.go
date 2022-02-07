@@ -89,10 +89,10 @@ func (c OktaASAClient) ListGroups(ctx context.Context, parameters ListGroupsPara
 			Get(requestURL)
 		if err != nil {
 			logging.Errorf("received error while making request to %s", requestURL)
-			return []Group{}, err
+			return nil, err
 		}
 		if _, err := checkStatusCode(resp, 200); err != nil {
-			return []Group{}, err
+			return nil, err
 		}
 
 		groupsListResponse := resp.Result().(*GroupsListResponse)

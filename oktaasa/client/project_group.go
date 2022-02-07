@@ -183,10 +183,10 @@ func (c OktaASAClient) ListProjectGroups(ctx context.Context, project string, pa
 			Get(requestURL)
 		if err != nil {
 			logging.Errorf("received error while making request to %s", requestURL)
-			return []ProjectGroup{}, err
+			return nil, err
 		}
 		if _, err := checkStatusCode(resp, 200); err != nil {
-			return []ProjectGroup{}, err
+			return nil, err
 		}
 
 		projectGroupsListResponse := resp.Result().(*ProjectGroupsListResponse)

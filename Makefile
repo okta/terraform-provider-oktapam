@@ -1,4 +1,3 @@
-TEST?=$$(go list ./... | grep -v 'vendor')
 HOSTNAME=hashicorp.com
 NAMESPACE=okta
 NAME=oktaasa
@@ -35,8 +34,9 @@ link_legacy:
 	ln -s ${PLUGIN_DIR}/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}/${BINARY} ${PLUGIN_DIR}/${BINARY}
 
 test: 
-	go test -i $(TEST) || exit 1                                                   
-	echo $(TEST) | xargs -t -n4 go test $(TESTARGS) -timeout=30s -parallel=4                    
+# TESTARGS here can be used to pass arbitrary flags to go test, e.g. '-run TestMyTest'
+	go test ./... -v $(TESTARGS)
 
 testacc: 
-	TF_ACC=1 go test $(TEST) -v $(TESTARGS) -timeout 120m   
+# TESTARGS here can be used to pass arbitrary flags to go test, e.g. '-run TestMyTest'
+	TF_ACC=1 go test ./... -v $(TESTARGS) -timeout 120m   
