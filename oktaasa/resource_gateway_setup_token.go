@@ -53,7 +53,7 @@ func resourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, 
 		return diag.FromErr(err)
 	}
 
-	if token.ID == "" {
+	if token == nil {
 		logging.Debugf("setup token id was blank")
 		d.SetId("")
 		return nil
@@ -83,12 +83,13 @@ func resourceGatewaySetupTokenCreate(ctx context.Context, d *schema.ResourceData
 		Description: description,
 		Details:     &client.GatewaySetupTokenLabelDetails{Labels: labelsMap},
 	}
-	createdToken, err := c.CreateGatewaySetupToken(ctx, tokenSpec)
-	if err != nil {
+	if createdToken, err := c.CreateGatewaySetupToken(ctx, tokenSpec); err != nil {
 		return diag.FromErr(err)
+	} else if createdToken == nil {
+		d.SetId("")
+	} else {
+		d.SetId(createdToken.ID)
 	}
-
-	d.SetId(createdToken.ID)
 
 	return resourceGatewaySetupTokenRead(ctx, d, m)
 }

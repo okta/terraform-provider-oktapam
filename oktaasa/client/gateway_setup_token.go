@@ -3,11 +3,13 @@ package client
 import (
 	"context"
 	"fmt"
+	"net/url"
 
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
 	"github.com/tomnomnom/linkheader"
 )
 
+// defines the type of gateway that we'll be registering, currently the only type allowed
 const gatewayAgentRegistrationType = "gateway-agent"
 
 type GatewaySetupToken struct {
@@ -46,10 +48,11 @@ type GatewaySetupTokensListResponse struct {
 }
 
 func (c OktaASAClient) ListGatewaySetupTokens(ctx context.Context) ([]GatewaySetupToken, error) {
-	requestURL := fmt.Sprintf("/v1/teams/%s/gateway_setup_tokens", c.Team)
+	requestURL := fmt.Sprintf("/v1/teams/%s/gateway_setup_tokens", url.PathEscape(c.Team))
 	tokens := make([]GatewaySetupToken, 0)
 
 	for {
+		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
 		logging.Tracef("making GET request to %s", requestURL)
 		resp, err := c.CreateBaseRequest(ctx).
 			SetResult(&GatewaySetupTokensListResponse{}).
@@ -58,8 +61,7 @@ func (c OktaASAClient) ListGatewaySetupTokens(ctx context.Context) ([]GatewaySet
 			logging.Errorf("received error while making request to %s", requestURL)
 			return []GatewaySetupToken{}, err
 		}
-		err = checkStatusCode(resp, 200)
-		if err != nil {
+		if _, err := checkStatusCode(resp, 200); err != nil {
 			return []GatewaySetupToken{}, err
 		}
 
@@ -84,62 +86,59 @@ func (c OktaASAClient) ListGatewaySetupTokens(ctx context.Context) ([]GatewaySet
 	return tokens, nil
 }
 
-func (c *OktaASAClient) GetGatewaySetupToken(ctx context.Context, id string) (GatewaySetupToken, error) {
+func (c OktaASAClient) GetGatewaySetupToken(ctx context.Context, id string) (*GatewaySetupToken, error) {
 	if id == "" {
-		return GatewaySetupToken{}, fmt.Errorf("supplied blank gateway setup token id")
+		return nil, fmt.Errorf("supplied blank gateway setup token id")
 	}
-	requestURL := fmt.Sprintf("/v1/teams/%s/gateway_setup_tokens/%s", c.Team, id)
+	requestURL := fmt.Sprintf("/v1/teams/%s/gateway_setup_tokens/%s", url.PathEscape(c.Team), url.PathEscape(id))
 
 	logging.Tracef("making GET request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetResult(&GatewaySetupToken{}).Get(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
-		return GatewaySetupToken{}, err
+		return nil, err
 	}
-	err = checkStatusCode(resp, 200, 404)
-	if err != nil {
-		return GatewaySetupToken{}, err
-	}
-	if resp.StatusCode() == 404 {
-		return GatewaySetupToken{}, nil
+	if statusCode, err := checkStatusCode(resp, 200, 404); err != nil {
+		return nil, err
+	} else if statusCode == 404 {
+		return nil, nil
 	}
 
 	token := resp.Result().(*GatewaySetupToken)
-	return *token, nil
+	return token, nil
 }
 
-func (c *OktaASAClient) CreateGatewaySetupToken(ctx context.Context, token GatewaySetupToken) (GatewaySetupToken, error) {
-	requestURL := fmt.Sprintf("/v1/teams/%s/gateway_setup_tokens", c.Team)
+func (c OktaASAClient) CreateGatewaySetupToken(ctx context.Context, token GatewaySetupToken) (*GatewaySetupToken, error) {
+	// create a token with the values specified within token
+	requestURL := fmt.Sprintf("/v1/teams/%s/gateway_setup_tokens", url.PathEscape(c.Team))
 	logging.Tracef("making POST request to %s", requestURL)
 	token.RegistrationType = gatewayAgentRegistrationType
 	resp, err := c.CreateBaseRequest(ctx).SetBody(token).SetResult(&GatewaySetupToken{}).Post(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
-		return GatewaySetupToken{}, err
+		return nil, err
 	}
-	err = checkStatusCode(resp, 201)
-	if err != nil {
+	if _, err := checkStatusCode(resp, 201); err != nil {
 		logging.Tracef("unexpected status code: %d", resp.StatusCode())
-		return GatewaySetupToken{}, err
+		return nil, err
 	}
 	createdToken := resp.Result().(*GatewaySetupToken)
 
-	return *createdToken, nil
+	return createdToken, nil
 }
 
-func (c *OktaASAClient) DeleteGatewaySetupToken(ctx context.Context, id string) error {
+func (c OktaASAClient) DeleteGatewaySetupToken(ctx context.Context, id string) error {
 	if id == "" {
 		return fmt.Errorf("supplied blank gateway setup token id")
 	}
-	requestURL := fmt.Sprintf("/v1/teams/%s/gateway_setup_tokens/%s", c.Team, id)
+	requestURL := fmt.Sprintf("/v1/teams/%s/gateway_setup_tokens/%s", url.PathEscape(c.Team), url.PathEscape(id))
 	logging.Tracef("making DELETE request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).Delete(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
 	}
-	err = checkStatusCode(resp, 204)
-	if err != nil {
+	if _, err := checkStatusCode(resp, 204); err != nil {
 		logging.Tracef("unexpected status code: %d", resp.StatusCode())
 		return err
 	}

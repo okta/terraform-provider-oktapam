@@ -65,7 +65,7 @@ func testAccServerEnrollmentTokenCheckExists(rn string, expectedServerEnrollment
 		if err != nil {
 			return fmt.Errorf("error getting server enrollment token: %w", err)
 		}
-		if token.ID == "" {
+		if token == nil || token.ID == "" {
 			return fmt.Errorf("server enrollment token for project %s with id %s does not exist", projectName, tokenID)
 		}
 		if token.Description != expectedServerEnrollmentToken.Description {
@@ -83,7 +83,7 @@ func testAccServerEnrollmentTokenCheckDestroy(token client.ServerEnrollmentToken
 		if err != nil {
 			return fmt.Errorf("error getting project associated with server enrollment token: %w", err)
 		}
-		if project.ID == "" {
+		if project == nil || project.ID == "" {
 			// if all resources are removed, the project will be removed, which also removes the enrollment token
 			return nil
 		}

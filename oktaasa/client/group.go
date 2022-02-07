@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"strconv"
 
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
@@ -76,10 +77,11 @@ type GroupsListResponse struct {
 }
 
 func (c OktaASAClient) ListGroups(ctx context.Context, parameters ListGroupsParameters) ([]Group, error) {
-	requestURL := fmt.Sprintf("/v1/teams/%s/groups", c.Team)
+	requestURL := fmt.Sprintf("/v1/teams/%s/groups", url.PathEscape(c.Team))
 	groups := make([]Group, 0)
 
 	for {
+		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
 		logging.Tracef("making GET request to %s", requestURL)
 		resp, err := c.CreateBaseRequest(ctx).
 			SetResult(&GroupsListResponse{}).
@@ -89,8 +91,7 @@ func (c OktaASAClient) ListGroups(ctx context.Context, parameters ListGroupsPara
 			logging.Errorf("received error while making request to %s", requestURL)
 			return []Group{}, err
 		}
-		err = checkStatusCode(resp, 200)
-		if err != nil {
+		if _, err := checkStatusCode(resp, 200); err != nil {
 			return []Group{}, err
 		}
 
@@ -115,53 +116,56 @@ func (c OktaASAClient) ListGroups(ctx context.Context, parameters ListGroupsPara
 	return groups, nil
 }
 
-func (c OktaASAClient) GetGroup(ctx context.Context, name string, allowDeleted bool) (Group, error) {
-	requestURL := fmt.Sprintf("/v1/teams/%s/groups/%s", c.Team, name)
+func (c OktaASAClient) GetGroup(ctx context.Context, name string, allowDeleted bool) (*Group, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/groups/%s", url.PathEscape(c.Team), url.PathEscape(name))
 	logging.Tracef("making GET request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetResult(&Group{}).Get(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
-		return Group{}, err
+		return nil, err
 	}
 	statusCode := resp.StatusCode()
 
 	if statusCode == 200 {
 		group := resp.Result().(*Group)
 		if group.Exists() || allowDeleted {
-			return *group, nil
+			return group, nil
 		}
-		return Group{}, nil
+		return nil, nil
 	} else if statusCode == 404 {
-		return Group{}, nil
+		return nil, nil
 	}
 
-	return Group{}, createErrorForInvalidCode(resp, 200, 404)
+	return nil, createErrorForInvalidCode(resp, 200, 404)
 }
 
 func (c OktaASAClient) CreateGroup(ctx context.Context, group Group) error {
-	requestURL := fmt.Sprintf("/v1/teams/%s/groups", c.Team)
+	// Create the group on the api server specified by group
+	requestURL := fmt.Sprintf("/v1/teams/%s/groups", url.PathEscape(c.Team))
 	logging.Tracef("making POST request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(group).Post(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
 	}
-	return checkStatusCode(resp, 201)
+	_, err = checkStatusCode(resp, 201)
+	return err
 }
 
 func (c OktaASAClient) UpdateGroup(ctx context.Context, groupName string, updates map[string]interface{}) error {
-	requestURL := fmt.Sprintf("/v1/teams/%s/groups/%s", c.Team, groupName)
+	requestURL := fmt.Sprintf("/v1/teams/%s/groups/%s", url.PathEscape(c.Team), url.PathEscape(groupName))
 	logging.Tracef("making PUT request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(updates).Put(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
 	}
-	return checkStatusCode(resp, 204)
+	_, err = checkStatusCode(resp, 204)
+	return err
 }
 
 func (c OktaASAClient) DeleteGroup(ctx context.Context, groupName string) error {
-	requestURL := fmt.Sprintf("/v1/teams/%s/groups/%s", c.Team, groupName)
+	requestURL := fmt.Sprintf("/v1/teams/%s/groups/%s", url.PathEscape(c.Team), url.PathEscape(groupName))
 	logging.Tracef("making DELETE request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).Delete(requestURL)
 	if err != nil {
@@ -169,5 +173,6 @@ func (c OktaASAClient) DeleteGroup(ctx context.Context, groupName string) error 
 		return err
 	}
 
-	return checkStatusCode(resp, 204, 404)
+	_, err = checkStatusCode(resp, 204, 404)
+	return err
 }

@@ -93,7 +93,7 @@ func testAccProjectCheckExists(rn string, expectedProject client.Project) resour
 		if err != nil {
 			return fmt.Errorf("error getting project :%w", err)
 		}
-		if proj.ID == "" {
+		if proj == nil || proj.ID == "" {
 			return fmt.Errorf("project %s does not exist", expectedProject.Name)
 		}
 		expectedProject.ID = proj.ID
@@ -114,7 +114,7 @@ func testAccProjectCheckDestroy(projectName string) resource.TestCheckFunc {
 			return fmt.Errorf("error getting project: %w", err)
 		}
 
-		if proj.Exists() {
+		if proj != nil && proj.Exists() {
 			return fmt.Errorf("project still exists")
 		}
 

@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"strconv"
 
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
@@ -101,10 +102,11 @@ type ProjectsListResponse struct {
 }
 
 func (c OktaASAClient) ListProjects(ctx context.Context, parameters ListProjectsParameters) ([]Project, error) {
-	requestURL := fmt.Sprintf("/v1/teams/%s/projects", c.Team)
+	requestURL := fmt.Sprintf("/v1/teams/%s/projects", url.PathEscape(c.Team))
 	projects := make([]Project, 0)
 
 	for {
+		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
 		logging.Tracef("making GET request to %s", requestURL)
 
 		resp, err := c.CreateBaseRequest(ctx).SetQueryParams(parameters.toMap()).SetResult(&ProjectsListResponse{}).Get(requestURL)
@@ -112,8 +114,7 @@ func (c OktaASAClient) ListProjects(ctx context.Context, parameters ListProjects
 			logging.Errorf("received error while making request to %s", requestURL)
 			return []Project{}, err
 		}
-		err = checkStatusCode(resp, 200)
-		if err != nil {
+		if _, err := checkStatusCode(resp, 200); err != nil {
 			return []Project{}, err
 		}
 
@@ -138,53 +139,56 @@ func (c OktaASAClient) ListProjects(ctx context.Context, parameters ListProjects
 	return projects, nil
 }
 
-func (c OktaASAClient) GetProject(ctx context.Context, name string, allowDeleted bool) (Project, error) {
-	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s", c.Team, name)
+func (c OktaASAClient) GetProject(ctx context.Context, name string, allowDeleted bool) (*Project, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s", url.PathEscape(c.Team), url.PathEscape(name))
 	logging.Tracef("making GET request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetResult(&Project{}).Get(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
-		return Project{}, err
+		return nil, err
 	}
 	statusCode := resp.StatusCode()
 
 	if statusCode == 200 {
 		project := resp.Result().(*Project)
 		if !project.Exists() && !allowDeleted {
-			return Project{}, nil
+			return nil, nil
 		}
-		return *project, nil
+		return project, nil
 	} else if statusCode == 404 {
-		return Project{}, nil
+		return nil, nil
 	}
 
-	return Project{}, createErrorForInvalidCode(resp, 200, 404)
+	return nil, createErrorForInvalidCode(resp, 200, 404)
 }
 
 func (c OktaASAClient) CreateProject(ctx context.Context, proj Project) error {
-	requestURL := fmt.Sprintf("/v1/teams/%s/projects", c.Team)
+	// Create the project on the api server specified by project
+	requestURL := fmt.Sprintf("/v1/teams/%s/projects", url.PathEscape(c.Team))
 	logging.Tracef("making POST request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(proj).Post(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
 	}
-	return checkStatusCode(resp, 201)
+	_, err = checkStatusCode(resp, 201)
+	return err
 }
 
 func (c OktaASAClient) UpdateProject(ctx context.Context, projectName string, updates map[string]interface{}) error {
-	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s", c.Team, projectName)
+	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s", url.PathEscape(c.Team), url.PathEscape(projectName))
 	logging.Tracef("making PUT request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(updates).Put(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
 	}
-	return checkStatusCode(resp, 204)
+	_, err = checkStatusCode(resp, 204)
+	return err
 }
 
 func (c OktaASAClient) DeleteProject(ctx context.Context, projectName string) error {
-	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s", c.Team, projectName)
+	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s", url.PathEscape(c.Team), url.PathEscape(projectName))
 	logging.Tracef("making DELETE request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).Delete(requestURL)
 	if err != nil {
@@ -192,5 +196,6 @@ func (c OktaASAClient) DeleteProject(ctx context.Context, projectName string) er
 		return err
 	}
 
-	return checkStatusCode(resp, 204, 404)
+	_, err = checkStatusCode(resp, 204, 404)
+	return err
 }

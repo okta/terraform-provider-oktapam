@@ -80,7 +80,7 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{
 		return diag.FromErr(err)
 	}
 
-	if group.Name != "" {
+	if group != nil && group.Name != "" {
 		if group.DeletedAt == "" {
 			logging.Infof("Group %s exists", group.Name)
 			d.SetId(group.Name)

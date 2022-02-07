@@ -140,7 +140,7 @@ func resourceProjectReadWithIgnorable(ctx context.Context, d *schema.ResourceDat
 	// the values that were used to create the project
 	ignorableValues := map[string]bool{"next_unix_gid": true, "next_unix_uid": true}
 
-	if proj.Name != "" {
+	if proj != nil && proj.Name != "" {
 		if proj.DeletedAt == "" {
 			logging.Infof("Project %s exists", proj.Name)
 			d.SetId(proj.Name)

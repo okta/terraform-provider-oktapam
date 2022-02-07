@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -170,10 +171,11 @@ func (c OktaASAClient) ListProjectGroups(ctx context.Context, project string, pa
 		return []ProjectGroup{}, fmt.Errorf("supplied blank project name")
 	}
 
-	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups", c.Team, project)
+	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups", url.PathEscape(c.Team), url.PathEscape(project))
 	projectGroups := make([]ProjectGroup, 0)
 
 	for {
+		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
 		logging.Tracef("making GET request to %s", requestURL)
 		resp, err := c.CreateBaseRequest(ctx).
 			SetQueryParams(parameters.toMap()).
@@ -183,8 +185,7 @@ func (c OktaASAClient) ListProjectGroups(ctx context.Context, project string, pa
 			logging.Errorf("received error while making request to %s", requestURL)
 			return []ProjectGroup{}, err
 		}
-		err = checkStatusCode(resp, 200)
-		if err != nil {
+		if _, err := checkStatusCode(resp, 200); err != nil {
 			return []ProjectGroup{}, err
 		}
 
@@ -214,58 +215,61 @@ func (c OktaASAClient) ListProjectGroups(ctx context.Context, project string, pa
 	return projectGroups, nil
 }
 
-func (c OktaASAClient) GetProjectGroup(ctx context.Context, project, group string) (ProjectGroup, error) {
+func (c OktaASAClient) GetProjectGroup(ctx context.Context, project, group string) (*ProjectGroup, error) {
 	if project == "" {
-		return ProjectGroup{}, fmt.Errorf("supplied blank project name")
+		return nil, fmt.Errorf("supplied blank project name")
 	}
 	if group == "" {
-		return ProjectGroup{}, fmt.Errorf("supplied blank group name")
+		return nil, fmt.Errorf("supplied blank group name")
 	}
 
-	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups/%s", c.Team, project, group)
+	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups/%s", url.PathEscape(c.Team), url.PathEscape(project), url.PathEscape(group))
 	logging.Tracef("making GET request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetResult(&ProjectGroup{}).Get(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
-		return ProjectGroup{}, err
+		return nil, err
 	}
 	statusCode := resp.StatusCode()
 
 	if statusCode == 200 {
 		projectGroup := resp.Result().(*ProjectGroup)
 		projectGroup.Project = project
-		return *projectGroup, nil
+		return projectGroup, nil
 	} else if statusCode == 404 {
-		return ProjectGroup{}, nil
+		return nil, nil
 	}
 
-	return ProjectGroup{}, createErrorForInvalidCode(resp, 200, 404)
+	return nil, createErrorForInvalidCode(resp, 200, 404)
 }
 
 func (c OktaASAClient) CreateProjectGroup(ctx context.Context, projectGroup ProjectGroup) error {
-	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups", c.Team, projectGroup.Project)
+	// Create the project group on the api server specified by project group
+	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups", url.PathEscape(c.Team), url.PathEscape(projectGroup.Project))
 	logging.Tracef("making POST request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(projectGroup).Post(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
 	}
-	return checkStatusCode(resp, 204)
+	_, err = checkStatusCode(resp, 204)
+	return err
 }
 
 func (c OktaASAClient) UpdateProjectGroup(ctx context.Context, projectGroup ProjectGroup) error {
-	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups/%s", c.Team, projectGroup.Project, projectGroup.Group)
+	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups/%s", url.PathEscape(c.Team), url.PathEscape(projectGroup.Project), url.PathEscape(projectGroup.Group))
 	logging.Tracef("making PUT request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(projectGroup).Put(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
 	}
-	return checkStatusCode(resp, 204)
+	_, err = checkStatusCode(resp, 204)
+	return err
 }
 
 func (c OktaASAClient) DeleteProjectGroup(ctx context.Context, project, group string) error {
-	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups/%s", c.Team, project, group)
+	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups/%s", url.PathEscape(c.Team), url.PathEscape(project), url.PathEscape(group))
 	logging.Tracef("making DELETE request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).Delete(requestURL)
 	if err != nil {
@@ -273,5 +277,6 @@ func (c OktaASAClient) DeleteProjectGroup(ctx context.Context, project, group st
 		return err
 	}
 
-	return checkStatusCode(resp, 204, 404)
+	_, err = checkStatusCode(resp, 204, 404)
+	return err
 }

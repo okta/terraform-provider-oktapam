@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -29,7 +30,7 @@ type OktaASAClient struct {
 
 func CreateOktaASAClient(apiKey, apiKeySecret, team, apiHost string) (OktaASAClient, error) {
 	logging.Infof("Creating ASA Client")
-	authorizationURL := fmt.Sprintf("%s/v1/teams/%s/service_token", apiHost, team)
+	authorizationURL := fmt.Sprintf("%s/v1/teams/%s/service_token", apiHost, url.PathEscape(team))
 	client := resty.New()
 
 	resp, err := client.R().
@@ -45,7 +46,7 @@ func CreateOktaASAClient(apiKey, apiKeySecret, team, apiHost string) (OktaASACli
 		return OktaASAClient{}, fmt.Errorf("received a 401 when requesting service token.  check credentials and try again")
 	}
 
-	err = checkStatusCode(resp, 200)
+	_, err = checkStatusCode(resp, 200)
 	if err != nil {
 		return OktaASAClient{}, err
 	}
@@ -105,14 +106,14 @@ func (c OktaASAClient) CreateBaseRequest(ctx context.Context) *resty.Request {
 	return c.client.R().SetContext(ctx)
 }
 
-func checkStatusCode(resp *resty.Response, allowed ...int) error {
+func checkStatusCode(resp *resty.Response, allowed ...int) (int, error) {
 	received := resp.StatusCode()
 	for _, c := range allowed {
 		if received == c {
-			return nil
+			return received, nil
 		}
 	}
-	return createErrorForInvalidCode(resp, allowed...)
+	return received, createErrorForInvalidCode(resp, allowed...)
 }
 
 func createErrorForInvalidCode(resp *resty.Response, allowed ...int) error {

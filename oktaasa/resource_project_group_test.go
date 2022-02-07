@@ -102,6 +102,8 @@ func testAccProjectGroupCheckExists(rn string, expectedProjectGroup client.Proje
 		projectGroup, err := client.GetProjectGroup(context.Background(), project, group)
 		if err != nil {
 			return fmt.Errorf("error getting project group: %w", err)
+		} else if projectGroup == nil {
+			return fmt.Errorf("project group does not exist")
 		}
 		expectedProjectGroup.GroupID = projectGroup.GroupID
 
@@ -120,21 +122,21 @@ func testAccProjectGroupCheckDestroy(projectGroup client.ProjectGroup) resource.
 		if err != nil {
 			return fmt.Errorf("error getting project group: %w", err)
 		}
-		if pg.Project != "" && pg.Group != "" && pg.DeletedAt == "" && pg.RemovedAt == "" {
+		if pg != nil && pg.Project != "" && pg.Group != "" && pg.DeletedAt == "" && pg.RemovedAt == "" {
 			return fmt.Errorf("project group still exists")
 		}
 		group, err := client.GetGroup(context.Background(), projectGroup.Group, false)
 		if err != nil {
 			return fmt.Errorf("error getting group associated with project group: %w", err)
 		}
-		if group.ID != "" {
+		if group != nil && group.ID != "" {
 			return fmt.Errorf("group still exists: %s", projectGroup.Group)
 		}
 		project, err := client.GetProject(context.Background(), projectGroup.Project, false)
 		if err != nil {
 			return fmt.Errorf("error getting project associated with project group: %w", err)
 		}
-		if project.ID != "" {
+		if project != nil && project.ID != "" {
 			return fmt.Errorf("project still exists: %s", projectGroup.Project)
 		}
 		return nil

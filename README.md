@@ -27,7 +27,8 @@ $ make build
 
 Using the provider
 ----------------------
-Set the following environment variables prior to running: Okta's ASA API key, secret and team name. 
+You will need to create a team a service user.  Then set the following environment variables prior to running: Okta's ASA API key, secret and team name. 
+
 ```
 export OKTAASA_KEY_SECRET=<secret here>
 export OKTAASA_KEY=<key here>
@@ -43,9 +44,6 @@ export OKTAASA_API_HOST=<root url for host here>
 
 Developing the Provider
 ---------------------------
-
-If you wish to work on the provider, you'll first need [Go](http://www.golang.org) installed on your machine (version 1.16+ is *required*). 
-
 To compile the provider, run `make build`. This will build the provider and put in the project directory
 
 ```sh

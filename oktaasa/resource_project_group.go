@@ -119,7 +119,7 @@ func resourceProjectGroupRead(ctx context.Context, d *schema.ResourceData, m int
 	}
 
 	ignorableValues := map[string]bool{"deleted_at": true, "removed_at": true}
-	if projectGroup.Group != "" {
+	if projectGroup != nil && projectGroup.Group != "" {
 		if projectGroup.DeletedAt != "" {
 			logging.Infof("Group %s was deleted", group)
 			d.SetId("")

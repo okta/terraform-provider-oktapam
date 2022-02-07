@@ -64,7 +64,7 @@ func resourceServerEnrollmentTokenRead(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(err)
 	}
 
-	if token.ID == "" {
+	if token == nil || token.ID == "" {
 		logging.Debugf("token id was blank")
 		d.SetId("")
 		return nil

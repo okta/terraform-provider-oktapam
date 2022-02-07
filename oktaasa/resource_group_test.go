@@ -75,7 +75,7 @@ func testAccGroupCheckExists(rn string, expectedGroup client.Group) resource.Tes
 		if err != nil {
 			return fmt.Errorf("error getting group :%w", err)
 		}
-		if group.ID == "" {
+		if group == nil {
 			return fmt.Errorf("group %s does not exist", expectedGroup.Name)
 		}
 		expectedGroup.ID = group.ID
@@ -95,7 +95,7 @@ func testAccGroupCheckDestroy(groupName string) resource.TestCheckFunc {
 			return fmt.Errorf("error getting group: %w", err)
 		}
 
-		if group.Exists() {
+		if group != nil && group.Exists() {
 			return fmt.Errorf("group still exists")
 		}
 
