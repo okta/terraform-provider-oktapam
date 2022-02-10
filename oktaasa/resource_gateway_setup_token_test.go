@@ -22,7 +22,7 @@ func TestAccGatewaySetupToken(t *testing.T) {
 		labels[key] = value
 	}
 	setupToken := client.GatewaySetupToken{
-		Description: description,
+		Description: &description,
 		Details:     &client.GatewaySetupTokenLabelDetails{Labels: labels},
 	}
 
@@ -66,8 +66,8 @@ func testAccGatewaySetupTokenCheckExists(rn string, expectedGatewaySetupToken cl
 		if token == nil {
 			return fmt.Errorf("gateway setup token for with id %s does not exist", resourceID)
 		}
-		if token.Description != expectedGatewaySetupToken.Description {
-			return fmt.Errorf("expected description does not match returned description for gateway setup token.  expected: %s, got: %s", expectedGatewaySetupToken.Description, token.Description)
+		if *token.Description != *expectedGatewaySetupToken.Description {
+			return fmt.Errorf("expected description does not match returned description for gateway setup token.  expected: %s, got: %s", *expectedGatewaySetupToken.Description, *token.Description)
 		}
 		labelsCompare := pretty.Compare(expectedGatewaySetupToken.Details.Labels, token.Details.Labels)
 		if labelsCompare != "" {
@@ -109,5 +109,5 @@ func createTestAccGatewaySetupTokenCreateConfig(token client.GatewaySetupToken) 
 	for k, v := range token.Details.Labels {
 		labelStrings = append(labelStrings, fmt.Sprintf("\t%s = \"%s\"", k, v))
 	}
-	return fmt.Sprintf(testAccGatewaySetupTokenCreateConfigFormat, token.Description, strings.Join(labelStrings, "\n"))
+	return fmt.Sprintf(testAccGatewaySetupTokenCreateConfigFormat, *token.Description, strings.Join(labelStrings, "\n"))
 }

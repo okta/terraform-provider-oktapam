@@ -10,13 +10,13 @@ import (
 )
 
 // defines the type of gateway that we'll be registering, currently the only type allowed
-const gatewayAgentRegistrationType = "gateway-agent"
+var gatewayAgentRegistrationType = "gateway-agent"
 
 type GatewaySetupToken struct {
-	ID               string                         `json:"id,omitempty"`
-	Description      string                         `json:"description,omitempty"`
-	RegistrationType string                         `json:"registration_type,omitempty"`
-	CreatedAt        string                         `json:"created_at,omitempty"`
+	ID               *string                        `json:"id,omitempty"`
+	Description      *string                        `json:"description"`
+	RegistrationType *string                        `json:"registration_type"`
+	CreatedAt        *string                        `json:"created_at,omitempty"`
 	Details          *GatewaySetupTokenLabelDetails `json:"details,omitempty"`
 }
 
@@ -24,17 +24,16 @@ type GatewaySetupTokenLabelDetails struct {
 	Labels map[string]string `json:"labels,omitempty"`
 }
 
-func (t GatewaySetupToken) ToMap() map[string]interface{} {
+func (t GatewaySetupToken) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{})
 
-	if t.ID != "" {
-		m["id"] = t.ID
+	m["description"] = t.Description
+
+	if t.ID != nil {
+		m["id"] = *t.ID
 	}
-	if t.Description != "" {
-		m["description"] = t.Description
-	}
-	if t.CreatedAt != "" {
-		m["created_at"] = t.CreatedAt
+	if t.CreatedAt != nil {
+		m["created_at"] = *t.CreatedAt
 	}
 	if t.Details != nil {
 		m["labels"] = t.Details.Labels
@@ -112,7 +111,7 @@ func (c OktaASAClient) CreateGatewaySetupToken(ctx context.Context, token Gatewa
 	// create a token with the values specified within token
 	requestURL := fmt.Sprintf("/v1/teams/%s/gateway_setup_tokens", url.PathEscape(c.Team))
 	logging.Tracef("making POST request to %s", requestURL)
-	token.RegistrationType = gatewayAgentRegistrationType
+	token.RegistrationType = &gatewayAgentRegistrationType
 	resp, err := c.CreateBaseRequest(ctx).SetBody(token).SetResult(&GatewaySetupToken{}).Post(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)

@@ -53,7 +53,7 @@ func dataSourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData
 	}
 	tokens := make([]map[string]interface{}, len(tokensList))
 	for idx, token := range tokensList {
-		tokens[idx] = token.ToMap()
+		tokens[idx] = token.ToResourceMap()
 	}
 	if err := d.Set("gateway_setup_tokens", tokens); err != nil {
 		return diag.FromErr(err)

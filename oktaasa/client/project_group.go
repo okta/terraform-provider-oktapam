@@ -8,88 +8,105 @@ import (
 	"strings"
 
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
+	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
 	"github.com/tomnomnom/linkheader"
 )
 
 type ProjectGroup struct {
-	Project          string `json:"_"`
-	Group            string `json:"group"`
-	GroupID          string `json:"group_id,omitempty"`
-	DeletedAt        string `json:"deleted_at,omitempty"`
-	RemovedAt        string `json:"removed_at,omitempty"`
-	CreateServerGoup bool   `json:"create_server_group"`
-	ServerAccess     bool   `json:"server_access"`
-	ServerAdmin      bool   `json:"server_admin"`
-	ServersSelector  string `json:"servers_selector,omitempty"`
+	Project          *string `json:"_"`
+	Group            *string `json:"group"`
+	GroupID          *string `json:"group_id,omitempty"`
+	DeletedAt        *string `json:"deleted_at,omitempty"`
+	RemovedAt        *string `json:"removed_at,omitempty"`
+	CreateServerGoup bool    `json:"create_server_group"`
+	ServerAccess     bool    `json:"server_access"`
+	ServerAdmin      bool    `json:"server_admin"`
+	ServersSelector  string  `json:"servers_selector,omitempty"`
 }
 
-func ProjectGroupFromMap(m map[string]interface{}) (ProjectGroup, error) {
-	p := ProjectGroup{}
+func ProjectGroupFromMap(m map[string]interface{}) (*ProjectGroup, error) {
 	if m == nil {
-		return p, nil
+		return nil, nil
 	}
 
+	p := ProjectGroup{}
 	for k, v := range m {
 		switch k {
 		case "project_name":
-			p.Project = v.(string)
+			p.Project = utils.AsStringPtr(v.(string))
 		case "group_name":
-			p.Group = v.(string)
+			p.Group = utils.AsStringPtr(v.(string))
 		case "group_id":
-			p.GroupID = v.(string)
+			p.GroupID = utils.AsStringPtr(v.(string))
 		case "deleted_at":
-			p.DeletedAt = v.(string)
+			p.DeletedAt = utils.AsStringPtr(v.(string))
 		case "removed_at":
-			p.RemovedAt = v.(string)
+			p.RemovedAt = utils.AsStringPtr(v.(string))
 		case "create_server_group":
 			b, err := parseBool(v)
 			if err != nil {
-				return ProjectGroup{}, err
+				return nil, err
 			}
 			p.CreateServerGoup = b
 		case "server_access":
 			b, err := parseBool(v)
 			if err != nil {
-				return ProjectGroup{}, err
+				return nil, err
 			}
 			p.ServerAccess = b
 		case "server_admin":
 			b, err := parseBool(v)
 			if err != nil {
-				return ProjectGroup{}, err
+				return nil, err
 			}
 			p.ServerAdmin = b
 		case "servers_selector":
-			p.ServersSelector = FormatServersSelectorString(v.(map[string]interface{}))
+			serversSelectorString, err := FormatServersSelectorString(v.(map[string]interface{}))
+			if err != nil {
+				return nil, err
+			}
+
+			p.ServersSelector = serversSelectorString
 		default:
-			return ProjectGroup{}, fmt.Errorf("uknown key: %s", k)
+			return nil, fmt.Errorf("uknown key: %s", k)
 		}
 	}
 
-	return p, nil
+	return &p, nil
 }
 
-func FormatServersSelectorString(m map[string]interface{}) string {
+func invalidSelectorPart(s string) bool {
+	return strings.ContainsAny(s, "=,")
+}
+
+func FormatServersSelectorString(m map[string]interface{}) (string, error) {
 	selectors := make([]string, 0, len(m))
 	for key, value := range m {
-		selectors = append(selectors, key+"="+fmt.Sprint(value))
+		if invalidSelectorPart(key) {
+			return "", fmt.Errorf("servers selector key cannot contain a '=' or ',' key: %s", key)
+		}
+		valueString := fmt.Sprint(value)
+		if invalidSelectorPart(key) {
+			return "", fmt.Errorf("servers selector value cannot contain a '=' or ',' value: %s", valueString)
+		}
+		selectors = append(selectors, key+"="+valueString)
 	}
-	return strings.Join(selectors, ",")
+	return strings.Join(selectors, ","), nil
 }
 
 func parseServersSelectorString(s string) (map[string]interface{}, error) {
-	m := make(map[string]interface{})
-
 	if len(s) == 0 {
-		return m, nil
+		return nil, nil
 	}
+
+	m := make(map[string]interface{})
 
 	selectors := strings.Split(s, ",")
 	for _, selector := range selectors {
 		parts := strings.Split(selector, "=")
 
 		if len(parts) != 2 {
-			return map[string]interface{}{}, fmt.Errorf("selectors must be in the form <key>=<value>: %s", selector)
+			return nil, fmt.Errorf("selectors must be in the form <key>=<value>: %s", selector)
 		}
 
 		m[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
@@ -98,23 +115,23 @@ func parseServersSelectorString(s string) (map[string]interface{}, error) {
 	return m, nil
 }
 
-func (p *ProjectGroup) ToMap() (map[string]interface{}, error) {
+func (p *ProjectGroup) ToResourceMap() (map[string]interface{}, error) {
 	m := make(map[string]interface{})
 
-	if p.Project != "" {
-		m["project_name"] = p.Project
+	if p.Project != nil {
+		m["project_name"] = *p.Project
 	}
-	if p.Group != "" {
-		m["group_name"] = p.Group
+	if p.Group != nil {
+		m["group_name"] = *p.Group
 	}
-	if p.GroupID != "" {
-		m["group_id"] = p.GroupID
+	if p.GroupID != nil {
+		m["group_id"] = *p.GroupID
 	}
-	if p.DeletedAt != "" {
-		m["deleted_at"] = p.DeletedAt
+	if p.DeletedAt != nil {
+		m["deleted_at"] = *p.DeletedAt
 	}
-	if p.RemovedAt != "" {
-		m["removed_at"] = p.RemovedAt
+	if p.RemovedAt != nil {
+		m["removed_at"] = *p.RemovedAt
 	}
 	if p.CreateServerGoup {
 		m["create_server_group"] = p.CreateServerGoup
@@ -124,7 +141,7 @@ func (p *ProjectGroup) ToMap() (map[string]interface{}, error) {
 	if p.ServersSelector != "" {
 		selectorsMap, err := parseServersSelectorString(p.ServersSelector)
 		if err != nil {
-			return map[string]interface{}{}, err
+			return nil, err
 		}
 		m["servers_selector"] = selectorsMap
 	}
@@ -140,8 +157,8 @@ type ListProjectGroupsParameters struct {
 	OfflineEnabled    bool
 }
 
-func (p ListProjectGroupsParameters) toMap() map[string]string {
-	m := make(map[string]string, 4)
+func (p ListProjectGroupsParameters) toQueryParametersMap() map[string]string {
+	m := make(map[string]string, 5)
 
 	if p.IncludeRemoved {
 		m["include_removed"] = strconv.FormatBool(p.IncludeRemoved)
@@ -168,7 +185,7 @@ type ProjectGroupsListResponse struct {
 
 func (c OktaASAClient) ListProjectGroups(ctx context.Context, project string, parameters ListProjectGroupsParameters) ([]ProjectGroup, error) {
 	if project == "" {
-		return []ProjectGroup{}, fmt.Errorf("supplied blank project name")
+		return nil, fmt.Errorf("supplied blank project name")
 	}
 
 	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups", url.PathEscape(c.Team), url.PathEscape(project))
@@ -178,7 +195,7 @@ func (c OktaASAClient) ListProjectGroups(ctx context.Context, project string, pa
 		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
 		logging.Tracef("making GET request to %s", requestURL)
 		resp, err := c.CreateBaseRequest(ctx).
-			SetQueryParams(parameters.toMap()).
+			SetQueryParams(parameters.toQueryParametersMap()).
 			SetResult(&ProjectGroupsListResponse{}).
 			Get(requestURL)
 		if err != nil {
@@ -208,7 +225,7 @@ func (c OktaASAClient) ListProjectGroups(ctx context.Context, project string, pa
 	}
 
 	for idx, projectGroup := range projectGroups {
-		projectGroup.Project = project
+		projectGroup.Project = &project
 		projectGroups[idx] = projectGroup
 	}
 
@@ -234,7 +251,7 @@ func (c OktaASAClient) GetProjectGroup(ctx context.Context, project, group strin
 
 	if statusCode == 200 {
 		projectGroup := resp.Result().(*ProjectGroup)
-		projectGroup.Project = project
+		projectGroup.Project = &project
 		return projectGroup, nil
 	} else if statusCode == 404 {
 		return nil, nil
@@ -245,7 +262,7 @@ func (c OktaASAClient) GetProjectGroup(ctx context.Context, project, group strin
 
 func (c OktaASAClient) CreateProjectGroup(ctx context.Context, projectGroup ProjectGroup) error {
 	// Create the project group on the api server specified by project group
-	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups", url.PathEscape(c.Team), url.PathEscape(projectGroup.Project))
+	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups", url.PathEscape(c.Team), url.PathEscape(*projectGroup.Project))
 	logging.Tracef("making POST request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(projectGroup).Post(requestURL)
 	if err != nil {
@@ -257,7 +274,7 @@ func (c OktaASAClient) CreateProjectGroup(ctx context.Context, projectGroup Proj
 }
 
 func (c OktaASAClient) UpdateProjectGroup(ctx context.Context, projectGroup ProjectGroup) error {
-	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups/%s", url.PathEscape(c.Team), url.PathEscape(projectGroup.Project), url.PathEscape(projectGroup.Group))
+	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups/%s", url.PathEscape(c.Team), url.PathEscape(*projectGroup.Project), url.PathEscape(*projectGroup.Group))
 	logging.Tracef("making PUT request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(projectGroup).Put(requestURL)
 	if err != nil {

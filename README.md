@@ -41,6 +41,13 @@ If you are able to test against a non-production server, you can set the URL via
 export OKTAASA_API_HOST=<root url for host here>
 ```
 
+If the non-production server is not within the `scaleft.com` or `okta.com` domains, you will need to set the `OKTAASA_TRUSTED_DOMAIN_OVERRIDE` environment variable to the full domain being used, e.g.:
+
+```
+export OKTAASA_API_HOST="https://my.testing.domain"
+export OKTAASA_TRUSTED_DOMAIN_OVERRIDE="my.testing.domain"
+```
+
 
 Developing the Provider
 ---------------------------

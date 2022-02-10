@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
+	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
 )
 
 func TestAccProjectGroup(t *testing.T) {
@@ -17,14 +18,14 @@ func TestAccProjectGroup(t *testing.T) {
 	groupName := fmt.Sprintf("test-acc-project-group-group-%s", randSeq(10))
 
 	initialProjectGroup := client.ProjectGroup{
-		Project:      projectName,
-		Group:        groupName,
+		Project:      &projectName,
+		Group:        &groupName,
 		ServerAccess: true,
 		ServerAdmin:  true,
 	}
 	updatedProjectGroup := client.ProjectGroup{
-		Project:          projectName,
-		Group:            groupName,
+		Project:          &projectName,
+		Group:            &groupName,
 		ServerAccess:     true,
 		ServerAdmin:      false,
 		CreateServerGoup: true,
@@ -118,26 +119,26 @@ func testAccProjectGroupCheckExists(rn string, expectedProjectGroup client.Proje
 func testAccProjectGroupCheckDestroy(projectGroup client.ProjectGroup) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(client.OktaASAClient)
-		pg, err := client.GetProjectGroup(context.Background(), projectGroup.Project, projectGroup.Group)
+		pg, err := client.GetProjectGroup(context.Background(), *projectGroup.Project, *projectGroup.Group)
 		if err != nil {
 			return fmt.Errorf("error getting project group: %w", err)
 		}
-		if pg != nil && pg.Project != "" && pg.Group != "" && pg.DeletedAt == "" && pg.RemovedAt == "" {
+		if pg != nil && utils.IsNonEmpty(pg.Project) && utils.IsNonEmpty(pg.Group) && utils.IsBlank(pg.DeletedAt) && utils.IsBlank(pg.RemovedAt) {
 			return fmt.Errorf("project group still exists")
 		}
-		group, err := client.GetGroup(context.Background(), projectGroup.Group, false)
+		group, err := client.GetGroup(context.Background(), *projectGroup.Group, false)
 		if err != nil {
 			return fmt.Errorf("error getting group associated with project group: %w", err)
 		}
-		if group != nil && group.ID != "" {
-			return fmt.Errorf("group still exists: %s", projectGroup.Group)
+		if group != nil && utils.IsNonEmpty(group.ID) {
+			return fmt.Errorf("group still exists: %s", *projectGroup.Group)
 		}
-		project, err := client.GetProject(context.Background(), projectGroup.Project, false)
+		project, err := client.GetProject(context.Background(), *projectGroup.Project, false)
 		if err != nil {
 			return fmt.Errorf("error getting project associated with project group: %w", err)
 		}
-		if project != nil && project.ID != "" {
-			return fmt.Errorf("project still exists: %s", projectGroup.Project)
+		if project != nil && utils.IsNonEmpty(project.ID) {
+			return fmt.Errorf("project still exists: %s", *projectGroup.Project)
 		}
 		return nil
 	}
@@ -161,7 +162,7 @@ resource "oktaasa_project_group" "test-acc-project-group" {
 }`
 
 func createTestAccProjectGroupCreateConfig(projectGroup client.ProjectGroup) string {
-	return fmt.Sprintf(testAccProjectGroupCreateConfigFormat, projectGroup.Project, projectGroup.Group)
+	return fmt.Sprintf(testAccProjectGroupCreateConfigFormat, *projectGroup.Project, *projectGroup.Group)
 }
 
 const testAccProjectGroupUpdateConfigFormat = `
@@ -182,5 +183,5 @@ resource "oktaasa_project_group" "test-acc-project-group" {
 }`
 
 func createTestAccProjectGroupUpdateConfig(projectGroup client.ProjectGroup) string {
-	return fmt.Sprintf(testAccProjectGroupUpdateConfigFormat, projectGroup.Project, projectGroup.Group)
+	return fmt.Sprintf(testAccProjectGroupUpdateConfigFormat, *projectGroup.Project, *projectGroup.Group)
 }

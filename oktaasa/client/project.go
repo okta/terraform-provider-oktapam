@@ -7,72 +7,87 @@ import (
 	"strconv"
 
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
+	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
 	"github.com/tomnomnom/linkheader"
 )
 
 type Project struct {
-	Name                   string `json:"name"`
-	ID                     string `json:"id,omitempty"`
-	Team                   string `json:"team,omitempty"`
-	DeletedAt              string `json:"deleted_at,omitempty"`
-	SharedAdminUserName    string `json:"shared_admin_user_name,omitempty"`
-	SharedStandardUserName string `json:"shared_standard_user_name,omitempty"`
-	NextUnixGID            int    `json:"next_unix_gid,omitempty"`
-	NextUnixUID            int    `json:"next_unix_uid,omitempty"`
-	ForceSharedSSHUsers    bool   `json:"force_shared_ssh_users,omitempty"`
-	CreateServerUsers      bool   `json:"create_server_users,omitempty"`
-	ForwardTraffic         bool   `json:"forward_traffic,omitempty"`
-	RDPSessionRecording    bool   `json:"rdp_session_recording,omitempty"`
-	RequirePreAuthForCreds bool   `json:"require_preauth_for_creds,omitempty"`
-	SSHSessionRecording    bool   `json:"ssh_session_recording,omitempty"`
-	GatewaySelector        string `json:"gateway_selector,omitempty"`
-	ADJoinedUsers          bool   `json:"ad_joined_users,omitempty"`
+	Name                   *string `json:"name"`
+	ID                     *string `json:"id,omitempty"`
+	Team                   *string `json:"team,omitempty"`
+	DeletedAt              *string `json:"deleted_at,omitempty"`
+	SharedAdminUserName    *string `json:"shared_admin_user_name,omitempty"`
+	SharedStandardUserName *string `json:"shared_standard_user_name,omitempty"`
+	NextUnixGID            *int    `json:"next_unix_gid,omitempty"`
+	NextUnixUID            *int    `json:"next_unix_uid,omitempty"`
+	ForceSharedSSHUsers    *bool   `json:"force_shared_ssh_users,omitempty"`
+	CreateServerUsers      *bool   `json:"create_server_users,omitempty"`
+	ForwardTraffic         *bool   `json:"forward_traffic,omitempty"`
+	RDPSessionRecording    *bool   `json:"rdp_session_recording,omitempty"`
+	RequirePreAuthForCreds *bool   `json:"require_preauth_for_creds,omitempty"`
+	SSHSessionRecording    *bool   `json:"ssh_session_recording,omitempty"`
+	GatewaySelector        *string `json:"gateway_selector,omitempty"`
+	ADJoinedUsers          *bool   `json:"ad_joined_users,omitempty"`
 }
 
-func (p Project) ToMap() map[string]interface{} {
+func (p Project) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{}, 2)
 
-	if p.Name != "" {
-		m["project_name"] = p.Name
+	if p.Name != nil {
+		m["project_name"] = *p.Name
 	}
-	if p.ID != "" {
-		m["id"] = p.ID
+	if p.ID != nil {
+		m["id"] = *p.ID
 	}
-	if p.Team != "" {
-		m["team"] = p.Team
+	if p.Team != nil {
+		m["team"] = *p.Team
 	}
-	if p.DeletedAt != "" {
-		m["deleted_at"] = p.DeletedAt
+	if p.DeletedAt != nil {
+		m["deleted_at"] = *p.DeletedAt
 	}
-	if p.NextUnixGID != 0 {
-		m["next_unix_gid"] = p.NextUnixGID
+	if p.NextUnixGID != nil {
+		m["next_unix_gid"] = *p.NextUnixGID
 	}
-	if p.NextUnixUID != 0 {
-		m["next_unix_uid"] = p.NextUnixUID
+	if p.NextUnixUID != nil {
+		m["next_unix_uid"] = *p.NextUnixUID
 	}
-	if p.SharedAdminUserName != "" {
-		m["shared_admin_user_name"] = p.SharedAdminUserName
+	if p.SharedAdminUserName != nil {
+		m["shared_admin_user_name"] = *p.SharedAdminUserName
 	}
-	if p.SharedStandardUserName != "" {
-		m["shared_standard_user_name"] = p.SharedStandardUserName
+	if p.SharedStandardUserName != nil {
+		m["shared_standard_user_name"] = *p.SharedStandardUserName
 	}
-	if p.GatewaySelector != "" {
-		m["gateway_selector"] = p.GatewaySelector
+	if p.GatewaySelector != nil {
+		m["gateway_selector"] = *p.GatewaySelector
 	}
 
-	m["force_shared_ssh_users"] = p.ForceSharedSSHUsers
-	m["create_server_users"] = p.CreateServerUsers
-	m["forward_traffic"] = p.ForwardTraffic
-	m["rdp_session_recording"] = p.RDPSessionRecording
-	m["require_preauth_for_creds"] = p.RequirePreAuthForCreds
-	m["ssh_session_recording"] = p.SSHSessionRecording
-	m["ad_joined_users"] = p.ADJoinedUsers
+	if p.ForceSharedSSHUsers != nil {
+		m["force_shared_ssh_users"] = p.ForceSharedSSHUsers
+	}
+	if p.CreateServerUsers != nil {
+		m["create_server_users"] = *p.CreateServerUsers
+	}
+	if p.ForwardTraffic != nil {
+		m["forward_traffic"] = *p.ForwardTraffic
+	}
+	if p.RDPSessionRecording != nil {
+		m["rdp_session_recording"] = *p.RDPSessionRecording
+	}
+	if p.RequirePreAuthForCreds != nil {
+		m["require_preauth_for_creds"] = *p.RequirePreAuthForCreds
+	}
+	if p.SSHSessionRecording != nil {
+		m["ssh_session_recording"] = *p.SSHSessionRecording
+	}
+	if p.ADJoinedUsers != nil {
+		m["ad_joined_users"] = *p.ADJoinedUsers
+	}
 
 	return m
 }
 
 func (p Project) Exists() bool {
-	return p.ID != "" && p.DeletedAt == ""
+	return utils.IsNonEmpty(p.ID) && utils.IsBlank(p.DeletedAt)
 }
 
 type ListProjectsParameters struct {
@@ -81,7 +96,7 @@ type ListProjectsParameters struct {
 	Contains      string
 }
 
-func (p ListProjectsParameters) toMap() map[string]string {
+func (p ListProjectsParameters) toQueryParametersMap() map[string]string {
 	m := make(map[string]string, 3)
 
 	if p.Self {
@@ -109,7 +124,7 @@ func (c OktaASAClient) ListProjects(ctx context.Context, parameters ListProjects
 		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
 		logging.Tracef("making GET request to %s", requestURL)
 
-		resp, err := c.CreateBaseRequest(ctx).SetQueryParams(parameters.toMap()).SetResult(&ProjectsListResponse{}).Get(requestURL)
+		resp, err := c.CreateBaseRequest(ctx).SetQueryParams(parameters.toQueryParametersMap()).SetResult(&ProjectsListResponse{}).Get(requestURL)
 		if err != nil {
 			logging.Errorf("received error while making request to %s", requestURL)
 			return nil, err

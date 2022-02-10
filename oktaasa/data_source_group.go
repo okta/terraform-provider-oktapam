@@ -77,19 +77,19 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, m interfa
 		parameters.Contains = contains.(string)
 	}
 
-	includeDeleted, err := getBool("include_deleted", d)
+	includeDeleted, err := getOkBool("include_deleted", d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	parameters.IncludeDeleted = includeDeleted
 
-	onlyIncludeDeleted, err := getBool("only_include_deleted", d)
+	onlyIncludeDeleted, err := getOkBool("only_include_deleted", d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	parameters.OnlyIncludeDeleted = onlyIncludeDeleted
 
-	disconnectedModeOnOnly, err := getBool("disconnected_mode_on_only", d)
+	disconnectedModeOnOnly, err := getOkBool("disconnected_mode_on_only", d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -101,7 +101,7 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, m interfa
 	}
 	groups := make([]map[string]interface{}, len(groupsList))
 	for idx, proj := range groupsList {
-		groups[idx] = proj.ToMap()
+		groups[idx] = proj.ToResourceMap()
 	}
 
 	if err := d.Set("groups", groups); err != nil {

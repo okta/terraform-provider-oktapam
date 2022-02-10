@@ -10,34 +10,34 @@ import (
 )
 
 type ServerEnrollmentToken struct {
-	Project       string `json:"_"`
-	Token         string `json:"token,omitempty"`
-	ID            string `json:"id,omitempty"`
-	Description   string `json:"description,omitempty"`
-	CreatedByUser string `json:"created_by_user,omitempty"`
-	IssuedAt      string `json:"issued_at,omitempty"`
+	Project       *string `json:"_"`
+	Description   *string `json:"description"`
+	Token         *string `json:"token,omitempty"`
+	ID            *string `json:"id,omitempty"`
+	CreatedByUser *string `json:"created_by_user,omitempty"`
+	IssuedAt      *string `json:"issued_at,omitempty"`
 }
 
-func (t ServerEnrollmentToken) ToMap() map[string]interface{} {
+func (t ServerEnrollmentToken) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{})
 
-	if t.Project != "" {
-		m["project_name"] = t.Project
+	if t.Project != nil {
+		m["project_name"] = *t.Project
 	}
-	if t.Token != "" {
-		m["token"] = t.Token
+	if t.Description != nil {
+		m["description"] = *t.Description
 	}
-	if t.ID != "" {
-		m["id"] = t.ID
+	if t.Token != nil {
+		m["token"] = *t.Token
 	}
-	if t.Description != "" {
-		m["description"] = t.Description
+	if t.ID != nil {
+		m["id"] = *t.ID
 	}
-	if t.CreatedByUser != "" {
-		m["created_by_user"] = t.CreatedByUser
+	if t.CreatedByUser != nil {
+		m["created_by_user"] = *t.CreatedByUser
 	}
-	if t.IssuedAt != "" {
-		m["issued_at"] = t.IssuedAt
+	if t.IssuedAt != nil {
+		m["issued_at"] = *t.IssuedAt
 	}
 
 	return m
@@ -49,7 +49,7 @@ type ServerEnrollmentTokensListResponse struct {
 
 func (c OktaASAClient) ListServerEnrollmentTokens(ctx context.Context, project string) ([]ServerEnrollmentToken, error) {
 	if project == "" {
-		return []ServerEnrollmentToken{}, fmt.Errorf("supplied blank project name")
+		return nil, fmt.Errorf("supplied blank project name")
 	}
 	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/server_enrollment_tokens", url.PathEscape(c.Team), url.PathEscape(project))
 	tokens := make([]ServerEnrollmentToken, 0)
@@ -87,7 +87,7 @@ func (c OktaASAClient) ListServerEnrollmentTokens(ctx context.Context, project s
 	}
 
 	for idx, token := range tokens {
-		token.Project = project
+		token.Project = &project
 		tokens[idx] = token
 	}
 
@@ -113,7 +113,7 @@ func (c OktaASAClient) GetServerEnrollmentToken(ctx context.Context, project, id
 		return nil, err
 	}
 	token := resp.Result().(*ServerEnrollmentToken)
-	token.Project = project
+	token.Project = &project
 
 	return token, nil
 }
@@ -138,7 +138,7 @@ func (c OktaASAClient) CreateServerEnrollmentToken(ctx context.Context, project,
 		logging.Tracef("unexpected status code: %d", resp.StatusCode())
 		return ServerEnrollmentToken{}, err
 	}
-	token.Project = project
+	token.Project = &project
 
 	return token, nil
 }

@@ -59,7 +59,7 @@ func resourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, 
 		return nil
 	}
 
-	for key, value := range token.ToMap() {
+	for key, value := range token.ToResourceMap() {
 		logging.Debugf("setting %s to %v", key, value)
 		d.Set(key, value)
 	}
@@ -70,7 +70,7 @@ func resourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, 
 func resourceGatewaySetupTokenCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaASAClient)
 
-	description := d.Get("description").(string)
+	description := getStringPtr("description", d, true)
 	labels := d.Get("labels").(map[string]interface{})
 
 	labelsMap := make(map[string]string, len(labels))
@@ -88,7 +88,7 @@ func resourceGatewaySetupTokenCreate(ctx context.Context, d *schema.ResourceData
 	} else if createdToken == nil {
 		d.SetId("")
 	} else {
-		d.SetId(createdToken.ID)
+		d.SetId(*createdToken.ID)
 	}
 
 	return resourceGatewaySetupTokenRead(ctx, d, m)

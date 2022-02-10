@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -14,6 +15,9 @@ import (
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/version"
 )
+
+const OKTAASA_TRUSTED_DOMAINS = "scaleft.com,okta.com"
+const TRUSTED_DOMAIN_OVERRIDE_ENV_VAR = "OKTAASA_TRUSTED_DOMAIN_OVERRIDE"
 
 var terraformUserAgent = "terraform_provider_oktaasa/" + version.Version
 
@@ -40,7 +44,35 @@ func CreateOktaASAClient(apiKey, apiKeySecret, team, apiHost string) (*OktaASACl
 	}
 }
 
+func checkTrustedDomain(apiHost string) error {
+	// this is more of a check for misconfiguration than anything as we allow it to be overriden
+	// for testing/debugging purposes
+	u, err := url.Parse(apiHost)
+	if err != nil {
+		logging.Errorf("error while parsing api host value: %s, \n%w", apiHost, err)
+		return err
+	}
+	hostname := u.Hostname()
+
+	for _, domain := range strings.Split(OKTAASA_TRUSTED_DOMAINS, ",") {
+		if strings.HasSuffix(hostname, domain) {
+			return nil
+		}
+	}
+
+	if hostname == os.Getenv(TRUSTED_DOMAIN_OVERRIDE_ENV_VAR) {
+		return nil
+	}
+
+	return fmt.Errorf("configured api host is not within a trusted domain")
+}
+
 func createServiceToken(apiKey, apiKeySecret, apiHost, team string) (*ServiceToken, error) {
+	err := checkTrustedDomain(apiHost)
+	if err != nil {
+		return nil, err
+	}
+
 	authorizationURL := fmt.Sprintf("%s/v1/teams/%s/service_token", apiHost, url.PathEscape(team))
 	client := resty.New()
 
@@ -96,17 +128,16 @@ func setRateLimitRetryLogic(client *resty.Client) *resty.Client {
 				return waitTime, nil
 			}
 
-			now := time.Now()
 			laterUnix, err := strconv.ParseInt(retryAtHeader, 10, 64)
 			if err != nil {
 				return 0, err
 			}
 			later := time.Unix(laterUnix, 0)
-			diff := later.Unix() - now.Unix()
+			diff := time.Until(later)
 
 			// duration returned is the diff between now and the time given by
 			// the server, plus jitter between 100-3000ms
-			waitTime := (time.Second * time.Duration(diff)) + (time.Millisecond * time.Duration(rand.Intn(2900)+100))
+			waitTime := diff + (time.Millisecond * time.Duration(rand.Intn(2900)+100))
 			logging.Infof("Request was rate limited, waiting %s to retry again", waitTime)
 
 			return waitTime, nil

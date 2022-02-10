@@ -96,31 +96,31 @@ func dataSourceProjectGroupsRead(ctx context.Context, d *schema.ResourceData, m 
 		return diag.Errorf("project_name cannot be blank")
 	}
 	parameters := client.ListProjectGroupsParameters{}
-	includeRemoved, err := getBool("include_removed", d)
+	includeRemoved, err := getOkBool("include_removed", d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	parameters.IncludeRemoved = includeRemoved
 
-	createServerGroup, err := getBool("create_server_group", d)
+	createServerGroup, err := getOkBool("create_server_group", d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	parameters.CreateServerGroup = createServerGroup
 
-	hasSelectors, err := getBool("has_selectors", d)
+	hasSelectors, err := getOkBool("has_selectors", d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	parameters.HasSelectors = hasSelectors
 
-	hasNoSelectors, err := getBool("has_no_selectors", d)
+	hasNoSelectors, err := getOkBool("has_no_selectors", d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	parameters.HasNoSelectors = hasNoSelectors
 
-	offlineEnabled, err := getBool("offline_enabled", d)
+	offlineEnabled, err := getOkBool("offline_enabled", d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -133,7 +133,7 @@ func dataSourceProjectGroupsRead(ctx context.Context, d *schema.ResourceData, m 
 
 	assignments := make([]map[string]interface{}, len(assignmentsList))
 	for idx, assignment := range assignmentsList {
-		m, err := assignment.ToMap()
+		m, err := assignment.ToResourceMap()
 		if err != nil {
 			return diag.FromErr(err)
 		}

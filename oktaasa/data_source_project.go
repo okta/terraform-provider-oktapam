@@ -124,7 +124,7 @@ func dataSourceProjectsRead(ctx context.Context, d *schema.ResourceData, m inter
 		parameters.ADJoinedUsers = &p
 	}
 
-	self, err := getBool("self", d)
+	self, err := getOkBool("self", d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -137,7 +137,7 @@ func dataSourceProjectsRead(ctx context.Context, d *schema.ResourceData, m inter
 
 	projects := make([]map[string]interface{}, len(projectsList))
 	for idx, proj := range projectsList {
-		projects[idx] = proj.ToMap()
+		projects[idx] = proj.ToResourceMap()
 	}
 
 	if err := d.Set("projects", projects); err != nil {

@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
+	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
 )
 
 func resourceProject() *schema.Resource {
@@ -42,7 +43,7 @@ func resourceProject() *schema.Resource {
 			"force_shared_ssh_users": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default:  false,
+				Computed: true,
 				ForceNew: true,
 			},
 			"shared_admin_user_name": {
@@ -58,7 +59,7 @@ func resourceProject() *schema.Resource {
 			"create_server_users": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default:  false,
+				Computed: true,
 			},
 			"deleted_at": {
 				Type:     schema.TypeString,
@@ -67,22 +68,22 @@ func resourceProject() *schema.Resource {
 			"forward_traffic": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default:  false,
+				Computed: true,
 			},
 			"rdp_session_recording": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default:  false,
+				Computed: true,
 			},
 			"require_preauth_for_creds": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default:  false,
+				Computed: true,
 			},
 			"ssh_session_recording": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default:  false,
+				Computed: true,
 			},
 			"gateway_selector": {
 				Type:     schema.TypeString,
@@ -91,6 +92,7 @@ func resourceProject() *schema.Resource {
 			"ad_joined_users": {
 				Type:     schema.TypeBool,
 				Optional: true,
+				Computed: true,
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -103,19 +105,19 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m interf
 	c := m.(client.OktaASAClient)
 
 	project := client.Project{
-		Name:                   d.Get("project_name").(string),
-		NextUnixGID:            d.Get("next_unix_gid").(int),
-		NextUnixUID:            d.Get("next_unix_uid").(int),
-		ForceSharedSSHUsers:    d.Get("force_shared_ssh_users").(bool),
-		SharedAdminUserName:    d.Get("shared_admin_user_name").(string),
-		SharedStandardUserName: d.Get("shared_standard_user_name").(string),
-		CreateServerUsers:      d.Get("create_server_users").(bool),
-		ForwardTraffic:         d.Get("forward_traffic").(bool),
-		RDPSessionRecording:    d.Get("rdp_session_recording").(bool),
-		RequirePreAuthForCreds: d.Get("require_preauth_for_creds").(bool),
-		SSHSessionRecording:    d.Get("ssh_session_recording").(bool),
-		GatewaySelector:        d.Get("gateway_selector").(string),
-		ADJoinedUsers:          d.Get("ad_joined_users").(bool),
+		Name:                   getStringPtr("project_name", d, true),
+		NextUnixGID:            getIntPtr("next_unix_gid", d, false),
+		NextUnixUID:            getIntPtr("next_unix_uid", d, false),
+		ForceSharedSSHUsers:    getBoolPtr("force_shared_ssh_users", d, false),
+		SharedAdminUserName:    getStringPtr("shared_admin_user_name", d, false),
+		SharedStandardUserName: getStringPtr("shared_standard_user_name", d, false),
+		CreateServerUsers:      getBoolPtr("create_server_users", d, false),
+		ForwardTraffic:         getBoolPtr("forward_traffic", d, false),
+		RDPSessionRecording:    getBoolPtr("rdp_session_recording", d, false),
+		RequirePreAuthForCreds: getBoolPtr("require_preauth_for_creds", d, false),
+		SSHSessionRecording:    getBoolPtr("ssh_session_recording", d, false),
+		GatewaySelector:        getStringPtr("gateway_selector", d, false),
+		ADJoinedUsers:          getBoolPtr("ad_joined_users", d, false),
 	}
 
 	err := c.CreateProject(ctx, project)
@@ -123,7 +125,7 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m interf
 		return diag.FromErr(err)
 	}
 
-	d.SetId(project.Name)
+	d.SetId(*project.Name)
 	return resourceProjectRead(ctx, d, m)
 }
 
@@ -140,15 +142,15 @@ func resourceProjectReadWithIgnorable(ctx context.Context, d *schema.ResourceDat
 	// the values that were used to create the project
 	ignorableValues := map[string]bool{"next_unix_gid": true, "next_unix_uid": true}
 
-	if proj != nil && proj.Name != "" {
-		if proj.DeletedAt == "" {
+	if proj != nil && utils.IsNonEmpty(proj.Name) {
+		if utils.IsBlank(proj.DeletedAt) {
 			logging.Infof("Project %s exists", proj.Name)
-			d.SetId(proj.Name)
+			d.SetId(*proj.Name)
 		} else {
 			logging.Infof("Project %s was removed", projectName)
 			d.SetId("")
 		}
-		for key, value := range proj.ToMap() {
+		for key, value := range proj.ToResourceMap() {
 			if _, ok := ignorableValues[key]; !ignoreValues || !ok {
 				d.Set(key, value)
 			}

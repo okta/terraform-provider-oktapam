@@ -67,7 +67,7 @@ func dataSourceServerEnrollmentTokenRead(ctx context.Context, d *schema.Resource
 
 	tokens := make([]map[string]interface{}, len(tokensList))
 	for idx, token := range tokensList {
-		tokens[idx] = token.ToMap()
+		tokens[idx] = token.ToResourceMap()
 	}
 
 	if err := d.Set("server_enrollment_tokens", tokens); err != nil {

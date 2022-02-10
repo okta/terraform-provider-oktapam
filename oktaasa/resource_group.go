@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
+	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
 )
 
 func resourceGroup() *schema.Resource {
@@ -58,7 +59,7 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interfac
 		roles = r.([]string)
 	}
 	group := client.Group{
-		Name:  d.Get("name").(string),
+		Name:  getStringPtr("name", d, true),
 		Roles: roles,
 	}
 
@@ -66,7 +67,7 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interfac
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(group.Name)
+	d.SetId(*group.Name)
 	return resourceGroupRead(ctx, d, m)
 }
 
@@ -80,15 +81,15 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{
 		return diag.FromErr(err)
 	}
 
-	if group != nil && group.Name != "" {
-		if group.DeletedAt == "" {
+	if group != nil && utils.IsNonEmpty(group.Name) {
+		if utils.IsBlank(group.DeletedAt) {
 			logging.Infof("Group %s exists", group.Name)
-			d.SetId(group.Name)
+			d.SetId(*group.Name)
 		} else {
 			logging.Infof("Group %s was removed", groupName)
 			d.SetId("")
 		}
-		for key, value := range group.ToMap() {
+		for key, value := range group.ToResourceMap() {
 			d.Set(key, value)
 		}
 	} else {

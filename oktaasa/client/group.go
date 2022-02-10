@@ -7,35 +7,36 @@ import (
 	"strconv"
 
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
+	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
 	"github.com/tomnomnom/linkheader"
 )
 
 type Group struct {
-	Name                 string   `json:"name"`
-	ID                   string   `json:"id,omitempty"`
-	DeletedAt            string   `json:"deleted_at,omitempty"`
-	FederatedFromTeam    string   `json:"federated_from_team,omitempty"`
-	FederationApprovedAt string   `json:"federation_approved_at,omitempty"`
+	Name                 *string  `json:"name"`
+	ID                   *string  `json:"id,omitempty"`
+	DeletedAt            *string  `json:"deleted_at,omitempty"`
+	FederatedFromTeam    *string  `json:"federated_from_team,omitempty"`
+	FederationApprovedAt *string  `json:"federation_approved_at,omitempty"`
 	Roles                []string `json:"roles"`
 }
 
-func (g Group) ToMap() map[string]interface{} {
+func (g Group) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{}, 2)
 
-	if g.Name != "" {
-		m["name"] = g.Name
+	if g.Name != nil {
+		m["name"] = *g.Name
 	}
-	if g.ID != "" {
-		m["id"] = g.ID
+	if g.ID != nil {
+		m["id"] = *g.ID
 	}
-	if g.DeletedAt != "" {
-		m["deleted_at"] = g.DeletedAt
+	if g.DeletedAt != nil {
+		m["deleted_at"] = *g.DeletedAt
 	}
-	if g.FederatedFromTeam != "" {
-		m["federated_from_team"] = g.FederatedFromTeam
+	if g.FederatedFromTeam != nil {
+		m["federated_from_team"] = *g.FederatedFromTeam
 	}
-	if g.FederationApprovedAt != "" {
-		m["federation_approved_at"] = g.FederationApprovedAt
+	if g.FederationApprovedAt != nil {
+		m["federation_approved_at"] = *g.FederationApprovedAt
 	}
 	m["roles"] = g.Roles
 
@@ -43,7 +44,7 @@ func (g Group) ToMap() map[string]interface{} {
 }
 
 func (g Group) Exists() bool {
-	return g.ID != "" && g.DeletedAt == ""
+	return utils.IsNonEmpty(g.ID) && utils.IsBlank(g.DeletedAt)
 }
 
 type ListGroupsParameters struct {
@@ -53,7 +54,7 @@ type ListGroupsParameters struct {
 	DisconnectedModeOnOnly bool
 }
 
-func (p ListGroupsParameters) toMap() map[string]string {
+func (p ListGroupsParameters) toQueryParametersMap() map[string]string {
 	m := make(map[string]string, 4)
 
 	if p.Contains != "" {
@@ -85,7 +86,7 @@ func (c OktaASAClient) ListGroups(ctx context.Context, parameters ListGroupsPara
 		logging.Tracef("making GET request to %s", requestURL)
 		resp, err := c.CreateBaseRequest(ctx).
 			SetResult(&GroupsListResponse{}).
-			SetQueryParams(parameters.toMap()).
+			SetQueryParams(parameters.toQueryParametersMap()).
 			Get(requestURL)
 		if err != nil {
 			logging.Errorf("received error while making request to %s", requestURL)

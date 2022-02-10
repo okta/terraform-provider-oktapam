@@ -15,11 +15,11 @@ func TestAccGroup(t *testing.T) {
 	resourceName := "oktaasa_group.test-group"
 	groupName := fmt.Sprintf("test-acc-group-%s", randSeq(10))
 	initialGroup := client.Group{
-		Name:  groupName,
+		Name:  &groupName,
 		Roles: make([]string, 0),
 	}
 	updatedGroup := client.Group{
-		Name:  groupName,
+		Name:  &groupName,
 		Roles: []string{"access_user"},
 	}
 
@@ -66,17 +66,17 @@ func testAccGroupCheckExists(rn string, expectedGroup client.Group) resource.Tes
 		if resourceID == "" {
 			return fmt.Errorf("resource id not set")
 		}
-		if expectedGroup.Name != resourceID {
-			return fmt.Errorf("resource id not set to expected value.  expected %s, got %s", expectedGroup.Name, resourceID)
+		if *expectedGroup.Name != resourceID {
+			return fmt.Errorf("resource id not set to expected value.  expected %s, got %s", *expectedGroup.Name, resourceID)
 		}
 
 		client := testAccProvider.Meta().(client.OktaASAClient)
-		group, err := client.GetGroup(context.Background(), expectedGroup.Name, false)
+		group, err := client.GetGroup(context.Background(), *expectedGroup.Name, false)
 		if err != nil {
 			return fmt.Errorf("error getting group :%w", err)
 		}
 		if group == nil {
-			return fmt.Errorf("group %s does not exist", expectedGroup.Name)
+			return fmt.Errorf("group %s does not exist", *expectedGroup.Name)
 		}
 		expectedGroup.ID = group.ID
 		comparison := pretty.Compare(group, expectedGroup)

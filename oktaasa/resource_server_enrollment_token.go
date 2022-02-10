@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
+	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
 )
 
 func resourceServerEnrollmentToken() *schema.Resource {
@@ -64,13 +65,13 @@ func resourceServerEnrollmentTokenRead(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(err)
 	}
 
-	if token == nil || token.ID == "" {
+	if token == nil || utils.IsBlank(token.ID) {
 		logging.Debugf("token id was blank")
 		d.SetId("")
 		return nil
 	}
 
-	for key, value := range token.ToMap() {
+	for key, value := range token.ToResourceMap() {
 		logging.Debugf("setting %s to %v", key, value)
 		d.Set(key, value)
 	}
@@ -89,7 +90,7 @@ func resourceServerEnrollmentTokenCreate(ctx context.Context, d *schema.Resource
 		return diag.FromErr(err)
 	}
 
-	d.SetId(fmt.Sprintf("%s|%s", token.Project, token.ID))
+	d.SetId(fmt.Sprintf("%s|%s", *token.Project, *token.ID))
 
 	return resourceServerEnrollmentTokenRead(ctx, d, m)
 }

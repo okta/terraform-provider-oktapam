@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
+	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
 )
 
 func resourceProjectGroup() *schema.Resource {
@@ -35,6 +36,7 @@ func resourceProjectGroup() *schema.Resource {
 			"create_server_group": {
 				Type:     schema.TypeBool,
 				Optional: true,
+				Computed: true,
 			},
 			"server_access": {
 				Type:     schema.TypeBool,
@@ -61,11 +63,11 @@ func resourceProjectGroup() *schema.Resource {
 func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaASAClient)
 
-	serverAdmin, err := getBool("server_admin", d)
+	serverAdmin, err := getOkBool("server_admin", d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	serverAccess, err := getBool("server_access", d)
+	serverAccess, err := getOkBool("server_access", d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -74,7 +76,7 @@ func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m i
 		return diag.Errorf("server_access or server_admin must be true")
 	}
 
-	createServerGroup, err := getBool("create_server_group", d)
+	createServerGroup, err := getOkBool("create_server_group", d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -84,13 +86,18 @@ func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m i
 		serversSelector = ss.(map[string]interface{})
 	}
 
+	serversSelectorString, err := client.FormatServersSelectorString(serversSelector)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	projectGroup := client.ProjectGroup{
-		Project:          d.Get("project_name").(string),
-		Group:            d.Get("group_name").(string),
+		Project:          getStringPtr("project_name", d, true),
+		Group:            getStringPtr("group_name", d, true),
 		ServerAccess:     serverAccess,
 		ServerAdmin:      serverAdmin,
 		CreateServerGoup: createServerGroup,
-		ServersSelector:  client.FormatServersSelectorString(serversSelector),
+		ServersSelector:  serversSelectorString,
 	}
 
 	err = c.CreateProjectGroup(ctx, projectGroup)
@@ -98,7 +105,7 @@ func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m i
 		return diag.FromErr(err)
 	}
 
-	d.SetId(createProjectGroupResourceID(projectGroup.Project, projectGroup.Group))
+	d.SetId(createProjectGroupResourceID(*projectGroup.Project, *projectGroup.Group))
 
 	return resourceProjectGroupRead(ctx, d, m)
 }
@@ -119,16 +126,16 @@ func resourceProjectGroupRead(ctx context.Context, d *schema.ResourceData, m int
 	}
 
 	ignorableValues := map[string]bool{"deleted_at": true, "removed_at": true}
-	if projectGroup != nil && projectGroup.Group != "" {
-		if projectGroup.DeletedAt != "" {
+	if projectGroup != nil && utils.IsNonEmpty(projectGroup.Group) {
+		if utils.IsNonEmpty(projectGroup.DeletedAt) {
 			logging.Infof("Group %s was deleted", group)
 			d.SetId("")
-		} else if projectGroup.RemovedAt != "" {
+		} else if utils.IsNonEmpty(projectGroup.RemovedAt) {
 			logging.Infof("Group %s was removed from project %s", group, project)
 			d.SetId("")
 		} else {
-			d.SetId(createProjectGroupResourceID(projectGroup.Project, projectGroup.Group))
-			attributes, err := projectGroup.ToMap()
+			d.SetId(createProjectGroupResourceID(*projectGroup.Project, *projectGroup.Group))
+			attributes, err := projectGroup.ToResourceMap()
 			if err != nil {
 				return diag.FromErr(err)
 			}
@@ -182,8 +189,10 @@ func resourceProjectGroupUpdate(ctx context.Context, d *schema.ResourceData, m i
 		pg, err := client.ProjectGroupFromMap(updates)
 		if err != nil {
 			return diag.FromErr(err)
+		} else if pg == nil {
+			return diag.Errorf("could not create ProjectGroup from supplied values")
 		}
-		err = c.UpdateProjectGroup(ctx, pg)
+		err = c.UpdateProjectGroup(ctx, *pg)
 		if err != nil {
 			return diag.FromErr(err)
 		}

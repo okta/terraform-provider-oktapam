@@ -4,3 +4,4 @@
 *.swp
 
 terraform-provider-oktaasa
+oktaasa/test.log

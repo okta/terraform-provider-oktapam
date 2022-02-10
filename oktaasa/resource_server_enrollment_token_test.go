@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
+	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
 )
 
 func TestAccServerEnrollmentToken(t *testing.T) {
@@ -15,8 +16,8 @@ func TestAccServerEnrollmentToken(t *testing.T) {
 	description := fmt.Sprintf("Acceptance Test Token: %s", randSeq(10))
 	projectName := fmt.Sprintf("test-acc-server-enrollment-token-project-%s", randSeq(10))
 	enrollmentToken := client.ServerEnrollmentToken{
-		Project:     projectName,
-		Description: description,
+		Project:     &projectName,
+		Description: &description,
 	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -56,8 +57,8 @@ func testAccServerEnrollmentTokenCheckExists(rn string, expectedServerEnrollment
 		if err != nil {
 			return fmt.Errorf("error parsing resource id: %w", err)
 		}
-		if projectName != expectedServerEnrollmentToken.Project {
-			return fmt.Errorf("resource ID did not have the expected project. expected %s, got %s", expectedServerEnrollmentToken.Project, projectName)
+		if projectName != *expectedServerEnrollmentToken.Project {
+			return fmt.Errorf("resource ID did not have the expected project. expected %s, got %s", *expectedServerEnrollmentToken.Project, projectName)
 		}
 
 		client := testAccProvider.Meta().(client.OktaASAClient)
@@ -65,11 +66,11 @@ func testAccServerEnrollmentTokenCheckExists(rn string, expectedServerEnrollment
 		if err != nil {
 			return fmt.Errorf("error getting server enrollment token: %w", err)
 		}
-		if token == nil || token.ID == "" {
+		if token == nil || utils.IsBlank(token.ID) {
 			return fmt.Errorf("server enrollment token for project %s with id %s does not exist", projectName, tokenID)
 		}
-		if token.Description != expectedServerEnrollmentToken.Description {
-			return fmt.Errorf("expected description does not match returned description for server enrollment token.  expected: %s, got: %s", expectedServerEnrollmentToken.Description, token.Description)
+		if *token.Description != *expectedServerEnrollmentToken.Description {
+			return fmt.Errorf("expected description does not match returned description for server enrollment token.  expected: %s, got: %s", *expectedServerEnrollmentToken.Description, *token.Description)
 		}
 
 		return nil
@@ -79,16 +80,16 @@ func testAccServerEnrollmentTokenCheckExists(rn string, expectedServerEnrollment
 func testAccServerEnrollmentTokenCheckDestroy(token client.ServerEnrollmentToken) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(client.OktaASAClient)
-		project, err := client.GetProject(context.Background(), token.Project, false)
+		project, err := client.GetProject(context.Background(), *token.Project, false)
 		if err != nil {
 			return fmt.Errorf("error getting project associated with server enrollment token: %w", err)
 		}
-		if project == nil || project.ID == "" {
+		if project == nil || utils.IsBlank(project.ID) {
 			// if all resources are removed, the project will be removed, which also removes the enrollment token
 			return nil
 		}
 
-		tokens, err := client.ListServerEnrollmentTokens(context.Background(), token.Project)
+		tokens, err := client.ListServerEnrollmentTokens(context.Background(), *token.Project)
 		if err != nil {
 			return fmt.Errorf("error getting tokens: %w", err)
 		}
@@ -117,5 +118,5 @@ resource "oktaasa_server_enrollment_token" "test-server-enrollment-token" {
 `
 
 func createTestAccServerEnrollmentTokenCreateConfig(token client.ServerEnrollmentToken) string {
-	return fmt.Sprintf(testAccServerEnrollmentTokenCreateConfigFormat, token.Project, token.Description)
+	return fmt.Sprintf(testAccServerEnrollmentTokenCreateConfigFormat, *token.Project, *token.Description)
 }
