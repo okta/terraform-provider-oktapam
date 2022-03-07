@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
 	"github.com/tomnomnom/linkheader"
 )
 
@@ -104,7 +104,7 @@ type ProjectsListResponse struct {
 	Projects []Project `json:"list"`
 }
 
-func (c OktaASAClient) ListProjects(ctx context.Context, parameters ListProjectsParameters) ([]Project, error) {
+func (c OktaPAMClient) ListProjects(ctx context.Context, parameters ListProjectsParameters) ([]Project, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/projects", url.PathEscape(c.Team))
 	projects := make([]Project, 0)
 
@@ -142,7 +142,7 @@ func (c OktaASAClient) ListProjects(ctx context.Context, parameters ListProjects
 	return projects, nil
 }
 
-func (c OktaASAClient) GetProject(ctx context.Context, name string, allowDeleted bool) (*Project, error) {
+func (c OktaPAMClient) GetProject(ctx context.Context, name string, allowDeleted bool) (*Project, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s", url.PathEscape(c.Team), url.PathEscape(name))
 	logging.Tracef("making GET request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetResult(&Project{}).Get(requestURL)
@@ -165,7 +165,7 @@ func (c OktaASAClient) GetProject(ctx context.Context, name string, allowDeleted
 	return nil, createErrorForInvalidCode(resp, 200, 404)
 }
 
-func (c OktaASAClient) CreateProject(ctx context.Context, proj Project) error {
+func (c OktaPAMClient) CreateProject(ctx context.Context, proj Project) error {
 	// Create the project on the api server specified by project
 	requestURL := fmt.Sprintf("/v1/teams/%s/projects", url.PathEscape(c.Team))
 	logging.Tracef("making POST request to %s", requestURL)
@@ -178,7 +178,7 @@ func (c OktaASAClient) CreateProject(ctx context.Context, proj Project) error {
 	return err
 }
 
-func (c OktaASAClient) UpdateProject(ctx context.Context, projectName string, updates map[string]interface{}) error {
+func (c OktaPAMClient) UpdateProject(ctx context.Context, projectName string, updates map[string]interface{}) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s", url.PathEscape(c.Team), url.PathEscape(projectName))
 	logging.Tracef("making PUT request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(updates).Put(requestURL)
@@ -190,7 +190,7 @@ func (c OktaASAClient) UpdateProject(ctx context.Context, projectName string, up
 	return err
 }
 
-func (c OktaASAClient) DeleteProject(ctx context.Context, projectName string) error {
+func (c OktaPAMClient) DeleteProject(ctx context.Context, projectName string) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s", url.PathEscape(c.Team), url.PathEscape(projectName))
 	logging.Tracef("making DELETE request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).Delete(requestURL)

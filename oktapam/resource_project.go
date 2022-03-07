@@ -1,13 +1,13 @@
-package oktaasa
+package oktapam
 
 import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
 )
 
 func resourceProject() *schema.Resource {
@@ -86,7 +86,7 @@ func resourceProject() *schema.Resource {
 }
 
 func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 
 	project := client.Project{
 		Name:                   getStringPtr("name", d, true),
@@ -111,7 +111,7 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m interf
 }
 
 func resourceProjectReadWithIgnorable(ctx context.Context, d *schema.ResourceData, m interface{}, ignoreValues bool) (*schema.ResourceData, error) {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 
 	projectName := d.Id()
 	proj, err := c.GetProject(ctx, projectName, false)
@@ -119,7 +119,7 @@ func resourceProjectReadWithIgnorable(ctx context.Context, d *schema.ResourceDat
 		return nil, err
 	}
 
-	// these values are updated in normal operation of ASA and should not be reset to
+	// these values are updated in normal operation of PAM and should not be reset to
 	// the values that were used to create the project
 	ignorableValues := map[string]bool{"next_unix_gid": true, "next_unix_uid": true}
 
@@ -161,7 +161,7 @@ func resourceProjectRead(ctx context.Context, d *schema.ResourceData, m interfac
 }
 
 func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 	projectName := d.Id()
 
 	changed := false
@@ -198,7 +198,7 @@ func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, m interf
 
 func resourceProjectDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 	projectName := d.Id()
 
 	err := c.DeleteProject(ctx, projectName)

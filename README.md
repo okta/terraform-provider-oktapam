@@ -1,4 +1,4 @@
-Terraform Provider for Okta's Advanced Server Access (Okta's ASA)
+Terraform Provider for Okta's Priviledged Access Management (Okta's PAM)
 =========================
 
 Requirements
@@ -10,42 +10,42 @@ Requirements
 Building The Provider
 ---------------------
 
-Clone repository to: `$PROJECT_DIR/terraform-provider-oktaasa`
+Clone repository to: `$PROJECT_DIR/terraform-provider-oktapam`
 
 where `$PROJECT_DIR` is a directory within your local machine.
 
 ```sh
-$ git clone git@github.com:okta/terraform-provider-oktaasa $PROJECT_DIR/terraform-provider-oktaasa
+$ git clone git@github.com:okta/terraform-provider-oktapam $PROJECT_DIR/terraform-provider-oktapam
 ```
 
 Go to the provider directory and build the provider
 
 ```sh
-$ cd $PROJECT_DIR/terraform-provider-oktaasa
+$ cd $PROJECT_DIR/terraform-provider-oktapam
 $ make build
 ```
 
 Using the provider
 ----------------------
-You will need to create a team a service user.  Then set the following environment variables prior to running: Okta's ASA API key, secret and team name. 
+You will need to create a team a service user.  Then set the following environment variables prior to running: Okta's PAM API key, secret and team name. 
 
 ```
-export OKTAASA_KEY_SECRET=<secret here>
-export OKTAASA_KEY=<key here>
-export OKTAASA_TEAM=<team name>
+export OKTAPAM_KEY_SECRET=<secret here>
+export OKTAPAM_KEY=<key here>
+export OKTAPAM_TEAM=<team name>
 ```
 
 If you are able to test against a non-production server, you can set the URL via: 
 
 ```
-export OKTAASA_API_HOST=<root url for host here>
+export OKTAPAM_API_HOST=<root url for host here>
 ```
 
-If the non-production server is not within the `scaleft.com` or `okta.com` domains, you will need to set the `OKTAASA_TRUSTED_DOMAIN_OVERRIDE` environment variable to the full domain being used, e.g.:
+If the non-production server is not within the `scaleft.com` or `okta.com` domains, you will need to set the `OKTAPAM_TRUSTED_DOMAIN_OVERRIDE` environment variable to the full domain being used, e.g.:
 
 ```
-export OKTAASA_API_HOST="https://my.testing.domain"
-export OKTAASA_TRUSTED_DOMAIN_OVERRIDE="my.testing.domain"
+export OKTAPAM_API_HOST="https://my.testing.domain"
+export OKTAPAM_TRUSTED_DOMAIN_OVERRIDE="my.testing.domain"
 ```
 
 
@@ -57,7 +57,7 @@ To compile the provider, run `make build`. This will build the provider and put 
 $ make bin
 ```
 
-To install the provider on your local machine, run `make install`.  This will build the provider and install it within the `~/.terraform.d/plugins/hashicorp.com/okta/oktaasa/[VERSION]/[OS_ARCH]/terraform-provider-oktaasa` directory.
+To install the provider on your local machine, run `make install`.  This will build the provider and install it within the `~/.terraform.d/plugins/hashicorp.com/okta/oktapam/[VERSION]/[OS_ARCH]/terraform-provider-oktapam` directory.
 
 ```sh
 $ make install
@@ -77,7 +77,7 @@ $ make test
 
 In order to run the full suite of Acceptance tests, run `make testacc`.
 
-*Note:* Acceptance tests create real resources, and often cost money to run.  If you wish to test against a dev/test server, ensure that you have the `OKTAASA_API_HOST` variable set.
+*Note:* Acceptance tests create real resources, and often cost money to run.  If you wish to test against a dev/test server, ensure that you have the `OKTAPAM_API_HOST` variable set.
 
 ```sh
 $ make testacc

@@ -1,4 +1,4 @@
-package oktaasa
+package oktapam
 
 import (
 	"os"
@@ -22,7 +22,7 @@ var testAccProvider *schema.Provider
 func init() {
 	testAccProvider = Provider()
 	testAccProviders = map[string]*schema.Provider{
-		"oktaasa": testAccProvider,
+		"oktapam": testAccProvider,
 	}
 }
 

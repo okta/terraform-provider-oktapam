@@ -1,4 +1,4 @@
-package oktaasa
+package oktapam
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
 )
 
 func resourceGatewaySetupToken() *schema.Resource {
@@ -45,7 +45,7 @@ func resourceGatewaySetupToken() *schema.Resource {
 }
 
 func resourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 
 	tokenID := d.Id()
 	token, err := c.GetGatewaySetupToken(ctx, tokenID)
@@ -68,7 +68,7 @@ func resourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceGatewaySetupTokenCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 
 	description := getStringPtr("description", d, true)
 	labels := d.Get("labels").(map[string]interface{})
@@ -95,7 +95,7 @@ func resourceGatewaySetupTokenCreate(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceGatewaySetupTokenDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 
 	id := d.Id()
 	err := c.DeleteGatewaySetupToken(ctx, id)

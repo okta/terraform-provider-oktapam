@@ -1,13 +1,13 @@
-package oktaasa
+package oktapam
 
 import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
 )
 
 func resourceGroup() *schema.Resource {
@@ -45,7 +45,7 @@ func resourceGroup() *schema.Resource {
 }
 
 func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 	roles := make([]string, 0)
 	if r, ok := d.GetOk("roles"); ok {
 		roles = r.([]string)
@@ -65,7 +65,7 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interfac
 
 func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 
 	groupName := d.Id()
 	group, err := c.GetGroup(ctx, groupName, false)
@@ -92,7 +92,7 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{
 }
 
 func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 	groupName := d.Id()
 
 	changed := false
@@ -126,7 +126,7 @@ func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 
 func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 	groupName := d.Id()
 
 	err := c.DeleteGroup(ctx, groupName)

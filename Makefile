@@ -1,8 +1,8 @@
 HOSTNAME=hashicorp.com
 NAMESPACE=okta
-NAME=oktaasa
+NAME=oktapam
 BINARY=terraform-provider-${NAME}
-VERSION=2.0.0
+VERSION=0.1.0
 OS_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
 PLUGIN_DIR=~/.terraform.d/plugins
 

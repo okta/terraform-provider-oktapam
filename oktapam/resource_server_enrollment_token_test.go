@@ -1,4 +1,4 @@
-package oktaasa
+package oktapam
 
 import (
 	"context"
@@ -7,12 +7,12 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
 )
 
 func TestAccServerEnrollmentToken(t *testing.T) {
-	resourceName := "oktaasa_server_enrollment_token.test-server-enrollment-token"
+	resourceName := "oktapam_server_enrollment_token.test-server-enrollment-token"
 	description := fmt.Sprintf("Acceptance Test Token: %s", randSeq(10))
 	projectName := fmt.Sprintf("test-acc-server-enrollment-token-project-%s", randSeq(10))
 	enrollmentToken := client.ServerEnrollmentToken{
@@ -61,7 +61,7 @@ func testAccServerEnrollmentTokenCheckExists(rn string, expectedServerEnrollment
 			return fmt.Errorf("resource ID did not have the expected project. expected %s, got %s", *expectedServerEnrollmentToken.Project, projectName)
 		}
 
-		client := testAccProvider.Meta().(client.OktaASAClient)
+		client := testAccProvider.Meta().(client.OktaPAMClient)
 		token, err := client.GetServerEnrollmentToken(context.Background(), projectName, tokenID)
 		if err != nil {
 			return fmt.Errorf("error getting server enrollment token: %w", err)
@@ -79,7 +79,7 @@ func testAccServerEnrollmentTokenCheckExists(rn string, expectedServerEnrollment
 
 func testAccServerEnrollmentTokenCheckDestroy(token client.ServerEnrollmentToken) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(client.OktaASAClient)
+		client := testAccProvider.Meta().(client.OktaPAMClient)
 		project, err := client.GetProject(context.Background(), *token.Project, false)
 		if err != nil {
 			return fmt.Errorf("error getting project associated with server enrollment token: %w", err)
@@ -105,15 +105,15 @@ func testAccServerEnrollmentTokenCheckDestroy(token client.ServerEnrollmentToken
 }
 
 const testAccServerEnrollmentTokenCreateConfigFormat = `
-resource "oktaasa_project" "test-server-enrollment-token-project" {
+resource "oktapam_project" "test-server-enrollment-token-project" {
     name = "%s"
   	next_unix_uid = 60120
   	next_unix_gid = 63020
 }
-resource "oktaasa_server_enrollment_token" "test-server-enrollment-token" {
-    project_name = oktaasa_project.test-server-enrollment-token-project.name
+resource "oktapam_server_enrollment_token" "test-server-enrollment-token" {
+    project_name = oktapam_project.test-server-enrollment-token-project.name
 	description  = "%s"
-	depends_on = [oktaasa_project.test-server-enrollment-token-project]
+	depends_on = [oktapam_project.test-server-enrollment-token-project]
 }
 `
 
