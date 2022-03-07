@@ -12,12 +12,10 @@ import (
 )
 
 type Group struct {
-	Name                 *string  `json:"name"`
-	ID                   *string  `json:"id,omitempty"`
-	DeletedAt            *string  `json:"deleted_at,omitempty"`
-	FederatedFromTeam    *string  `json:"federated_from_team,omitempty"`
-	FederationApprovedAt *string  `json:"federation_approved_at,omitempty"`
-	Roles                []string `json:"roles"`
+	Name      *string  `json:"name"`
+	ID        *string  `json:"id,omitempty"`
+	DeletedAt *string  `json:"deleted_at,omitempty"`
+	Roles     []string `json:"roles"`
 }
 
 func (g Group) ToResourceMap() map[string]interface{} {
@@ -31,12 +29,6 @@ func (g Group) ToResourceMap() map[string]interface{} {
 	}
 	if g.DeletedAt != nil {
 		m["deleted_at"] = *g.DeletedAt
-	}
-	if g.FederatedFromTeam != nil {
-		m["federated_from_team"] = *g.FederatedFromTeam
-	}
-	if g.FederationApprovedAt != nil {
-		m["federation_approved_at"] = *g.FederationApprovedAt
 	}
 	m["roles"] = g.Roles
 

@@ -26,14 +26,6 @@ func resourceGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"federated_from_team": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"federation_approved_at": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"deleted_at": {
 				Type:     schema.TypeString,
 				Computed: true,
