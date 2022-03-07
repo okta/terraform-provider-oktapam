@@ -17,7 +17,7 @@ func resourceProject() *schema.Resource {
 		UpdateContext: resourceProjectUpdate,
 		DeleteContext: resourceProjectDelete,
 		Schema: map[string]*schema.Schema{
-			"project_name": {
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
@@ -39,22 +39,6 @@ func resourceProject() *schema.Resource {
 				Type:     schema.TypeInt,
 				Optional: true,
 				Default:  60001,
-			},
-			"force_shared_ssh_users": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Computed: true,
-				ForceNew: true,
-			},
-			"shared_admin_user_name": {
-				Type:     schema.TypeString,
-				Computed: true,
-				Optional: true,
-			},
-			"shared_standard_user_name": {
-				Type:     schema.TypeString,
-				Computed: true,
-				Optional: true,
 			},
 			"create_server_users": {
 				Type:     schema.TypeBool,
@@ -105,12 +89,9 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m interf
 	c := m.(client.OktaASAClient)
 
 	project := client.Project{
-		Name:                   getStringPtr("project_name", d, true),
+		Name:                   getStringPtr("name", d, true),
 		NextUnixGID:            getIntPtr("next_unix_gid", d, false),
 		NextUnixUID:            getIntPtr("next_unix_uid", d, false),
-		ForceSharedSSHUsers:    getBoolPtr("force_shared_ssh_users", d, false),
-		SharedAdminUserName:    getStringPtr("shared_admin_user_name", d, false),
-		SharedStandardUserName: getStringPtr("shared_standard_user_name", d, false),
 		CreateServerUsers:      getBoolPtr("create_server_users", d, false),
 		ForwardTraffic:         getBoolPtr("forward_traffic", d, false),
 		RDPSessionRecording:    getBoolPtr("rdp_session_recording", d, false),
@@ -189,8 +170,6 @@ func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, m interf
 	changeableAttributes := []string{
 		"next_unix_gid",
 		"next_unix_uid",
-		"force_shared_ssh_users",
-		"shared_admin_user_name",
 		"create_server_users",
 		"forward_traffic",
 		"rdp_session_recording",

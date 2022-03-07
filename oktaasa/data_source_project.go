@@ -51,20 +51,6 @@ func dataSourceProjects() *schema.Resource {
 							Type:     schema.TypeInt,
 							Computed: true,
 						},
-						"force_shared_ssh_users": {
-							Type:     schema.TypeBool,
-							Computed: true,
-						},
-						"shared_admin_user_name": {
-							Type:     schema.TypeString,
-							Computed: true,
-							Optional: true,
-						},
-						"shared_standard_user_name": {
-							Type:     schema.TypeString,
-							Computed: true,
-							Optional: true,
-						},
 						"create_server_users": {
 							Type:     schema.TypeBool,
 							Computed: true,

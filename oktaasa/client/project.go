@@ -16,11 +16,8 @@ type Project struct {
 	ID                     *string `json:"id,omitempty"`
 	Team                   *string `json:"team,omitempty"`
 	DeletedAt              *string `json:"deleted_at,omitempty"`
-	SharedAdminUserName    *string `json:"shared_admin_user_name,omitempty"`
-	SharedStandardUserName *string `json:"shared_standard_user_name,omitempty"`
 	NextUnixGID            *int    `json:"next_unix_gid,omitempty"`
 	NextUnixUID            *int    `json:"next_unix_uid,omitempty"`
-	ForceSharedSSHUsers    *bool   `json:"force_shared_ssh_users,omitempty"`
 	CreateServerUsers      *bool   `json:"create_server_users,omitempty"`
 	ForwardTraffic         *bool   `json:"forward_traffic,omitempty"`
 	RDPSessionRecording    *bool   `json:"rdp_session_recording,omitempty"`
@@ -34,7 +31,7 @@ func (p Project) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{}, 2)
 
 	if p.Name != nil {
-		m["project_name"] = *p.Name
+		m["name"] = *p.Name
 	}
 	if p.ID != nil {
 		m["id"] = *p.ID
@@ -51,19 +48,10 @@ func (p Project) ToResourceMap() map[string]interface{} {
 	if p.NextUnixUID != nil {
 		m["next_unix_uid"] = *p.NextUnixUID
 	}
-	if p.SharedAdminUserName != nil {
-		m["shared_admin_user_name"] = *p.SharedAdminUserName
-	}
-	if p.SharedStandardUserName != nil {
-		m["shared_standard_user_name"] = *p.SharedStandardUserName
-	}
 	if p.GatewaySelector != nil {
 		m["gateway_selector"] = *p.GatewaySelector
 	}
 
-	if p.ForceSharedSSHUsers != nil {
-		m["force_shared_ssh_users"] = p.ForceSharedSSHUsers
-	}
 	if p.CreateServerUsers != nil {
 		m["create_server_users"] = *p.CreateServerUsers
 	}

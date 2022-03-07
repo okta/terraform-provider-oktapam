@@ -106,12 +106,12 @@ func testAccServerEnrollmentTokenCheckDestroy(token client.ServerEnrollmentToken
 
 const testAccServerEnrollmentTokenCreateConfigFormat = `
 resource "oktaasa_project" "test-server-enrollment-token-project" {
-    project_name = "%s"
+    name = "%s"
   	next_unix_uid = 60120
   	next_unix_gid = 63020
 }
 resource "oktaasa_server_enrollment_token" "test-server-enrollment-token" {
-    project_name = oktaasa_project.test-server-enrollment-token-project.project_name
+    project_name = oktaasa_project.test-server-enrollment-token-project.name
 	description  = "%s"
 	depends_on = [oktaasa_project.test-server-enrollment-token-project]
 }

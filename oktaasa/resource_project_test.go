@@ -19,7 +19,6 @@ func TestAccProject(t *testing.T) {
 		Name:                   &projectName,
 		NextUnixUID:            utils.AsIntPtr(60120),
 		NextUnixGID:            utils.AsIntPtr(63020),
-		ForceSharedSSHUsers:    utils.AsBoolPtrZero(false, true),
 		CreateServerUsers:      utils.AsBoolPtrZero(false, true),
 		ForwardTraffic:         utils.AsBoolPtrZero(false, true),
 		RequirePreAuthForCreds: utils.AsBoolPtrZero(false, true),
@@ -31,7 +30,6 @@ func TestAccProject(t *testing.T) {
 		Name:                   &projectName,
 		NextUnixUID:            utils.AsIntPtr(61200),
 		NextUnixGID:            utils.AsIntPtr(63400),
-		ForceSharedSSHUsers:    utils.AsBoolPtrZero(false, true),
 		CreateServerUsers:      utils.AsBoolPtrZero(true, true),
 		ForwardTraffic:         utils.AsBoolPtrZero(true, true),
 		RequirePreAuthForCreds: utils.AsBoolPtrZero(false, true),
@@ -50,7 +48,7 @@ func TestAccProject(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccProjectCheckExists(resourceName, initialProject),
 					resource.TestCheckResourceAttr(
-						resourceName, "project_name", projectName,
+						resourceName, "name", projectName,
 					),
 					resource.TestCheckResourceAttr(
 						resourceName, "next_unix_uid", "60120",
@@ -65,7 +63,7 @@ func TestAccProject(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccProjectCheckExists(resourceName, updatedProject),
 					resource.TestCheckResourceAttr(
-						resourceName, "project_name", projectName,
+						resourceName, "name", projectName,
 					),
 					resource.TestCheckResourceAttr(
 						resourceName, "next_unix_uid", "61200",
@@ -135,7 +133,7 @@ func testAccProjectCheckDestroy(projectName string) resource.TestCheckFunc {
 
 const testAccProjectCreateConfigFormat = `
 resource "oktaasa_project" "test-project" {
-    project_name = "%s"
+    name = "%s"
   	next_unix_uid = 60120
   	next_unix_gid = 63020
 }`
@@ -146,7 +144,7 @@ func createTestAccProjectCreateConfig(projectName string) string {
 
 const testAccProjectUpdateConfigFormat = `
 resource "oktaasa_project" "test-project" {
-    project_name              = "%s"
+    name              = "%s"
   	next_unix_uid             = 61200
   	next_unix_gid             = 63400
 	create_server_users       = true

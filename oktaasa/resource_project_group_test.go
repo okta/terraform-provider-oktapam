@@ -146,7 +146,7 @@ func testAccProjectGroupCheckDestroy(projectGroup client.ProjectGroup) resource.
 
 const testAccProjectGroupCreateConfigFormat = `
 resource "oktaasa_project" "test-project-group-project" {
-    project_name = "%s"
+    name = "%s"
   	next_unix_uid = 60120
   	next_unix_gid = 63020
 }
@@ -154,7 +154,7 @@ resource "oktaasa_group" "test-project-group-group" {
     name = "%s"
 }
 resource "oktaasa_project_group" "test-acc-project-group" {
-    project_name = oktaasa_project.test-project-group-project.project_name
+    project_name = oktaasa_project.test-project-group-project.name
   	group_name = oktaasa_group.test-project-group-group.name
 	server_access = true
 	server_admin = true
@@ -167,7 +167,7 @@ func createTestAccProjectGroupCreateConfig(projectGroup client.ProjectGroup) str
 
 const testAccProjectGroupUpdateConfigFormat = `
 resource "oktaasa_project" "test-project-group-project" {
-    project_name = "%s"
+    name = "%s"
   	next_unix_uid = 60120
   	next_unix_gid = 63020
 }
@@ -175,7 +175,7 @@ resource "oktaasa_group" "test-project-group-group" {
     name = "%s"
 }
 resource "oktaasa_project_group" "test-acc-project-group" {
-    project_name = oktaasa_project.test-project-group-project.project_name
+    project_name = oktaasa_project.test-project-group-project.name
   	group_name = oktaasa_group.test-project-group-group.name
 	server_access = true
 	server_admin = false
