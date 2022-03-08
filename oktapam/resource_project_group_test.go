@@ -1,4 +1,4 @@
-package oktaasa
+package oktapam
 
 import (
 	"context"
@@ -8,12 +8,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/kylelemons/godebug/pretty"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
 )
 
 func TestAccProjectGroup(t *testing.T) {
-	resourceName := "oktaasa_project_group.test-acc-project-group"
+	resourceName := "oktapam_project_group.test-acc-project-group"
 	projectName := fmt.Sprintf("test-acc-project-group-project-%s", randSeq(10))
 	groupName := fmt.Sprintf("test-acc-project-group-group-%s", randSeq(10))
 
@@ -99,7 +99,7 @@ func testAccProjectGroupCheckExists(rn string, expectedProjectGroup client.Proje
 			return fmt.Errorf("error parsing resource id: %w", err)
 		}
 
-		client := testAccProvider.Meta().(client.OktaASAClient)
+		client := testAccProvider.Meta().(client.OktaPAMClient)
 		projectGroup, err := client.GetProjectGroup(context.Background(), project, group)
 		if err != nil {
 			return fmt.Errorf("error getting project group: %w", err)
@@ -118,7 +118,7 @@ func testAccProjectGroupCheckExists(rn string, expectedProjectGroup client.Proje
 
 func testAccProjectGroupCheckDestroy(projectGroup client.ProjectGroup) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(client.OktaASAClient)
+		client := testAccProvider.Meta().(client.OktaPAMClient)
 		pg, err := client.GetProjectGroup(context.Background(), *projectGroup.Project, *projectGroup.Group)
 		if err != nil {
 			return fmt.Errorf("error getting project group: %w", err)
@@ -145,17 +145,17 @@ func testAccProjectGroupCheckDestroy(projectGroup client.ProjectGroup) resource.
 }
 
 const testAccProjectGroupCreateConfigFormat = `
-resource "oktaasa_project" "test-project-group-project" {
+resource "oktapam_project" "test-project-group-project" {
     name = "%s"
   	next_unix_uid = 60120
   	next_unix_gid = 63020
 }
-resource "oktaasa_group" "test-project-group-group" {
+resource "oktapam_group" "test-project-group-group" {
     name = "%s"
 }
-resource "oktaasa_project_group" "test-acc-project-group" {
-    project_name = oktaasa_project.test-project-group-project.name
-  	group_name = oktaasa_group.test-project-group-group.name
+resource "oktapam_project_group" "test-acc-project-group" {
+    project_name = oktapam_project.test-project-group-project.name
+  	group_name = oktapam_group.test-project-group-group.name
 	server_access = true
 	server_admin = true
 	create_server_group = false
@@ -166,17 +166,17 @@ func createTestAccProjectGroupCreateConfig(projectGroup client.ProjectGroup) str
 }
 
 const testAccProjectGroupUpdateConfigFormat = `
-resource "oktaasa_project" "test-project-group-project" {
+resource "oktapam_project" "test-project-group-project" {
     name = "%s"
   	next_unix_uid = 60120
   	next_unix_gid = 63020
 }
-resource "oktaasa_group" "test-project-group-group" {
+resource "oktapam_group" "test-project-group-group" {
     name = "%s"
 }
-resource "oktaasa_project_group" "test-acc-project-group" {
-    project_name = oktaasa_project.test-project-group-project.name
-  	group_name = oktaasa_group.test-project-group-group.name
+resource "oktapam_project_group" "test-acc-project-group" {
+    project_name = oktapam_project.test-project-group-project.name
+  	group_name = oktapam_group.test-project-group-group.name
 	server_access = true
 	server_admin = false
 	create_server_group = true

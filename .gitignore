@@ -3,5 +3,5 @@
 .DS_Store
 *.swp
 
-terraform-provider-oktaasa
-oktaasa/test.log
+terraform-provider-oktapam
+oktapam/test.log

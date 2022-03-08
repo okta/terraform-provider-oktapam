@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
 	"github.com/tomnomnom/linkheader"
 )
 
@@ -47,7 +47,7 @@ type ServerEnrollmentTokensListResponse struct {
 	Tokens []ServerEnrollmentToken `json:"list"`
 }
 
-func (c OktaASAClient) ListServerEnrollmentTokens(ctx context.Context, project string) ([]ServerEnrollmentToken, error) {
+func (c OktaPAMClient) ListServerEnrollmentTokens(ctx context.Context, project string) ([]ServerEnrollmentToken, error) {
 	if project == "" {
 		return nil, fmt.Errorf("supplied blank project name")
 	}
@@ -94,7 +94,7 @@ func (c OktaASAClient) ListServerEnrollmentTokens(ctx context.Context, project s
 	return tokens, nil
 }
 
-func (c OktaASAClient) GetServerEnrollmentToken(ctx context.Context, project, id string) (*ServerEnrollmentToken, error) {
+func (c OktaPAMClient) GetServerEnrollmentToken(ctx context.Context, project, id string) (*ServerEnrollmentToken, error) {
 	if project == "" {
 		return nil, fmt.Errorf("supplied blank project name")
 	}
@@ -118,7 +118,7 @@ func (c OktaASAClient) GetServerEnrollmentToken(ctx context.Context, project, id
 	return token, nil
 }
 
-func (c OktaASAClient) CreateServerEnrollmentToken(ctx context.Context, project, description string) (ServerEnrollmentToken, error) {
+func (c OktaPAMClient) CreateServerEnrollmentToken(ctx context.Context, project, description string) (ServerEnrollmentToken, error) {
 	if project == "" {
 		return ServerEnrollmentToken{}, fmt.Errorf("supplied blank project name")
 	}
@@ -143,7 +143,7 @@ func (c OktaASAClient) CreateServerEnrollmentToken(ctx context.Context, project,
 	return token, nil
 }
 
-func (c OktaASAClient) DeleteServerEnrollmentToken(ctx context.Context, project, id string) error {
+func (c OktaPAMClient) DeleteServerEnrollmentToken(ctx context.Context, project, id string) error {
 	if project == "" {
 		return fmt.Errorf("supplied blank project name")
 	}

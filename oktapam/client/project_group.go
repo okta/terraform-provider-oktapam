@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
 	"github.com/tomnomnom/linkheader"
 )
 
@@ -183,7 +183,7 @@ type ProjectGroupsListResponse struct {
 	ProjectGroups []ProjectGroup `json:"list"`
 }
 
-func (c OktaASAClient) ListProjectGroups(ctx context.Context, project string, parameters ListProjectGroupsParameters) ([]ProjectGroup, error) {
+func (c OktaPAMClient) ListProjectGroups(ctx context.Context, project string, parameters ListProjectGroupsParameters) ([]ProjectGroup, error) {
 	if project == "" {
 		return nil, fmt.Errorf("supplied blank project name")
 	}
@@ -232,7 +232,7 @@ func (c OktaASAClient) ListProjectGroups(ctx context.Context, project string, pa
 	return projectGroups, nil
 }
 
-func (c OktaASAClient) GetProjectGroup(ctx context.Context, project, group string) (*ProjectGroup, error) {
+func (c OktaPAMClient) GetProjectGroup(ctx context.Context, project, group string) (*ProjectGroup, error) {
 	if project == "" {
 		return nil, fmt.Errorf("supplied blank project name")
 	}
@@ -260,7 +260,7 @@ func (c OktaASAClient) GetProjectGroup(ctx context.Context, project, group strin
 	return nil, createErrorForInvalidCode(resp, 200, 404)
 }
 
-func (c OktaASAClient) CreateProjectGroup(ctx context.Context, projectGroup ProjectGroup) error {
+func (c OktaPAMClient) CreateProjectGroup(ctx context.Context, projectGroup ProjectGroup) error {
 	// Create the project group on the api server specified by project group
 	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups", url.PathEscape(c.Team), url.PathEscape(*projectGroup.Project))
 	logging.Tracef("making POST request to %s", requestURL)
@@ -273,7 +273,7 @@ func (c OktaASAClient) CreateProjectGroup(ctx context.Context, projectGroup Proj
 	return err
 }
 
-func (c OktaASAClient) UpdateProjectGroup(ctx context.Context, projectGroup ProjectGroup) error {
+func (c OktaPAMClient) UpdateProjectGroup(ctx context.Context, projectGroup ProjectGroup) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups/%s", url.PathEscape(c.Team), url.PathEscape(*projectGroup.Project), url.PathEscape(*projectGroup.Group))
 	logging.Tracef("making PUT request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(projectGroup).Put(requestURL)
@@ -285,7 +285,7 @@ func (c OktaASAClient) UpdateProjectGroup(ctx context.Context, projectGroup Proj
 	return err
 }
 
-func (c OktaASAClient) DeleteProjectGroup(ctx context.Context, project, group string) error {
+func (c OktaPAMClient) DeleteProjectGroup(ctx context.Context, project, group string) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/groups/%s", url.PathEscape(c.Team), url.PathEscape(project), url.PathEscape(group))
 	logging.Tracef("making DELETE request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).Delete(requestURL)

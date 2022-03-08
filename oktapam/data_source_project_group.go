@@ -1,4 +1,4 @@
-package oktaasa
+package oktapam
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
 )
 
 func dataSourceProjectGroups() *schema.Resource {
@@ -90,7 +90,7 @@ func dataSourceProjectGroups() *schema.Resource {
 }
 
 func dataSourceProjectGroupsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 	project := d.Get("project_name").(string)
 	if project == "" {
 		return diag.Errorf("project_name cannot be blank")

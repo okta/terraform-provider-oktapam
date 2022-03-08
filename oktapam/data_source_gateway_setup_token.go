@@ -1,4 +1,4 @@
-package oktaasa
+package oktapam
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
 )
 
 func dataSourceGatewaySetupTokens() *schema.Resource {
@@ -46,7 +46,7 @@ func dataSourceGatewaySetupTokens() *schema.Resource {
 }
 
 func dataSourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 	tokensList, err := c.ListGatewaySetupTokens(ctx)
 	if err != nil {
 		return diag.FromErr(err)

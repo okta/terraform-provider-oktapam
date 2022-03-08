@@ -1,4 +1,4 @@
-package oktaasa
+package oktapam
 
 import (
 	"context"
@@ -8,12 +8,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/kylelemons/godebug/pretty"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
 )
 
 func TestAccProject(t *testing.T) {
-	resourceName := "oktaasa_project.test-project"
+	resourceName := "oktapam_project.test-project"
 	projectName := fmt.Sprintf("test-acc-project-%s", randSeq(10))
 	initialProject := client.Project{
 		Name:                   &projectName,
@@ -97,7 +97,7 @@ func testAccProjectCheckExists(rn string, expectedProject client.Project) resour
 			return fmt.Errorf("resource id not set to expected value.  expected %s, got %s", *expectedProject.Name, resourceID)
 		}
 
-		client := testAccProvider.Meta().(client.OktaASAClient)
+		client := testAccProvider.Meta().(client.OktaPAMClient)
 		proj, err := client.GetProject(context.Background(), *expectedProject.Name, false)
 		if err != nil {
 			return fmt.Errorf("error getting project :%w", err)
@@ -117,7 +117,7 @@ func testAccProjectCheckExists(rn string, expectedProject client.Project) resour
 
 func testAccProjectCheckDestroy(projectName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(client.OktaASAClient)
+		client := testAccProvider.Meta().(client.OktaPAMClient)
 		proj, err := client.GetProject(context.Background(), projectName, false)
 		if err != nil {
 			return fmt.Errorf("error getting project: %w", err)
@@ -132,7 +132,7 @@ func testAccProjectCheckDestroy(projectName string) resource.TestCheckFunc {
 }
 
 const testAccProjectCreateConfigFormat = `
-resource "oktaasa_project" "test-project" {
+resource "oktapam_project" "test-project" {
     name = "%s"
   	next_unix_uid = 60120
   	next_unix_gid = 63020
@@ -143,7 +143,7 @@ func createTestAccProjectCreateConfig(projectName string) string {
 }
 
 const testAccProjectUpdateConfigFormat = `
-resource "oktaasa_project" "test-project" {
+resource "oktapam_project" "test-project" {
     name              = "%s"
   	next_unix_uid             = 61200
   	next_unix_gid             = 63400

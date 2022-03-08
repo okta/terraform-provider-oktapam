@@ -1,11 +1,11 @@
-package oktaasa
+package oktapam
 
 import (
 	"fmt"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
 )
 
 func getOkBool(attribute string, d *schema.ResourceData) (bool, error) {

@@ -1,4 +1,4 @@
-module github.com/terraform-providers/terraform-provider-oktaasa
+module github.com/terraform-providers/terraform-provider-oktapam
 
 go 1.16
 

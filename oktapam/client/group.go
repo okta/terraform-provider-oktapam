@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
 	"github.com/tomnomnom/linkheader"
 )
 
@@ -69,7 +69,7 @@ type GroupsListResponse struct {
 	Groups []Group `json:"list"`
 }
 
-func (c OktaASAClient) ListGroups(ctx context.Context, parameters ListGroupsParameters) ([]Group, error) {
+func (c OktaPAMClient) ListGroups(ctx context.Context, parameters ListGroupsParameters) ([]Group, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/groups", url.PathEscape(c.Team))
 	groups := make([]Group, 0)
 
@@ -109,7 +109,7 @@ func (c OktaASAClient) ListGroups(ctx context.Context, parameters ListGroupsPara
 	return groups, nil
 }
 
-func (c OktaASAClient) GetGroup(ctx context.Context, name string, allowDeleted bool) (*Group, error) {
+func (c OktaPAMClient) GetGroup(ctx context.Context, name string, allowDeleted bool) (*Group, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/groups/%s", url.PathEscape(c.Team), url.PathEscape(name))
 	logging.Tracef("making GET request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetResult(&Group{}).Get(requestURL)
@@ -132,7 +132,7 @@ func (c OktaASAClient) GetGroup(ctx context.Context, name string, allowDeleted b
 	return nil, createErrorForInvalidCode(resp, 200, 404)
 }
 
-func (c OktaASAClient) CreateGroup(ctx context.Context, group Group) error {
+func (c OktaPAMClient) CreateGroup(ctx context.Context, group Group) error {
 	// Create the group on the api server specified by group
 	requestURL := fmt.Sprintf("/v1/teams/%s/groups", url.PathEscape(c.Team))
 	logging.Tracef("making POST request to %s", requestURL)
@@ -145,7 +145,7 @@ func (c OktaASAClient) CreateGroup(ctx context.Context, group Group) error {
 	return err
 }
 
-func (c OktaASAClient) UpdateGroup(ctx context.Context, groupName string, updates map[string]interface{}) error {
+func (c OktaPAMClient) UpdateGroup(ctx context.Context, groupName string, updates map[string]interface{}) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/groups/%s", url.PathEscape(c.Team), url.PathEscape(groupName))
 	logging.Tracef("making PUT request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(updates).Put(requestURL)
@@ -157,7 +157,7 @@ func (c OktaASAClient) UpdateGroup(ctx context.Context, groupName string, update
 	return err
 }
 
-func (c OktaASAClient) DeleteGroup(ctx context.Context, groupName string) error {
+func (c OktaPAMClient) DeleteGroup(ctx context.Context, groupName string) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/groups/%s", url.PathEscape(c.Team), url.PathEscape(groupName))
 	logging.Tracef("making DELETE request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).Delete(requestURL)

@@ -1,4 +1,4 @@
-package oktaasa
+package oktapam
 
 import (
 	"context"
@@ -8,11 +8,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/kylelemons/godebug/pretty"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
 )
 
 func TestAccGroup(t *testing.T) {
-	resourceName := "oktaasa_group.test-group"
+	resourceName := "oktapam_group.test-group"
 	groupName := fmt.Sprintf("test-acc-group-%s", randSeq(10))
 	initialGroup := client.Group{
 		Name:  &groupName,
@@ -70,7 +70,7 @@ func testAccGroupCheckExists(rn string, expectedGroup client.Group) resource.Tes
 			return fmt.Errorf("resource id not set to expected value.  expected %s, got %s", *expectedGroup.Name, resourceID)
 		}
 
-		client := testAccProvider.Meta().(client.OktaASAClient)
+		client := testAccProvider.Meta().(client.OktaPAMClient)
 		group, err := client.GetGroup(context.Background(), *expectedGroup.Name, false)
 		if err != nil {
 			return fmt.Errorf("error getting group :%w", err)
@@ -89,7 +89,7 @@ func testAccGroupCheckExists(rn string, expectedGroup client.Group) resource.Tes
 
 func testAccGroupCheckDestroy(groupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(client.OktaASAClient)
+		client := testAccProvider.Meta().(client.OktaPAMClient)
 		group, err := client.GetGroup(context.Background(), groupName, false)
 		if err != nil {
 			return fmt.Errorf("error getting group: %w", err)
@@ -104,7 +104,7 @@ func testAccGroupCheckDestroy(groupName string) resource.TestCheckFunc {
 }
 
 const testAccGroupCreateConfigFormat = `
-resource "oktaasa_group" "test-group" {
+resource "oktapam_group" "test-group" {
 	name = "%s"
 	roles = []
 }
@@ -115,7 +115,7 @@ func createTestAccGroupCreateConfig(groupName string) string {
 }
 
 const testAccGroupUpdateConfigFormat = `
-resource "oktaasa_group" "test-group" {
+resource "oktapam_group" "test-group" {
 	name = "%s"
 	roles = ["access_user"]
 }

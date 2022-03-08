@@ -1,4 +1,4 @@
-package oktaasa
+package oktapam
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
 )
 
 func dataSourceGroups() *schema.Resource {
@@ -62,7 +62,7 @@ func dataSourceGroups() *schema.Resource {
 func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 	parameters := client.ListGroupsParameters{}
 
 	if contains, ok := d.GetOk("contains"); ok {

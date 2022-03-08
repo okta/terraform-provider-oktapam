@@ -1,4 +1,4 @@
-package oktaasa
+package oktapam
 
 import (
 	"context"
@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/kylelemons/godebug/pretty"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
 )
 
 func TestAccGatewaySetupToken(t *testing.T) {
-	resourceName := "oktaasa_gateway_setup_token.test-gateway-setup-token"
+	resourceName := "oktapam_gateway_setup_token.test-gateway-setup-token"
 	description := fmt.Sprintf("Acceptance Test Setup Token: %s", randSeq(10))
 	labels := make(map[string]string)
 	for i := 0; i < 10; i++ {
@@ -58,7 +58,7 @@ func testAccGatewaySetupTokenCheckExists(rn string, expectedGatewaySetupToken cl
 
 		resourceID := rs.Primary.ID
 
-		client := testAccProvider.Meta().(client.OktaASAClient)
+		client := testAccProvider.Meta().(client.OktaPAMClient)
 		token, err := client.GetGatewaySetupToken(context.Background(), resourceID)
 		if err != nil {
 			return fmt.Errorf("error getting gateway setup token: %w", err)
@@ -80,7 +80,7 @@ func testAccGatewaySetupTokenCheckExists(rn string, expectedGatewaySetupToken cl
 
 func testAccGatewaySetupTokenCheckDestroy(token client.GatewaySetupToken) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(client.OktaASAClient)
+		client := testAccProvider.Meta().(client.OktaPAMClient)
 		tokens, err := client.ListGatewaySetupTokens(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting tokens: %w", err)
@@ -96,7 +96,7 @@ func testAccGatewaySetupTokenCheckDestroy(token client.GatewaySetupToken) resour
 }
 
 const testAccGatewaySetupTokenCreateConfigFormat = `
-resource "oktaasa_gateway_setup_token" "test-gateway-setup-token" {
+resource "oktapam_gateway_setup_token" "test-gateway-setup-token" {
 	description = "%s"
 	labels = {
 %s

@@ -12,14 +12,14 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/version"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/version"
 )
 
-const OKTAASA_TRUSTED_DOMAINS = "scaleft.com,okta.com"
-const TRUSTED_DOMAIN_OVERRIDE_ENV_VAR = "OKTAASA_TRUSTED_DOMAIN_OVERRIDE"
+const OKTAPAM_TRUSTED_DOMAINS = "scaleft.com,okta.com"
+const TRUSTED_DOMAIN_OVERRIDE_ENV_VAR = "OKTAPAM_TRUSTED_DOMAIN_OVERRIDE"
 
-var terraformUserAgent = "terraform_provider_oktaasa/" + version.Version
+var terraformUserAgent = "terraform_provider_oktapam/" + version.Version
 
 type ServiceToken struct {
 	TeamName    string    `json:"team_name"`
@@ -27,20 +27,20 @@ type ServiceToken struct {
 	ExpiresAt   time.Time `json:"expires_at"`
 }
 
-type OktaASAClient struct {
+type OktaPAMClient struct {
 	Team   string
 	client *resty.Client
 }
 
-func CreateOktaASAClient(apiKey, apiKeySecret, team, apiHost string) (*OktaASAClient, error) {
-	logging.Infof("Creating ASA Client")
+func CreateOktaPAMClient(apiKey, apiKeySecret, team, apiHost string) (*OktaPAMClient, error) {
+	logging.Infof("Creating PAM Client")
 	if serviceToken, err := createServiceToken(apiKey, apiKeySecret, apiHost, team); err != nil {
 		return nil, err
 	} else {
 		client := setBaseHTTPSettings(resty.New(), apiHost, *serviceToken)
 		client = setRateLimitRetryLogic(client)
 
-		return &OktaASAClient{Team: team, client: client}, nil
+		return &OktaPAMClient{Team: team, client: client}, nil
 	}
 }
 
@@ -54,7 +54,7 @@ func checkTrustedDomain(apiHost string) error {
 	}
 	hostname := u.Hostname()
 
-	for _, domain := range strings.Split(OKTAASA_TRUSTED_DOMAINS, ",") {
+	for _, domain := range strings.Split(OKTAPAM_TRUSTED_DOMAINS, ",") {
 		if strings.HasSuffix(hostname, domain) {
 			return nil
 		}
@@ -144,7 +144,7 @@ func setRateLimitRetryLogic(client *resty.Client) *resty.Client {
 		})
 }
 
-func (c OktaASAClient) CreateBaseRequest(ctx context.Context) *resty.Request {
+func (c OktaPAMClient) CreateBaseRequest(ctx context.Context) *resty.Request {
 	return c.client.R().SetContext(ctx)
 }
 

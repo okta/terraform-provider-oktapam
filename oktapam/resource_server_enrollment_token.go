@@ -1,4 +1,4 @@
-package oktaasa
+package oktapam
 
 import (
 	"context"
@@ -7,9 +7,9 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
 )
 
 func resourceServerEnrollmentToken() *schema.Resource {
@@ -52,7 +52,7 @@ func resourceServerEnrollmentToken() *schema.Resource {
 }
 
 func resourceServerEnrollmentTokenRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 
 	resourceId := d.Id()
 	project, id, err := parseServerEnrollmentTokenResourceID(resourceId)
@@ -80,7 +80,7 @@ func resourceServerEnrollmentTokenRead(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceServerEnrollmentTokenCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 
 	project := d.Get("project_name").(string)
 	description := d.Get("description").(string)
@@ -96,7 +96,7 @@ func resourceServerEnrollmentTokenCreate(ctx context.Context, d *schema.Resource
 }
 
 func resourceServerEnrollmentTokenDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 
 	resourceId := d.Id()
 	project, id, err := parseServerEnrollmentTokenResourceID(resourceId)
@@ -117,7 +117,7 @@ func resourceServerEnrollmentTokenDelete(ctx context.Context, d *schema.Resource
 func parseServerEnrollmentTokenResourceID(resourceId string) (string, string, error) {
 	split := strings.Split(resourceId, "|")
 	if len(split) != 2 {
-		return "", "", fmt.Errorf("oktaasa_server_enrollment_token id must be in the format of <project name>|<enrollment token id>, received: %s", resourceId)
+		return "", "", fmt.Errorf("oktapam_server_enrollment_token id must be in the format of <project name>|<enrollment token id>, received: %s", resourceId)
 	}
 	return split[0], split[1], nil
 }

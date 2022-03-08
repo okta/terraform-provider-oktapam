@@ -1,4 +1,4 @@
-package oktaasa
+package oktapam
 
 import (
 	"context"
@@ -7,9 +7,9 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/client"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/utils"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
 )
 
 func resourceProjectGroup() *schema.Resource {
@@ -61,7 +61,7 @@ func resourceProjectGroup() *schema.Resource {
 }
 
 func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 
 	serverAdmin, err := getOkBool("server_admin", d)
 	if err != nil {
@@ -111,7 +111,7 @@ func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m i
 }
 
 func resourceProjectGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 	project, group, err := parseProjectGroupResourceID(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
@@ -155,7 +155,7 @@ func resourceProjectGroupRead(ctx context.Context, d *schema.ResourceData, m int
 }
 
 func resourceProjectGroupUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 
 	changed := false
 	updates := make(map[string]interface{})
@@ -202,7 +202,7 @@ func resourceProjectGroupUpdate(ctx context.Context, d *schema.ResourceData, m i
 }
 
 func resourceProjectGroupDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaASAClient)
+	c := m.(client.OktaPAMClient)
 	project, group, err := parseProjectGroupResourceID(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
@@ -224,7 +224,7 @@ func createProjectGroupResourceID(project, group string) string {
 func parseProjectGroupResourceID(resourceId string) (string, string, error) {
 	split := strings.Split(resourceId, "|")
 	if len(split) != 2 {
-		return "", "", fmt.Errorf("oktaasa_project_group id must be in the format of <project name>|<group name>, received: %s", resourceId)
+		return "", "", fmt.Errorf("oktapam_project_group id must be in the format of <project name>|<group name>, received: %s", resourceId)
 	}
 	return split[0], split[1], nil
 }

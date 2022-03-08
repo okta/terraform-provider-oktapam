@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/terraform-providers/terraform-provider-oktaasa/oktaasa/logging"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
 	"github.com/tomnomnom/linkheader"
 )
 
@@ -46,7 +46,7 @@ type GatewaySetupTokensListResponse struct {
 	Tokens []GatewaySetupToken `json:"list"`
 }
 
-func (c OktaASAClient) ListGatewaySetupTokens(ctx context.Context) ([]GatewaySetupToken, error) {
+func (c OktaPAMClient) ListGatewaySetupTokens(ctx context.Context) ([]GatewaySetupToken, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/gateway_setup_tokens", url.PathEscape(c.Team))
 	tokens := make([]GatewaySetupToken, 0)
 
@@ -85,7 +85,7 @@ func (c OktaASAClient) ListGatewaySetupTokens(ctx context.Context) ([]GatewaySet
 	return tokens, nil
 }
 
-func (c OktaASAClient) GetGatewaySetupToken(ctx context.Context, id string) (*GatewaySetupToken, error) {
+func (c OktaPAMClient) GetGatewaySetupToken(ctx context.Context, id string) (*GatewaySetupToken, error) {
 	if id == "" {
 		return nil, fmt.Errorf("supplied blank gateway setup token id")
 	}
@@ -107,7 +107,7 @@ func (c OktaASAClient) GetGatewaySetupToken(ctx context.Context, id string) (*Ga
 	return token, nil
 }
 
-func (c OktaASAClient) CreateGatewaySetupToken(ctx context.Context, token GatewaySetupToken) (*GatewaySetupToken, error) {
+func (c OktaPAMClient) CreateGatewaySetupToken(ctx context.Context, token GatewaySetupToken) (*GatewaySetupToken, error) {
 	// create a token with the values specified within token
 	requestURL := fmt.Sprintf("/v1/teams/%s/gateway_setup_tokens", url.PathEscape(c.Team))
 	logging.Tracef("making POST request to %s", requestURL)
@@ -126,7 +126,7 @@ func (c OktaASAClient) CreateGatewaySetupToken(ctx context.Context, token Gatewa
 	return createdToken, nil
 }
 
-func (c OktaASAClient) DeleteGatewaySetupToken(ctx context.Context, id string) error {
+func (c OktaPAMClient) DeleteGatewaySetupToken(ctx context.Context, id string) error {
 	if id == "" {
 		return fmt.Errorf("supplied blank gateway setup token id")
 	}
