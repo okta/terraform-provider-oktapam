@@ -1,0 +1,6 @@
+FROM golang:1.17
+
+ENV APP_PATH=/src
+RUN mkdir -p $APP_PATH
+COPY . $APP_PATH
+WORKDIR $APP_PATH
