@@ -1,5 +1,20 @@
 steps:
-  - name: ":test_tube: Placeholder"
-    command: "echo 'Hello world'"
+  - name: "Unit Tests"
+    command: "./scripts/ci-tests.sh"
+    key: "test"
+    timeout_in_minutes: 20
     agents:
-      queue=dev-elastic-ci
+      queue: dev-elastic-ci
+  - name: "Acceptance Tests"
+    if: build.pull_request.repository.fork == null || build.pull_request.labels includes 'run-acceptance'
+    command: "./scripts/ci-acceptance-tests.sh"
+    key: "acceptance-test"
+    timeout_in_minutes: 20
+    agents:
+      queue: dev-elastic-ci
+  - name: "Build"
+    command: "./scripts/ci-build.sh"
+    key: "build"
+    timeout_in_minutes: 20
+    agents:
+      queue: dev-elastic-ci

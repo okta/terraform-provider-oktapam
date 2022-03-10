@@ -1,0 +1,42 @@
+MAKEFLAGS += --no-builtin-rules
+
+CI_CONTAINER_IIDFILE= ./build/ci-output/container.txt
+
+#build the container from Dockerfile.ci
+.PHONY: ci-container
+ci-container:
+	rm -rf "./build/ci-output"
+	mkdir -p "./build/ci-output"
+	docker build -f Dockerfile.ci --iidfile ${CI_CONTAINER_IIDFILE} .
+
+.PHONY: ci-test
+ci-test: ci-container
+	docker run --rm=true -a stderr -a stdout \
+		--label "com.buildkite.job-id=${BUILDKITE_JOB_ID}" \
+		-e BUILDKITE_BUILD_NUMBER \
+		-e BUILDKITE_PIPELINE_SLUG \
+		-e BUILDKITE_JOB_ID \
+		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C /src test
+
+.PHONY: ci-acceptance-test
+ci-acceptance-test: ci-container
+	docker run --rm=true -a stderr -a stdout \
+		--label "com.buildkite.job-id=${BUILDKITE_JOB_ID}" \
+		-e BUILDKITE_BUILD_NUMBER \
+		-e BUILDKITE_PIPELINE_SLUG \
+		-e BUILDKITE_JOB_ID \
+		-e OKTAPAM_KEY \
+		-e OKTAPAM_SECRET \
+		-e OKTAPAM_TEAM \
+		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C /src testacc
+
+.PHONY: ci-build
+ci-build: ci-container
+	docker run --rm=true -a stderr -a stdout \
+		--label "com.buildkite.job-id=${BUILDKITE_JOB_ID}" \
+		-e BUILDKITE_BUILD_NUMBER \
+		-e BUILDKITE_PIPELINE_SLUG \
+		-e BUILDKITE_JOB_ID \
+		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C /src build
+
+.PHONY: all ci-build ci-test ci-acceptance-test
