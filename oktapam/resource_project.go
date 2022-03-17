@@ -2,7 +2,9 @@ package oktapam
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
@@ -78,6 +80,31 @@ func resourceProject() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
+			"ssh_certificate_type": {
+				Type:     schema.TypeString,
+				Optional: true, // this is optional at this point since it is behind a feature flag.  if/when this changes, this should become required
+				Computed: true,
+				ValidateDiagFunc: func(i interface{}, p cty.Path) diag.Diagnostics {
+					var diags diag.Diagnostics
+					s := i.(string)
+
+					valid := []string{"CERT_TYPE_RSA_01", "CERT_TYPE_RSA_SHA2_256_01", "CERT_TYPE_RSA_SHA2_512_01", "CERT_TYPE_ED25519_01"}
+
+					for _, v := range valid {
+						if v == s {
+							return nil
+						}
+					}
+
+					diag := diag.Diagnostic{
+						Severity: diag.Error,
+						Summary:  "invalid value",
+						Detail:   fmt.Sprintf("%q is not one of %q", s, valid),
+					}
+
+					return append(diags, diag)
+				},
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceProjectReadImport,
@@ -99,6 +126,7 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m interf
 		SSHSessionRecording:    getBoolPtr("ssh_session_recording", d, false),
 		GatewaySelector:        getStringPtr("gateway_selector", d, false),
 		ADJoinedUsers:          getBoolPtr("ad_joined_users", d, false),
+		SSHCertificateType:     getStringPtr("ssh_certificate_type", d, false),
 	}
 
 	err := c.CreateProject(ctx, project)

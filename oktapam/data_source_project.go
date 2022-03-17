@@ -90,6 +90,11 @@ func dataSourceProjects() *schema.Resource {
 							Computed: true,
 							Optional: true,
 						},
+						"ssh_certificate_type": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Optional: true,
+						},
 					},
 				},
 			},
