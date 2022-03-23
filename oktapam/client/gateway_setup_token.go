@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
 	"github.com/tomnomnom/linkheader"
@@ -46,7 +47,7 @@ type GatewaySetupTokensListResponse struct {
 	Tokens []GatewaySetupToken `json:"list"`
 }
 
-func (c OktaPAMClient) ListGatewaySetupTokens(ctx context.Context) ([]GatewaySetupToken, error) {
+func (c OktaPAMClient) ListGatewaySetupTokens(ctx context.Context, descriptionContains string) ([]GatewaySetupToken, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/gateway_setup_tokens", url.PathEscape(c.Team))
 	tokens := make([]GatewaySetupToken, 0)
 
@@ -65,7 +66,17 @@ func (c OktaPAMClient) ListGatewaySetupTokens(ctx context.Context) ([]GatewaySet
 		}
 
 		tokensListResponse := resp.Result().(*GatewaySetupTokensListResponse)
-		tokens = append(tokens, tokensListResponse.Tokens...)
+		if descriptionContains == "" {
+			tokens = append(tokens, tokensListResponse.Tokens...)
+		} else {
+			// the API does not currently allow for a filter here, so we do this client-side
+			// Note that all tokens returned by the API will still be scoped to the user's access
+			for _, token := range tokensListResponse.Tokens {
+				if strings.Contains(*token.Description, descriptionContains) {
+					tokens = append(tokens, token)
+				}
+			}
+		}
 
 		linkHeader := resp.Header().Get("Link")
 		if linkHeader == "" {

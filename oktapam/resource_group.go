@@ -46,10 +46,19 @@ func resourceGroup() *schema.Resource {
 
 func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
-	roles := make([]string, 0)
+	var roles []string
 	if r, ok := d.GetOk("roles"); ok {
-		roles = r.([]string)
+		rolesAttr := r.(*schema.Set)
+		rolesI := rolesAttr.List()
+		roles = make([]string, len(rolesI))
+
+		for idx, ri := range rolesI {
+			roles[idx] = ri.(string)
+		}
+	} else {
+		roles = make([]string, 0)
 	}
+
 	group := client.Group{
 		Name:  getStringPtr("name", d, true),
 		Roles: roles,

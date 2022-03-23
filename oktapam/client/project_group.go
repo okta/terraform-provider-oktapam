@@ -202,8 +202,12 @@ func (c OktaPAMClient) ListProjectGroups(ctx context.Context, project string, pa
 			logging.Errorf("received error while making request to %s", requestURL)
 			return nil, err
 		}
-		if _, err := checkStatusCode(resp, 200); err != nil {
+		if _, err := checkStatusCode(resp, 200, 404); err != nil {
 			return nil, err
+		}
+
+		if resp.StatusCode() == 404 {
+			break
 		}
 
 		projectGroupsListResponse := resp.Result().(*ProjectGroupsListResponse)

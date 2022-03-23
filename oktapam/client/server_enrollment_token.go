@@ -64,8 +64,12 @@ func (c OktaPAMClient) ListServerEnrollmentTokens(ctx context.Context, project s
 			logging.Errorf("received error while making request to %s", requestURL)
 			return nil, err
 		}
-		if _, err := checkStatusCode(resp, 200); err != nil {
+		if _, err := checkStatusCode(resp, 200, 404); err != nil {
 			return nil, err
+		}
+
+		if resp.StatusCode() == 404 {
+			break
 		}
 
 		tokensListResponse := resp.Result().(*ServerEnrollmentTokensListResponse)
