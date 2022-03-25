@@ -40,3 +40,12 @@ test:
 testacc: 
 # TESTARGS here can be used to pass arbitrary flags to go test, e.g. '-run TestMyTest'
 	TF_ACC=1 go test ./... -v $(TESTARGS) -timeout 120m   
+
+generate:
+	go generate ./...
+
+check-generate:
+	go generate ./...
+	git diff --compact-summary --exit-code || \
+  	(echo; echo "Unexpected difference in directories after code generation. Run 'go generate ./...' command and commit."; exit 1)
+

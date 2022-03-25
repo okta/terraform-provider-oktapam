@@ -18,3 +18,9 @@ steps:
     timeout_in_minutes: 20
     agents:
       queue: dev-elastic-ci
+  - name: "Check Generated Output"
+    command: "./scripts/ci-check-generated.sh"
+    key: "check-generated"
+    timeout_in_minutes: 20
+    agents:
+      queue: dev-elastic-ci

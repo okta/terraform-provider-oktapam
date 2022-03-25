@@ -39,4 +39,14 @@ ci-build: ci-container
 		-e BUILDKITE_JOB_ID \
 		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C /src build
 
-.PHONY: all ci-build ci-test ci-acceptance-test
+.PHONY: ci-check-generate
+ci-check-generate: ci-container
+	docker run --rm=true -a stderr -a stdout \
+		--label "com.buildkite.job-id=${BUILDKITE_JOB_ID}" \
+		-e BUILDKITE_BUILD_NUMBER \
+		-e BUILDKITE_PIPELINE_SLUG \
+		-e BUILDKITE_JOB_ID \
+		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C /src check-generate
+
+
+.PHONY: all ci-build ci-test ci-acceptance-test ci-check-generate

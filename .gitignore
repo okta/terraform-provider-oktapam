@@ -2,6 +2,8 @@
 .vscode
 .DS_Store
 *.swp
+.terraform-version
 
+build
 terraform-provider-oktapam
 oktapam/test.log
