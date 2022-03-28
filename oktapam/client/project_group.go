@@ -207,6 +207,7 @@ func (c OktaPAMClient) ListProjectGroups(ctx context.Context, project string, pa
 		}
 
 		if resp.StatusCode() == 404 {
+			logging.Warnf("received a 404 for %s, could indicate that the referenced project does not exist", requestURL)
 			break
 		}
 

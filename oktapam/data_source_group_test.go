@@ -14,12 +14,12 @@ func TestAccDatasourceGroup(t *testing.T) {
 	resourceName := "data.oktapam_group.test_groups"
 	groupNamePrefix := fmt.Sprintf("test-acc-datasource-group-%s", randSeq(10))
 	expectedGroups := map[string]client.Group{
-		groupNamePrefix + "-one": {
-			Name:  utils.AsStringPtr(groupNamePrefix + "-one"),
+		groupNamePrefix + "-1": {
+			Name:  utils.AsStringPtr(groupNamePrefix + "-1"),
 			Roles: make([]string, 0),
 		},
-		groupNamePrefix + "-two": {
-			Name:  utils.AsStringPtr(groupNamePrefix + "-two"),
+		groupNamePrefix + "-2": {
+			Name:  utils.AsStringPtr(groupNamePrefix + "-2"),
 			Roles: []string{"access_user"},
 		},
 	}
@@ -29,7 +29,7 @@ func TestAccDatasourceGroup(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: createTestAccDatasourceGroupCreateConfig(groupNamePrefix),
+				Config: createTestAccDatasourceGroupInitConfig(groupNamePrefix),
 			},
 			{
 				Config: createTestAccDatasourceGroupsConfig(groupNamePrefix),
@@ -104,17 +104,17 @@ func createTestAccDatasourceGroupsConfig(prefix string) string {
 	return fmt.Sprintf(testAccDatasourceGroupsConfigFormat, prefix)
 }
 
-const testAccDatasourceGroupCreateConfigFormat = `
-resource "oktapam_group" "test-group-one" {
-	name = "%s-one"
+const testAccDatasourceGroupInitConfigFormat = `
+resource "oktapam_group" "test-group-1" {
+	name = "%s-1"
 	roles = []
 }
-resource "oktapam_group" "test-group-two" {
-	name = "%s-two"
+resource "oktapam_group" "test-group-2" {
+	name = "%s-2"
 	roles = ["access_user"]
 }
 `
 
-func createTestAccDatasourceGroupCreateConfig(groupName string) string {
-	return fmt.Sprintf(testAccDatasourceGroupCreateConfigFormat, groupName, groupName)
+func createTestAccDatasourceGroupInitConfig(groupName string) string {
+	return fmt.Sprintf(testAccDatasourceGroupInitConfigFormat, groupName, groupName)
 }

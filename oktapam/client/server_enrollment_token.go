@@ -69,6 +69,7 @@ func (c OktaPAMClient) ListServerEnrollmentTokens(ctx context.Context, project s
 		}
 
 		if resp.StatusCode() == 404 {
+			logging.Warnf("received a 404 for %s, could indicate that the referenced project does not exist", requestURL)
 			break
 		}
 

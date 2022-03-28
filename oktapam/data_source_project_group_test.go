@@ -13,20 +13,20 @@ import (
 func TestAccDatasourceProjectGroup(t *testing.T) {
 	resourceName := "data.oktapam_project_group.test_project_groups"
 	projectName := fmt.Sprintf("test-acc-project-group-project-%s", randSeq(10))
-	groupOneName := fmt.Sprintf("test-acc-project-group-group-one-%s", randSeq(10))
-	groupTwoName := fmt.Sprintf("test-acc-project-group-group-two-%s", randSeq(10))
+	group1Name := fmt.Sprintf("test-acc-project-group-group-1-%s", randSeq(10))
+	group2Name := fmt.Sprintf("test-acc-project-group-group-2-%s", randSeq(10))
 
 	expectedGroups := map[string]client.ProjectGroup{
-		groupOneName: {
+		group1Name: {
 			Project:          utils.AsStringPtr(projectName),
-			Group:            utils.AsStringPtr(groupOneName),
+			Group:            utils.AsStringPtr(group1Name),
 			ServerAccess:     true,
 			ServerAdmin:      true,
 			CreateServerGoup: false,
 		},
-		groupTwoName: {
+		group2Name: {
 			Project:          utils.AsStringPtr(projectName),
-			Group:            utils.AsStringPtr(groupTwoName),
+			Group:            utils.AsStringPtr(group2Name),
 			ServerAccess:     true,
 			ServerAdmin:      false,
 			CreateServerGoup: false,
@@ -38,7 +38,7 @@ func TestAccDatasourceProjectGroup(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: createTestAccDatasourceProjectGroupCreateConfig(projectName, groupOneName, groupTwoName),
+				Config: createTestAccDatasourceProjectGroupInitConfig(projectName, group1Name, group2Name),
 			},
 			{
 				Config: testAccDatasourceProjectGroupConfig(projectName),
@@ -123,34 +123,34 @@ func testAccDatasourceProjectGroupConfig(projectName string) string {
 	return fmt.Sprintf(testAccDatasourceProjectGroupFormat, projectName)
 }
 
-const testAccDatasourceProjectGroupCreateConfigFormat = `
+const testAccDatasourceProjectGroupInitConfigFormat = `
 resource "oktapam_project" "test-project-group-project" {
-    name = "%s"
-  	next_unix_uid = 60120
-  	next_unix_gid = 63020
+	name = "%s"
+	next_unix_uid = 60120
+	next_unix_gid = 63020
 }
-resource "oktapam_group" "test-project-group-group-one" {
-    name = "%s"
+resource "oktapam_group" "test-project-group-group-1" {
+	name = "%s"
 }
-resource "oktapam_group" "test-project-group-group-two" {
-    name = "%s"
+resource "oktapam_group" "test-project-group-group-2" {
+	name = "%s"
 }
-resource "oktapam_project_group" "test-acc-project-group-one" {
-    project_name = oktapam_project.test-project-group-project.name
-  	group_name = oktapam_group.test-project-group-group-one.name
+resource "oktapam_project_group" "test-acc-project-group-project-group-1" {
+	project_name = oktapam_project.test-project-group-project.name
+	group_name = oktapam_group.test-project-group-group-1.name
 	server_access = true
 	server_admin = true
 	create_server_group = false
 }
-resource "oktapam_project_group" "test-acc-project-group-two" {
-    project_name = oktapam_project.test-project-group-project.name
-  	group_name = oktapam_group.test-project-group-group-two.name
+resource "oktapam_project_group" "test-acc-project-group-project-group-2" {
+	project_name = oktapam_project.test-project-group-project.name
+	group_name = oktapam_group.test-project-group-group-2.name
 	server_access = true
 	server_admin = false
 	create_server_group = false
 }
 `
 
-func createTestAccDatasourceProjectGroupCreateConfig(projectName, groupOneName, groupTwoName string) string {
-	return fmt.Sprintf(testAccDatasourceProjectGroupCreateConfigFormat, projectName, groupOneName, groupTwoName)
+func createTestAccDatasourceProjectGroupInitConfig(projectName, group1Name, group2Name string) string {
+	return fmt.Sprintf(testAccDatasourceProjectGroupInitConfigFormat, projectName, group1Name, group2Name)
 }
