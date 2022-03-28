@@ -81,7 +81,7 @@ func testAccGatewaySetupTokenCheckExists(rn string, expectedGatewaySetupToken cl
 func testAccGatewaySetupTokenCheckDestroy(token client.GatewaySetupToken) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(client.OktaPAMClient)
-		tokens, err := client.ListGatewaySetupTokens(context.Background())
+		tokens, err := client.ListGatewaySetupTokens(context.Background(), *token.Description)
 		if err != nil {
 			return fmt.Errorf("error getting tokens: %w", err)
 		}

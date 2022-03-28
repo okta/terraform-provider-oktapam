@@ -8,35 +8,48 @@ import (
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
 )
 
-const DefaultAPIBaseURL = "https://app.scaleft.com"
+const (
+	DefaultAPIBaseURL = "https://app.scaleft.com"
 
-const apiHostSchemaEnvVar = "OKTAPAM_API_HOST"
-const apiKeySchemaEnvVar = "OKTAPAM_KEY"
-const apiKeySecretSchemaEnvVar = "OKTAPAM_SECRET"
-const teamSchemaEnvVar = "OKTAPAM_TEAM"
+	apiHostSchemaEnvVar      = "OKTAPAM_API_HOST"
+	apiKeySchemaEnvVar       = "OKTAPAM_KEY"
+	apiKeySecretSchemaEnvVar = "OKTAPAM_SECRET"
+	teamSchemaEnvVar         = "OKTAPAM_TEAM"
+
+	apiHostKey      = "oktapam_api_host"
+	apiKeyKey       = "oktapam_key"
+	apiKeySecretKey = "oktapam_secret"
+	teamKey         = "oktapam_team"
+
+	providerProjectKey               = "oktapam_project"
+	providerGroupKey                 = "oktapam_group"
+	providerServerEnrollmentTokenKey = "oktapam_server_enrollment_token"
+	providerProjectGroupKey          = "oktapam_project_group"
+	providerGatewaySetupTokenKey     = "oktapam_gateway_setup_token"
+)
 
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
-			"oktapam_api_host": {
+			apiHostKey: {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc(apiHostSchemaEnvVar, DefaultAPIBaseURL),
 				Description: "Okta PAM API Host",
 			},
-			"oktapam_key": {
+			apiKeyKey: {
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc(apiKeySchemaEnvVar, nil),
 				Description: "Okta PAM API Key",
 			},
-			"oktapam_secret": {
+			apiKeySecretKey: {
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc(apiKeySecretSchemaEnvVar, nil),
 				Description: "Okta PAM API Secret",
 			},
-			"oktapam_team": {
+			teamKey: {
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc(teamSchemaEnvVar, nil),
@@ -44,28 +57,28 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"oktapam_project":                 resourceProject(),
-			"oktapam_group":                   resourceGroup(),
-			"oktapam_server_enrollment_token": resourceServerEnrollmentToken(),
-			"oktapam_project_group":           resourceProjectGroup(),
-			"oktapam_gateway_setup_token":     resourceGatewaySetupToken(),
+			providerProjectKey:               resourceProject(),
+			providerGroupKey:                 resourceGroup(),
+			providerServerEnrollmentTokenKey: resourceServerEnrollmentToken(),
+			providerProjectGroupKey:          resourceProjectGroup(),
+			providerGatewaySetupTokenKey:     resourceGatewaySetupToken(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"oktapam_projects":                 dataSourceProjects(),
-			"oktapam_groups":                   dataSourceGroups(),
-			"oktapam_server_enrollment_tokens": dataSourceServerEnrollmentTokens(),
-			"oktapam_project_groups":           dataSourceProjectGroups(),
-			"oktapam_gateway_setup_tokens":     dataSourceGatewaySetupTokens(),
+			providerProjectKey:               dataSourceProjects(),
+			providerGroupKey:                 dataSourceGroups(),
+			providerServerEnrollmentTokenKey: dataSourceServerEnrollmentTokens(),
+			providerProjectGroupKey:          dataSourceProjectGroups(),
+			providerGatewaySetupTokenKey:     dataSourceGatewaySetupTokens(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
 }
 
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	apiKey := d.Get("oktapam_key").(string)
-	apiKeySecret := d.Get("oktapam_secret").(string)
-	team := d.Get("oktapam_team").(string)
-	apiHost := d.Get("oktapam_api_host").(string)
+	apiKey := d.Get(apiKeyKey).(string)
+	apiKeySecret := d.Get(apiKeySecretKey).(string)
+	team := d.Get(teamKey).(string)
+	apiHost := d.Get(apiHostKey).(string)
 
 	client, err := client.CreateOktaPAMClient(apiKey, apiKeySecret, team, apiHost)
 	if err != nil {

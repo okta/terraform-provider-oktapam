@@ -14,6 +14,10 @@ func dataSourceGatewaySetupTokens() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceGatewaySetupTokenRead,
 		Schema: map[string]*schema.Schema{
+			"description_contains": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"gateway_setup_tokens": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -46,8 +50,9 @@ func dataSourceGatewaySetupTokens() *schema.Resource {
 }
 
 func dataSourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	contains := d.Get("description_contains").(string)
 	c := m.(client.OktaPAMClient)
-	tokensList, err := c.ListGatewaySetupTokens(ctx)
+	tokensList, err := c.ListGatewaySetupTokens(ctx, contains)
 	if err != nil {
 		return diag.FromErr(err)
 	}
