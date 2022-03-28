@@ -71,7 +71,7 @@ func getIndexMappingFromResource(rs *terraform.ResourceState, prefix, identifier
 		if attr, ok := attributes[attrName]; ok {
 			mapping[attr] = fmt.Sprint(i)
 		} else {
-			return nil, fmt.Errorf("Could not find find attribute %s", attrName)
+			return nil, fmt.Errorf("Could not find attribute %s", attrName)
 		}
 	}
 
