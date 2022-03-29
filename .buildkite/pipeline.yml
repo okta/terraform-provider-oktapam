@@ -12,9 +12,9 @@ steps:
     timeout_in_minutes: 20
     agents:
       queue: dev-elastic-ci
-  - name: "Build"
-    command: "./scripts/ci-build.sh"
-    key: "build"
+  - name: "Compile"
+    command: "./scripts/ci-compile.sh"
+    key: "Compile"
     timeout_in_minutes: 20
     agents:
       queue: dev-elastic-ci

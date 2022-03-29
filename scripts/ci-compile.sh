@@ -7,4 +7,4 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 
 cd "${DIR}/.."
 
-make -f Makefile.ci ci-build
+make -f Makefile.ci ci-compile

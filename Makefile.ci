@@ -1,6 +1,7 @@
 MAKEFLAGS += --no-builtin-rules
 
 CI_CONTAINER_IIDFILE= ./build/ci-output/container.txt
+SRC_DIR= /src/terraform-provider-oktapam
 
 #build the container from Dockerfile.ci
 .PHONY: ci-container
@@ -16,7 +17,7 @@ ci-test: ci-container
 		-e BUILDKITE_BUILD_NUMBER \
 		-e BUILDKITE_PIPELINE_SLUG \
 		-e BUILDKITE_JOB_ID \
-		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C /src test
+		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C ${SRC_DIR} test
 
 .PHONY: ci-acceptance-test
 ci-acceptance-test: ci-container
@@ -28,16 +29,16 @@ ci-acceptance-test: ci-container
 		-e OKTAPAM_KEY \
 		-e OKTAPAM_SECRET \
 		-e OKTAPAM_TEAM \
-		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C /src testacc
+		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C ${SRC_DIR} testacc
 
-.PHONY: ci-build
-ci-build: ci-container
+.PHONY: ci-compile
+ci-compile: ci-container
 	docker run --rm=true -a stderr -a stdout \
 		--label "com.buildkite.job-id=${BUILDKITE_JOB_ID}" \
 		-e BUILDKITE_BUILD_NUMBER \
 		-e BUILDKITE_PIPELINE_SLUG \
 		-e BUILDKITE_JOB_ID \
-		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C /src build
+		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C ${SRC_DIR} compile
 
 .PHONY: ci-check-generate
 ci-check-generate: ci-container
@@ -46,7 +47,6 @@ ci-check-generate: ci-container
 		-e BUILDKITE_BUILD_NUMBER \
 		-e BUILDKITE_PIPELINE_SLUG \
 		-e BUILDKITE_JOB_ID \
-		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C /src check-generate
+		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C ${SRC_DIR} check-generate
 
-
-.PHONY: all ci-build ci-test ci-acceptance-test ci-check-generate
+.PHONY: all ci-compile ci-test ci-acceptance-test ci-check-generate
