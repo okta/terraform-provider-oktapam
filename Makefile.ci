@@ -1,6 +1,10 @@
 MAKEFLAGS += --no-builtin-rules
 
 CI_CONTAINER_IIDFILE= ./build/ci-output/container.txt
+# Sets the directory to utilize as the work dir within the container
+# Note that for check-generate to work, the directory must be named
+# after the terraform provider due to the plugin using the base directory
+# as the terraform provider's name
 SRC_DIR= /src/terraform-provider-oktapam
 
 #build the container from Dockerfile.ci
@@ -8,7 +12,7 @@ SRC_DIR= /src/terraform-provider-oktapam
 ci-container:
 	rm -rf "./build/ci-output"
 	mkdir -p "./build/ci-output"
-	docker build -f Dockerfile.ci --iidfile ${CI_CONTAINER_IIDFILE} .
+	docker build -f Dockerfile.ci --iidfile ${CI_CONTAINER_IIDFILE} --build-arg APP_PATH=${SRC_DIR} .
 
 .PHONY: ci-test
 ci-test: ci-container
