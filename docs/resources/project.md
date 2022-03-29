@@ -21,7 +21,6 @@ description: |-
 
 ### Optional
 
-- `ad_joined_users` (Boolean)
 - `create_server_users` (Boolean)
 - `forward_traffic` (Boolean)
 - `gateway_selector` (String)

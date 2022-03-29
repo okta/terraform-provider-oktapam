@@ -75,11 +75,6 @@ func resourceProject() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"ad_joined_users": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Computed: true,
-			},
 			"ssh_certificate_type": {
 				Type:     schema.TypeString,
 				Optional: true, // this is optional at this point since it is behind a feature flag.  if/when this changes, this should become required
@@ -125,7 +120,6 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m interf
 		RequirePreAuthForCreds: getBoolPtr("require_preauth_for_creds", d, false),
 		SSHSessionRecording:    getBoolPtr("ssh_session_recording", d, false),
 		GatewaySelector:        getStringPtr("gateway_selector", d, false),
-		ADJoinedUsers:          getBoolPtr("ad_joined_users", d, false),
 		SSHCertificateType:     getStringPtr("ssh_certificate_type", d, false),
 	}
 
@@ -204,7 +198,6 @@ func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, m interf
 		"require_preauth_for_creds",
 		"ssh_session_recording",
 		"gateway_selector",
-		"ad_joined_users",
 	}
 
 	for _, attribute := range changeableAttributes {
