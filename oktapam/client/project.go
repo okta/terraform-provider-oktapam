@@ -24,7 +24,6 @@ type Project struct {
 	RequirePreAuthForCreds *bool   `json:"require_preauth_for_creds,omitempty"`
 	SSHSessionRecording    *bool   `json:"ssh_session_recording,omitempty"`
 	GatewaySelector        *string `json:"gateway_selector,omitempty"`
-	ADJoinedUsers          *bool   `json:"ad_joined_users,omitempty"`
 	SSHCertificateType     *string `json:"ssh_certificate_type,omitempty"`
 }
 
@@ -68,9 +67,6 @@ func (p Project) ToResourceMap() map[string]interface{} {
 	if p.SSHSessionRecording != nil {
 		m["ssh_session_recording"] = *p.SSHSessionRecording
 	}
-	if p.ADJoinedUsers != nil {
-		m["ad_joined_users"] = *p.ADJoinedUsers
-	}
 	if p.SSHCertificateType != nil {
 		m["ssh_certificate_type"] = *p.SSHCertificateType
 	}
@@ -83,9 +79,8 @@ func (p Project) Exists() bool {
 }
 
 type ListProjectsParameters struct {
-	Self          bool
-	ADJoinedUsers *bool
-	Contains      string
+	Self     bool
+	Contains string
 }
 
 func (p ListProjectsParameters) toQueryParametersMap() map[string]string {
@@ -93,9 +88,6 @@ func (p ListProjectsParameters) toQueryParametersMap() map[string]string {
 
 	if p.Self {
 		m["self"] = strconv.FormatBool(p.Self)
-	}
-	if p.ADJoinedUsers != nil {
-		m["ad_joined_users"] = strconv.FormatBool(*p.ADJoinedUsers)
 	}
 	if p.Contains != "" {
 		m["contains"] = p.Contains

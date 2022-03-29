@@ -22,10 +22,6 @@ func dataSourceProjects() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"ad_joined_users": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
 			"projects": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -85,11 +81,6 @@ func dataSourceProjects() *schema.Resource {
 							Computed: true,
 							Optional: true,
 						},
-						"ad_joined_users": {
-							Type:     schema.TypeBool,
-							Computed: true,
-							Optional: true,
-						},
 						"ssh_certificate_type": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -109,10 +100,6 @@ func dataSourceProjectsRead(ctx context.Context, d *schema.ResourceData, m inter
 	parameters := client.ListProjectsParameters{}
 	if contains, ok := d.GetOk("contains"); ok {
 		parameters.Contains = contains.(string)
-	}
-	if adu, ok := d.GetOk("ad_joined_users"); ok {
-		p := adu.(bool)
-		parameters.ADJoinedUsers = &p
 	}
 
 	self, err := getOkBool("self", d)

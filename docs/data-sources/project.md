@@ -17,7 +17,6 @@ description: |-
 
 ### Optional
 
-- `ad_joined_users` (Boolean)
 - `contains` (String)
 - `id` (String) The ID of this resource.
 - `self` (Boolean)
@@ -31,7 +30,6 @@ description: |-
 
 Read-Only:
 
-- `ad_joined_users` (Boolean)
 - `create_server_users` (Boolean)
 - `deleted_at` (String)
 - `forward_traffic` (Boolean)

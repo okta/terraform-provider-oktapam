@@ -24,7 +24,6 @@ func TestAccProject(t *testing.T) {
 		RequirePreAuthForCreds: utils.AsBoolPtrZero(false, true),
 		RDPSessionRecording:    utils.AsBoolPtrZero(false, true),
 		SSHSessionRecording:    utils.AsBoolPtrZero(false, true),
-		ADJoinedUsers:          utils.AsBoolPtrZero(false, true),
 	}
 	updatedProject := client.Project{
 		Name:                   &projectName,
@@ -35,7 +34,6 @@ func TestAccProject(t *testing.T) {
 		RequirePreAuthForCreds: utils.AsBoolPtrZero(false, true),
 		RDPSessionRecording:    utils.AsBoolPtrZero(true, true),
 		SSHSessionRecording:    utils.AsBoolPtrZero(true, true),
-		ADJoinedUsers:          utils.AsBoolPtrZero(false, true),
 		GatewaySelector:        utils.AsStringPtr("env=test"),
 	}
 	resource.Test(t, resource.TestCase{
