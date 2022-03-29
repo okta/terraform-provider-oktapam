@@ -1,6 +1,9 @@
-FROM golang:1.17
+FROM golang:1.17-bullseye
 
-ENV APP_PATH=/src
+ARG APP_PATH
+
+RUN go install github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs@v0.7.0
+
 RUN mkdir -p $APP_PATH
 COPY . $APP_PATH
 WORKDIR $APP_PATH

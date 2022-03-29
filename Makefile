@@ -8,7 +8,7 @@ PLUGIN_DIR=~/.terraform.d/plugins
 
 .DEFAULT_GOAL := install
 
-build:
+compile:
 	go build -o ${BINARY}
 
 release:
@@ -25,7 +25,7 @@ release:
 	GOOS=windows GOARCH=386 go build -o ./bin/${BINARY}_${VERSION}_windows_386
 	GOOS=windows GOARCH=amd64 go build -o ./bin/${BINARY}_${VERSION}_windows_amd64
 
-install: build
+install: compile
 	mkdir -p ${PLUGIN_DIR}/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
 	mv ${BINARY} ${PLUGIN_DIR}/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
 
@@ -40,3 +40,12 @@ test:
 testacc: 
 # TESTARGS here can be used to pass arbitrary flags to go test, e.g. '-run TestMyTest'
 	TF_ACC=1 go test ./... -v $(TESTARGS) -timeout 120m   
+
+generate:
+	go generate ./...
+
+check-generate:
+	go generate ./...
+	git diff --compact-summary --exit-code || \
+  	(echo; echo "Unexpected difference in directories after code generation. Run 'go generate ./...' command and commit."; exit 1)
+
