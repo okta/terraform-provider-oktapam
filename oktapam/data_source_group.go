@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"context"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants"
 	"strconv"
 	"time"
 
@@ -14,47 +15,11 @@ func dataSourceGroups() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceGroupsRead,
 		Schema: map[string]*schema.Schema{
-			"contains": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"include_deleted": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-			"only_include_deleted": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-			"disconnected_mode_on_only": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-			"groups": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"id": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"deleted_at": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"roles": {
-							Type:     schema.TypeList,
-							Elem:     schema.TypeString,
-							Computed: true,
-						},
-					},
-				},
-			},
+			constants.AttrContains:               constants.AttributeSchemas[constants.AttrContains],
+			constants.AttrIncludeDeleted:         constants.AttributeSchemas[constants.AttrIncludeDeleted],
+			constants.AttrOnlyIncludeDeleted:     constants.AttributeSchemas[constants.AttrOnlyIncludeDeleted],
+			constants.AttrDisconnectedModeOnOnly: constants.AttributeSchemas[constants.AttrDisconnectedModeOnOnly],
+			constants.ResGroups:                  constants.ResourceSchemas[constants.ResGroups],
 		},
 	}
 }

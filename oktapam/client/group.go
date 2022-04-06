@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants"
 	"net/url"
 	"strconv"
 
@@ -22,15 +23,15 @@ func (g Group) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{}, 2)
 
 	if g.Name != nil {
-		m["name"] = *g.Name
+		m[constants.AttrName] = *g.Name
 	}
 	if g.ID != nil {
-		m["id"] = *g.ID
+		m[constants.AttrId] = *g.ID
 	}
 	if g.DeletedAt != nil {
-		m["deleted_at"] = *g.DeletedAt
+		m[constants.AttrDeletedAt] = *g.DeletedAt
 	}
-	m["roles"] = g.Roles
+	m[constants.AttrRoles] = g.Roles
 
 	return m
 }
@@ -50,16 +51,16 @@ func (p ListGroupsParameters) toQueryParametersMap() map[string]string {
 	m := make(map[string]string, 4)
 
 	if p.Contains != "" {
-		m["contains"] = p.Contains
+		m[constants.AttrContains] = p.Contains
 	}
 	if p.IncludeDeleted {
-		m["IncludeDeleted"] = strconv.FormatBool(p.IncludeDeleted)
+		m[constants.AttrIncludeDeleted] = strconv.FormatBool(p.IncludeDeleted)
 	}
 	if p.OnlyIncludeDeleted {
-		m["OnlyIncludeDeleted"] = strconv.FormatBool(p.OnlyIncludeDeleted)
+		m[constants.AttrOnlyIncludeDeleted] = strconv.FormatBool(p.OnlyIncludeDeleted)
 	}
 	if p.DisconnectedModeOnOnly {
-		m["DisconnectedModeOnOnly"] = strconv.FormatBool(p.DisconnectedModeOnOnly)
+		m[constants.AttrDisconnectedModeOnOnly] = strconv.FormatBool(p.DisconnectedModeOnOnly)
 	}
 
 	return m

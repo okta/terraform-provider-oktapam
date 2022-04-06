@@ -167,10 +167,10 @@ func (p ListProjectGroupsParameters) toQueryParametersMap() map[string]string {
 		m["create_server_group"] = strconv.FormatBool(p.CreateServerGroup)
 	}
 	if p.HasSelectors {
-		m["HasSelectors"] = strconv.FormatBool(p.HasSelectors)
+		m["has_selectors"] = strconv.FormatBool(p.HasSelectors)
 	}
 	if p.HasNoSelectors {
-		m["HasNoSelectors"] = strconv.FormatBool(p.HasNoSelectors)
+		m["has_no_selectors"] = strconv.FormatBool(p.HasNoSelectors)
 	}
 	if p.OfflineEnabled {
 		m["offline_enabled"] = strconv.FormatBool(p.OfflineEnabled)

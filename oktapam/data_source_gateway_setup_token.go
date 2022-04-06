@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"context"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants"
 	"strconv"
 	"time"
 
@@ -14,43 +15,14 @@ func dataSourceGatewaySetupTokens() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceGatewaySetupTokenRead,
 		Schema: map[string]*schema.Schema{
-			"description_contains": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"gateway_setup_tokens": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"id": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"created_at": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"description": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"labels": {
-							Type: schema.TypeMap,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-							Computed: true,
-						},
-					},
-				},
-			},
+			constants.AttrDescriptionContains: constants.AttributeSchemas[constants.AttrDescriptionContains],
+			constants.ResGatewaySetupTokens:   constants.ResourceSchemas[constants.ResGatewaySetupTokens],
 		},
 	}
 }
 
 func dataSourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	contains := d.Get("description_contains").(string)
+	contains := d.Get(constants.AttrDescriptionContains).(string)
 	c := m.(client.OktaPAMClient)
 	tokensList, err := c.ListGatewaySetupTokens(ctx, contains)
 	if err != nil {
