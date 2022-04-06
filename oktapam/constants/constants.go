@@ -83,12 +83,6 @@ var AttributeSchemas = map[string]*schema.Schema{
 		Description: "Only include deleted resources",
 		Optional: true,
 	},
-	AttrRoles: {
-		Type:     schema.TypeList,
-		Description: "A list of roles for the ASA Group. Options are `access_user`, `access_admin`, and `reporting_user`.",
-		Elem:     schema.TypeString,
-		Computed: true,
-	},
 }
 
 var ResourceSchemas = map[string]*schema.Schema{
