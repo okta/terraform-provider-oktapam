@@ -17,15 +17,15 @@ description: |-
 
 ### Optional
 
-- `contains` (String)
-- `disconnected_mode_on_only` (Boolean)
+- `contains` (String) Filter for resource
+- `disconnected_mode_on_only` (Boolean) Only include resources with disconnected mode enabled
 - `id` (String) The ID of this resource.
-- `include_deleted` (Boolean)
-- `only_include_deleted` (Boolean)
+- `include_deleted` (Boolean) Include deleted resources
+- `only_include_deleted` (Boolean) Only include deleted resources
 
 ### Read-Only
 
-- `groups` (List of Object) (see [below for nested schema](#nestedatt--groups))
+- `groups` (List of Object) A set of ASA Users (see [below for nested schema](#nestedatt--groups))
 
 <a id="nestedatt--groups"></a>
 ### Nested Schema for `groups`
