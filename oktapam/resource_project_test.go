@@ -24,6 +24,7 @@ func TestAccProject(t *testing.T) {
 		RequirePreAuthForCreds: utils.AsBoolPtrZero(false, true),
 		RDPSessionRecording:    utils.AsBoolPtrZero(false, true),
 		SSHSessionRecording:    utils.AsBoolPtrZero(false, true),
+		SSHCertificateType:     utils.AsStringPtr("CERT_TYPE_ED25519_01"),
 	}
 	updatedProject := client.Project{
 		Name:                   &projectName,
@@ -35,6 +36,7 @@ func TestAccProject(t *testing.T) {
 		RDPSessionRecording:    utils.AsBoolPtrZero(true, true),
 		SSHSessionRecording:    utils.AsBoolPtrZero(true, true),
 		GatewaySelector:        utils.AsStringPtr("env=test"),
+		SSHCertificateType:     utils.AsStringPtr("CERT_TYPE_ED25519_01"),
 	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -131,9 +133,10 @@ func testAccProjectCheckDestroy(projectName string) resource.TestCheckFunc {
 
 const testAccProjectCreateConfigFormat = `
 resource "oktapam_project" "test-project" {
-    name = "%s"
-  	next_unix_uid = 60120
-  	next_unix_gid = 63020
+    name                 = "%s"
+  	next_unix_uid        = 60120
+  	next_unix_gid        = 63020
+	ssh_certificate_type = "CERT_TYPE_ED25519_01"
 }`
 
 func createTestAccProjectCreateConfig(projectName string) string {
@@ -142,7 +145,7 @@ func createTestAccProjectCreateConfig(projectName string) string {
 
 const testAccProjectUpdateConfigFormat = `
 resource "oktapam_project" "test-project" {
-    name              = "%s"
+    name                      = "%s"
   	next_unix_uid             = 61200
   	next_unix_gid             = 63400
 	create_server_users       = true
@@ -150,6 +153,7 @@ resource "oktapam_project" "test-project" {
 	rdp_session_recording     = true
 	ssh_session_recording     = true
 	gateway_selector          = "env=test"
+	ssh_certificate_type      = "CERT_TYPE_ED25519_01"
 }`
 
 func createTestAccProjectUpdateConfig(projectName string) string {
