@@ -19,12 +19,9 @@ description: |-
 
 - `project_name` (String)
 
-### Optional
-
-- `id` (String) The ID of this resource.
-
 ### Read-Only
 
+- `id` (String) The ID of this resource.
 - `server_enrollment_tokens` (List of Object) (see [below for nested schema](#nestedatt--server_enrollment_tokens))
 
 <a id="nestedatt--server_enrollment_tokens"></a>

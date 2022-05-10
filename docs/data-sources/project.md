@@ -18,11 +18,11 @@ description: |-
 ### Optional
 
 - `contains` (String)
-- `id` (String) The ID of this resource.
 - `self` (Boolean)
 
 ### Read-Only
 
+- `id` (String) The ID of this resource.
 - `projects` (List of Object) (see [below for nested schema](#nestedatt--projects))
 
 <a id="nestedatt--projects"></a>

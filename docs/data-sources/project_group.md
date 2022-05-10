@@ -24,12 +24,12 @@ description: |-
 - `create_server_group` (Boolean)
 - `has_no_selectors` (Boolean)
 - `has_selectors` (Boolean)
-- `id` (String) The ID of this resource.
 - `include_removed` (Boolean)
 - `offline_enabled` (Boolean)
 
 ### Read-Only
 
+- `id` (String) The ID of this resource.
 - `project_groups` (List of Object) (see [below for nested schema](#nestedatt--project_groups))
 
 <a id="nestedatt--project_groups"></a>

@@ -18,11 +18,11 @@ description: |-
 ### Optional
 
 - `description_contains` (String)
-- `id` (String) The ID of this resource.
 
 ### Read-Only
 
 - `gateway_setup_tokens` (List of Object) (see [below for nested schema](#nestedatt--gateway_setup_tokens))
+- `id` (String) The ID of this resource.
 
 <a id="nestedatt--gateway_setup_tokens"></a>
 ### Nested Schema for `gateway_setup_tokens`

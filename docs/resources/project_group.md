@@ -25,11 +25,11 @@ description: |-
 ### Optional
 
 - `create_server_group` (Boolean)
-- `id` (String) The ID of this resource.
 - `servers_selector` (Map of String)
 
 ### Read-Only
 
 - `group_id` (String)
+- `id` (String) The ID of this resource.
 
 

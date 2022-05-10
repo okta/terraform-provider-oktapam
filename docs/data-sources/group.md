@@ -19,13 +19,13 @@ description: |-
 
 - `contains` (String)
 - `disconnected_mode_on_only` (Boolean)
-- `id` (String) The ID of this resource.
 - `include_deleted` (Boolean)
 - `only_include_deleted` (Boolean)
 
 ### Read-Only
 
 - `groups` (List of Object) (see [below for nested schema](#nestedatt--groups))
+- `id` (String) The ID of this resource.
 
 <a id="nestedatt--groups"></a>
 ### Nested Schema for `groups`
