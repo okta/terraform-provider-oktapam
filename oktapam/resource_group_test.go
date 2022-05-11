@@ -25,7 +25,7 @@ func TestAccGroup(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories:    testAccProviders,
 		CheckDestroy: testAccGroupCheckDestroy(groupName),
 		Steps: []resource.TestStep{
 			{

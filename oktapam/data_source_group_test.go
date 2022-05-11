@@ -26,7 +26,7 @@ func TestAccDatasourceGroup(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		ProviderFactories: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccDatasourceGroupInitConfig(groupNamePrefix),

@@ -28,7 +28,7 @@ func TestAccGatewaySetupToken(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories:    testAccProviders,
 		CheckDestroy: testAccGatewaySetupTokenCheckDestroy(setupToken),
 		Steps: []resource.TestStep{
 			{

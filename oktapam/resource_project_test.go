@@ -40,7 +40,7 @@ func TestAccProject(t *testing.T) {
 	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories:    testAccProviders,
 		CheckDestroy: testAccProjectCheckDestroy(projectName),
 		Steps: []resource.TestStep{
 			{

@@ -21,7 +21,7 @@ func TestAccServerEnrollmentToken(t *testing.T) {
 	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories:    testAccProviders,
 		CheckDestroy: testAccServerEnrollmentTokenCheckDestroy(enrollmentToken),
 		Steps: []resource.TestStep{
 			{

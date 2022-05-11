@@ -32,7 +32,7 @@ func TestAccProjectGroup(t *testing.T) {
 	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories:    testAccProviders,
 		CheckDestroy: testAccProjectGroupCheckDestroy(initialProjectGroup),
 		Steps: []resource.TestStep{
 			{

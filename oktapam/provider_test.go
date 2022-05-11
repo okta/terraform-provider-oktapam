@@ -18,13 +18,14 @@ func TestProvider(t *testing.T) {
 	}
 }
 
-var testAccProviders map[string]*schema.Provider
+var testAccProviders map[string]func() (*schema.Provider, error)
 var testAccProvider *schema.Provider
 
 func init() {
 	testAccProvider = Provider()
-	testAccProviders = map[string]*schema.Provider{
-		"oktapam": testAccProvider,
+	testAccProviders = map[string]func() (*schema.Provider, error){}
+	testAccProviders["oktapam"] = func() (*schema.Provider, error) {
+		return testAccProvider, nil
 	}
 }
 
