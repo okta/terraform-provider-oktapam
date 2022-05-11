@@ -86,7 +86,7 @@ func FormatServersSelectorString(m map[string]interface{}) (string, error) {
 			return "", fmt.Errorf("servers selector key cannot contain a '=' or ',' key: %s", key)
 		}
 		valueString := fmt.Sprint(value)
-		if invalidSelectorPart(key) {
+		if invalidSelectorPart(valueString) {
 			return "", fmt.Errorf("servers selector value cannot contain a '=' or ',' value: %s", valueString)
 		}
 		selectors = append(selectors, key+"="+valueString)
