@@ -87,6 +87,9 @@ func resourceProject() *schema.Resource {
 
 					for _, v := range valid {
 						if v == s {
+							if s == "CERT_TYPE_RSA_01" {
+								logging.Warnf("CERT_TYPE_RSA_01 is a deprecated key algorithm type and should only be used for compatibility purposes.  For new projects, please use a more current key algorithm")
+							}
 							return nil
 						}
 					}
