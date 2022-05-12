@@ -9,7 +9,7 @@ PLUGIN_DIR=~/.terraform.d/plugins
 .DEFAULT_GOAL := install
 
 compile:
-	go build -o ${BINARY}
+	go build -mod=vendor -o ${BINARY}
 
 release:
 	GOOS=darwin GOARCH=amd64 go build -o ./bin/${BINARY}_${VERSION}_darwin_amd64
@@ -36,11 +36,11 @@ link_legacy:
 
 test: 
 # TESTARGS here can be used to pass arbitrary flags to go test, e.g. '-run TestMyTest'
-	go test ./... -v $(TESTARGS)
+	go test ./... -mod=vendor -v $(TESTARGS)
 
 testacc: 
 # TESTARGS here can be used to pass arbitrary flags to go test, e.g. '-run TestMyTest'
-	TF_ACC=1 go test ./... -v $(TESTARGS) -timeout 120m   
+	TF_ACC=1 go test ./... -mod=vendor -v $(TESTARGS) -timeout 120m
 
 generate:
 	go generate ./...
