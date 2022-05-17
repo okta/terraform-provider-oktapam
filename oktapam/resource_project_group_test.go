@@ -3,6 +3,7 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -40,19 +41,19 @@ func TestAccProjectGroup(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccProjectGroupCheckExists(resourceName, initialProjectGroup),
 					resource.TestCheckResourceAttr(
-						resourceName, "project_name", projectName,
+						resourceName, attributes.ProjectName, projectName,
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, "group_name", groupName,
+						resourceName, attributes.GroupName, groupName,
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, "server_access", "true",
+						resourceName, attributes.ServerAccess, "true",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, "server_admin", "true",
+						resourceName, attributes.ServerAdmin, "true",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, "create_server_group", "false",
+						resourceName, attributes.CreateServerGroup, "false",
 					),
 				),
 			},
@@ -61,19 +62,19 @@ func TestAccProjectGroup(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccProjectGroupCheckExists(resourceName, updatedProjectGroup),
 					resource.TestCheckResourceAttr(
-						resourceName, "project_name", projectName,
+						resourceName, attributes.ProjectName, projectName,
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, "group_name", groupName,
+						resourceName, attributes.GroupName, groupName,
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, "server_access", "true",
+						resourceName, attributes.ServerAccess, "true",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, "server_admin", "false",
+						resourceName, attributes.ServerAdmin, "false",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, "create_server_group", "true",
+						resourceName, attributes.CreateServerGroup, "true",
 					),
 				),
 			},

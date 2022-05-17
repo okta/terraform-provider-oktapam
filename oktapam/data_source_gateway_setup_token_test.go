@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"strings"
 	"testing"
 
@@ -29,7 +30,7 @@ func TestAccDatasourceGatewaySetupToken(t *testing.T) {
 			},
 			{
 				Config: testAccDatasourceGatewaySetupTokenConfig(identifier),
-				Check:  resource.TestCheckResourceAttr(resourceName, "gateway_setup_tokens.#", "2"),
+				Check:  resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.GatewaySetupTokens), "2"),
 			},
 		},
 	})

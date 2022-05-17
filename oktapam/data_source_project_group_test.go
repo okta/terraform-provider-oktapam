@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -43,7 +44,7 @@ func TestAccDatasourceProjectGroup(t *testing.T) {
 			{
 				Config: testAccDatasourceProjectGroupConfig(projectName),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "project_groups.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.ProjectGroups), "2"),
 					testAccDatasourceProjectGroupsCheck(resourceName, expectedGroups),
 				),
 			},
@@ -56,55 +57,55 @@ func testAccDatasourceProjectGroupsCheck(rn string, expectedProjects map[string]
 		if !ok {
 			return fmt.Errorf("resource not found: %s", rn)
 		}
-		mappings, err := getIndexMappingFromResource(rs, "project_groups", "group_name", len(expectedProjects))
+		mappings, err := getIndexMappingFromResource(rs, attributes.ProjectGroups, attributes.GroupName, len(expectedProjects))
 		if err != nil {
 			return fmt.Errorf("error mapping resources to indices: %w", err)
 		}
-		attributes := rs.Primary.Attributes
+		primaryAttributes := rs.Primary.Attributes
 		for name, projectGroup := range expectedProjects {
 			// tests some attributes to ensure we are obtaining some attributes that were set by the original create resource and some that were computed
 			idx, ok := mappings[name]
 			if !ok {
 				return fmt.Errorf("could not find resource with name: %s", name)
 			}
-			projectName, ok := attributes[fmt.Sprintf("project_groups.%s.project_name", idx)]
+			projectName, ok := primaryAttributes[fmt.Sprintf("%s.%s.%s", attributes.ProjectGroups, idx, attributes.ProjectName)]
 			if !ok {
-				return fmt.Errorf("project_name attribute not set for project group with group %q", name)
+				return fmt.Errorf("%s attribute not set for project group with group %q", attributes.ProjectName, name)
 			}
 			if projectName != *projectGroup.Project {
-				return fmt.Errorf("mismatch for project_name value, expected %q, got %q", *projectGroup.Project, projectName)
+				return fmt.Errorf("mismatch for %s value, expected %q, got %q", attributes.ProjectName, *projectGroup.Project, projectName)
 			}
 
-			groupName, ok := attributes[fmt.Sprintf("project_groups.%s.group_name", idx)]
+			groupName, ok := primaryAttributes[fmt.Sprintf("%s.%s.%s", attributes.ProjectGroups, idx, attributes.GroupName)]
 			if !ok {
-				return fmt.Errorf("group_name attribute not set for project group with group %q", name)
+				return fmt.Errorf("%s attribute not set for project group with group %q", attributes.GroupName, name)
 			}
 			if groupName != *projectGroup.Group {
-				return fmt.Errorf("mismatch for group_name value, expected %q, got %q", *projectGroup.Group, groupName)
+				return fmt.Errorf("mismatch for %s value, expected %q, got %q", attributes.GroupName, *projectGroup.Group, groupName)
 			}
 
-			serverAccess, ok := attributes[fmt.Sprintf("project_groups.%s.server_access", idx)]
+			serverAccess, ok := primaryAttributes[fmt.Sprintf("%s.%s.%s", attributes.ProjectGroups, idx, attributes.ServerAccess)]
 			if !ok {
-				return fmt.Errorf("server_access attribute not set for project group with group %q", name)
+				return fmt.Errorf("%s attribute not set for project group with group %q", attributes.ServerAccess, name)
 			}
 			if serverAccess != fmt.Sprint(projectGroup.ServerAccess) {
-				return fmt.Errorf("mismatch for server_access attribute, expected %q, got %q", fmt.Sprint(projectGroup.ServerAccess), serverAccess)
+				return fmt.Errorf("mismatch for %s attribute, expected %q, got %q", attributes.ServerAccess, fmt.Sprint(projectGroup.ServerAccess), serverAccess)
 			}
 
-			serverAdmin, ok := attributes[fmt.Sprintf("project_groups.%s.server_admin", idx)]
+			serverAdmin, ok := primaryAttributes[fmt.Sprintf("%s.%s.%s", attributes.ProjectGroups, idx, attributes.ServerAdmin)]
 			if !ok {
-				return fmt.Errorf("server_admin attribute not set for project group with group %q", name)
+				return fmt.Errorf("%s attribute not set for project group with group %q", attributes.ServerAccess, name)
 			}
 			if serverAdmin != fmt.Sprint(projectGroup.ServerAdmin) {
-				return fmt.Errorf("mismatch for server_admin attribute, expected %q, got %q", fmt.Sprint(projectGroup.ServerAdmin), serverAdmin)
+				return fmt.Errorf("mismatch for %s attribute, expected %q, got %q", attributes.ServerAccess, fmt.Sprint(projectGroup.ServerAdmin), serverAdmin)
 			}
 
-			createServerGroup, ok := attributes[fmt.Sprintf("project_groups.%s.create_server_group", idx)]
+			createServerGroup, ok := primaryAttributes[fmt.Sprintf("%s.%s.%s", attributes.ProjectGroups, idx, attributes.CreateServerGroup)]
 			if !ok {
-				return fmt.Errorf("create_server_group attribute not set for project group with group %q", name)
+				return fmt.Errorf("%s attribute not set for project group with group %q", attributes.CreateServerGroup, name)
 			}
 			if createServerGroup != fmt.Sprint(projectGroup.CreateServerGoup) {
-				return fmt.Errorf("mismatch for create_server_group attribute, expected %q, got %q", fmt.Sprint(projectGroup.CreateServerGoup), createServerGroup)
+				return fmt.Errorf("mismatch for %s attribute, expected %q, got %q", attributes.CreateServerGroup, fmt.Sprint(projectGroup.CreateServerGoup), createServerGroup)
 			}
 
 		}

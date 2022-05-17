@@ -3,6 +3,7 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -48,13 +49,13 @@ func TestAccProject(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccProjectCheckExists(resourceName, initialProject),
 					resource.TestCheckResourceAttr(
-						resourceName, "name", projectName,
+						resourceName, attributes.Name, projectName,
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, "next_unix_uid", "60120",
+						resourceName, attributes.NextUnixUID, "60120",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, "next_unix_gid", "63020",
+						resourceName, attributes.NextUnixGID, "63020",
 					),
 				),
 			},
@@ -63,13 +64,13 @@ func TestAccProject(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccProjectCheckExists(resourceName, updatedProject),
 					resource.TestCheckResourceAttr(
-						resourceName, "name", projectName,
+						resourceName, attributes.Name, projectName,
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, "next_unix_uid", "61200",
+						resourceName, attributes.NextUnixUID, "61200",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, "next_unix_gid", "63400",
+						resourceName, attributes.NextUnixGID, "63400",
 					),
 				),
 			},

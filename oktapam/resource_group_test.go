@@ -3,6 +3,7 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -33,7 +34,7 @@ func TestAccGroup(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccGroupCheckExists(resourceName, initialGroup),
 					resource.TestCheckResourceAttr(
-						resourceName, "name", groupName,
+						resourceName, attributes.Name, groupName,
 					),
 				),
 			},
@@ -42,7 +43,7 @@ func TestAccGroup(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccGroupCheckExists(resourceName, updatedGroup),
 					resource.TestCheckResourceAttr(
-						resourceName, "name", groupName,
+						resourceName, attributes.Name, groupName,
 					),
 				),
 			},

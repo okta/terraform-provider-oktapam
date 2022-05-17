@@ -3,6 +3,7 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -29,10 +30,10 @@ func TestAccServerEnrollmentToken(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccServerEnrollmentTokenCheckExists(resourceName, enrollmentToken),
 					resource.TestCheckResourceAttr(
-						resourceName, "project_name", projectName,
+						resourceName, attributes.ProjectName, projectName,
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, "description", description,
+						resourceName, attributes.Description, description,
 					),
 				),
 			},
@@ -58,7 +59,7 @@ func testAccServerEnrollmentTokenCheckExists(rn string, expectedServerEnrollment
 			return fmt.Errorf("error parsing resource id: %w", err)
 		}
 		if projectName != *expectedServerEnrollmentToken.Project {
-			return fmt.Errorf("resource ID did not have the expected project. expected %s, got %s", *expectedServerEnrollmentToken.Project, projectName)
+			return fmt.Errorf("resource id did not have the expected project. expected %s, got %s", *expectedServerEnrollmentToken.Project, projectName)
 		}
 
 		client := testAccProvider.Meta().(client.OktaPAMClient)
