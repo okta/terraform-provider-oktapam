@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"net/url"
 	"strconv"
 	"strings"
@@ -32,35 +33,35 @@ func ProjectGroupFromMap(m map[string]interface{}) (*ProjectGroup, error) {
 	p := ProjectGroup{}
 	for k, v := range m {
 		switch k {
-		case "project_name":
+		case attributes.ProjectName:
 			p.Project = utils.AsStringPtr(v.(string))
-		case "group_name":
+		case attributes.GroupName:
 			p.Group = utils.AsStringPtr(v.(string))
-		case "group_id":
+		case attributes.GroupID:
 			p.GroupID = utils.AsStringPtr(v.(string))
-		case "deleted_at":
+		case attributes.DeletedAt:
 			p.DeletedAt = utils.AsStringPtr(v.(string))
-		case "removed_at":
+		case attributes.RemovedAt:
 			p.RemovedAt = utils.AsStringPtr(v.(string))
-		case "create_server_group":
+		case attributes.CreateServerGroup:
 			b, err := parseBool(v)
 			if err != nil {
 				return nil, err
 			}
 			p.CreateServerGoup = b
-		case "server_access":
+		case attributes.ServerAccess:
 			b, err := parseBool(v)
 			if err != nil {
 				return nil, err
 			}
 			p.ServerAccess = b
-		case "server_admin":
+		case attributes.ServerAdmin:
 			b, err := parseBool(v)
 			if err != nil {
 				return nil, err
 			}
 			p.ServerAdmin = b
-		case "servers_selector":
+		case attributes.ServersSelector:
 			serversSelectorString, err := FormatServersSelectorString(v.(map[string]interface{}))
 			if err != nil {
 				return nil, err
@@ -119,31 +120,31 @@ func (p *ProjectGroup) ToResourceMap() (map[string]interface{}, error) {
 	m := make(map[string]interface{})
 
 	if p.Project != nil {
-		m["project_name"] = *p.Project
+		m[attributes.ProjectName] = *p.Project
 	}
 	if p.Group != nil {
-		m["group_name"] = *p.Group
+		m[attributes.GroupName] = *p.Group
 	}
 	if p.GroupID != nil {
-		m["group_id"] = *p.GroupID
+		m[attributes.GroupID] = *p.GroupID
 	}
 	if p.DeletedAt != nil {
-		m["deleted_at"] = *p.DeletedAt
+		m[attributes.DeletedAt] = *p.DeletedAt
 	}
 	if p.RemovedAt != nil {
-		m["removed_at"] = *p.RemovedAt
+		m[attributes.RemovedAt] = *p.RemovedAt
 	}
 	if p.CreateServerGoup {
-		m["create_server_group"] = p.CreateServerGoup
+		m[attributes.CreateServerGroup] = p.CreateServerGoup
 	}
-	m["server_access"] = p.ServerAccess
-	m["server_admin"] = p.ServerAdmin
+	m[attributes.ServerAccess] = p.ServerAccess
+	m[attributes.ServerAdmin] = p.ServerAdmin
 	if p.ServersSelector != "" {
 		selectorsMap, err := parseServersSelectorString(p.ServersSelector)
 		if err != nil {
 			return nil, err
 		}
-		m["servers_selector"] = selectorsMap
+		m[attributes.ServersSelector] = selectorsMap
 	}
 
 	return m, nil
@@ -161,10 +162,10 @@ func (p ListProjectGroupsParameters) toQueryParametersMap() map[string]string {
 	m := make(map[string]string, 5)
 
 	if p.IncludeRemoved {
-		m["include_removed"] = strconv.FormatBool(p.IncludeRemoved)
+		m[attributes.IncludeRemoved] = strconv.FormatBool(p.IncludeRemoved)
 	}
 	if p.CreateServerGroup {
-		m["create_server_group"] = strconv.FormatBool(p.CreateServerGroup)
+		m[attributes.CreateServerGroup] = strconv.FormatBool(p.CreateServerGroup)
 	}
 	if p.HasSelectors {
 		m["HasSelectors"] = strconv.FormatBool(p.HasSelectors)
@@ -173,7 +174,7 @@ func (p ListProjectGroupsParameters) toQueryParametersMap() map[string]string {
 		m["HasNoSelectors"] = strconv.FormatBool(p.HasNoSelectors)
 	}
 	if p.OfflineEnabled {
-		m["offline_enabled"] = strconv.FormatBool(p.OfflineEnabled)
+		m[attributes.OfflineEnabled] = strconv.FormatBool(p.OfflineEnabled)
 	}
 
 	return m

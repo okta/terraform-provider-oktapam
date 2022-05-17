@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"net/url"
 	"strings"
 
@@ -28,16 +29,16 @@ type GatewaySetupTokenLabelDetails struct {
 func (t GatewaySetupToken) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{})
 
-	m["description"] = t.Description
+	m[attributes.Description] = t.Description
 
 	if t.ID != nil {
-		m["id"] = *t.ID
+		m[attributes.ID] = *t.ID
 	}
 	if t.CreatedAt != nil {
-		m["created_at"] = *t.CreatedAt
+		m[attributes.CreatedAt] = *t.CreatedAt
 	}
 	if t.Details != nil {
-		m["labels"] = t.Details.Labels
+		m[attributes.Labels] = t.Details.Labels
 	}
 
 	return m
