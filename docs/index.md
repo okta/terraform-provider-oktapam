@@ -17,10 +17,10 @@ description: |-
 
 ### Required
 
+- `oktapam_key` (String) Okta PAM API Key
 - `oktapam_secret` (String) Okta PAM API Secret
+- `oktapam_team` (String) Okta PAM Team
 
 ### Optional
 
 - `oktapam_api_host` (String) Okta PAM API Host
-- `oktapam_key` (String) Okta PAM API Key
-- `oktapam_team` (String) Okta PAM Team
