@@ -17,11 +17,11 @@ description: |-
 
 ### Optional
 
-- `description_contains` (String)
+- `description_contains` (String) If a value is provided, the results are filtered to only contain resources whose name contains that value.
 
 ### Read-Only
 
-- `gateway_setup_tokens` (List of Object) (see [below for nested schema](#nestedatt--gateway_setup_tokens))
+- `gateway_setup_tokens` (List of Object) A list of tokens for ASA Gateway enrollment, corresponding to an ASA Team. (see [below for nested schema](#nestedatt--gateway_setup_tokens))
 - `id` (String) The ID of this resource.
 
 <a id="nestedatt--gateway_setup_tokens"></a>

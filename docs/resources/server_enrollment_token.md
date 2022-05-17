@@ -3,12 +3,12 @@
 page_title: "oktapam_server_enrollment_token Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  
+  A token for ASA Server enrollment.
 ---
 
 # oktapam_server_enrollment_token (Resource)
 
-
+A token for ASA Server enrollment.
 
 
 
@@ -17,14 +17,14 @@ description: |-
 
 ### Required
 
-- `description` (String)
-- `project_name` (String)
+- `description` (String) If a value is provided, the results are filtered to only contain resources whose description contains that value.
+- `project_name` (String) The human-readable name of the ASA Project.
 
 ### Read-Only
 
-- `created_by_user` (String)
+- `created_by_user` (String) The ASA User that created the resource.
 - `id` (String) The ID of this resource.
-- `issued_at` (String)
-- `token` (String)
+- `issued_at` (String) The UTC issuance time of the resource.
+- `token` (String) The secret used for resource enrollment.
 
 

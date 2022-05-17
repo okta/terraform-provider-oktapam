@@ -17,24 +17,24 @@ description: |-
 
 ### Required
 
-- `name` (String)
+- `name` (String) The human-readable name of the resource.
 
 ### Optional
 
-- `create_server_users` (Boolean)
-- `forward_traffic` (Boolean)
-- `gateway_selector` (String)
-- `next_unix_gid` (Number)
-- `next_unix_uid` (Number)
-- `rdp_session_recording` (Boolean)
-- `require_preauth_for_creds` (Boolean)
-- `ssh_certificate_type` (String)
-- `ssh_session_recording` (Boolean)
+- `create_server_users` (Boolean) If 'true', `sftd` (ASA Server Agent) creates corresponding local (unix or windows) user accounts in the ASA Project's servers.
+- `forward_traffic` (Boolean) If 'true', all traffic in the ASA Project be forwarded through selected ASA Gateways.
+- `gateway_selector` (String) Assigns ASA Gateways with labels matching all selectors. At least one selector is necessary for traffic forwarding.
+- `next_unix_gid` (Number) The GID to use when creating a new ASA Server User.
+- `next_unix_uid` (Number) The GID to use when creating a new ASA Server User.
+- `rdp_session_recording` (Boolean) If 'true', enable remote desktop protocol (RDP) recording on all servers in the ASA Project.
+- `require_preauth_for_creds` (Boolean) If 'true', require preauthorization before an ASA User can retrieve credentials to sign in.
+- `ssh_certificate_type` (String) The SSH certificate type used by access requests.
+- `ssh_session_recording` (Boolean) If 'true', enables ssh recording on server access requests.
 
 ### Read-Only
 
-- `deleted_at` (String)
+- `deleted_at` (String) UTC time of resource creation.
 - `id` (String) The ID of this resource.
-- `team` (String)
+- `team` (String) The human-readable name of the ASA Team that owns the resource.
 
 

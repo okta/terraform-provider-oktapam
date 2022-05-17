@@ -3,12 +3,12 @@
 page_title: "oktapam_gateway_setup_token Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  
+  A token for ASA Gateway enrollment.
 ---
 
 # oktapam_gateway_setup_token (Resource)
 
-
+A token for ASA Gateway enrollment.
 
 
 
@@ -17,12 +17,12 @@ description: |-
 
 ### Required
 
-- `description` (String)
-- `labels` (Map of String)
+- `description` (String) The human-readable description of the resource.
+- `labels` (Map of String) A map of key-value pairings.
 
 ### Read-Only
 
-- `created_at` (String)
+- `created_at` (String) UTC time of resource deletion.
 - `id` (String) The ID of this resource.
 
 
