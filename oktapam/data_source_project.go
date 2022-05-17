@@ -138,7 +138,7 @@ func dataSourceProjectsRead(ctx context.Context, d *schema.ResourceData, m inter
 		projects[idx] = proj.ToResourceMap()
 	}
 
-	if err := d.Set(attributes.Team, projects); err != nil {
+	if err := d.Set(attributes.Projects, projects); err != nil {
 		return diag.FromErr(err)
 	}
 
