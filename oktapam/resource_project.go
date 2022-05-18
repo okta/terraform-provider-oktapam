@@ -91,7 +91,7 @@ func resourceProject() *schema.Resource {
 								diag := diag.Diagnostic{
 									Severity: diag.Warning,
 									Summary:  "deprecated value",
-									Detail:   "CERT_TYPE_RSA_01 is a deprecated key algorithm type and should only be used for compatibility purposes.  For new projects, please use a more current key algorithm",
+									Detail:   "CERT_TYPE_RSA_01 is a deprecated key algorithm type. This option should only be used to connect to legacy systems that cannot use newer SSH versions. If you do need to use CERT_TYPE_RSA_01, it is recommended to connect via a gateway with traffic forwarding. Otherwise, please use a more current key algorithm. ",
 								}
 								return append(diags, diag)
 							}
