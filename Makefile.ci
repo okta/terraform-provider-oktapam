@@ -6,13 +6,15 @@ CI_CONTAINER_IIDFILE= ./build/ci-output/container.txt
 # after the terraform provider due to the plugin using the base directory
 # as the terraform provider's name
 SRC_DIR= /src/terraform-provider-oktapam
+TERRAFORM_PATH= /testacc/terraform-cli/bin
+
 
 #build the container from Dockerfile.ci
 .PHONY: ci-container
 ci-container:
 	rm -rf "./build/ci-output"
 	mkdir -p "./build/ci-output"
-	docker build -f Dockerfile.ci --iidfile ${CI_CONTAINER_IIDFILE} --build-arg APP_PATH=${SRC_DIR} .
+	docker build -f Dockerfile.ci --iidfile ${CI_CONTAINER_IIDFILE} --build-arg APP_PATH=${SRC_DIR} --build-arg TERRAFORM_PATH=${TERRAFORM_PATH} .
 
 .PHONY: ci-test
 ci-test: ci-container

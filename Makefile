@@ -40,7 +40,7 @@ test:
 
 testacc: 
 # TESTARGS here can be used to pass arbitrary flags to go test, e.g. '-run TestMyTest'
-	TF_ACC=1 go test ./... -v $(TESTARGS) -timeout 120m   
+	TF_ACC=1 TF_ACC_TERRAFORM_PATH=/testacc/terraform-cli/bin go test ./... -v $(TESTARGS) -timeout 120m
 
 generate:
 	go generate ./...
