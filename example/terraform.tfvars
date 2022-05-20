@@ -4,4 +4,4 @@ oktapam_secret = ""
 oktapam_team = ""
 
 // Optional
-oktapam_api_host = ""
+// oktapam_api_host = "https://app.scaleft.com"

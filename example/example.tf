@@ -64,3 +64,7 @@ resource "oktapam_gateway_setup_token" "test-gateway-token" {
   labels = {env = "test"}
 }
 
+// End result:
+// If the resulting server enrollment token and gateway setup token are added to an sftd agent
+// and sft-gatewayd agent, users on `group-one` could access `sftd` via `sft-gatewayd`.
+// This is left as an exercise to the user.
