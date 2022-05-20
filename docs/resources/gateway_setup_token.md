@@ -18,11 +18,11 @@ A token for ASA Gateway enrollment.
 ### Required
 
 - `description` (String) The human-readable description of the resource.
-- `labels` (Map of String) A map of key-value pairings.
+- `labels` (Map of String) A map of key-value pairings that define access to the ASA Gateway.
 
 ### Read-Only
 
-- `created_at` (String) UTC time of resource deletion.
+- `created_at` (String) The UTC time of resource deletion. Format is `year-month-day 00:00:00 +0000 UTC`.
 - `id` (String) The ID of this resource.
 
 

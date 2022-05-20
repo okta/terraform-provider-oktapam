@@ -17,8 +17,8 @@ description: |-
 
 ### Required
 
-- `group_name` (String) The human-readable name of the ASA Group
-- `project_name` (String) The human-readable name of the ASA Project.
+- `group_name` (String) The human-readable name of the ASA Group. Values are case-sensitive.
+- `project_name` (String) The human-readable name of the ASA Project. Values are case-sensitive.
 - `server_access` (Boolean) If 'true', members of this ASA Group have access to the ASA Project servers.
 - `server_admin` (Boolean) If 'true', members of ASA Group have sudo permissions on ASA Project servers.
 
@@ -29,7 +29,7 @@ description: |-
 
 ### Read-Only
 
-- `group_id` (String) The ID corresponding to ASA Group.
+- `group_id` (String) The ID corresponding to a ASA Group.
 - `id` (String) The ID of this resource.
 
 

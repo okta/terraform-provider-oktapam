@@ -17,7 +17,7 @@ A set of ASA Users.
 
 ### Required
 
-- `name` (String) The human-readable name of the resource.
+- `name` (String) The human-readable name of the resource. Values are case-sensitive.
 
 ### Optional
 
@@ -25,7 +25,7 @@ A set of ASA Users.
 
 ### Read-Only
 
-- `deleted_at` (String) UTC time of resource creation.
+- `deleted_at` (String) The UTC time of resource creation. Format is `year-month-day 00:00:00 +0000 UTC`.
 - `id` (String) The ID of this resource.
 
 

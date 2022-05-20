@@ -18,13 +18,13 @@ A token for ASA Server enrollment.
 ### Required
 
 - `description` (String) If a value is provided, the results are filtered to only contain resources whose description contains that value.
-- `project_name` (String) The human-readable name of the ASA Project.
+- `project_name` (String) The human-readable name of the ASA Project. Values are case-sensitive.
 
 ### Read-Only
 
 - `created_by_user` (String) The ASA User that created the resource.
 - `id` (String) The ID of this resource.
-- `issued_at` (String) The UTC issuance time of the resource.
+- `issued_at` (String) The UTC issuance time of the resource. Format is `year-month-day 00:00:00 +0000 UTC`.
 - `token` (String) The secret used for resource enrollment.
 
 

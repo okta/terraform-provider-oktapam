@@ -90,7 +90,7 @@ func resourceProject() *schema.Resource {
 			},
 			attributes.SSHCertificateType: {
 				Type:        schema.TypeString,
-				Optional:    true, // this is optional at this point since it is behind a feature flag.  if/when this changes, this should become required
+				Optional:    true, // The default value is `CERT_TYPE_ED25519_01`
 				Computed:    true,
 				Description: descriptions.SSHCertificateType,
 				ValidateDiagFunc: func(i interface{}, p cty.Path) diag.Diagnostics {
