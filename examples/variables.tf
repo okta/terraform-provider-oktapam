@@ -7,6 +7,8 @@ variable "oktapam_secret" {
 variable "oktapam_team" {
   type = string
 }
+
 variable "oktapam_api_host" {
   type = string
+  default = "https://app.scaleft.com"
 }
