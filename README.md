@@ -51,10 +51,10 @@ export OKTAPAM_TRUSTED_DOMAIN_OVERRIDE="my.testing.domain"
 
 Developing the Provider
 ---------------------------
-To compile the provider, run `make compile`. This will build the provider and put in the project directory
+To compile the provider, run `make build`. This will build the provider and put in the project directory
 
 ```sh
-$ make compile
+$ make build
 ```
 
 To install the provider on your local machine, run `make install`.  This will build the provider and install it within the `~/.terraform.d/plugins/hashicorp.com/okta/oktapam/[VERSION]/[OS_ARCH]/terraform-provider-oktapam` directory.
