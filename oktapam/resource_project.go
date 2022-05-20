@@ -40,7 +40,7 @@ func resourceProject() *schema.Resource {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     63001,
-				Description: descriptions.NextUnixUID,
+				Description: descriptions.NextUnixGID,
 			},
 			attributes.NextUnixUID: {
 				Type:        schema.TypeInt,
