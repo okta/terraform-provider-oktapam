@@ -9,6 +9,11 @@ terraform {
   }
 }
 
+// End result:
+// If the resulting server enrollment token and gateway setup token are added to an sftd agent
+// and sft-gatewayd agent, users on `group-one` could access `sftd` via `sft-gatewayd`.
+// This is left as an exercise to the user.
+
 provider "oktapam" {
   // Required
   oktapam_key = var.oktapam_key
@@ -63,8 +68,3 @@ resource "oktapam_gateway_setup_token" "test-gateway-token" {
   // Gateway is assigned to project if labels satisfy all gateway_selectors
   labels = {env = "test"}
 }
-
-// End result:
-// If the resulting server enrollment token and gateway setup token are added to an sftd agent
-// and sft-gatewayd agent, users on `group-one` could access `sftd` via `sft-gatewayd`.
-// This is left as an exercise to the user.
