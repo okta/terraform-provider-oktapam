@@ -17,20 +17,20 @@ description: |-
 
 ### Required
 
-- `project_name` (String)
+- `project_name` (String) If a value is provided, the results are filtered to only contain resources belonging to the ASA Project.
 
 ### Optional
 
-- `create_server_group` (Boolean)
-- `has_no_selectors` (Boolean)
-- `has_selectors` (Boolean)
-- `include_removed` (Boolean)
-- `offline_enabled` (Boolean)
+- `create_server_group` (Boolean) If 'true', the results only include the ASA Project Groups that have 'create_server_group' field set to 'true'.
+- `has_no_selectors` (Boolean) If 'true', the results only include resources with empty label selectors.
+- `has_selectors` (Boolean) If 'true', the results only include resources with label selectors set.
+- `include_removed` (Boolean) If 'true', the results include removed resources.
+- `offline_enabled` (Boolean) If 'true', the results only include resources with disconnected mode enabled.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `project_groups` (List of Object) (see [below for nested schema](#nestedatt--project_groups))
+- `project_groups` (List of Object) A list of ASA Groups attached to an ASA Project. (see [below for nested schema](#nestedatt--project_groups))
 
 <a id="nestedatt--project_groups"></a>
 ### Nested Schema for `project_groups`

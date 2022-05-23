@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"net/url"
 	"strconv"
 
@@ -22,15 +23,15 @@ func (g Group) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{}, 2)
 
 	if g.Name != nil {
-		m["name"] = *g.Name
+		m[attributes.Name] = *g.Name
 	}
 	if g.ID != nil {
-		m["id"] = *g.ID
+		m[attributes.ID] = *g.ID
 	}
 	if g.DeletedAt != nil {
-		m["deleted_at"] = *g.DeletedAt
+		m[attributes.DeletedAt] = *g.DeletedAt
 	}
-	m["roles"] = g.Roles
+	m[attributes.Roles] = g.Roles
 
 	return m
 }
@@ -50,7 +51,7 @@ func (p ListGroupsParameters) toQueryParametersMap() map[string]string {
 	m := make(map[string]string, 4)
 
 	if p.Contains != "" {
-		m["contains"] = p.Contains
+		m[attributes.Contains] = p.Contains
 	}
 	if p.IncludeDeleted {
 		m["IncludeDeleted"] = strconv.FormatBool(p.IncludeDeleted)

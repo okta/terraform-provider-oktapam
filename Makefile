@@ -8,7 +8,7 @@ PLUGIN_DIR=~/.terraform.d/plugins
 
 .DEFAULT_GOAL := install
 
-compile:
+build:
 	go build -o ${BINARY}
 
 release:

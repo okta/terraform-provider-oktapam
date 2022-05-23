@@ -42,7 +42,7 @@ ci-compile: ci-container
 		-e BUILDKITE_BUILD_NUMBER \
 		-e BUILDKITE_PIPELINE_SLUG \
 		-e BUILDKITE_JOB_ID \
-		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C ${SRC_DIR} compile
+		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C ${SRC_DIR} build
 
 .PHONY: ci-check-generate
 ci-check-generate: ci-container

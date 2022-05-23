@@ -17,12 +17,12 @@ description: |-
 
 ### Required
 
-- `project_name` (String)
+- `project_name` (String) If a value is provided, the results are filtered to only contain resources belonging to the ASA Project.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `server_enrollment_tokens` (List of Object) (see [below for nested schema](#nestedatt--server_enrollment_tokens))
+- `server_enrollment_tokens` (List of Object) A list of tokens for ASA Server enrollment, corresponding to an ASA Project. (see [below for nested schema](#nestedatt--server_enrollment_tokens))
 
 <a id="nestedatt--server_enrollment_tokens"></a>
 ### Nested Schema for `server_enrollment_tokens`

@@ -2,6 +2,8 @@ package oktapam
 
 import (
 	"context"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/descriptions"
 	"strconv"
 	"time"
 
@@ -14,73 +16,91 @@ func dataSourceProjectGroups() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceProjectGroupsRead,
 		Schema: map[string]*schema.Schema{
-			"project_name": {
-				Type:     schema.TypeString,
-				Required: true,
+			// Query parameter values
+			attributes.ProjectName: {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: descriptions.FilterProjectName,
 			},
-			"include_removed": {
-				Type:     schema.TypeBool,
-				Optional: true,
+			attributes.IncludeRemoved: {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: descriptions.FilterIncludeRemoved,
 			},
-			"create_server_group": {
-				Type:     schema.TypeBool,
-				Optional: true,
+			attributes.CreateServerGroup: {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: descriptions.FilterCreateServerGroup,
 			},
-			"has_selectors": {
-				Type:     schema.TypeBool,
-				Optional: true,
+			attributes.HasSelectors: {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: descriptions.FilterHasSelectors,
 			},
-			"has_no_selectors": {
-				Type:     schema.TypeBool,
-				Optional: true,
+			attributes.HasNoSelectors: {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: descriptions.FilterHasNoSelectors,
 			},
-			"offline_enabled": {
-				Type:     schema.TypeBool,
-				Optional: true,
+			attributes.OfflineEnabled: { // TODO: update this after fixing endpoint
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: descriptions.FilterOfflineEnabled,
 			},
-			"project_groups": {
-				Type:     schema.TypeList,
-				Computed: true,
+			// Return value
+			attributes.ProjectGroups: {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: descriptions.SourceProjectGroups,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"project_name": {
-							Type:     schema.TypeString,
-							Computed: true,
+						attributes.ProjectName: {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: descriptions.ProjectName,
 						},
-						"group_name": {
-							Type:     schema.TypeString,
-							Computed: true,
+						attributes.GroupName: {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: descriptions.GroupName,
 						},
-						"group_id": {
-							Type:     schema.TypeString,
-							Computed: true,
+						attributes.GroupID: {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: descriptions.GroupID,
 						},
-						"deleted_at": {
-							Type:     schema.TypeString,
-							Computed: true,
+						attributes.DeletedAt: {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: descriptions.DeletedAt,
 						},
-						"removed_at": {
-							Type:     schema.TypeString,
-							Computed: true,
+						attributes.RemovedAt: {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: descriptions.RemovedAt,
 						},
-						"create_server_group": {
-							Type:     schema.TypeBool,
-							Computed: true,
+						attributes.CreateServerGroup: {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: descriptions.CreateServerGroup,
 						},
-						"server_access": {
-							Type:     schema.TypeBool,
-							Computed: true,
+						attributes.ServerAccess: {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: descriptions.ServerAccess,
 						},
-						"server_admin": {
-							Type:     schema.TypeBool,
-							Computed: true,
+						attributes.ServerAdmin: {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: descriptions.ServerAdmin,
 						},
-						"servers_selector": {
+						attributes.ServersSelector: {
 							Type: schema.TypeMap,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
-							Computed: true,
+							Computed:    true,
+							Description: descriptions.ServersSelector,
 						},
 					},
 				},
@@ -91,36 +111,36 @@ func dataSourceProjectGroups() *schema.Resource {
 
 func dataSourceProjectGroupsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
-	project := d.Get("project_name").(string)
+	project := d.Get(attributes.ProjectName).(string)
 	if project == "" {
-		return diag.Errorf("project_name cannot be blank")
+		return diag.Errorf("%s cannot be blank", attributes.ProjectName)
 	}
 	parameters := client.ListProjectGroupsParameters{}
-	includeRemoved, err := getOkBool("include_removed", d)
+	includeRemoved, err := getOkBool(attributes.IncludeRemoved, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	parameters.IncludeRemoved = includeRemoved
 
-	createServerGroup, err := getOkBool("create_server_group", d)
+	createServerGroup, err := getOkBool(attributes.CreateServerGroup, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	parameters.CreateServerGroup = createServerGroup
 
-	hasSelectors, err := getOkBool("has_selectors", d)
+	hasSelectors, err := getOkBool(attributes.HasSelectors, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	parameters.HasSelectors = hasSelectors
 
-	hasNoSelectors, err := getOkBool("has_no_selectors", d)
+	hasNoSelectors, err := getOkBool(attributes.HasNoSelectors, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	parameters.HasNoSelectors = hasNoSelectors
 
-	offlineEnabled, err := getOkBool("offline_enabled", d)
+	offlineEnabled, err := getOkBool(attributes.OfflineEnabled, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -140,7 +160,7 @@ func dataSourceProjectGroupsRead(ctx context.Context, d *schema.ResourceData, m 
 		assignments[idx] = m
 	}
 
-	if err := d.Set("project_groups", assignments); err != nil {
+	if err := d.Set(attributes.ProjectGroups, assignments); err != nil {
 		return diag.FromErr(err)
 	}
 

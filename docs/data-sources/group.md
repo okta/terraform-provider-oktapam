@@ -17,14 +17,14 @@ description: |-
 
 ### Optional
 
-- `contains` (String)
-- `disconnected_mode_on_only` (Boolean)
-- `include_deleted` (Boolean)
-- `only_include_deleted` (Boolean)
+- `contains` (String) If a value is provided, the results are filtered to only contain resources whose name contains that value.
+- `disconnected_mode_on_only` (Boolean) If 'true', the results only include resources with disconnected mode enabled.
+- `include_deleted` (Boolean) If 'true', the results include deleted resources.
+- `only_include_deleted` (Boolean) If 'true', the results only include deleted resources.
 
 ### Read-Only
 
-- `groups` (List of Object) (see [below for nested schema](#nestedatt--groups))
+- `groups` (List of Object) A list of ASA Groups, corresponding to an ASA Team. (see [below for nested schema](#nestedatt--groups))
 - `id` (String) The ID of this resource.
 
 <a id="nestedatt--groups"></a>

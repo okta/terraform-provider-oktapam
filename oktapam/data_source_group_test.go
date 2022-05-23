@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -34,7 +35,7 @@ func TestAccDatasourceGroup(t *testing.T) {
 			{
 				Config: createTestAccDatasourceGroupsConfig(groupNamePrefix),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "groups.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Groups), "2"),
 					testAccDatasourceGroupsCheck(resourceName, expectedGroups),
 				),
 			},
@@ -48,36 +49,36 @@ func testAccDatasourceGroupsCheck(rn string, expectedGroups map[string]client.Gr
 		if !ok {
 			return fmt.Errorf("resource not found: %s", rn)
 		}
-		mappings, err := getIndexMappingFromResource(rs, "groups", "name", len(expectedGroups))
+		mappings, err := getIndexMappingFromResource(rs, attributes.Groups, attributes.Name, len(expectedGroups))
 		if err != nil {
 			return fmt.Errorf("error mapping resources to indices: %w", err)
 		}
 
-		attributes := rs.Primary.Attributes
+		primaryAttributes := rs.Primary.Attributes
 		for name, group := range expectedGroups {
 			idx, ok := mappings[name]
 			if !ok {
-				return fmt.Errorf("could not find resource with name: %s", name)
+				return fmt.Errorf("could not find resource with %s: %s", attributes.Name, name)
 			}
 
-			name, ok := attributes[fmt.Sprintf("groups.%s.name", idx)]
+			name, ok := primaryAttributes[fmt.Sprintf("%s.%s.%s", attributes.Groups, idx, attributes.Name)]
 			if !ok {
-				return fmt.Errorf("name attribute not set for group %q", name)
+				return fmt.Errorf("%s attribute not set for group %q", attributes.Name, name)
 			}
 			if name != *group.Name {
-				return fmt.Errorf("name attributes did not match for group %q, expected %q, got %q", name, *group.Name, name)
+				return fmt.Errorf("%s attributes did not match for group %q, expected %q, got %q", attributes.Name, name, *group.Name, name)
 			}
 
 			expectedNumRoles := len(group.Roles)
-			numRoles, ok := attributes[fmt.Sprintf("groups.%s.roles.#", idx)]
+			numRoles, ok := primaryAttributes[fmt.Sprintf("%s.%s.%s.#", attributes.Groups, idx, attributes.Roles)]
 			if !ok {
-				return fmt.Errorf("roles attribute not set for group %q", name)
+				return fmt.Errorf("%s attribute not set for group %q", attributes.Roles, name)
 			}
 			if numRoles != fmt.Sprint(expectedNumRoles) {
-				return fmt.Errorf("mismatch of number of roles set for group %q, expected %d, got %s", name, expectedNumRoles, numRoles)
+				return fmt.Errorf("mismatch of number of %s set for group %q, expected %d, got %s", attributes.Roles, name, expectedNumRoles, numRoles)
 			}
 
-			roles, err := getArrayFromResource(rs, fmt.Sprintf("groups.%s.roles", idx), expectedNumRoles)
+			roles, err := getArrayFromResource(rs, fmt.Sprintf("%s.%s.%s", attributes.Groups, idx, attributes.Roles), expectedNumRoles)
 			if err != nil {
 				return fmt.Errorf("error while retrieving roles from state: %w", err)
 			}

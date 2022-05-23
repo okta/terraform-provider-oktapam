@@ -3,12 +3,12 @@
 page_title: "oktapam_group Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  
+  A set of ASA Users.
 ---
 
 # oktapam_group (Resource)
 
-
+A set of ASA Users.
 
 
 
@@ -17,15 +17,15 @@ description: |-
 
 ### Required
 
-- `name` (String)
+- `name` (String) The human-readable name of the resource. Values are case-sensitive.
 
 ### Optional
 
-- `roles` (Set of String)
+- `roles` (Set of String) A list of roles for the ASA Group. Options are `access_user`, `access_admin`, and `reporting_user`.
 
 ### Read-Only
 
-- `deleted_at` (String)
+- `deleted_at` (String) The UTC time of resource creation. Format is `2022-01-01 00:00:00 +0000 UTC`.
 - `id` (String) The ID of this resource.
 
 

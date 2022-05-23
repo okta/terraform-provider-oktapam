@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -22,7 +23,7 @@ func TestAccDatasourceServerEnrollmentToken(t *testing.T) {
 			},
 			{
 				Config: createTestAccDatasourceServerEnrollmentTokenConfig(projectName),
-				Check:  resource.TestCheckResourceAttr(resourceName, "server_enrollment_tokens.#", "2"),
+				Check:  resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.ServerEnrollmentTokens), "2"),
 			},
 		},
 	})

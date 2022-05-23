@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -36,7 +37,7 @@ func TestAccDatasourceProject(t *testing.T) {
 			{
 				Config: createTestAccDatasourceProjectsConfig(projectNamePrefix),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "projects.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Projects), "2"),
 					testAccDatasourceProjectsCheck(resourceName, expectedProjects),
 				),
 			},
@@ -50,43 +51,43 @@ func testAccDatasourceProjectsCheck(rn string, expectedProjects map[string]clien
 		if !ok {
 			return fmt.Errorf("resource not found: %s", rn)
 		}
-		mappings, err := getIndexMappingFromResource(rs, "projects", "name", len(expectedProjects))
+		mappings, err := getIndexMappingFromResource(rs, attributes.Projects, attributes.Name, len(expectedProjects))
 		if err != nil {
 			return fmt.Errorf("error mapping resources to indices: %w", err)
 		}
-		attributes := rs.Primary.Attributes
+		primaryAttributes := rs.Primary.Attributes
 		for name, project := range expectedProjects {
 			// tests some attributes to ensure we are obtaining some attributes that were set by the original create resource and some that were computed
 			idx, ok := mappings[name]
 			if !ok {
-				return fmt.Errorf("could not find resource with name: %s", name)
+				return fmt.Errorf("could not find resource with %s: %s", attributes.Name, name)
 			}
 			if name != *project.Name {
-				return fmt.Errorf("name attributes did not match for project %q, expected %q, got %q", name, *project.Name, name)
+				return fmt.Errorf("%s attributes did not match for project %q, expected %q, got %q", attributes.Name, name, *project.Name, name)
 			}
-			nextUnixUID, ok := attributes[fmt.Sprintf("projects.%s.next_unix_uid", idx)]
+			nextUnixUID, ok := primaryAttributes[fmt.Sprintf("%s.%s.%s", attributes.Projects, idx, attributes.NextUnixUID)]
 			if !ok {
-				return fmt.Errorf("next_unix_uid attribute not set for project %q", name)
+				return fmt.Errorf("%s attribute not set for project %q", attributes.NextUnixUID, name)
 			}
 			expectedNextUnixUID := fmt.Sprintf("%d", *project.NextUnixUID)
 			if nextUnixUID != expectedNextUnixUID {
-				return fmt.Errorf("mismatch for next_unix_uid value, expected %q, got %q", expectedNextUnixUID, nextUnixUID)
+				return fmt.Errorf("mismatch for %s value, expected %q, got %q", attributes.NextUnixUID, expectedNextUnixUID, nextUnixUID)
 			}
-			nextUnixGID, ok := attributes[fmt.Sprintf("projects.%s.next_unix_gid", idx)]
+			nextUnixGID, ok := primaryAttributes[fmt.Sprintf("%s.%s.%s", attributes.Projects, idx, attributes.NextUnixGID)]
 			if !ok {
-				return fmt.Errorf("next_unix_gid attribute not set for project %q", name)
+				return fmt.Errorf("%s attribute not set for project %q", attributes.NextUnixGID, name)
 			}
 			expectedNextUnixGID := fmt.Sprintf("%d", *project.NextUnixGID)
 			if nextUnixGID != expectedNextUnixGID {
-				return fmt.Errorf("mismatch for next_unix_gid value, expected %q, got %q", expectedNextUnixGID, nextUnixGID)
+				return fmt.Errorf("mismatch for %s value, expected %q, got %q", attributes.NextUnixGID, expectedNextUnixGID, nextUnixGID)
 			}
-			createServerUsers, ok := attributes[fmt.Sprintf("projects.%s.create_server_users", idx)]
+			createServerUsers, ok := primaryAttributes[fmt.Sprintf("%s.%s.%s", attributes.Projects, idx, attributes.CreateServerUsers)]
 			if !ok {
-				return fmt.Errorf("create_server_users attribute not set for project %q", name)
+				return fmt.Errorf("%s attribute not set for project %q", attributes.CreateServerUsers, name)
 			}
 			expectedCreateServerUsers := project.CreateServerUsers != nil && *project.CreateServerUsers
 			if createServerUsers != fmt.Sprint(expectedCreateServerUsers) {
-				return fmt.Errorf("mismatch for create_server_users attribute, expected %q, got %q", fmt.Sprint(expectedCreateServerUsers), createServerUsers)
+				return fmt.Errorf("mismatch for %s attribute, expected %q, got %q", attributes.CreateServerUsers, fmt.Sprint(expectedCreateServerUsers), createServerUsers)
 			}
 		}
 		return nil

@@ -3,6 +3,8 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/descriptions"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -19,39 +21,46 @@ func resourceProjectGroup() *schema.Resource {
 		UpdateContext: resourceProjectGroupUpdate,
 		DeleteContext: resourceProjectGroupDelete,
 		Schema: map[string]*schema.Schema{
-			"project_name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+			attributes.ProjectName: {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: descriptions.ProjectName,
 			},
-			"group_name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+			attributes.GroupName: {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: descriptions.GroupName,
 			},
-			"group_id": {
-				Type:     schema.TypeString,
-				Computed: true,
+			attributes.GroupID: {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: descriptions.GroupID,
 			},
-			"create_server_group": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Computed: true,
+			attributes.CreateServerGroup: {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+				Description: descriptions.CreateServerGroup,
 			},
-			"server_access": {
-				Type:     schema.TypeBool,
-				Required: true,
+			attributes.ServerAccess: {
+				Type:        schema.TypeBool,
+				Required:    true,
+				Description: descriptions.ServerAccess,
 			},
-			"server_admin": {
-				Type:     schema.TypeBool,
-				Required: true,
+			attributes.ServerAdmin: {
+				Type:        schema.TypeBool,
+				Required:    true,
+				Description: descriptions.ServerAdmin,
 			},
-			"servers_selector": {
+			attributes.ServersSelector: {
 				Type: schema.TypeMap,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Optional: true,
+				Optional:    true,
+				Description: descriptions.ServersSelector,
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -63,11 +72,11 @@ func resourceProjectGroup() *schema.Resource {
 func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	serverAdmin, err := getOkBool("server_admin", d)
+	serverAdmin, err := getOkBool(attributes.ServerAdmin, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	serverAccess, err := getOkBool("server_access", d)
+	serverAccess, err := getOkBool(attributes.ServerAccess, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -76,13 +85,13 @@ func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m i
 		return diag.Errorf("server_access or server_admin must be true")
 	}
 
-	createServerGroup, err := getOkBool("create_server_group", d)
+	createServerGroup, err := getOkBool(attributes.CreateServerGroup, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	var serversSelector map[string]interface{}
-	if ss, ok := d.GetOk("servers_selector"); ok {
+	if ss, ok := d.GetOk(attributes.ServersSelector); ok {
 		serversSelector = ss.(map[string]interface{})
 	}
 
@@ -92,8 +101,8 @@ func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m i
 	}
 
 	projectGroup := client.ProjectGroup{
-		Project:          getStringPtr("project_name", d, true),
-		Group:            getStringPtr("group_name", d, true),
+		Project:          getStringPtr(attributes.ProjectName, d, true),
+		Group:            getStringPtr(attributes.GroupName, d, true),
 		ServerAccess:     serverAccess,
 		ServerAdmin:      serverAdmin,
 		CreateServerGoup: createServerGroup,
@@ -125,7 +134,7 @@ func resourceProjectGroupRead(ctx context.Context, d *schema.ResourceData, m int
 		return diag.FromErr(err)
 	}
 
-	ignorableValues := map[string]bool{"deleted_at": true, "removed_at": true}
+	ignorableValues := map[string]bool{attributes.DeletedAt: true, attributes.RemovedAt: true}
 	if projectGroup != nil && utils.IsNonEmpty(projectGroup.Group) {
 		if utils.IsNonEmpty(projectGroup.DeletedAt) {
 			logging.Infof("Group %s was deleted", group)
@@ -161,17 +170,17 @@ func resourceProjectGroupUpdate(ctx context.Context, d *schema.ResourceData, m i
 	updates := make(map[string]interface{})
 
 	changeableAttributes := []string{
-		"server_access",
-		"server_admin",
-		"create_server_group",
-		"servers_selector",
+		attributes.ServerAccess,
+		attributes.ServerAdmin,
+		attributes.CreateServerGroup,
+		attributes.ServersSelector,
 	}
 
 	requiredAttributes := []string{
-		"project_name",
-		"group_name",
-		"server_access",
-		"server_admin",
+		attributes.ProjectName,
+		attributes.GroupName,
+		attributes.ServerAccess,
+		attributes.ServerAdmin,
 	}
 
 	for _, attribute := range changeableAttributes {

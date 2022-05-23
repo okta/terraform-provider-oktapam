@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"net/url"
 	"strconv"
 
@@ -31,44 +32,44 @@ func (p Project) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{}, 2)
 
 	if p.Name != nil {
-		m["name"] = *p.Name
+		m[attributes.Name] = *p.Name
 	}
 	if p.ID != nil {
-		m["id"] = *p.ID
+		m[attributes.ID] = *p.ID
 	}
 	if p.Team != nil {
-		m["team"] = *p.Team
+		m[attributes.Team] = *p.Team
 	}
 	if p.DeletedAt != nil {
-		m["deleted_at"] = *p.DeletedAt
+		m[attributes.DeletedAt] = *p.DeletedAt
 	}
 	if p.NextUnixGID != nil {
-		m["next_unix_gid"] = *p.NextUnixGID
+		m[attributes.NextUnixGID] = *p.NextUnixGID
 	}
 	if p.NextUnixUID != nil {
-		m["next_unix_uid"] = *p.NextUnixUID
+		m[attributes.NextUnixUID] = *p.NextUnixUID
 	}
 	if p.GatewaySelector != nil {
-		m["gateway_selector"] = *p.GatewaySelector
+		m[attributes.GatewaySelector] = *p.GatewaySelector
 	}
 
 	if p.CreateServerUsers != nil {
-		m["create_server_users"] = *p.CreateServerUsers
+		m[attributes.CreateServerUsers] = *p.CreateServerUsers
 	}
 	if p.ForwardTraffic != nil {
-		m["forward_traffic"] = *p.ForwardTraffic
+		m[attributes.ForwardTraffic] = *p.ForwardTraffic
 	}
 	if p.RDPSessionRecording != nil {
-		m["rdp_session_recording"] = *p.RDPSessionRecording
+		m[attributes.RDPSessionRecording] = *p.RDPSessionRecording
 	}
 	if p.RequirePreAuthForCreds != nil {
-		m["require_preauth_for_creds"] = *p.RequirePreAuthForCreds
+		m[attributes.RequirePreauthForCreds] = *p.RequirePreAuthForCreds
 	}
 	if p.SSHSessionRecording != nil {
-		m["ssh_session_recording"] = *p.SSHSessionRecording
+		m[attributes.SSHSessionRecording] = *p.SSHSessionRecording
 	}
 	if p.SSHCertificateType != nil {
-		m["ssh_certificate_type"] = *p.SSHCertificateType
+		m[attributes.SSHCertificateType] = *p.SSHCertificateType
 	}
 
 	return m
@@ -87,10 +88,10 @@ func (p ListProjectsParameters) toQueryParametersMap() map[string]string {
 	m := make(map[string]string, 3)
 
 	if p.Self {
-		m["self"] = strconv.FormatBool(p.Self)
+		m[attributes.Self] = strconv.FormatBool(p.Self)
 	}
 	if p.Contains != "" {
-		m["contains"] = p.Contains
+		m[attributes.Contains] = p.Contains
 	}
 
 	return m

@@ -30,7 +30,7 @@ Using the provider
 You will need to create a team a service user.  Then set the following environment variables prior to running: Okta's PAM API key, secret and team name. 
 
 ```
-export OKTAPAM_KEY_SECRET=<secret here>
+export OKTAPAM_SECRET=<secret here>
 export OKTAPAM_KEY=<key here>
 export OKTAPAM_TEAM=<team name>
 ```
@@ -54,7 +54,7 @@ Developing the Provider
 To compile the provider, run `make build`. This will build the provider and put in the project directory
 
 ```sh
-$ make bin
+$ make build
 ```
 
 To install the provider on your local machine, run `make install`.  This will build the provider and install it within the `~/.terraform.d/plugins/hashicorp.com/okta/oktapam/[VERSION]/[OS_ARCH]/terraform-provider-oktapam` directory.

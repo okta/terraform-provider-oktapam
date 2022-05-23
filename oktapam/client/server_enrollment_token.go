@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"net/url"
 
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
@@ -22,22 +23,22 @@ func (t ServerEnrollmentToken) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{})
 
 	if t.Project != nil {
-		m["project_name"] = *t.Project
+		m[attributes.ProjectName] = *t.Project
 	}
 	if t.Description != nil {
-		m["description"] = *t.Description
+		m[attributes.Description] = *t.Description
 	}
 	if t.Token != nil {
-		m["token"] = *t.Token
+		m[attributes.Token] = *t.Token
 	}
 	if t.ID != nil {
-		m["id"] = *t.ID
+		m[attributes.ID] = *t.ID
 	}
 	if t.CreatedByUser != nil {
-		m["created_by_user"] = *t.CreatedByUser
+		m[attributes.CreatedByUser] = *t.CreatedByUser
 	}
 	if t.IssuedAt != nil {
-		m["issued_at"] = *t.IssuedAt
+		m[attributes.IssuedAt] = *t.IssuedAt
 	}
 
 	return m
@@ -130,7 +131,7 @@ func (c OktaPAMClient) CreateServerEnrollmentToken(ctx context.Context, project,
 	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/server_enrollment_tokens", url.PathEscape(c.Team), url.PathEscape(project))
 
 	request := map[string]interface{}{
-		"description": description,
+		attributes.Description: description,
 	}
 	token := ServerEnrollmentToken{}
 	logging.Tracef("making POST request to %s", requestURL)

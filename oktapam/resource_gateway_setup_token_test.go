@@ -3,6 +3,7 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"strings"
 	"testing"
 
@@ -36,7 +37,7 @@ func TestAccGatewaySetupToken(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccGatewaySetupTokenCheckExists(resourceName, setupToken),
 					resource.TestCheckResourceAttr(
-						resourceName, "description", description,
+						resourceName, attributes.Description, description,
 					),
 				),
 			},

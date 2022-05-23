@@ -17,13 +17,13 @@ description: |-
 
 ### Optional
 
-- `contains` (String)
-- `self` (Boolean)
+- `contains` (String) If a value is provided, the results are filtered to only contain resources whose name contains that value.
+- `self` (Boolean) If 'true', only lists the ASA Projects that the ASA User making this request has been assigned.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `projects` (List of Object) (see [below for nested schema](#nestedatt--projects))
+- `projects` (List of Object) A list of ASA Projects, corresponding to an ASA Team. (see [below for nested schema](#nestedatt--projects))
 
 <a id="nestedatt--projects"></a>
 ### Nested Schema for `projects`
