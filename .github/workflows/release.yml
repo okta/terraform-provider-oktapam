@@ -1,0 +1,36 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - se/gh-action/release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: conventional changelog action
+        id: changelog
+        # https://github.com/TriPSs/conventional-changelog-action
+        uses: TriPSs/conventional-changelog-action@latest
+        with:
+          # you can also create separate token to trace action
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: create release
+        # https://github.com/actions/create-release
+        uses: softprops/action-gh-release@v1
+        if: ${{steps.changelog.outputs.skipped == 'false'}}
+        env:
+          # This token is provided by Actions, you do not need to create your own token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.changelog.outputs.tag }}
+          name: ${{ steps.changelog.outputs.tag }}
+          body: ${{steps.changelog.outputs.clean_changelog}}
+          draft: false
+          prerelease: false
