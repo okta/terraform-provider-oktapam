@@ -12,7 +12,9 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-
+      - run: echo "$GITHUB_CONTEXT"
+      - run: echo "${{ github }}"
+      - run: echo "${{ github.event }}"
       - name: conventional changelog action
         id: changelog
         # https://github.com/TriPSs/conventional-changelog-action
