@@ -1,0 +1,18 @@
+name: Acceptance Tests
+on: [push]
+jobs:
+  Acceptance-Tests:
+    # Ensure acceptance tests are only run on okta/terraform-provider-oktapam or if a special label is applied (`run-acceptance-tests`)
+    if: github.repository == 'okta/terraform-provider-oktapam' || github.event.label.name == 'run-acceptance-tests'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Run unit tests
+        run: |
+          ./scripts/ci-acceptance-tests.sh
+        env:
+          OKTAPAM_SECRET: ${{ secrets.OKTA_499446_OKTAPAM_SECRET }}
+          OKTAPAM_KEY: ${{ secrets.OKTA_499446_OKTAPAM_KEY }}
+          OKTAPAM_TEAM: ${{ secrets.OKTA_499446_OKTAPAM_TEAM }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
