@@ -1,0 +1,25 @@
+name: Changelog
+
+# only trigger on pull request closed events
+on:
+  pull_request:
+    types: [ closed ]
+
+# TODO:
+# Changelog:
+# - On merge, get description
+# - Parse description, update the latest changelog version,
+# Release:
+# - On tag, update the changelog version to released, make a new unreleased version
+# - could also have a per-version changelog, like that a bit, find the directory based on the version
+# - `latest` for unreleased? or `unreleased`? Nah, when you release just take the latest and use that
+
+jobs:
+  Close-PR:
+    # this job will only run if the PR has been merged
+    if: github.event.pull_request.merged == false # test on closing PR
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "$GITHUB_CONTEXT"
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
