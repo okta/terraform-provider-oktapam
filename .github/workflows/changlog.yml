@@ -18,7 +18,7 @@ jobs:
         id: get_pull_request
         with:
           # route: GET ${{ github.pull_request._links.self.href }}
-          route: GET /repos/:repository/pull/:pr_number
+          route: GET /repos/{repository}/pull/{pr_number}
           repository: ${{ github.repository }}
           pr_number: ${{ github.event.number }}
         env:
