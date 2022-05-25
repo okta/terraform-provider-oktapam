@@ -16,7 +16,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/version"
 )
 
-const OKTAPAM_TRUSTED_DOMAINS = "scaleft.com,okta.com,dev.sudo.wtf"
+const OKTAPAM_TRUSTED_DOMAINS = "scaleft.com,okta.com"
 const TRUSTED_DOMAIN_OVERRIDE_ENV_VAR = "OKTAPAM_TRUSTED_DOMAIN_OVERRIDE"
 
 var terraformUserAgent = "terraform_provider_oktapam/" + version.Version
