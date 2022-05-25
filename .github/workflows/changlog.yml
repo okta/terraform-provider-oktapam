@@ -15,12 +15,12 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
       - uses: octokit/request-action@v2.x
-          id: get_pull_request
-          with:
-            # route: GET ${{ github.pull_request._links.self.href }}
-            route: GET /repos/:repository/pull/:pr_number
-            repository: ${{ github.repository }}
-            pr_number: ${{ github.event.number }}
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: get_pull_request
+        with:
+          # route: GET ${{ github.pull_request._links.self.href }}
+          route: GET /repos/:repository/pull/:pr_number
+          repository: ${{ github.repository }}
+          pr_number: ${{ github.event.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: "echo latest pull request: ${{ steps.get_pull_request.outputs.data }}"
