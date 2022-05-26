@@ -6,8 +6,13 @@ data "oktapam_gateway" "ad_gateway" {
 
 // Create self-signed certificate
 resource "oktapam_ad_passwordless_certificate" "self_signed" {
-  name              = "dev-test"
-  common_name       = "test-cn"
+  name        = "dev-test"
+  common_name = "test-cn"
+  //API is designed to take this argument as a single value in days but we can have something more general too
+  #  validity {
+  #    type = "DAYS"
+  #    value = 180
+  #  }
   ttl_days          = 180
   enterprise_signed = false
 }
