@@ -7,7 +7,7 @@ data "oktapam_gateway" "ad_gateway" {
 // Create self-signed certificate
 resource "oktapam_ad_passwordless_certificate" "self_signed" {
   name              = "dev-test"
-  cn                = "test-cn"
+  common_name       = "test-cn"
   ttl_days          = 180
   enterprise_signed = false
 }

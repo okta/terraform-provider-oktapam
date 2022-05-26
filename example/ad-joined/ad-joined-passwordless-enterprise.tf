@@ -7,13 +7,13 @@ data "oktapam_gateway" "ad_gateway" {
 // Create enterprise-signed certificate request
 // Pending : Upload
 resource "oktapam_ad_passwordless_certificate" "enterprise_signed_csr" {
-  name              = "dev-test"
-  cn                = "test-cn"
-  o                 = "okta"
-  ou                = "pam"
-  locality          = "San Francisco"
-  state             = "CA"
-  enterprise_signed = true
+  name                = "dev-test"
+  common_name         = "test-cn"
+  organization        = "okta"
+  organizational_unit = "pam"
+  locality            = "San Francisco"
+  state               = "CA"
+  enterprise_signed   = true
 }
 
 // Create project with `forward_traffic` enabled & gateway selector
