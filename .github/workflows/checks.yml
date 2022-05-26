@@ -55,6 +55,7 @@ jobs:
   notify-on-failure:
     name: Notify Slack on Failure
     runs-on: ubuntu-latest
+    needs: [check1, check2, check3, check4]
     if: failure() && github.repository == 'okta/terraform-provider-oktapam'
     steps:
       - uses: actions/checkout@v2
