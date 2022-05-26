@@ -1,5 +1,6 @@
 name: Checks
-on: [push]
+on:
+  push:
   schedule:
     # Run every hour. Uses POSIX cron syntax
     - cron: "0 */1 * * *"
