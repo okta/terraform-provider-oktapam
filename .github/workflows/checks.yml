@@ -38,7 +38,7 @@ jobs:
         run: |
           ./scripts/ci-acceptance-tests.sh
         env:
-          OKTAPAM_SECRET: ${{ secrets.OKTA_499446_OKTAPAM_SECRET }}
+          # OKTAPAM_SECRET: ${{ secrets.OKTA_499446_OKTAPAM_SECRET }}
           OKTAPAM_KEY: ${{ secrets.OKTA_499446_OKTAPAM_KEY }}
           OKTAPAM_TEAM: ${{ secrets.OKTA_499446_OKTAPAM_TEAM }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
