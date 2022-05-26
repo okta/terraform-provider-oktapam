@@ -4,9 +4,9 @@ on: [push]
     # Run every hour. Uses POSIX cron syntax
     - cron: "0 */1 * * *"
 
-
 jobs:
-  Compile:
+  check1:
+    name: Compile
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -15,7 +15,8 @@ jobs:
         run: |
           ./scripts/ci-compile.sh
       - run: echo "🍏 This job's status is ${{ job.status }}."
-  Unit-Tests:
+  check2:
+    name: Unit Tests
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -24,7 +25,8 @@ jobs:
         run: |
           ./scripts/ci-tests.sh
       - run: echo "🍏 This job's status is ${{ job.status }}."
-  Acceptance-Tests:
+  check3:
+    name: Acceptance Tests
     # Ensure acceptance tests are only run on okta/terraform-provider-oktapam or if a special label is applied (`run-acceptance-tests`)
     if: github.repository == 'okta/terraform-provider-oktapam' || github.event.label.name == 'run-acceptance-tests'
     runs-on: ubuntu-latest
@@ -39,7 +41,8 @@ jobs:
           OKTAPAM_KEY: ${{ secrets.OKTA_499446_OKTAPAM_KEY }}
           OKTAPAM_TEAM: ${{ secrets.OKTA_499446_OKTAPAM_TEAM }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-  Doc-Generation:
+  check4:
+    name: Doc Generation
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -48,3 +51,17 @@ jobs:
         run: |
           ./scripts/ci-check-generated.sh
       - run: echo "🍏 This job's status is ${{ job.status }}."
+  notify-on-failure:
+    name: Notify Slack on Failure
+    runs-on: ubuntu-latest
+    if: failure() && github.repository == 'okta/terraform-provider-oktapam'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_USERNAME: GithubActions
+          SLACK_CHANNEL: eng-asa
+          SLACK_COLOR: job.status
+          SLACK_ICON: https://avatars.githubusercontent.com/u/44036562?s=40&v=4
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
