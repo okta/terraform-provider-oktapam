@@ -1,7 +1,7 @@
 //Gateway is mandatory for AD-Joined
 // Separate gateway for AD Connection and RDP
 data "oktapam_gateway" "ad_gateway" {
-  name = "ad_gateway"
+  id = "<ad_gateway_id>"
 }
 
 // Create enterprise-signed certificate request
@@ -39,12 +39,15 @@ resource "oktapam_ad_connection" "testad" {
   passwordless_enabled        = true // Boolean flag to indicate if passwordless feature is enabled. Other option is to implicitly set it if cert ifd provided
   passwordless_certificate_id = oktapam_ad_passwordless_certificate.enterprise_signed_csr.id
   domain_controller           = ["dc1", "dc2"] //Optional: DC used to query the domain
+  depends_on = [
+    oktapam_ad_passwordless_certificate.enterprise_signed_csr
+  ]
 }
 
 //AD Joined Server Discovery
 //Each Connection can have multiple server sync Jobs but only one active at a time
 // One option is to name it : oktapam_ad_connection_server_sync_job
-resource "oktapam_ad_connection_task" "daily-job" {
+resource "oktapam_ad_connection_task" "daily_job" {
   connection                 = oktapam_ad_connection.testad.id
   name                       = "daily-job"
   is_active                  = true

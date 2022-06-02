@@ -1,7 +1,7 @@
 //Gateway is mandatory for AD-Joined
 // Separate gateway for AD Connection and RDP
 data "oktapam_gateway" "ad_gateway" {
-  name = "ad_gateway"
+  id = "<ad_gateway_id>"
 }
 
 // Create project with `forward_traffic` enabled & gateway selector
@@ -35,7 +35,7 @@ resource "oktapam_ad_connection_task" "hourly_job" {
   connection                 = oktapam_ad_connection.testad.id
   name                       = "daily-job"
   is_active                  = true
-  frequency                  = 12                # Every 12 hours
+  frequency                  = 12 # Every 12 hours
   hostname_attribute         = var.ad_connection_task.hostname_attribute
   access_address_attribute   = var.ad_connection_task.access_address_attribute
   operating_system_attribute = var.ad_connection_task.operating_system_attribute
