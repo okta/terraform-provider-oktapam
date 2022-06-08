@@ -3,10 +3,11 @@ package client
 import (
 	"context"
 	"fmt"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
@@ -151,11 +152,11 @@ func (p *ProjectGroup) ToResourceMap() (map[string]interface{}, error) {
 }
 
 type ListProjectGroupsParameters struct {
-	IncludeRemoved    bool
-	CreateServerGroup bool
-	HasSelectors      bool
-	HasNoSelectors    bool
-	OfflineEnabled    bool
+	IncludeRemoved         bool
+	CreateServerGroup      bool
+	HasSelectors           bool
+	HasNoSelectors         bool
+	DisconnectedModeOnOnly bool
 }
 
 func (p ListProjectGroupsParameters) toQueryParametersMap() map[string]string {
@@ -168,13 +169,13 @@ func (p ListProjectGroupsParameters) toQueryParametersMap() map[string]string {
 		m[attributes.CreateServerGroup] = strconv.FormatBool(p.CreateServerGroup)
 	}
 	if p.HasSelectors {
-		m["HasSelectors"] = strconv.FormatBool(p.HasSelectors)
+		m[attributes.HasSelectors] = strconv.FormatBool(p.HasSelectors)
 	}
 	if p.HasNoSelectors {
-		m["HasNoSelectors"] = strconv.FormatBool(p.HasNoSelectors)
+		m[attributes.HasNoSelectors] = strconv.FormatBool(p.HasNoSelectors)
 	}
-	if p.OfflineEnabled {
-		m[attributes.OfflineEnabled] = strconv.FormatBool(p.OfflineEnabled)
+	if p.DisconnectedModeOnOnly {
+		m[attributes.DisconnectedModeOnOnly] = strconv.FormatBool(p.DisconnectedModeOnOnly)
 	}
 
 	return m

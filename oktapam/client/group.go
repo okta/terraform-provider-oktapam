@@ -54,13 +54,13 @@ func (p ListGroupsParameters) toQueryParametersMap() map[string]string {
 		m[attributes.Contains] = p.Contains
 	}
 	if p.IncludeDeleted {
-		m["IncludeDeleted"] = strconv.FormatBool(p.IncludeDeleted)
+		m[attributes.IncludeDeleted] = strconv.FormatBool(p.IncludeDeleted)
 	}
 	if p.OnlyIncludeDeleted {
-		m["OnlyIncludeDeleted"] = strconv.FormatBool(p.OnlyIncludeDeleted)
+		m[attributes.OnlyIncludeDeleted] = strconv.FormatBool(p.OnlyIncludeDeleted)
 	}
 	if p.DisconnectedModeOnOnly {
-		m["DisconnectedModeOnOnly"] = strconv.FormatBool(p.DisconnectedModeOnOnly)
+		m[attributes.DisconnectedModeOnOnly] = strconv.FormatBool(p.DisconnectedModeOnOnly)
 	}
 
 	return m

@@ -2,10 +2,11 @@ package oktapam
 
 import (
 	"context"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/descriptions"
 	"strconv"
 	"time"
+
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/descriptions"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -42,10 +43,10 @@ func dataSourceProjectGroups() *schema.Resource {
 				Optional:    true,
 				Description: descriptions.FilterHasNoSelectors,
 			},
-			attributes.OfflineEnabled: { // TODO: update this after fixing endpoint
+			attributes.DisconnectedModeOnOnly: {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: descriptions.FilterOfflineEnabled,
+				Description: descriptions.FilterDisconnectedModeOnOnly,
 			},
 			// Return value
 			attributes.ProjectGroups: {
@@ -140,11 +141,11 @@ func dataSourceProjectGroupsRead(ctx context.Context, d *schema.ResourceData, m 
 	}
 	parameters.HasNoSelectors = hasNoSelectors
 
-	offlineEnabled, err := getOkBool(attributes.OfflineEnabled, d)
+	disconnectedModeOnOnly, err := getOkBool(attributes.DisconnectedModeOnOnly, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	parameters.OfflineEnabled = offlineEnabled
+	parameters.DisconnectedModeOnOnly = disconnectedModeOnOnly
 
 	assignmentsList, err := c.ListProjectGroups(ctx, project, parameters)
 	if err != nil {

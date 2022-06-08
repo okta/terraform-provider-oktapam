@@ -22,10 +22,10 @@ description: |-
 ### Optional
 
 - `create_server_group` (Boolean) If 'true', the results only include the ASA Project Groups that have 'create_server_group' field set to 'true'.
+- `disconnected_mode_on_only` (Boolean) If 'true', the results only include resources with disconnected mode enabled.
 - `has_no_selectors` (Boolean) If 'true', the results only include resources with empty label selectors.
 - `has_selectors` (Boolean) If 'true', the results only include resources with label selectors set.
 - `include_removed` (Boolean) If 'true', the results include removed resources.
-- `offline_enabled` (Boolean) If 'true', the results only include resources with disconnected mode enabled.
 
 ### Read-Only
 
