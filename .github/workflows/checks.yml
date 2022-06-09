@@ -67,4 +67,4 @@ jobs:
           url: ' https://hooks.slack.com/workflows/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'
           method: 'POST'
           customHeaders: '{"Content-Type": "application/json"}'
-          data: '{"build_link": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}", "compile_status": "${{ needs.check1.result }}", "unittest_status": "${{ needs.check2.result }}", "acctest_status": "${{ needs.check3.result }}", "doc_status": "${{ needs.check4.result }}"}'
+          data: '{"build_link": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}", "branch": "${{ github.ref_name }}" }'
