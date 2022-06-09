@@ -38,7 +38,7 @@ jobs:
         run: |
           ./scripts/ci-acceptance-tests.sh
         env:
-          # OKTAPAM_SECRET: ${{ secrets.OKTA_499446_OKTAPAM_SECRET }}
+          OKTAPAM_SECRET: ${{ secrets.OKTA_499446_OKTAPAM_SECRET }}
           OKTAPAM_KEY: ${{ secrets.OKTA_499446_OKTAPAM_KEY }}
           OKTAPAM_TEAM: ${{ secrets.OKTA_499446_OKTAPAM_TEAM }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
@@ -63,8 +63,7 @@ jobs:
       - name: Notify Slack
         uses: fjogeleit/http-request-action@v1
         with:
-          # NOTE: This webhook is only for testing purposes and will be rotated following usage
-          url: ' https://hooks.slack.com/workflows/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'
+          url: ${{ secrets.SLACK_WEBHOOK }}
           method: 'POST'
           customHeaders: '{"Content-Type": "application/json"}'
           data: '{"build_link": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}", "branch": "${{ github.ref_name }}" }'
