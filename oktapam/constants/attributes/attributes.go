@@ -26,7 +26,6 @@ const (
 	Name = "name"
 	NextUnixGID = "next_unix_gid"
 	NextUnixUID = "next_unix_uid"
-	OfflineEnabled = "offline_enabled" // NOTE: This is inconsistent, most other API endpoints use `disconnected_mode_on_only`.
 	OnlyIncludeDeleted = "only_include_deleted"
 	ProjectGroups = "project_groups"
 	ProjectName = "project_name"

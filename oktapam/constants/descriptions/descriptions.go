@@ -45,7 +45,6 @@ const (
 	FilterIncludeDeleted = "If 'true', the results include deleted resources."
 	FilterOnlyIncludeDeleted = "If 'true', the results only include deleted resources."
 	FilterIncludeRemoved = "If 'true', the results include removed resources."
-	FilterOfflineEnabled = "If 'true', the results only include resources with disconnected mode enabled." // NOTE: This is inconsistent, most other API endpoints use `disconnected_mode_on_only`.
 	FilterProjectName = "If a value is provided, the results are filtered to only contain resources belonging to the ASA Project."
 	FilterSelf = "If 'true', only lists the ASA Projects that the ASA User making this request has been assigned."
 
