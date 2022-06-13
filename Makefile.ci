@@ -53,7 +53,7 @@ ci-compile: ci-container
 		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C ${SRC_DIR} build
 
 .PHONY: ci-install
-ci-compile: ci-container
+ci-install: ci-container
 	docker run -a stderr -a stdout \
 		--label "com.buildkite.job-id=${BUILDKITE_JOB_ID}" \
 		-e BUILDKITE_BUILD_NUMBER \
