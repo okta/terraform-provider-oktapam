@@ -10,7 +10,7 @@ DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 
 cd "${DIR}/.."
-
+set -x
 # remove container first, if it happens to exist
 make -f Makefile.ci ci-remove-container || echo "Container doesn't exist. Continue."
 # now do install
