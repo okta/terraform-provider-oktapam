@@ -7,7 +7,13 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 
 cd "${DIR}/.."
 
-make -f Makefile.ci ci-install
-docker cp "${PROVIDER_BINARY}" /tmp
+# remove container first, if it happens to exist
 make -f Makefile.ci ci-remove-container
+# now do install
+make -f Makefile.ci ci-install
+# copy artifact to host
+docker cp "${PROVIDER_BINARY}" /tmp
+# remove container
+make -f Makefile.ci ci-remove-container
+# display contents of /tmp
 ls -al /tmp
