@@ -64,6 +64,9 @@ ci-install: ci-container
 		-e BUILDKITE_PIPELINE_SLUG \
 		-e BUILDKITE_JOB_ID \
 		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C ${SRC_DIR} install
+
+.PHONY: ci-artifact-copy
+ci-artifact-copy: ci-install
     docker cp "${INSTALL_CONTAINER_NAME}:${TEMP_DIR}/${PROVIDER_NAME}" /tmp
 
 .PHONY: ci-check-generate
