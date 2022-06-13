@@ -12,6 +12,7 @@ make -f Makefile.ci ci-remove-container || echo "Container doesn't exist. Contin
 # now do install
 make -f Makefile.ci ci-install
 # copy artifact to host
+xet -x
 docker cp "${INSTALL_CONTAINER_NAME}:${INSTALL_TARGET}/${PROVIDER_BINARY}" /tmp
 # remove container
 make -f Makefile.ci ci-remove-container
