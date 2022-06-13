@@ -9,7 +9,9 @@ cd "${DIR}/.."
 
 # remove container first, if it happens to exist
 make -f Makefile.ci ci-remove-container || echo "Container doesn't exist. Continue."
-# install and copy artifact to host
+# now do install
+make -f Makefile.ci ci-install
+# copy artifact to host
 make -f Makefile.ci ci-artifact-copy
 # remove container
 make -f Makefile.ci ci-remove-container

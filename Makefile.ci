@@ -66,7 +66,7 @@ ci-install: ci-container
 		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C ${SRC_DIR} install
 
 .PHONY: ci-artifact-copy
-ci-artifact-copy: ci-install
+ci-artifact-copy:
     docker exec --name "${INSTALL_CONTAINER_NAME}" ls -al ${TEMP_DIR}
     docker cp "${INSTALL_CONTAINER_NAME}:${TEMP_DIR}/${PROVIDER_NAME}" ${TEMP_DIR}
     ls -al ${TEMP_DIR}
