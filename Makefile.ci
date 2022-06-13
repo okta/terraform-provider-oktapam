@@ -67,7 +67,7 @@ ci-install: ci-container
 
 .PHONY: ci-artifact-copy
 ci-artifact-copy:
-	docker exec --name "${INSTALL_CONTAINER_NAME}" ls -al ${TEMP_DIR}
+	docker exec -d "${INSTALL_CONTAINER_NAME}" ls -al ${TEMP_DIR}
 
 .PHONY: ci-check-generate
 ci-check-generate: ci-container
