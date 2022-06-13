@@ -8,6 +8,7 @@ CI_CONTAINER_IIDFILE= ./build/ci-output/container.txt
 PROVIDER_NAME=terraform-provider-oktapam
 SRC_DIR=/src/${PROVIDER_NAME}
 TEMP_DIR=/tmp
+ARTIFACT_DIR=./artifacts
 INSTALL_CONTAINER_NAME=install_container
 
 #build the container from Dockerfile.ci
@@ -66,8 +67,8 @@ ci-install: ci-container
 		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C ${SRC_DIR} install
 
 .PHONY: ci-artifact-copy
-ci-artifact-copy:
-	docker cp "${INSTALL_CONTAINER_NAME}:${TEMP_DIR}/${PROVIDER_NAME}" ${TEMP_DIR}
+ci-artifact-copy: ci-install
+	docker cp "${INSTALL_CONTAINER_NAME}:${TEMP_DIR}/${PROVIDER_NAME}" ${ARTIFACT_DIR}
 
 .PHONY: ci-check-generate
 ci-check-generate: ci-container
