@@ -14,6 +14,10 @@ ci-container:
 	mkdir -p "./build/ci-output"
 	docker build -f Dockerfile.ci --iidfile ${CI_CONTAINER_IIDFILE} --build-arg APP_PATH=${SRC_DIR} .
 
+.PHONY: ci-remove-container
+ci-remove-container:
+	docker rm `cat ./build/ci-output/container.txt`
+
 .PHONY: ci-test
 ci-test: ci-container
 	docker run --rm=true -a stderr -a stdout \
@@ -47,6 +51,15 @@ ci-compile: ci-container
 		-e BUILDKITE_PIPELINE_SLUG \
 		-e BUILDKITE_JOB_ID \
 		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C ${SRC_DIR} build
+
+.PHONY: ci-install
+ci-compile: ci-container
+	docker run -a stderr -a stdout \
+		--label "com.buildkite.job-id=${BUILDKITE_JOB_ID}" \
+		-e BUILDKITE_BUILD_NUMBER \
+		-e BUILDKITE_PIPELINE_SLUG \
+		-e BUILDKITE_JOB_ID \
+		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C ${SRC_DIR} install
 
 .PHONY: ci-check-generate
 ci-check-generate: ci-container
