@@ -8,7 +8,7 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 cd "${DIR}/.."
 
 # remove container first, if it happens to exist
-make -f Makefile.ci ci-remove-container
+make -f Makefile.ci ci-remove-container || echo "Container doesn't exist. Continue."
 # now do install
 make -f Makefile.ci ci-install
 # copy artifact to host
