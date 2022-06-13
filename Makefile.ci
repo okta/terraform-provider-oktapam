@@ -5,7 +5,9 @@ CI_CONTAINER_IIDFILE= ./build/ci-output/container.txt
 # Note that for check-generate to work, the directory must be named
 # after the terraform provider due to the plugin using the base directory
 # as the terraform provider's name
-SRC_DIR= /src/terraform-provider-oktapam
+PROVIDER_NAME=terraform-provider-oktapam
+SRC_DIR=/src/${PROVIDER_NAME}
+TEMP_DIR=/tmp
 INSTALL_CONTAINER_NAME=install_container
 
 #build the container from Dockerfile.ci
@@ -62,6 +64,7 @@ ci-install: ci-container
 		-e BUILDKITE_PIPELINE_SLUG \
 		-e BUILDKITE_JOB_ID \
 		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C ${SRC_DIR} install
+    docker cp "${INSTALL_CONTAINER_NAME}:${TEMP_DIR}/${PROVIDER_NAME}" /tmp
 
 .PHONY: ci-check-generate
 ci-check-generate: ci-container
