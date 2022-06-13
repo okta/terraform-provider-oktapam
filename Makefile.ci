@@ -6,6 +6,7 @@ CI_CONTAINER_IIDFILE= ./build/ci-output/container.txt
 # after the terraform provider due to the plugin using the base directory
 # as the terraform provider's name
 SRC_DIR= /src/terraform-provider-oktapam
+INSTALL_CONTAINER_NAME=install_container
 
 #build the container from Dockerfile.ci
 .PHONY: ci-container
@@ -16,7 +17,7 @@ ci-container:
 
 .PHONY: ci-remove-container
 ci-remove-container:
-	docker rm `cat ./build/ci-output/container.txt`
+	docker rm "${INSTALL_CONTAINER_NAME}"
 
 .PHONY: ci-test
 ci-test: ci-container
@@ -56,6 +57,7 @@ ci-compile: ci-container
 ci-install: ci-container
 	docker run -a stderr -a stdout \
 		--label "com.buildkite.job-id=${BUILDKITE_JOB_ID}" \
+		--name "${INSTALL_CONTAINER_NAME}" \
 		-e BUILDKITE_BUILD_NUMBER \
 		-e BUILDKITE_PIPELINE_SLUG \
 		-e BUILDKITE_JOB_ID \
