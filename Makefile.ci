@@ -6,7 +6,7 @@ CI_CONTAINER_IIDFILE= ./build/ci-output/container.txt
 # after the terraform provider due to the plugin using the base directory
 # as the terraform provider's name
 SRC_DIR= /src/terraform-provider-oktapam
-INSTALL_CONTAINER_NAME=install_container
+export INSTALL_CONTAINER_NAME=install_container
 
 #build the container from Dockerfile.ci
 .PHONY: ci-container
