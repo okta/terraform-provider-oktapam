@@ -17,3 +17,5 @@ make -f Makefile.ci ci-artifact-copy
 make -f Makefile.ci ci-remove-container
 # display contents of artifact dir
 ls -al artifacts
+# upload artifact
+buildkite-agent artifact upload ./artifacts/*
