@@ -18,4 +18,4 @@ make -f Makefile.ci ci-remove-container
 # display contents of artifact dir
 ls -al artifacts
 # upload artifact
-buildkite-agent artifact upload ./artifacts/*
+buildkite-agent artifact upload ./artifacts/* "s3://${BUILDKITE_S3_ARTIFACT_EXCHANGE_BUCKET}/${BUILDKITE_PIPELINE_NAME}/"
