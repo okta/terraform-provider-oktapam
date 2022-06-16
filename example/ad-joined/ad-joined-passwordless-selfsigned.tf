@@ -1,7 +1,7 @@
 //Gateway is mandatory for AD-Joined
 // Separate gateway for AD Connection and RDP
 data "oktapam_gateway" "ad_gateway" {
-  id = "<ad_gateway_id>"
+  id = "db778975-1776-4057-8360-6b9488c8f528"
 }
 
 // Create self-signed certificate
@@ -31,15 +31,16 @@ resource "oktapam_project" "test_project" {
 }
 
 //Active Directory Connection with passwordless certificate configured in team settings
+//Active Directory Connection with passwordless certificate configured in team settings
 resource "oktapam_ad_connection" "testad" {
   name                        = "ad-connection"
   gateway_id                  = data.oktapam_gateway.ad_gateway.id
   domain                      = "dev-test.example.com"
-  service_user                = "ldap@dev-test"
-  service_user_secret         = "secret"
-  passwordless_enabled        = true // Boolean flag to indicate if passwordless feature is enabled. Other option is to implicitly set it if cert ifd provided
+  service_account_username    = "ldap@dev-test"
+  service_account_password    = "secret"
+  use_passwordless            = true // Boolean flag to indicate if passwordless feature is enabled. Other option is to implicitly set it if cert ifd provided
   passwordless_certificate_id = oktapam_ad_passwordless_certificate.self_signed.id
-  domain_controller           = ["dc1", "dc2"] //Optional: DC used to query the domain
+  domain_controller           = ["dc1.com", "dc2.com"] //Optional: DC used to query the domain
   depends_on = [
     oktapam_ad_passwordless_certificate.self_signed
   ]
@@ -59,32 +60,17 @@ resource "oktapam_ad_connection_task" "daily_job" {
   operating_system_attribute = var.ad_connection_task.operating_system_attribute
   bastion_attribute          = var.ad_connection_task.bastion_attribute
   alt_names_attributes       = var.ad_connection_task.alt_names_attributes
+  rule_assignments {
+    base_dn           = "ou=real,dc=dev-test,dc=sudo,dc=wtf"
+    ldap_query_filter = "(objectclass=computer)"
+    project_id        = "d7f82a2a-b547-49b3-b28f-8ebe948ad689"
+    priority          = 1
+  }
   depends_on = [
     oktapam_ad_connection.testad
   ]
 }
 
-#resource "oktapam_ad_connection_task_schedule" "daily-job-schedule" {
-#  server_sync_job_id = oktapam_ad_connection_task.hourly_job.id
-#  schedule_type      = "hourly" //Possible values hourly, daily, every 6 hours, 12 hours
-#  interval           = "1"
-#  depends_on = [
-#    oktapam_ad_connection_task.hourly_job
-#  ]
-#}
-
-//Each Job can have multiple sync rules with different priorities for server discovery
-resource "oktapam_ad_connection_task_rules" "rule1" {
-  server_sync_job_id  = oktapam_ad_connection_task.daily-job.id
-  name                = "rule1"
-  priority            = "1"
-  baseDN              = "ou=technology,dc=dev-test,dc=com"
-  ldapQuery           = "(objectCategory=Computer)"
-  assigned_project_id = oktapam_project.test-project.id
-  depends_on = [
-    oktapam_ad_connection_task.daily-job
-  ]
-}
 
 
 
