@@ -57,7 +57,7 @@ type ADRuleAssignment struct {
 
 type ADTaskSettingsSchedule struct {
 	Frequency    *int `json:"frequency"`
-	StartHourUTC *int `json:"startHourUTC"`
+	StartHourUTC *int `json:"start_hour_utc"`
 }
 
 func (adConn ADConnection) Exists() bool {
@@ -91,33 +91,38 @@ func (c OktaPAMClient) GetADConnection(ctx context.Context, id string) (*ADConne
 	return nil, createErrorForInvalidCode(resp, 200, 404)
 }
 
-func (c OktaPAMClient) CreateADConnection(ctx context.Context, adConn *ADConnection) error {
+func (c OktaPAMClient) CreateADConnection(ctx context.Context, adConn ADConnection) (*ADConnection, error) {
 	// Create the group on the api server specified by group
 	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections", url.PathEscape(c.Team))
 	logging.Tracef("making POST request to %s", requestURL)
-	resp, err := c.CreateBaseRequest(ctx).SetBody(adConn).SetResult(adConn).Post(requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetBody(adConn).SetResult(&ADConnection{}).Post(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
-		return err
+		return nil, err
 	}
+	if _, err := checkStatusCode(resp, 201); err != nil {
+		logging.Tracef("unexpected status code: %d", resp.StatusCode())
+		return nil, err
+	}
+	createdADConnection := resp.Result().(*ADConnection)
 
-	//if resp.StatusCode() == 201 {
-	//	adConn = resp.Result().(*ADConnection)
-	//}
-	_, err = checkStatusCode(resp, 201)
-	return err
+	return createdADConnection, nil
 }
 
-func (c OktaPAMClient) UpdateADConnection(ctx context.Context, adConnId string, adConn *ADConnection) error {
+func (c OktaPAMClient) UpdateADConnection(ctx context.Context, adConnId string, adConn ADConnection) (*ADConnection, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s", url.PathEscape(c.Team), url.PathEscape(adConnId))
 	logging.Tracef("making PUT request to %s", requestURL)
-	resp, err := c.CreateBaseRequest(ctx).SetBody(*adConn).Put(requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetBody(adConn).SetResult(&ADConnection{}).Put(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
-		return err
+		return nil, err
 	}
-	_, err = checkStatusCode(resp, 204)
-	return err
+	if _, err := checkStatusCode(resp, 204); err != nil {
+		logging.Tracef("unexpected status code: %d", resp.StatusCode())
+		return nil, err
+	}
+	updatedADConnection := resp.Result().(*ADConnection)
+	return updatedADConnection, nil
 }
 
 func (c OktaPAMClient) DeleteADConnection(ctx context.Context, adConnId string) error {
@@ -157,34 +162,43 @@ func (c OktaPAMClient) GetADTaskSettings(ctx context.Context, adConnId string, a
 	return nil, createErrorForInvalidCode(resp, 200, 404)
 }
 
-func (c OktaPAMClient) CreateADTaskSettings(ctx context.Context, adConnId string, adTaskSettings *ADTaskSettings) error {
+func (c OktaPAMClient) CreateADTaskSettings(ctx context.Context, adConnId string, adTaskSettings ADTaskSettings) (*ADTaskSettings, error) {
 	// Create the group on the api server specified by group
 	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s/task_settings", url.PathEscape(c.Team),
 		url.PathEscape(adConnId))
 	logging.Tracef("making POST request to %s", requestURL)
-	resp, err := c.CreateBaseRequest(ctx).SetBody(adTaskSettings).SetResult(adTaskSettings).Post(requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetBody(adTaskSettings).SetResult(&ADTaskSettings{}).Post(requestURL)
 
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
-		return err
+		return nil, err
 	}
-	_, err = checkStatusCode(resp, 201)
-	return err
+	if _, err := checkStatusCode(resp, 201); err != nil {
+		logging.Tracef("unexpected status code: %d", resp.StatusCode())
+		return nil, err
+	}
+
+	createdADTaskSettings := resp.Result().(*ADTaskSettings)
+	return createdADTaskSettings, nil
 }
 
-func (c OktaPAMClient) UpdateADTaskSettings(ctx context.Context, adConnId string, adTaskSettingsId string, adTaskSettings *ADTaskSettings) error {
+func (c OktaPAMClient) UpdateADTaskSettings(ctx context.Context, adConnId string, adTaskSettingsId string, adTaskSettings ADTaskSettings) (*ADTaskSettings, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s/task_settings/%s", url.PathEscape(c.Team),
 		url.PathEscape(adConnId), url.PathEscape(adTaskSettingsId))
 	logging.Tracef("making PUT request to %s", requestURL)
-	resp, err := c.CreateBaseRequest(ctx).SetBody(adTaskSettings).SetResult(adTaskSettings).Put(requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetBody(adTaskSettings).SetResult(&ADTaskSettings{}).Put(requestURL)
 
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
-		return err
+		return nil, err
+	}
+	if _, err := checkStatusCode(resp, 204); err != nil {
+		logging.Tracef("unexpected status code: %d", resp.StatusCode())
+		return nil, err
 	}
 
-	_, err = checkStatusCode(resp, 204)
-	return err
+	updatedADTaskSettings := resp.Result().(*ADTaskSettings)
+	return updatedADTaskSettings, nil
 }
 
 func (c OktaPAMClient) DeleteADTaskSettings(ctx context.Context, adConnId string, adTaskSettingsId string) error {
