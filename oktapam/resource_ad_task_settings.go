@@ -160,17 +160,106 @@ func resourceADTaskSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 	adConnId := d.Get(attributes.ADConnectionID).(string)
 
 	//Build ADTaskSettings Api Object
-	adTaskSettings := expandADTaskSettings(d)
+	adTaskSettingsReq := expandADTaskSettings(d)
 
 	//Call api client
-	err := c.CreateADTaskSettings(ctx, adConnId, &adTaskSettings)
+	if createdADTS, err := c.CreateADTaskSettings(ctx, adConnId, adTaskSettingsReq); err != nil {
+		return diag.FromErr(err)
+	} else if createdADTS == nil {
+		d.SetId("")
+	} else {
+		//Set returned id
+		d.SetId(*createdADTS.ID)
+	}
+
+	return resourceADTaskSettingsRead(ctx, d, m)
+}
+
+func resourceADTaskSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diags diag.Diagnostics
+	c := m.(client.OktaPAMClient)
+
+	id := d.Id()
+	adConnId := d.Get(attributes.ADConnectionID).(string)
+
+	adTaskSettings, err := c.GetADTaskSettings(ctx, adConnId, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	//Set returned id
-	d.SetId(*adTaskSettings.ID)
+	if adTaskSettings != nil && utils.IsNonEmpty(adTaskSettings.ID) {
+		for key, value := range flattenADTaskSettings(adTaskSettings) {
+			_ = d.Set(key, value)
+		}
+	} else {
+		logging.Infof("ADTaskSettings %s does not exist", id)
+	}
+
+	return diags
+}
+
+func resourceADTaskSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(client.OktaPAMClient)
+	taskSettingsId := d.Id()
+	adConnId := d.Get(attributes.ADConnectionID).(string)
+
+	if d.HasChangesExcept(attributes.Name,
+		attributes.HostnameAttribute,
+		attributes.AccessAddressAttribute,
+		attributes.OSAttribute,
+		attributes.BastionAttribute,
+		attributes.AltNamesAttributes,
+		attributes.AdditionalAttributeMapping,
+		attributes.ADRuleAssignments) {
+		//If deactivated
+		if _, new := d.GetChange(attributes.IsActive); d.HasChange(attributes.IsActive) && new != nil && !new.(bool) {
+			//Deactivate task
+			err := c.DeactivateADTaskSettings(ctx, adConnId, taskSettingsId)
+			if err != nil {
+				return diag.FromErr(err)
+			}
+		} else if d.HasChanges(attributes.Frequency,
+			attributes.IsActive,
+			attributes.StartHourUTC) {
+			schedule := client.ADTaskSettingsSchedule{
+				Frequency:    getIntPtr(attributes.Frequency, d, false),
+				StartHourUTC: getIntPtr(attributes.StartHourUTC, d, false),
+			}
+			err := c.UpdateADTaskSettingsSchedule(ctx, adConnId, taskSettingsId, schedule)
+			if err != nil {
+				return diag.FromErr(err)
+			}
+		}
+	} else {
+		//ADTask Settings is immutable and update will create new
+		adTaskSettingsReq := expandADTaskSettings(d)
+		//Call api client
+		if updatedADTS, err := c.UpdateADTaskSettings(ctx, adConnId, taskSettingsId, adTaskSettingsReq); err != nil {
+			return diag.FromErr(err)
+		} else if updatedADTS == nil {
+			d.SetId("")
+		} else {
+			//Set returned id
+			d.SetId(*updatedADTS.ID)
+		}
+	}
+
 	return resourceADTaskSettingsRead(ctx, d, m)
+}
+
+func resourceADTaskSettingsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diags diag.Diagnostics
+	c := m.(client.OktaPAMClient)
+	taskSettingsId := d.Id()
+	adConnId := d.Get(attributes.ADConnectionID).(string)
+
+	err := c.DeleteADTaskSettings(ctx, adConnId, taskSettingsId)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	d.SetId("")
+	return diags
 }
 
 func expandADTaskSettings(d *schema.ResourceData) client.ADTaskSettings {
@@ -316,91 +405,4 @@ func flattenADTaskSettings(taskSettings *client.ADTaskSettings) map[string]inter
 	}
 
 	return m
-}
-
-func resourceADTaskSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
-
-	id := d.Id()
-	adConnId := d.Get(attributes.ADConnectionID).(string)
-
-	adTaskSettings, err := c.GetADTaskSettings(ctx, adConnId, id)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	if adTaskSettings != nil && utils.IsNonEmpty(adTaskSettings.ID) {
-		for key, value := range flattenADTaskSettings(adTaskSettings) {
-			_ = d.Set(key, value)
-		}
-	} else {
-		logging.Infof("ADTaskSettings %s does not exist", id)
-	}
-
-	return diags
-}
-
-func resourceADTaskSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
-	taskSettingsId := d.Id()
-	adConnId := d.Get(attributes.ADConnectionID).(string)
-
-	if d.HasChangesExcept(attributes.Name,
-		attributes.Frequency,
-		attributes.IsActive,
-		attributes.StartHourUTC,
-		attributes.HostnameAttribute,
-		attributes.AccessAddressAttribute,
-		attributes.OSAttribute,
-		attributes.BastionAttribute,
-		attributes.AltNamesAttributes,
-		attributes.AdditionalAttributeMapping,
-		attributes.ADRuleAssignments) {
-		//If deactivated
-		if _, new := d.GetChange(attributes.IsActive); d.HasChange(attributes.IsActive) && new != nil && !new.(bool) {
-			//Deactivate task
-			err := c.DeactivateADTaskSettings(ctx, adConnId, taskSettingsId)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-		} else if d.HasChanges(attributes.Frequency,
-			attributes.IsActive,
-			attributes.StartHourUTC) {
-			schedule := client.ADTaskSettingsSchedule{
-				Frequency:    getIntPtr(attributes.Frequency, d, false),
-				StartHourUTC: getIntPtr(attributes.StartHourUTC, d, false),
-			}
-			err := c.UpdateADTaskSettingsSchedule(ctx, adConnId, taskSettingsId, schedule)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-		}
-	} else {
-		//ADTask Settings is immutable and update will create new
-		adTaskSettings := expandADTaskSettings(d)
-		err := c.UpdateADTaskSettings(ctx, adConnId, taskSettingsId, &adTaskSettings)
-		if err != nil {
-			return diag.FromErr(err)
-		} else {
-			d.SetId(*adTaskSettings.ID)
-		}
-	}
-
-	return resourceADTaskSettingsRead(ctx, d, m)
-}
-
-func resourceADTaskSettingsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
-	taskSettingsId := d.Id()
-	adConnId := d.Get(attributes.ADConnectionID).(string)
-
-	err := c.DeleteADTaskSettings(ctx, adConnId, taskSettingsId)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	d.SetId("")
-	return diags
 }

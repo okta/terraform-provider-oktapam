@@ -85,13 +85,13 @@ func resourceADConnection() *schema.Resource {
 func resourceADConnectionCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	//Build ADConnection
+	//Build ADConnection API Request Object
 	var domainControllers []string
 	if v, ok := d.GetOk(attributes.DomainControllers); ok && v.(*schema.Set).Len() > 0 {
 		domainControllers = utils.ExpandStringSet(v.(*schema.Set))
 	}
 
-	adConnection := client.ADConnection{
+	adConnectionReq := client.ADConnection{
 		Name:                   getStringPtr(attributes.Name, d, false),
 		GatewayID:              getStringPtr(attributes.GatewayID, d, false),
 		Domain:                 getStringPtr(attributes.Domain, d, false),
@@ -103,13 +103,15 @@ func resourceADConnectionCreate(ctx context.Context, d *schema.ResourceData, m i
 	}
 
 	//Call api client
-	err := c.CreateADConnection(ctx, &adConnection)
-	if err != nil {
+	if createdADConn, err := c.CreateADConnection(ctx, adConnectionReq); err != nil {
 		return diag.FromErr(err)
+	} else if createdADConn == nil {
+		d.SetId("")
+	} else {
+		//Set returned id
+		d.SetId(*createdADConn.ID)
 	}
 
-	//Set returned id
-	d.SetId(*adConnection.ID)
 	return resourceADConnectionRead(ctx, d, m)
 }
 
@@ -146,7 +148,8 @@ func resourceADConnectionUpdate(ctx context.Context, d *schema.ResourceData, m i
 			domainControllers = utils.ExpandStringSet(v.(*schema.Set))
 		}
 
-		adConnection := client.ADConnection{
+		//Build API Client Request Object
+		adConnectionReq := client.ADConnection{
 			Name:                   getStringPtr(attributes.Name, d, false),
 			GatewayID:              getStringPtr(attributes.GatewayID, d, false),
 			Domain:                 getStringPtr(attributes.Domain, d, false),
@@ -157,7 +160,7 @@ func resourceADConnectionUpdate(ctx context.Context, d *schema.ResourceData, m i
 			DomainControllers:      domainControllers,
 		}
 
-		err := c.UpdateADConnection(ctx, adConnId, &adConnection)
+		_, err := c.UpdateADConnection(ctx, adConnId, adConnectionReq)
 		if err != nil {
 			return diag.FromErr(err)
 		}
