@@ -2,8 +2,9 @@ package oktapam
 
 import (
 	"fmt"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"testing"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -15,7 +16,7 @@ func TestAccDatasourceServerEnrollmentToken(t *testing.T) {
 	description2 := fmt.Sprintf("Datasource Acceptance Test Token - 2: %s", randSeq(10))
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
 		Steps: []resource.TestStep{
 			{
