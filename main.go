@@ -4,7 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam"
+	"github.com/okta/terraform-provider-oktapam/oktapam"
 )
 
 // Run the docs generation tool, check its repository for more information on how it works and how docs

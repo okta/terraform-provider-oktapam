@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
+	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
+	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 	"github.com/tomnomnom/linkheader"
 )
 

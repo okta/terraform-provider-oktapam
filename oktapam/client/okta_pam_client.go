@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/version"
+	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
+	"github.com/okta/terraform-provider-oktapam/oktapam/version"
 )
 
 const OKTAPAM_TRUSTED_DOMAINS = "scaleft.com,okta.com"
