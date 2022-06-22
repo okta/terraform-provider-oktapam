@@ -2,7 +2,7 @@ package oktapam
 
 import (
 	"fmt"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"strings"
 	"testing"
 

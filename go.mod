@@ -1,4 +1,4 @@
-module github.com/terraform-providers/terraform-provider-oktapam
+module github.com/okta/terraform-provider-oktapam
 
 go 1.17
 

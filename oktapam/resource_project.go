@@ -6,11 +6,11 @@ import (
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/descriptions"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
+	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
+	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 )
 
 func resourceProject() *schema.Resource {
