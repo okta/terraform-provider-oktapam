@@ -35,7 +35,7 @@ type GatewaySetupTokenLabelDetails struct {
 func (t GatewaySetupToken) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{})
 
-	m[attributes.Description] = t.Description
+	m[attributes.Description] = *t.Description
 
 	if t.ID != nil {
 		m[attributes.ID] = *t.ID
@@ -48,7 +48,7 @@ func (t GatewaySetupToken) ToResourceMap() map[string]interface{} {
 	}
 
 	if t.Token != nil {
-		m[attributes.Token] = t.Token
+		m[attributes.Token] = *t.Token
 	}
 
 	return m

@@ -3,6 +3,7 @@ package oktapam
 import (
 	"context"
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
@@ -42,6 +43,11 @@ func resourceGatewaySetupToken() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 				Description: descriptions.Labels,
+			},
+			attributes.Token: {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: descriptions.Token,
 			},
 		},
 		Importer: &schema.ResourceImporter{
