@@ -3,8 +3,9 @@ package oktapam
 import (
 	"context"
 	"fmt"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"testing"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -32,9 +33,9 @@ func TestAccProjectGroup(t *testing.T) {
 		CreateServerGoup: true,
 	}
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		ProviderFactories:    testAccProviders,
-		CheckDestroy: testAccProjectGroupCheckDestroy(initialProjectGroup),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviders,
+		CheckDestroy:      testAccProjectGroupCheckDestroy(initialProjectGroup),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccProjectGroupCreateConfig(initialProjectGroup),

@@ -2,10 +2,11 @@ package oktapam
 
 import (
 	"context"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 	"strconv"
 	"time"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -51,6 +52,11 @@ func dataSourceGatewaySetupTokens() *schema.Resource {
 							},
 							Computed:    true,
 							Description: descriptions.Labels,
+						},
+						attributes.Token: {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: descriptions.Token,
 						},
 					},
 				},

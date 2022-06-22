@@ -3,9 +3,10 @@ package client
 import (
 	"context"
 	"fmt"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"net/url"
 	"strings"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 	"github.com/tomnomnom/linkheader"
@@ -20,6 +21,11 @@ type GatewaySetupToken struct {
 	RegistrationType *string                        `json:"registration_type"`
 	CreatedAt        *string                        `json:"created_at,omitempty"`
 	Details          *GatewaySetupTokenLabelDetails `json:"details,omitempty"`
+	Token            *string                        `json:"token,omitempty"`
+}
+
+type GatewaySetupTokenValue struct {
+	Token *string `json:"token,omitempty"`
 }
 
 type GatewaySetupTokenLabelDetails struct {
@@ -29,7 +35,7 @@ type GatewaySetupTokenLabelDetails struct {
 func (t GatewaySetupToken) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{})
 
-	m[attributes.Description] = t.Description
+	m[attributes.Description] = *t.Description
 
 	if t.ID != nil {
 		m[attributes.ID] = *t.ID
@@ -39,6 +45,10 @@ func (t GatewaySetupToken) ToResourceMap() map[string]interface{} {
 	}
 	if t.Details != nil {
 		m[attributes.Labels] = t.Details.Labels
+	}
+
+	if t.Token != nil {
+		m[attributes.Token] = *t.Token
 	}
 
 	return m
@@ -94,6 +104,16 @@ func (c OktaPAMClient) ListGatewaySetupTokens(ctx context.Context, descriptionCo
 		}
 	}
 
+	// Retrieve token values for each resource
+	for _, token := range tokens {
+		value, err := c.GetGatewaySetupTokenValue(ctx, *token.ID)
+		if err != nil {
+			logging.Errorf("received error while retrieving token value for token id %s", *token.ID)
+			return nil, err
+		}
+		token.Token = value.Token
+	}
+
 	return tokens, nil
 }
 
@@ -116,6 +136,37 @@ func (c OktaPAMClient) GetGatewaySetupToken(ctx context.Context, id string) (*Ga
 	}
 
 	token := resp.Result().(*GatewaySetupToken)
+
+	// Retrieve token value
+	value, err := c.GetGatewaySetupTokenValue(ctx, *token.ID)
+	if err != nil {
+		logging.Errorf("received error while retrieving token value for token id %s", *token.ID)
+		return nil, err
+	}
+	token.Token = value.Token
+
+	return token, nil
+}
+
+func (c OktaPAMClient) GetGatewaySetupTokenValue(ctx context.Context, id string) (*GatewaySetupTokenValue, error) {
+	if id == "" {
+		return nil, fmt.Errorf("supplied blank gateway setup token id")
+	}
+	requestURL := fmt.Sprintf("/v1/teams/%s/gateway_setup_tokens/%s/token", url.PathEscape(c.Team), url.PathEscape(id))
+
+	logging.Tracef("making GET request to %s", requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetResult(&GatewaySetupTokenValue{}).Get(requestURL)
+	if err != nil {
+		logging.Errorf("received error while making request to %s", requestURL)
+		return nil, err
+	}
+	if statusCode, err := checkStatusCode(resp, 200, 404); err != nil {
+		return nil, err
+	} else if statusCode == 404 {
+		return nil, nil
+	}
+
+	token := resp.Result().(*GatewaySetupTokenValue)
 	return token, nil
 }
 

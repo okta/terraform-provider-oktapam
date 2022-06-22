@@ -24,5 +24,6 @@ A token for ASA Gateway enrollment.
 
 - `created_at` (String) The UTC time of resource deletion. Format is `2022-01-01 00:00:00 +0000 UTC`.
 - `id` (String) The ID of this resource.
+- `token` (String) The secret used for resource enrollment.
 
 

@@ -3,9 +3,10 @@ package oktapam
 import (
 	"context"
 	"fmt"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"strings"
 	"testing"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -28,9 +29,9 @@ func TestAccGatewaySetupToken(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		ProviderFactories:    testAccProviders,
-		CheckDestroy: testAccGatewaySetupTokenCheckDestroy(setupToken),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviders,
+		CheckDestroy:      testAccGatewaySetupTokenCheckDestroy(setupToken),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccGatewaySetupTokenCreateConfig(setupToken),
