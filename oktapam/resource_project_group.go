@@ -3,9 +3,10 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/descriptions"
-	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -234,6 +235,14 @@ func parseProjectGroupResourceID(resourceId string) (string, string, error) {
 	split := strings.Split(resourceId, "|")
 	if len(split) != 2 {
 		return "", "", fmt.Errorf("oktapam_project_group id must be in the format of <project name>|<group name>, received: %s", resourceId)
+	}
+	return split[0], split[1], nil
+}
+
+func parseGroupUserResourceID(resourceId string) (string, string, error) {
+	split := strings.Split(resourceId, "|")
+	if len(split) != 2 {
+		return "", "", fmt.Errorf("oktapam_group_user id must be in the format of <group name>|<user name>, received: %s", resourceId)
 	}
 	return split[0], split[1], nil
 }
