@@ -1,12 +1,12 @@
-HOSTNAME=hashicorp.com
-NAMESPACE=okta
+HOSTNAME=okta.com
+NAMESPACE=pam
 NAME=oktapam
 BINARY=terraform-provider-${NAME}
-VERSION=0.1.0
+VERSION=0.1.2
 OS_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
 PLUGIN_DIR=~/.terraform.d/plugins
 
-.DEFAULT_GOAL := install
+.DEFAULT_GOAL := build
 
 build:
 	go build -o ${BINARY}
@@ -28,7 +28,7 @@ release:
 
 install: build
 	mkdir -p ${PLUGIN_DIR}/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
-	mv ${BINARY} ${PLUGIN_DIR}/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
+	cp ${BINARY} ${PLUGIN_DIR}/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
 
 link_legacy:
 	mkdir -p ${PLUGIN_DIR}
