@@ -1,6 +1,8 @@
 package attributes
 
 const (
+	Claims                  = "claims"
+	ClusterSelector         = "cluster_selector"
 	Contains                = "contains"
 	CreateServerGroup       = "create_server_group"
 	CreateServerUsers       = "create_server_users"

@@ -68,7 +68,7 @@ func Provider() *schema.Provider {
 			providerGatewaySetupTokenKey:     resourceGatewaySetupToken(),
 			providerKubernetesClusterKey:     resourceKubernetesCluster(),
 			//providerKubernetesClusterConnectionKey: resourceKubernetesClusterConnection(),
-			//providerKubernetesClusterGroupKey:      resourceKubernetesClusterGroup(),
+			providerKubernetesClusterGroupKey: resourceKubernetesClusterGroup(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{

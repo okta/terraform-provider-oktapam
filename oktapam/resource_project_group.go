@@ -102,12 +102,12 @@ func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m i
 	}
 
 	projectGroup := client.ProjectGroup{
-		Project:          getStringPtr(attributes.ProjectName, d, true),
-		Group:            getStringPtr(attributes.GroupName, d, true),
-		ServerAccess:     serverAccess,
-		ServerAdmin:      serverAdmin,
-		CreateServerGoup: createServerGroup,
-		ServersSelector:  serversSelectorString,
+		Project:           getStringPtr(attributes.ProjectName, d, true),
+		Group:             getStringPtr(attributes.GroupName, d, true),
+		ServerAccess:      serverAccess,
+		ServerAdmin:       serverAdmin,
+		CreateServerGroup: createServerGroup,
+		ServersSelector:   serversSelectorString,
 	}
 
 	err = c.CreateProjectGroup(ctx, projectGroup)
@@ -145,14 +145,16 @@ func resourceProjectGroupRead(ctx context.Context, d *schema.ResourceData, m int
 			d.SetId("")
 		} else {
 			d.SetId(createProjectGroupResourceID(*projectGroup.Project, *projectGroup.Group))
-			attributes, err := projectGroup.ToResourceMap()
+			attrs, err := projectGroup.ToResourceMap()
 			if err != nil {
 				return diag.FromErr(err)
 			}
 
-			for key, value := range attributes {
+			for key, value := range attrs {
 				if _, ok := ignorableValues[key]; !ok {
-					d.Set(key, value)
+					if err := d.Set(key, value); err != nil {
+						return diag.FromErr(err)
+					}
 				}
 			}
 		}

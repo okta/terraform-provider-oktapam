@@ -4,6 +4,8 @@ const (
 	// Descriptions -- conventions from API docs
 
 	// Attribute Descriptions
+	ClusterGroupClaims      = "A map of claims to be given to users in this Cluster Group."
+	ClusterSelector         = "A label selector to used to match Kubernetes clusters."
 	CreateServerGroup       = "If 'true', `sftd` (ASA Server Agent) creates a corresponding local (unix or windows) group in the ASA Project's servers."
 	CreateServerUsers       = "If 'true', `sftd` (ASA Server Agent) creates corresponding local (unix or windows) user accounts in the ASA Project's servers."
 	CreatedAt               = "The UTC time of resource deletion. Format is `2022-01-01 00:00:00 +0000 UTC`."
@@ -53,10 +55,11 @@ const (
 	FilterSelf                   = "If 'true', only lists the ASA Projects that the ASA User making this request has been assigned."
 
 	// Resource Descriptions -- resources are dynamic, and state is kept up to date on POST / PUT / DELETE
-	ResourceGatewaySetupToken     = "A token for ASA Gateway enrollment."
-	ResourceGroup                 = "A set of ASA Users."
-	ResourceKubernetesCluster     = "A Kubernetes cluster."
-	ResourceServerEnrollmentToken = "A token for ASA Server enrollment."
+	ResourceGatewaySetupToken      = "A token for ASA Gateway enrollment."
+	ResourceGroup                  = "A set of ASA Users."
+	ResourceKubernetesCluster      = "A Kubernetes cluster."
+	ResourceKubernetesClusterGroup = "A mapping of Kubernetes cluster to Project Group."
+	ResourceServerEnrollmentToken  = "A token for ASA Server enrollment."
 
 	// Data Source Descriptions -- sources are read-only, fetched on LIST
 	SourceGatewaySetupTokens     = "A list of tokens for ASA Gateway enrollment, corresponding to an ASA Team."

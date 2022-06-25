@@ -112,19 +112,6 @@ func resourceKubernetesClusterRead(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
-func resourceKubernetesClusterDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
-
-	id := d.Id()
-
-	if err := c.DeleteKubernetesCluster(ctx, id); err != nil {
-		return diag.FromErr(err)
-	}
-
-	d.SetId("")
-	return nil
-}
-
 func resourceKubernetesClusterUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	id := d.Id()
@@ -149,5 +136,18 @@ func resourceKubernetesClusterUpdate(ctx context.Context, d *schema.ResourceData
 		}
 	}
 
+	return nil
+}
+
+func resourceKubernetesClusterDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(client.OktaPAMClient)
+
+	id := d.Id()
+
+	if err := c.DeleteKubernetesCluster(ctx, id); err != nil {
+		return diag.FromErr(err)
+	}
+
+	d.SetId("")
 	return nil
 }
