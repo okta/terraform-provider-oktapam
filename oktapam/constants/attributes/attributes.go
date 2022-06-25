@@ -2,6 +2,7 @@ package attributes
 
 const (
 	Claims                  = "claims"
+	ClusterID               = "cluster_id"
 	ClusterSelector         = "cluster_selector"
 	Contains                = "contains"
 	CreateServerGroup       = "create_server_group"

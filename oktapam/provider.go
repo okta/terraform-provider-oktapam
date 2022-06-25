@@ -61,14 +61,14 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			providerProjectKey:               resourceProject(),
-			providerGroupKey:                 resourceGroup(),
-			providerServerEnrollmentTokenKey: resourceServerEnrollmentToken(),
-			providerProjectGroupKey:          resourceProjectGroup(),
-			providerGatewaySetupTokenKey:     resourceGatewaySetupToken(),
-			providerKubernetesClusterKey:     resourceKubernetesCluster(),
-			//providerKubernetesClusterConnectionKey: resourceKubernetesClusterConnection(),
-			providerKubernetesClusterGroupKey: resourceKubernetesClusterGroup(),
+			providerProjectKey:                     resourceProject(),
+			providerGroupKey:                       resourceGroup(),
+			providerServerEnrollmentTokenKey:       resourceServerEnrollmentToken(),
+			providerProjectGroupKey:                resourceProjectGroup(),
+			providerGatewaySetupTokenKey:           resourceGatewaySetupToken(),
+			providerKubernetesClusterKey:           resourceKubernetesCluster(),
+			providerKubernetesClusterConnectionKey: resourceKubernetesClusterConnection(),
+			providerKubernetesClusterGroupKey:      resourceKubernetesClusterGroup(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
