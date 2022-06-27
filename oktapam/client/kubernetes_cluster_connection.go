@@ -45,7 +45,7 @@ func (c OktaPAMClient) CreateKubernetesClusterConnection(ctx context.Context, cl
 	}
 
 	createdConnection := resp.Result().(*KubernetesClusterConnection)
-
+	createdConnection.ID = &clusterID
 	return createdConnection, nil
 }
 
@@ -70,6 +70,7 @@ func (c OktaPAMClient) GetKubernetesClusterConnection(ctx context.Context, clust
 	}
 
 	clusterConnection := resp.Result().(*KubernetesClusterConnection)
+	clusterConnection.ID = &clusterID
 
 	return clusterConnection, nil
 }

@@ -24,6 +24,11 @@ func resourceKubernetesClusterGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			attributes.GroupID: {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: descriptions.GroupID,
+			},
 			attributes.GroupName: {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -46,8 +51,7 @@ func resourceKubernetesClusterGroup() *schema.Resource {
 
 func resourceKubernetesClustGroupCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
-
-	groupID := getStringPtr(attributes.GroupID, d, false)
+	groupName := getStringPtr(attributes.GroupName, d, true)
 	clusterSelector := getStringPtr(attributes.ClusterSelector, d, true)
 
 	claims := d.Get(attributes.Claims).(map[string]interface{})
@@ -59,7 +63,7 @@ func resourceKubernetesClustGroupCreate(ctx context.Context, d *schema.ResourceD
 	}
 
 	clusterGroupSpec := client.KubernetesClusterGroup{
-		GroupName:       groupID,
+		GroupName:       groupName,
 		ClusterSelector: clusterSelector,
 		Claims:          claimsMap,
 	}

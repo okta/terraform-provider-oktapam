@@ -19,13 +19,14 @@ func resourceKubernetesClusterConnection() *schema.Resource {
 		UpdateContext: resourceKubernetesClusterConnectionUpdate,
 		Description:   descriptions.ResourceKubernetesClusterConnection,
 		Schema: map[string]*schema.Schema{
-			attributes.ID: {
+			attributes.ID: { //TODO(ja) fix me - clusterid vs id
 				Type:     schema.TypeString,
 				Computed: true,
 			},
 			attributes.ClusterID: {
 				Type:        schema.TypeString,
 				Computed:    false,
+				Required:    true,
 				ForceNew:    true,
 				Description: descriptions.KubernetesClusterID,
 			},
