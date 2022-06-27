@@ -2,6 +2,8 @@ package utils
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -54,10 +56,10 @@ func ExpandStringSet(v *schema.Set) []string {
 
 func ExpandStringList(vI []interface{}) []string {
 	vs := make([]string, len(vI))
-	for _, v := range vI {
+	for idx, v := range vI {
 		val, ok := v.(string)
 		if ok && val != "" {
-			vs = append(vs, val)
+			vs[idx] = val
 		}
 	}
 	return vs
@@ -89,4 +91,44 @@ func Contains(s []string, e string) bool {
 		}
 	}
 	return false
+}
+
+type checkResourceExistsFunc func(string) (bool, error)
+
+func CheckResourceExists(name string, checkResourceExists checkResourceExistsFunc) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		resNotFoundErr := fmt.Errorf("resource not found: %s", name)
+		// retrieve the resource by name from the state
+		rs, ok := s.RootModule().Resources[name]
+		if !ok {
+			return resNotFoundErr
+		}
+		ID := rs.Primary.ID
+		exist, err := checkResourceExists(ID)
+		if err != nil {
+			return err
+		} else if !exist {
+			return resNotFoundErr
+		}
+		return nil
+	}
+}
+
+func CreateCheckResourceDestroy(typeName string, checkResourceExists checkResourceExistsFunc) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		for _, rs := range s.RootModule().Resources {
+			if rs.Type != typeName {
+				continue
+			}
+			ID := rs.Primary.ID
+			exists, err := checkResourceExists(ID)
+			if err != nil {
+				return err
+			}
+			if exists {
+				return fmt.Errorf("resource still exists, ID: %s", ID)
+			}
+		}
+		return nil
+	}
 }

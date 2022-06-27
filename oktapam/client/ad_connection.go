@@ -3,7 +3,10 @@ package client
 import (
 	"context"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
+	"github.com/tomnomnom/linkheader"
 	"net/url"
+	"strconv"
 
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
@@ -60,6 +63,50 @@ type ADTaskSettingsSchedule struct {
 	StartHourUTC *int `json:"start_hour_utc"`
 }
 
+type ListADConnectionsParameters struct {
+	GatewayID          string
+	CertificateID      string
+	IncludeCertDetails bool
+}
+
+type ADConnectionsListResponse struct {
+	ADConnections []ADConnection `json:"list"`
+}
+
+func (adConn ADConnection) ToResourceMap() map[string]interface{} {
+	m := make(map[string]interface{})
+
+	if adConn.Name != nil {
+		m[attributes.Name] = *adConn.Name
+	}
+	if adConn.ID != nil {
+		m[attributes.ID] = *adConn.ID
+	}
+	if adConn.GatewayID != nil {
+		m[attributes.GatewayID] = *adConn.GatewayID
+	}
+	if adConn.Domain != nil {
+		m[attributes.Domain] = *adConn.Domain
+	}
+	if adConn.ServiceAccountUsername != nil {
+		m[attributes.ServiceAccountUsername] = *adConn.ServiceAccountUsername
+	}
+	if adConn.ServiceAccountPassword != nil {
+		m[attributes.ServiceAccountPassword] = *adConn.ServiceAccountPassword
+	}
+	if adConn.DomainControllers != nil {
+		m[attributes.DomainControllers] = adConn.DomainControllers
+	}
+	if adConn.UsePasswordless != nil {
+		m[attributes.UsePasswordless] = *adConn.UsePasswordless
+	}
+	if adConn.CertificateId != nil {
+		m[attributes.CertificateID] = *adConn.CertificateId
+	}
+
+	return m
+}
+
 func (adConn ADConnection) Exists() bool {
 	return utils.IsNonEmpty(adConn.ID) && utils.IsBlank(adConn.DeletedAt)
 }
@@ -68,7 +115,47 @@ func (adTaskSettings ADTaskSettings) Exists() bool {
 	return utils.IsNonEmpty(adTaskSettings.ID)
 }
 
-func (c OktaPAMClient) GetADConnection(ctx context.Context, id string) (*ADConnection, error) {
+func (c OktaPAMClient) ListADConnections(ctx context.Context, parameters ListADConnectionsParameters) ([]ADConnection, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections", url.PathEscape(c.Team))
+	adConnections := make([]ADConnection, 0)
+
+	for {
+		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
+		logging.Tracef("making GET request to %s", requestURL)
+
+		resp, err := c.CreateBaseRequest(ctx).SetQueryParams(parameters.toQueryParametersMap()).SetResult(&ADConnectionsListResponse{}).Get(requestURL)
+		if err != nil {
+			logging.Errorf("received error while making request to %s", requestURL)
+			return nil, err
+		}
+		if _, err := checkStatusCode(resp, 200); err != nil {
+			return nil, err
+		}
+
+		adConnectionsListResponse := resp.Result().(*ADConnectionsListResponse)
+		adConnections = append(adConnections, adConnectionsListResponse.ADConnections...)
+
+		linkHeader := resp.Header().Get("Link")
+		//No more results to fetch
+		if linkHeader == "" {
+			break
+		}
+		links := linkheader.Parse(linkHeader)
+		requestURL = ""
+
+		//Set the request url with next link
+		for _, link := range links {
+			if link.Rel == "next" {
+				requestURL = link.URL
+				break
+			}
+		}
+	}
+
+	return adConnections, nil
+}
+
+func (c OktaPAMClient) GetADConnection(ctx context.Context, id string, allowDeleted bool) (*ADConnection, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s", url.PathEscape(c.Team), url.PathEscape(id))
 	logging.Tracef("making GET request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetResult(&ADConnection{}).Get(requestURL)
@@ -80,7 +167,7 @@ func (c OktaPAMClient) GetADConnection(ctx context.Context, id string) (*ADConne
 
 	if statusCode == 200 {
 		adConn := resp.Result().(*ADConnection)
-		if adConn.Exists() {
+		if adConn.Exists() || allowDeleted {
 			return adConn, nil
 		}
 		return nil, nil
@@ -241,4 +328,20 @@ func (c OktaPAMClient) DeactivateADTaskSettings(ctx context.Context, adConnId st
 
 	_, err = checkStatusCode(resp, 204)
 	return err
+}
+
+func (p ListADConnectionsParameters) toQueryParametersMap() map[string]string {
+	m := make(map[string]string, 3)
+
+	if p.GatewayID != "" {
+		m[attributes.GatewayID] = p.GatewayID
+	}
+	if p.CertificateID != "" {
+		m[attributes.CertificateID] = p.CertificateID
+	}
+	if p.IncludeCertDetails {
+		m[attributes.IncludeCertDetails] = strconv.FormatBool(p.IncludeCertDetails)
+	}
+
+	return m
 }

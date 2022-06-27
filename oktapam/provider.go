@@ -28,6 +28,7 @@ const (
 	providerGatewaySetupTokenKey     = "oktapam_gateway_setup_token"
 	providerADConnectionKey          = "oktapam_ad_connection"
 	providerADTaskSettingsKey        = "oktapam_ad_task_settings"
+	providerGatewayKey               = "oktapam_gateway"
 )
 
 func Provider() *schema.Provider {
@@ -73,6 +74,8 @@ func Provider() *schema.Provider {
 			providerServerEnrollmentTokenKey: dataSourceServerEnrollmentTokens(),
 			providerProjectGroupKey:          dataSourceProjectGroups(),
 			providerGatewaySetupTokenKey:     dataSourceGatewaySetupTokens(),
+			providerADConnectionKey:          dataSourceADConnections(),
+			providerGatewayKey:               dataSourceGateways(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

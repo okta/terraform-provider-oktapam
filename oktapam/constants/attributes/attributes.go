@@ -70,4 +70,11 @@ const (
 	ADRuleAssignmentsProjectID       = "project_id"
 	ADRuleAssignmentsPriority        = "priority"
 	ADConnectionID                   = "connection_id"
+	IncludeCertDetails               = "include_cert_details"
+	ADConnections                    = "ad_connections"
+	AccessAddress                    = "access_address"
+	DefaultAddress                   = "default_address"
+	CloudProvider                    = "cloud_provider"
+	RefuseConnections                = "refuse_connections"
+	Gateways                         = "gateways"
 )
