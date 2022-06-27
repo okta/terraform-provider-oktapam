@@ -64,9 +64,12 @@ func adConnectionExists(id string) (bool, error) {
 }
 
 const testAccADConnectionCreateConfigFormat = `
+data oktapam_gateway "gateways" {
+}
+
 resource "oktapam_ad_connection" "test-ad-connection" {
 name                     = "%s"
-gateway_id               = "6f27cc1e-e14e-47a4-b80f-83a9ca41b4cb"
+gateway_id               = data.oktapam_gateway.gateways.gateways[0].id
 domain                   = "test.com"
 service_account_username = "account@test.com"
 service_account_password = "password"
@@ -80,9 +83,12 @@ func createTestAccADConnectionCreateConfig(adConnectionName string) string {
 }
 
 const testAccADConnectionUpdateConfigFormat = `
+data oktapam_gateway "gateways" {
+}
+
 resource "oktapam_ad_connection" "test-ad-connection" {
 name                     = "%s"
-gateway_id               = "6f27cc1e-e14e-47a4-b80f-83a9ca41b4cb"
+gateway_id               = data.oktapam_gateway.gateways.gateways[0].id
 domain                   = "updated.test.com"
 service_account_username = "account@test.com"
 service_account_password = "password"
