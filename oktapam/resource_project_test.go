@@ -3,14 +3,15 @@ package oktapam
 import (
 	"context"
 	"fmt"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"testing"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/kylelemons/godebug/pretty"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client"
+	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 )
 
 func TestAccProject(t *testing.T) {
@@ -40,9 +41,9 @@ func TestAccProject(t *testing.T) {
 		SSHCertificateType:     utils.AsStringPtr("CERT_TYPE_ED25519_01"),
 	}
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		ProviderFactories:    testAccProviders,
-		CheckDestroy: testAccProjectCheckDestroy(projectName),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviders,
+		CheckDestroy:      testAccProjectCheckDestroy(projectName),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccProjectCreateConfig(projectName),

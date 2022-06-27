@@ -3,12 +3,13 @@ package client
 import (
 	"context"
 	"fmt"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"net/url"
 	"strconv"
 
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
+	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 	"github.com/tomnomnom/linkheader"
 )
 
@@ -54,13 +55,13 @@ func (p ListGroupsParameters) toQueryParametersMap() map[string]string {
 		m[attributes.Contains] = p.Contains
 	}
 	if p.IncludeDeleted {
-		m["IncludeDeleted"] = strconv.FormatBool(p.IncludeDeleted)
+		m[attributes.IncludeDeleted] = strconv.FormatBool(p.IncludeDeleted)
 	}
 	if p.OnlyIncludeDeleted {
-		m["OnlyIncludeDeleted"] = strconv.FormatBool(p.OnlyIncludeDeleted)
+		m[attributes.OnlyIncludeDeleted] = strconv.FormatBool(p.OnlyIncludeDeleted)
 	}
 	if p.DisconnectedModeOnOnly {
-		m["DisconnectedModeOnOnly"] = strconv.FormatBool(p.DisconnectedModeOnOnly)
+		m[attributes.DisconnectedModeOnOnly] = strconv.FormatBool(p.DisconnectedModeOnOnly)
 	}
 
 	return m

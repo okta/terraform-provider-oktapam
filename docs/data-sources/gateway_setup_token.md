@@ -33,5 +33,6 @@ Read-Only:
 - `description` (String)
 - `id` (String)
 - `labels` (Map of String)
+- `token` (String)
 
 

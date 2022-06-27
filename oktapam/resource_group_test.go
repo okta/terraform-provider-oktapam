@@ -3,13 +3,14 @@ package oktapam
 import (
 	"context"
 	"fmt"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"testing"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/kylelemons/godebug/pretty"
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 )
 
 func TestAccGroup(t *testing.T) {
@@ -25,9 +26,9 @@ func TestAccGroup(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		ProviderFactories:    testAccProviders,
-		CheckDestroy: testAccGroupCheckDestroy(groupName),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviders,
+		CheckDestroy:      testAccGroupCheckDestroy(groupName),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccGroupCreateConfig(groupName),
