@@ -120,13 +120,13 @@ func resourceADConnectionRead(ctx context.Context, d *schema.ResourceData, m int
 	c := m.(client.OktaPAMClient)
 
 	adConnectionId := d.Id()
-	adConnection, err := c.GetADConnection(ctx, adConnectionId)
+	adConnection, err := c.GetADConnection(ctx, adConnectionId, false)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	if adConnection != nil && utils.IsNonEmpty(adConnection.ID) {
-		for key, value := range flattenADConnection(adConnection) {
+		for key, value := range adConnection.ToResourceMap() {
 			_ = d.Set(key, value)
 		}
 	} else {
@@ -181,38 +181,4 @@ func resourceADConnectionDelete(ctx context.Context, d *schema.ResourceData, m i
 
 	d.SetId("")
 	return diags
-}
-
-func flattenADConnection(adConn *client.ADConnection) map[string]interface{} {
-	m := make(map[string]interface{})
-
-	if adConn.Name != nil {
-		m[attributes.Name] = *adConn.Name
-	}
-	if adConn.ID != nil {
-		m[attributes.ID] = *adConn.ID
-	}
-	if adConn.GatewayID != nil {
-		m[attributes.GatewayID] = *adConn.GatewayID
-	}
-	if adConn.Domain != nil {
-		m[attributes.Domain] = *adConn.Domain
-	}
-	if adConn.ServiceAccountUsername != nil {
-		m[attributes.ServiceAccountUsername] = *adConn.ServiceAccountUsername
-	}
-	if adConn.ServiceAccountPassword != nil {
-		m[attributes.ServiceAccountPassword] = *adConn.ServiceAccountPassword
-	}
-	if adConn.DomainControllers != nil {
-		m[attributes.DomainControllers] = adConn.DomainControllers
-	}
-	if adConn.UsePasswordless != nil {
-		m[attributes.UsePasswordless] = *adConn.UsePasswordless
-	}
-	if adConn.CertificateId != nil {
-		m[attributes.CertificateID] = *adConn.CertificateId
-	}
-
-	return m
 }
