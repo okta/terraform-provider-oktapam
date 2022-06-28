@@ -26,7 +26,7 @@ func (t KubernetesClusterGroup) ToResourceMap() map[string]interface{} {
 	}
 
 	if t.GroupName != nil {
-		m[attributes.GroupID] = *t.GroupName
+		m[attributes.GroupName] = *t.GroupName
 	}
 
 	if t.ClusterSelector != nil {
