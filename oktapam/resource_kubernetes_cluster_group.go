@@ -47,6 +47,9 @@ func resourceKubernetesClusterGroup() *schema.Resource {
 				Description: descriptions.ClusterGroupClaims,
 			},
 		},
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 	}
 }
 

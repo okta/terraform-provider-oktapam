@@ -33,8 +33,8 @@ func TestAccKubernetesClusterGroup(t *testing.T) {
 		GroupName:       &groupName,
 		ClusterSelector: &clusterSelector2,
 		Claims: map[string][]string{
-			"claim1": {"val1", "val2"},
-			"claim2": {"val3"},
+			"claim3": {"val4"},
+			"claim4": {"val5", "val6"},
 		},
 	}
 
@@ -44,15 +44,18 @@ func TestAccKubernetesClusterGroup(t *testing.T) {
 		CheckDestroy:      testAccClusterGroupCheckDestroy(clusterGroup1),
 		Steps: []resource.TestStep{
 			{
+				// ensure create works
 				Config: createTestAccKubernetesClusterGroupCreateConfig(clusterGroup1),
 				Check:  testAccKubernetesClusterGroupExists(resourceName, clusterGroup1),
 			},
 			{
+				// test importing resource
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
+				// ensure updating cluster selector and claims works
 				Config: createTestAccKubernetesClusterGroupCreateConfig(clusterGroup2),
 				Check:  testAccKubernetesClusterGroupExists(resourceName, clusterGroup2),
 			},
