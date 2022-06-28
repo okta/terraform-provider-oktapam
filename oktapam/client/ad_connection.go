@@ -179,7 +179,7 @@ func (c OktaPAMClient) GetADConnection(ctx context.Context, id string, allowDele
 }
 
 func (c OktaPAMClient) CreateADConnection(ctx context.Context, adConn ADConnection) (*ADConnection, error) {
-	// Create the group on the api server specified by group
+	// Create the ad connection on the api server
 	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections", url.PathEscape(c.Team))
 	logging.Tracef("making POST request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(adConn).SetResult(&ADConnection{}).Post(requestURL)
@@ -250,7 +250,7 @@ func (c OktaPAMClient) GetADTaskSettings(ctx context.Context, adConnId string, a
 }
 
 func (c OktaPAMClient) CreateADTaskSettings(ctx context.Context, adConnId string, adTaskSettings ADTaskSettings) (*ADTaskSettings, error) {
-	// Create the group on the api server specified by group
+	// Create the ad connection task settings on the api server
 	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s/task_settings", url.PathEscape(c.Team),
 		url.PathEscape(adConnId))
 	logging.Tracef("making POST request to %s", requestURL)
