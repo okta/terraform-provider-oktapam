@@ -49,6 +49,48 @@ func (t KubernetesClusterGroup) ToResourceMap() map[string]interface{} {
 	return m
 }
 
+type KubernetesClusterGroupListResponse struct {
+	ClusterGroups []KubernetesClusterGroup `json:"list"`
+}
+
+func (c OktaPAMClient) ListKubernetesClusterGroups(ctx context.Context) ([]KubernetesClusterGroup, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/kubernetes/cluster_groups", url.PathEscape(c.Team))
+	clusterGroups := make([]KubernetesClusterGroup, 0)
+
+	for {
+		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
+		logging.Tracef("making GET request to %s", requestURL)
+
+		resp, err := c.CreateBaseRequest(ctx).SetResult(&KubernetesClusterGroupListResponse{}).Get(requestURL)
+		if err != nil {
+			logging.Errorf("received error while making request to %s", requestURL)
+			return nil, err
+		}
+		if _, err := checkStatusCode(resp, 200); err != nil {
+			return nil, err
+		}
+
+		clusterGroupResponse := resp.Result().(*KubernetesClusterGroupListResponse)
+		clusterGroups = append(clusterGroups, clusterGroupResponse.ClusterGroups...)
+
+		linkHeader := resp.Header().Get("Link")
+		if linkHeader == "" {
+			break
+		}
+		links := linkheader.Parse(linkHeader)
+		requestURL = ""
+
+		for _, link := range links {
+			if link.Rel == "next" {
+				requestURL = link.URL
+				break
+			}
+		}
+	}
+
+	return clusterGroups, nil
+}
+
 func (c OktaPAMClient) GetKubernetesClusterGroup(ctx context.Context, id string) (*KubernetesClusterGroup, error) {
 	if id == "" {
 		return nil, errors.New("supplied blank kubernetes cluster group id")
