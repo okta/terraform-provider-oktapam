@@ -3,6 +3,7 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -56,10 +57,14 @@ func resourceKubernetesClustGroupCreate(ctx context.Context, d *schema.ResourceD
 
 	claims := d.Get(attributes.Claims).(map[string]interface{})
 
-	claimsMap := make(map[string]string, len(claims))
+	claimsMap := make(map[string][]string, len(claims))
 
-	for k, v := range claims {
-		claimsMap[k] = fmt.Sprint(v)
+	for k, csvValues := range claims {
+		var values []string
+		for _, value := range strings.Split(fmt.Sprint(csvValues), ",") {
+			values = append(values, value)
+		}
+		claimsMap[k] = values
 	}
 
 	clusterGroupSpec := client.KubernetesClusterGroup{
@@ -95,7 +100,6 @@ func resourceKubernetesClusterGroupRead(ctx context.Context, d *schema.ResourceD
 	}
 
 	for key, value := range clusterGroup.ToResourceMap() {
-		logging.Debugf("setting %q to %v", key, value)
 		if err := d.Set(key, value); err != nil {
 			return diag.FromErr(err)
 		}
@@ -118,7 +122,24 @@ func resourceKubernetesClusterGroupUpdate(ctx context.Context, d *schema.Resourc
 
 	for _, attribute := range changeableAttributes {
 		if d.HasChange(attribute) {
-			updates[attribute] = d.Get(attribute)
+			switch attribute {
+			case attributes.Claims:
+				claims := d.Get(attributes.Claims).(map[string]interface{})
+
+				claimsMap := make(map[string]interface{}, len(claims))
+
+				for k, csvValues := range claims {
+					var values []string
+					for _, value := range strings.Split(fmt.Sprint(csvValues), ",") {
+						values = append(values, value)
+					}
+					claimsMap[k] = values
+				}
+
+				updates[attribute] = claimsMap
+			default:
+				updates[attribute] = d.Get(attribute)
+			}
 			changed = true
 		}
 	}

@@ -11,10 +11,10 @@ import (
 )
 
 type KubernetesClusterGroup struct {
-	ID              *string           `json:"id,omitempty"`
-	GroupName       *string           `json:"group_name,omitempty"`
-	ClusterSelector *string           `json:"cluster_selector,omitempty"`
-	Claims          map[string]string `json:"claims,omitempty"`
+	ID              *string             `json:"id,omitempty"`
+	GroupName       *string             `json:"group_name,omitempty"`
+	ClusterSelector *string             `json:"cluster_selector,omitempty"`
+	Claims          map[string][]string `json:"claims,omitempty"`
 }
 
 func (t KubernetesClusterGroup) ToResourceMap() map[string]interface{} {
@@ -33,7 +33,17 @@ func (t KubernetesClusterGroup) ToResourceMap() map[string]interface{} {
 	}
 
 	if t.Claims != nil {
-		m[attributes.Claims] = t.Claims
+		claimsOut := make(map[string]string)
+		for k, values := range t.Claims {
+			claimsOut[k] = ""
+			for _, claimValue := range values {
+				if len(claimsOut[k]) > 0 {
+					claimsOut[k] += ","
+				}
+				claimsOut[k] += claimValue
+			}
+		}
+		m[attributes.Claims] = claimsOut
 	}
 
 	return m
@@ -87,7 +97,7 @@ func (c OktaPAMClient) CreateKubernetesClusterGroup(ctx context.Context, cluster
 
 func (c OktaPAMClient) UpdateKubernetesClusterGroup(ctx context.Context, clusterGroupID string, updates map[string]interface{}) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/kubernetes/cluster_groups/%s", url.PathEscape(c.Team), url.PathEscape(clusterGroupID))
-	logging.Tracef("making PUT request to %s", requestURL)
+	logging.Tracef("making PUT request to %s -> %+v", requestURL, updates)
 
 	resp, err := c.CreateBaseRequest(ctx).SetBody(updates).Put(requestURL)
 	if err != nil {
