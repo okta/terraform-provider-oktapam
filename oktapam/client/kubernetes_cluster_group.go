@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/tomnomnom/linkheader"
 	"net/url"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
