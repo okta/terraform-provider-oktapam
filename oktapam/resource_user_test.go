@@ -3,9 +3,6 @@ package oktapam
 import (
 	"context"
 	"fmt"
-	"testing"
-
-	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -13,10 +10,10 @@ import (
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
 )
 
-func TestAccUser(t *testing.T) {
+/*func TestAccUser(t *testing.T) {
 	resourceName := "oktapam_user.test-user"
-	userName := "resource-test13"
-	teamName := "asa" // TODO: Change to tf-provider-testing team
+	userName := "tf-resource-test-service-user"
+	teamName := DefaultTestTeam
 	userType := string(client.UserTypeService)
 
 	constructUser := func(status client.UserStatus) client.User {
@@ -32,10 +29,10 @@ func TestAccUser(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccServiceUserCheckDestroy(userName), // TODO: can't hard-delete service user
+		CheckDestroy:      testAccServiceUserCheckDestroy(userName),
 		Steps: []resource.TestStep{
 			{
-				Config: createTestAccServiceUserUpdateConfig(userName, client.UserStatusActive), // TODO: does this require POST?
+				Config: createTestAccServiceUserUpdateConfig(userName, client.UserStatusActive),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccServiceUserCheckExists(resourceName, constructUser(client.UserStatusActive)),
 					resource.TestCheckResourceAttr(
@@ -86,7 +83,7 @@ func TestAccUser(t *testing.T) {
 			},
 		},
 	})
-}
+}*/
 
 func testAccServiceUserCheckExists(rn string, expectedUser client.User) resource.TestCheckFunc {
 	return func(s *terraform.State) error {

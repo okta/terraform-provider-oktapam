@@ -15,7 +15,7 @@ import (
 
 func TestAccDatasourceServiceUser(t *testing.T) {
 	resourceName := "data.oktapam_user.test_users"
-	userNamePrefix := "tf-test"
+	userNamePrefix := "tf-testing-service-user"
 
 	userName1 := userNamePrefix + "1"
 	userName2 := userNamePrefix + "2"
@@ -104,16 +104,8 @@ func TestAccDatasourceServiceUser(t *testing.T) {
 				testAccDatasourceServiceUsersCheck(resourceName, expectedUsers),
 			),
 		},
-		/*{
-			Config: createTestAccDatasourceServiceUsersStatusConfig(userNamePrefix, string(client.UserStatusDeleted)),
-			Check: resource.ComposeTestCheckFunc(
-				resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Users), "1"),
-				testAccDatasourceServiceUsersCheck(resourceName, deletedUsers),
-			),
-		},*/
 	}
 	// Status steps
-	//steps = append(steps, generateStatusSteps(resourceName, userNamePrefix, expectedUsers)...)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -121,63 +113,6 @@ func TestAccDatasourceServiceUser(t *testing.T) {
 		Steps:             steps,
 	})
 }
-
-// Generates all combinations (Note: not permutations) for 3 boolean values
-/*func generateSets() []map[string]bool {
-	statuses := []string{"ACTIVE", "DISABLED", "REMOVED"}
-	var sets []map[string]bool
-	// Not a comprehensive combination solution
-	for index1 := 0; index1 < len(statuses); index1++ {
-		set := make(map[string]bool)
-		for index2 := 0; index2 < len(statuses); index2++ {
-			if index1 == index2 {
-				set[statuses[index1]] = true
-				sets = append(sets, set)
-				continue
-			}
-			set[statuses[index1]] = true
-			set[statuses[index2]] = true
-			sets = append(sets, set)
-		}
-	}
-	return sets
-}
-
-func generateStatusSteps(resourceName, prefix string, expectedUsers map[string]client.ServiceUser) []resource.TestStep {
-	statuses := []string{"ACTIVE", "DISABLED", "REMOVED"}
-	sets := generateSets()
-
-	fullSet := make(map[string]bool)
-	for _, status := range statuses {
-		fullSet[status] = true
-	}
-	sets = append(sets, fullSet)
-
-	// Generate step for each set
-	var steps []resource.TestStep
-	for _, s := range sets {
-
-		statusLookup := ""
-		expectedLength := 0
-		for k, v := range s {
-			if v {
-				statusLookup += fmt.Sprintf("%s,", k)
-				expectedLength++
-			}
-		}
-
-		steps = append(steps,
-			resource.TestStep{
-				Config: createTestAccDatasourceServiceUsersStatusConfig(prefix, statusLookup),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Users), fmt.Sprintf("%d", expectedLength)),
-					testAccDatasourceServiceUsersCheck(resourceName, expectedUsers),
-				),
-			},
-		)
-	}
-	return steps
-}*/
 
 func testAccDatasourceServiceUsersCheck(rn string, expectedUsers map[string]client.User) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
@@ -213,6 +148,7 @@ func testAccDatasourceServiceUsersCheck(rn string, expectedUsers map[string]clie
 const testAccDatasourceHumanUsersFormat = `
 data "oktapam_user" "test_users" {
 	user_type = "human"
+	contains = "ste"
 }
 `
 
