@@ -34,20 +34,24 @@ func (t KubernetesClusterGroup) ToResourceMap() map[string]interface{} {
 	}
 
 	if t.Claims != nil {
-		claimsOut := make(map[string]string)
-		for k, values := range t.Claims {
-			claimsOut[k] = ""
-			for _, claimValue := range values {
-				if len(claimsOut[k]) > 0 {
-					claimsOut[k] += ","
-				}
-				claimsOut[k] += claimValue
-			}
-		}
-		m[attributes.Claims] = claimsOut
+		m[attributes.Claims] = claimsMapToCSV(t.Claims)
 	}
 
 	return m
+}
+
+func claimsMapToCSV(claimsIn map[string][]string) map[string]string {
+	claimsOut := make(map[string]string)
+	for k, values := range claimsIn {
+		claimsOut[k] = ""
+		for _, claimValue := range values {
+			if len(claimsOut[k]) > 0 {
+				claimsOut[k] += ","
+			}
+			claimsOut[k] += claimValue
+		}
+	}
+	return claimsOut
 }
 
 type KubernetesClusterGroupListResponse struct {

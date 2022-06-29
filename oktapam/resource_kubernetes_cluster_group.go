@@ -25,11 +25,6 @@ func resourceKubernetesClusterGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			attributes.GroupID: {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: descriptions.GroupID,
-			},
 			attributes.GroupName: {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -58,22 +53,10 @@ func resourceKubernetesClustGroupCreate(ctx context.Context, d *schema.ResourceD
 	groupName := getStringPtr(attributes.GroupName, d, true)
 	clusterSelector := getStringPtr(attributes.ClusterSelector, d, true)
 
-	claims := d.Get(attributes.Claims).(map[string]interface{})
-
-	claimsMap := make(map[string][]string, len(claims))
-
-	for k, csvValues := range claims {
-		var values []string
-		for _, value := range strings.Split(fmt.Sprint(csvValues), ",") {
-			values = append(values, value)
-		}
-		claimsMap[k] = values
-	}
-
 	clusterGroupSpec := client.KubernetesClusterGroup{
 		GroupName:       groupName,
 		ClusterSelector: clusterSelector,
-		Claims:          claimsMap,
+		Claims:          claimsCSVToMap(d.Get(attributes.Claims).(map[string]interface{})),
 	}
 
 	if createdClusterGroup, err := c.CreateKubernetesClusterGroup(ctx, clusterGroupSpec); err != nil {
@@ -90,8 +73,7 @@ func resourceKubernetesClustGroupCreate(ctx context.Context, d *schema.ResourceD
 func resourceKubernetesClusterGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	clusterGroupID := d.Id()
-	clusterGroup, err := c.GetKubernetesClusterGroup(ctx, clusterGroupID)
+	clusterGroup, err := c.GetKubernetesClusterGroup(ctx, d.Id())
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -127,19 +109,7 @@ func resourceKubernetesClusterGroupUpdate(ctx context.Context, d *schema.Resourc
 		if d.HasChange(attribute) {
 			switch attribute {
 			case attributes.Claims:
-				claims := d.Get(attributes.Claims).(map[string]interface{})
-
-				claimsMap := make(map[string]interface{}, len(claims))
-
-				for k, csvValues := range claims {
-					var values []string
-					for _, value := range strings.Split(fmt.Sprint(csvValues), ",") {
-						values = append(values, value)
-					}
-					claimsMap[k] = values
-				}
-
-				updates[attribute] = claimsMap
+				updates[attribute] = claimsCSVToMap(d.Get(attributes.Claims).(map[string]interface{}))
 			default:
 				updates[attribute] = d.Get(attribute)
 			}
@@ -159,12 +129,24 @@ func resourceKubernetesClusterGroupUpdate(ctx context.Context, d *schema.Resourc
 func resourceKubernetesClusterGroupDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	id := d.Id()
-
-	if err := c.DeleteKubernetesClusterGroup(ctx, id); err != nil {
+	if err := c.DeleteKubernetesClusterGroup(ctx, d.Id()); err != nil {
 		return diag.FromErr(err)
 	}
 
 	d.SetId("")
 	return nil
+}
+
+func claimsCSVToMap(claimsIn map[string]interface{}) map[string][]string {
+	claimsMap := make(map[string][]string)
+
+	for k, csvValues := range claimsIn {
+		var values []string
+		for _, value := range strings.Split(fmt.Sprint(csvValues), ",") {
+			values = append(values, value)
+		}
+		claimsMap[k] = values
+	}
+
+	return claimsMap
 }
