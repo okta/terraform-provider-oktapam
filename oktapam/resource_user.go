@@ -3,6 +3,8 @@ package oktapam
 import (
 	"context"
 
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/errors"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
@@ -79,7 +81,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 			return diag.FromErr(err)
 		}
 	default:
-		return diag.Errorf("%s is not a valid user type option. Either %s or %s must be specified.", *userType, client.UserTypeHuman, client.UserTypeService)
+		return diag.Errorf(errors.InvalidUserTypeError, *userType)
 	}
 	d.SetId(*userName)
 	return resourceUserRead(ctx, d, m)
@@ -106,9 +108,9 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 			return diag.FromErr(err)
 		}
 	case "":
-		return diag.Errorf("User type must be specified. Valid options are %s or %s.", client.UserTypeHuman, client.UserTypeService)
+		return diag.Errorf(errors.MissingUserTypeError)
 	default:
-		return diag.Errorf("%s is not a valid user type option. Either %s or %s must be specified.", *userType, client.UserTypeHuman, client.UserTypeService)
+		return diag.Errorf(errors.InvalidUserTypeError, *userType)
 	}
 
 	// Allow for deleted users, as they are soft-deleted // TODO: Check this comment
@@ -172,9 +174,9 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 				return diag.FromErr(err)
 			}
 		case "":
-			return diag.Errorf("User type must be specified. Valid options are %s or %s.", client.UserTypeHuman, client.UserTypeService)
+			return diag.Errorf(errors.MissingUserTypeError)
 		default:
-			return diag.Errorf("%s is not a valid user type option. Either %s or %s must be specified.", *userType, client.UserTypeHuman, client.UserTypeService)
+			return diag.Errorf(errors.InvalidUserTypeError, *userType)
 		}
 	}
 	d.SetId(userName)
@@ -199,9 +201,9 @@ func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface
 			return diag.FromErr(err)
 		}
 	case "":
-		return diag.Errorf("User type must be specified. Valid options are %s or %s.", client.UserTypeHuman, client.UserTypeService)
+		return diag.Errorf(errors.MissingUserTypeError)
 	default:
-		return diag.Errorf("%s is not a valid user type option. Either %s or %s must be specified.", *userType, client.UserTypeHuman, client.UserTypeService)
+		return diag.Errorf(errors.InvalidUserTypeError, *userType)
 	}
 
 	d.SetId("")

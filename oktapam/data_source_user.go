@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/errors"
+
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/constants/descriptions"
 
@@ -13,9 +15,9 @@ import (
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
 )
 
-func dataSourceServiceUsers() *schema.Resource {
+func dataSourceUsers() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceServiceUsersRead,
+		ReadContext: dataSourceUsersRead,
 		Schema: map[string]*schema.Schema{
 			// Query parameter values
 			attributes.Contains: {
@@ -88,7 +90,7 @@ func dataSourceServiceUsers() *schema.Resource {
 	}
 }
 
-func dataSourceServiceUsersRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	c := m.(client.OktaPAMClient)
@@ -144,7 +146,7 @@ func dataSourceServiceUsersRead(ctx context.Context, d *schema.ResourceData, m i
 			return diag.FromErr(err)
 		}
 	default:
-		return diag.Errorf("%s is not a valid user type option", userType)
+		return diag.Errorf(errors.InvalidUserTypeError, userType)
 	}
 
 	users := make([]map[string]interface{}, len(usersList))

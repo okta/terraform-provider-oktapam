@@ -60,7 +60,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			providerProjectKey:               resourceProject(),
 			providerGroupKey:                 resourceGroup(),
-			providerUserKey:                  resourceServiceUser(),
+			providerUserKey:                  resourceUser(),
 			providerServerEnrollmentTokenKey: resourceServerEnrollmentToken(),
 			providerProjectGroupKey:          resourceProjectGroup(),
 			providerGatewaySetupTokenKey:     resourceGatewaySetupToken(),
@@ -68,7 +68,7 @@ func Provider() *schema.Provider {
 		DataSourcesMap: map[string]*schema.Resource{
 			providerProjectKey:               dataSourceProjects(),
 			providerGroupKey:                 dataSourceGroups(),
-			providerUserKey:                  dataSourceServiceUsers(),
+			providerUserKey:                  dataSourceUsers(),
 			providerServerEnrollmentTokenKey: dataSourceServerEnrollmentTokens(),
 			providerProjectGroupKey:          dataSourceProjectGroups(),
 			providerGatewaySetupTokenKey:     dataSourceGatewaySetupTokens(),
