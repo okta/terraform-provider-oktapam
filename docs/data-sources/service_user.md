@@ -19,7 +19,7 @@ description: |-
 
 - `contains` (String) If a value is provided, the results are filtered to only contain resources whose name contains that value.
 - `starts_with` (String) If a value is provided, includes ASA Users with name that begins with the value.
-- `status` (String) If a value is provided, includes ASA Users with specified statuses. Valid statuses include: `ACTIVE`, `DISABLED`, and `DELETED`.
+- `status` (List of String) If a value is provided, includes ASA Users with specified statuses. Valid statuses include: `ACTIVE`, `DISABLED`, and `DELETED`.
 
 ### Read-Only
 
@@ -37,5 +37,6 @@ Read-Only:
 - `server_user_name` (String)
 - `status` (String)
 - `team_name` (String)
+- `user_type` (String)
 
 

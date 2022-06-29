@@ -36,6 +36,7 @@ const (
 	Status              = "The status of the ASA User. Valid statuses are `ACTIVE`, `DISABLED`, and `DELETED`."
 	TeamName            = "The human-readable name of the ASA Team that owns the resource. Values are lower-case."
 	Token               = "The secret used for resource enrollment."
+	UserType            = "The user type. Valid types are `human` and `service`."
 
 	// Query Parameter Descriptions
 	FilterContains               = "If a value is provided, the results are filtered to only contain resources whose name contains that value."

@@ -50,6 +50,11 @@ func resourceServiceUser() *schema.Resource {
 				Computed:    true,
 				Description: descriptions.DeletedAt,
 			},
+			attributes.UserType: {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: descriptions.UserType,
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -119,7 +124,7 @@ func resourceServiceUserUpdate(ctx context.Context, d *schema.ResourceData, m in
 	}
 
 	if changed {
-		su, err := client.ServiceUserFromMap(updates)
+		su, err := client.UserFromMap(updates)
 		if err != nil {
 			return diag.FromErr(err)
 		} else if su == nil {

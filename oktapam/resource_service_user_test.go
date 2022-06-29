@@ -15,15 +15,17 @@ import (
 
 func TestAccServiceUser(t *testing.T) {
 	resourceName := "oktapam_service_user.test-user"
-	userName := "resource-test"
+	userName := "resource-test3"
 	teamName := "asa" // TODO: Change to tf-provider-testing team
+	userType := string(client.UserTypeService)
 
-	constructUser := func(status client.UserStatus) client.ServiceUser {
+	constructUser := func(status client.UserStatus) client.User {
 		sstatus := string(status)
-		return client.ServiceUser{
+		return client.User{
 			Name:     &userName,
 			Status:   &sstatus,
 			TeamName: &teamName,
+			UserType: &userType,
 		}
 	}
 
@@ -77,7 +79,7 @@ func TestAccServiceUser(t *testing.T) {
 	})
 }
 
-func testAccServiceUserCheckExists(rn string, expectedUser client.ServiceUser) resource.TestCheckFunc {
+func testAccServiceUserCheckExists(rn string, expectedUser client.User) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[rn]
 		if !ok {

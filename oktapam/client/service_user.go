@@ -20,21 +20,27 @@ const UserStatusActive UserStatus = "ACTIVE"
 const UserStatusDisabled UserStatus = "DISABLED"
 const UserStatusDeleted UserStatus = "DELETED"
 
-type ServiceUser struct {
+type UserType string
+
+const UserTypeHuman UserType = "human"
+const UserTypeService UserType = "service"
+
+type User struct {
 	Name           *string `json:"name"`
 	ID             *string `json:"id"`
 	TeamName       *string `json:"team_name"`
 	ServerUserName *string `json:"server_user_name,omitempty"`
 	Status         *string `json:"status"` // TODO: Change this to using typed string
 	DeletedAt      *string `json:"deleted_at,omitempty"`
+	UserType       *string `json:"user_type"`
 }
 
-func ServiceUserFromMap(m map[string]interface{}) (*ServiceUser, error) {
+func UserFromMap(m map[string]interface{}) (*User, error) {
 	if m == nil {
 		return nil, nil
 	}
 
-	su := ServiceUser{}
+	su := User{}
 	for k, v := range m {
 		switch k {
 		case attributes.Name:
@@ -48,7 +54,7 @@ func ServiceUserFromMap(m map[string]interface{}) (*ServiceUser, error) {
 	return &su, nil
 }
 
-func (su ServiceUser) ToResourceMap() map[string]interface{} {
+func (su User) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{}, 2)
 
 	if su.Name != nil {
@@ -68,6 +74,9 @@ func (su ServiceUser) ToResourceMap() map[string]interface{} {
 	}
 	if su.Status != nil {
 		m[attributes.Status] = *su.Status
+	}
+	if su.UserType != nil {
+		m[attributes.UserType] = *su.UserType
 	}
 	return m
 }
@@ -94,17 +103,16 @@ func (p ListUsersParameters) toQueryParametersMap() map[string]string {
 	if p.IncludeServiceUsers != "" {
 		m[attributes.IncludeServiceUsers] = p.IncludeServiceUsers
 	}
-
 	return m
 }
 
 type ServiceUsersListResponse struct {
-	ServiceUsers []ServiceUser `json:"list"`
+	ServiceUsers []User `json:"list"`
 }
 
-func (c OktaPAMClient) ListServiceUsers(ctx context.Context, parameters ListUsersParameters) ([]ServiceUser, error) {
+func (c OktaPAMClient) ListServiceUsers(ctx context.Context, parameters ListUsersParameters) ([]User, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/service_users", url.PathEscape(c.Team))
-	serviceUsers := make([]ServiceUser, 0)
+	serviceUsers := make([]User, 0)
 
 	for {
 		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
@@ -145,10 +153,10 @@ func (c OktaPAMClient) ListServiceUsers(ctx context.Context, parameters ListUser
 	return serviceUsers, nil
 }
 
-func (c OktaPAMClient) GetServiceUser(ctx context.Context, serviceUserName string) (*ServiceUser, error) {
+func (c OktaPAMClient) GetServiceUser(ctx context.Context, serviceUserName string) (*User, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/service_users/%s", url.PathEscape(c.Team), url.PathEscape(serviceUserName))
 	logging.Tracef("making GET request to %s", requestURL)
-	resp, err := c.CreateBaseRequest(ctx).SetResult(&ServiceUser{}).Get(requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetResult(&User{}).Get(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return nil, err
@@ -156,7 +164,7 @@ func (c OktaPAMClient) GetServiceUser(ctx context.Context, serviceUserName strin
 	statusCode := resp.StatusCode()
 
 	if statusCode == 200 {
-		serviceUser := resp.Result().(*ServiceUser)
+		serviceUser := resp.Result().(*User)
 		return serviceUser, nil
 	} else if statusCode == 404 {
 		return nil, nil
@@ -181,7 +189,7 @@ func (c OktaPAMClient) CreateServiceUser(ctx context.Context, userName string) e
 	return err
 }
 
-func (c OktaPAMClient) UpdateServiceUser(ctx context.Context, userName string, serviceUser *ServiceUser) error {
+func (c OktaPAMClient) UpdateServiceUser(ctx context.Context, userName string, serviceUser *User) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/service_users/%s", url.PathEscape(c.Team), url.PathEscape(userName))
 	logging.Tracef("making PUT request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(serviceUser).Put(requestURL)

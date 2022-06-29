@@ -29,5 +29,6 @@ An ASA User of type `service`, responsible for automation.
 - `id` (String) The ID of this resource.
 - `server_user_name` (String) The name of the corresponding ASA Server User.
 - `team_name` (String) The human-readable name of the ASA Team that owns the resource. Values are lower-case.
+- `user_type` (String) The user type. Valid types are `human` and `service`.
 
 

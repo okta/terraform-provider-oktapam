@@ -71,6 +71,11 @@ func dataSourceServiceUsers() *schema.Resource {
 							Computed:    true,
 							Description: descriptions.DeletedAt,
 						},
+						attributes.UserType: {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: descriptions.UserType,
+						},
 					},
 				},
 			},

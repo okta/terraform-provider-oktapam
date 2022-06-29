@@ -16,22 +16,25 @@ func TestAccDatasourceServiceUser(t *testing.T) {
 	resourceName := "data.oktapam_service_user.test_users"
 	userNamePrefix := "tf-test"
 
-	expectedUsers := map[string]client.ServiceUser{
+	expectedUsers := map[string]client.User{
 		userNamePrefix + "1": {
-			Name:   utils.AsStringPtr(userNamePrefix + "1"),
-			Status: utils.AsStringPtr(string(client.UserStatusActive)),
+			Name:     utils.AsStringPtr(userNamePrefix + "1"),
+			Status:   utils.AsStringPtr(string(client.UserStatusActive)),
+			UserType: utils.AsStringPtr(string(client.UserTypeService)),
 		},
 		userNamePrefix + "2": {
-			Name:   utils.AsStringPtr(userNamePrefix + "2"),
-			Status: utils.AsStringPtr(string(client.UserStatusActive)),
+			Name:     utils.AsStringPtr(userNamePrefix + "2"),
+			Status:   utils.AsStringPtr(string(client.UserStatusActive)),
+			UserType: utils.AsStringPtr(string(client.UserTypeService)),
 		},
 		userNamePrefix + "3": {
-			Name:   utils.AsStringPtr(userNamePrefix + "3"),
-			Status: utils.AsStringPtr(string(client.UserStatusActive)),
+			Name:     utils.AsStringPtr(userNamePrefix + "3"),
+			Status:   utils.AsStringPtr(string(client.UserStatusActive)),
+			UserType: utils.AsStringPtr(string(client.UserTypeService)),
 		},
 	}
 
-	emptyUsers := map[string]client.ServiceUser{}
+	emptyUsers := map[string]client.User{}
 
 	steps := []resource.TestStep{
 		// TODO: Skip creation, because users cannot be deleted
@@ -145,7 +148,7 @@ func generateStatusSteps(resourceName, prefix string, expectedUsers map[string]c
 	return steps
 }*/
 
-func testAccDatasourceServiceUsersCheck(rn string, expectedUsers map[string]client.ServiceUser) resource.TestCheckFunc {
+func testAccDatasourceServiceUsersCheck(rn string, expectedUsers map[string]client.User) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[rn]
 		if !ok {

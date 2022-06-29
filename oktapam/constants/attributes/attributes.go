@@ -51,4 +51,5 @@ const (
 	Team                   = "team" // NOTE: This is inconsistent, most other API endpoints use `team_name`.
 	TeamName               = "team_name"
 	Token                  = "token"
+	UserType               = "user_type"
 )
