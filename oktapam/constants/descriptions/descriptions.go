@@ -60,7 +60,7 @@ const (
 	ResourceGatewaySetupToken     = "A token for ASA Gateway enrollment."
 	ResourceGroup                 = "A set of ASA Users."
 	ResourceServerEnrollmentToken = "A token for ASA Server enrollment."
-	ResourceServiceUser           = "An ASA User of type `service`, responsible for automation."
+	ResourceUser                  = "An ASA User. Valid user types are `human` and `service`."
 
 	// Data Source Descriptions -- sources are read-only, fetched on LIST
 	SourceGatewaySetupTokens     = "A list of tokens for ASA Gateway enrollment, corresponding to an ASA Team."

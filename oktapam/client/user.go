@@ -157,8 +157,8 @@ func (c OktaPAMClient) ListUsers(ctx context.Context, parameters ListUsersParame
 
 // Commands used by only `human` users:
 
-func (c OktaPAMClient) GetHumanUser(ctx context.Context, serviceUserName string) (*User, error) {
-	requestURL := fmt.Sprintf("/v1/teams/%s/users/%s", url.PathEscape(c.Team), url.PathEscape(serviceUserName))
+func (c OktaPAMClient) GetHumanUser(ctx context.Context, userName string) (*User, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/users/%s", url.PathEscape(c.Team), url.PathEscape(userName))
 	logging.Tracef("making GET request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetResult(&User{}).Get(requestURL)
 	if err != nil {
@@ -178,10 +178,7 @@ func (c OktaPAMClient) GetHumanUser(ctx context.Context, serviceUserName string)
 }
 
 func (c OktaPAMClient) CreateHumanUser(ctx context.Context, userName string) error {
-
-	// TODO provide context about why a human user cannot be created
-
-	return nil
+	return fmt.Errorf("%s user creation is not available. Please create the user from your Okta console.", UserTypeHuman)
 }
 
 func (c OktaPAMClient) UpdateHumanUser(ctx context.Context, userName string, serviceUser *User) error {
@@ -197,10 +194,7 @@ func (c OktaPAMClient) UpdateHumanUser(ctx context.Context, userName string, ser
 }
 
 func (c OktaPAMClient) DeleteHumanUser(ctx context.Context, userName string) error {
-
-	// TODO provide context about why a human user cannot be deleted
-
-	return nil
+	return fmt.Errorf("%s user deletion is not available. Please delete the user from your Okta console.", UserTypeHuman)
 }
 
 // Commands used by only `service` users:

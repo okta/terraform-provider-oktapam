@@ -137,12 +137,14 @@ func dataSourceServiceUsersRead(ctx context.Context, d *schema.ResourceData, m i
 		if err != nil {
 			return diag.FromErr(err)
 		}
-	default:
+	case "":
 		parameters.IncludeServiceUsers = "true"
 		usersList, err = c.ListUsers(ctx, parameters)
 		if err != nil {
 			return diag.FromErr(err)
 		}
+	default:
+		return diag.Errorf("%s is not a valid user type option", userType)
 	}
 
 	users := make([]map[string]interface{}, len(usersList))

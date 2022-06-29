@@ -11,13 +11,13 @@ import (
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/logging"
 )
 
-func resourceServiceUser() *schema.Resource {
+func resourceUser() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceServiceUserCreate,
-		ReadContext:   resourceServiceUserRead,
-		UpdateContext: resourceServiceUserUpdate,
-		DeleteContext: resourceServiceUserDelete,
-		Description:   descriptions.ResourceServiceUser,
+		CreateContext: resourceUserCreate,
+		ReadContext:   resourceUserRead,
+		UpdateContext: resourceUserUpdate,
+		DeleteContext: resourceUserDelete,
+		Description:   descriptions.ResourceUser,
 		Schema: map[string]*schema.Schema{
 			attributes.Name: {
 				Type:        schema.TypeString,
@@ -62,32 +62,59 @@ func resourceServiceUser() *schema.Resource {
 	}
 }
 
-func resourceServiceUserCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	userName := getStringPtr(attributes.Name, d, true)
+	userType := getStringPtr(attributes.UserType, d, false) // TODO: user type must be set
 
-	err := c.CreateServiceUser(ctx, *userName) // TODO: Maybe the username doesn't exist at this stage?
-	if err != nil {
-		return diag.FromErr(err)
+	switch *userType {
+	case string(client.UserTypeHuman):
+		err := c.CreateHumanUser(ctx, *userName)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+	case string(client.UserTypeService):
+		err := c.CreateServiceUser(ctx, *userName)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+	default:
+		return diag.Errorf("%s is not a valid user type option. Either %s or %s must be specified.", *userType, client.UserTypeHuman, client.UserTypeService)
 	}
 	d.SetId(*userName)
-	return resourceServiceUserRead(ctx, d, m)
+	return resourceUserRead(ctx, d, m)
 }
 
-func resourceServiceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
 	userName := d.Id()
-	serviceUser, err := c.GetServiceUser(ctx, userName)
-	if err != nil {
-		return diag.FromErr(err)
+	userType := getStringPtr(attributes.UserType, d, true)
+
+	var user *client.User
+	var err error
+	switch *userType {
+	case string(client.UserTypeHuman):
+		user, err = c.GetHumanUser(ctx, userName)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+	case string(client.UserTypeService):
+		user, err = c.GetServiceUser(ctx, userName)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+	case "":
+		return diag.Errorf("User type must be specified. Valid options are %s or %s.", client.UserTypeHuman, client.UserTypeService)
+	default:
+		return diag.Errorf("%s is not a valid user type option. Either %s or %s must be specified.", *userType, client.UserTypeHuman, client.UserTypeService)
 	}
 
-	// Allow for deleted users, as they are soft-deleted
-	if serviceUser != nil {
-		d.SetId(*serviceUser.Name)
-		for key, value := range serviceUser.ToResourceMap() {
+	// Allow for deleted users, as they are soft-deleted // TODO: Check this comment
+	if user != nil {
+		d.SetId(*user.Name)
+		for key, value := range user.ToResourceMap() {
 			d.Set(key, value)
 		}
 	} else {
@@ -97,13 +124,15 @@ func resourceServiceUserRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func resourceServiceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	userName := d.Id()
+	userType := getStringPtr(attributes.UserType, d, true) // TODO: user type must be set
 
 	changed := false
 	updates := make(map[string]interface{})
 
+	// NOTE: possible that other fields must be included in the update
 	changeableAttributes := []string{
 		attributes.Status,
 	}
@@ -131,24 +160,48 @@ func resourceServiceUserUpdate(ctx context.Context, d *schema.ResourceData, m in
 			return diag.Errorf("could not create service user from supplied values")
 		}
 
-		// NOTE: possible that other fields must be included in the update
-		err = c.UpdateServiceUser(ctx, userName, su)
-		if err != nil {
-			return diag.FromErr(err)
+		switch *userType {
+		case string(client.UserTypeHuman):
+			err := c.UpdateHumanUser(ctx, userName, su)
+			if err != nil {
+				return diag.FromErr(err)
+			}
+		case string(client.UserTypeService):
+			err := c.UpdateServiceUser(ctx, userName, su)
+			if err != nil {
+				return diag.FromErr(err)
+			}
+		case "":
+			return diag.Errorf("User type must be specified. Valid options are %s or %s.", client.UserTypeHuman, client.UserTypeService)
+		default:
+			return diag.Errorf("%s is not a valid user type option. Either %s or %s must be specified.", *userType, client.UserTypeHuman, client.UserTypeService)
 		}
 	}
 	d.SetId(userName)
-	return resourceServiceUserRead(ctx, d, m)
+	return resourceUserRead(ctx, d, m)
 }
 
-func resourceServiceUserDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 	userName := d.Id()
+	userType := getStringPtr(attributes.UserType, d, true)
 
-	err := c.DeleteServiceUser(ctx, userName)
-	if err != nil {
-		return diag.FromErr(err)
+	switch *userType {
+	case string(client.UserTypeHuman):
+		err := c.DeleteHumanUser(ctx, userName)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+	case string(client.UserTypeService):
+		err := c.DeleteServiceUser(ctx, userName)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+	case "":
+		return diag.Errorf("User type must be specified. Valid options are %s or %s.", client.UserTypeHuman, client.UserTypeService)
+	default:
+		return diag.Errorf("%s is not a valid user type option. Either %s or %s must be specified.", *userType, client.UserTypeHuman, client.UserTypeService)
 	}
 
 	d.SetId("")
