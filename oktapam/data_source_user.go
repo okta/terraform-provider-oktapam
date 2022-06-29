@@ -125,6 +125,7 @@ func dataSourceServiceUsersRead(ctx context.Context, d *schema.ResourceData, m i
 	var err error
 
 	// Based on data source user type, return corresponding type using corresponding endpoint
+	// Note, in both endpoints `deleted` users are not returned
 	switch userType {
 	case string(client.UserTypeHuman):
 		usersList, err = c.ListUsers(ctx, parameters)

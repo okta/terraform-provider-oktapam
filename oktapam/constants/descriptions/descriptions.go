@@ -48,11 +48,13 @@ const (
 	FilterIncludeDeleted         = "If 'true', the results include deleted resources."
 	FilterOnlyIncludeDeleted     = "If 'true', the results only include deleted resources."
 	FilterIncludeRemoved         = "If 'true', the results include removed resources."
-	FilterIncludeServiceUsers    = "If 'true', include ASA Service Users in the results."
 	FilterProjectName            = "If a value is provided, the results are filtered to only contain resources belonging to the ASA Project."
 	FilterSelf                   = "If 'true', only lists the ASA Projects that the ASA User making this request has been assigned."
 	FilterStartsWith             = "If a value is provided, includes ASA Users with name that begins with the value."
 	FilterStatus                 = "If a value is provided, includes ASA Users with specified statuses. Valid statuses include: `ACTIVE`, `DISABLED`, and `DELETED`."
+
+	// Provider-Level Filter
+	FilterUserType = "Valid types are `human` and `service`. If left unspecified, both types will be included."
 
 	// Resource Descriptions -- resources are dynamic, and state is kept up to date on POST / PUT / DELETE
 	ResourceGatewaySetupToken     = "A token for ASA Gateway enrollment."

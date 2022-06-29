@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/url"
-	"strings"
 
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/utils"
 
@@ -88,20 +87,20 @@ type ListUsersParameters struct {
 	IncludeServiceUsers string // NOTE: Unused in service_user endpoint
 }
 
-func (p ListUsersParameters) toQueryParametersMap() map[string]string {
-	m := make(map[string]string, 4)
+func (p ListUsersParameters) toQueryParametersMap() map[string][]string {
+	m := make(map[string][]string, 4)
 
 	if p.Contains != "" {
-		m[attributes.Contains] = p.Contains
+		m[attributes.Contains] = []string{p.Contains}
 	}
 	if p.StartsWith != "" {
-		m[attributes.StartsWith] = p.StartsWith
+		m[attributes.StartsWith] = []string{p.StartsWith}
 	}
 	if len(p.Status) > 0 {
-		m[attributes.Status] = strings.Join(p.Status, ",")
+		m[attributes.Status] = p.Status
 	}
 	if p.IncludeServiceUsers != "" {
-		m[attributes.IncludeServiceUsers] = p.IncludeServiceUsers
+		m[attributes.IncludeServiceUsers] = []string{p.IncludeServiceUsers}
 	}
 	return m
 }
@@ -122,7 +121,7 @@ func (c OktaPAMClient) ListUsers(ctx context.Context, parameters ListUsersParame
 		logging.Tracef("making GET request to %s", requestURL)
 		resp, err := c.CreateBaseRequest(ctx).
 			SetResult(&UsersListResponse{}).
-			SetQueryParams(parameters.toQueryParametersMap()).
+			SetQueryParamsFromValues(parameters.toQueryParametersMap()).
 			Get(requestURL)
 		if err != nil {
 			logging.Errorf("received error while making request to %s", requestURL)
@@ -215,7 +214,7 @@ func (c OktaPAMClient) ListServiceUsers(ctx context.Context, parameters ListUser
 		logging.Tracef("making GET request to %s", requestURL)
 		resp, err := c.CreateBaseRequest(ctx).
 			SetResult(&UsersListResponse{}).
-			SetQueryParams(parameters.toQueryParametersMap()).
+			SetQueryParamsFromValues(parameters.toQueryParametersMap()).
 			Get(requestURL)
 		if err != nil {
 			logging.Errorf("received error while making request to %s", requestURL)
