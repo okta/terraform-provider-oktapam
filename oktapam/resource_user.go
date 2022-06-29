@@ -27,6 +27,12 @@ func resourceUser() *schema.Resource {
 				ForceNew:    true,
 				Description: descriptions.Name,
 			},
+			attributes.UserType: {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: descriptions.UserType,
+			},
 			attributes.ID: {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -51,11 +57,6 @@ func resourceUser() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: descriptions.DeletedAt,
-			},
-			attributes.UserType: {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: descriptions.UserType,
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -108,7 +109,11 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 			return diag.FromErr(err)
 		}
 	case "":
-		return diag.Errorf(errors.MissingUserTypeError)
+		// The human endpoint can return either service or type, this will be used in import cases
+		user, err = c.GetHumanUser(ctx, userName)
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	default:
 		return diag.Errorf(errors.InvalidUserTypeError, *userType)
 	}

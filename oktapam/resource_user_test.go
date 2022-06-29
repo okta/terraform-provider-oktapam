@@ -13,9 +13,9 @@ import (
 	"github.com/terraform-providers/terraform-provider-oktapam/oktapam/client"
 )
 
-func TestAccServiceUser(t *testing.T) {
-	resourceName := "oktapam_service_user.test-user"
-	userName := "resource-test3"
+func TestAccUser(t *testing.T) {
+	resourceName := "oktapam_user.test-user"
+	userName := "resource-test13"
 	teamName := "asa" // TODO: Change to tf-provider-testing team
 	userType := string(client.UserTypeService)
 
@@ -42,6 +42,9 @@ func TestAccServiceUser(t *testing.T) {
 						resourceName, attributes.Name, userName,
 					),
 					resource.TestCheckResourceAttr(
+						resourceName, attributes.UserType, string(client.UserTypeService),
+					),
+					resource.TestCheckResourceAttr(
 						resourceName, attributes.Status, string(client.UserStatusActive),
 					),
 				),
@@ -54,6 +57,9 @@ func TestAccServiceUser(t *testing.T) {
 						resourceName, attributes.Name, userName,
 					),
 					resource.TestCheckResourceAttr(
+						resourceName, attributes.UserType, string(client.UserTypeService),
+					),
+					resource.TestCheckResourceAttr(
 						resourceName, attributes.Status, string(client.UserStatusDisabled),
 					),
 				),
@@ -64,6 +70,9 @@ func TestAccServiceUser(t *testing.T) {
 					testAccServiceUserCheckExists(resourceName, constructUser(client.UserStatusDeleted)),
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.Name, userName,
+					),
+					resource.TestCheckResourceAttr(
+						resourceName, attributes.UserType, string(client.UserTypeService),
 					),
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.Status, string(client.UserStatusDeleted),
@@ -139,8 +148,9 @@ func createTestAccServiceUserUpdateConfig(userName string, status client.UserSta
 }
 
 const testAccServiceUserUpdateConfigFormat = `
-resource "oktapam_service_user" "test-user" {
+resource "oktapam_user" "test-user" {
 	name = "%s"
     status = "%s"
+	user_type = "service"
 }
 `
