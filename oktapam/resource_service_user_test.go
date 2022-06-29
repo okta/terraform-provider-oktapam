@@ -15,8 +15,8 @@ import (
 
 func TestAccServiceUser(t *testing.T) {
 	resourceName := "oktapam_service_user.test-user"
-	userName := "test30"
-	teamName := "demo3" // TODO: Change to tf-provider-testing team
+	userName := "resource-test"
+	teamName := "asa" // TODO: Change to tf-provider-testing team
 
 	constructUser := func(status client.UserStatus) client.ServiceUser {
 		sstatus := string(status)
