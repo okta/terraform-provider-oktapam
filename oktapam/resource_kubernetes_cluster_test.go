@@ -47,22 +47,28 @@ func TestAccKubernetesCluster(t *testing.T) {
 		CheckDestroy:      testAccClusterCheckDestroy(cluster1),
 		Steps: []resource.TestStep{
 			{
+				// create a normal cluster with some labels.
 				Config: createTestAccKubernetesClusterConfig(cluster1),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, attributes.KubernetesClusterKey, clusterKey),
 					resource.TestCheckResourceAttr(resourceName, attributes.KubernetesAuthMechanism, authMechanism),
 					resource.TestCheckResourceAttr(resourceName, attributes.Labels+".%", "2"),
+					resource.TestCheckResourceAttr(resourceName, attributes.Labels+".key1", "value1"),
+					resource.TestCheckResourceAttr(resourceName, attributes.Labels+".key2", "value2"),
 				),
 			},
 			{
+				// make sure import works
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
+				// update the cluster labels (the only attribute that doesn't force a new resource)
 				Config: createTestAccKubernetesClusterConfig(cluster2),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, attributes.Labels+".%", "1"),
+					resource.TestCheckResourceAttr(resourceName, attributes.Labels+".key3", "value3"),
 				),
 			},
 		},
