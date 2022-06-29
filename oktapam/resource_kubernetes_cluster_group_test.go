@@ -3,13 +3,13 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"strings"
 	"testing"
 	"text/template"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/kylelemons/godebug/pretty"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 )
 
@@ -34,7 +34,6 @@ func TestAccKubernetesClusterGroup(t *testing.T) {
 		ClusterSelector: &clusterSelector2,
 		Claims: map[string][]string{
 			"claim3": {"val4"},
-			"claim4": {"val5", "val6"},
 		},
 	}
 
@@ -46,7 +45,13 @@ func TestAccKubernetesClusterGroup(t *testing.T) {
 			{
 				// ensure create works
 				Config: createTestAccKubernetesClusterGroupCreateConfig(clusterGroup1ResourceTemplate, clusterGroup1),
-				Check:  testAccKubernetesClusterGroupExists(resourceName, clusterGroup1),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, attributes.ClusterSelector, clusterSelector1),
+					resource.TestCheckResourceAttr(resourceName, attributes.GroupName, groupName),
+					resource.TestCheckResourceAttr(resourceName, attributes.Claims+".%", "2"),
+					resource.TestCheckResourceAttr(resourceName, attributes.Claims+".claim1", "val1,val2"),
+					resource.TestCheckResourceAttr(resourceName, attributes.Claims+".claim2", "val3"),
+				),
 			},
 			{
 				// test importing resource
@@ -57,46 +62,14 @@ func TestAccKubernetesClusterGroup(t *testing.T) {
 			{
 				// ensure updating cluster selector and claims works
 				Config: createTestAccKubernetesClusterGroupCreateConfig(clusterGroup2ResourceTemplate, clusterGroup2),
-				Check:  testAccKubernetesClusterGroupExists(resourceName, clusterGroup2),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, attributes.ClusterSelector, clusterSelector2),
+					resource.TestCheckResourceAttr(resourceName, attributes.Claims+".%", "1"),
+					resource.TestCheckResourceAttr(resourceName, attributes.Claims+".claim3", "val4"),
+				),
 			},
 		},
 	})
-}
-
-// testAccKubernetesClusterGroupExists ensures the resource created by terraform has the values we expect.
-func testAccKubernetesClusterGroupExists(resourceName string, expectedClusterGroup client.KubernetesClusterGroup) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		res, ok := s.RootModule().Resources[resourceName]
-		if !ok {
-			return fmt.Errorf("resource %q not found", resourceName)
-		}
-
-		resourceID := res.Primary.ID
-
-		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
-
-		clusterGroup, err := pamClient.GetKubernetesClusterGroup(context.Background(), resourceID)
-		if err != nil {
-			return fmt.Errorf("error getting kubernetes cluster group %q: %w", resourceID, err)
-		}
-
-		if clusterGroup == nil {
-			return fmt.Errorf("missing kubernetes cluster group %q", resourceID)
-		}
-
-		if *expectedClusterGroup.ClusterSelector != *clusterGroup.ClusterSelector {
-			return fmt.Errorf("expected cluster selector %q, got %q on cluster group %q", *expectedClusterGroup.ClusterSelector, *clusterGroup.ClusterSelector, resourceID)
-		}
-		if *expectedClusterGroup.GroupName != *clusterGroup.GroupName {
-			return fmt.Errorf("expected cluster group name %q, got %q on cluster group %q", *expectedClusterGroup.GroupName, *expectedClusterGroup.GroupName, resourceID)
-		}
-		claimDifferences := pretty.Compare(expectedClusterGroup.Claims, clusterGroup.Claims)
-		if claimDifferences != "" {
-			return fmt.Errorf("cluster group %q claims are different than expected: %q", resourceID, claimDifferences)
-		}
-
-		return nil
-	}
 }
 
 func createTestAccKubernetesClusterGroupCreateConfig(body string, clusterGroup client.KubernetesClusterGroup) string {
@@ -124,12 +97,10 @@ func testAccClusterGroupCheckDestroy(expectedClusterGroup client.KubernetesClust
 				return fmt.Errorf("cluster group for group %q still exists", *expectedClusterGroup.GroupName)
 			}
 		}
-
 		return nil
 	}
 }
 
-// language=Terraform
 const clusterGroup1ResourceTemplate = `resource "oktapam_kubernetes_cluster_group" "test_group" {
   group_name       = "{{ .GroupName }}"
   cluster_selector = "{{ .ClusterSelector }}"
@@ -141,14 +112,12 @@ const clusterGroup1ResourceTemplate = `resource "oktapam_kubernetes_cluster_grou
 }
 `
 
-// language=Terraform
 const clusterGroup2ResourceTemplate = `resource "oktapam_kubernetes_cluster_group" "test_group" {
   group_name       = "{{ .GroupName }}"
   cluster_selector = "{{ .ClusterSelector }}"
 
   claims = {
 	claim3 = "val4"
-	claim4 = "val5,val6"
   }
 }
 `

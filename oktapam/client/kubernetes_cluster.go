@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"github.com/tomnomnom/linkheader"
 	"net/url"
 	"strings"
 
@@ -141,4 +142,46 @@ func (c OktaPAMClient) DeleteKubernetesCluster(ctx context.Context, id string) e
 	}
 
 	return nil
+}
+
+type KubernetesClusterListResponse struct {
+	Clusters []KubernetesCluster `json:"list"`
+}
+
+func (c OktaPAMClient) ListKubernetesClusters(ctx context.Context) ([]KubernetesCluster, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/kubernetes/clusters", url.PathEscape(c.Team))
+	clusters := make([]KubernetesCluster, 0)
+
+	for {
+		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
+		logging.Tracef("making GET request to %s", requestURL)
+
+		resp, err := c.CreateBaseRequest(ctx).SetResult(&KubernetesClusterListResponse{}).Get(requestURL)
+		if err != nil {
+			logging.Errorf("received error while making request to %s", requestURL)
+			return nil, err
+		}
+		if _, err := checkStatusCode(resp, 200); err != nil {
+			return nil, err
+		}
+
+		clusterGroupResponse := resp.Result().(*KubernetesClusterListResponse)
+		clusters = append(clusters, clusterGroupResponse.Clusters...)
+
+		linkHeader := resp.Header().Get("Link")
+		if linkHeader == "" {
+			break
+		}
+		links := linkheader.Parse(linkHeader)
+		requestURL = ""
+
+		for _, link := range links {
+			if link.Rel == "next" {
+				requestURL = link.URL
+				break
+			}
+		}
+	}
+
+	return clusters, nil
 }
