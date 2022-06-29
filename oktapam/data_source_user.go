@@ -34,8 +34,13 @@ func dataSourceServiceUsers() *schema.Resource {
 				Optional:    true,
 				Description: descriptions.FilterStatus,
 			},
+			attributes.UserType: {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: descriptions.FilterUserType,
+			},
 			// Return value
-			attributes.ServiceUsers: {
+			attributes.Users: {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Description: descriptions.SourceServiceUsers,
@@ -87,6 +92,9 @@ func dataSourceServiceUsersRead(ctx context.Context, d *schema.ResourceData, m i
 	var diags diag.Diagnostics
 
 	c := m.(client.OktaPAMClient)
+	var userType string
+
+	// Get the query parameters for the request
 	parameters := client.ListUsersParameters{}
 
 	if contains, ok := d.GetOk(attributes.Contains); ok {
@@ -108,16 +116,40 @@ func dataSourceServiceUsersRead(ctx context.Context, d *schema.ResourceData, m i
 		parameters.Status = make([]string, 0)
 	}
 
-	serviceUsersList, err := c.ListServiceUsers(ctx, parameters)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	serviceUsers := make([]map[string]interface{}, len(serviceUsersList))
-	for idx, serviceUser := range serviceUsersList {
-		serviceUsers[idx] = serviceUser.ToResourceMap()
+	// Get the user type for the request
+	if userTypeValue, ok := d.GetOk(attributes.UserType); ok {
+		userType = userTypeValue.(string)
 	}
 
-	if err := d.Set(attributes.ServiceUsers, serviceUsers); err != nil {
+	var usersList []client.User
+	var err error
+
+	// Based on data source user type, return corresponding type using corresponding endpoint
+	switch userType {
+	case string(client.UserTypeHuman):
+		usersList, err = c.ListUsers(ctx, parameters)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+	case string(client.UserTypeService):
+		usersList, err = c.ListServiceUsers(ctx, parameters)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+	default:
+		parameters.IncludeServiceUsers = "true"
+		usersList, err = c.ListUsers(ctx, parameters)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	users := make([]map[string]interface{}, len(usersList))
+	for idx, serviceUser := range usersList {
+		users[idx] = serviceUser.ToResourceMap()
+	}
+
+	if err := d.Set(attributes.Users, users); err != nil {
 		return diag.FromErr(err)
 	}
 

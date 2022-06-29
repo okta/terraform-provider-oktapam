@@ -43,7 +43,6 @@ const (
 	ServerEnrollmentTokens = "server_enrollment_tokens"
 	ServerUserName         = "server_user_name"
 	ServersSelector        = "servers_selector"
-	ServiceUsers           = "service_users"
 	SSHCertificateType     = "ssh_certificate_type"
 	SSHSessionRecording    = "ssh_session_recording"
 	StartsWith             = "starts_with"
@@ -52,4 +51,5 @@ const (
 	TeamName               = "team_name"
 	Token                  = "token"
 	UserType               = "user_type"
+	Users                  = "users"
 )

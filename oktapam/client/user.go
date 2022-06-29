@@ -106,19 +106,22 @@ func (p ListUsersParameters) toQueryParametersMap() map[string]string {
 	return m
 }
 
-type ServiceUsersListResponse struct {
-	ServiceUsers []User `json:"list"`
+type UsersListResponse struct {
+	Users []User `json:"list"`
 }
 
-func (c OktaPAMClient) ListServiceUsers(ctx context.Context, parameters ListUsersParameters) ([]User, error) {
-	requestURL := fmt.Sprintf("/v1/teams/%s/service_users", url.PathEscape(c.Team))
-	serviceUsers := make([]User, 0)
+// Commands used by both `human` and `service` users:
+
+// Must include `includeServiceUsers` for `service` users
+func (c OktaPAMClient) ListUsers(ctx context.Context, parameters ListUsersParameters) ([]User, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/users", url.PathEscape(c.Team))
+	users := make([]User, 0)
 
 	for {
 		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
 		logging.Tracef("making GET request to %s", requestURL)
 		resp, err := c.CreateBaseRequest(ctx).
-			SetResult(&ServiceUsersListResponse{}).
+			SetResult(&UsersListResponse{}).
 			SetQueryParams(parameters.toQueryParametersMap()).
 			Get(requestURL)
 		if err != nil {
@@ -129,8 +132,101 @@ func (c OktaPAMClient) ListServiceUsers(ctx context.Context, parameters ListUser
 			return nil, err
 		}
 
-		serviceUsersListResponse := resp.Result().(*ServiceUsersListResponse)
-		serviceUsers = append(serviceUsers, serviceUsersListResponse.ServiceUsers...)
+		usersListResponse := resp.Result().(*UsersListResponse)
+		users = append(users, usersListResponse.Users...)
+
+		linkHeader := resp.Header().Get("Link")
+		if linkHeader == "" {
+			break
+		}
+		links := linkheader.Parse(linkHeader)
+		requestURL = ""
+
+		isNext := false
+		for _, link := range links {
+			if link.Rel == "next" {
+				requestURL = link.URL
+				isNext = true
+			}
+		}
+		if !isNext {
+			break
+		}
+	}
+	return users, nil
+}
+
+// Commands used by only `human` users:
+
+func (c OktaPAMClient) GetHumanUser(ctx context.Context, serviceUserName string) (*User, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/users/%s", url.PathEscape(c.Team), url.PathEscape(serviceUserName))
+	logging.Tracef("making GET request to %s", requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetResult(&User{}).Get(requestURL)
+	if err != nil {
+		logging.Errorf("received error while making request to %s", requestURL)
+		return nil, err
+	}
+	statusCode := resp.StatusCode()
+
+	if statusCode == 200 {
+		serviceUser := resp.Result().(*User)
+		return serviceUser, nil
+	} else if statusCode == 404 {
+		return nil, nil
+	}
+
+	return nil, createErrorForInvalidCode(resp, 200, 404)
+}
+
+func (c OktaPAMClient) CreateHumanUser(ctx context.Context, userName string) error {
+
+	// TODO provide context about why a human user cannot be created
+
+	return nil
+}
+
+func (c OktaPAMClient) UpdateHumanUser(ctx context.Context, userName string, serviceUser *User) error {
+	requestURL := fmt.Sprintf("/v1/teams/%s/users/%s", url.PathEscape(c.Team), url.PathEscape(userName))
+	logging.Tracef("making PUT request to %s", requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetBody(serviceUser).Put(requestURL)
+	if err != nil {
+		logging.Errorf("received error while making request to %s", requestURL)
+		return err
+	}
+	_, err = checkStatusCode(resp, 200)
+	return err
+}
+
+func (c OktaPAMClient) DeleteHumanUser(ctx context.Context, userName string) error {
+
+	// TODO provide context about why a human user cannot be deleted
+
+	return nil
+}
+
+// Commands used by only `service` users:
+
+func (c OktaPAMClient) ListServiceUsers(ctx context.Context, parameters ListUsersParameters) ([]User, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/service_users", url.PathEscape(c.Team))
+	serviceUsers := make([]User, 0)
+
+	for {
+		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
+		logging.Tracef("making GET request to %s", requestURL)
+		resp, err := c.CreateBaseRequest(ctx).
+			SetResult(&UsersListResponse{}).
+			SetQueryParams(parameters.toQueryParametersMap()).
+			Get(requestURL)
+		if err != nil {
+			logging.Errorf("received error while making request to %s", requestURL)
+			return nil, err
+		}
+		if _, err := checkStatusCode(resp, 200); err != nil {
+			return nil, err
+		}
+
+		serviceUsersListResponse := resp.Result().(*UsersListResponse)
+		serviceUsers = append(serviceUsers, serviceUsersListResponse.Users...)
 
 		linkHeader := resp.Header().Get("Link")
 		if linkHeader == "" {

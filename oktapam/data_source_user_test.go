@@ -13,7 +13,7 @@ import (
 )
 
 func TestAccDatasourceServiceUser(t *testing.T) {
-	resourceName := "data.oktapam_service_user.test_users"
+	resourceName := "data.oktapam_user.test_users"
 	userNamePrefix := "tf-test"
 
 	expectedUsers := map[string]client.User{
@@ -46,7 +46,7 @@ func TestAccDatasourceServiceUser(t *testing.T) {
 		{
 			Config: createTestAccDatasourceServiceUsersContainsConfig(userNamePrefix),
 			Check: resource.ComposeTestCheckFunc(
-				resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.ServiceUsers), "3"),
+				resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Users), "3"),
 				testAccDatasourceServiceUsersCheck(resourceName, expectedUsers),
 			),
 		},
@@ -54,7 +54,7 @@ func TestAccDatasourceServiceUser(t *testing.T) {
 		{
 			Config: createTestAccDatasourceServiceUsersStartsWithConfig(userNamePrefix),
 			Check: resource.ComposeTestCheckFunc(
-				resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.ServiceUsers), "3"),
+				resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Users), "3"),
 				testAccDatasourceServiceUsersCheck(resourceName, expectedUsers),
 			),
 		},
@@ -62,21 +62,21 @@ func TestAccDatasourceServiceUser(t *testing.T) {
 		{
 			Config: createTestAccDatasourceServiceUsersStatusConfig(userNamePrefix, string(client.UserStatusActive)),
 			Check: resource.ComposeTestCheckFunc(
-				resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.ServiceUsers), "3"),
+				resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Users), "3"),
 				testAccDatasourceServiceUsersCheck(resourceName, expectedUsers),
 			),
 		},
 		{
 			Config: createTestAccDatasourceServiceUsersStatusConfig(userNamePrefix, string(client.UserStatusDisabled)),
 			Check: resource.ComposeTestCheckFunc(
-				resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.ServiceUsers), "0"),
+				resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Users), "0"),
 				testAccDatasourceServiceUsersCheck(resourceName, emptyUsers),
 			),
 		},
 		{
 			Config: createTestAccDatasourceServiceUsersStatusConfig(userNamePrefix, string(client.UserStatusDeleted)),
 			Check: resource.ComposeTestCheckFunc(
-				resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.ServiceUsers), "0"),
+				resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Users), "0"),
 				testAccDatasourceServiceUsersCheck(resourceName, emptyUsers),
 			),
 		},
@@ -139,7 +139,7 @@ func generateStatusSteps(resourceName, prefix string, expectedUsers map[string]c
 			resource.TestStep{
 				Config: createTestAccDatasourceServiceUsersStatusConfig(prefix, statusLookup),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.ServiceUsers), fmt.Sprintf("%d", expectedLength)),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Users), fmt.Sprintf("%d", expectedLength)),
 					testAccDatasourceServiceUsersCheck(resourceName, expectedUsers),
 				),
 			},
@@ -154,7 +154,7 @@ func testAccDatasourceServiceUsersCheck(rn string, expectedUsers map[string]clie
 		if !ok {
 			return fmt.Errorf("resource not found: %s", rn)
 		}
-		mappings, err := getIndexMappingFromResource(rs, attributes.ServiceUsers, attributes.Name, len(expectedUsers))
+		mappings, err := getIndexMappingFromResource(rs, attributes.Users, attributes.Name, len(expectedUsers))
 		if err != nil {
 			return fmt.Errorf("error mapping resources to indices: %w", err)
 		}
@@ -166,7 +166,7 @@ func testAccDatasourceServiceUsersCheck(rn string, expectedUsers map[string]clie
 				return fmt.Errorf("could not find resource with %s: %s", attributes.Name, name)
 			}
 
-			name, ok := primaryAttributes[fmt.Sprintf("%s.%s.%s", attributes.ServiceUsers, idx, attributes.Name)]
+			name, ok := primaryAttributes[fmt.Sprintf("%s.%s.%s", attributes.Users, idx, attributes.Name)]
 			if !ok {
 				return fmt.Errorf("%s attribute not set for service user %q", attributes.Name, name)
 			}
@@ -180,19 +180,22 @@ func testAccDatasourceServiceUsersCheck(rn string, expectedUsers map[string]clie
 }
 
 const testAccDatasourceServiceUsersContainsFormat = `
-data "oktapam_service_user" "test_users" {
+data "oktapam_user" "test_users" {
+	user_type = "service"
 	contains = "%s"
 }
 `
 
 const testAccDatasourceServiceUsersStartsWithFormat = `
-data "oktapam_service_user" "test_users" {
+data "oktapam_user" "test_users" {
+	user_type = "service"
 	starts_with = "%s"
 }
 `
 
 const testAccDatasourceServiceUsersStatusFormat = `
-data "oktapam_service_user" "test_users" {
+data "oktapam_user" "test_users" {
+	user_type = "service"
 	starts_with = "%s"
 	status = ["%s"]
 }
