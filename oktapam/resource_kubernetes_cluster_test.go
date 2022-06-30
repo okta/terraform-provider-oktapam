@@ -86,7 +86,6 @@ func createTestAccKubernetesClusterConfig(cluster client.KubernetesCluster) stri
 		panic(err)
 	}
 	return output.String()
-
 }
 
 func testAccClusterCheckDestroy(expectedCluster client.KubernetesCluster) resource.TestCheckFunc {

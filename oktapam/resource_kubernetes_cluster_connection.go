@@ -19,7 +19,7 @@ func resourceKubernetesClusterConnection() *schema.Resource {
 		UpdateContext: resourceKubernetesClusterConnectionUpdate,
 		Description:   descriptions.ResourceKubernetesClusterConnection,
 		Schema: map[string]*schema.Schema{
-			attributes.ID: { //TODO(ja) fix me - clusterid vs id
+			attributes.ID: {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -54,17 +54,15 @@ func resourceKubernetesClusterConnectionCreate(ctx context.Context, d *schema.Re
 	apiURL := getStringPtr(attributes.KubernetesAPIURL, d, true)
 	publicCertificate := getStringPtr(attributes.PublicCertificate, d, true)
 
-	connectionSpec := client.KubernetesClusterConnection{
-		APIURL:            apiURL,
-		PublicCertificate: publicCertificate,
-	}
+	connectionDetails := make(map[string]interface{})
 
-	if createdConnection, err := c.CreateKubernetesClusterConnection(ctx, clusterID, connectionSpec); err != nil {
+	connectionDetails[attributes.KubernetesAPIURL] = apiURL
+	connectionDetails[attributes.PublicCertificate] = publicCertificate
+
+	if err := c.UpdateKubernetesCluster(ctx, clusterID, connectionDetails); err != nil {
 		return diag.FromErr(err)
-	} else if createdConnection == nil {
-		d.SetId("")
 	} else {
-		d.SetId(*createdConnection.ID)
+		d.SetId(clusterID)
 	}
 
 	return resourceKubernetesClusterConnectionRead(ctx, d, m)
@@ -73,8 +71,7 @@ func resourceKubernetesClusterConnectionCreate(ctx context.Context, d *schema.Re
 func resourceKubernetesClusterConnectionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	clusterID := d.Id()
-	cluster, err := c.GetKubernetesClusterConnection(ctx, clusterID)
+	cluster, err := c.GetKubernetesClusterConnection(ctx, d.Id())
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -115,7 +112,7 @@ func resourceKubernetesClusterConnectionUpdate(ctx context.Context, d *schema.Re
 	}
 
 	if changed {
-		if err := c.UpdateKubernetesClusterConnection(ctx, id, updates); err != nil {
+		if err := c.UpdateKubernetesCluster(ctx, id, updates); err != nil {
 			return diag.FromErr(err)
 		}
 	}
@@ -126,9 +123,7 @@ func resourceKubernetesClusterConnectionUpdate(ctx context.Context, d *schema.Re
 func resourceKubernetesClusterConnectionDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	id := d.Id()
-
-	if err := c.DeleteKubernetesClusterConnection(ctx, id); err != nil {
+	if err := c.DeleteKubernetesClusterConnection(ctx, d.Id()); err != nil {
 		return diag.FromErr(err)
 	}
 

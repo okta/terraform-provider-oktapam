@@ -11,6 +11,7 @@ import (
 
 type KubernetesClusterConnection struct {
 	ID                *string `json:"-"`
+	ClusterID         *string `json:"-"`
 	APIURL            *string `json:"api_url,omitempty"`
 	PublicCertificate *string `json:"public_certificate,omitempty"`
 }
@@ -27,26 +28,6 @@ func (t KubernetesClusterConnection) ToResourceMap() map[string]interface{} {
 	}
 
 	return m
-}
-
-func (c OktaPAMClient) CreateKubernetesClusterConnection(ctx context.Context, clusterID string, clusterConnection KubernetesClusterConnection) (*KubernetesClusterConnection, error) {
-	requestURL := fmt.Sprintf("/v1/teams/%s/kubernetes/clusters/%s", url.PathEscape(c.Team), url.PathEscape(clusterID))
-	logging.Tracef("making PUT request to %s", requestURL)
-
-	resp, err := c.CreateBaseRequest(ctx).SetBody(clusterConnection).SetResult(&KubernetesClusterConnection{}).Put(requestURL)
-	if err != nil {
-		logging.Errorf("received error while making request to %s", requestURL)
-		return nil, err
-	}
-
-	if _, err := checkStatusCode(resp, 204); err != nil {
-		logging.Tracef("unexpected status code: %d", resp.StatusCode())
-		return nil, err
-	}
-
-	createdConnection := resp.Result().(*KubernetesClusterConnection)
-	createdConnection.ID = &clusterID
-	return createdConnection, nil
 }
 
 func (c OktaPAMClient) GetKubernetesClusterConnection(ctx context.Context, clusterID string) (*KubernetesClusterConnection, error) {
@@ -71,22 +52,9 @@ func (c OktaPAMClient) GetKubernetesClusterConnection(ctx context.Context, clust
 
 	clusterConnection := resp.Result().(*KubernetesClusterConnection)
 	clusterConnection.ID = &clusterID
+	clusterConnection.ClusterID = &clusterID
 
 	return clusterConnection, nil
-}
-
-func (c OktaPAMClient) UpdateKubernetesClusterConnection(ctx context.Context, clusterID string, updates map[string]interface{}) error {
-	requestURL := fmt.Sprintf("/v1/teams/%s/kubernetes/clusters/%s", url.PathEscape(c.Team), url.PathEscape(clusterID))
-	logging.Tracef("making PUT request to %s", requestURL)
-
-	resp, err := c.CreateBaseRequest(ctx).SetBody(updates).Put(requestURL)
-	if err != nil {
-		logging.Errorf("received error while making request to %s", requestURL)
-		return err
-	}
-
-	_, err = checkStatusCode(resp, 204)
-	return err
 }
 
 func (c OktaPAMClient) DeleteKubernetesClusterConnection(ctx context.Context, clusterID string) error {
