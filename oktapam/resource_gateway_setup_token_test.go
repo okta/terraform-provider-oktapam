@@ -68,7 +68,7 @@ func testAccGatewaySetupTokenCheckExists(rn string, expectedGatewaySetupToken cl
 		if token == nil {
 			return fmt.Errorf("gateway setup token for with id %s does not exist", resourceID)
 		}
-		if token.Token == nil {
+		if *token.Token == "" {
 			return fmt.Errorf("gateway setup token value for with id %s does not exist", resourceID)
 		}
 		if *token.Description != *expectedGatewaySetupToken.Description {
