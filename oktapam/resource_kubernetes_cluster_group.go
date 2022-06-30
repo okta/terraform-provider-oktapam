@@ -137,6 +137,7 @@ func resourceKubernetesClusterGroupDelete(ctx context.Context, d *schema.Resourc
 	return nil
 }
 
+// claimsCSVToMap is purpose-built and expects Kubernetes-style values (ie, no commas, spaces, funny characters, etc).
 func claimsCSVToMap(claimsIn map[string]interface{}) map[string][]string {
 	claimsMap := make(map[string][]string)
 

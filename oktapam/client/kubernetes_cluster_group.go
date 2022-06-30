@@ -41,6 +41,8 @@ func (t KubernetesClusterGroup) ToResourceMap() map[string]interface{} {
 	return m
 }
 
+// claimsMapToCSV is purpose built to handle Kubernetes-style values. (ie no spaces, limited punctuation, etc). No
+// escaping of values is performed.
 func claimsMapToCSV(claimsIn map[string][]string) map[string]string {
 	claimsOut := make(map[string]string, len(claimsIn))
 	for k, values := range claimsIn {
