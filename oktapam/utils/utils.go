@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
@@ -71,26 +72,6 @@ func ConvertStringSliceToSet(strings []string) *schema.Set {
 		arr[i] = str
 	}
 	return schema.NewSet(schema.HashString, arr)
-}
-
-func SetNonPrimitives(d *schema.ResourceData, valueMap map[string]interface{}) error {
-	for k, v := range valueMap {
-		if v != nil {
-			if err := d.Set(k, v); err != nil {
-				return fmt.Errorf("error setting %s for resource %s: %s", k, d.Id(), err)
-			}
-		}
-	}
-	return nil
-}
-
-func Contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
 }
 
 type checkResourceExistsFunc func(string) (bool, error)
