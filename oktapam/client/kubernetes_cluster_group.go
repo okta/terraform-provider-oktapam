@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/tomnomnom/linkheader"
 	"net/url"
+	"strings"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
@@ -41,15 +42,9 @@ func (t KubernetesClusterGroup) ToResourceMap() map[string]interface{} {
 }
 
 func claimsMapToCSV(claimsIn map[string][]string) map[string]string {
-	claimsOut := make(map[string]string)
+	claimsOut := make(map[string]string, len(claimsIn))
 	for k, values := range claimsIn {
-		claimsOut[k] = ""
-		for _, claimValue := range values {
-			if len(claimsOut[k]) > 0 {
-				claimsOut[k] += ","
-			}
-			claimsOut[k] += claimValue
-		}
+		claimsOut[k] = strings.Join(values, ",")
 	}
 	return claimsOut
 }

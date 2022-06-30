@@ -15,7 +15,7 @@ import (
 
 func resourceKubernetesClusterGroup() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceKubernetesClustGroupCreate,
+		CreateContext: resourceKubernetesClusterGroupCreate,
 		ReadContext:   resourceKubernetesClusterGroupRead,
 		UpdateContext: resourceKubernetesClusterGroupUpdate,
 		DeleteContext: resourceKubernetesClusterGroupDelete,
@@ -48,7 +48,7 @@ func resourceKubernetesClusterGroup() *schema.Resource {
 	}
 }
 
-func resourceKubernetesClustGroupCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceKubernetesClusterGroupCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	groupName := getStringPtr(attributes.GroupName, d, true)
 	clusterSelector := getStringPtr(attributes.ClusterSelector, d, true)
