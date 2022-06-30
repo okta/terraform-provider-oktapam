@@ -6,7 +6,7 @@ VERSION=0.1.2
 OS_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
 PLUGIN_DIR=~/.terraform.d/plugins
 
-.DEFAULT_GOAL := build
+.DEFAULT_GOAL := install
 
 build:
 	go build -o ${BINARY}
