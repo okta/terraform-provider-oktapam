@@ -68,6 +68,9 @@ func testAccGatewaySetupTokenCheckExists(rn string, expectedGatewaySetupToken cl
 		if token == nil {
 			return fmt.Errorf("gateway setup token for with id %s does not exist", resourceID)
 		}
+		if token.Token == nil {
+			return fmt.Errorf("gateway setup token value for with id %s does not exist", resourceID)
+		}
 		if *token.Description != *expectedGatewaySetupToken.Description {
 			return fmt.Errorf("expected description does not match returned description for gateway setup token.  expected: %s, got: %s", *expectedGatewaySetupToken.Description, *token.Description)
 		}
@@ -101,7 +104,7 @@ const testAccGatewaySetupTokenCreateConfigFormat = `
 resource "oktapam_gateway_setup_token" "test-gateway-setup-token" {
 	description = "%s"
 	labels = {
-%s
+		%s
 	}
 }
 `
