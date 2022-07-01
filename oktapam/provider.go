@@ -26,6 +26,10 @@ const (
 	providerServerEnrollmentTokenKey = "oktapam_server_enrollment_token"
 	providerProjectGroupKey          = "oktapam_project_group"
 	providerGatewaySetupTokenKey     = "oktapam_gateway_setup_token"
+
+	providerKubernetesClusterKey           = "oktapam_kubernetes_cluster"
+	providerKubernetesClusterConnectionKey = "oktapam_kubernetes_cluster_connection"
+	providerKubernetesClusterGroupKey      = "oktapam_kubernetes_cluster_group"
 )
 
 func Provider() *schema.Provider {
@@ -57,12 +61,16 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			providerProjectKey:               resourceProject(),
-			providerGroupKey:                 resourceGroup(),
-			providerServerEnrollmentTokenKey: resourceServerEnrollmentToken(),
-			providerProjectGroupKey:          resourceProjectGroup(),
-			providerGatewaySetupTokenKey:     resourceGatewaySetupToken(),
+			providerProjectKey:                     resourceProject(),
+			providerGroupKey:                       resourceGroup(),
+			providerServerEnrollmentTokenKey:       resourceServerEnrollmentToken(),
+			providerProjectGroupKey:                resourceProjectGroup(),
+			providerGatewaySetupTokenKey:           resourceGatewaySetupToken(),
+			providerKubernetesClusterKey:           resourceKubernetesCluster(),
+			providerKubernetesClusterConnectionKey: resourceKubernetesClusterConnection(),
+			providerKubernetesClusterGroupKey:      resourceKubernetesClusterGroup(),
 		},
+
 		DataSourcesMap: map[string]*schema.Resource{
 			providerProjectKey:               dataSourceProjects(),
 			providerGroupKey:                 dataSourceGroups(),
@@ -80,10 +88,10 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	team := d.Get(teamKey).(string)
 	apiHost := d.Get(apiHostKey).(string)
 
-	client, err := client.CreateOktaPAMClient(apiKey, apiKeySecret, team, apiHost)
+	pamClient, err := client.CreateOktaPAMClient(apiKey, apiKeySecret, team, apiHost)
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
 
-	return *client, nil
+	return *pamClient, nil
 }

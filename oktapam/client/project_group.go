@@ -15,15 +15,15 @@ import (
 )
 
 type ProjectGroup struct {
-	Project          *string `json:"_"`
-	Group            *string `json:"group"`
-	GroupID          *string `json:"group_id,omitempty"`
-	DeletedAt        *string `json:"deleted_at,omitempty"`
-	RemovedAt        *string `json:"removed_at,omitempty"`
-	CreateServerGoup bool    `json:"create_server_group"`
-	ServerAccess     bool    `json:"server_access"`
-	ServerAdmin      bool    `json:"server_admin"`
-	ServersSelector  string  `json:"servers_selector,omitempty"`
+	Project           *string `json:"_"`
+	Group             *string `json:"group"`
+	GroupID           *string `json:"group_id,omitempty"`
+	DeletedAt         *string `json:"deleted_at,omitempty"`
+	RemovedAt         *string `json:"removed_at,omitempty"`
+	CreateServerGroup bool    `json:"create_server_group"`
+	ServerAccess      bool    `json:"server_access"`
+	ServerAdmin       bool    `json:"server_admin"`
+	ServersSelector   string  `json:"servers_selector,omitempty"`
 }
 
 func ProjectGroupFromMap(m map[string]interface{}) (*ProjectGroup, error) {
@@ -49,7 +49,7 @@ func ProjectGroupFromMap(m map[string]interface{}) (*ProjectGroup, error) {
 			if err != nil {
 				return nil, err
 			}
-			p.CreateServerGoup = b
+			p.CreateServerGroup = b
 		case attributes.ServerAccess:
 			b, err := parseBool(v)
 			if err != nil {
@@ -135,8 +135,8 @@ func (p *ProjectGroup) ToResourceMap() (map[string]interface{}, error) {
 	if p.RemovedAt != nil {
 		m[attributes.RemovedAt] = *p.RemovedAt
 	}
-	if p.CreateServerGoup {
-		m[attributes.CreateServerGroup] = p.CreateServerGoup
+	if p.CreateServerGroup {
+		m[attributes.CreateServerGroup] = p.CreateServerGroup
 	}
 	m[attributes.ServerAccess] = p.ServerAccess
 	m[attributes.ServerAdmin] = p.ServerAdmin

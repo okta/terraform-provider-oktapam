@@ -26,11 +26,11 @@ func TestAccProjectGroup(t *testing.T) {
 		ServerAdmin:  true,
 	}
 	updatedProjectGroup := client.ProjectGroup{
-		Project:          &projectName,
-		Group:            &groupName,
-		ServerAccess:     true,
-		ServerAdmin:      false,
-		CreateServerGoup: true,
+		Project:           &projectName,
+		Group:             &groupName,
+		ServerAccess:      true,
+		ServerAdmin:       false,
+		CreateServerGroup: true,
 	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -101,8 +101,8 @@ func testAccProjectGroupCheckExists(rn string, expectedProjectGroup client.Proje
 			return fmt.Errorf("error parsing resource id: %w", err)
 		}
 
-		client := testAccProvider.Meta().(client.OktaPAMClient)
-		projectGroup, err := client.GetProjectGroup(context.Background(), project, group)
+		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
+		projectGroup, err := pamClient.GetProjectGroup(context.Background(), project, group)
 		if err != nil {
 			return fmt.Errorf("error getting project group: %w", err)
 		} else if projectGroup == nil {
@@ -120,22 +120,22 @@ func testAccProjectGroupCheckExists(rn string, expectedProjectGroup client.Proje
 
 func testAccProjectGroupCheckDestroy(projectGroup client.ProjectGroup) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(client.OktaPAMClient)
-		pg, err := client.GetProjectGroup(context.Background(), *projectGroup.Project, *projectGroup.Group)
+		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
+		pg, err := pamClient.GetProjectGroup(context.Background(), *projectGroup.Project, *projectGroup.Group)
 		if err != nil {
 			return fmt.Errorf("error getting project group: %w", err)
 		}
 		if pg != nil && utils.IsNonEmpty(pg.Project) && utils.IsNonEmpty(pg.Group) && utils.IsBlank(pg.DeletedAt) && utils.IsBlank(pg.RemovedAt) {
 			return fmt.Errorf("project group still exists")
 		}
-		group, err := client.GetGroup(context.Background(), *projectGroup.Group, false)
+		group, err := pamClient.GetGroup(context.Background(), *projectGroup.Group, false)
 		if err != nil {
 			return fmt.Errorf("error getting group associated with project group: %w", err)
 		}
 		if group != nil && utils.IsNonEmpty(group.ID) {
 			return fmt.Errorf("group still exists: %s", *projectGroup.Group)
 		}
-		project, err := client.GetProject(context.Background(), *projectGroup.Project, false)
+		project, err := pamClient.GetProject(context.Background(), *projectGroup.Project, false)
 		if err != nil {
 			return fmt.Errorf("error getting project associated with project group: %w", err)
 		}
