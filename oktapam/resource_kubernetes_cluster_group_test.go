@@ -110,7 +110,7 @@ func testAccClusterGroupCheckDestroy(expectedClusterGroup client.KubernetesClust
 }
 
 const clusterGroup1ResourceTemplate = `resource "oktapam_kubernetes_cluster_group" "test_group" {
-  group_name       = oktapam_group.test_group.name
+  group_name       = "{{ .GroupName }}"
   cluster_selector = "{{ .ClusterSelector }}"
 
   claims = {
@@ -121,7 +121,7 @@ const clusterGroup1ResourceTemplate = `resource "oktapam_kubernetes_cluster_grou
 `
 
 const clusterGroup2ResourceTemplate = `resource "oktapam_kubernetes_cluster_group" "test_group" {
-  group_name       = oktapam_group.test_group.name
+  group_name       = "{{ .GroupName }}"
   cluster_selector = "{{ .ClusterSelector }}"
 
   claims = {
