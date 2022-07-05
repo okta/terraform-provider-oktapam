@@ -15,7 +15,7 @@ import (
 func TestAccKubernetesCluster(t *testing.T) {
 	resourceName := "oktapam_kubernetes_cluster.acctest_cluster"
 
-	clusterKey := "test-key"
+	clusterKey := resource.PrefixedUniqueId("cluster-key-")
 	authMechanism := "NONE"
 
 	labels1 := map[string]string{

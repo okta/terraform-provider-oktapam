@@ -12,7 +12,6 @@ import (
 
 func TestAccKubernetesClusterConnection(t *testing.T) {
 	resourceName := "oktapam_kubernetes_cluster_connection.acctest"
-
 	apiURL := "https://localhost:6443"
 
 	publicCertificate := string(pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: make([]byte, 1000)}))
@@ -30,7 +29,7 @@ func TestAccKubernetesClusterConnection(t *testing.T) {
 		ProviderFactories: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: createTestAccKubernetesClusterConnectionConfig(clusterConnection),
+				Config: createTestAccKubernetesClusterConnectionConfig(resource.PrefixedUniqueId("cluster-key-"), clusterConnection),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, attributes.KubernetesAPIURL, apiURL),
 					resource.TestCheckResourceAttr(resourceName, attributes.PublicCertificate, publicCertificate),
@@ -46,14 +45,22 @@ func TestAccKubernetesClusterConnection(t *testing.T) {
 	})
 }
 
-func createTestAccKubernetesClusterConnectionConfig(clusterConnection client.KubernetesClusterConnection) string {
+func createTestAccKubernetesClusterConnectionConfig(clusterKey string, clusterConnection client.KubernetesClusterConnection) string {
 	tpl, err := template.New("cluster_connection").New("cluster").Parse(clusterConnectionResourceTemplate)
 	if err != nil {
 		panic(err)
 	}
 
+	type templateData struct {
+		client.KubernetesClusterConnection
+		ClusterKey string
+	}
+
 	var output strings.Builder
-	if err := tpl.Execute(&output, clusterConnection); err != nil {
+	if err := tpl.Execute(&output, templateData{
+		KubernetesClusterConnection: clusterConnection,
+		ClusterKey:                  clusterKey,
+	}); err != nil {
 		panic(err)
 	}
 	return output.String()
@@ -61,7 +68,7 @@ func createTestAccKubernetesClusterConnectionConfig(clusterConnection client.Kub
 
 const clusterConnectionResourceTemplate = `
 resource "oktapam_kubernetes_cluster" "acctest" {
-	key = "acctest"
+	key = "{{.ClusterKey}}"
 	auth_mechanism="NONE"
 }
 
