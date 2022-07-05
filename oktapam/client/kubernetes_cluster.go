@@ -3,9 +3,10 @@ package client
 import (
 	"context"
 	"fmt"
-	"github.com/tomnomnom/linkheader"
 	"net/url"
 	"strings"
+
+	"github.com/tomnomnom/linkheader"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"

@@ -2,12 +2,13 @@ package oktapam
 
 import (
 	"encoding/pem"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/terraform-provider-oktapam/oktapam/client"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"strings"
 	"testing"
 	"text/template"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
 func TestAccKubernetesClusterConnection(t *testing.T) {

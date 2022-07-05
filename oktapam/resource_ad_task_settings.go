@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
@@ -212,7 +213,7 @@ func resourceADTaskSettingsUpdate(ctx context.Context, d *schema.ResourceData, m
 		attributes.AdditionalAttributeMapping,
 		attributes.ADRuleAssignments) {
 		//If deactivated
-		if _, new := d.GetChange(attributes.IsActive); d.HasChange(attributes.IsActive) && new != nil && !new.(bool) {
+		if _, active := d.GetChange(attributes.IsActive); d.HasChange(attributes.IsActive) && active != nil && !active.(bool) {
 			//Deactivate task
 			err := c.DeactivateADTaskSettings(ctx, adConnId, taskSettingsId)
 			if err != nil {
