@@ -16,11 +16,11 @@ func TestAccKubernetesClusterConnection(t *testing.T) {
 	apiURL := "https://localhost:6443"
 
 	publicCertificate := string(pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: make([]byte, 1000)}))
-	publicCertificate = strings.Replace(publicCertificate, "\n", "\\n", -1)
+	publicCertificateToSend := strings.Replace(publicCertificate, "\n", "\\n", -1)
 
 	clusterConnection := client.KubernetesClusterConnection{
 		APIURL:            &apiURL,
-		PublicCertificate: &publicCertificate,
+		PublicCertificate: &publicCertificateToSend,
 	}
 
 	resource.Test(t, resource.TestCase{
