@@ -10,6 +10,7 @@ const (
 	Description            = "description"
 	DescriptionContains    = "description_contains"
 	DisconnectedModeOnOnly = "disconnected_mode_on_only"
+	FilterStatus           = "filter_status" // NOTE: This attribute exists to avoid conflicts with Status
 	ForwardTraffic         = "forward_traffic"
 	GatewaySelector        = "gateway_selector"
 	GatewaySetupTokens     = "gateway_setup_tokens"
@@ -21,6 +22,7 @@ const (
 	ID                     = "id"
 	IncludeDeleted         = "include_deleted"
 	IncludeRemoved         = "include_removed"
+	IncludeServiceUsers    = "include_service_users"
 	IssuedAt               = "issued_at"
 	Labels                 = "labels"
 	Name                   = "name"
@@ -38,9 +40,15 @@ const (
 	ServerAccess           = "server_access"
 	ServerAdmin            = "server_admin"
 	ServerEnrollmentTokens = "server_enrollment_tokens"
+	ServerUserName         = "server_user_name"
 	ServersSelector        = "servers_selector"
 	SSHCertificateType     = "ssh_certificate_type"
 	SSHSessionRecording    = "ssh_session_recording"
+	StartsWith             = "starts_with"
+	Status                 = "status"
 	Team                   = "team" // NOTE: This is inconsistent, most other API endpoints use `team_name`.
+	TeamName               = "team_name"
 	Token                  = "token"
+	UserType               = "user_type"
+	Users                  = "users"
 )
