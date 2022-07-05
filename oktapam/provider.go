@@ -33,6 +33,7 @@ const (
 	providerProjectKey                     = "oktapam_project"
 	providerProjectGroupKey                = "oktapam_project_group"
 	providerServerEnrollmentTokenKey       = "oktapam_server_enrollment_token"
+	providerUserKey                        = "oktapam_user"
 )
 
 func Provider() *schema.Provider {
@@ -74,6 +75,7 @@ func Provider() *schema.Provider {
 			providerProjectKey:                     resourceProject(),
 			providerProjectGroupKey:                resourceProjectGroup(),
 			providerServerEnrollmentTokenKey:       resourceServerEnrollmentToken(),
+			providerUserKey:                        resourceUser(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{

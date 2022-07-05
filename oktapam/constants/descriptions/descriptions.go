@@ -62,6 +62,7 @@ const (
 	Roles                            = "A list of roles for the ASA Group. Options are `access_user`, `access_admin`, and `reporting_user`."
 	ServerAccess                     = "If 'true', members of this ASA Group have access to the ASA Project servers."
 	ServerAdmin                      = "If 'true', members of ASA Group have sudo permissions on ASA Project servers."
+	ServerUserName                   = "The name of the corresponding ASA Server User."
 	ServersSelector                  = "Enables access to ASA Servers with labels matching all selectors. For ASA Projects Groups using Policy Sync Feature."
 	ServiceAccountUsername           = "The username of the service account that can be used to query the domain."
 	ServiceAccountPassword           = "The password of the service account that can be used to query the domain."
@@ -69,9 +70,11 @@ const (
 		"This option should only be used to connect to legacy systems that cannot use newer SSH versions. If you do need to use `CERT_TYPE_RSA_01`, it is recommended to connect via a gateway with traffic forwarding. " +
 		"Otherwise, please use a more current key algorithm. If left unspecified, `CERT_TYPE_ED25519_01` is used by default."
 	SSHSessionRecording = "If 'true', enables ssh recording on server access requests."
+	Status              = "The status of the ASA User. Valid statuses are `ACTIVE`, `DISABLED`, and `DELETED`."
 	TeamName            = "The human-readable name of the ASA Team that owns the resource. Values are lower-case."
 	Token               = "The secret used for resource enrollment."
 	UsePasswordless     = "if 'true', Users will not need password to login."
+	UserType            = "The user type. Valid types are `human` and `service`."
 
 	// Query Parameter Descriptions
 	FilterContains               = "If a value is provided, the results are filtered to only contain resources whose name contains that value."
@@ -89,6 +92,11 @@ const (
 	FilterGatewayID              = "If 'true', the results only include the connections which has the same gateway id."
 	FilterCertificateID          = "If 'true', the results only include the connections which has the same certificate id."
 	FilterIncludeCertDetails     = "If 'true', the results include the certificate details "
+	FilterStartsWith             = "If a value is provided, includes ASA Users with name that begins with the value."
+	FilterStatus                 = "If a value is provided, includes ASA Users with specified statuses. Valid statuses include: `ACTIVE`, `DISABLED`, and `DELETED`."
+
+	// Provider-Level Filter
+	FilterUserType = "Valid types are `human` and `service`. If left unspecified, both types will be included."
 
 	// Resource Descriptions -- resources are dynamic, and state is kept up to date on POST / PUT / DELETE
 	ResourceGatewaySetupToken           = "A token for ASA Gateway enrollment."
@@ -99,6 +107,7 @@ const (
 	ResourceKubernetesClusterConnection = "A set of details describing how to connect to an existing Kubernetes Cluster."
 	ResourceKubernetesClusterGroup      = "A mapping of Kubernetes cluster to Project Group."
 	ResourceServerEnrollmentToken       = "A token for ASA Server enrollment."
+	ResourceUser                        = "An ASA User. Valid user types are `human` and `service`."
 
 	// Data Source Descriptions -- sources are read-only, fetched on LIST
 	SourceGatewaySetupTokens     = "A list of tokens for ASA Gateway enrollment, corresponding to an ASA Team."
