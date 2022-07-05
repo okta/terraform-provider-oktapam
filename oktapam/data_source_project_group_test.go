@@ -20,18 +20,18 @@ func TestAccDatasourceProjectGroup(t *testing.T) {
 
 	expectedGroups := map[string]client.ProjectGroup{
 		group1Name: {
-			Project:          utils.AsStringPtr(projectName),
-			Group:            utils.AsStringPtr(group1Name),
-			ServerAccess:     true,
-			ServerAdmin:      true,
-			CreateServerGoup: false,
+			Project:           utils.AsStringPtr(projectName),
+			Group:             utils.AsStringPtr(group1Name),
+			ServerAccess:      true,
+			ServerAdmin:       true,
+			CreateServerGroup: false,
 		},
 		group2Name: {
-			Project:          utils.AsStringPtr(projectName),
-			Group:            utils.AsStringPtr(group2Name),
-			ServerAccess:     true,
-			ServerAdmin:      false,
-			CreateServerGoup: false,
+			Project:           utils.AsStringPtr(projectName),
+			Group:             utils.AsStringPtr(group2Name),
+			ServerAccess:      true,
+			ServerAdmin:       false,
+			CreateServerGroup: false,
 		},
 	}
 
@@ -105,8 +105,8 @@ func testAccDatasourceProjectGroupsCheck(rn string, expectedProjects map[string]
 			if !ok {
 				return fmt.Errorf("%s attribute not set for project group with group %q", attributes.CreateServerGroup, name)
 			}
-			if createServerGroup != fmt.Sprint(projectGroup.CreateServerGoup) {
-				return fmt.Errorf("mismatch for %s attribute, expected %q, got %q", attributes.CreateServerGroup, fmt.Sprint(projectGroup.CreateServerGoup), createServerGroup)
+			if createServerGroup != fmt.Sprint(projectGroup.CreateServerGroup) {
+				return fmt.Errorf("mismatch for %s attribute, expected %q, got %q", attributes.CreateServerGroup, fmt.Sprint(projectGroup.CreateServerGroup), createServerGroup)
 			}
 
 		}

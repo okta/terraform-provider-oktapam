@@ -1,3 +1,4 @@
 package version
 
-const Version = "0.1.1"
+// Version is overriden in the Makefile
+var Version = "dev"
