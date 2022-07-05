@@ -16,7 +16,7 @@ import (
 func TestAccKubernetesClusterGroup(t *testing.T) {
 	resourceName := "oktapam_kubernetes_cluster_group.test_group"
 
-	groupName := "everyone"
+	groupName := resource.PrefixedUniqueId("cluster-group-test-group-")
 	clusterSelector1 := "select=everything"
 	clusterSelector2 := "select=nothing"
 
@@ -43,6 +43,9 @@ func TestAccKubernetesClusterGroup(t *testing.T) {
 		CheckDestroy:      testAccClusterGroupCheckDestroy(clusterGroup1),
 		Steps: []resource.TestStep{
 			{
+				Config: createTestAccClusterGroupGroupCreateConfig(groupName),
+			},
+			{
 				// ensure create works
 				Config: createTestAccKubernetesClusterGroupCreateConfig(clusterGroup1ResourceTemplate, clusterGroup1),
 				Check: resource.ComposeAggregateTestCheckFunc(
@@ -67,6 +70,10 @@ func TestAccKubernetesClusterGroup(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, attributes.Claims+".%", "1"),
 					resource.TestCheckResourceAttr(resourceName, attributes.Claims+".claim3", "val4"),
 				),
+			},
+			{
+				Config:  createTestAccClusterGroupGroupCreateConfig(groupName),
+				Destroy: true,
 			},
 		},
 	})
@@ -102,7 +109,7 @@ func testAccClusterGroupCheckDestroy(expectedClusterGroup client.KubernetesClust
 }
 
 const clusterGroup1ResourceTemplate = `resource "oktapam_kubernetes_cluster_group" "test_group" {
-  group_name       = "{{ .GroupName }}"
+  group_name       = oktapam_group.test_group.name
   cluster_selector = "{{ .ClusterSelector }}"
 
   claims = {
@@ -113,11 +120,22 @@ const clusterGroup1ResourceTemplate = `resource "oktapam_kubernetes_cluster_grou
 `
 
 const clusterGroup2ResourceTemplate = `resource "oktapam_kubernetes_cluster_group" "test_group" {
-  group_name       = "{{ .GroupName }}"
+  group_name       = oktapam_group.test_group.name
   cluster_selector = "{{ .ClusterSelector }}"
 
   claims = {
 	claim3 = "val4"
   }
+}
+`
+
+func createTestAccClusterGroupGroupCreateConfig(groupName string) string {
+	return fmt.Sprintf(testAccClusterGroupGroupConfigFormat, groupName)
+}
+
+const testAccClusterGroupGroupConfigFormat = `
+resource "oktapam_group" "test_group" {
+	name = "%s"
+	roles = ["access_user"]
 }
 `
