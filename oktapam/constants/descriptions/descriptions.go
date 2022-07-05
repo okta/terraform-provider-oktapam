@@ -91,11 +91,10 @@ const (
 	FilterIncludeCertDetails     = "If 'true', the results include the certificate details "
 
 	// Resource Descriptions -- resources are dynamic, and state is kept up to date on POST / PUT / DELETE
-	ResourceGatewaySetupToken     = "A token for ASA Gateway enrollment."
-	ResourceGroup                 = "A set of ASA Users."
-	ResourceServerEnrollmentToken = "A token for ASA Server enrollment."
-	ResourceADConnection          = "An Active Directory (AD) Connection to query AD Domain for available servers."
-	ResourceADTaskSettings        = "Settings for Active Directory (AD) task for server discovery"
+	ResourceGatewaySetupToken           = "A token for ASA Gateway enrollment."
+	ResourceGroup                       = "A set of ASA Users."
+	ResourceADConnection                = "An Active Directory (AD) Connection to query AD Domain for available servers."
+	ResourceADTaskSettings              = "Settings for Active Directory (AD) task for server discovery"
 	ResourceKubernetesCluster           = "A Kubernetes cluster."
 	ResourceKubernetesClusterConnection = "A set of details describing how to connect to an existing Kubernetes Cluster."
 	ResourceKubernetesClusterGroup      = "A mapping of Kubernetes cluster to Project Group."
