@@ -72,7 +72,8 @@ const (
 	DefaultAddress                   = "Default Address of the gateway."
 	CloudProvider                    = "Cloud Provider name of the host where gateway is running."
 	RefuseConnections                = "If 'true', gateway refuse connection."
-
+	CertificateCommonName            = "Common Name or FQDN to which certificate is issued to."
+	CSRDetails                       = "Certificate Signing Request (CSR) Details."
 	// Query Parameter Descriptions
 	FilterContains               = "If a value is provided, the results are filtered to only contain resources whose name contains that value."
 	FilterCreateServerGroup      = "If 'true', the results only include the ASA Project Groups that have 'create_server_group' field set to 'true'."
@@ -107,5 +108,6 @@ const (
 	SourceProjectGroups          = "A list of ASA Groups attached to an ASA Project."
 	SourceServerEnrollmentTokens = "A list of tokens for ASA Server enrollment, corresponding to an ASA Project."
 	SourceADConnections          = "A list of ASA AD Connections, corresponding to an ASA Team."
-	SourceGateways               = "A list of ASA Gateways, corresponding to an ASA Team"
+	SourceGateways               = "A list of ASA Gateways, corresponding to an ASA Team."
+	CertificateSigningRequest    = "Certificate Signing Request (CSR) in base 64 encoded pkcs#10 format."
 )

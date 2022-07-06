@@ -21,17 +21,18 @@ const (
 	apiKeySecretKey = "oktapam_secret"
 	teamKey         = "oktapam_team"
 
-	providerProjectKey               = "oktapam_project"
-	providerGroupKey                 = "oktapam_group"
-	providerServerEnrollmentTokenKey = "oktapam_server_enrollment_token"
-	providerProjectGroupKey          = "oktapam_project_group"
-	providerGatewaySetupTokenKey     = "oktapam_gateway_setup_token" 
-	providerADConnectionKey          = "oktapam_ad_connection"
-	providerADTaskSettingsKey        = "oktapam_ad_task_settings"
-	providerGatewayKey               = "oktapam_gateway"
+	providerProjectKey                     = "oktapam_project"
+	providerGroupKey                       = "oktapam_group"
+	providerServerEnrollmentTokenKey       = "oktapam_server_enrollment_token"
+	providerProjectGroupKey                = "oktapam_project_group"
+	providerGatewaySetupTokenKey           = "oktapam_gateway_setup_token"
+	providerADConnectionKey                = "oktapam_ad_connection"
+	providerADTaskSettingsKey              = "oktapam_ad_task_settings"
+	providerGatewayKey                     = "oktapam_gateway"
 	providerKubernetesClusterKey           = "oktapam_kubernetes_cluster"
 	providerKubernetesClusterConnectionKey = "oktapam_kubernetes_cluster_connection"
 	providerKubernetesClusterGroupKey      = "oktapam_kubernetes_cluster_group"
+	providerADCertificateSigningRequest    = "oktapam_ad_certificate_signing_request"
 )
 
 func Provider() *schema.Provider {
@@ -73,6 +74,7 @@ func Provider() *schema.Provider {
 			providerKubernetesClusterGroupKey:      resourceKubernetesClusterGroup(),
 			providerADConnectionKey:                resourceADConnection(),
 			providerADTaskSettingsKey:              resourceADTaskSettings(),
+			providerADCertificateSigningRequest:    resourceADCertificateSigningRequest(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
