@@ -69,13 +69,13 @@ func createTestAccKubernetesClusterConnectionConfig(clusterKey string, clusterCo
 
 const clusterConnectionResourceTemplate = `
 resource "oktapam_kubernetes_cluster" "acctest" {
-	key = "{{.ClusterKey}}"
-	auth_mechanism="NONE"
+	key             = "{{.ClusterKey}}"
+	auth_mechanism  = "NONE"
 }
 
 resource "oktapam_kubernetes_cluster_connection" "acctest" {
-	cluster_id=oktapam_kubernetes_cluster.acctest.id
-	api_url = "{{.APIURL}}"
+	cluster_id         = oktapam_kubernetes_cluster.acctest.id
+	api_url            = "{{.APIURL}}"
 	public_certificate = "{{.PublicCertificate}}"
 }
 `

@@ -90,6 +90,11 @@ func resourceKubernetesClusterConnectionRead(ctx context.Context, d *schema.Reso
 		}
 	}
 
+	// since 'connection' is really part of a cluster, we manually attach the cluster_id
+	if err := d.Set(attributes.ClusterID, d.Id()); err != nil {
+		return diag.FromErr(err)
+	}
+
 	return nil
 }
 
