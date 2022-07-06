@@ -3,19 +3,25 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"os"
+	"strings"
+	"testing"
+	"text/template"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
-	"strings"
-	"testing"
-	"text/template"
 )
 
 func TestAccKubernetesCluster(t *testing.T) {
+	if _, ok := os.LookupEnv("SFT_KUBERNETES_BETA"); !ok {
+		t.Skip("skipping Kubernetes tests")
+	}
+
 	resourceName := "oktapam_kubernetes_cluster.acctest_cluster"
 
-	clusterKey := "test-key"
+	clusterKey := resource.PrefixedUniqueId("cluster-key-")
 	authMechanism := "NONE"
 
 	labels1 := map[string]string{

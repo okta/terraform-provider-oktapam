@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
@@ -87,6 +88,11 @@ func resourceKubernetesClusterConnectionRead(ctx context.Context, d *schema.Reso
 		if err := d.Set(key, value); err != nil {
 			return diag.FromErr(err)
 		}
+	}
+
+	// since 'connection' is really part of a cluster, we manually attach the cluster_id
+	if err := d.Set(attributes.ClusterID, d.Id()); err != nil {
+		return diag.FromErr(err)
 	}
 
 	return nil

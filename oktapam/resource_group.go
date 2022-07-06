@@ -91,7 +91,7 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{
 
 	if group != nil && utils.IsNonEmpty(group.Name) {
 		if utils.IsBlank(group.DeletedAt) {
-			logging.Infof("Group %s exists", group.Name)
+			logging.Infof("Group %s exists", *group.Name)
 			d.SetId(*group.Name)
 		} else {
 			logging.Infof("Group %s was removed", groupName)

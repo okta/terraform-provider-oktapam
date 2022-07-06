@@ -3,10 +3,12 @@ package oktapam
 import (
 	"context"
 	"fmt"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
+	"os"
 	"strings"
 	"testing"
 	"text/template"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -14,9 +16,13 @@ import (
 )
 
 func TestAccKubernetesClusterGroup(t *testing.T) {
+	if _, ok := os.LookupEnv("SFT_KUBERNETES_BETA"); !ok {
+		t.Skip("skipping Kubernetes tests")
+	}
+
 	resourceName := "oktapam_kubernetes_cluster_group.test_group"
 
-	groupName := "everyone"
+	groupName := resource.PrefixedUniqueId("cluster-group-test-group-")
 	clusterSelector1 := "select=everything"
 	clusterSelector2 := "select=nothing"
 
@@ -101,8 +107,14 @@ func testAccClusterGroupCheckDestroy(expectedClusterGroup client.KubernetesClust
 	}
 }
 
-const clusterGroup1ResourceTemplate = `resource "oktapam_kubernetes_cluster_group" "test_group" {
-  group_name       = "{{ .GroupName }}"
+const clusterGroup1ResourceTemplate = `
+resource "oktapam_group" "test_group" {
+	name = "{{ .GroupName }}"
+	roles = ["access_user"]
+}
+
+resource "oktapam_kubernetes_cluster_group" "test_group" {
+  group_name       = oktapam_group.test_group.name
   cluster_selector = "{{ .ClusterSelector }}"
 
   claims = {
@@ -112,8 +124,14 @@ const clusterGroup1ResourceTemplate = `resource "oktapam_kubernetes_cluster_grou
 }
 `
 
-const clusterGroup2ResourceTemplate = `resource "oktapam_kubernetes_cluster_group" "test_group" {
-  group_name       = "{{ .GroupName }}"
+const clusterGroup2ResourceTemplate = `
+resource "oktapam_group" "test_group" {
+	name = "{{ .GroupName }}"
+	roles = ["access_user"]
+}
+
+resource "oktapam_kubernetes_cluster_group" "test_group" {
+  group_name       = oktapam_group.test_group.name
   cluster_selector = "{{ .ClusterSelector }}"
 
   claims = {
