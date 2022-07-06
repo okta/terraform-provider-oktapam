@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"encoding/pem"
+	"os"
 	"strings"
 	"testing"
 	"text/template"
@@ -12,6 +13,10 @@ import (
 )
 
 func TestAccKubernetesClusterConnection(t *testing.T) {
+	if _, ok := os.LookupEnv("SFT_KUBERNETES_BETA"); !ok {
+		t.Skip("skipping Kubernetes tests")
+	}
+
 	resourceName := "oktapam_kubernetes_cluster_connection.acctest"
 	apiURL := "https://localhost:6443"
 

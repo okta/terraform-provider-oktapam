@@ -3,6 +3,7 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 	"text/template"
@@ -15,6 +16,10 @@ import (
 )
 
 func TestAccKubernetesClusterGroup(t *testing.T) {
+	if _, ok := os.LookupEnv("SFT_KUBERNETES_BETA"); !ok {
+		t.Skip("skipping Kubernetes tests")
+	}
+
 	resourceName := "oktapam_kubernetes_cluster_group.test_group"
 
 	groupName := resource.PrefixedUniqueId("cluster-group-test-group-")

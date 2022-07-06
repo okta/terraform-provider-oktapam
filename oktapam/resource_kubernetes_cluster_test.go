@@ -3,6 +3,7 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 	"text/template"
@@ -14,6 +15,10 @@ import (
 )
 
 func TestAccKubernetesCluster(t *testing.T) {
+	if _, ok := os.LookupEnv("SFT_KUBERNETES_BETA"); !ok {
+		t.Skip("skipping Kubernetes tests")
+	}
+
 	resourceName := "oktapam_kubernetes_cluster.acctest_cluster"
 
 	clusterKey := resource.PrefixedUniqueId("cluster-key-")
