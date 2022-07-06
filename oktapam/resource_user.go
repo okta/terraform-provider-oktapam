@@ -69,20 +69,19 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 	userName := getStringPtr(attributes.Name, d, true)
 	userType := getStringPtr(attributes.UserType, d, false) // TODO: user type must be set
 
+	var err error
 	switch *userType {
 	case string(client.UserTypeHuman):
-		err := c.CreateHumanUser(ctx, *userName)
-		if err != nil {
-			return diag.FromErr(err)
-		}
+		err = c.CreateHumanUser(ctx, *userName)
 	case string(client.UserTypeService):
-		err := c.CreateServiceUser(ctx, *userName)
-		if err != nil {
-			return diag.FromErr(err)
-		}
+		err = c.CreateServiceUser(ctx, *userName)
 	default:
 		return diag.Errorf(errors.InvalidUserTypeError, *userType)
 	}
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	d.SetId(*userName)
 	return resourceUserRead(ctx, d, m)
 }
