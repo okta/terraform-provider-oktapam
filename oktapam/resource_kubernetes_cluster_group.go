@@ -3,14 +3,13 @@ package oktapam
 import (
 	"context"
 	"fmt"
-	"strings"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
+	"strings"
 )
 
 func resourceKubernetesClusterGroup() *schema.Resource {
@@ -79,7 +78,7 @@ func resourceKubernetesClusterGroupRead(ctx context.Context, d *schema.ResourceD
 	}
 
 	if clusterGroup == nil {
-		logging.Debugf("kubernetes cluster group was blank")
+		logging.Debugf("kubernetes cluster group %q was blank", d.Id())
 		d.SetId("")
 		return nil
 	}
