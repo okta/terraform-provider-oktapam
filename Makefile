@@ -2,7 +2,7 @@ HOSTNAME=okta.com
 NAMESPACE=pam
 NAME=oktapam
 BINARY=terraform-provider-${NAME}
-VERSION=0.1.2
+VERSION=0.1.3
 OS_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
 PLUGIN_DIR=~/.terraform.d/plugins
 
