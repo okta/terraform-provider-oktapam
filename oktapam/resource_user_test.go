@@ -15,7 +15,8 @@ import (
 
 func TestAccUser(t *testing.T) {
 	resourceName := "oktapam_user.test-user"
-	userName := "tf-resource-test-service-user2"
+	identifier := randSeq(20)
+	userName := "tf-acceptance-test-user-" + identifier
 	teamName := DefaultTestTeam
 	userType := string(client.UserTypeService)
 
