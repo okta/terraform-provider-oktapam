@@ -100,7 +100,7 @@ func (c OktaPAMClient) GetKubernetesCluster(ctx context.Context, id string) (*Ku
 
 	cluster.Labels = cleanLabels
 
-	oidcIssuerURL := fmt.Sprintf("%s/v1/teams/%s/kubernetes/clusters/%s/.well-known/openid-configuration",
+	oidcIssuerURL := fmt.Sprintf("%s/v1/teams/%s/kubernetes/clusters/%s",
 		c.client.BaseURL,
 		url.PathEscape(c.Team),
 		url.PathEscape(id))
