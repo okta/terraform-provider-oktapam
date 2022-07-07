@@ -22,6 +22,7 @@ const (
 	HasSelectors                     = "has_selectors"
 	HasNoSelectors                   = "has_no_selectors"
 	ID                               = "id"
+	IDs                              = "ids"
 	IncludeDeleted                   = "include_deleted"
 	IncludeRemoved                   = "include_removed"
 	IssuedAt                         = "issued_at"

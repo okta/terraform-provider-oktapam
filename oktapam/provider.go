@@ -25,13 +25,14 @@ const (
 	providerGroupKey                       = "oktapam_group"
 	providerServerEnrollmentTokenKey       = "oktapam_server_enrollment_token"
 	providerProjectGroupKey                = "oktapam_project_group"
-	providerGatewaySetupTokenKey           = "oktapam_gateway_setup_token"
 	providerADConnectionKey                = "oktapam_ad_connection"
 	providerADTaskSettingsKey              = "oktapam_ad_task_settings"
 	providerGatewayKey                     = "oktapam_gateway"
 	providerKubernetesClusterKey           = "oktapam_kubernetes_cluster"
 	providerKubernetesClusterConnectionKey = "oktapam_kubernetes_cluster_connection"
 	providerKubernetesClusterGroupKey      = "oktapam_kubernetes_cluster_group"
+	providerGatewaySetupTokenKey           = "oktapam_gateway_setup_token"
+	providerGatewaySetupTokensKey          = "oktapam_gateway_setup_tokens"
 )
 
 func Provider() *schema.Provider {
@@ -80,7 +81,8 @@ func Provider() *schema.Provider {
 			providerGroupKey:                 dataSourceGroups(),
 			providerServerEnrollmentTokenKey: dataSourceServerEnrollmentTokens(),
 			providerProjectGroupKey:          dataSourceProjectGroups(),
-			providerGatewaySetupTokenKey:     dataSourceGatewaySetupTokens(),
+			providerGatewaySetupTokenKey:     dataSourceGatewaySetupToken(),
+			providerGatewaySetupTokensKey:    dataSourceGatewaySetupTokens(),
 			providerADConnectionKey:          dataSourceADConnections(),
 			providerGatewayKey:               dataSourceGateways(),
 		},
