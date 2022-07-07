@@ -5,8 +5,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -24,15 +22,10 @@ func TestAccDatasourceGatewaySetupTokenList(t *testing.T) {
 	// Config 1: create two tokens
 	initConfig := createTestAccDatasourceGatewaySetupTokensInitConfig(description1, description2, labels)
 
-	// Config 2: list using filter that will only return one token
-	data1Name := "data1"
-	data1FullName := fmt.Sprintf("%s.%s", prefix, data1Name)
-	listOneConfig := testAccDatasourceGatewaySetupTokensConfig(data1Name, fmt.Sprintf("%s: 1", identifier))
-
-	// Config 3: list using filter that returns both
-	data2Name := "data2"
-	data2FullName := fmt.Sprintf("%s.%s", prefix, data2Name)
-	listBothConfig := testAccDatasourceGatewaySetupTokensConfig(data2Name, identifier)
+	// Config 2: list using filter that returns both
+	dataName := "data1"
+	dataFullName := fmt.Sprintf("%s.%s", prefix, dataName)
+	listConfig := testAccDatasourceGatewaySetupTokensConfig(dataName, identifier)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -43,28 +36,11 @@ func TestAccDatasourceGatewaySetupTokenList(t *testing.T) {
 				Config: initConfig,
 			},
 			{
-				Config: listOneConfig,
-				Check: resource.ComposeAggregateTestCheckFunc(
-					check(),
-					resource.TestCheckResourceAttr(data1FullName, fmt.Sprintf("%s.#", attributes.IDs), "1"),
-				),
-			},
-			{
-				Config: listBothConfig,
-				Check: resource.ComposeAggregateTestCheckFunc(
-					check(),
-					resource.TestCheckResourceAttr(data2FullName, fmt.Sprintf("%s.#", attributes.IDs), "2"),
-				),
+				Config: listConfig,
+				Check:  resource.TestCheckResourceAttr(dataFullName, fmt.Sprintf("%s.#", attributes.IDs), "2"),
 			},
 		},
 	})
-}
-
-func check() resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		fmt.Println("STATE:", s.RootModule().String())
-		return nil
-	}
 }
 
 const testAccDatasourceGatewaySetupTokensInitConfigFormat = `
