@@ -95,15 +95,12 @@ func (c OktaPAMClient) ListGatewaySetupTokens(ctx context.Context, descriptionCo
 		}
 		links := linkheader.Parse(linkHeader)
 		requestURL = ""
-
-		isNext := false
 		for _, link := range links {
 			if link.Rel == "next" {
 				requestURL = link.URL
-				isNext = true
 			}
 		}
-		if !isNext {
+		if requestURL == "" {
 			break
 		}
 	}
