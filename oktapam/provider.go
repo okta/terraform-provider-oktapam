@@ -33,6 +33,7 @@ const (
 	providerKubernetesClusterConnectionKey = "oktapam_kubernetes_cluster_connection"
 	providerKubernetesClusterGroupKey      = "oktapam_kubernetes_cluster_group"
 	providerADCertificateSigningRequestKey = "oktapam_ad_certificate_signing_request"
+	providerADCertificateObjectKey         = "oktapam_ad_certificate_object"
 )
 
 func Provider() *schema.Provider {
@@ -75,6 +76,7 @@ func Provider() *schema.Provider {
 			providerADConnectionKey:                resourceADConnection(),
 			providerADTaskSettingsKey:              resourceADTaskSettings(),
 			providerADCertificateSigningRequestKey: resourceADCertificateSigningRequest(),
+			providerADCertificateObjectKey:         resourceADCertificateObject(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{

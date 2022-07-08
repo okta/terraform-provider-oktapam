@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
@@ -144,3 +145,40 @@ func (c OktaPAMClient) GetADSmartcardCertificate(ctx context.Context, certificat
 
 	return nil, createErrorForInvalidCode(resp, 200, 404)
 }
+
+//multipart/form-data; boundary=----WebKitFormBoundarywJ2EfEGCBeQAQ6vR
+func (c OktaPAMClient) UploadADSmartcardCertificate(ctx context.Context, certificateId string, filename string, content string) error {
+	requestURL := fmt.Sprintf("/v1/teams/%s/certificates/%s/upload", url.PathEscape(c.Team), url.PathEscape(certificateId))
+	logging.Tracef("making GET request to %s", requestURL)
+
+	resp, err := c.CreateBaseRequest(ctx).SetMultipartField("file", filename, "multipart/form-data", strings.NewReader(content)).Post(requestURL)
+
+	if err != nil {
+		logging.Errorf("received error while making request to %s", requestURL)
+		return err
+	}
+
+	_, err = checkStatusCode(resp, 200)
+	return err
+}
+
+
+//if v, ok := d.GetOk("source"); ok {
+//source := v.(string)
+//path, err := homedir.Expand(source)
+//if err != nil {
+//return fmt.Errorf("Error expanding homedir in source (%s): %s", source, err)
+//}
+//file, err := os.Open(path)
+//if err != nil {
+//return fmt.Errorf("Error opening S3 object source (%s): %s", path, err)
+//}
+//
+//body = file
+//defer func() {
+//err := file.Close()
+//if err != nil {
+//log.Printf("[WARN] Error closing S3 object source (%s): %s", path, err)
+//}
+//}()
+//}
