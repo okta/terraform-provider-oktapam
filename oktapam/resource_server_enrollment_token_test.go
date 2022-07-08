@@ -3,6 +3,7 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
@@ -15,8 +16,9 @@ import (
 
 func TestAccServerEnrollmentToken(t *testing.T) {
 	resourceName := "oktapam_server_enrollment_token.test-server-enrollment-token"
-	description := fmt.Sprintf("Acceptance Test Token: %s", randSeq(10))
-	projectName := fmt.Sprintf("test-acc-server-enrollment-token-project-%s", randSeq(10))
+	identifier := randSeq(10)
+	description := fmt.Sprintf("Acceptance Test Token Set %s, Token 1", identifier)
+	projectName := fmt.Sprintf("test-acc-server-enrollment-token-project-%s", identifier)
 	enrollmentToken := client.ServerEnrollmentToken{
 		Project:     &projectName,
 		Description: &description,
@@ -24,7 +26,7 @@ func TestAccServerEnrollmentToken(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccServerEnrollmentTokenCheckDestroy(enrollmentToken),
+		CheckDestroy:      testAccServerEnrollmentTokenCheckDestroy(projectName, identifier),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccServerEnrollmentTokenCreateConfig(enrollmentToken),
@@ -79,10 +81,10 @@ func testAccServerEnrollmentTokenCheckExists(rn string, expectedServerEnrollment
 	}
 }
 
-func testAccServerEnrollmentTokenCheckDestroy(token client.ServerEnrollmentToken) resource.TestCheckFunc {
+func testAccServerEnrollmentTokenCheckDestroy(projectName, identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(client.OktaPAMClient)
-		project, err := client.GetProject(context.Background(), *token.Project, false)
+		project, err := client.GetProject(context.Background(), projectName, false)
 		if err != nil {
 			return fmt.Errorf("error getting project associated with server enrollment token: %w", err)
 		}
@@ -91,16 +93,17 @@ func testAccServerEnrollmentTokenCheckDestroy(token client.ServerEnrollmentToken
 			return nil
 		}
 
-		tokens, err := client.ListServerEnrollmentTokens(context.Background(), *token.Project)
+		tokens, err := client.ListServerEnrollmentTokens(context.Background(), projectName)
 		if err != nil {
 			return fmt.Errorf("error getting tokens: %w", err)
 		}
 
-		for _, t := range tokens {
-			if token.Description == t.Description {
+		for _, token := range tokens {
+			if strings.Contains(*token.Description, identifier) {
 				return fmt.Errorf("token still exists")
 			}
 		}
+
 		// the token was removed, but the project still exists
 		return fmt.Errorf("project still exists")
 	}

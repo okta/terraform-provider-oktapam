@@ -17,23 +17,14 @@ description: |-
 
 ### Required
 
-- `project_name` (String) If a value is provided, the results are filtered to only contain resources belonging to the ASA Project.
+- `project_name` (String) The human-readable name of the ASA Project. Values are case-sensitive.
 
 ### Read-Only
 
+- `created_by_user` (String) The ASA User that created the resource.
+- `description` (String) The human-readable description of the resource.
 - `id` (String) The ID of this resource.
-- `server_enrollment_tokens` (List of Object) A list of tokens for ASA Server enrollment, corresponding to an ASA Project. (see [below for nested schema](#nestedatt--server_enrollment_tokens))
-
-<a id="nestedatt--server_enrollment_tokens"></a>
-### Nested Schema for `server_enrollment_tokens`
-
-Read-Only:
-
-- `created_by_user` (String)
-- `description` (String)
-- `id` (String)
-- `issued_at` (String)
-- `project_name` (String)
-- `token` (String)
+- `issued_at` (String) The UTC issuance time of the resource. Format is `2022-01-01 00:00:00 +0000 UTC`.
+- `token` (String) The secret used for resource enrollment.
 
 

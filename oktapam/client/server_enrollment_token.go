@@ -85,12 +85,13 @@ func (c OktaPAMClient) ListServerEnrollmentTokens(ctx context.Context, project s
 		}
 		links := linkheader.Parse(linkHeader)
 		requestURL = ""
-
 		for _, link := range links {
 			if link.Rel == "next" {
 				requestURL = link.URL
-				break
 			}
+		}
+		if requestURL == "" {
+			break
 		}
 	}
 

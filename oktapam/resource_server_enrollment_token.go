@@ -100,7 +100,7 @@ func resourceServerEnrollmentTokenCreate(ctx context.Context, d *schema.Resource
 		return diag.FromErr(err)
 	}
 
-	d.SetId(fmt.Sprintf("%s|%s", *token.Project, *token.ID))
+	d.SetId(createServerEnrollmentTokenResourceID(*token.Project, *token.ID))
 
 	return resourceServerEnrollmentTokenRead(ctx, d, m)
 }
@@ -122,6 +122,10 @@ func resourceServerEnrollmentTokenDelete(ctx context.Context, d *schema.Resource
 	d.SetId("")
 
 	return nil
+}
+
+func createServerEnrollmentTokenResourceID(project, tokenId string) string {
+	return fmt.Sprintf("%s|%s", project, tokenId)
 }
 
 func parseServerEnrollmentTokenResourceID(resourceId string) (string, string, error) {
