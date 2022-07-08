@@ -4,6 +4,11 @@ const (
 	// Descriptions -- conventions from API docs
 
 	// Attribute Descriptions
+	CertificateCommonName       = "Common Name or FQDN to which certificate is issued to."
+	CertificateContent          = "Certificate Signing Request (CSR)/ Self Signed Certificate content."
+	CertificateStatus           = "Certificate status - Valid/Request Created"
+	CertificateType             = "Certificate Request Type - certificate_signing_request/self_signed"
+	CSRDetails                  = "Certificate Signing Request (CSR) Details."
 	ClusterGroupClaims          = "A map of claims to be given to users in this Cluster Group."
 	ClusterSelector             = "A label selector to used to match Kubernetes clusters."
 	CreateServerGroup           = "If 'true', `sftd` (ASA Server Agent) creates a corresponding local (unix or windows) group in the ASA Project's servers."
@@ -13,6 +18,7 @@ const (
 	DeletedAt                   = "The UTC time of resource creation. Format is `2022-01-01 00:00:00 +0000 UTC`."
 	Description                 = "The human-readable description of the resource."
 	DescriptionContains         = "If a value is provided, the results are filtered to only contain resources whose description contains that value."
+	EnterpriseSigned            = "If 'true', certificate is signed"
 	ForwardTraffic              = "If 'true', all traffic in the ASA Project be forwarded through selected ASA Gateways."
 	GatewaySelector             = "Assigns ASA Gateways with labels matching all selectors. At least one selector is required for traffic forwarding."
 	GroupID                     = "The ID corresponding to a ASA Group."
@@ -72,8 +78,7 @@ const (
 	DefaultAddress                   = "Default Address of the gateway."
 	CloudProvider                    = "Cloud Provider name of the host where gateway is running."
 	RefuseConnections                = "If 'true', gateway refuse connection."
-	CertificateCommonName            = "Common Name or FQDN to which certificate is issued to."
-	CSRDetails                       = "Certificate Signing Request (CSR) Details."
+
 	// Query Parameter Descriptions
 	FilterContains               = "If a value is provided, the results are filtered to only contain resources whose name contains that value."
 	FilterCreateServerGroup      = "If 'true', the results only include the ASA Project Groups that have 'create_server_group' field set to 'true'."
@@ -94,6 +99,7 @@ const (
 	// Resource Descriptions -- resources are dynamic, and state is kept up to date on POST / PUT / DELETE
 	ResourceGatewaySetupToken           = "A token for ASA Gateway enrollment."
 	ResourceGroup                       = "A set of ASA Users."
+	ResourceADCertificateSigningRequest = "A Certificate Signing Request for AD Passwordless certificates"
 	ResourceADConnection                = "An Active Directory (AD) Connection to query AD Domain for available servers."
 	ResourceADTaskSettings              = "Settings for Active Directory (AD) task for server discovery"
 	ResourceKubernetesCluster           = "A Kubernetes cluster."
@@ -109,5 +115,4 @@ const (
 	SourceServerEnrollmentTokens = "A list of tokens for ASA Server enrollment, corresponding to an ASA Project."
 	SourceADConnections          = "A list of ASA AD Connections, corresponding to an ASA Team."
 	SourceGateways               = "A list of ASA Gateways, corresponding to an ASA Team."
-	CertificateSigningRequest    = "Certificate Signing Request (CSR) in base 64 encoded pkcs#10 format."
 )

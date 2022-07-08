@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"net/url"
-
-	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
+	"time"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
+	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
@@ -18,12 +18,16 @@ const (
 )
 
 type ADSmartCardCertificate struct {
-	ID                        *string               `json:"id"`
-	DisplayName               *string               `json:"display_name"`
-	CommonName                *string               `json:"common_name"`
-	Type                      *string               `json:"type"`
-	Details                   *ADCertificateDetails `json:"details"`
-	CertificateSigningRequest *string               `json:"certificate_signing_request"`
+	ID               *string               `json:"id"`
+	DisplayName      *string               `json:"display_name"`
+	CommonName       *string               `json:"common_name"`
+	Type             *string               `json:"type"`
+	Details          *ADCertificateDetails `json:"details"`
+	Status           *string               `json:"status"`
+	EnterpriseSigned *bool                 `json:"enterprise_signed"`
+	CreatedAt        *time.Time            `json:"created_at"`
+	ExpiresAt        *time.Time            `json:"expires_at"`
+	Content          *string               `json:"content"`
 }
 
 type ADCertificateDetails interface {
@@ -57,18 +61,29 @@ func (t ADSmartCardCertificate) ToResourceMap() map[string]interface{} {
 		m[attributes.ID] = *t.ID
 	}
 	if t.DisplayName != nil {
-		m[attributes.DisplayName] = *t.ID
+		m[attributes.DisplayName] = *t.DisplayName
 	}
 	if t.CommonName != nil {
 		m[attributes.CommonName] = *t.CommonName
 	}
-	if t.Type != nil {
-		m[attributes.Type] = *t.Type
-	}
 	if t.Details != nil {
 		m[attributes.Details] = *t.Details
 	}
-
+	if t.Status != nil {
+		m[attributes.Status] = *t.Status
+	}
+	if t.EnterpriseSigned != nil {
+		m[attributes.EnterpriseSigned] = *t.EnterpriseSigned
+	}
+	//if t.CreatedAt != nil {
+	//	m[attributes.CreatedAt] = *t.CreatedAt
+	//}
+	//if t.ExpiresAt != nil {
+	//	m[attributes.ExpiresAt] = *t.ExpiresAt
+	//}
+	if t.Content != nil {
+		m[attributes.Content] = *t.Content
+	}
 	return m
 }
 
@@ -77,7 +92,7 @@ func (t ADSmartCardCertificate) Exists() bool {
 }
 
 func (c OktaPAMClient) CreateADSmartcardCertificate(ctx context.Context, adCert ADSmartCardCertificate) (*ADSmartCardCertificate, error) {
-	requestURL := fmt.Sprintf("/v1/teams/%s/certificates", url.PathEscape(c.Team))
+	requestURL := fmt.Sprintf("/v1/teams/%s/certificates/json", url.PathEscape(c.Team))
 	logging.Tracef("making POST request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(adCert).SetResult(&ADSmartCardCertificate{}).Post(requestURL)
 	if err != nil {
@@ -109,7 +124,8 @@ func (c OktaPAMClient) DeleteADSmartcardCertificate(ctx context.Context, certifi
 func (c OktaPAMClient) GetADSmartcardCertificate(ctx context.Context, certificateId string) (*ADSmartCardCertificate, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/certificates/%s", url.PathEscape(c.Team), url.PathEscape(certificateId))
 	logging.Tracef("making GET request to %s", requestURL)
-	resp, err := c.CreateBaseRequest(ctx).SetResult(&Group{}).Get(requestURL)
+
+	resp, err := c.CreateBaseRequest(ctx).SetResult(&ADSmartCardCertificate{}).Get(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return nil, err
@@ -117,9 +133,9 @@ func (c OktaPAMClient) GetADSmartcardCertificate(ctx context.Context, certificat
 	statusCode := resp.StatusCode()
 
 	if statusCode == 200 {
-		adCert := resp.Result().(*ADSmartCardCertificate)
-		if adCert.Exists() {
-			return adCert, nil
+		createdADCert := resp.Result().(*ADSmartCardCertificate)
+		if createdADCert.Exists() {
+			return createdADCert, nil
 		}
 		return nil, nil
 	} else if statusCode == 404 {
