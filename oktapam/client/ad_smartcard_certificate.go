@@ -40,26 +40,6 @@ type ADCertificateDetails struct {
 	TTLDays            int64  `json:"ttl_days,omitempty"`
 }
 
-//type SelfSignedCertDetails struct {
-//	TTLDays int64
-//}
-//
-//func (*SelfSignedCertDetails) CertType() string {
-//	return AD_CERTIFICATE_TYPE_SELF_SIGNED
-//}
-//
-//type EnterpriseSignedCertDetails struct {
-//	Organization       string `json:"organization"`
-//	OrganizationalUnit string `json:"organizational_unit"`
-//	Locality           string `json:"locality"`
-//	Province           string `json:"province"`
-//	Country            string `json:"country"`
-//}
-//
-//func (*EnterpriseSignedCertDetails) CertType() string {
-//	return AD_CERTIFICATE_TYPE_SIGNING_REQUEST
-//}
-
 func (t ADSmartCardCertificate) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{})
 
@@ -90,12 +70,6 @@ func (t ADSmartCardCertificate) ToResourceMap() map[string]interface{} {
 	if t.EnterpriseSigned != nil {
 		m[attributes.EnterpriseSigned] = *t.EnterpriseSigned
 	}
-	//if t.CreatedAt != nil {
-	//	m[attributes.CreatedAt] = *t.CreatedAt
-	//}
-	//if t.ExpiresAt != nil {
-	//	m[attributes.ExpiresAt] = *t.ExpiresAt
-	//}
 	if t.Content != nil {
 		m[attributes.Content] = *t.Content
 	}
@@ -174,23 +148,3 @@ func (c OktaPAMClient) UploadADSmartcardCertificate(ctx context.Context, certifi
 	_, err = checkStatusCode(resp, 200)
 	return err
 }
-
-//if v, ok := d.GetOk("source"); ok {
-//source := v.(string)
-//path, err := homedir.Expand(source)
-//if err != nil {
-//return fmt.Errorf("Error expanding homedir in source (%s): %s", source, err)
-//}
-//file, err := os.Open(path)
-//if err != nil {
-//return fmt.Errorf("Error opening S3 object source (%s): %s", path, err)
-//}
-//
-//body = file
-//defer func() {
-//err := file.Close()
-//if err != nil {
-//log.Printf("[WARN] Error closing S3 object source (%s): %s", path, err)
-//}
-//}()
-//}
