@@ -51,11 +51,11 @@ func dataSourceGatewaySetupToken() *schema.Resource {
 
 func dataSourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
-	tokenId := d.Get(attributes.ID).(string)
-	if tokenId == "" {
+	tokenID := d.Get(attributes.ID).(string)
+	if tokenID == "" {
 		return diag.Errorf("%s cannot be blank", attributes.ID)
 	}
-	token, err := c.GetGatewaySetupToken(ctx, tokenId)
+	token, err := c.GetGatewaySetupToken(ctx, tokenID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -66,9 +66,8 @@ func dataSourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData
 			d.Set(key, value)
 		}
 	} else {
-		logging.Infof("gateway setup token %s does not exist", tokenId)
+		logging.Infof("gateway setup token %s does not exist", tokenID)
 	}
 
-	//d.SetId(strconv.FormatInt(time.Now().Unix(), 10)) // TODO: when is this used?
 	return nil
 }

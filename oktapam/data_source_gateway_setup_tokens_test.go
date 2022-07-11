@@ -62,7 +62,7 @@ resource "oktapam_gateway_setup_token" "test-gateway-setup-token-2" {
 func createTestAccDatasourceGatewaySetupTokensInitConfig(description1 string, description2 string, labels map[string]string) string {
 	labelStrings := make([]string, 0, len(labels))
 	for k, v := range labels {
-		labelStrings = append(labelStrings, fmt.Sprintf("\t%s = \"%s\"", k, v))
+		labelStrings = append(labelStrings, fmt.Sprintf("\t%s = %q", k, v))
 	}
 	labelBlock := strings.Join(labelStrings, "\n")
 	return fmt.Sprintf(testAccDatasourceGatewaySetupTokensInitConfigFormat, description1, labelBlock, description2, labelBlock)

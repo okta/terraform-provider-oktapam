@@ -67,6 +67,10 @@ func checkResourcesEqual(resourceName1, resourceName2 string) resource.TestCheck
 	}
 }
 
+// NOTE: This config (1) creates a new token (2) lists the existing tokens with the matching description
+// (a unique identifier is passed in, so the list will return only one id) and (3) get the new token as a oktapam_gateway_setup_token.
+// The test then compares the token resource with this data source to ensure they are equal.
+
 const testAccDatasourceGatewaySetupTokenInitListFetchConfigFormat = `
 resource "oktapam_gateway_setup_token" "test-gateway-setup-token-1" {
 	description = "%s"
@@ -88,7 +92,7 @@ data "oktapam_gateway_setup_token" "target_token" {
 func createTestAccDatasourceGatewaySetupTokenInitConfig(identifier, description1 string, labels map[string]string) string {
 	labelStrings := make([]string, 0, len(labels))
 	for k, v := range labels {
-		labelStrings = append(labelStrings, fmt.Sprintf("\t%s = \"%s\"", k, v))
+		labelStrings = append(labelStrings, fmt.Sprintf("\t%s = %q", k, v))
 	}
 	labelBlock := strings.Join(labelStrings, "\n")
 	return fmt.Sprintf(testAccDatasourceGatewaySetupTokenInitListFetchConfigFormat, description1, labelBlock, identifier)
