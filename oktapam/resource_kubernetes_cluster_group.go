@@ -79,7 +79,7 @@ func resourceKubernetesClusterGroupRead(ctx context.Context, d *schema.ResourceD
 	}
 
 	if clusterGroup == nil {
-		logging.Debugf("kubernetes cluster group was blank")
+		logging.Debugf("kubernetes cluster group %q was blank", d.Id())
 		d.SetId("")
 		return nil
 	}

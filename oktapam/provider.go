@@ -21,19 +21,19 @@ const (
 	apiKeySecretKey = "oktapam_secret"
 	teamKey         = "oktapam_team"
 
-	providerProjectKey                     = "oktapam_project"
-	providerGroupKey                       = "oktapam_group"
-	providerServerEnrollmentTokenKey       = "oktapam_server_enrollment_token"
-	providerProjectGroupKey                = "oktapam_project_group"
-	providerGatewaySetupTokenKey           = "oktapam_gateway_setup_token"
+	providerADCertificateSigningRequestKey = "oktapam_ad_certificate_signing_request"
+	providerADCertificateObjectKey         = "oktapam_ad_certificate_object"
 	providerADConnectionKey                = "oktapam_ad_connection"
 	providerADTaskSettingsKey              = "oktapam_ad_task_settings"
 	providerGatewayKey                     = "oktapam_gateway"
+	providerGatewaySetupTokenKey           = "oktapam_gateway_setup_token"
+	providerGroupKey                       = "oktapam_group"
 	providerKubernetesClusterKey           = "oktapam_kubernetes_cluster"
 	providerKubernetesClusterConnectionKey = "oktapam_kubernetes_cluster_connection"
 	providerKubernetesClusterGroupKey      = "oktapam_kubernetes_cluster_group"
-	providerADCertificateSigningRequestKey = "oktapam_ad_certificate_signing_request"
-	providerADCertificateObjectKey         = "oktapam_ad_certificate_object"
+	providerProjectKey                     = "oktapam_project"
+	providerProjectGroupKey                = "oktapam_project_group"
+	providerServerEnrollmentTokenKey       = "oktapam_server_enrollment_token"
 )
 
 func Provider() *schema.Provider {
@@ -65,18 +65,18 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			providerProjectKey:                     resourceProject(),
-			providerGroupKey:                       resourceGroup(),
-			providerServerEnrollmentTokenKey:       resourceServerEnrollmentToken(),
-			providerProjectGroupKey:                resourceProjectGroup(),
-			providerGatewaySetupTokenKey:           resourceGatewaySetupToken(),
-			providerKubernetesClusterKey:           resourceKubernetesCluster(),
-			providerKubernetesClusterConnectionKey: resourceKubernetesClusterConnection(),
-			providerKubernetesClusterGroupKey:      resourceKubernetesClusterGroup(),
 			providerADConnectionKey:                resourceADConnection(),
 			providerADTaskSettingsKey:              resourceADTaskSettings(),
 			providerADCertificateSigningRequestKey: resourceADCertificateSigningRequest(),
 			providerADCertificateObjectKey:         resourceADCertificateObject(),
+			providerGroupKey:                       resourceGroup(),
+			providerGatewaySetupTokenKey:           resourceGatewaySetupToken(),
+			providerKubernetesClusterKey:           resourceKubernetesCluster(),
+			providerKubernetesClusterConnectionKey: resourceKubernetesClusterConnection(),
+			providerKubernetesClusterGroupKey:      resourceKubernetesClusterGroup(),
+			providerProjectGroupKey:                resourceProjectGroup(),
+			providerProjectKey:                     resourceProject(),
+			providerServerEnrollmentTokenKey:       resourceServerEnrollmentToken(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{

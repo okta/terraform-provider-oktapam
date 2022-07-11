@@ -14,7 +14,6 @@ const (
 	AltNamesAttributes               = "alt_names_attributes"
 	BastionAttribute                 = "bastion_attribute"
 	CertificateID                    = "certificate_id"
-	CertificateSigningRequest        = "certificate_signing_request"
 	Country                          = "country"
 	Claims                           = "claims"
 	CloudProvider                    = "cloud_provider"

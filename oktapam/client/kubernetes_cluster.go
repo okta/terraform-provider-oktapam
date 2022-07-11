@@ -3,9 +3,10 @@ package client
 import (
 	"context"
 	"fmt"
-	"github.com/tomnomnom/linkheader"
 	"net/url"
 	"strings"
+
+	"github.com/tomnomnom/linkheader"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
@@ -99,7 +100,7 @@ func (c OktaPAMClient) GetKubernetesCluster(ctx context.Context, id string) (*Ku
 
 	cluster.Labels = cleanLabels
 
-	oidcIssuerURL := fmt.Sprintf("%s/v1/teams/%s/kubernetes/clusters/%s/.well-known/openid-configuration",
+	oidcIssuerURL := fmt.Sprintf("%s/v1/teams/%s/kubernetes/clusters/%s",
 		c.client.BaseURL,
 		url.PathEscape(c.Team),
 		url.PathEscape(id))
