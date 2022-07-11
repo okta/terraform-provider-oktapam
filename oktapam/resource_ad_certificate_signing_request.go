@@ -37,9 +37,10 @@ func resourceADCertificateSigningRequest() *schema.Resource {
 				Description: descriptions.CertificateCommonName,
 			},
 			attributes.Details: {
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				Required:    true,
 				ForceNew:    true,
+				MinItems:    1,
 				MaxItems:    1,
 				Description: descriptions.CSRDetails,
 				Elem: &schema.Resource{
@@ -97,17 +98,30 @@ func resourceADCertificateSigningRequest() *schema.Resource {
 func resourceADCertificateSigningRequestCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	var csrDetails client.ADCertificateDetails
-	if v, ok := d.GetOk(attributes.Details); ok && len(v.(*schema.Set).List()) == 1 {
-		detailsMap := v.(*schema.Set).List()[0].(map[string]interface{})
+	var csrDetails *client.ADCertificateDetails
+	if v, ok := d.GetOk(attributes.Details); ok {
+		list := v.([]interface{})
 
-		csrDetails = &client.EnterpriseSignedCertDetails{
+		detailsMap := list[0].(map[string]interface{})
+		csrDetails = &client.ADCertificateDetails{
 			Organization:       detailsMap[attributes.Organization].(string),
 			OrganizationalUnit: detailsMap[attributes.OrganizationalUnit].(string),
 			Locality:           detailsMap[attributes.Locality].(string),
 			Province:           detailsMap[attributes.Province].(string),
 			Country:            detailsMap[attributes.Country].(string),
 		}
+
+		for _, item := range list {
+			detailsMap := item.(map[string]interface{})
+			csrDetails = &client.ADCertificateDetails{
+				Organization:       detailsMap[attributes.Organization].(string),
+				OrganizationalUnit: detailsMap[attributes.OrganizationalUnit].(string),
+				Locality:           detailsMap[attributes.Locality].(string),
+				Province:           detailsMap[attributes.Province].(string),
+				Country:            detailsMap[attributes.Country].(string),
+			}
+		}
+
 	}
 
 	//Build Certificate API Request Object
@@ -115,7 +129,7 @@ func resourceADCertificateSigningRequestCreate(ctx context.Context, d *schema.Re
 		DisplayName: getStringPtr(attributes.DisplayName, d, false),
 		CommonName:  getStringPtr(attributes.CommonName, d, false),
 		Type:        utils.AsStringPtr(client.AD_CERTIFICATE_TYPE_SIGNING_REQUEST),
-		Details:     &csrDetails,
+		Details:     csrDetails,
 	}
 
 	//Call api client

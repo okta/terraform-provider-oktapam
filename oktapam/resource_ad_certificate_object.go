@@ -67,6 +67,7 @@ func resourceADCertificateUploadCreate(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(err)
 	}
 
+	d.SetId(*certificateID)
 	return resourceADCertificateRead(ctx, d, m)
 }
 

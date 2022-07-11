@@ -31,29 +31,34 @@ type ADSmartCardCertificate struct {
 	Content          *string               `json:"content"`
 }
 
-type ADCertificateDetails interface {
-	CertType() string
+type ADCertificateDetails struct {
+	Organization       string `json:"organization,omitempty"`
+	OrganizationalUnit string `json:"organizational_unit,omitempty"`
+	Locality           string `json:"locality,omitempty"`
+	Province           string `json:"province,omitempty"`
+	Country            string `json:"country,omitempty"`
+	TTLDays            int64  `json:"ttl_days,omitempty"`
 }
 
-type SelfSignedCertDetails struct {
-	TTLDays int64
-}
-
-func (*SelfSignedCertDetails) CertType() string {
-	return AD_CERTIFICATE_TYPE_SELF_SIGNED
-}
-
-type EnterpriseSignedCertDetails struct {
-	Organization       string `json:"organization"`
-	OrganizationalUnit string `json:"organizational_unit"`
-	Locality           string `json:"locality"`
-	Province           string `json:"province"`
-	Country            string `json:"country"`
-}
-
-func (*EnterpriseSignedCertDetails) CertType() string {
-	return AD_CERTIFICATE_TYPE_SIGNING_REQUEST
-}
+//type SelfSignedCertDetails struct {
+//	TTLDays int64
+//}
+//
+//func (*SelfSignedCertDetails) CertType() string {
+//	return AD_CERTIFICATE_TYPE_SELF_SIGNED
+//}
+//
+//type EnterpriseSignedCertDetails struct {
+//	Organization       string `json:"organization"`
+//	OrganizationalUnit string `json:"organizational_unit"`
+//	Locality           string `json:"locality"`
+//	Province           string `json:"province"`
+//	Country            string `json:"country"`
+//}
+//
+//func (*EnterpriseSignedCertDetails) CertType() string {
+//	return AD_CERTIFICATE_TYPE_SIGNING_REQUEST
+//}
 
 func (t ADSmartCardCertificate) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{})
@@ -68,7 +73,16 @@ func (t ADSmartCardCertificate) ToResourceMap() map[string]interface{} {
 		m[attributes.CommonName] = *t.CommonName
 	}
 	if t.Details != nil {
-		m[attributes.Details] = *t.Details
+		flattenedCertDetails := make([]interface{}, 1)
+		flattenedCertDetails = append(flattenedCertDetails, map[string]interface{}{
+			attributes.Organization:     t.Details.Organization,
+			attributes.OrganizationalUnit:          t.Details.OrganizationalUnit,
+			attributes.Locality: t.Details.Locality,
+			attributes.Province:       t.Details.Province,
+			attributes.Country:        t.Details.Country,
+		})
+
+		m[attributes.Details] = flattenedCertDetails
 	}
 	if t.Status != nil {
 		m[attributes.Status] = *t.Status
@@ -146,7 +160,6 @@ func (c OktaPAMClient) GetADSmartcardCertificate(ctx context.Context, certificat
 	return nil, createErrorForInvalidCode(resp, 200, 404)
 }
 
-//multipart/form-data; boundary=----WebKitFormBoundarywJ2EfEGCBeQAQ6vR
 func (c OktaPAMClient) UploadADSmartcardCertificate(ctx context.Context, certificateId string, filename string, content string) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/certificates/%s/upload", url.PathEscape(c.Team), url.PathEscape(certificateId))
 	logging.Tracef("making GET request to %s", requestURL)
@@ -161,7 +174,6 @@ func (c OktaPAMClient) UploadADSmartcardCertificate(ctx context.Context, certifi
 	_, err = checkStatusCode(resp, 200)
 	return err
 }
-
 
 //if v, ok := d.GetOk("source"); ok {
 //source := v.(string)
