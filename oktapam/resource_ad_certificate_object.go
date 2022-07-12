@@ -75,21 +75,18 @@ func resourceADCertificateRead(ctx context.Context, d *schema.ResourceData, m in
 	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
-	certificateId := d.Id()
-	adCertificate, err := c.GetADSmartcardCertificate(ctx, certificateId)
+	certificateID := d.Id()
+	adCertificate, err := c.GetADSmartcardCertificate(ctx, certificateID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	if adCertificate != nil && utils.IsNonEmpty(adCertificate.ID) {
-		//for key, value := range adCertificate.ToResourceMap() {
-		//	_ = d.Set(key, value)
-		//}
 		_ = d.Set(attributes.ID, adCertificate.ID)
 		_ = d.Set(attributes.EnterpriseSigned, adCertificate.EnterpriseSigned)
 		_ = d.Set(attributes.Status, adCertificate.Status)
 	} else {
-		logging.Infof("ADSmartCardCertificate %s does not exist", certificateId)
+		logging.Infof("ADSmartCardCertificate %s does not exist", certificateID)
 	}
 
 	return diags
