@@ -5,69 +5,95 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
+	"github.com/kylelemons/godebug/pretty"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDatasourceGatewaySetupToken(t *testing.T) {
-	resourceName := "data.oktapam_gateway_setup_token.test_gateway_setup_tokens"
+func TestAccDatasourceGatewaySetupTokenFetch(t *testing.T) {
+	resourceName := "oktapam_gateway_setup_token.test-gateway-setup-token-1"
+	dataSourceName := "data.oktapam_gateway_setup_token.target_token"
+
 	identifier := randSeq(10)
-	description1 := fmt.Sprintf("Acceptance Test Setup Token - 1: %s", identifier)
-	description2 := fmt.Sprintf("Acceptance Test Setup Token - 2: %s", identifier)
-	labels := make(map[string]string)
-	for i := 0; i < 10; i++ {
-		key := fmt.Sprintf("key-%s", randSeq(10))
-		value := fmt.Sprintf("value-%s", randSeq(10))
-		labels[key] = value
-	}
+	description := fmt.Sprintf("Acceptance Test Setup Token Set %s: 1", identifier)
+	labels := constructLabels(10)
+
+	testConfig := createTestAccDatasourceGatewaySetupTokenInitConfig(identifier, description, labels)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
+		CheckDestroy:      testAccGatewaySetupTokenCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{
-				Config: createTestAccDatasourceGatewaySetupTokenInitConfig(description1, description2, labels),
-			},
-			{
-				Config: testAccDatasourceGatewaySetupTokenConfig(identifier),
-				Check:  resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.GatewaySetupTokens), "2"),
+				Config: testConfig,
+				Check: resource.ComposeAggregateTestCheckFunc(
+					checkResourcesEqual(resourceName, dataSourceName),
+				),
 			},
 		},
 	})
 }
 
-const testAccDatasourceGatewaySetupTokenFormat = `
-data "oktapam_gateway_setup_token" "test_gateway_setup_tokens" {
-	description_contains = "%s"
+func constructLabels(length int) map[string]string {
+	labels := make(map[string]string)
+	for i := 0; i < length; i++ {
+		key := fmt.Sprintf("key-%s", randSeq(10))
+		value := fmt.Sprintf("value-%s", randSeq(10))
+		labels[key] = value
+	}
+	return labels
 }
-`
 
-func testAccDatasourceGatewaySetupTokenConfig(descriptionContains string) string {
-	return fmt.Sprintf(testAccDatasourceGatewaySetupTokenFormat, descriptionContains)
+func checkResourcesEqual(resourceName1, resourceName2 string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		resource1, ok := s.RootModule().Resources[resourceName1]
+		if !ok {
+			return fmt.Errorf("resource 1 not found: %s", resourceName1)
+		}
+
+		resource2, ok := s.RootModule().Resources[resourceName2]
+		if !ok {
+			return fmt.Errorf("resource 2 not found: %s", resourceName2)
+		}
+
+		comparison := pretty.Compare(resource1.Primary.Attributes, resource2.Primary.Attributes)
+		if comparison != "" {
+			return fmt.Errorf("resources are not equal")
+		}
+		return nil
+	}
 }
 
-const testAccDatasourceGatewaySetupTokenInitConfigFormat = `
+// NOTE: This config (1) creates a new token (2) lists the existing tokens with the matching description
+// (a unique identifier is passed in, so the list will return only one id) and (3) get the new token as a oktapam_gateway_setup_token.
+// The test then compares the token resource with this data source to ensure they are equal.
+
+const testAccDatasourceGatewaySetupTokenInitListFetchConfigFormat = `
 resource "oktapam_gateway_setup_token" "test-gateway-setup-token-1" {
 	description = "%s"
 	labels = {
-%s
+		%s
 	}
 }
 
-resource "oktapam_gateway_setup_token" "test-gateway-setup-token-2" {
-	description = "%s"
-	labels = {
-%s
-	}
+data "oktapam_gateway_setup_tokens" "token_list" {
+	depends_on = [oktapam_gateway_setup_token.test-gateway-setup-token-1]
+	description_contains = "%s"
+}
+
+data "oktapam_gateway_setup_token" "target_token" {
+	id = data.oktapam_gateway_setup_tokens.token_list.ids[0]
 }
 `
 
-func createTestAccDatasourceGatewaySetupTokenInitConfig(description1 string, description2 string, labels map[string]string) string {
+func createTestAccDatasourceGatewaySetupTokenInitConfig(identifier, description1 string, labels map[string]string) string {
 	labelStrings := make([]string, 0, len(labels))
 	for k, v := range labels {
-		labelStrings = append(labelStrings, fmt.Sprintf("\t%s = \"%s\"", k, v))
+		labelStrings = append(labelStrings, fmt.Sprintf("\t%s = %q", k, v))
 	}
 	labelBlock := strings.Join(labelStrings, "\n")
-	return fmt.Sprintf(testAccDatasourceGatewaySetupTokenInitConfigFormat, description1, labelBlock, description2, labelBlock)
+	return fmt.Sprintf(testAccDatasourceGatewaySetupTokenInitListFetchConfigFormat, description1, labelBlock, identifier)
 }
