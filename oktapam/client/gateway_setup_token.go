@@ -95,23 +95,24 @@ func (c OktaPAMClient) ListGatewaySetupTokens(ctx context.Context, descriptionCo
 		}
 		links := linkheader.Parse(linkHeader)
 		requestURL = ""
-
 		for _, link := range links {
 			if link.Rel == "next" {
 				requestURL = link.URL
-				break
 			}
+		}
+		if requestURL == "" {
+			break
 		}
 	}
 
 	// Retrieve token values for each resource
-	for _, token := range tokens {
+	for i, token := range tokens {
 		value, err := c.GetGatewaySetupTokenValue(ctx, *token.ID)
 		if err != nil {
 			logging.Errorf("received error while retrieving token value for token id %s", *token.ID)
 			return nil, err
 		}
-		token.Token = value.Token
+		tokens[i].Token = value.Token
 	}
 
 	return tokens, nil

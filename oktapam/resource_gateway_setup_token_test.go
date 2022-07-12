@@ -16,13 +16,11 @@ import (
 
 func TestAccGatewaySetupToken(t *testing.T) {
 	resourceName := "oktapam_gateway_setup_token.test-gateway-setup-token"
-	description := fmt.Sprintf("Acceptance Test Setup Token: %s", randSeq(10))
-	labels := make(map[string]string)
-	for i := 0; i < 10; i++ {
-		key := fmt.Sprintf("key-%s", randSeq(10))
-		value := fmt.Sprintf("value-%s", randSeq(10))
-		labels[key] = value
-	}
+
+	identifier := randSeq(10)
+	description := fmt.Sprintf("Acceptance Test Setup Token: %s", identifier)
+	labels := constructLabels(10)
+
 	setupToken := client.GatewaySetupToken{
 		Description: &description,
 		Details:     &client.GatewaySetupTokenLabelDetails{Labels: labels},
@@ -31,7 +29,7 @@ func TestAccGatewaySetupToken(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccGatewaySetupTokenCheckDestroy(setupToken),
+		CheckDestroy:      testAccGatewaySetupTokenCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccGatewaySetupTokenCreateConfig(setupToken),
@@ -68,6 +66,9 @@ func testAccGatewaySetupTokenCheckExists(rn string, expectedGatewaySetupToken cl
 		if token == nil {
 			return fmt.Errorf("gateway setup token for with id %s does not exist", resourceID)
 		}
+		if *token.Token == "" {
+			return fmt.Errorf("gateway setup token value for with id %s does not exist", resourceID)
+		}
 		if *token.Description != *expectedGatewaySetupToken.Description {
 			return fmt.Errorf("expected description does not match returned description for gateway setup token.  expected: %s, got: %s", *expectedGatewaySetupToken.Description, *token.Description)
 		}
@@ -80,19 +81,18 @@ func testAccGatewaySetupTokenCheckExists(rn string, expectedGatewaySetupToken cl
 	}
 }
 
-func testAccGatewaySetupTokenCheckDestroy(token client.GatewaySetupToken) resource.TestCheckFunc {
+func testAccGatewaySetupTokenCheckDestroy(identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(client.OktaPAMClient)
-		tokens, err := client.ListGatewaySetupTokens(context.Background(), *token.Description)
+		tokens, err := client.ListGatewaySetupTokens(context.Background(), identifier)
 		if err != nil {
 			return fmt.Errorf("error getting tokens: %w", err)
 		}
 
-		for _, t := range tokens {
-			if token.Description == t.Description {
-				return fmt.Errorf("token still exists")
-			}
+		if len(tokens) > 0 {
+			return fmt.Errorf("token still exists")
 		}
+
 		return nil
 	}
 }
@@ -101,7 +101,7 @@ const testAccGatewaySetupTokenCreateConfigFormat = `
 resource "oktapam_gateway_setup_token" "test-gateway-setup-token" {
 	description = "%s"
 	labels = {
-%s
+		%s
 	}
 }
 `
