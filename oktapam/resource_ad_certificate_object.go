@@ -82,9 +82,9 @@ func resourceADCertificateRead(ctx context.Context, d *schema.ResourceData, m in
 	}
 
 	if adCertificate != nil && utils.IsNonEmpty(adCertificate.ID) {
-		_ = d.Set(attributes.ID, adCertificate.ID)
-		_ = d.Set(attributes.EnterpriseSigned, adCertificate.EnterpriseSigned)
-		_ = d.Set(attributes.Status, adCertificate.Status)
+		_ = d.Set(attributes.ID, *adCertificate.ID)
+		_ = d.Set(attributes.EnterpriseSigned, *adCertificate.EnterpriseSigned)
+		_ = d.Set(attributes.Status, *adCertificate.Status)
 	} else {
 		logging.Infof("ADSmartCardCertificate %s does not exist", certificateID)
 	}
