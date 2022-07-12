@@ -21,12 +21,13 @@ const (
 	apiKeySecretKey = "oktapam_secret"
 	teamKey         = "oktapam_team"
 
-	providerADCertificateSigningRequestKey = "oktapam_ad_certificate_signing_request"
 	providerADCertificateObjectKey         = "oktapam_ad_certificate_object"
+    providerADCertificateSigningRequestKey = "oktapam_ad_certificate_signing_request"
 	providerADConnectionKey                = "oktapam_ad_connection"
 	providerADTaskSettingsKey              = "oktapam_ad_task_settings"
 	providerGatewayKey                     = "oktapam_gateway"
 	providerGatewaySetupTokenKey           = "oktapam_gateway_setup_token"
+	providerGatewaySetupTokensKey          = "oktapam_gateway_setup_tokens"
 	providerGroupKey                       = "oktapam_group"
 	providerKubernetesClusterKey           = "oktapam_kubernetes_cluster"
 	providerKubernetesClusterConnectionKey = "oktapam_kubernetes_cluster_connection"
@@ -65,12 +66,12 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
+			providerADCertificateObjectKey:         resourceADCertificateObject(),
+			providerADCertificateSigningRequestKey: resourceADCertificateSigningRequest(),
 			providerADConnectionKey:                resourceADConnection(),
 			providerADTaskSettingsKey:              resourceADTaskSettings(),
-			providerADCertificateSigningRequestKey: resourceADCertificateSigningRequest(),
-			providerADCertificateObjectKey:         resourceADCertificateObject(),
-			providerGroupKey:                       resourceGroup(),
 			providerGatewaySetupTokenKey:           resourceGatewaySetupToken(),
+			providerGroupKey:                       resourceGroup(),
 			providerKubernetesClusterKey:           resourceKubernetesCluster(),
 			providerKubernetesClusterConnectionKey: resourceKubernetesClusterConnection(),
 			providerKubernetesClusterGroupKey:      resourceKubernetesClusterGroup(),
@@ -80,13 +81,14 @@ func Provider() *schema.Provider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			providerProjectKey:               dataSourceProjects(),
-			providerGroupKey:                 dataSourceGroups(),
-			providerServerEnrollmentTokenKey: dataSourceServerEnrollmentTokens(),
-			providerProjectGroupKey:          dataSourceProjectGroups(),
-			providerGatewaySetupTokenKey:     dataSourceGatewaySetupTokens(),
 			providerADConnectionKey:          dataSourceADConnections(),
 			providerGatewayKey:               dataSourceGateways(),
+			providerGatewaySetupTokenKey:     dataSourceGatewaySetupToken(),
+			providerGatewaySetupTokensKey:    dataSourceGatewaySetupTokens(),
+			providerGroupKey:                 dataSourceGroups(),
+			providerProjectKey:               dataSourceProjects(),
+			providerProjectGroupKey:          dataSourceProjectGroups(),
+			providerServerEnrollmentTokenKey: dataSourceServerEnrollmentTokens(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
