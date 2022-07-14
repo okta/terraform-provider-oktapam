@@ -59,19 +59,19 @@ func (t ADSmartCardCertificate) ToResourceMap() map[string]interface{} {
 		if t.Details.Organization != nil {
 			flattenedCertDetail[attributes.Organization] = *t.Details.Organization
 		}
-		if t.Details.Organization != nil {
-			flattenedCertDetail[attributes.OrganizationalUnit] = *t.Details.Organization
+		if t.Details.OrganizationalUnit != nil {
+			flattenedCertDetail[attributes.OrganizationalUnit] = *t.Details.OrganizationalUnit
 		}
-		if t.Details.Organization != nil {
-			flattenedCertDetail[attributes.Locality] = *t.Details.Organization
+		if t.Details.Locality != nil {
+			flattenedCertDetail[attributes.Locality] = *t.Details.Locality
 		}
-		if t.Details.Organization != nil {
-			flattenedCertDetail[attributes.Province] = *t.Details.Organization
+		if t.Details.Province != nil {
+			flattenedCertDetail[attributes.Province] = *t.Details.Province
 		}
-		if t.Details.Organization != nil {
-			flattenedCertDetail[attributes.Country] = *t.Details.Organization
+		if t.Details.Country != nil {
+			flattenedCertDetail[attributes.Country] = *t.Details.Country
 		}
-		if t.Details.Organization != nil {
+		if t.Details.TTLDays != nil {
 			flattenedCertDetail[attributes.TTLDays] = *t.Details.TTLDays
 		}
 		flattenedCertDetails = append(flattenedCertDetails, flattenedCertDetail)
