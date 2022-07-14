@@ -32,12 +32,12 @@ type ADSmartCardCertificate struct {
 }
 
 type ADCertificateDetails struct {
-	Organization       string `json:"organization,omitempty"`
-	OrganizationalUnit string `json:"organizational_unit,omitempty"`
-	Locality           string `json:"locality,omitempty"`
-	Province           string `json:"province,omitempty"`
-	Country            string `json:"country,omitempty"`
-	TTLDays            int64  `json:"ttl_days,omitempty"`
+	Organization       *string `json:"organization,omitempty"`
+	OrganizationalUnit *string `json:"organizational_unit,omitempty"`
+	Locality           *string `json:"locality,omitempty"`
+	Province           *string `json:"province,omitempty"`
+	Country            *string `json:"country,omitempty"`
+	TTLDays            *int64  `json:"ttl_days,omitempty"`
 }
 
 func (t ADSmartCardCertificate) ToResourceMap() map[string]interface{} {
@@ -54,13 +54,27 @@ func (t ADSmartCardCertificate) ToResourceMap() map[string]interface{} {
 	}
 	if t.Details != nil {
 		flattenedCertDetails := make([]interface{}, 1)
-		flattenedCertDetails = append(flattenedCertDetails, map[string]interface{}{
-			attributes.Organization:     t.Details.Organization,
-			attributes.OrganizationalUnit:          t.Details.OrganizationalUnit,
-			attributes.Locality: t.Details.Locality,
-			attributes.Province:       t.Details.Province,
-			attributes.Country:        t.Details.Country,
-		})
+		flattenedCertDetail := make(map[string]interface{})
+
+		if t.Details.Organization != nil {
+			flattenedCertDetail[attributes.Organization] = *t.Details.Organization
+		}
+		if t.Details.Organization != nil {
+			flattenedCertDetail[attributes.OrganizationalUnit] = *t.Details.Organization
+		}
+		if t.Details.Organization != nil {
+			flattenedCertDetail[attributes.Locality] = *t.Details.Organization
+		}
+		if t.Details.Organization != nil {
+			flattenedCertDetail[attributes.Province] = *t.Details.Organization
+		}
+		if t.Details.Organization != nil {
+			flattenedCertDetail[attributes.Country] = *t.Details.Organization
+		}
+		if t.Details.Organization != nil {
+			flattenedCertDetail[attributes.TTLDays] = *t.Details.TTLDays
+		}
+		flattenedCertDetails = append(flattenedCertDetails, flattenedCertDetail)
 
 		m[attributes.Details] = flattenedCertDetails
 	}

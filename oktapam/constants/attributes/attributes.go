@@ -96,6 +96,7 @@ const (
 	Status                           = "status"
 	Team                             = "team" // NOTE: This is inconsistent, most other API endpoints use `team_name`.
 	Token                            = "token"
+	TTLDays                          = "ttl_days"
 	Type                             = "type"
 	UsePasswordless                  = "use_passwordless"
 	Value                            = "value"

@@ -101,26 +101,16 @@ func resourceADCertificateSigningRequestCreate(ctx context.Context, d *schema.Re
 	if v, ok := d.GetOk(attributes.Details); ok {
 		list := v.([]interface{})
 
-		detailsMap := list[0].(map[string]interface{})
-		csrDetails = &client.ADCertificateDetails{
-			Organization:       detailsMap[attributes.Organization].(string),
-			OrganizationalUnit: detailsMap[attributes.OrganizationalUnit].(string),
-			Locality:           detailsMap[attributes.Locality].(string),
-			Province:           detailsMap[attributes.Province].(string),
-			Country:            detailsMap[attributes.Country].(string),
-		}
-
-		for _, item := range list {
-			detailsMap := item.(map[string]interface{})
+		if len(v.([]interface{})) == 1 {
+			detailsMap := list[0].(map[string]interface{})
 			csrDetails = &client.ADCertificateDetails{
-				Organization:       detailsMap[attributes.Organization].(string),
-				OrganizationalUnit: detailsMap[attributes.OrganizationalUnit].(string),
-				Locality:           detailsMap[attributes.Locality].(string),
-				Province:           detailsMap[attributes.Province].(string),
-				Country:            detailsMap[attributes.Country].(string),
+				Organization:       utils.AsStringPtr(detailsMap[attributes.Organization].(string)),
+				OrganizationalUnit: utils.AsStringPtr(detailsMap[attributes.OrganizationalUnit].(string)),
+				Locality:           utils.AsStringPtr(detailsMap[attributes.Locality].(string)),
+				Province:           utils.AsStringPtr(detailsMap[attributes.Province].(string)),
+				Country:            utils.AsStringPtr(detailsMap[attributes.Country].(string)),
 			}
 		}
-
 	}
 
 	//Build Certificate API Request Object

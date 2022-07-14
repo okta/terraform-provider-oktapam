@@ -22,7 +22,7 @@ const (
 	teamKey         = "oktapam_team"
 
 	providerADCertificateObjectKey         = "oktapam_ad_certificate_object"
-    providerADCertificateSigningRequestKey = "oktapam_ad_certificate_signing_request"
+	providerADCertificateSigningRequestKey = "oktapam_ad_certificate_signing_request"
 	providerADConnectionKey                = "oktapam_ad_connection"
 	providerADTaskSettingsKey              = "oktapam_ad_task_settings"
 	providerGatewayKey                     = "oktapam_gateway"
