@@ -15,15 +15,16 @@ import (
 )
 
 type UserStatus string
-
-const UserStatusActive UserStatus = "ACTIVE"
-const UserStatusDisabled UserStatus = "DISABLED"
-const UserStatusDeleted UserStatus = "DELETED"
-
 type UserType string
 
-const UserTypeHuman UserType = "human"
-const UserTypeService UserType = "service"
+const (
+	UserStatusActive   UserStatus = "ACTIVE"
+	UserStatusDisabled UserStatus = "DISABLED"
+	UserStatusDeleted  UserStatus = "DELETED"
+
+	UserTypeHuman   UserType = "human"
+	UserTypeService UserType = "service"
+)
 
 type User struct {
 	Name           *string `json:"name"`

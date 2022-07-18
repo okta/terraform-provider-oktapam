@@ -10,7 +10,6 @@ import (
 
 const (
 	DefaultAPIBaseURL = "https://app.scaleft.com"
-	DefaultTestTeam   = "pam-tf-provider-testing"
 
 	apiHostSchemaEnvVar      = "OKTAPAM_API_HOST"
 	apiKeySchemaEnvVar       = "OKTAPAM_KEY"
