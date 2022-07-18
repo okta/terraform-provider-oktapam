@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
@@ -204,11 +205,11 @@ func (c OktaPAMClient) ListProjectGroups(ctx context.Context, project string, pa
 			logging.Errorf("received error while making request to %s", requestURL)
 			return nil, err
 		}
-		if _, err := checkStatusCode(resp, 200, 404); err != nil {
+		if _, err := checkStatusCode(resp, http.StatusOK, http.StatusNotFound); err != nil {
 			return nil, err
 		}
 
-		if resp.StatusCode() == 404 {
+		if resp.StatusCode() == http.StatusNotFound {
 			logging.Warnf("received a 404 for %s, could indicate that the referenced project does not exist", requestURL)
 			break
 		}
@@ -256,15 +257,15 @@ func (c OktaPAMClient) GetProjectGroup(ctx context.Context, project, group strin
 	}
 	statusCode := resp.StatusCode()
 
-	if statusCode == 200 {
+	if statusCode == http.StatusOK {
 		projectGroup := resp.Result().(*ProjectGroup)
 		projectGroup.Project = &project
 		return projectGroup, nil
-	} else if statusCode == 404 {
+	} else if statusCode == http.StatusNotFound {
 		return nil, nil
 	}
 
-	return nil, createErrorForInvalidCode(resp, 200, 404)
+	return nil, createErrorForInvalidCode(resp, http.StatusOK, http.StatusNotFound)
 }
 
 func (c OktaPAMClient) CreateProjectGroup(ctx context.Context, projectGroup ProjectGroup) error {
@@ -276,7 +277,7 @@ func (c OktaPAMClient) CreateProjectGroup(ctx context.Context, projectGroup Proj
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
 	}
-	_, err = checkStatusCode(resp, 204)
+	_, err = checkStatusCode(resp, http.StatusNoContent)
 	return err
 }
 
@@ -288,7 +289,7 @@ func (c OktaPAMClient) UpdateProjectGroup(ctx context.Context, projectGroup Proj
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
 	}
-	_, err = checkStatusCode(resp, 204)
+	_, err = checkStatusCode(resp, http.StatusNoContent)
 	return err
 }
 
@@ -301,6 +302,6 @@ func (c OktaPAMClient) DeleteProjectGroup(ctx context.Context, project, group st
 		return err
 	}
 
-	_, err = checkStatusCode(resp, 204, 404)
+	_, err = checkStatusCode(resp, http.StatusNoContent, http.StatusNotFound)
 	return err
 }

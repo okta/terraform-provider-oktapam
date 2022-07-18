@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"net/url"
 	"strconv"
 
@@ -115,7 +116,7 @@ func (c OktaPAMClient) ListProjects(ctx context.Context, parameters ListProjects
 			logging.Errorf("received error while making request to %s", requestURL)
 			return nil, err
 		}
-		if _, err := checkStatusCode(resp, 200); err != nil {
+		if _, err := checkStatusCode(resp, http.StatusOK); err != nil {
 			return nil, err
 		}
 
@@ -150,17 +151,17 @@ func (c OktaPAMClient) GetProject(ctx context.Context, name string, allowDeleted
 	}
 	statusCode := resp.StatusCode()
 
-	if statusCode == 200 {
+	if statusCode == http.StatusOK {
 		project := resp.Result().(*Project)
 		if !project.Exists() && !allowDeleted {
 			return nil, nil
 		}
 		return project, nil
-	} else if statusCode == 404 {
+	} else if statusCode == http.StatusNotFound {
 		return nil, nil
 	}
 
-	return nil, createErrorForInvalidCode(resp, 200, 404)
+	return nil, createErrorForInvalidCode(resp, http.StatusOK, http.StatusNotFound)
 }
 
 func (c OktaPAMClient) CreateProject(ctx context.Context, proj Project) error {
@@ -184,7 +185,7 @@ func (c OktaPAMClient) UpdateProject(ctx context.Context, projectName string, up
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
 	}
-	_, err = checkStatusCode(resp, 204)
+	_, err = checkStatusCode(resp, http.StatusNoContent)
 	return err
 }
 
@@ -197,6 +198,6 @@ func (c OktaPAMClient) DeleteProject(ctx context.Context, projectName string) er
 		return err
 	}
 
-	_, err = checkStatusCode(resp, 204, 404)
+	_, err = checkStatusCode(resp, http.StatusNoContent, http.StatusNotFound)
 	return err
 }

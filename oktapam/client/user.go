@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"net/url"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
@@ -126,7 +127,7 @@ func (c OktaPAMClient) ListUsers(ctx context.Context, parameters ListUsersParame
 			logging.Errorf("received error while making request to %s", requestURL)
 			return nil, err
 		}
-		if _, err := checkStatusCode(resp, 200); err != nil {
+		if _, err := checkStatusCode(resp, http.StatusOK); err != nil {
 			return nil, err
 		}
 
@@ -166,29 +167,29 @@ func (c OktaPAMClient) GetHumanUser(ctx context.Context, userName string) (*User
 	}
 	statusCode := resp.StatusCode()
 
-	if statusCode == 200 {
+	if statusCode == http.StatusOK {
 		user := resp.Result().(*User)
 		return user, nil
-	} else if statusCode == 404 {
+	} else if statusCode == http.StatusNotFound {
 		return nil, nil
 	}
 
-	return nil, createErrorForInvalidCode(resp, 200, 404)
+	return nil, createErrorForInvalidCode(resp, http.StatusOK, http.StatusNotFound)
 }
 
 func (c OktaPAMClient) CreateHumanUser(ctx context.Context, userName string) error {
 	return fmt.Errorf("%s user creation is not available. Please create the user from your Okta console.", UserTypeHuman)
 }
 
-func (c OktaPAMClient) UpdateHumanUser(ctx context.Context, userName string, serviceUser *User) error {
+func (c OktaPAMClient) UpdateHumanUser(ctx context.Context, userName string, humanUser *User) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/users/%s", url.PathEscape(c.Team), url.PathEscape(userName))
 	logging.Tracef("making PUT request to %s", requestURL)
-	resp, err := c.CreateBaseRequest(ctx).SetBody(serviceUser).Put(requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetBody(humanUser).Put(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
 	}
-	_, err = checkStatusCode(resp, 200)
+	_, err = checkStatusCode(resp, http.StatusOK)
 	return err
 }
 
@@ -213,7 +214,7 @@ func (c OktaPAMClient) ListServiceUsers(ctx context.Context, parameters ListUser
 			logging.Errorf("received error while making request to %s", requestURL)
 			return nil, err
 		}
-		if _, err := checkStatusCode(resp, 200); err != nil {
+		if _, err := checkStatusCode(resp, http.StatusOK); err != nil {
 			return nil, err
 		}
 
@@ -249,16 +250,15 @@ func (c OktaPAMClient) GetServiceUser(ctx context.Context, serviceUserName strin
 		logging.Errorf("received error while making request to %s", requestURL)
 		return nil, err
 	}
-	statusCode := resp.StatusCode()
 
-	if statusCode == 200 {
+	if statusCode, err := checkStatusCode(resp, http.StatusOK, http.StatusNoContent); err == nil {
 		serviceUser := resp.Result().(*User)
 		return serviceUser, nil
-	} else if statusCode == 404 {
+	} else if statusCode == http.StatusNotFound {
 		return nil, nil
 	}
 
-	return nil, createErrorForInvalidCode(resp, 200, 404)
+	return nil, createErrorForInvalidCode(resp, http.StatusOK, http.StatusNotFound)
 }
 
 func (c OktaPAMClient) CreateServiceUser(ctx context.Context, userName string) error {
@@ -273,7 +273,7 @@ func (c OktaPAMClient) CreateServiceUser(ctx context.Context, userName string) e
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
 	}
-	_, err = checkStatusCode(resp, 201)
+	_, err = checkStatusCode(resp, http.StatusCreated)
 	return err
 }
 
@@ -285,7 +285,7 @@ func (c OktaPAMClient) UpdateServiceUser(ctx context.Context, userName string, s
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
 	}
-	_, err = checkStatusCode(resp, 200)
+	_, err = checkStatusCode(resp, http.StatusOK)
 	return err
 }
 
@@ -297,6 +297,6 @@ func (c OktaPAMClient) DeleteServiceUser(ctx context.Context, userName string) e
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
 	}
-	_, err = checkStatusCode(resp, 204, 404)
+	_, err = checkStatusCode(resp, http.StatusNoContent, http.StatusNotFound)
 	return err
 }
