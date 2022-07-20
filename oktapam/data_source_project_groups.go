@@ -14,7 +14,7 @@ import (
 
 func dataSourceProjectGroups() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceProjectGroupsRead,
+		ReadContext: dataSourceProjectGroupList,
 		Schema: map[string]*schema.Schema{
 			// Query parameter values
 			attributes.ProjectName: {
@@ -48,11 +48,6 @@ func dataSourceProjectGroups() *schema.Resource {
 				Description: descriptions.FilterDisconnectedModeOnOnly,
 			},
 			// Return values
-			attributes.ProjectNames: {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-			},
 			attributes.GroupNames: {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -62,7 +57,7 @@ func dataSourceProjectGroups() *schema.Resource {
 	}
 }
 
-func dataSourceProjectGroupsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceProjectGroupList(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	project := d.Get(attributes.ProjectName).(string)
 	if project == "" {
@@ -104,15 +99,9 @@ func dataSourceProjectGroupsRead(ctx context.Context, d *schema.ResourceData, m 
 		return diag.FromErr(err)
 	}
 
-	projectNames := make([]string, len(projectGroups))
 	groupNames := make([]string, len(projectGroups))
 	for idx, projectGroup := range projectGroups {
-		projectNames[idx] = *projectGroup.Project
 		groupNames[idx] = *projectGroup.Group
-	}
-
-	if err := d.Set(attributes.ProjectNames, projectNames); err != nil {
-		return diag.FromErr(err)
 	}
 
 	if err := d.Set(attributes.GroupNames, groupNames); err != nil {
