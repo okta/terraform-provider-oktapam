@@ -3,6 +3,8 @@ package oktapam
 import (
 	"context"
 
+	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
+
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"

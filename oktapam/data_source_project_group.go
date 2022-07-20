@@ -83,19 +83,23 @@ func dataSourceProjectGroupsFetch(ctx context.Context, d *schema.ResourceData, m
 	if tokenID == "" {
 		return diag.Errorf("%s cannot be blank", attributes.ID)
 	}
-
-	project, err := c.GetProjectGroup(ctx, project, group)
+	projectGroup, err := c.GetProjectGroup(ctx, project, group)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	if token != nil {
-		d.SetId(*token.ID)
-		for key, value := range token.ToResourceMap() {
+	if projectGroup != nil {
+		d.SetId(createProjectGroupResourceID(*projectGroup.Project, *projectGroup.Group))
+		resourceMap, err := projectGroup.ToResourceMap()
+		if err != nil {
+			return diag.FromErr(err)
+		}
+
+		for key, value := range resourceMap {
 			d.Set(key, value)
 		}
 	} else {
-		logging.Infof("gateway setup token %s does not exist", tokenID)
+		logging.Infof("project group belonging to project %s and group %s does not exist", *projectGroup.Project, *projectGroup.Group)
 	}
 
 	return nil
