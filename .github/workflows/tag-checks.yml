@@ -1,6 +1,8 @@
 name: Tag Checks
 on:
-  push:
+  schedule:
+    # Run every day. Uses POSIX cron syntax
+    - cron: "0 0 */1 * *"
 
 jobs:
   check:
