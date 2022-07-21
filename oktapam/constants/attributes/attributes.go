@@ -44,8 +44,6 @@ const (
 	GatewayID                        = "gateway_id"
 	Gateways                         = "gateways"
 	GatewaySelector                  = "gateway_selector"
-	Groups                           = "groups"
-	GroupID                          = "group_id"
 	GroupName                        = "group_name"
 	GroupNames                       = "group_names"
 	HasSelectors                     = "has_selectors"

@@ -51,15 +51,15 @@ resource "oktapam_group" "test-2" {
 	roles = ["access_user"]
 }
 
-resource "oktapam_project_group" "test-project-group-1" {
+resource "oktapam_project_group" "test-1" {
 	project_name = oktapam_project.test-1.name
 	group_name = oktapam_group.test-1.name
 	server_access = true
 	server_admin = true
-	create_server_group = false
+	create_server_group = true
 }
 
-resource "oktapam_project_group" "test-project-group-2" {
+resource "oktapam_project_group" "test-2" {
 	project_name = oktapam_project.test-1.name
 	group_name = oktapam_group.test-2.name
 	server_access = true
@@ -69,15 +69,17 @@ resource "oktapam_project_group" "test-project-group-2" {
 
 data "oktapam_project_groups" "list" {
 	depends_on = [oktapam_project_group.test-1]
-	contains = "%s"
+	project_name = oktapam_project.test-1.name
+	create_server_group = true
 }
 
 data "oktapam_project_group" "target" {
 	depends_on = [data.oktapam_project_groups.list]
-	name = data.oktapam_project_groups.list.names[0]
+	project_name = oktapam_project.test-1.name
+	group_name = data.oktapam_project_groups.list.group_names[0]
 }
 `
 
 func createTestAccDatasourceProjectGroupInitConfig(identifier string) string {
-	return fmt.Sprintf(testAccDatasourceProjectGroupInitListFetchConfigFormat, identifier, identifier, identifier, identifier)
+	return fmt.Sprintf(testAccDatasourceProjectGroupInitListFetchConfigFormat, identifier, identifier, identifier)
 }

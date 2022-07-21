@@ -29,11 +29,6 @@ func dataSourceProjectGroup() *schema.Resource {
 				ForceNew:    true,
 				Description: descriptions.GroupName,
 			},
-			attributes.GroupID: {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: descriptions.GroupID,
-			},
 			attributes.DeletedAt: {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -74,15 +69,16 @@ func dataSourceProjectGroup() *schema.Resource {
 func dataSourceProjectGroupsFetch(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	project, group, err := parseProjectGroupResourceID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
+	group := d.Get(attributes.GroupName).(string)
+	if group == "" {
+		return diag.Errorf("%s cannot be blank", attributes.GroupName)
 	}
 
-	tokenID := d.Get(attributes.ID).(string)
-	if tokenID == "" {
-		return diag.Errorf("%s cannot be blank", attributes.ID)
+	project := d.Get(attributes.ProjectName).(string)
+	if project == "" {
+		return diag.Errorf("%s cannot be blank", attributes.ProjectName)
 	}
+
 	projectGroup, err := c.GetProjectGroup(ctx, project, group)
 	if err != nil {
 		return diag.FromErr(err)

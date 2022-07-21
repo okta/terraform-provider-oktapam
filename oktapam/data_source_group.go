@@ -34,8 +34,10 @@ func dataSourceGroup() *schema.Resource {
 				Description: descriptions.DeletedAt,
 			},
 			attributes.Roles: {
-				Type:        schema.TypeList,
-				Elem:        schema.TypeString,
+				Type: schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 				Computed:    true,
 				Description: descriptions.Roles,
 			},
