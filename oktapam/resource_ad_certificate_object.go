@@ -55,10 +55,9 @@ func resourceADCertificateUploadCreate(ctx context.Context, d *schema.ResourceDa
 
 	certificateID := d.Get(attributes.CertificateID).(string)
 	source := d.Get(attributes.Source).(string)
-	fileName := "cert-upload-tf"
 
 	//Call api client
-	if err := c.UploadADSmartcardCertificate(ctx, certificateID, fileName, source); err != nil {
+	if err := c.UploadADSmartcardCertificate(ctx, certificateID, source); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -67,7 +66,6 @@ func resourceADCertificateUploadCreate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceADCertificateRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
 	certificateID := d.Id()
@@ -77,18 +75,23 @@ func resourceADCertificateRead(ctx context.Context, d *schema.ResourceData, m in
 	}
 
 	if adCertificate != nil && utils.IsNonEmpty(adCertificate.ID) {
-		_ = d.Set(attributes.ID, *adCertificate.ID)
-		_ = d.Set(attributes.EnterpriseSigned, *adCertificate.EnterpriseSigned)
-		_ = d.Set(attributes.Status, *adCertificate.Status)
+		if err := d.Set(attributes.ID, *adCertificate.ID); err != nil {
+			return diag.FromErr(err)
+		}
+		if err := d.Set(attributes.EnterpriseSigned, *adCertificate.EnterpriseSigned); err != nil {
+			return diag.FromErr(err)
+		}
+		if err := d.Set(attributes.Status, *adCertificate.Status); err != nil {
+			return diag.FromErr(err)
+		}
 	} else {
 		logging.Infof("ADSmartCardCertificate %s does not exist", certificateID)
 	}
 
-	return diags
+	return nil
 }
 
 func resourceADCertificateDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 	certificateId := d.Id()
 
@@ -98,5 +101,5 @@ func resourceADCertificateDelete(ctx context.Context, d *schema.ResourceData, m 
 	}
 
 	d.SetId("")
-	return diags
+	return nil
 }

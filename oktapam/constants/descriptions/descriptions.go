@@ -39,7 +39,7 @@ const (
 	DescriptionContains              = "If a value is provided, the results are filtered to only contain resources whose description contains that value."
 	Domain                           = "The domain against which to query."
 	DomainControllers                = "A comma-separated list of the specific domain controller(s) that should be used to query the domain. Can be specified as a hostname or IP."
-	EnterpriseSigned                 = "If 'true', certificate is signed"
+	EnterpriseSigned                 = "If 'true', certificate is signed by AD Certificate Services."
 	ForwardTraffic                   = "If 'true', all traffic in the ASA Project be forwarded through selected ASA Gateways."
 	GatewayID                        = "The UUID of the Gateway with which this AD Connection is associated."
 	GatewaySelector                  = "Assigns ASA Gateways with labels matching all selectors. At least one selector is required for traffic forwarding."

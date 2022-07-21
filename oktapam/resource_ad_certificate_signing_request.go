@@ -101,7 +101,7 @@ func resourceADCertificateSigningRequestCreate(ctx context.Context, d *schema.Re
 	if v, ok := d.GetOk(attributes.Details); ok {
 		list := v.([]interface{})
 
-		if len(v.([]interface{})) == 1 {
+		if size := len(list); size==1  {
 			detailsMap := list[0].(map[string]interface{})
 			csrDetails = &client.ADCertificateDetails{
 				Organization:       utils.AsStringPtr(detailsMap[attributes.Organization].(string)),
@@ -110,6 +110,8 @@ func resourceADCertificateSigningRequestCreate(ctx context.Context, d *schema.Re
 				Province:           utils.AsStringPtr(detailsMap[attributes.Province].(string)),
 				Country:            utils.AsStringPtr(detailsMap[attributes.Country].(string)),
 			}
+		}else {
+			return diag.Errorf("certificate details missing")
 		}
 	}
 
@@ -117,7 +119,7 @@ func resourceADCertificateSigningRequestCreate(ctx context.Context, d *schema.Re
 	csrReq := client.ADSmartCardCertificate{
 		DisplayName: getStringPtr(attributes.DisplayName, d, false),
 		CommonName:  getStringPtr(attributes.CommonName, d, false),
-		Type:        utils.AsStringPtr(client.AD_CERTIFICATE_TYPE_SIGNING_REQUEST),
+		Type:        utils.AsStringPtr(client.ADCertificateTypeSigningRequest),
 		Details:     csrDetails,
 	}
 
@@ -136,7 +138,6 @@ func resourceADCertificateSigningRequestCreate(ctx context.Context, d *schema.Re
 }
 
 func resourceADCertificateSigningRequestRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
 	certificateID := d.Id()
@@ -153,7 +154,7 @@ func resourceADCertificateSigningRequestRead(ctx context.Context, d *schema.Reso
 		logging.Infof("ADSmartCardCertificate %s does not exist", certificateID)
 	}
 
-	return diags
+	return nil
 }
 
 func resourceADCertificateSigningRequestDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

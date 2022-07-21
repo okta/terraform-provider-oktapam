@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"net/url"
 	"strings"
 	"time"
@@ -14,21 +15,21 @@ import (
 )
 
 const (
-	AD_CERTIFICATE_TYPE_SIGNING_REQUEST = "certificate_signing_request"
-	AD_CERTIFICATE_TYPE_SELF_SIGNED     = "self_signed"
+	ADCertificateTypeSigningRequest = "certificate_signing_request"
+	ADCertificateTypeSelfSigned     = "self_signed"
 )
 
 type ADSmartCardCertificate struct {
-	ID               *string               `json:"id"`
-	DisplayName      *string               `json:"display_name"`
-	CommonName       *string               `json:"common_name"`
-	Type             *string               `json:"type"`
-	Details          *ADCertificateDetails `json:"details"`
-	Status           *string               `json:"status"`
-	EnterpriseSigned *bool                 `json:"enterprise_signed"`
-	CreatedAt        *time.Time            `json:"created_at"`
-	ExpiresAt        *time.Time            `json:"expires_at"`
-	Content          *string               `json:"content"`
+	ID               *string               `json:"id,omitempty"`
+	DisplayName      *string               `json:"display_name,omitempty"`
+	CommonName       *string               `json:"common_name,omitempty"`
+	Type             *string               `json:"type,omitempty"`
+	Details          *ADCertificateDetails `json:"details,omitempty"`
+	Status           *string               `json:"status,omitempty"`
+	EnterpriseSigned *bool                 `json:"enterprise_signed,omitempty"`
+	CreatedAt        *time.Time            `json:"created_at,omitempty"`
+	ExpiresAt        *time.Time            `json:"expires_at,omitempty"`
+	Content          *string               `json:"content,omitempty"`
 }
 
 type ADCertificateDetails struct {
@@ -102,7 +103,7 @@ func (c OktaPAMClient) CreateADSmartcardCertificate(ctx context.Context, adCert 
 		logging.Errorf("received error while making request to %s", requestURL)
 		return nil, err
 	}
-	if _, err := checkStatusCode(resp, 201); err != nil {
+	if _, err := checkStatusCode(resp, http.StatusCreated); err != nil {
 		logging.Tracef("unexpected status code: %d", resp.StatusCode())
 		return nil, err
 	}
@@ -111,8 +112,8 @@ func (c OktaPAMClient) CreateADSmartcardCertificate(ctx context.Context, adCert 
 	return createdADCert, nil
 }
 
-func (c OktaPAMClient) DeleteADSmartcardCertificate(ctx context.Context, certificateId string) error {
-	requestURL := fmt.Sprintf("/v1/teams/%s/certificates/%s", url.PathEscape(c.Team), url.PathEscape(certificateId))
+func (c OktaPAMClient) DeleteADSmartcardCertificate(ctx context.Context, certificateID string) error {
+	requestURL := fmt.Sprintf("/v1/teams/%s/certificates/%s", url.PathEscape(c.Team), url.PathEscape(certificateID))
 	logging.Tracef("making DELETE request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).Delete(requestURL)
 	if err != nil {
@@ -148,11 +149,11 @@ func (c OktaPAMClient) GetADSmartcardCertificate(ctx context.Context, certificat
 	return nil, createErrorForInvalidCode(resp, 200, 404)
 }
 
-func (c OktaPAMClient) UploadADSmartcardCertificate(ctx context.Context, certificateId string, filename string, content string) error {
+func (c OktaPAMClient) UploadADSmartcardCertificate(ctx context.Context, certificateId string, content string) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/certificates/%s/upload", url.PathEscape(c.Team), url.PathEscape(certificateId))
 	logging.Tracef("making GET request to %s", requestURL)
 
-	resp, err := c.CreateBaseRequest(ctx).SetMultipartField("file", filename, "multipart/form-data", strings.NewReader(content)).Post(requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetMultipartField("file", "cert-upload-tf", "multipart/form-data", strings.NewReader(content)).Post(requestURL)
 
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)

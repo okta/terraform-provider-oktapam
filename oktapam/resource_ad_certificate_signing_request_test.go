@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	CSR_STATUS_CREATED = "request_created"
+	csrStatusCreated = "request_created"
 )
 
 func TestAccADCertificateSigningRequest(t *testing.T) {
@@ -32,7 +32,7 @@ func TestAccADCertificateSigningRequest(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, attributes.DisplayName, csrName),
 					resource.TestCheckResourceAttr(resourceName, attributes.EnterpriseSigned, "true"),
-					resource.TestCheckResourceAttr(resourceName, attributes.Status, CSR_STATUS_CREATED),
+					resource.TestCheckResourceAttr(resourceName, attributes.Status, csrStatusCreated),
 				),
 			},
 		},
