@@ -15,7 +15,7 @@ import (
 
 func dataSourceGroups() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceGroupsRead,
+		ReadContext: dataSourceGroupList,
 		Schema: map[string]*schema.Schema{
 			// Query parameter values
 			attributes.Contains: {
@@ -48,7 +48,7 @@ func dataSourceGroups() *schema.Resource {
 	}
 }
 
-func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceGroupList(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	c := m.(client.OktaPAMClient)

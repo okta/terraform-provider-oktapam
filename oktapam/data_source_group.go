@@ -15,7 +15,7 @@ import (
 func dataSourceGroup() *schema.Resource {
 	return &schema.Resource{
 		Description: descriptions.SourceGroups,
-		ReadContext: dataSourceGroupsFetch,
+		ReadContext: dataSourceGroupFetch,
 		Schema: map[string]*schema.Schema{
 			attributes.Name: {
 				Type:        schema.TypeString,
@@ -45,7 +45,7 @@ func dataSourceGroup() *schema.Resource {
 	}
 }
 
-func dataSourceGroupsFetch(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceGroupFetch(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	name := d.Get(attributes.Name).(string)
 	if name == "" {

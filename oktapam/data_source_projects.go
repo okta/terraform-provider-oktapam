@@ -14,7 +14,7 @@ import (
 
 func dataSourceProjects() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceProjectsList,
+		ReadContext: dataSourceProjectList,
 		Schema: map[string]*schema.Schema{
 			// Query parameter values
 			attributes.Self: {
@@ -37,7 +37,7 @@ func dataSourceProjects() *schema.Resource {
 	}
 }
 
-func dataSourceProjectsList(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceProjectList(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	c := m.(client.OktaPAMClient)

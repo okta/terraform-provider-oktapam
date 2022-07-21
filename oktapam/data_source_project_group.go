@@ -15,7 +15,7 @@ import (
 func dataSourceProjectGroup() *schema.Resource {
 	return &schema.Resource{
 		Description: descriptions.SourceProjectGroups,
-		ReadContext: dataSourceProjectGroupsFetch,
+		ReadContext: dataSourceProjectGroupFetch,
 		Schema: map[string]*schema.Schema{
 			attributes.ProjectName: {
 				Type:        schema.TypeString,
@@ -66,7 +66,7 @@ func dataSourceProjectGroup() *schema.Resource {
 	}
 }
 
-func dataSourceProjectGroupsFetch(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceProjectGroupFetch(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	group := d.Get(attributes.GroupName).(string)
