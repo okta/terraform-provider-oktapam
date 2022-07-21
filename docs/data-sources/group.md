@@ -23,6 +23,6 @@ Returns a list of ASA Groups. For more information check out the [documentation]
 
 - `deleted_at` (String) The UTC time of resource creation. Format is `2022-01-01 00:00:00 +0000 UTC`.
 - `id` (String) The ID of this resource.
-- `roles` (List of String) A list of roles for the ASA Group. Options are `access_user`, `access_admin`, and `reporting_user`.
+- `roles` (Set of String) A list of roles for the ASA Group. Options are `access_user`, `access_admin`, and `reporting_user`.
 
 

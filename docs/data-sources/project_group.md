@@ -24,7 +24,6 @@ Returns a list of ASA Project Groups, corespondibng to an ASA Project. For more 
 
 - `create_server_group` (Boolean) If 'true', `sftd` (ASA Server Agent) creates a corresponding local (unix or windows) group in the ASA Project's servers.
 - `deleted_at` (String) The UTC time of resource creation. Format is `2022-01-01 00:00:00 +0000 UTC`.
-- `group_id` (String) The ID corresponding to a ASA Group.
 - `id` (String) The ID of this resource.
 - `removed_at` (String) UTC time of resource removal from parent resource. Format is `2022-01-01 00:00:00 +0000 UTC`.
 - `server_access` (Boolean) If 'true', members of this ASA Group have access to the ASA Project servers.
