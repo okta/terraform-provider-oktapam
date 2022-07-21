@@ -2,12 +2,9 @@ package oktapam
 
 import (
 	"context"
-<<<<<<< HEAD
 	"fmt"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/errors"
-=======
->>>>>>> c5f6662 (Clean up)
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
