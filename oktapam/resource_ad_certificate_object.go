@@ -29,9 +29,10 @@ func resourceADCertificateObject() *schema.Resource {
 				Required: true,
 			},
 			attributes.Source: {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				ForceNew:    true,
+				Required:    true,
+				Description: descriptions.CertificateContent,
 			},
 			attributes.EnterpriseSigned: {
 				Type:        schema.TypeBool,

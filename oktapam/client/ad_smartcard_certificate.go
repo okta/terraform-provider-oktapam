@@ -75,7 +75,7 @@ func (t ADSmartCardCertificate) ToResourceMap() map[string]interface{} {
 		if t.Details.TTLDays != nil {
 			flattenedCertDetail[attributes.TTLDays] = *t.Details.TTLDays
 		}
-		flattenedCertDetails = append(flattenedCertDetails, flattenedCertDetail)
+		flattenedCertDetails[0] = flattenedCertDetail
 
 		m[attributes.Details] = flattenedCertDetails
 	}

@@ -100,19 +100,16 @@ func resourceADCertificateSigningRequestCreate(ctx context.Context, d *schema.Re
 	var csrDetails *client.ADCertificateDetails
 	if v, ok := d.GetOk(attributes.Details); ok {
 		list := v.([]interface{})
-
-		if size := len(list); size==1  {
-			detailsMap := list[0].(map[string]interface{})
-			csrDetails = &client.ADCertificateDetails{
-				Organization:       utils.AsStringPtr(detailsMap[attributes.Organization].(string)),
-				OrganizationalUnit: utils.AsStringPtr(detailsMap[attributes.OrganizationalUnit].(string)),
-				Locality:           utils.AsStringPtr(detailsMap[attributes.Locality].(string)),
-				Province:           utils.AsStringPtr(detailsMap[attributes.Province].(string)),
-				Country:            utils.AsStringPtr(detailsMap[attributes.Country].(string)),
-			}
-		}else {
-			return diag.Errorf("certificate details missing")
+		detailsMap := list[0].(map[string]interface{})
+		csrDetails = &client.ADCertificateDetails{
+			Organization:       utils.AsStringPtr(detailsMap[attributes.Organization].(string)),
+			OrganizationalUnit: utils.AsStringPtr(detailsMap[attributes.OrganizationalUnit].(string)),
+			Locality:           utils.AsStringPtr(detailsMap[attributes.Locality].(string)),
+			Province:           utils.AsStringPtr(detailsMap[attributes.Province].(string)),
+			Country:            utils.AsStringPtr(detailsMap[attributes.Country].(string)),
 		}
+	} else {
+		return diag.Errorf("certificate details missing")
 	}
 
 	//Build Certificate API Request Object
