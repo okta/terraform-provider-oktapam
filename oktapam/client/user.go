@@ -135,15 +135,12 @@ func (c OktaPAMClient) ListUsers(ctx context.Context, parameters ListUsersParame
 		}
 		links := linkheader.Parse(linkHeader)
 		requestURL = ""
-
-		isNext := false
 		for _, link := range links {
 			if link.Rel == "next" {
 				requestURL = link.URL
-				isNext = true
 			}
 		}
-		if !isNext {
+		if requestURL == "" {
 			break
 		}
 	}
@@ -222,15 +219,12 @@ func (c OktaPAMClient) ListServiceUsers(ctx context.Context, parameters ListUser
 		}
 		links := linkheader.Parse(linkHeader)
 		requestURL = ""
-
-		isNext := false
 		for _, link := range links {
 			if link.Rel == "next" {
 				requestURL = link.URL
-				isNext = true
 			}
 		}
-		if !isNext {
+		if requestURL == "" {
 			break
 		}
 	}
