@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"net/url"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
@@ -66,11 +67,11 @@ func (c OktaPAMClient) ListServerEnrollmentTokens(ctx context.Context, project s
 			logging.Errorf("received error while making request to %s", requestURL)
 			return nil, err
 		}
-		if _, err := checkStatusCode(resp, 200, 404); err != nil {
+		if _, err := checkStatusCode(resp, http.StatusOK, http.StatusNotFound); err != nil {
 			return nil, err
 		}
 
-		if resp.StatusCode() == 404 {
+		if resp.StatusCode() == http.StatusNotFound {
 			logging.Warnf("received a 404 for %s, could indicate that the referenced project does not exist", requestURL)
 			break
 		}
@@ -116,7 +117,7 @@ func (c OktaPAMClient) GetServerEnrollmentToken(ctx context.Context, project, id
 		logging.Errorf("received error while making request to %s", requestURL)
 		return nil, err
 	}
-	if _, err := checkStatusCode(resp, 200); err != nil {
+	if _, err := checkStatusCode(resp, http.StatusOK); err != nil {
 		return nil, err
 	}
 	token := resp.Result().(*ServerEnrollmentToken)
@@ -167,6 +168,6 @@ func (c OktaPAMClient) DeleteServerEnrollmentToken(ctx context.Context, project,
 		return err
 	}
 
-	_, err = checkStatusCode(resp, 204, 404)
+	_, err = checkStatusCode(resp, http.StatusNoContent, http.StatusNotFound)
 	return err
 }

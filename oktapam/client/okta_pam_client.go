@@ -89,7 +89,7 @@ func createServiceToken(apiKey, apiKeySecret, apiHost, team string) (*ServiceTok
 		return nil, fmt.Errorf("received a 401 from URL %s when requesting service token.  check credentials and try again", authorizationURL)
 	}
 
-	_, err = checkStatusCode(resp, 200)
+	_, err = checkStatusCode(resp, http.StatusOK)
 	if err != nil {
 		return nil, err
 	}

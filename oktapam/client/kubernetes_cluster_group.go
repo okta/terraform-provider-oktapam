@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
 	"strings"
 
@@ -69,7 +70,7 @@ func (c OktaPAMClient) ListKubernetesClusterGroups(ctx context.Context) ([]Kuber
 			logging.Errorf("received error while making request to %s", requestURL)
 			return nil, err
 		}
-		if _, err := checkStatusCode(resp, 200); err != nil {
+		if _, err := checkStatusCode(resp, http.StatusOK); err != nil {
 			return nil, err
 		}
 
@@ -108,9 +109,9 @@ func (c OktaPAMClient) GetKubernetesClusterGroup(ctx context.Context, id string)
 		return nil, err
 	}
 
-	if statusCode, err := checkStatusCode(resp, 200, 404); err != nil {
+	if statusCode, err := checkStatusCode(resp, http.StatusOK, http.StatusNotFound); err != nil {
 		return nil, err
-	} else if statusCode == 404 {
+	} else if statusCode == http.StatusNotFound {
 		return nil, nil
 	}
 
@@ -150,7 +151,7 @@ func (c OktaPAMClient) UpdateKubernetesClusterGroup(ctx context.Context, cluster
 		return err
 	}
 
-	_, err = checkStatusCode(resp, 204)
+	_, err = checkStatusCode(resp, http.StatusNoContent)
 	return err
 }
 
@@ -169,7 +170,7 @@ func (c OktaPAMClient) DeleteKubernetesClusterGroup(ctx context.Context, id stri
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
 	}
-	if _, err := checkStatusCode(resp, 204, 404); err != nil {
+	if _, err := checkStatusCode(resp, http.StatusNoContent, http.StatusNotFound); err != nil {
 		logging.Tracef("unexpected status code: %d", resp.StatusCode())
 		return err
 	}

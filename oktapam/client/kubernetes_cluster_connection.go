@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
@@ -45,9 +46,9 @@ func (c OktaPAMClient) GetKubernetesClusterConnection(ctx context.Context, clust
 		return nil, err
 	}
 
-	if statusCode, err := checkStatusCode(resp, 200, 404); err != nil {
+	if statusCode, err := checkStatusCode(resp, http.StatusOK, http.StatusNotFound); err != nil {
 		return nil, err
-	} else if statusCode == 404 {
+	} else if statusCode == http.StatusNotFound {
 		return nil, nil
 	}
 

@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"net/url"
 	"strconv"
 
@@ -128,7 +129,7 @@ func (c OktaPAMClient) ListADConnections(ctx context.Context, parameters ListADC
 			logging.Errorf("received error while making request to %s", requestURL)
 			return nil, err
 		}
-		if _, err := checkStatusCode(resp, 200); err != nil {
+		if _, err := checkStatusCode(resp, http.StatusOK); err != nil {
 			return nil, err
 		}
 
@@ -165,17 +166,17 @@ func (c OktaPAMClient) GetADConnection(ctx context.Context, id string, allowDele
 	}
 	statusCode := resp.StatusCode()
 
-	if statusCode == 200 {
+	if statusCode == http.StatusOK {
 		adConn := resp.Result().(*ADConnection)
 		if adConn.Exists() || allowDeleted {
 			return adConn, nil
 		}
 		return nil, nil
-	} else if statusCode == 404 {
+	} else if statusCode == http.StatusNotFound {
 		return nil, nil
 	}
 
-	return nil, createErrorForInvalidCode(resp, 200, 404)
+	return nil, createErrorForInvalidCode(resp, http.StatusOK, http.StatusNotFound)
 }
 
 func (c OktaPAMClient) CreateADConnection(ctx context.Context, adConn ADConnection) (*ADConnection, error) {
@@ -204,7 +205,7 @@ func (c OktaPAMClient) UpdateADConnection(ctx context.Context, adConnId string, 
 		logging.Errorf("received error while making request to %s", requestURL)
 		return nil, err
 	}
-	if _, err := checkStatusCode(resp, 204); err != nil {
+	if _, err := checkStatusCode(resp, http.StatusNoContent); err != nil {
 		logging.Tracef("unexpected status code: %d", resp.StatusCode())
 		return nil, err
 	}
@@ -221,7 +222,7 @@ func (c OktaPAMClient) DeleteADConnection(ctx context.Context, adConnId string) 
 		return err
 	}
 
-	_, err = checkStatusCode(resp, 204, 404)
+	_, err = checkStatusCode(resp, http.StatusNoContent, http.StatusNotFound)
 	return err
 }
 
@@ -236,17 +237,17 @@ func (c OktaPAMClient) GetADTaskSettings(ctx context.Context, adConnId string, a
 	}
 	statusCode := resp.StatusCode()
 
-	if statusCode == 200 {
+	if statusCode == http.StatusOK {
 		adTaskSettings := resp.Result().(*ADTaskSettings)
 		if adTaskSettings.Exists() {
 			return adTaskSettings, nil
 		}
 		return nil, nil
-	} else if statusCode == 404 {
+	} else if statusCode == http.StatusNotFound {
 		return nil, nil
 	}
 
-	return nil, createErrorForInvalidCode(resp, 200, 404)
+	return nil, createErrorForInvalidCode(resp, http.StatusOK, http.StatusNotFound)
 }
 
 func (c OktaPAMClient) CreateADTaskSettings(ctx context.Context, adConnId string, adTaskSettings ADTaskSettings) (*ADTaskSettings, error) {
@@ -279,7 +280,7 @@ func (c OktaPAMClient) UpdateADTaskSettings(ctx context.Context, adConnId string
 		logging.Errorf("received error while making request to %s", requestURL)
 		return nil, err
 	}
-	if _, err := checkStatusCode(resp, 204); err != nil {
+	if _, err := checkStatusCode(resp, http.StatusNoContent); err != nil {
 		logging.Tracef("unexpected status code: %d", resp.StatusCode())
 		return nil, err
 	}
@@ -298,7 +299,7 @@ func (c OktaPAMClient) DeleteADTaskSettings(ctx context.Context, adConnId string
 		return err
 	}
 
-	_, err = checkStatusCode(resp, 204, 404)
+	_, err = checkStatusCode(resp, http.StatusNoContent, http.StatusNotFound)
 	return err
 }
 
@@ -312,7 +313,7 @@ func (c OktaPAMClient) UpdateADTaskSettingsSchedule(ctx context.Context, adConnI
 		return err
 	}
 
-	_, err = checkStatusCode(resp, 204)
+	_, err = checkStatusCode(resp, http.StatusNoContent)
 	return err
 }
 
@@ -326,7 +327,7 @@ func (c OktaPAMClient) DeactivateADTaskSettings(ctx context.Context, adConnId st
 		return err
 	}
 
-	_, err = checkStatusCode(resp, 204)
+	_, err = checkStatusCode(resp, http.StatusNoContent)
 	return err
 }
 

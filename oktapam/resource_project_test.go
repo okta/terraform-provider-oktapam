@@ -58,6 +58,9 @@ func TestAccProject(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.NextUnixGID, "63020",
 					),
+					resource.TestCheckResourceAttr(
+						resourceName, attributes.SSHCertificateType, "CERT_TYPE_ED25519_01",
+					),
 				),
 			},
 			{
@@ -72,6 +75,9 @@ func TestAccProject(t *testing.T) {
 					),
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.NextUnixGID, "63400",
+					),
+					resource.TestCheckResourceAttr(
+						resourceName, attributes.SSHCertificateType, "CERT_TYPE_ED25519_01",
 					),
 				),
 			},

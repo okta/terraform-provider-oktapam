@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"net/url"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
@@ -62,7 +63,7 @@ func (c OktaPAMClient) ListGateways(ctx context.Context, parameters ListGatewayP
 			logging.Errorf("received error while making request to %s", requestURL)
 			return nil, err
 		}
-		if _, err := checkStatusCode(resp, 200); err != nil {
+		if _, err := checkStatusCode(resp, http.StatusOK); err != nil {
 			return nil, err
 		}
 
