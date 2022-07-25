@@ -10,7 +10,6 @@ const (
 
 	UserTypeHuman   UserType = "human"
 	UserTypeService UserType = "service"
-	UserTypeMissing UserType = ""
 )
 
 func (ut UserType) String() string {
