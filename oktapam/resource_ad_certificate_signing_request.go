@@ -128,7 +128,9 @@ func resourceADCertificateSigningRequestCreate(ctx context.Context, d *schema.Re
 	} else {
 		//Set returned id
 		d.SetId(*createdADCSR.ID)
-		d.Set(attributes.Content, *createdADCSR.Content)
+		if err := d.Set(attributes.Content, *createdADCSR.Content); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	return resourceADCertificateSigningRequestRead(ctx, d, m)
