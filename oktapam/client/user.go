@@ -6,34 +6,24 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
-
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/errors"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/typed_strings"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 	"github.com/tomnomnom/linkheader"
 )
 
-type UserStatus string
-type UserType string
-
-const (
-	UserStatusActive   UserStatus = "ACTIVE"
-	UserStatusDisabled UserStatus = "DISABLED"
-	UserStatusDeleted  UserStatus = "DELETED"
-
-	UserTypeHuman   UserType = "human"
-	UserTypeService UserType = "service"
-)
-
 type User struct {
-	Name           *string `json:"name"`
-	ID             *string `json:"id"`
-	TeamName       *string `json:"team_name"`
-	ServerUserName *string `json:"server_user_name,omitempty"`
-	Status         *string `json:"status"` // TODO: Change this to using typed string
-	DeletedAt      *string `json:"deleted_at,omitempty"`
-	UserType       *string `json:"user_type"`
+	Name           *string                   `json:"name"`
+	ID             *string                   `json:"id"`
+	TeamName       *string                   `json:"team_name"`
+	ServerUserName *string                   `json:"server_user_name,omitempty"`
+	DeletedAt      *string                   `json:"deleted_at,omitempty"`
+	Status         *typed_strings.UserStatus `json:"status"`
+	UserType       *typed_strings.UserType   `json:"user_type"`
 }
 
 func UserFromMap(m map[string]interface{}) (*User, error) {
@@ -46,8 +36,12 @@ func UserFromMap(m map[string]interface{}) (*User, error) {
 		switch k {
 		case attributes.Name:
 			su.Name = utils.AsStringPtr(v.(string))
+		case attributes.UserType:
+			userType := typed_strings.UserType(v.(string))
+			su.UserType = &userType
 		case attributes.Status:
-			su.Status = utils.AsStringPtr(v.(string))
+			userStatus := typed_strings.UserStatus(v.(string))
+			su.Status = &userStatus
 		default:
 			return nil, fmt.Errorf("uknown key: %s", k)
 		}
@@ -179,7 +173,7 @@ func (c OktaPAMClient) GetHumanUser(ctx context.Context, userName string) (*User
 }
 
 func (c OktaPAMClient) CreateHumanUser(ctx context.Context, userName string) error {
-	return fmt.Errorf("%s user creation is not available. Please create the user from your Okta console.", UserTypeHuman)
+	return fmt.Errorf(errors.HumanUserCreationError)
 }
 
 func (c OktaPAMClient) UpdateHumanUser(ctx context.Context, userName string, humanUser *User) error {
@@ -195,7 +189,7 @@ func (c OktaPAMClient) UpdateHumanUser(ctx context.Context, userName string, hum
 }
 
 func (c OktaPAMClient) DeleteHumanUser(ctx context.Context, userName string) error {
-	return fmt.Errorf("%s user deletion is not available. Please delete the user from your Okta console.", UserTypeHuman)
+	return fmt.Errorf(errors.HumanUserDeletionError)
 }
 
 // Commands used by only `service` users:

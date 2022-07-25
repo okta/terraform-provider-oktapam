@@ -3,9 +3,14 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"testing"
 
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/errors"
+
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/typed_strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -14,17 +19,19 @@ import (
 )
 
 func TestAccUser(t *testing.T) {
-	resourceName := "oktapam_user.test-user"
+	resource1 := "test-user-1"
+	resource2 := "test-user-2"
+	resourceType := "oktapam_user"
+	resourceName1 := fmt.Sprintf("%s.%s", resourceType, resource1)
 	identifier := randSeq(20)
 	userName := "tf-acceptance-test-user-" + identifier
 	teamName := DefaultTestTeam
-	userType := string(client.UserTypeService)
+	userType := typed_strings.UserTypeService
 
-	constructUser := func(status client.UserStatus) client.User {
-		sstatus := string(status)
+	constructUser := func(status typed_strings.UserStatus) client.User {
 		return client.User{
 			Name:     &userName,
-			Status:   &sstatus,
+			Status:   &status,
 			TeamName: &teamName,
 			UserType: &userType,
 		}
@@ -36,54 +43,59 @@ func TestAccUser(t *testing.T) {
 		CheckDestroy:      testAccServiceUserCheckDestroy(userName),
 		Steps: []resource.TestStep{
 			{
-				Config: createTestAccServiceUserUpdateConfig(userName, client.UserStatusActive),
+				Config: createTestAccServiceUserUpdateConfig(resource1, userName, typed_strings.UserStatusActive),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					testAccServiceUserCheckExists(resourceName, constructUser(client.UserStatusActive)),
+					testAccServiceUserCheckExists(resourceName1, constructUser(typed_strings.UserStatusActive)),
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.Name, userName,
+						resourceName1, attributes.Name, userName,
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.UserType, string(client.UserTypeService),
+						resourceName1, attributes.UserType, typed_strings.UserTypeService.String(),
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.Status, string(client.UserStatusActive),
+						resourceName1, attributes.Status, typed_strings.UserStatusActive.String(),
 					),
 				),
 			},
 			{
-				Config: createTestAccServiceUserUpdateConfig(userName, client.UserStatusDisabled),
-				Check: resource.ComposeAggregateTestCheckFunc(
-					testAccServiceUserCheckExists(resourceName, constructUser(client.UserStatusDisabled)),
-					resource.TestCheckResourceAttr(
-						resourceName, attributes.Name, userName,
-					),
-					resource.TestCheckResourceAttr(
-						resourceName, attributes.UserType, string(client.UserTypeService),
-					),
-					resource.TestCheckResourceAttr(
-						resourceName, attributes.Status, string(client.UserStatusDisabled),
-					),
-				),
-			},
-			{
-				Config: createTestAccServiceUserUpdateConfig(userName, client.UserStatusDeleted),
-				Check: resource.ComposeAggregateTestCheckFunc(
-					testAccServiceUserCheckExists(resourceName, constructUser(client.UserStatusDeleted)),
-					resource.TestCheckResourceAttr(
-						resourceName, attributes.Name, userName,
-					),
-					resource.TestCheckResourceAttr(
-						resourceName, attributes.UserType, string(client.UserTypeService),
-					),
-					resource.TestCheckResourceAttr(
-						resourceName, attributes.Status, string(client.UserStatusDeleted),
-					),
-				),
-			},
-			{
-				ResourceName:      resourceName,
+				ResourceName:      resourceName1,
 				ImportState:       true,
 				ImportStateVerify: true,
+			},
+			{
+				Config: createTestAccServiceUserUpdateConfig(resource1, userName, typed_strings.UserStatusDisabled),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccServiceUserCheckExists(resourceName1, constructUser(typed_strings.UserStatusDisabled)),
+					resource.TestCheckResourceAttr(
+						resourceName1, attributes.Name, userName,
+					),
+					resource.TestCheckResourceAttr(
+						resourceName1, attributes.UserType, typed_strings.UserTypeService.String(),
+					),
+					resource.TestCheckResourceAttr(
+						resourceName1, attributes.Status, typed_strings.UserStatusDisabled.String(),
+					),
+				),
+			},
+			{
+				Config: createTestAccServiceUserUpdateConfig(resource1, userName, typed_strings.UserStatusDeleted),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccServiceUserCheckExists(resourceName1, constructUser(typed_strings.UserStatusDeleted)),
+					resource.TestCheckResourceAttr(
+						resourceName1, attributes.Name, userName,
+					),
+					resource.TestCheckResourceAttr(
+						resourceName1, attributes.UserType, typed_strings.UserTypeService.String(),
+					),
+					resource.TestCheckResourceAttr(
+						resourceName1, attributes.Status, typed_strings.UserStatusDeleted.String(),
+					),
+				),
+			},
+			{
+				// Ensure attempted Human User creation fails
+				Config:      createTestAccHumanUserUpdateConfig(resource2, userName, typed_strings.UserStatusActive),
+				ExpectError: regexp.MustCompile(errors.HumanUserCreationError),
 			},
 		},
 	})
@@ -91,7 +103,6 @@ func TestAccUser(t *testing.T) {
 
 func testAccServiceUserCheckExists(rn string, expectedUser client.User) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		fmt.Println("Check if user exists")
 		rs, ok := s.RootModule().Resources[rn]
 		if !ok {
 			return fmt.Errorf("resource not found: %s", rn)
@@ -101,7 +112,8 @@ func testAccServiceUserCheckExists(rn string, expectedUser client.User) resource
 		if resourceID == "" {
 			return fmt.Errorf("resource id not set")
 		}
-		if expectedUser.Name == nil || *expectedUser.Name != resourceID {
+
+		if expectedUser.Name == nil || createUserID(*expectedUser.Name, expectedUser.UserType.String()) != resourceID {
 			return fmt.Errorf("resource id not set to expected value. expected %s, got %s", *expectedUser.Name, resourceID)
 		}
 
@@ -116,7 +128,6 @@ func testAccServiceUserCheckExists(rn string, expectedUser client.User) resource
 		expectedUser.ID = user.ID
 		expectedUser.DeletedAt = user.DeletedAt
 		comparison := pretty.Compare(user, expectedUser)
-		fmt.Println("Comparison:", comparison)
 		if comparison != "" {
 			return fmt.Errorf("expected service user does not match returned service user.\n%s", comparison)
 		}
@@ -137,7 +148,7 @@ func testAccServiceUserCheckDestroy(userName string) resource.TestCheckFunc {
 			return fmt.Errorf("service user does not exist")
 		}
 
-		if *user.Status != string(client.UserStatusDeleted) { // TODO: Is it possible to get deleted service user?
+		if *user.Status != typed_strings.UserStatusDeleted {
 			return fmt.Errorf("service user is not deleted")
 		}
 
@@ -146,14 +157,18 @@ func testAccServiceUserCheckDestroy(userName string) resource.TestCheckFunc {
 }
 
 // Create and update are the same
-func createTestAccServiceUserUpdateConfig(userName string, status client.UserStatus) string {
-	return fmt.Sprintf(testAccServiceUserUpdateConfigFormat, userName, string(status))
+func createTestAccServiceUserUpdateConfig(resourceName, userName string, status typed_strings.UserStatus) string {
+	return fmt.Sprintf(testAccUserUpdateConfigFormat, resourceName, userName, status.String(), typed_strings.UserTypeService)
 }
 
-const testAccServiceUserUpdateConfigFormat = `
-resource "oktapam_user" "test-user" {
+func createTestAccHumanUserUpdateConfig(resourceName, userName string, status typed_strings.UserStatus) string {
+	return fmt.Sprintf(testAccUserUpdateConfigFormat, resourceName, userName, status.String(), typed_strings.UserTypeHuman)
+}
+
+const testAccUserUpdateConfigFormat = `
+resource "oktapam_user" "%s" {
 	name = "%s"
-    status = "%s"
-	user_type = "service"
+	status = "%s"
+	user_type = "%s"
 }
 `

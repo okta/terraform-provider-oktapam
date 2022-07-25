@@ -2,13 +2,18 @@ package oktapam
 
 import (
 	"context"
+	"fmt"
+	"strings"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/typed_strings"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/errors"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/errors"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 )
 
@@ -49,7 +54,7 @@ func resourceUser() *schema.Resource {
 			},
 			attributes.Status: {
 				Type:        schema.TypeString,
-				Optional:    true, // TODO: Check this
+				Optional:    true,
 				Description: descriptions.Status,
 			},
 			attributes.DeletedAt: {
@@ -66,73 +71,72 @@ func resourceUser() *schema.Resource {
 
 func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
-	userName := getStringPtr(attributes.Name, d, true)
-	userType := getStringPtr(attributes.UserType, d, false) // TODO: user type must be set
 
-	var err error
-	switch *userType {
-	case string(client.UserTypeHuman):
-		err = c.CreateHumanUser(ctx, *userName)
-	case string(client.UserTypeService):
-		err = c.CreateServiceUser(ctx, *userName)
+	userName, userType, err := getRequiredAttributes(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	switch typed_strings.UserType(userType) {
+	case typed_strings.UserTypeHuman:
+		err = c.CreateHumanUser(ctx, userName)
+	case typed_strings.UserTypeService:
+		err = c.CreateServiceUser(ctx, userName)
+	case typed_strings.UserTypeMissing:
+		return diag.Errorf(errors.MissingUserTypeError)
 	default:
-		return diag.Errorf(errors.InvalidUserTypeError, *userType)
+		return diag.Errorf(errors.InvalidUserTypeError, userType)
 	}
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	d.SetId(*userName)
+	d.SetId(createUserID(userName, userType))
 	return resourceUserRead(ctx, d, m)
 }
 
 func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
-	userName := d.Id()
-	userType := getStringPtr(attributes.UserType, d, true)
-
-	var user *client.User
-	var err error
-	switch *userType {
-	case string(client.UserTypeHuman):
-		user, err = c.GetHumanUser(ctx, userName)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	case string(client.UserTypeService):
-		user, err = c.GetServiceUser(ctx, userName)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	case "":
-		// The human endpoint can return either service or type, this will be used in import cases
-		user, err = c.GetHumanUser(ctx, userName)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	default:
-		return diag.Errorf(errors.InvalidUserTypeError, *userType)
+	userName, userType, err := getRequiredAttributes(d)
+	if err != nil {
+		return diag.FromErr(err)
 	}
 
-	// Allow for deleted users, as they are soft-deleted // TODO: Check this comment
+	var user *client.User
+	switch typed_strings.UserType(userType) {
+	case typed_strings.UserTypeHuman:
+		user, err = c.GetHumanUser(ctx, userName)
+	case typed_strings.UserTypeService:
+		user, err = c.GetServiceUser(ctx, userName)
+	case typed_strings.UserTypeMissing:
+		return diag.Errorf(errors.MissingUserTypeError)
+	default:
+		return diag.Errorf(errors.InvalidUserTypeError, userType)
+	}
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	if user != nil {
-		d.SetId(*user.Name)
+		d.SetId(createUserID(userName, userType))
 		for key, value := range user.ToResourceMap() {
 			d.Set(key, value)
 		}
 	} else {
-		logging.Infof("service user %s does not exist", userName)
+		logging.Infof("%s user %s does not exist", userType, userName)
 	}
 
-	return diags
+	return nil
 }
 
 func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
-	userName := d.Id()
-	userType := getStringPtr(attributes.UserType, d, true) // TODO: user type must be set
+
+	userName, userType, err := getRequiredAttributes(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 
 	changed := false
 	updates := make(map[string]interface{})
@@ -162,53 +166,84 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 		if err != nil {
 			return diag.FromErr(err)
 		} else if su == nil {
-			return diag.Errorf("could not create service user from supplied values")
+			return diag.Errorf("could not update %s user from supplied values", userType)
 		}
 
-		switch *userType {
-		case string(client.UserTypeHuman):
+		switch typed_strings.UserType(userType) {
+		case typed_strings.UserTypeHuman:
 			err := c.UpdateHumanUser(ctx, userName, su)
 			if err != nil {
 				return diag.FromErr(err)
 			}
-		case string(client.UserTypeService):
+		case typed_strings.UserTypeService:
 			err := c.UpdateServiceUser(ctx, userName, su)
 			if err != nil {
 				return diag.FromErr(err)
 			}
-		case "":
+		case typed_strings.UserTypeMissing:
 			return diag.Errorf(errors.MissingUserTypeError)
 		default:
-			return diag.Errorf(errors.InvalidUserTypeError, *userType)
+			return diag.Errorf(errors.InvalidUserTypeError, userType)
 		}
 	}
-	d.SetId(userName)
+	d.SetId(createUserID(userName, userType))
 	return resourceUserRead(ctx, d, m)
 }
 
 func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
-	userName := d.Id()
-	userType := getStringPtr(attributes.UserType, d, true)
+	userName, userType, err := getRequiredAttributes(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 
-	switch *userType {
-	case string(client.UserTypeHuman):
+	switch typed_strings.UserType(userType) {
+	case typed_strings.UserTypeHuman:
 		err := c.DeleteHumanUser(ctx, userName)
 		if err != nil {
 			return diag.FromErr(err)
 		}
-	case string(client.UserTypeService):
+	case typed_strings.UserTypeService:
 		err := c.DeleteServiceUser(ctx, userName)
 		if err != nil {
 			return diag.FromErr(err)
 		}
-	case "":
+	case typed_strings.UserTypeMissing:
 		return diag.Errorf(errors.MissingUserTypeError)
 	default:
-		return diag.Errorf(errors.InvalidUserTypeError, *userType)
+		return diag.Errorf(errors.InvalidUserTypeError, userType)
 	}
 
 	d.SetId("")
-	return diags
+	return nil
+}
+
+func getRequiredAttributes(d *schema.ResourceData) (string, string, error) {
+	if d.Id() != "" {
+		return parseUserID(d.Id())
+	}
+
+	userName := getStringPtr(attributes.Name, d, false)
+	if userName == nil {
+		return "", "", fmt.Errorf(errors.MissingAttributeError, attributes.Name)
+	}
+
+	userType := getStringPtr(attributes.UserType, d, false)
+	if userType == nil {
+		return "", "", fmt.Errorf(errors.MissingAttributeError, attributes.UserType)
+	}
+
+	return *userName, *userType, nil
+}
+
+func createUserID(userName, userType string) string {
+	return fmt.Sprintf("%s|%s", userName, userType)
+}
+
+func parseUserID(resourceId string) (string, string, error) {
+	split := strings.Split(resourceId, "|")
+	if len(split) != 2 {
+		return "", "", fmt.Errorf("oktapam_user id must be in the format of <user name>|<user type>, received: %s", resourceId)
+	}
+	return split[0], split[1], nil
 }
