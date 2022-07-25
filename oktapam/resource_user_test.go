@@ -125,7 +125,6 @@ func testAccServiceUserCheckExists(rn string, expectedUser client.User) resource
 		if user == nil {
 			return fmt.Errorf("service user %s does not exist", *expectedUser.Name)
 		}
-		expectedUser.ID = user.ID
 		expectedUser.DeletedAt = user.DeletedAt
 		comparison := pretty.Compare(user, expectedUser)
 		if comparison != "" {

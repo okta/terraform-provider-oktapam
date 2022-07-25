@@ -18,7 +18,6 @@ import (
 
 type User struct {
 	Name           *string                   `json:"name"`
-	ID             *string                   `json:"id"`
 	TeamName       *string                   `json:"team_name"`
 	ServerUserName *string                   `json:"server_user_name,omitempty"`
 	DeletedAt      *string                   `json:"deleted_at,omitempty"`
@@ -54,9 +53,6 @@ func (su User) ToResourceMap() map[string]interface{} {
 
 	if su.Name != nil {
 		m[attributes.Name] = *su.Name
-	}
-	if su.ID != nil {
-		m[attributes.ID] = *su.ID
 	}
 	if su.DeletedAt != nil {
 		m[attributes.DeletedAt] = *su.DeletedAt
