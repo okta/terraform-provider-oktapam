@@ -4,10 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/kylelemons/godebug/pretty"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -32,26 +28,6 @@ func TestAccDatasourceServerEnrollmentTokenFetch(t *testing.T) {
 			},
 		},
 	})
-}
-
-func checkResourcesEqual(resourceName1, resourceName2 string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		resource1, ok := s.RootModule().Resources[resourceName1]
-		if !ok {
-			return fmt.Errorf("resource 1 not found: %s", resourceName1)
-		}
-
-		resource2, ok := s.RootModule().Resources[resourceName2]
-		if !ok {
-			return fmt.Errorf("resource 2 not found: %s", resourceName2)
-		}
-
-		comparison := pretty.Compare(resource1.Primary.Attributes, resource2.Primary.Attributes)
-		if comparison != "" {
-			return fmt.Errorf("resources are not equal")
-		}
-		return nil
-	}
 }
 
 const testAccDatasourceServerEnrollmentTokenInitListFetchConfigFormat = `
