@@ -10,10 +10,10 @@ const (
 	ResourceUser                  = "An ASA User. Valid user types are `human` and `service`. " + LinkServiceUser
 
 	// EA/Beta Features:
-	ResourceADConnection                = "An Active Directory (AD) Connection to query AD Domain for available servers."
-	ResourceADRuleAssignment            = ""
-	ResourceADTaskSettings              = "Settings for Active Directory (AD) task for server discovery"
-	ResourceKubernetesCluster           = "A Kubernetes cluster."
-	ResourceKubernetesClusterConnection = "A set of details describing how to connect to an existing Kubernetes Cluster."
-	ResourceKubernetesClusterGroup      = "A mapping of Kubernetes cluster to Project Group."
+	ResourceADConnection                = PrefixBeta + "An Active Directory (AD) Connection to query AD Domain for available servers."
+	ResourceADRuleAssignment            = PrefixBeta + ""
+	ResourceADTaskSettings              = PrefixBeta + "Settings for Active Directory (AD) task for server discovery"
+	ResourceKubernetesCluster           = PrefixBeta + "A Kubernetes cluster."
+	ResourceKubernetesClusterConnection = PrefixBeta + "A set of details describing how to connect to an existing Kubernetes Cluster."
+	ResourceKubernetesClusterGroup      = PrefixBeta + "A mapping of Kubernetes cluster to Project Group."
 )

@@ -3,12 +3,12 @@
 page_title: "oktapam_ad_connection Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  An Active Directory (AD) Connection to query AD Domain for available servers.
+  Beta / EA Feature: An Active Directory (AD) Connection to query AD Domain for available servers.
 ---
 
 # oktapam_ad_connection (Resource)
 
-An Active Directory (AD) Connection to query AD Domain for available servers.
+Beta / EA Feature: An Active Directory (AD) Connection to query AD Domain for available servers.
 
 
 
