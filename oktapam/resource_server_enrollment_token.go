@@ -124,7 +124,7 @@ func resourceServerEnrollmentTokenDelete(ctx context.Context, d *schema.Resource
 	return nil
 }
 
-func createServerEnrollmentTokenResourceID(project, tokenID string) string {
+func createServerEnrollmentTokenResourceID(project string, tokenID string) string {
 	return fmt.Sprintf("%s|%s", project, tokenID)
 }
 

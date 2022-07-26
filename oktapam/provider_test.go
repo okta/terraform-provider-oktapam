@@ -65,7 +65,7 @@ func arrayContainsString(s []string, e string) bool {
 	return false
 }
 
-func getIndexMappingFromResource(rs *terraform.ResourceState, prefix, identifierAttribute string, expectedLength int) (map[string]string, error) {
+func getIndexMappingFromResource(rs *terraform.ResourceState, prefix string, identifierAttribute string, expectedLength int) (map[string]string, error) {
 	attributes := rs.Primary.Attributes
 	mapping := make(map[string]string, expectedLength)
 

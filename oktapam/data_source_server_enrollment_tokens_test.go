@@ -67,6 +67,6 @@ resource "oktapam_server_enrollment_token" "test_server_enrollment_token_2" {
 }
 `
 
-func createTestAccDatasourceServerEnrollmentTokenInitConfig(projectName string, description1, description2 string) string {
+func createTestAccDatasourceServerEnrollmentTokenInitConfig(projectName string, description1 string, description2 string) string {
 	return fmt.Sprintf(testAccDatasourceServerEnrollmentTokenInitConfigFormat, projectName, description1, description2)
 }

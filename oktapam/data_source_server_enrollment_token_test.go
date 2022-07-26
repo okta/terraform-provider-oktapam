@@ -52,6 +52,6 @@ data "oktapam_server_enrollment_token" "target_token" {
 }
 `
 
-func createTestAccDatasourceServerEnrollmentTokenInitListFetchConfig(projectName, description string) string {
+func createTestAccDatasourceServerEnrollmentTokenInitListFetchConfig(projectName string, description string) string {
 	return fmt.Sprintf(testAccDatasourceServerEnrollmentTokenInitListFetchConfigFormat, projectName, description)
 }

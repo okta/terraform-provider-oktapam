@@ -81,7 +81,7 @@ func testAccServerEnrollmentTokenCheckExists(rn string, expectedServerEnrollment
 	}
 }
 
-func testAccServerEnrollmentTokenCheckDestroy(projectName, identifier string) resource.TestCheckFunc {
+func testAccServerEnrollmentTokenCheckDestroy(projectName string, identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(client.OktaPAMClient)
 		project, err := client.GetProject(context.Background(), projectName, false)

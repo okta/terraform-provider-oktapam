@@ -156,11 +156,11 @@ func testAccServiceUserCheckDestroy(userName string) resource.TestCheckFunc {
 }
 
 // Create and update are the same
-func createTestAccServiceUserUpdateConfig(resourceName, userName string, status typed_strings.UserStatus) string {
+func createTestAccServiceUserUpdateConfig(resourceName string, userName string, status typed_strings.UserStatus) string {
 	return fmt.Sprintf(testAccUserUpdateConfigFormat, resourceName, userName, status.String(), typed_strings.UserTypeService)
 }
 
-func createTestAccHumanUserUpdateConfig(resourceName, userName string, status typed_strings.UserStatus) string {
+func createTestAccHumanUserUpdateConfig(resourceName string, userName string, status typed_strings.UserStatus) string {
 	return fmt.Sprintf(testAccUserUpdateConfigFormat, resourceName, userName, status.String(), typed_strings.UserTypeHuman)
 }
 

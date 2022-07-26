@@ -235,7 +235,7 @@ func getRequiredUserAttributes(d *schema.ResourceData) (string, string, error) {
 	return *userName, *userType, nil
 }
 
-func createUserID(userName, userType string) string {
+func createUserID(userName string, userType string) string {
 	return fmt.Sprintf("%s|%s", userName, userType)
 }
 
