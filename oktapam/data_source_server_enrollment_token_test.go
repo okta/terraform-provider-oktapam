@@ -44,6 +44,7 @@ resource "oktapam_server_enrollment_token" "test_server_enrollment_token_1" {
 
 data "oktapam_server_enrollment_tokens" "token_list" {
 	project_name = oktapam_project.test_server_enrollment_token_project.name
+	depends_on = [oktapam_server_enrollment_token.test_server_enrollment_token_1]
 }
 
 data "oktapam_server_enrollment_token" "target_token" {
