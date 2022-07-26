@@ -15,9 +15,9 @@ import (
 )
 
 func TestAccProjectGroup(t *testing.T) {
-	resourceName := "oktapam_project_group.test-acc-project-group"
-	projectName := fmt.Sprintf("test-acc-project-group-project-%s", randSeq(10))
-	groupName := fmt.Sprintf("test-acc-project-group-group-%s", randSeq(10))
+	resourceName := "oktapam_project_group.test_acc_project_group"
+	projectName := fmt.Sprintf("test_acc_project_group_project_%s", randSeq(10))
+	groupName := fmt.Sprintf("test_acc_project_group_group_%s", randSeq(10))
 
 	initialProjectGroup := client.ProjectGroup{
 		Project:      &projectName,
@@ -147,17 +147,17 @@ func testAccProjectGroupCheckDestroy(projectGroup client.ProjectGroup) resource.
 }
 
 const testAccProjectGroupCreateConfigFormat = `
-resource "oktapam_project" "test-project-group-project" {
+resource "oktapam_project" "test_project_group_project" {
     name = "%s"
   	next_unix_uid = 60120
   	next_unix_gid = 63020
 }
-resource "oktapam_group" "test-project-group-group" {
+resource "oktapam_group" "test_project_group_group" {
     name = "%s"
 }
-resource "oktapam_project_group" "test-acc-project-group" {
-    project_name = oktapam_project.test-project-group-project.name
-  	group_name = oktapam_group.test-project-group-group.name
+resource "oktapam_project_group" "test_acc_project_group" {
+    project_name = oktapam_project.test_project_group_project.name
+  	group_name = oktapam_group.test_project_group_group.name
 	server_access = true
 	server_admin = true
 	create_server_group = false
@@ -168,17 +168,17 @@ func createTestAccProjectGroupCreateConfig(projectGroup client.ProjectGroup) str
 }
 
 const testAccProjectGroupUpdateConfigFormat = `
-resource "oktapam_project" "test-project-group-project" {
+resource "oktapam_project" "test_project_group_project" {
     name = "%s"
   	next_unix_uid = 60120
   	next_unix_gid = 63020
 }
-resource "oktapam_group" "test-project-group-group" {
+resource "oktapam_group" "test_project_group_group" {
     name = "%s"
 }
-resource "oktapam_project_group" "test-acc-project-group" {
-    project_name = oktapam_project.test-project-group-project.name
-  	group_name = oktapam_group.test-project-group-group.name
+resource "oktapam_project_group" "test_acc_project_group" {
+    project_name = oktapam_project.test_project_group_project.name
+  	group_name = oktapam_group.test_project_group_group.name
 	server_access = true
 	server_admin = false
 	create_server_group = true

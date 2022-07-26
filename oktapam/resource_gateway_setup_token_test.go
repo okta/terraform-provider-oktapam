@@ -15,7 +15,7 @@ import (
 )
 
 func TestAccGatewaySetupToken(t *testing.T) {
-	resourceName := "oktapam_gateway_setup_token.test-gateway-setup-token"
+	resourceName := "oktapam_gateway_setup_token.test_gateway_setup_token"
 
 	identifier := randSeq(10)
 	description := fmt.Sprintf("Acceptance Test Setup Token: %s", identifier)
@@ -98,7 +98,7 @@ func testAccGatewaySetupTokenCheckDestroy(identifier string) resource.TestCheckF
 }
 
 const testAccGatewaySetupTokenCreateConfigFormat = `
-resource "oktapam_gateway_setup_token" "test-gateway-setup-token" {
+resource "oktapam_gateway_setup_token" "test_gateway_setup_token" {
 	description = "%s"
 	labels = {
 		%s

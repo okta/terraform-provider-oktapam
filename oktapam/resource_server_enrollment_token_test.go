@@ -15,10 +15,10 @@ import (
 )
 
 func TestAccServerEnrollmentToken(t *testing.T) {
-	resourceName := "oktapam_server_enrollment_token.test-server-enrollment-token"
+	resourceName := "oktapam_server_enrollment_token.test_server_enrollment_token"
 	identifier := randSeq(10)
 	description := fmt.Sprintf("Acceptance Test Token Set %s, Token 1", identifier)
-	projectName := fmt.Sprintf("test-acc-server-enrollment-token-project-%s", identifier)
+	projectName := fmt.Sprintf("test_acc_server_enrollment_token_project_%s", identifier)
 	enrollmentToken := client.ServerEnrollmentToken{
 		Project:     &projectName,
 		Description: &description,
@@ -110,15 +110,14 @@ func testAccServerEnrollmentTokenCheckDestroy(projectName, identifier string) re
 }
 
 const testAccServerEnrollmentTokenCreateConfigFormat = `
-resource "oktapam_project" "test-server-enrollment-token-project" {
+resource "oktapam_project" "test_server_enrollment_token_project" {
     name = "%s"
   	next_unix_uid = 60120
   	next_unix_gid = 63020
 }
-resource "oktapam_server_enrollment_token" "test-server-enrollment-token" {
-    project_name = oktapam_project.test-server-enrollment-token-project.name
+resource "oktapam_server_enrollment_token" "test_server_enrollment_token" {
+    project_name = oktapam_project.test_server_enrollment_token_project.name
 	description  = "%s"
-	depends_on = [oktapam_project.test-server-enrollment-token-project]
 }
 `
 

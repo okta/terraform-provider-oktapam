@@ -8,11 +8,11 @@ import (
 )
 
 func TestAccDatasourceServerEnrollmentTokenFetch(t *testing.T) {
-	resourceName := "oktapam_server_enrollment_token.test-server-enrollment-token-1"
+	resourceName := "oktapam_server_enrollment_token.test_server_enrollment_token_1"
 	dataSourceName := "data.oktapam_server_enrollment_token.target_token"
 
 	identifier := randSeq(10)
-	projectName := fmt.Sprintf("test-acc-datasource-server-enrollment-token-project-%s", identifier)
+	projectName := fmt.Sprintf("test_acc_datasource_server_enrollment_token_project_%s", identifier)
 	description := fmt.Sprintf("Datasource Acceptance Test Token Set %s, Token 1", identifier)
 
 	testConfig := createTestAccDatasourceServerEnrollmentTokenInitListFetchConfig(projectName, description)
@@ -31,27 +31,24 @@ func TestAccDatasourceServerEnrollmentTokenFetch(t *testing.T) {
 }
 
 const testAccDatasourceServerEnrollmentTokenInitListFetchConfigFormat = `
-resource "oktapam_project" "test-server-enrollment-token-project" {
+resource "oktapam_project" "test_server_enrollment_token_project" {
     name = "%s"
   	next_unix_uid = 60120
   	next_unix_gid = 63020
 }
 
-resource "oktapam_server_enrollment_token" "test-server-enrollment-token-1" {
-    project_name = oktapam_project.test-server-enrollment-token-project.name
+resource "oktapam_server_enrollment_token" "test_server_enrollment_token_1" {
+    project_name = oktapam_project.test_server_enrollment_token_project.name
 	description  = "%s"
-	depends_on = [oktapam_project.test-server-enrollment-token-project]
 }
 
 data "oktapam_server_enrollment_tokens" "token_list" {
-	project_name = oktapam_project.test-server-enrollment-token-project.name
-	depends_on = [oktapam_server_enrollment_token.test-server-enrollment-token-1]
+	project_name = oktapam_project.test_server_enrollment_token_project.name
 }
 
 data "oktapam_server_enrollment_token" "target_token" {
-	project_name = oktapam_project.test-server-enrollment-token-project.name
+	project_name = oktapam_project.test_server_enrollment_token_project.name
 	id = data.oktapam_server_enrollment_tokens.token_list.ids[0]
-	depends_on = [data.oktapam_server_enrollment_tokens.token_list]
 }
 `
 

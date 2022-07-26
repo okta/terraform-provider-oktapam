@@ -15,8 +15,8 @@ import (
 )
 
 func TestAccProject(t *testing.T) {
-	resourceName := "oktapam_project.test-project"
-	projectName := fmt.Sprintf("test-acc-project-%s", randSeq(10))
+	resourceName := "oktapam_project.test_project"
+	projectName := fmt.Sprintf("test_acc_project_%s", randSeq(10))
 	initialProject := client.Project{
 		Name:                   &projectName,
 		NextUnixUID:            utils.AsIntPtr(60120),
@@ -140,7 +140,7 @@ func testAccProjectCheckDestroy(projectName string) resource.TestCheckFunc {
 }
 
 const testAccProjectCreateConfigFormat = `
-resource "oktapam_project" "test-project" {
+resource "oktapam_project" "test_project" {
     name                 = "%s"
   	next_unix_uid        = 60120
   	next_unix_gid        = 63020
@@ -152,7 +152,7 @@ func createTestAccProjectCreateConfig(projectName string) string {
 }
 
 const testAccProjectUpdateConfigFormat = `
-resource "oktapam_project" "test-project" {
+resource "oktapam_project" "test_project" {
     name                      = "%s"
   	next_unix_uid             = 61200
   	next_unix_gid             = 63400

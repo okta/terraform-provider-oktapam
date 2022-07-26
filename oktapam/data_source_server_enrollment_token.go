@@ -2,6 +2,9 @@ package oktapam
 
 import (
 	"context"
+	"fmt"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/errors"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
@@ -54,17 +57,12 @@ func dataSourceServerEnrollmentToken() *schema.Resource {
 func dataSourceServerEnrollmentTokenFetch(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	id := d.Get(attributes.ID).(string)
-	if id == "" {
-		return diag.Errorf("%s cannot be blank", attributes.ID)
+	id, projectName, err := getRequiredServerEnrollmentTokenAttributes(d)
+	if err != nil {
+		return diag.FromErr(err)
 	}
 
-	project := d.Get(attributes.ProjectName).(string)
-	if project == "" {
-		return diag.Errorf("%s cannot be blank", attributes.ProjectName)
-	}
-
-	token, err := c.GetServerEnrollmentToken(ctx, project, id)
+	token, err := c.GetServerEnrollmentToken(ctx, projectName, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -79,4 +77,22 @@ func dataSourceServerEnrollmentTokenFetch(ctx context.Context, d *schema.Resourc
 	}
 
 	return nil
+}
+
+func getRequiredServerEnrollmentTokenAttributes(d *schema.ResourceData) (string, string, error) {
+	if d.Id() != "" {
+		return parseServerEnrollmentTokenResourceID(d.Id())
+	}
+
+	id := getStringPtr(attributes.ID, d, false)
+	if id == nil {
+		return "", "", fmt.Errorf(errors.MissingAttributeError, attributes.ID)
+	}
+
+	projectName := getStringPtr(attributes.ProjectName, d, false)
+	if projectName == nil {
+		return "", "", fmt.Errorf(errors.MissingAttributeError, attributes.ProjectName)
+	}
+
+	return *id, *projectName, nil
 }

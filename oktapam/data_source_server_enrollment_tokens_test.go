@@ -51,21 +51,19 @@ func createTestAccDatasourceServerEnrollmentTokenConfig(projectName string) stri
 }
 
 const testAccDatasourceServerEnrollmentTokenInitConfigFormat = `
-resource "oktapam_project" "test-server-enrollment-token-project" {
+resource "oktapam_project" "test_server_enrollment_token_project" {
     name = "%s"
   	next_unix_uid = 60120
   	next_unix_gid = 63020
 }
-resource "oktapam_server_enrollment_token" "test-server-enrollment-token-1" {
-    project_name = oktapam_project.test-server-enrollment-token-project.name
+resource "oktapam_server_enrollment_token" "test_server_enrollment_token_1" {
+    project_name = oktapam_project.test_server_enrollment_token_project.name
 	description  = "%s"
-	depends_on = [oktapam_project.test-server-enrollment-token-project]
 }
 
-resource "oktapam_server_enrollment_token" "test-server-enrollment-token-2" {
-    project_name = oktapam_project.test-server-enrollment-token-project.name
+resource "oktapam_server_enrollment_token" "test_server_enrollment_token_2" {
+    project_name = oktapam_project.test_server_enrollment_token_project.name
 	description  = "%s"
-	depends_on = [oktapam_project.test-server-enrollment-token-project]
 }
 `
 
