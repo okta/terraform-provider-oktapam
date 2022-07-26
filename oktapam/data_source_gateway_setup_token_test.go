@@ -47,7 +47,7 @@ func constructLabels(length int) map[string]string {
 	return labels
 }
 
-func checkResourcesEqual(resourceName1, resourceName2 string) resource.TestCheckFunc {
+func checkResourcesEqual(resourceName1 string, resourceName2 string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resource1, ok := s.RootModule().Resources[resourceName1]
 		if !ok {
@@ -89,7 +89,7 @@ data "oktapam_gateway_setup_token" "target_token" {
 }
 `
 
-func createTestAccDatasourceGatewaySetupTokenInitConfig(identifier, description1 string, labels map[string]string) string {
+func createTestAccDatasourceGatewaySetupTokenInitConfig(identifier string, description1 string, labels map[string]string) string {
 	labelStrings := make([]string, 0, len(labels))
 	for k, v := range labels {
 		labelStrings = append(labelStrings, fmt.Sprintf("\t%s = %q", k, v))

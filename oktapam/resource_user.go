@@ -79,7 +79,7 @@ func resourceUser() *schema.Resource {
 func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	userName, userType, err := getRequiredAttributes(d)
+	userName, userType, err := getRequiredUserAttributes(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -103,7 +103,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	userName, userType, err := getRequiredAttributes(d)
+	userName, userType, err := getRequiredUserAttributes(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -136,7 +136,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	userName, userType, err := getRequiredAttributes(d)
+	userName, userType, err := getRequiredUserAttributes(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -193,7 +193,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 
 func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
-	userName, userType, err := getRequiredAttributes(d)
+	userName, userType, err := getRequiredUserAttributes(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -217,7 +217,7 @@ func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface
 	return nil
 }
 
-func getRequiredAttributes(d *schema.ResourceData) (string, string, error) {
+func getRequiredUserAttributes(d *schema.ResourceData) (string, string, error) {
 	if d.Id() != "" {
 		return parseUserID(d.Id())
 	}
@@ -235,7 +235,7 @@ func getRequiredAttributes(d *schema.ResourceData) (string, string, error) {
 	return *userName, *userType, nil
 }
 
-func createUserID(userName, userType string) string {
+func createUserID(userName string, userType string) string {
 	return fmt.Sprintf("%s|%s", userName, userType)
 }
 

@@ -14,8 +14,8 @@ import (
 )
 
 func TestAccGroup(t *testing.T) {
-	resourceName := "oktapam_group.test-group"
-	groupName := fmt.Sprintf("test-acc-group-%s", randSeq(10))
+	resourceName := "oktapam_group.test_group"
+	groupName := fmt.Sprintf("test_acc_group_%s", randSeq(10))
 	initialGroup := client.Group{
 		Name:  &groupName,
 		Roles: make([]string, 0),
@@ -106,7 +106,7 @@ func testAccGroupCheckDestroy(groupName string) resource.TestCheckFunc {
 }
 
 const testAccGroupCreateConfigFormat = `
-resource "oktapam_group" "test-group" {
+resource "oktapam_group" "test_group" {
 	name = "%s"
 	roles = []
 }
@@ -117,7 +117,7 @@ func createTestAccGroupCreateConfig(groupName string) string {
 }
 
 const testAccGroupUpdateConfigFormat = `
-resource "oktapam_group" "test-group" {
+resource "oktapam_group" "test_group" {
 	name = "%s"
 	roles = ["access_user"]
 }

@@ -19,12 +19,12 @@ import (
 )
 
 func TestAccUser(t *testing.T) {
-	resource1 := "test-user-1"
-	resource2 := "test-user-2"
+	resource1 := "test_user_1"
+	resource2 := "test_user_2"
 	resourceType := "oktapam_user"
 	resourceName1 := fmt.Sprintf("%s.%s", resourceType, resource1)
 	identifier := randSeq(20)
-	userName := "tf-acceptance-test-user-" + identifier
+	userName := "tf_acceptance_test_user_" + identifier
 	teamName := DefaultTestTeam
 	userType := typed_strings.UserTypeService
 
@@ -156,11 +156,11 @@ func testAccServiceUserCheckDestroy(userName string) resource.TestCheckFunc {
 }
 
 // Create and update are the same
-func createTestAccServiceUserUpdateConfig(resourceName, userName string, status typed_strings.UserStatus) string {
+func createTestAccServiceUserUpdateConfig(resourceName string, userName string, status typed_strings.UserStatus) string {
 	return fmt.Sprintf(testAccUserUpdateConfigFormat, resourceName, userName, status.String(), typed_strings.UserTypeService)
 }
 
-func createTestAccHumanUserUpdateConfig(resourceName, userName string, status typed_strings.UserStatus) string {
+func createTestAccHumanUserUpdateConfig(resourceName string, userName string, status typed_strings.UserStatus) string {
 	return fmt.Sprintf(testAccUserUpdateConfigFormat, resourceName, userName, status.String(), typed_strings.UserTypeHuman)
 }
 
