@@ -16,7 +16,7 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/version"
 )
 
-const OKTAPAM_TRUSTED_DOMAINS = "scaleft.com,okta.com"
+const OKTAPAM_TRUSTED_DOMAINS = "scaleft.com,scaleft.io,okta.com"
 const TRUSTED_DOMAIN_OVERRIDE_ENV_VAR = "OKTAPAM_TRUSTED_DOMAIN_OVERRIDE"
 
 var terraformUserAgent = "terraform_provider_oktapam/" + version.Version
@@ -89,7 +89,7 @@ func createServiceToken(apiKey, apiKeySecret, apiHost, team string) (*ServiceTok
 		return nil, fmt.Errorf("received a 401 from URL %s when requesting service token.  check credentials and try again", authorizationURL)
 	}
 
-	_, err = checkStatusCode(resp, 200)
+	_, err = checkStatusCode(resp, http.StatusOK)
 	if err != nil {
 		return nil, err
 	}

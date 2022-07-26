@@ -33,6 +33,7 @@ ci-acceptance-test: ci-container
 		-e OKTAPAM_KEY \
 		-e OKTAPAM_SECRET \
 		-e OKTAPAM_TEAM \
+		-e OKTAPAM_API_HOST \
 		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C ${SRC_DIR} testacc
 
 .PHONY: ci-compile
