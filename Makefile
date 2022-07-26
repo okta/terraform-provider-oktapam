@@ -2,7 +2,7 @@ HOSTNAME=okta.com
 NAMESPACE=pam
 NAME=oktapam
 BINARY=terraform-provider-${NAME}
-# On verion changes, update versions.yml
+# On verion changes, update tag-checks.yml
 VERSION=0.1.4
 OS_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
 PLUGIN_DIR=~/.terraform.d/plugins
