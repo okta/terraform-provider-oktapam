@@ -15,11 +15,11 @@ import (
 
 func resourceADConnection() *schema.Resource {
 	return &schema.Resource{
+		Description:   descriptions.ResourceADConnection,
 		CreateContext: resourceADConnectionCreate,
 		ReadContext:   resourceADConnectionRead,
 		UpdateContext: resourceADConnectionUpdate,
 		DeleteContext: resourceADConnectionDelete,
-		Description:   descriptions.ResourceADConnection,
 		Schema: map[string]*schema.Schema{
 			attributes.Name: {
 				Type:        schema.TypeString,

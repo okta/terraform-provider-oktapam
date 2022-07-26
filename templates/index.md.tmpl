@@ -1,0 +1,35 @@
+---
+page_title: "Provider: okta_pam"
+description: |-
+---
+
+## {{ .ProviderShortName }} Provider
+
+The Okta PAM Terraform Provider is used to interact with Okta's Advanced Server Access product. This provider supports common ASA use cases such as automating the creation of ASA Projects, obtaining enrollment tokens to enroll servers in ASA Projects as part of server builds, and granting access to ASA servers by assigning ASA Groups to Projects. The provider is intended as a full replacement for the classic ASA Terraform provider published here: https://registry.terraform.io/providers/oktadeveloper/oktaasa/1.0.1. Users of the oktaasa Terraform provider are encouraged to migrate to the Okta PAM Terraform Provider.
+
+### Key differences between oktaasa provider and Okta PAM Terraform Provider
+- Project resources now support additional parameters for configuring server access behaviors.
+- Team Roles can now be assigned to ASA Groups.
+- ASA Users can be assigned to ASA Groups.
+- Introduces support for Gateway Setup Tokens as a resource type, enabling Provider users to automate the creation and deployment of ASA Gateways.
+- Adds support for configuring Active Directory connections for supporting AD Joined user authentication.
+
+## Authentication
+The Okta PAM Providers requires a Service User account that is granted the 'Admin' role be created. This Service User account will be used by the Provider to authenticate to ASA.
+
+1) Create a Service User account with Admin permissions as documented here: https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/service-users.htm.
+- Use your ASA Team name (same team that the service account in step 1 resides in) as the value for the 'oktapam_team' value.
+- Use the Service Account ID for the 'oktapam_key' value
+- Use the Service Account key for the 'oktapam_secret' value.
+
+## Schema
+
+### Required
+
+- `oktapam_key` (String) Okta PAM API Key
+- `oktapam_secret` (String) Okta PAM API Secret
+- `oktapam_team` (String) Okta PAM Team
+
+### Optional
+
+- `oktapam_api_host` (String) Okta PAM API Host

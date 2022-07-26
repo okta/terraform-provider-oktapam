@@ -13,12 +13,11 @@ import (
 
 func resourceKubernetesClusterConnection() *schema.Resource {
 	return &schema.Resource{
-
+		Description:   descriptions.ResourceKubernetesClusterConnection,
 		CreateContext: resourceKubernetesClusterConnectionCreate,
 		ReadContext:   resourceKubernetesClusterConnectionRead,
 		DeleteContext: resourceKubernetesClusterConnectionDelete,
 		UpdateContext: resourceKubernetesClusterConnectionUpdate,
-		Description:   descriptions.ResourceKubernetesClusterConnection,
 		Schema: map[string]*schema.Schema{
 			attributes.ID: {
 				Type:     schema.TypeString,

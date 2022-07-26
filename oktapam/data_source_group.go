@@ -15,6 +15,7 @@ import (
 
 func dataSourceGroups() *schema.Resource {
 	return &schema.Resource{
+		Description: descriptions.SourceGroups,
 		ReadContext: dataSourceGroupsRead,
 		Schema: map[string]*schema.Schema{
 			// Query parameter values

@@ -17,6 +17,7 @@ import (
 
 func resourceProjectGroup() *schema.Resource {
 	return &schema.Resource{
+		Description:   descriptions.ResourceProjectGroup,
 		CreateContext: resourceProjectGroupCreate,
 		ReadContext:   resourceProjectGroupRead,
 		UpdateContext: resourceProjectGroupUpdate,

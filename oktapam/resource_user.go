@@ -20,11 +20,11 @@ import (
 
 func resourceUser() *schema.Resource {
 	return &schema.Resource{
+		Description:   descriptions.ResourceUser,
 		CreateContext: resourceUserCreate,
 		ReadContext:   resourceUserRead,
 		UpdateContext: resourceUserUpdate,
 		DeleteContext: resourceUserDelete,
-		Description:   descriptions.ResourceUser,
 		Schema: map[string]*schema.Schema{
 			attributes.Name: {
 				Type:        schema.TypeString,

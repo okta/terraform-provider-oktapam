@@ -14,11 +14,11 @@ import (
 
 func resourceADTaskSettings() *schema.Resource {
 	return &schema.Resource{
+		Description:   descriptions.ResourceADTaskSettings,
 		CreateContext: resourceADTaskSettingsCreate,
 		ReadContext:   resourceADTaskSettingsRead,
 		UpdateContext: resourceADTaskSettingsUpdate,
 		DeleteContext: resourceADTaskSettingsDelete,
-		Description:   descriptions.ResourceADTaskSettings,
 		Schema: map[string]*schema.Schema{
 			attributes.ADConnectionID: {
 				Type:        schema.TypeString,
@@ -128,6 +128,7 @@ var additionalAttributeMappingResource = &schema.Resource{
 }
 
 var adRuleAssignmentsResource = &schema.Resource{
+	Description: descriptions.ResourceADRuleAssignment,
 	Schema: map[string]*schema.Schema{
 		attributes.ID: {
 			Type:     schema.TypeString,
