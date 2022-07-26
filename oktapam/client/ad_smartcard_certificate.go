@@ -121,7 +121,7 @@ func (c OktaPAMClient) DeleteADSmartcardCertificate(ctx context.Context, certifi
 		return err
 	}
 
-	_, err = checkStatusCode(resp, 204, 404)
+	_, err = checkStatusCode(resp, http.StatusNoContent, http.StatusNotFound)
 	return err
 }
 
@@ -136,17 +136,17 @@ func (c OktaPAMClient) GetADSmartcardCertificate(ctx context.Context, certificat
 	}
 	statusCode := resp.StatusCode()
 
-	if statusCode == 200 {
+	if statusCode == http.StatusOK {
 		createdADCert := resp.Result().(*ADSmartCardCertificate)
 		if createdADCert.Exists() {
 			return createdADCert, nil
 		}
 		return nil, nil
-	} else if statusCode == 404 {
+	} else if statusCode == http.StatusNotFound {
 		return nil, nil
 	}
 
-	return nil, createErrorForInvalidCode(resp, 200, 404)
+	return nil, createErrorForInvalidCode(resp, http.StatusOK, http.StatusNotFound)
 }
 
 func (c OktaPAMClient) UploadADSmartcardCertificate(ctx context.Context, certificateId string, content string) error {
@@ -160,6 +160,6 @@ func (c OktaPAMClient) UploadADSmartcardCertificate(ctx context.Context, certifi
 		return err
 	}
 
-	_, err = checkStatusCode(resp, 200)
+	_, err = checkStatusCode(resp, http.StatusOK)
 	return err
 }
