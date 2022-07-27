@@ -15,6 +15,7 @@ import (
 
 func dataSourceServerEnrollmentTokens() *schema.Resource {
 	return &schema.Resource{
+		Description: descriptions.SourceServerEnrollmentTokens,
 		ReadContext: dataSourceServerEnrollmentTokenList,
 		Schema: map[string]*schema.Schema{
 			// Query parameter values

@@ -15,6 +15,7 @@ import (
 
 func dataSourceADConnections() *schema.Resource {
 	return &schema.Resource{
+		Description: descriptions.SourceADConnections,
 		ReadContext: dataSourceADConnectionsRead,
 		Schema: map[string]*schema.Schema{
 			// Query parameter values

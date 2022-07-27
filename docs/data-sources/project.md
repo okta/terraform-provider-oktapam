@@ -3,12 +3,12 @@
 page_title: "oktapam_project Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  
+  Returns a list of ASA Projects. See https://help.okta.com/asa/en-us/Content/Topics/AdvServerAccess/docs/setup/projects.htm for more information on ASA Projects.
 ---
 
 # oktapam_project (Data Source)
 
-
+Returns a list of ASA Projects. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/projects.htm for more information on ASA Projects.
 
 
 
@@ -23,7 +23,7 @@ description: |-
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `projects` (List of Object) A list of ASA Projects, corresponding to an ASA Team. (see [below for nested schema](#nestedatt--projects))
+- `projects` (List of Object) Returns a list of ASA Projects. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/projects.htm for more information on ASA Projects. (see [below for nested schema](#nestedatt--projects))
 
 <a id="nestedatt--projects"></a>
 ### Nested Schema for `projects`

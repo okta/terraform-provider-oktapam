@@ -14,11 +14,11 @@ import (
 
 func resourceGroup() *schema.Resource {
 	return &schema.Resource{
+		Description:   descriptions.ResourceGroup,
 		CreateContext: resourceGroupCreate,
 		ReadContext:   resourceGroupRead,
 		UpdateContext: resourceGroupUpdate,
 		DeleteContext: resourceGroupDelete,
-		Description:   descriptions.ResourceGroup,
 		Schema: map[string]*schema.Schema{
 			attributes.Name: {
 				Type:        schema.TypeString,

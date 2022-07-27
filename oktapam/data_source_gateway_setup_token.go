@@ -14,6 +14,7 @@ import (
 
 func dataSourceGatewaySetupToken() *schema.Resource {
 	return &schema.Resource{
+		Description: descriptions.SourceGatewaySetupToken,
 		ReadContext: dataSourceGatewaySetupTokenRead,
 		Schema: map[string]*schema.Schema{
 			attributes.ID: {
