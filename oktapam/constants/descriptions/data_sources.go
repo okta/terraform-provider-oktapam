@@ -16,18 +16,14 @@ var (
 	// Features In Progress
 
 	// Fetch
-	SourceGroup        = fmt.Sprintf("Returns a previously created ASA Group. %s", LinkGroup)
-	SourceProject      = fmt.Sprintf("Returns a previously created ASA Project. %s", LinkProject)
-	SourceProjectGroup = fmt.Sprintf("Returns a previously created ASA Group assigned to a given ASA Project. %s", LinkProjectGroup)
+	SourceADConnections = "Returns a list of ASA AD Connections, corresponding to an ASA Team."
+	SourceGateways      = fmt.Sprintf("Returns a list of ASA Gateways, corresponding to an ASA Team. %s", LinkGateway)
+	SourceGroup         = fmt.Sprintf("Returns a previously created ASA Group. %s", LinkGroup)
+	SourceProject       = fmt.Sprintf("Returns a previously created ASA Project. %s", LinkProject)
+	SourceProjectGroup  = fmt.Sprintf("Returns a previously created ASA Group assigned to a given ASA Project. %s", LinkProjectGroup)
 
 	// List
 	SourceGroups        = fmt.Sprintf("Returns a list of ASA Groups. %s", LinkGroup)
 	SourceProjects      = fmt.Sprintf("Returns a list of ASA Projects. %s", LinkProject)
 	SourceProjectGroups = fmt.Sprintf("Returns a list of ASA Project Groups, corespondibng to an ASA Project. %s", LinkProjectGroup)
-
-	// EA/Beta Features
-
-	// List
-	SourceADConnections = fmt.Sprintf("%s Returns a list of ASA AD Connections, corresponding to an ASA Team.", PrefixBeta)
-	SourceGateways      = fmt.Sprintf("%s Returns a list of ASA Gateways, corresponding to an ASA Team. %s", PrefixBeta, LinkGateway)
 )
