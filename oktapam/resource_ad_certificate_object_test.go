@@ -47,7 +47,7 @@ func TestAccADCertificateObject(t *testing.T) {
 }
 
 const testAccADCertificateUploadConfigFormat = `
-resource "oktapam_ad_certificate_signing_request" "test-csr" {
+resource "oktapam_ad_certificate_signing_request" "test_csr" {
   display_name = "%s"
   common_name = "testacc"
   details {
@@ -68,7 +68,7 @@ resource "tls_self_signed_cert" "ca-cert" {
   private_key_pem = tls_private_key.ca-private-key.private_key_pem
 
   subject {
-    common_name  = "AccTest.com"
+    common_name  = "example.com"
     organization = "Acc Test"
   }
 
@@ -83,7 +83,7 @@ resource "tls_self_signed_cert" "ca-cert" {
 }
 
 resource "tls_locally_signed_cert" "signed-cert" {
-  cert_request_pem   = oktapam_ad_certificate_signing_request.test-csr.content
+  cert_request_pem   = oktapam_ad_certificate_signing_request.test_csr.content
   ca_private_key_pem = tls_private_key.ca-private-key.private_key_pem
   ca_cert_pem        = tls_self_signed_cert.ca-cert.cert_pem
 
@@ -98,7 +98,7 @@ resource "tls_locally_signed_cert" "signed-cert" {
 }
 
 resource "oktapam_ad_certificate_object" "test-upload-cert" {
-  certificate_id = oktapam_ad_certificate_signing_request.test-csr.id
+  certificate_id = oktapam_ad_certificate_signing_request.test_csr.id
   source = tls_locally_signed_cert.signed-cert.cert_pem
 }
 `

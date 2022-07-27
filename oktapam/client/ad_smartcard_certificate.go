@@ -125,8 +125,8 @@ func (c OktaPAMClient) DeleteADSmartcardCertificate(ctx context.Context, certifi
 	return err
 }
 
-func (c OktaPAMClient) GetADSmartcardCertificate(ctx context.Context, certificateId string) (*ADSmartCardCertificate, error) {
-	requestURL := fmt.Sprintf("/v1/teams/%s/certificates/%s", url.PathEscape(c.Team), url.PathEscape(certificateId))
+func (c OktaPAMClient) GetADSmartcardCertificate(ctx context.Context, certificateID string) (*ADSmartCardCertificate, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/certificates/%s", url.PathEscape(c.Team), url.PathEscape(certificateID))
 	logging.Tracef("making GET request to %s", requestURL)
 
 	resp, err := c.CreateBaseRequest(ctx).SetResult(&ADSmartCardCertificate{}).Get(requestURL)

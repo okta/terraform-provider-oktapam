@@ -1,4 +1,4 @@
-resource "oktapam_ad_certificate_signing_request" "test-csr" {
+resource "oktapam_ad_certificate_signing_request" "test_csr" {
   display_name = "test-csr"
   common_name = "testcsr"
   details {
