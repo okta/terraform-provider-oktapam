@@ -24,7 +24,7 @@ const (
 	CertificateID                    = "Certificate ID used for password less access method."
 	CertificateStatus                = "Certificate status - Valid/Request Created."
 	CloudProvider                    = "Cloud provider name of the host where gateway is running."
-	ClusterGroupClaims               = "A map of claims to be given to users in this Cluster Group."
+	ClusterGroupClaims               = "A map of claims that will be included in credentials issued to users that are used to authenticate to Kubernetes clusters. Claims correspond to pre-configured role bindings on the cluster."
 	ClusterSelector                  = "A label selector to used to match Kubernetes clusters."
 	CreateServerGroup                = "If 'true', `sftd` (ASA Server Agent) creates a corresponding local (unix or windows) group in the ASA Project's servers."
 	CreateServerUsers                = "If 'true', `sftd` (ASA Server Agent) creates corresponding local (unix or windows) user accounts in the ASA Project's servers."
@@ -66,10 +66,10 @@ const (
 	ServerAccess                     = "If 'true', members of this ASA Group have access to the ASA Project servers."
 	ServerAdmin                      = "If 'true', members of ASA Group have sudo permissions on ASA Project servers."
 	ServerUserName                   = "The name of the corresponding ASA Server User."
-	ServersSelector                  = "Enables access to ASA Servers with labels matching all selectors. For ASA Projects Groups using Policy Sync Feature."
+	ServersSelector                  = "Enables access to ASA Servers with labels matching all selectors. Only available to customers that have the Early Access Policy Sync feature enabled on their team."
 	ServiceAccountUsername           = "The username of the service account that can be used to query the domain."
 	ServiceAccountPassword           = "The password of the service account that can be used to query the domain."
-	SSHCertificateType               = "The SSH certificate type used by access requests. Options include: `CERT_TYPE_ED25519_01`, `CERT_TYPE_RSA_01`. `CERT_TYPE_RSA_01` is a deprecated key algorithm type. " +
+	SSHCertificateType               = "The SSH certificate type used by access requests. Options include: `CERT_TYPE_ED25519_01`, `CERT_TYPE_ECDSA_521_01`, `CERT_TYPE_ECDSA_384_01`, `CERT_TYPE_ECDSA_256_01` and `CERT_TYPE_RSA_01`. `CERT_TYPE_RSA_01` is a deprecated key algorithm type. " +
 		"This option should only be used to connect to legacy systems that cannot use newer SSH versions. If you do need to use `CERT_TYPE_RSA_01`, it is recommended to connect via a gateway with traffic forwarding. " +
 		"Otherwise, please use a more current key algorithm. If left unspecified, `CERT_TYPE_ED25519_01` is used by default."
 	SSHSessionRecording = "If 'true', enables ssh recording on server access requests."

@@ -17,6 +17,8 @@ The Okta PAM Terraform Provider is used to interact with Okta's Advanced Server 
 ## Authentication
 The Okta PAM Providers requires a Service User account that is granted the 'Admin' role be created. This Service User account will be used by the Provider to authenticate to ASA.
 
+Additionally, this provider adds support for specific Beta features. Users should not use resources marked as 'Beta' in production environments and before confirming that the Beta feature has been enabled for your ASA team.
+
 1) Create a Service User account with Admin permissions as documented here: https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/service-users.htm.
 - Use your ASA Team name (same team that the service account in step 1 resides in) as the value for the 'oktapam_team' value.
 - Use the Service Account ID for the 'oktapam_key' value

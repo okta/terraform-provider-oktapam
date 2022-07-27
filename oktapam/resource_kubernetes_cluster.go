@@ -14,7 +14,7 @@ import (
 
 func resourceKubernetesCluster() *schema.Resource {
 	return &schema.Resource{
-		Description:   descriptions.ResourceGroup,
+		Description:   descriptions.ResourceKubernetesCluster,
 		CreateContext: resourceKubernetesClusterCreate,
 		ReadContext:   resourceKubernetesClusterRead,
 		DeleteContext: resourceKubernetesClusterDelete,

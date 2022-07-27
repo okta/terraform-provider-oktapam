@@ -3,12 +3,12 @@
 page_title: "oktapam_gateway_setup_token Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a previously created ASA Gateway Setup Token. See https://help.okta.com/asa/en-us/Content/Topics/AdvServerAccess/docs/gateway-configure.htm for more information on how gateway enrollment in ASA and how enrollment tokens are used.
+  Returns a previously created ASA Gateway Setup Token. See https://help.okta.com/asa/en-us/Content/Topics/AdvServerAccess/docs/gateway-configure.htm for more information on how gateway enrollment works in ASA and how gateway setup tokens are used.
 ---
 
 # oktapam_gateway_setup_token (Data Source)
 
-Returns a previously created ASA Gateway Setup Token. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm for more information on how gateway enrollment in ASA and how enrollment tokens are used.
+Returns a previously created ASA Gateway Setup Token. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm for more information on how gateway enrollment works in ASA and how gateway setup tokens are used.
 
 
 
