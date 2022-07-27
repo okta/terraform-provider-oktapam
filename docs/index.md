@@ -5,7 +5,7 @@ description: |-
 
 ## oktapam Provider
 
-The Okta PAM Terraform Provider is used to interact with Okta's Advanced Server Access product. This provider supports common ASA use cases such as automating the creation of ASA Projects, obtaining enrollment tokens to enroll servers in ASA Projects as part of server builds, and granting access to ASA servers by assigning ASA Groups to Projects. The provider is intended as a full replacement for the classic ASA Terraform provider published here: https://registry.terraform.io/providers/oktadeveloper/oktaasa/1.0.1. Users of the oktaasa Terraform provider are encouraged to migrate to the Okta PAM Terraform Provider.
+The Okta PAM Terraform Provider is used to interact with Okta's Advanced Server Access product. This provider supports common ASA use cases such as automating the creation of ASA Projects, obtaining enrollment tokens to enroll servers in ASA Projects as part of server builds, and granting access to ASA servers by assigning ASA Groups to Projects. The provider is intended as a full replacement for the [classic ASA Terraform provider.] (https://registry.terraform.io/providers/oktadeveloper/oktaasa/1.0.1) Users of the oktaasa Terraform provider are encouraged to migrate to the Okta PAM Terraform Provider.
 
 ### Key differences between oktaasa provider and Okta PAM Terraform Provider
 - Project resources now support additional parameters for configuring server access behaviors.
