@@ -2,6 +2,7 @@ package descriptions
 
 const (
 	// Supported Resource
+	ResourceADCertificateSigningRequest = "A Certificate Signing Request for AD Passwordless certificates"
 	ResourceGatewaySetupToken     = "A token for ASA Gateway enrollment. " + LinkGatewaySetupToken
 	ResourceGroup                 = "A set of ASA Users. " + LinkGroup
 	ResourceProject               = "An ASA construct that contains servers and is used to grant end users access to server infrastructure. " + LinkProject
