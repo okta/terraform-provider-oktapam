@@ -38,7 +38,7 @@ type ADCertificateDetails struct {
 	Locality           *string `json:"locality,omitempty"`
 	Province           *string `json:"province,omitempty"`
 	Country            *string `json:"country,omitempty"`
-	TTLDays            *int64  `json:"ttl_days,omitempty"`
+	TTLDays            *int    `json:"ttl_days,omitempty"`
 }
 
 type UpdateADCertificateRequest struct {
@@ -166,7 +166,6 @@ func (c OktaPAMClient) UpdateADSmartcardCertificateName(ctx context.Context, cer
 	_, err = checkStatusCode(resp, http.StatusNoContent)
 	return err
 }
-
 
 func (c OktaPAMClient) UploadADSmartcardCertificate(ctx context.Context, certificateId string, content string) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/certificates/%s/upload", url.PathEscape(c.Team), url.PathEscape(certificateId))

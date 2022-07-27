@@ -24,7 +24,7 @@ const (
 	CertificateCommonName            = "Common Name or FQDN to which certificate is issued to."
 	CertificateContent               = "Certificate Signing Request (CSR)/ Self Signed Certificate content."
 	CertificateID                    = "Certificate ID used for password less access method."
-	CertificateSource                = "Contents of a pem certificate."
+	CertificateRequestType			 = "Specifies the type of certificate request - Certificate Signing Request (CSR)/ Self Signed Certificate."
 	CertificateStatus                = "Certificate status - Valid/Request Created."
 	CloudProvider                    = "Cloud provider name of the host where gateway is running."
 	ClusterGroupClaims               = "A map of claims to be given to users in this Cluster Group."
