@@ -3,12 +3,12 @@
 page_title: "oktapam_kubernetes_cluster Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-Beta / EA Feature: Represents a Kubernetes cluster that has been registered with ASA. This resource will create configuration items in ASA needed in order to configure a Kubernetes cluster to authenticate user access with ASA. NOTE: This resource is only available for customers that are participating in the ASA Kubernetes support Beta program; contact support@okta.com if you wish to participate in the beta.
+  Beta Feature: Represents a Kubernetes cluster that has been registered with ASA. This resource will create configuration items in ASA needed in order to configure a Kubernetes cluster to authenticate user access with ASA. NOTE: This is only available if the ASA Team has the Kubernetes Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
 ---
 
 # oktapam_kubernetes_cluster (Resource)
 
-Beta / EA Feature: Represents a Kubernetes cluster that has been registered with ASA. This resource will create configuration items in ASA needed in order to configure a Kubernetes cluster to authenticate user access with ASA. NOTE: This resource is only available for customers that are participating in the ASA Kubernetes support Beta program; contact support@okta.com if you wish to participate in the beta.
+Beta Feature: Represents a Kubernetes cluster that has been registered with ASA. This resource will create configuration items in ASA needed in order to configure a Kubernetes cluster to authenticate user access with ASA. NOTE: This is only available if the ASA Team has the Kubernetes Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
 
 
 

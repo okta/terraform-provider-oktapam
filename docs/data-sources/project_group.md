@@ -3,12 +3,12 @@
 page_title: "oktapam_project_group Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of ASA Project Groups, corespondibng to an ASA Project. See https://help.okta.com/asa/en-us/Content/Topics/AdvServerAccess/docs/setup/add-a-group-to-project.htm for more information on assigning ASA Groups to Projects.
+  Returns a list of ASA Project Groups, corespondibng to an ASA Project. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm on assigning ASA Groups to Projects.
 ---
 
 # oktapam_project_group (Data Source)
 
-Returns a list of ASA Project Groups, corespondibng to an ASA Project. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm for more information on assigning ASA Groups to Projects.
+Returns a list of ASA Project Groups, corespondibng to an ASA Project. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm) on assigning ASA Groups to Projects.
 
 
 
@@ -22,15 +22,15 @@ Returns a list of ASA Project Groups, corespondibng to an ASA Project. See https
 ### Optional
 
 - `create_server_group` (Boolean) If 'true', the results only include the ASA Project Groups that have 'create_server_group' field set to 'true'.
-- `disconnected_mode_on_only` (Boolean) If 'true', the results only include resources with disconnected mode enabled. NOTE: This field is only valid for ASA teams with the Disconnected Mode Beta feature enabled.
-- `has_no_selectors` (Boolean) If 'true', the results only include resources with empty label selectors. NOTE: Label selectors are only applicable if the ASA Team has the Early Access PolicySync feature enabled.
-- `has_selectors` (Boolean) If 'true', the results only include resources with label selectors set. NOTE: Label selectors are only applicable if the ASA Team has the Early Access PolicySync feature enabled.
+- `disconnected_mode_on_only` (Boolean) If 'true', the results only include resources with disconnected mode enabled. NOTE: This is only available if the ASA Team has the Disconnected Mode Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
+- `has_no_selectors` (Boolean) If 'true', the results only include resources with empty label selectors. NOTE: This is only available if the ASA Team has the Early Access PolicySync feature enabled.
+- `has_selectors` (Boolean) If 'true', the results only include resources with label selectors set. NOTE: This is only available if the ASA Team has the Early Access PolicySync feature enabled.
 - `include_removed` (Boolean) If 'true', the results include removed resources.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `project_groups` (List of Object) Returns a list of ASA Project Groups, corespondibng to an ASA Project. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm for more information on assigning ASA Groups to Projects. (see [below for nested schema](#nestedatt--project_groups))
+- `project_groups` (List of Object) Returns a list of ASA Project Groups, corespondibng to an ASA Project. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm) on assigning ASA Groups to Projects. (see [below for nested schema](#nestedatt--project_groups))
 
 <a id="nestedatt--project_groups"></a>
 ### Nested Schema for `project_groups`

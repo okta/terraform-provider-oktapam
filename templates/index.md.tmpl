@@ -5,7 +5,7 @@ description: |-
 
 ## {{ .ProviderShortName }} Provider
 
-The Okta PAM Terraform Provider is used to interact with Okta's Advanced Server Access product. This provider supports common ASA use cases such as automating the creation of ASA Projects, obtaining enrollment tokens to enroll servers in ASA Projects as part of server builds, and granting access to ASA servers by assigning ASA Groups to Projects. The provider is intended as a full replacement for the classic ASA Terraform provider published here: https://registry.terraform.io/providers/oktadeveloper/oktaasa/1.0.1. Users of the oktaasa Terraform provider are encouraged to migrate to the Okta PAM Terraform Provider.
+The Okta PAM Terraform Provider is used to interact with Okta's Advanced Server Access product. This provider supports common ASA use cases such as automating the creation of ASA Projects, obtaining enrollment tokens to enroll servers in ASA Projects as part of server builds, and granting access to ASA servers by assigning ASA Groups to Projects. The provider is intended as a full replacement for the [classic ASA Terraform provider](https://registry.terraform.io/providers/oktadeveloper/oktaasa/1.0.1). Users of the oktaasa Terraform provider are encouraged to migrate to the Okta PAM Terraform Provider.
 
 ### Key differences between oktaasa provider and Okta PAM Terraform Provider
 - Project resources now support additional parameters for configuring server access behaviors.
@@ -19,7 +19,7 @@ The Okta PAM Providers requires a Service User account that is granted the 'Admi
 
 Additionally, this provider adds support for specific Beta features. Users should not use resources marked as 'Beta' in production environments and before confirming that the Beta feature has been enabled for your ASA team.
 
-1) Create a Service User account with Admin permissions as documented here: https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/service-users.htm.
+1) Follow the [guide](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/service-users.htm) to create a Service User account with Admin permissions
 - Use your ASA Team name (same team that the service account in step 1 resides in) as the value for the 'oktapam_team' value.
 - Use the Service Account ID for the 'oktapam_key' value
 - Use the Service Account key for the 'oktapam_secret' value.

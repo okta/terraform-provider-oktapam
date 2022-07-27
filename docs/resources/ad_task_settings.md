@@ -3,12 +3,12 @@
 page_title: "oktapam_ad_task_settings Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-Beta / EA Feature: Settings for Active Directory (AD) task for server discovery
+  Settings for Active Directory (AD) task for server discovery. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm on AD server discovery.
 ---
 
 # oktapam_ad_task_settings (Resource)
 
-Beta / EA Feature: Settings for Active Directory (AD) task for server discovery
+Settings for Active Directory (AD) task for server discovery. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm) on AD server discovery.
 
 
 

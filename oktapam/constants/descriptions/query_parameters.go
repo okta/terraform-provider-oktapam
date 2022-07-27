@@ -1,17 +1,18 @@
 package descriptions
 
-const (
+import "fmt"
+
+var (
 	// Query Parameter Descriptions
 	FilterContains               = "If a value is provided, the results are filtered to only contain resources whose name contains that value."
 	FilterCreateServerGroup      = "If 'true', the results only include the ASA Project Groups that have 'create_server_group' field set to 'true'."
 	FilterDescriptionContains    = "If a value is provided, the results are filtered to only contain resources whose name contains that value."
-	FilterDisconnectedModeOnOnly = "If 'true', the results only include resources with disconnected mode enabled. NOTE: This field is only valid for ASA teams with the Disconnected Mode Beta feature enabled."
-	FilterHasNoSelectors         = "If 'true', the results only include resources with empty label selectors. NOTE: Label selectors are only applicable if the ASA Team has the Early Access PolicySync feature enabled."
-	FilterHasSelectors           = "If 'true', the results only include resources with label selectors set. NOTE: Label selectors are only applicable if the ASA Team has the Early Access PolicySync feature enabled."
+	FilterDisconnectedModeOnOnly = fmt.Sprintf("If 'true', the results only include resources with disconnected mode enabled. %s", WarningBetaDisconnectMode)
+	FilterHasNoSelectors         = fmt.Sprintf("If 'true', the results only include resources with empty label selectors. %s", WarningEarlyAccessPolicySync)
+	FilterHasSelectors           = fmt.Sprintf("If 'true', the results only include resources with label selectors set. %s", WarningEarlyAccessPolicySync)
 	FilterIncludeDeleted         = "If 'true', the results include deleted resources."
 	FilterOnlyIncludeDeleted     = "If 'true', the results only include deleted resources."
 	FilterIncludeRemoved         = "If 'true', the results include removed resources."
-	FilterOfflineEnabled         = "If 'true', the results only include resources with disconnected mode enabled." // NOTE: This is inconsistent, most other API endpoints use `disconnected_mode_on_only`.
 	FilterProjectName            = "If a value is provided, the results are filtered to only contain resources belonging to the ASA Project."
 	FilterSelf                   = "If 'true', only lists the ASA Projects that the ASA User making this request has been assigned."
 	FilterGatewayID              = "If 'true', the results only include the connections which has the same gateway id."
