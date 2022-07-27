@@ -3,12 +3,12 @@
 page_title: "oktapam_gateway_setup_tokens Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A list of tokens for ASA Server enrollment, corresponding to an ASA Project. See https://help.okta.com/asa/en-us/Content/Topics/AdvServerAccess/docs/setup/enrolling-a-server.htm for more information on server enrollment in ASA and how enrollment tokens are used.
+  Returns a list of ASA Gateway Setup Token IDs, corresponding to an ASA Team. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm on how ASA Gateway enrollment and how enrollment tokens are used.
 ---
 
 # oktapam_gateway_setup_tokens (Data Source)
 
-A list of tokens for ASA Server enrollment, corresponding to an ASA Project. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm for more information on server enrollment in ASA and how enrollment tokens are used.
+Returns a list of ASA Gateway Setup Token IDs, corresponding to an ASA Team. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm) on how ASA Gateway enrollment and how enrollment tokens are used.
 
 
 

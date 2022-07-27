@@ -3,12 +3,12 @@
 page_title: "oktapam_gateway Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of ASA Gateways, corresponding to an ASA Team.See https://help.okta.com/asa/en-us/Content/Topics/AdvServerAccess/docs/gateways-and-bastions.htm for more information on ASA Gateways.
+  Returns a list of ASA Gateways, corresponding to an ASA Team. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateways-and-bastions.htm on ASA Gateways and bastions.
 ---
 
 # oktapam_gateway (Data Source)
 
-Returns a list of ASA Gateways, corresponding to an ASA Team.See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateways-and-bastions.htm for more information on ASA Gateways.
+Returns a list of ASA Gateways, corresponding to an ASA Team. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateways-and-bastions.htm) on ASA Gateways and bastions.
 
 
 
@@ -21,7 +21,7 @@ Returns a list of ASA Gateways, corresponding to an ASA Team.See https://help.ok
 
 ### Read-Only
 
-- `gateways` (List of Object) Returns a list of ASA Gateways, corresponding to an ASA Team.See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateways-and-bastions.htm for more information on ASA Gateways. (see [below for nested schema](#nestedatt--gateways))
+- `gateways` (List of Object) Returns a list of ASA Gateways, corresponding to an ASA Team. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateways-and-bastions.htm) on ASA Gateways and bastions. (see [below for nested schema](#nestedatt--gateways))
 - `id` (String) The ID of this resource.
 
 <a id="nestedatt--gateways"></a>

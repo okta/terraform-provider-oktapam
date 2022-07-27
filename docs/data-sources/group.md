@@ -3,12 +3,12 @@
 page_title: "oktapam_group Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of ASA Groups. See https://help.okta.com/asa/en-us/Content/Topics/AdvServerAccess/docs/setup/groups.htm for more information on ASA Groups.
+  Returns a list of ASA Groups. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm on ASA Groups.
 ---
 
 # oktapam_group (Data Source)
 
-Returns a list of ASA Groups. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm for more information on ASA Groups.
+Returns a list of ASA Groups. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm) on ASA Groups.
 
 
 
@@ -18,13 +18,13 @@ Returns a list of ASA Groups. See https://help.okta.com/asa/en-us/Content/Topics
 ### Optional
 
 - `contains` (String) If a value is provided, the results are filtered to only contain resources whose name contains that value.
-- `disconnected_mode_on_only` (Boolean) If 'true', the results only include resources with disconnected mode enabled. NOTE: This field is only valid for ASA teams with the Disconnected Mode Beta feature enabled.
+- `disconnected_mode_on_only` (Boolean) If 'true', the results only include resources with disconnected mode enabled. NOTE: This is only available if the ASA Team has the Disconnected Mode Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
 - `include_deleted` (Boolean) If 'true', the results include deleted resources.
 - `only_include_deleted` (Boolean) If 'true', the results only include deleted resources.
 
 ### Read-Only
 
-- `groups` (List of Object) Returns a list of ASA Groups. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm for more information on ASA Groups. (see [below for nested schema](#nestedatt--groups))
+- `groups` (List of Object) Returns a list of ASA Groups. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm) on ASA Groups. (see [below for nested schema](#nestedatt--groups))
 - `id` (String) The ID of this resource.
 
 <a id="nestedatt--groups"></a>
