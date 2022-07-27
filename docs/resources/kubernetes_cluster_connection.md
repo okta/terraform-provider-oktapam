@@ -3,12 +3,12 @@
 page_title: "oktapam_kubernetes_cluster_connection Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Beta Feature: A set of details describing how to connect to an existing Kubernetes Cluster. NOTE: This resource is only available for customers that are participating in the ASA Kubernetes support Beta program; contact support@okta.com if you wish to participate in the beta.
+  Beta Feature: A set of details describing how to connect to an existing Kubernetes Cluster. NOTE: This is only available for customers that are participating in the ASA Kubernetes support Beta program; contact support@okta.com if you wish to participate in the beta.
 ---
 
 # oktapam_kubernetes_cluster_connection (Resource)
 
-Beta Feature: A set of details describing how to connect to an existing Kubernetes Cluster. NOTE: This resource is only available for customers that are participating in the ASA Kubernetes support Beta program; contact support@okta.com if you wish to participate in the beta.
+Beta Feature: A set of details describing how to connect to an existing Kubernetes Cluster. NOTE: This is only available for customers that are participating in the ASA Kubernetes support Beta program; contact support@okta.com if you wish to participate in the beta.
 
 
 

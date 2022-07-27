@@ -18,7 +18,7 @@ Returns a list of ASA Groups. For more information check out the [documentation]
 ### Optional
 
 - `contains` (String) If a value is provided, the results are filtered to only contain resources whose name contains that value.
-- `disconnected_mode_on_only` (Boolean) If 'true', the results only include resources with disconnected mode enabled. NOTE: This field is only valid for ASA teams with the Disconnected Mode Beta feature enabled.
+- `disconnected_mode_on_only` (Boolean) If 'true', the results only include resources with disconnected mode enabled. NOTE: This is only valid for ASA teams with the Disconnected Mode Beta feature enabled.
 - `include_deleted` (Boolean) If 'true', the results include deleted resources.
 - `only_include_deleted` (Boolean) If 'true', the results only include deleted resources.
 
