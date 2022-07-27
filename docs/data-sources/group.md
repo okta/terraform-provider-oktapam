@@ -3,12 +3,12 @@
 page_title: "oktapam_group Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of ASA Groups. See https://help.okta.com/asa/en-us/Content/Topics/AdvServerAccess/docs/setup/groups.htm for more information on ASA Groups.
+  Returns a list of ASA Groups. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm on ASA Groups.
 ---
 
 # oktapam_group (Data Source)
 
-Returns a list of ASA Groups. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm for more information on ASA Groups.
+Returns a list of ASA Groups. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm) on ASA Groups.
 
 
 
@@ -24,7 +24,7 @@ Returns a list of ASA Groups. See https://help.okta.com/asa/en-us/Content/Topics
 
 ### Read-Only
 
-- `groups` (List of Object) Returns a list of ASA Groups. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm for more information on ASA Groups. (see [below for nested schema](#nestedatt--groups))
+- `groups` (List of Object) Returns a list of ASA Groups. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm) on ASA Groups. (see [below for nested schema](#nestedatt--groups))
 - `id` (String) The ID of this resource.
 
 <a id="nestedatt--groups"></a>

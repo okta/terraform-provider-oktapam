@@ -3,12 +3,12 @@
 page_title: "oktapam_gateway_setup_token Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A token for ASA Gateway enrollment. See https://help.okta.com/asa/en-us/Content/Topics/AdvServerAccess/docs/gateway-configure.htm for more information on how gateway enrollment works in ASA and how gateway setup tokens are used.
+  A token for ASA Gateway enrollment. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm on how ASA Gateway enrollment and how enrollment tokens are used.
 ---
 
 # oktapam_gateway_setup_token (Resource)
 
-A token for ASA Gateway enrollment. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm for more information on how gateway enrollment works in ASA and how gateway setup tokens are used.
+A token for ASA Gateway enrollment. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm) on how ASA Gateway enrollment and how enrollment tokens are used.
 
 
 

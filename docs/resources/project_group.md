@@ -3,12 +3,12 @@
 page_title: "oktapam_project_group Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Assigns an ASA Group to a Project and configures how that group is created on servers. See https://help.okta.com/asa/en-us/Content/Topics/AdvServerAccess/docs/setup/groups.htm for more information on ASA Groups.
+  Assigns an ASA Group to a Project and configures how that group is created on servers. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm on ASA Groups.
 ---
 
 # oktapam_project_group (Resource)
 
-Assigns an ASA Group to a Project and configures how that group is created on servers. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm for more information on ASA Groups.
+Assigns an ASA Group to a Project and configures how that group is created on servers. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm) on ASA Groups.
 
 
 

@@ -1,31 +1,33 @@
 package descriptions
 
-const (
+import "fmt"
+
+var (
 	// Supported Data Sources
 
 	// Fetch
-	SourceGatewaySetupToken     = "Returns a previously created ASA Gateway Setup Token. " + LinkGatewaySetupToken
-	SourceServerEnrollmentToken = "Returns a previously created ASA Server Enrollment Token, corresponding to an ASA Project. " + LinkServerEnrollmentToken
+	SourceGatewaySetupToken     = fmt.Sprintf("Returns a previously created ASA Gateway Setup Token. %s", LinkGatewaySetupToken)
+	SourceServerEnrollmentToken = fmt.Sprintf("Returns a previously created ASA Server Enrollment Token, corresponding to an ASA Project. %s", LinkServerEnrollmentToken)
 
 	// List
-	SourceGatewaySetupTokens     = "Returns a list of ASA Gateway Setup Token IDs, corresponding to an ASA Team. " + LinkGatewaySetupToken
-	SourceServerEnrollmentTokens = "A list of tokens for ASA Server enrollment, corresponding to an ASA Project. " + LinkServerEnrollmentToken
+	SourceGatewaySetupTokens     = fmt.Sprintf("Returns a list of ASA Gateway Setup Token IDs, corresponding to an ASA Team. %s", LinkGatewaySetupToken)
+	SourceServerEnrollmentTokens = fmt.Sprintf("A list of tokens for ASA Server enrollment, corresponding to an ASA Project. %s", LinkServerEnrollmentToken)
 
 	// Features In Progress
 
 	// Fetch
-	SourceGroup        = "Returns a previously created ASA Group. " + LinkGroup
-	SourceProject      = "Returns a previously created ASA Project. " + LinkProject
-	SourceProjectGroup = "Returns a previously created ASA Group assigned to a given ASA Project. " + LinkProjectGroup
+	SourceGroup        = fmt.Sprintf("Returns a previously created ASA Group. %s", LinkGroup)
+	SourceProject      = fmt.Sprintf("Returns a previously created ASA Project. %s", LinkProject)
+	SourceProjectGroup = fmt.Sprintf("Returns a previously created ASA Group assigned to a given ASA Project. %s", LinkProjectGroup)
 
 	// List
-	SourceGroups        = "Returns a list of ASA Groups. " + LinkGroup
-	SourceProjects      = "Returns a list of ASA Projects. " + LinkProject
-	SourceProjectGroups = "Returns a list of ASA Project Groups, corespondibng to an ASA Project. " + LinkProjectGroup
+	SourceGroups        = fmt.Sprintf("Returns a list of ASA Groups. %s", LinkGroup)
+	SourceProjects      = fmt.Sprintf("Returns a list of ASA Projects. %s", LinkProject)
+	SourceProjectGroups = fmt.Sprintf("Returns a list of ASA Project Groups, corespondibng to an ASA Project. %s", LinkProjectGroup)
 
 	// EA/Beta Features
 
 	// List
-	SourceADConnections = "Returns a list of ASA AD Connections, corresponding to an ASA Team."
-	SourceGateways      = "Returns a list of ASA Gateways, corresponding to an ASA Team." + LinkGateway
+	SourceADConnections = fmt.Sprintf("%s Returns a list of ASA AD Connections, corresponding to an ASA Team.", PrefixBeta)
+	SourceGateways      = fmt.Sprintf("%s Returns a list of ASA Gateways, corresponding to an ASA Team. %s", PrefixBeta, LinkGateway)
 )
