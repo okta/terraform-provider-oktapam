@@ -28,4 +28,3 @@ Beta Feature: A mapping of Kubernetes cluster to an ASA Group. Members of the pr
 
 - `id` (String) The ID of this resource.
 
-

@@ -34,4 +34,3 @@ An Active Directory (AD) Connection to query AD Domain for available servers. Fo
 - `deleted_at` (String) The UTC time of resource creation. Format is `2022-01-01 00:00:00 +0000 UTC`.
 - `id` (String) The ID of this resource.
 
-

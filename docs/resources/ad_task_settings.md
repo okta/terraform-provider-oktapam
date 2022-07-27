@@ -65,4 +65,3 @@ Optional:
 
 - `is_guid` (Boolean) Identifies an AD attribute as a Globally Unique Identifier (GUID)
 
-

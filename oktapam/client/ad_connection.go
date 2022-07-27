@@ -261,7 +261,7 @@ func (c OktaPAMClient) CreateADTaskSettings(ctx context.Context, adConnId string
 		logging.Errorf("received error while making request to %s", requestURL)
 		return nil, err
 	}
-	if _, err := checkStatusCode(resp, 201); err != nil {
+	if _, err := checkStatusCode(resp, http.StatusCreated); err != nil {
 		logging.Tracef("unexpected status code: %d", resp.StatusCode())
 		return nil, err
 	}
