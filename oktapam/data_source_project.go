@@ -15,6 +15,7 @@ import (
 
 func dataSourceProjects() *schema.Resource {
 	return &schema.Resource{
+		Description: descriptions.SourceProjects,
 		ReadContext: dataSourceProjectsRead,
 		Schema: map[string]*schema.Schema{
 			// Query parameter values

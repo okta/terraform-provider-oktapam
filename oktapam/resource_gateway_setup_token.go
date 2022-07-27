@@ -14,10 +14,10 @@ import (
 
 func resourceGatewaySetupToken() *schema.Resource {
 	return &schema.Resource{
+		Description:   descriptions.ResourceGatewaySetupToken,
 		CreateContext: resourceGatewaySetupTokenCreate,
 		ReadContext:   resourceGatewaySetupTokenRead,
 		DeleteContext: resourceGatewaySetupTokenDelete,
-		Description:   descriptions.ResourceGatewaySetupToken,
 		Schema: map[string]*schema.Schema{
 			attributes.ID: {
 				Type:     schema.TypeString,

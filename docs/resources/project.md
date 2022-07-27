@@ -3,12 +3,12 @@
 page_title: "oktapam_project Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  
+  An ASA construct that contains servers and is used to grant end users access to server infrastructure. See https://help.okta.com/asa/en-us/Content/Topics/AdvServerAccess/docs/setup/projects.htm for more information on ASA Projects.
 ---
 
 # oktapam_project (Resource)
 
-
+An ASA construct that contains servers and is used to grant end users access to server infrastructure. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/projects.htm for more information on ASA Projects.
 
 
 

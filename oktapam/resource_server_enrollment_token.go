@@ -17,10 +17,10 @@ import (
 
 func resourceServerEnrollmentToken() *schema.Resource {
 	return &schema.Resource{
+		Description:   descriptions.ResourceServerEnrollmentToken,
 		CreateContext: resourceServerEnrollmentTokenCreate,
 		ReadContext:   resourceServerEnrollmentTokenRead,
 		DeleteContext: resourceServerEnrollmentTokenDelete,
-		Description:   descriptions.ResourceServerEnrollmentToken,
 		Schema: map[string]*schema.Schema{
 			attributes.ProjectName: {
 				Type:        schema.TypeString,

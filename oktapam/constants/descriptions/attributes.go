@@ -1,8 +1,6 @@
 package descriptions
 
 const (
-	// Descriptions -- conventions from API docs
-
 	// Attribute Descriptions
 	AccessAddress                    = "Access Address of the gateway."
 	AccessAddressAttribute           = "AD Attribute mapped to IP address or DNS name used by the gateway to connect to a discovered server."
@@ -75,46 +73,4 @@ const (
 	Token               = "The secret used for resource enrollment."
 	UsePasswordless     = "if 'true', Users will not need password to login."
 	UserType            = "The user type. Valid types are `human` and `service`."
-
-	// Query Parameter Descriptions
-	FilterContains               = "If a value is provided, the results are filtered to only contain resources whose name contains that value."
-	FilterCreateServerGroup      = "If 'true', the results only include the ASA Project Groups that have 'create_server_group' field set to 'true'."
-	FilterDescriptionContains    = "If a value is provided, the results are filtered to only contain resources whose name contains that value."
-	FilterDisconnectedModeOnOnly = "If 'true', the results only include resources with disconnected mode enabled."
-	FilterHasNoSelectors         = "If 'true', the results only include resources with empty label selectors."
-	FilterHasSelectors           = "If 'true', the results only include resources with label selectors set."
-	FilterIncludeDeleted         = "If 'true', the results include deleted resources."
-	FilterOnlyIncludeDeleted     = "If 'true', the results only include deleted resources."
-	FilterIncludeRemoved         = "If 'true', the results include removed resources."
-	FilterOfflineEnabled         = "If 'true', the results only include resources with disconnected mode enabled." // NOTE: This is inconsistent, most other API endpoints use `disconnected_mode_on_only`.
-	FilterProjectName            = "If a value is provided, the results are filtered to only contain resources belonging to the ASA Project."
-	FilterSelf                   = "If 'true', only lists the ASA Projects that the ASA User making this request has been assigned."
-	FilterGatewayID              = "If 'true', the results only include the connections which has the same gateway id."
-	FilterCertificateID          = "If 'true', the results only include the connections which has the same certificate id."
-	FilterIncludeCertDetails     = "If 'true', the results include the certificate details "
-	FilterStartsWith             = "If a value is provided, includes ASA Users with name that begins with the value."
-	FilterStatus                 = "If a value is provided, includes ASA Users with specified statuses. Valid statuses include: `ACTIVE`, `DISABLED`, and `DELETED`."
-
-	// Provider-Level Filter
-	FilterUserType = "Valid types are `human` and `service`. If left unspecified, both types will be included."
-
-	// Resource Descriptions -- resources are dynamic, and state is kept up to date on POST / PUT / DELETE
-	ResourceGatewaySetupToken           = "A token for ASA Gateway enrollment."
-	ResourceGroup                       = "A set of ASA Users."
-	ResourceADConnection                = "An Active Directory (AD) Connection to query AD Domain for available servers."
-	ResourceADTaskSettings              = "Settings for Active Directory (AD) task for server discovery"
-	ResourceKubernetesCluster           = "A Kubernetes cluster."
-	ResourceKubernetesClusterConnection = "A set of details describing how to connect to an existing Kubernetes Cluster."
-	ResourceKubernetesClusterGroup      = "A mapping of Kubernetes cluster to Project Group."
-	ResourceServerEnrollmentToken       = "A token for ASA Server enrollment."
-	ResourceUser                        = "An ASA User. Valid user types are `human` and `service`."
-
-	// Data Source Descriptions -- sources are read-only, fetched on LIST
-	SourceGatewaySetupTokens     = "A list of tokens for ASA Gateway enrollment, corresponding to an ASA Team."
-	SourceGroups                 = "A list of ASA Groups, corresponding to an ASA Team."
-	SourceProjects               = "A list of ASA Projects, corresponding to an ASA Team."
-	SourceProjectGroups          = "A list of ASA Groups attached to an ASA Project."
-	SourceServerEnrollmentTokens = "A list of tokens for ASA Server enrollment, corresponding to an ASA Project."
-	SourceADConnections          = "A list of ASA AD Connections, corresponding to an ASA Team."
-	SourceGateways               = "A list of ASA Gateways, corresponding to an ASA Team"
 )

@@ -16,6 +16,7 @@ import (
 
 func dataSourceServerEnrollmentToken() *schema.Resource {
 	return &schema.Resource{
+		Description: descriptions.SourceServerEnrollmentTokens,
 		ReadContext: dataSourceServerEnrollmentTokenFetch,
 		Schema: map[string]*schema.Schema{
 			attributes.ID: {

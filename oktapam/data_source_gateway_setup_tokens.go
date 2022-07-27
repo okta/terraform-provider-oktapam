@@ -14,6 +14,7 @@ import (
 
 func dataSourceGatewaySetupTokens() *schema.Resource {
 	return &schema.Resource{
+		Description: descriptions.SourceServerEnrollmentTokens,
 		ReadContext: dataSourceGatewaySetupTokensRead,
 		Schema: map[string]*schema.Schema{
 			attributes.DescriptionContains: {

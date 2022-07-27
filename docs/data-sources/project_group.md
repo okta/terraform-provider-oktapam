@@ -3,12 +3,12 @@
 page_title: "oktapam_project_group Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  
+  Returns a list of ASA Project Groups, corespondibng to an ASA Project. See https://help.okta.com/asa/en-us/Content/Topics/AdvServerAccess/docs/setup/add-a-group-to-project.htm for more information on assigning ASA Groups to Projects.
 ---
 
 # oktapam_project_group (Data Source)
 
-
+Returns a list of ASA Project Groups, corespondibng to an ASA Project. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm for more information on assigning ASA Groups to Projects.
 
 
 
@@ -30,7 +30,7 @@ description: |-
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `project_groups` (List of Object) A list of ASA Groups attached to an ASA Project. (see [below for nested schema](#nestedatt--project_groups))
+- `project_groups` (List of Object) Returns a list of ASA Project Groups, corespondibng to an ASA Project. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm for more information on assigning ASA Groups to Projects. (see [below for nested schema](#nestedatt--project_groups))
 
 <a id="nestedatt--project_groups"></a>
 ### Nested Schema for `project_groups`
