@@ -41,6 +41,10 @@ type ADCertificateDetails struct {
 	TTLDays            *int64  `json:"ttl_days,omitempty"`
 }
 
+type UpdateADCertificateRequest struct {
+	DisplayName *string `json:"display_name,omitempty"`
+}
+
 func (t ADSmartCardCertificate) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{})
 
@@ -148,6 +152,21 @@ func (c OktaPAMClient) GetADSmartcardCertificate(ctx context.Context, certificat
 
 	return nil, createErrorForInvalidCode(resp, http.StatusOK, http.StatusNotFound)
 }
+
+func (c OktaPAMClient) UpdateADSmartcardCertificateName(ctx context.Context, certificateID string, updates map[string]interface{}) error {
+	requestURL := fmt.Sprintf("/v1/teams/%s/certificates/%s", url.PathEscape(c.Team), url.PathEscape(certificateID))
+	logging.Tracef("making PUT request to %s", requestURL)
+
+	resp, err := c.CreateBaseRequest(ctx).SetBody(updates).Put(requestURL)
+	if err != nil {
+		logging.Errorf("received error while making request to %s", requestURL)
+		return err
+	}
+
+	_, err = checkStatusCode(resp, http.StatusNoContent)
+	return err
+}
+
 
 func (c OktaPAMClient) UploadADSmartcardCertificate(ctx context.Context, certificateId string, content string) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/certificates/%s/upload", url.PathEscape(c.Team), url.PathEscape(certificateId))

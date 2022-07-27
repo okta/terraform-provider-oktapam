@@ -16,6 +16,7 @@ func resourceADCertificateSigningRequest() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceADCertificateSigningRequestCreate,
 		ReadContext:   resourceADCertificateSigningRequestRead,
+		UpdateContext: resourceADCertificateSigningRequestUpdate,
 		DeleteContext: resourceADCertificateSigningRequestDelete,
 		Description:   descriptions.ResourceADCertificateSigningRequest,
 		Schema: map[string]*schema.Schema{
@@ -26,7 +27,6 @@ func resourceADCertificateSigningRequest() *schema.Resource {
 			attributes.DisplayName: {
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 				Description: descriptions.Name,
 			},
 			attributes.CommonName: {
@@ -154,6 +154,33 @@ func resourceADCertificateSigningRequestRead(ctx context.Context, d *schema.Reso
 	}
 
 	return nil
+}
+
+func resourceADCertificateSigningRequestUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(client.OktaPAMClient)
+	id := d.Id()
+
+	changed := false
+	updates := make(map[string]interface{})
+
+	changeableAttributes := []string{
+		attributes.DisplayName,
+	}
+
+	for _, attribute := range changeableAttributes {
+		if d.HasChange(attribute) {
+			updates[attribute] = d.Get(attribute)
+			changed = true
+		}
+	}
+
+	if changed {
+		if err := c.UpdateADSmartcardCertificateName(ctx, id, updates); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	return resourceADCertificateSigningRequestRead(ctx, d, m)
 }
 
 func resourceADCertificateSigningRequestDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
