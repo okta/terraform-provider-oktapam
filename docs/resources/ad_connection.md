@@ -3,12 +3,12 @@
 page_title: "oktapam_ad_connection Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  An Active Directory (AD) Connection to query AD Domain for available servers.
+Beta / EA Feature: An Active Directory (AD) Connection to query AD Domain for available servers.
 ---
 
 # oktapam_ad_connection (Resource)
 
-An Active Directory (AD) Connection to query AD Domain for available servers.
+Beta / EA Feature: An Active Directory (AD) Connection to query AD Domain for available servers.
 
 
 
@@ -33,5 +33,4 @@ An Active Directory (AD) Connection to query AD Domain for available servers.
 
 - `deleted_at` (String) The UTC time of resource creation. Format is `2022-01-01 00:00:00 +0000 UTC`.
 - `id` (String) The ID of this resource.
-
 

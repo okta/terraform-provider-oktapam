@@ -3,12 +3,12 @@
 page_title: "oktapam_kubernetes_cluster_group Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A mapping of Kubernetes cluster to Project Group.
+Beta / EA Feature: A mapping of Kubernetes cluster to Project Group.
 ---
 
 # oktapam_kubernetes_cluster_group (Resource)
 
-A mapping of Kubernetes cluster to Project Group.
+Beta / EA Feature: A mapping of Kubernetes cluster to Project Group.
 
 
 
@@ -27,5 +27,4 @@ A mapping of Kubernetes cluster to Project Group.
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-
 

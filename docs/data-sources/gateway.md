@@ -3,12 +3,12 @@
 page_title: "oktapam_gateway Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  
+Beta / EA Feature: Returns a list of ASA Gateways, corresponding to an ASA Team.See https://help.okta.com/asa/en-us/Content/Topics/AdvServerAccess/docs/gateways-and-bastions.htm for more information on ASA Gateways.
 ---
 
 # oktapam_gateway (Data Source)
 
-
+Beta / EA Feature: Returns a list of ASA Gateways, corresponding to an ASA Team.See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateways-and-bastions.htm for more information on ASA Gateways.
 
 
 
@@ -21,7 +21,7 @@ description: |-
 
 ### Read-Only
 
-- `gateways` (List of Object) A list of ASA Gateways, corresponding to an ASA Team (see [below for nested schema](#nestedatt--gateways))
+- `gateways` (List of Object) Beta / EA Feature: Returns a list of ASA Gateways, corresponding to an ASA Team.See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateways-and-bastions.htm for more information on ASA Gateways. (see [below for nested schema](#nestedatt--gateways))
 - `id` (String) The ID of this resource.
 
 <a id="nestedatt--gateways"></a>
@@ -37,5 +37,4 @@ Read-Only:
 - `labels` (Map of String)
 - `name` (String)
 - `refuse_connections` (Boolean)
-
 

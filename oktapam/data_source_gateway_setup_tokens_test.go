@@ -74,6 +74,6 @@ data "oktapam_gateway_setup_tokens" "%s" {
 }
 `
 
-func testAccDatasourceGatewaySetupTokensConfig(name, descriptionContains string) string {
+func testAccDatasourceGatewaySetupTokensConfig(name string, descriptionContains string) string {
 	return fmt.Sprintf(testAccDatasourceGatewaySetupTokensFormat, name, descriptionContains)
 }

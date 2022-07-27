@@ -17,10 +17,10 @@ import (
 
 func resourceServerEnrollmentToken() *schema.Resource {
 	return &schema.Resource{
+		Description:   descriptions.ResourceServerEnrollmentToken,
 		CreateContext: resourceServerEnrollmentTokenCreate,
 		ReadContext:   resourceServerEnrollmentTokenRead,
 		DeleteContext: resourceServerEnrollmentTokenDelete,
-		Description:   descriptions.ResourceServerEnrollmentToken,
 		Schema: map[string]*schema.Schema{
 			attributes.ProjectName: {
 				Type:        schema.TypeString,
@@ -100,7 +100,7 @@ func resourceServerEnrollmentTokenCreate(ctx context.Context, d *schema.Resource
 		return diag.FromErr(err)
 	}
 
-	d.SetId(fmt.Sprintf("%s|%s", *token.Project, *token.ID))
+	d.SetId(createServerEnrollmentTokenResourceID(*token.Project, *token.ID))
 
 	return resourceServerEnrollmentTokenRead(ctx, d, m)
 }
@@ -122,6 +122,10 @@ func resourceServerEnrollmentTokenDelete(ctx context.Context, d *schema.Resource
 	d.SetId("")
 
 	return nil
+}
+
+func createServerEnrollmentTokenResourceID(project string, tokenID string) string {
+	return fmt.Sprintf("%s|%s", project, tokenID)
 }
 
 func parseServerEnrollmentTokenResourceID(resourceId string) (string, string, error) {

@@ -67,4 +67,4 @@ jobs:
           url: ${{ secrets.OKTA_499446_SLACK_WEBHOOK }}
           method: 'POST'
           customHeaders: '{"Content-Type": "application/json"}'
-          data: '{"build_link": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}", "branch": "${{ github.ref_name }}" }'
+          data: '{"build_link": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}", "branch": "${{ github.ref_name }}", "reason": "Tests failed"}'

@@ -15,11 +15,11 @@ import (
 
 func resourceKubernetesClusterGroup() *schema.Resource {
 	return &schema.Resource{
+		Description:   descriptions.ResourceKubernetesClusterGroup,
 		CreateContext: resourceKubernetesClusterGroupCreate,
 		ReadContext:   resourceKubernetesClusterGroupRead,
 		UpdateContext: resourceKubernetesClusterGroupUpdate,
 		DeleteContext: resourceKubernetesClusterGroupDelete,
-		Description:   descriptions.ResourceKubernetesClusterGroup,
 		Schema: map[string]*schema.Schema{
 			attributes.ID: {
 				Type:     schema.TypeString,

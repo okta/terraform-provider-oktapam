@@ -17,6 +17,7 @@ import (
 
 func resourceProjectGroup() *schema.Resource {
 	return &schema.Resource{
+		Description:   descriptions.ResourceProjectGroup,
 		CreateContext: resourceProjectGroupCreate,
 		ReadContext:   resourceProjectGroupRead,
 		UpdateContext: resourceProjectGroupUpdate,
@@ -229,7 +230,7 @@ func resourceProjectGroupDelete(ctx context.Context, d *schema.ResourceData, m i
 	return nil
 }
 
-func createProjectGroupResourceID(project, group string) string {
+func createProjectGroupResourceID(project string, group string) string {
 	return fmt.Sprintf("%s|%s", project, group)
 }
 

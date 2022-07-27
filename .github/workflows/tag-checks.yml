@@ -1,0 +1,51 @@
+name: Tag Checks
+on:
+  schedule:
+    # Run every day. Uses POSIX cron syntax: https://crontab.guru/#0_0_*/1
+    - cron: "0 0 */1 * *"
+
+jobs:
+  check:
+    name: Acceptance Tests on Tag
+    # Ensure acceptance tests are only run on okta/terraform-provider-oktapam or if a special label is applied (`run-tag-tests`)
+    if: github.repository == 'okta/terraform-provider-oktapam' || github.event.label.name == 'run-tag-tests'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # On version change, add new version here
+        # Skip v0.1.2, which was merged despite broken tests
+        tag: [v0.1.0, v0.1.1, v0.1.3, v0.1.4]
+    steps:
+      - name: Check out repository code of tag
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ matrix.tag }}
+      # Remove this step on 0.2.0, at that point relevant files will be stable
+      - name: Check out most recent files for testing purposes
+        run: |
+          git fetch origin master
+          git checkout origin/master Makefile.ci oktapam/client/okta_pam_client.go
+      - name: Run unit tests
+        run: |
+          ./scripts/ci-acceptance-tests.sh
+        env:
+          OKTAPAM_SECRET: ${{ secrets.OKTA_499446_OKTAPAM_SECRET }}
+          OKTAPAM_KEY: ${{ secrets.OKTA_499446_OKTAPAM_KEY }}
+          OKTAPAM_TEAM: ${{ secrets.OKTA_499446_OKTAPAM_TEAM }}
+          OKTAPAM_API_HOST: ${{ secrets.OKTA_499446_OKTAPAM_API_HOST }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+  notify-on-failure:
+    name: Notify Slack on Failure
+    runs-on: ubuntu-latest
+    needs: [check]
+    if: failure() && github.repository == 'okta/terraform-provider-oktapam' && ((github.ref_type == 'branch' && github.ref_name == 'master') || github.ref_type == 'tag')
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Notify Slack
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: ${{ secrets.OKTA_499446_SLACK_WEBHOOK }}
+          method: 'POST'
+          customHeaders: '{"Content-Type": "application/json"}'
+          data: '{"build_link": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}", "branch": "${{ github.ref_name }}", "reason": "Daily tag test failed" }'

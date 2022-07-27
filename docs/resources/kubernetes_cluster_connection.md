@@ -3,12 +3,12 @@
 page_title: "oktapam_kubernetes_cluster_connection Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A set of details describing how to connect to an existing Kubernetes Cluster.
+Beta / EA Feature: A set of details describing how to connect to an existing Kubernetes Cluster.
 ---
 
 # oktapam_kubernetes_cluster_connection (Resource)
 
-A set of details describing how to connect to an existing Kubernetes Cluster.
+Beta / EA Feature: A set of details describing how to connect to an existing Kubernetes Cluster.
 
 
 
@@ -27,5 +27,4 @@ A set of details describing how to connect to an existing Kubernetes Cluster.
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-
 

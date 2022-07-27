@@ -1,8 +1,6 @@
 package descriptions
 
 const (
-	// Descriptions -- conventions from API docs
-
 	// Attribute Descriptions
 	AccessAddress                    = "Access Address of the gateway."
 	AccessAddressAttribute           = "AD Attribute mapped to IP address or DNS name used by the gateway to connect to a discovered server."
@@ -21,11 +19,7 @@ const (
 	ADTaskStartHourUTC               = "If AD task is scheduled to run daily, then specify start hour in UTC"
 	AltNamesAttributes               = "AD Attribute mapped to alternative hostnames or DNS entries used to resolve a discovered server."
 	BastionAttribute                 = "AD Attribute mapped to bastion host that Advanced Server Access clients can use to tunnel traffic to a discovered server."
-	CertificateCommonName            = "Common Name or FQDN to which certificate is issued to."
-	CertificateContent               = "Certificate Signing Request (CSR)/ Self Signed Certificate content."
 	CertificateID                    = "Certificate ID used for password less access method."
-	CertificateSource                = "Contents of a pem certificate."
-	CertificateStatus                = "Certificate status - Valid/Request Created."
 	CloudProvider                    = "Cloud provider name of the host where gateway is running."
 	ClusterGroupClaims               = "A map of claims to be given to users in this Cluster Group."
 	ClusterSelector                  = "A label selector to used to match Kubernetes clusters."
@@ -33,14 +27,12 @@ const (
 	CreateServerUsers                = "If 'true', `sftd` (ASA Server Agent) creates corresponding local (unix or windows) user accounts in the ASA Project's servers."
 	CreatedAt                        = "The UTC time of resource deletion. Format is `2022-01-01 00:00:00 +0000 UTC`."
 	CreatedByUser                    = "The ASA User that created the resource."
-	CSRDetails                       = "Certificate Signing Request (CSR) Details."
 	DefaultAddress                   = "Default dddress of the gateway."
 	DeletedAt                        = "The UTC time of resource creation. Format is `2022-01-01 00:00:00 +0000 UTC`."
 	Description                      = "The human-readable description of the resource."
 	DescriptionContains              = "If a value is provided, the results are filtered to only contain resources whose description contains that value."
 	Domain                           = "The domain against which to query."
 	DomainControllers                = "A comma-separated list of the specific domain controller(s) that should be used to query the domain. Can be specified as a hostname or IP."
-	EnterpriseSigned                 = "If 'true', certificate is signed by AD Certificate Services."
 	ForwardTraffic                   = "If 'true', all traffic in the ASA Project be forwarded through selected ASA Gateways."
 	GatewayID                        = "The UUID of the Gateway with which this AD Connection is associated."
 	GatewaySelector                  = "Assigns ASA Gateways with labels matching all selectors. At least one selector is required for traffic forwarding."
@@ -81,47 +73,4 @@ const (
 	Token               = "The secret used for resource enrollment."
 	UsePasswordless     = "if 'true', Users will not need password to login."
 	UserType            = "The user type. Valid types are `human` and `service`."
-
-	// Query Parameter Descriptions
-	FilterContains               = "If a value is provided, the results are filtered to only contain resources whose name contains that value."
-	FilterCreateServerGroup      = "If 'true', the results only include the ASA Project Groups that have 'create_server_group' field set to 'true'."
-	FilterDescriptionContains    = "If a value is provided, the results are filtered to only contain resources whose name contains that value."
-	FilterDisconnectedModeOnOnly = "If 'true', the results only include resources with disconnected mode enabled."
-	FilterHasNoSelectors         = "If 'true', the results only include resources with empty label selectors."
-	FilterHasSelectors           = "If 'true', the results only include resources with label selectors set."
-	FilterIncludeDeleted         = "If 'true', the results include deleted resources."
-	FilterOnlyIncludeDeleted     = "If 'true', the results only include deleted resources."
-	FilterIncludeRemoved         = "If 'true', the results include removed resources."
-	FilterOfflineEnabled         = "If 'true', the results only include resources with disconnected mode enabled." // NOTE: This is inconsistent, most other API endpoints use `disconnected_mode_on_only`.
-	FilterProjectName            = "If a value is provided, the results are filtered to only contain resources belonging to the ASA Project."
-	FilterSelf                   = "If 'true', only lists the ASA Projects that the ASA User making this request has been assigned."
-	FilterGatewayID              = "If 'true', the results only include the connections which has the same gateway id."
-	FilterCertificateID          = "If 'true', the results only include the connections which has the same certificate id."
-	FilterIncludeCertDetails     = "If 'true', the results include the certificate details "
-	FilterStartsWith             = "If a value is provided, includes ASA Users with name that begins with the value."
-	FilterStatus                 = "If a value is provided, includes ASA Users with specified statuses. Valid statuses include: `ACTIVE`, `DISABLED`, and `DELETED`."
-
-	// Provider-Level Filter
-	FilterUserType = "Valid types are `human` and `service`. If left unspecified, both types will be included."
-
-	// Resource Descriptions -- resources are dynamic, and state is kept up to date on POST / PUT / DELETE
-	ResourceADCertificateSigningRequest = "A Certificate Signing Request for AD Passwordless certificates"
-	ResourceADConnection                = "An Active Directory (AD) Connection to query AD Domain for available servers."
-	ResourceADTaskSettings              = "Settings for Active Directory (AD) task for server discovery"
-	ResourceGatewaySetupToken           = "A token for ASA Gateway enrollment."
-	ResourceGroup                       = "A set of ASA Users."
-	ResourceKubernetesCluster           = "A Kubernetes cluster."
-	ResourceKubernetesClusterConnection = "A set of details describing how to connect to an existing Kubernetes Cluster."
-	ResourceKubernetesClusterGroup      = "A mapping of Kubernetes cluster to Project Group."
-	ResourceServerEnrollmentToken       = "A token for ASA Server enrollment."
-	ResourceUser                        = "An ASA User. Valid user types are `human` and `service`."
-
-	// Data Source Descriptions -- sources are read-only, fetched on LIST
-	SourceGatewaySetupTokens     = "A list of tokens for ASA Gateway enrollment, corresponding to an ASA Team."
-	SourceGroups                 = "A list of ASA Groups, corresponding to an ASA Team."
-	SourceProjects               = "A list of ASA Projects, corresponding to an ASA Team."
-	SourceProjectGroups          = "A list of ASA Groups attached to an ASA Project."
-	SourceServerEnrollmentTokens = "A list of tokens for ASA Server enrollment, corresponding to an ASA Project."
-	SourceADConnections          = "A list of ASA AD Connections, corresponding to an ASA Team."
-	SourceGateways               = "A list of ASA Gateways, corresponding to an ASA Team"
 )

@@ -4,61 +4,55 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDatasourceServerEnrollmentToken(t *testing.T) {
-	resourceName := "data.oktapam_server_enrollment_token.test_server_enrollment_tokens"
-	projectName := fmt.Sprintf("test-acc-datasource-server-enrollment-token-project-%s", randSeq(10))
-	description1 := fmt.Sprintf("Datasource Acceptance Test Token - 1: %s", randSeq(10))
-	description2 := fmt.Sprintf("Datasource Acceptance Test Token - 2: %s", randSeq(10))
+func TestAccDatasourceServerEnrollmentTokenFetch(t *testing.T) {
+	resourceName := "oktapam_server_enrollment_token.test_server_enrollment_token_1"
+	dataSourceName := "data.oktapam_server_enrollment_token.target_token"
+
+	identifier := randSeq(10)
+	projectName := fmt.Sprintf("test_acc_datasource_server_enrollment_token_project_%s", identifier)
+	description := fmt.Sprintf("Datasource Acceptance Test Token Set %s, Token 1", identifier)
+
+	testConfig := createTestAccDatasourceServerEnrollmentTokenInitListFetchConfig(projectName, description)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
+		CheckDestroy:      testAccServerEnrollmentTokenCheckDestroy(projectName, identifier),
 		Steps: []resource.TestStep{
 			{
-				Config: createTestAccDatasourceServerEnrollmentTokenInitConfig(projectName, description1, description2),
-			},
-			{
-				Config: createTestAccDatasourceServerEnrollmentTokenConfig(projectName),
-				Check:  resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.ServerEnrollmentTokens), "2"),
+				Config: testConfig,
+				Check:  checkResourcesEqual(resourceName, dataSourceName),
 			},
 		},
 	})
 }
 
-const testAccDatasourceServerEnrollmentTokenConfigFormat = `
-data "oktapam_server_enrollment_token" "test_server_enrollment_tokens" {
-	project_name = "%s"
-}
-`
-
-func createTestAccDatasourceServerEnrollmentTokenConfig(projectName string) string {
-	return fmt.Sprintf(testAccDatasourceServerEnrollmentTokenConfigFormat, projectName)
-}
-
-const testAccDatasourceServerEnrollmentTokenInitConfigFormat = `
-resource "oktapam_project" "test-server-enrollment-token-project" {
+const testAccDatasourceServerEnrollmentTokenInitListFetchConfigFormat = `
+resource "oktapam_project" "test_server_enrollment_token_project" {
     name = "%s"
   	next_unix_uid = 60120
   	next_unix_gid = 63020
 }
-resource "oktapam_server_enrollment_token" "test-server-enrollment-token-1" {
-    project_name = oktapam_project.test-server-enrollment-token-project.name
+
+resource "oktapam_server_enrollment_token" "test_server_enrollment_token_1" {
+    project_name = oktapam_project.test_server_enrollment_token_project.name
 	description  = "%s"
-	depends_on = [oktapam_project.test-server-enrollment-token-project]
 }
 
-resource "oktapam_server_enrollment_token" "test-server-enrollment-token-2" {
-    project_name = oktapam_project.test-server-enrollment-token-project.name
-	description  = "%s"
-	depends_on = [oktapam_project.test-server-enrollment-token-project]
+data "oktapam_server_enrollment_tokens" "token_list" {
+	project_name = oktapam_project.test_server_enrollment_token_project.name
+	depends_on = [oktapam_server_enrollment_token.test_server_enrollment_token_1]
+}
+
+data "oktapam_server_enrollment_token" "target_token" {
+	project_name = oktapam_project.test_server_enrollment_token_project.name
+	id = data.oktapam_server_enrollment_tokens.token_list.ids[0]
 }
 `
 
-func createTestAccDatasourceServerEnrollmentTokenInitConfig(projectName string, description1, description2 string) string {
-	return fmt.Sprintf(testAccDatasourceServerEnrollmentTokenInitConfigFormat, projectName, description1, description2)
+func createTestAccDatasourceServerEnrollmentTokenInitListFetchConfig(projectName string, description string) string {
+	return fmt.Sprintf(testAccDatasourceServerEnrollmentTokenInitListFetchConfigFormat, projectName, description)
 }

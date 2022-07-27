@@ -2,8 +2,9 @@ package oktapam
 
 import (
 	"context"
+	"strconv"
+	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 
@@ -12,16 +13,19 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 )
 
-func dataSourceGatewaySetupTokens() *schema.Resource {
+func dataSourceServerEnrollmentTokens() *schema.Resource {
 	return &schema.Resource{
 		Description: descriptions.SourceServerEnrollmentTokens,
-		ReadContext: dataSourceGatewaySetupTokensRead,
+		ReadContext: dataSourceServerEnrollmentTokenList,
 		Schema: map[string]*schema.Schema{
-			attributes.DescriptionContains: {
+			// Query parameter values
+			attributes.ProjectName: {
 				Type:        schema.TypeString,
-				Optional:    true,
-				Description: descriptions.FilterDescriptionContains,
+				Required:    true,
+				ForceNew:    true,
+				Description: descriptions.FilterProjectName,
 			},
+			// Return value
 			attributes.IDs: {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -31,23 +35,26 @@ func dataSourceGatewaySetupTokens() *schema.Resource {
 	}
 }
 
-func dataSourceGatewaySetupTokensRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceServerEnrollmentTokenList(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
-
-	contains := d.Get(attributes.DescriptionContains).(string)
-	tokens, err := c.ListGatewaySetupTokens(ctx, contains)
+	project := d.Get(attributes.ProjectName).(string)
+	if project == "" {
+		return diag.Errorf("%s cannot be blank", attributes.ProjectName)
+	}
+	tokensList, err := c.ListServerEnrollmentTokens(ctx, project)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	ids := make([]string, len(tokens))
-	for i, token := range tokens {
+	ids := make([]string, len(tokensList))
+	for i, token := range tokensList {
 		ids[i] = *token.ID
 	}
 
 	if err := d.Set(attributes.IDs, ids); err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resource.UniqueId())
+
+	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
 	return nil
 }

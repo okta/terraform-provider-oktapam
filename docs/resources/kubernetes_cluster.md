@@ -3,12 +3,12 @@
 page_title: "oktapam_kubernetes_cluster Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A Kubernetes cluster.
+A set of ASA Users. See https://help.okta.com/asa/en-us/Content/Topics/AdvServerAccess/docs/setup/groups.htm for more information on ASA Groups.
 ---
 
 # oktapam_kubernetes_cluster (Resource)
 
-A Kubernetes cluster.
+A set of ASA Users. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm for more information on ASA Groups.
 
 
 
@@ -28,5 +28,4 @@ A Kubernetes cluster.
 
 - `id` (String) The ID of this resource.
 - `oidc_issuer_url` (String) The OIDC Issuer URL to use when configuring your Kubernetes cluster.
-
 

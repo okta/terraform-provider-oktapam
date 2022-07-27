@@ -15,6 +15,7 @@ import (
 
 func dataSourceGateways() *schema.Resource {
 	return &schema.Resource{
+		Description: descriptions.SourceGateways,
 		ReadContext: dataSourceGatewayRead,
 		Schema: map[string]*schema.Schema{
 			// Query parameter values

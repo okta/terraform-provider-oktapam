@@ -153,6 +153,6 @@ resource "oktapam_project_group" "test-acc-project-group-project-group-2" {
 }
 `
 
-func createTestAccDatasourceProjectGroupInitConfig(projectName, group1Name, group2Name string) string {
+func createTestAccDatasourceProjectGroupInitConfig(projectName string, group1Name string, group2Name string) string {
 	return fmt.Sprintf(testAccDatasourceProjectGroupInitConfigFormat, projectName, group1Name, group2Name)
 }

@@ -3,12 +3,12 @@
 page_title: "oktapam_gateway_setup_tokens Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  
+A list of tokens for ASA Server enrollment, corresponding to an ASA Project. See https://help.okta.com/asa/en-us/Content/Topics/AdvServerAccess/docs/setup/enrolling-a-server.htm for more information on server enrollment in ASA and how enrollment tokens are used.
 ---
 
 # oktapam_gateway_setup_tokens (Data Source)
 
-
+A list of tokens for ASA Server enrollment, corresponding to an ASA Project. See https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm for more information on server enrollment in ASA and how enrollment tokens are used.
 
 
 
@@ -23,5 +23,4 @@ description: |-
 
 - `id` (String) The ID of this resource.
 - `ids` (List of String)
-
 
