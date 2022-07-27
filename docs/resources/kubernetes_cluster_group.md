@@ -3,12 +3,14 @@
 page_title: "oktapam_kubernetes_cluster_group Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Beta / EA Feature: A mapping of Kubernetes cluster to Project Group.
+  Beta Feature: A mapping of Kubernetes cluster to Project Group.
 ---
 
 # oktapam_kubernetes_cluster_group (Resource)
 
-Beta / EA Feature: A mapping of Kubernetes cluster to Project Group.
+NOTE: Kubernetes support is a Beta feature and is not generally available to Okta ASA customers. Contact support@okta.com if you wish to participate in the Beta release.
+
+Beta Feature: A mapping of Kubernetes cluster to Project Group.
 
 
 
