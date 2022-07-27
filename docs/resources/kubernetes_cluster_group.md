@@ -3,14 +3,12 @@
 page_title: "oktapam_kubernetes_cluster_group Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Beta Feature: A mapping of Kubernetes cluster to Project Group.
+  Beta / EA Feature: A mapping of Kubernetes cluster to an ASA Group. Members of the provided ASA group will be granted access to clusters which match the specified cluster_selectors.
 ---
 
 # oktapam_kubernetes_cluster_group (Resource)
 
-NOTE: Kubernetes support is a Beta feature and is not generally available to Okta ASA customers. Contact support@okta.com if you wish to participate in the Beta release.
-
-Beta Feature: A mapping of Kubernetes cluster to Project Group.
+Beta / EA Feature: A mapping of Kubernetes cluster to an ASA Group. Members of the provided ASA group will be granted access to clusters which match the specified cluster_selectors.
 
 
 
@@ -24,7 +22,7 @@ Beta Feature: A mapping of Kubernetes cluster to Project Group.
 
 ### Optional
 
-- `claims` (Map of String) A map of claims to be given to users in this Cluster Group.
+- `claims` (Map of String) A map of claims that will be included in credentials issued to users that are used to authenticate to Kubernetes clusters. Claims correspond to pre-configured role bindings on the cluster.
 
 ### Read-Only
 

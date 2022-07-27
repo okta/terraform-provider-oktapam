@@ -25,7 +25,7 @@ Assigns an ASA Group to a Project and configures how that group is created on se
 ### Optional
 
 - `create_server_group` (Boolean) If 'true', `sftd` (ASA Server Agent) creates a corresponding local (unix or windows) group in the ASA Project's servers.
-- `servers_selector` (Map of String) Enables access to ASA Servers with labels matching all selectors. For ASA Projects Groups using Policy Sync Feature.
+- `servers_selector` (Map of String) Enables access to ASA Servers with labels matching all selectors. Only available to customers that have the Early Access Policy Sync feature enabled on their team.
 
 ### Read-Only
 

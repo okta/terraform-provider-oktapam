@@ -26,6 +26,6 @@ const (
 	// EA/Beta Features
 
 	// List
-	SourceADConnections = PrefixBeta + "Returns a list of ASA AD Connections, corresponding to an ASA Team."
-	SourceGateways      = PrefixBeta + "Returns a list of ASA Gateways, corresponding to an ASA Team." + LinkGateway
+	SourceADConnections = "Returns a list of ASA AD Connections, corresponding to an ASA Team."
+	SourceGateways      = "Returns a list of ASA Gateways, corresponding to an ASA Team." + LinkGateway
 )
