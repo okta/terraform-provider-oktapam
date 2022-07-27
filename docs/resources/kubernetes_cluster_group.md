@@ -3,12 +3,12 @@
 page_title: "oktapam_kubernetes_cluster_group Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Beta Feature: A mapping of Kubernetes cluster to an ASA Group. Members of the provided ASA group will be granted access to clusters which match the specified cluster_selectors. NOTE: This is only available for customers that are participating in the ASA Kubernetes support Beta program; contact support@okta.com if you wish to participate in the beta.
+  Beta Feature: A mapping of Kubernetes cluster to an ASA Group. Members of the provided ASA group will be granted access to clusters which match the specified cluster_selectors. NOTE: This is only available if the ASA Team has the Kubernetes Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
 ---
 
 # oktapam_kubernetes_cluster_group (Resource)
 
-Beta Feature: A mapping of Kubernetes cluster to an ASA Group. Members of the provided ASA group will be granted access to clusters which match the specified cluster_selectors. NOTE: This is only available for customers that are participating in the ASA Kubernetes support Beta program; contact support@okta.com if you wish to participate in the beta.
+Beta Feature: A mapping of Kubernetes cluster to an ASA Group. Members of the provided ASA group will be granted access to clusters which match the specified cluster_selectors. NOTE: This is only available if the ASA Team has the Kubernetes Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
 
 
 

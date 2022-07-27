@@ -22,9 +22,9 @@ Returns a list of ASA Project Groups, corespondibng to an ASA Project. For more 
 ### Optional
 
 - `create_server_group` (Boolean) If 'true', the results only include the ASA Project Groups that have 'create_server_group' field set to 'true'.
-- `disconnected_mode_on_only` (Boolean) If 'true', the results only include resources with disconnected mode enabled. NOTE: This is only valid for ASA teams with the Disconnected Mode Beta feature enabled.
-- `has_no_selectors` (Boolean) If 'true', the results only include resources with empty label selectors. NOTE: This is only applicable if the ASA Team has the Early Access PolicySync feature enabled.
-- `has_selectors` (Boolean) If 'true', the results only include resources with label selectors set. NOTE: This is only applicable if the ASA Team has the Early Access PolicySync feature enabled.
+- `disconnected_mode_on_only` (Boolean) If 'true', the results only include resources with disconnected mode enabled. NOTE: This is only available if the ASA Team has the Disconnected Mode Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
+- `has_no_selectors` (Boolean) If 'true', the results only include resources with empty label selectors. NOTE: This is only available if the ASA Team has the Early Access PolicySync feature enabled.
+- `has_selectors` (Boolean) If 'true', the results only include resources with label selectors set. NOTE: This is only available if the ASA Team has the Early Access PolicySync feature enabled.
 - `include_removed` (Boolean) If 'true', the results include removed resources.
 
 ### Read-Only
