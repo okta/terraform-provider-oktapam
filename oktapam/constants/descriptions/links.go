@@ -1,6 +1,7 @@
 package descriptions
 
 const (
+	LinkADCertificates        = "For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-certs.htm) on AD Passwordless Certificates lifecycle & management."
 	LinkADConnection          = "For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-connections.htm) on AD Connection creation and usage."
 	LinkADRuleAssignment      = "For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync-assignment.htm) on AD rule assignment."
 	LinkADServerDiscovery     = "For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm) on AD server discovery."
