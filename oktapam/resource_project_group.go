@@ -43,7 +43,7 @@ func resourceProjectGroup() *schema.Resource {
 			attributes.CreateServerGroup: {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Computed:    true,
+				Default:     false,
 				Description: descriptions.CreateServerGroup,
 			},
 			attributes.ServerAccess: {

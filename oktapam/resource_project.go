@@ -53,7 +53,7 @@ func resourceProject() *schema.Resource {
 			attributes.CreateServerUsers: {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Computed:    true,
+				Default:     false,
 				Description: descriptions.CreateServerUsers,
 			},
 			attributes.DeletedAt: {
@@ -64,25 +64,25 @@ func resourceProject() *schema.Resource {
 			attributes.ForwardTraffic: {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Computed:    true,
+				Default:     false,
 				Description: descriptions.ForwardTraffic,
 			},
 			attributes.RDPSessionRecording: {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Computed:    true,
+				Default:     false,
 				Description: descriptions.RDPSessionRecording,
 			},
 			attributes.RequirePreauthForCreds: {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Computed:    true,
+				Default:     false,
 				Description: descriptions.RequirePreauthForCreds,
 			},
 			attributes.SSHSessionRecording: {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Computed:    true,
+				Default:     false,
 				Description: descriptions.SSHSessionRecording,
 			},
 			attributes.GatewaySelector: {
@@ -92,8 +92,8 @@ func resourceProject() *schema.Resource {
 			},
 			attributes.SSHCertificateType: {
 				Type:        schema.TypeString,
-				Optional:    true, // The default value is `CERT_TYPE_ED25519_01`
-				Computed:    true,
+				Optional:    true,
+				Default:     "CERT_TYPE_ED25519_01",
 				Description: descriptions.SSHCertificateType,
 				ValidateDiagFunc: func(i interface{}, p cty.Path) diag.Diagnostics {
 					var diags diag.Diagnostics
