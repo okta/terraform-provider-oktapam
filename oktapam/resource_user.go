@@ -45,6 +45,7 @@ func resourceUser() *schema.Resource {
 			},
 			attributes.Status: {
 				Type:        schema.TypeString,
+				Default:     typed_strings.UserStatusActive.String(),
 				Optional:    true,
 				Description: descriptions.Status,
 				ValidateFunc: validation.StringInSlice(
@@ -205,7 +206,15 @@ func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface
 			return diag.FromErr(err)
 		}
 	case typed_strings.UserTypeService:
-		err := c.DeleteServiceUser(ctx, userName)
+		user, err := c.GetServiceUser(ctx, userName)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+
+		deleted := typed_strings.UserStatusDeleted
+		user.Status = &deleted
+
+		err = c.DeleteServiceUser(ctx, userName, user)
 		if err != nil {
 			return diag.FromErr(err)
 		}
