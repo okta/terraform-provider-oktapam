@@ -24,3 +24,4 @@ Returns a list of ASA Gateway Setup Token IDs, corresponding to an ASA Team. For
 - `id` (String) The ID of this resource.
 - `ids` (List of String)
 
+

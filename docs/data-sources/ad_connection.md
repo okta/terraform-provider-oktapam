@@ -3,7 +3,7 @@
 page_title: "oktapam_ad_connection Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-Returns a list of ASA AD Connections, corresponding to an ASA Team.
+  Returns a list of ASA AD Connections, corresponding to an ASA Team.
 ---
 
 # oktapam_ad_connection (Data Source)
@@ -38,4 +38,5 @@ Read-Only:
 - `gateway_id` (String)
 - `id` (String)
 - `name` (String)
+
 
