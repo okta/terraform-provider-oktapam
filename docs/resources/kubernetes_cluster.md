@@ -29,3 +29,4 @@ Beta Feature: Represents a Kubernetes cluster that has been registered with ASA.
 - `id` (String) The ID of this resource.
 - `oidc_issuer_url` (String) The OIDC Issuer URL to use when configuring your Kubernetes cluster.
 
+

@@ -3,12 +3,12 @@
 page_title: "oktapam_ad_certificate_signing_request Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A Certificate Signing Request for AD Passwordless certificates
+  A Certificate Signing Request for AD Passwordless certificates. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-certs.htm on AD Passwordless Certificates lifecycle & management.
 ---
 
 # oktapam_ad_certificate_signing_request (Resource)
 
-A Certificate Signing Request for AD Passwordless certificates
+A Certificate Signing Request for AD Passwordless certificates. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-certs.htm) on AD Passwordless Certificates lifecycle & management.
 
 
 

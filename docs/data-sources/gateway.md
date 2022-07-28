@@ -38,3 +38,4 @@ Read-Only:
 - `name` (String)
 - `refuse_connections` (Boolean)
 
+
