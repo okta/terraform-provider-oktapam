@@ -274,14 +274,18 @@ func (c OktaPAMClient) UpdateServiceUser(ctx context.Context, userName string, s
 	return err
 }
 
-func (c OktaPAMClient) DeleteServiceUser(ctx context.Context, userName string) error {
+// NOTE: ASA does not support user hard-deletion, only soft-deletion by updating the status to `DELETED`.
+// The main reason for this atypical behavior is that the user name is used to provision the corresponding account across servers.
+// Following the removal of user permissions, the current behavior is to keep the user account on server while denying any short-lived certificates to that user for that server.
+// Soft-deletion prevents re-usage of the same user name, and with it the potential of the new user usurping the old user account.
+func (c OktaPAMClient) DeleteServiceUser(ctx context.Context, userName string, serviceUser *User) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/service_users/%s", url.PathEscape(c.Team), url.PathEscape(userName))
-	logging.Tracef("making DELETE request to %s", requestURL)
-	resp, err := c.CreateBaseRequest(ctx).Delete(requestURL)
+	logging.Tracef("making PUT request to %s", requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetBody(serviceUser).Put(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
 	}
-	_, err = checkStatusCode(resp, http.StatusNoContent, http.StatusNotFound)
+	_, err = checkStatusCode(resp, http.StatusOK, http.StatusNotFound)
 	return err
 }

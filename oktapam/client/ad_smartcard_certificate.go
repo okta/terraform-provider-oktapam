@@ -167,7 +167,6 @@ func (c OktaPAMClient) UpdateADSmartcardCertificateName(ctx context.Context, cer
 	return err
 }
 
-
 func (c OktaPAMClient) UploadADSmartcardCertificate(ctx context.Context, certificateId string, content string) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/certificates/%s/upload", url.PathEscape(c.Team), url.PathEscape(certificateId))
 	logging.Tracef("making GET request to %s", requestURL)
