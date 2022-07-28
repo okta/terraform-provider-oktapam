@@ -3,7 +3,6 @@ package oktapam
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 
@@ -48,6 +47,7 @@ func dataSourceGatewaySetupTokensRead(ctx context.Context, d *schema.ResourceDat
 	if err := d.Set(attributes.IDs, ids); err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(resource.UniqueId())
+	// Gateway tokens correspond to Team
+	d.SetId(c.Team)
 	return nil
 }

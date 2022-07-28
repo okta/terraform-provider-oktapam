@@ -2,8 +2,6 @@ package oktapam
 
 import (
 	"context"
-	"strconv"
-	"time"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
@@ -55,6 +53,7 @@ func dataSourceServerEnrollmentTokenList(ctx context.Context, d *schema.Resource
 		return diag.FromErr(err)
 	}
 
-	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	// Server enrollment tokens correspond to a Project
+	d.SetId(project)
 	return nil
 }
