@@ -2,7 +2,6 @@ package oktapam
 
 import (
 	"context"
-	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/typed_strings"
 	"strings"
@@ -73,7 +72,6 @@ func resourceADCertificateRequest() *schema.Resource {
 						attributes.Organization: {
 							Type: schema.TypeString,
 							ConflictsWith: []string{certDetailsTTLDays},
-							ValidateFunc: validateCertificateDetails,
 							Optional:      true,
 							ForceNew:      true,
 						},
@@ -140,12 +138,6 @@ func resourceADCertificateRequest() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
-}
-
-func validateCertificateDetails(v interface{}, k string) (ws []string, errors []error) {
-	value := v.(string)
-	fmt.Println(value)
-	return
 }
 
 func resourceADCertificateRequestCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
