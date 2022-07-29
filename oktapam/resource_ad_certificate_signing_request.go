@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/typed_strings"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,22 +16,35 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 )
 
-const (
-	certDetailsOrganization       = attributes.Details + "." + attributes.Organization
-	certDetailsOrganizationalUnit = attributes.Details + "." + attributes.OrganizationalUnit
-	certDetailsLocality           = attributes.Details + "." + attributes.Locality
-	certDetailsProvince           = attributes.Details + "." + attributes.Province
-	certDetailsCountry            = attributes.Details + "." + attributes.Country
-	certDetailsTTLDays            = attributes.Details + "." + attributes.TTLDays
-)
 
-func resourceADCertificateSigningRequest() *schema.Resource {
+// Below variables are used to define ConflictsWith contraint in the terraform resource schema
+// ConflictsWith is a set of attribute paths, including this attribute,
+// whose configurations cannot be set simultaneously. This implements the
+// validation logic declaratively within the schema and can trigger earlier
+// in Terraform operations, rather than using create or update logic which
+// only triggers during apply.
+//
+// Only absolute attribute paths, ones starting with top level attribute
+// names, are supported. Attribute paths cannot be accurately declared
+// for TypeList (if MaxItems is greater than 1), TypeMap, or TypeSet
+// attributes. To reference an attribute under a single configuration block
+// (TypeList with Elem of *Resource and MaxItems of 1), the syntax is
+// "parent_block_name.0.child_attribute_name".
+// Reference: https://github.com/hashicorp/terraform-plugin-sdk/blob/main/helper/schema/schema.go#L257
+var certDetailsOrganization = strings.Join([]string{attributes.Details, "0", attributes.Organization}, ".")
+var certDetailsOrganizationalUnit = strings.Join([]string{attributes.Details, "0", attributes.OrganizationalUnit}, ".")
+var certDetailsLocality = strings.Join([]string{attributes.Details, "0", attributes.Locality}, ".")
+var certDetailsProvince = strings.Join([]string{attributes.Details, "0", attributes.Province}, ".")
+var certDetailsCountry = strings.Join([]string{attributes.Details, "0", attributes.Country}, ".")
+var certDetailsTTLDays = strings.Join([]string{attributes.Details, "0", attributes.TTLDays}, ".")
+
+func resourceADCertificateRequest() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceADCertificateSigningRequestCreate,
-		ReadContext:   resourceADCertificateSigningRequestRead,
-		UpdateContext: resourceADCertificateSigningRequestUpdate,
-		DeleteContext: resourceADCertificateSigningRequestDelete,
-		Description:   descriptions.ResourceADCertificateSigningRequest,
+		CreateContext: resourceADCertificateRequestCreate,
+		ReadContext:   resourceADCertificateRequestRead,
+		UpdateContext: resourceADCertificateRequestUpdate,
+		DeleteContext: resourceADCertificateRequestDelete,
+		Description:   descriptions.ResourceADCertificateRequest,
 		Schema: map[string]*schema.Schema{
 			attributes.ID: {
 				Type:     schema.TypeString,
@@ -58,8 +72,7 @@ func resourceADCertificateSigningRequest() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						attributes.Organization: {
 							Type: schema.TypeString,
-							//Nested attributes require to join attribute names for reference
-							ConflictsWith: []string{"details.ttl_days"},
+							ConflictsWith: []string{certDetailsTTLDays},
 							ValidateFunc: validateCertificateDetails,
 							Optional:      true,
 							ForceNew:      true,
@@ -135,14 +148,14 @@ func validateCertificateDetails(v interface{}, k string) (ws []string, errors []
 	return
 }
 
-func resourceADCertificateSigningRequestCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADCertificateRequestCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	var csrDetails *client.ADCertificateDetails
+	var certRequestDetails *client.ADCertificateDetails
 	if v, ok := d.GetOk(attributes.Details); ok {
 		list := v.([]interface{})
 		detailsMap := list[0].(map[string]interface{})
-		csrDetails = &client.ADCertificateDetails{
+		certRequestDetails = &client.ADCertificateDetails{
 			Organization:       utils.AsStringPtr(detailsMap[attributes.Organization].(string)),
 			OrganizationalUnit: utils.AsStringPtr(detailsMap[attributes.OrganizationalUnit].(string)),
 			Locality:           utils.AsStringPtr(detailsMap[attributes.Locality].(string)),
@@ -159,7 +172,7 @@ func resourceADCertificateSigningRequestCreate(ctx context.Context, d *schema.Re
 		DisplayName: getStringPtr(attributes.DisplayName, d, false),
 		CommonName:  getStringPtr(attributes.CommonName, d, false),
 		Type:        getStringPtr(attributes.Type, d, false),
-		Details:     csrDetails,
+		Details:     certRequestDetails,
 	}
 
 	//Call api client
@@ -175,10 +188,10 @@ func resourceADCertificateSigningRequestCreate(ctx context.Context, d *schema.Re
 		}
 	}
 
-	return resourceADCertificateSigningRequestRead(ctx, d, m)
+	return resourceADCertificateRequestRead(ctx, d, m)
 }
 
-func resourceADCertificateSigningRequestRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADCertificateRequestRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	certificateID := d.Id()
@@ -198,7 +211,7 @@ func resourceADCertificateSigningRequestRead(ctx context.Context, d *schema.Reso
 	return nil
 }
 
-func resourceADCertificateSigningRequestUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADCertificateRequestUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	id := d.Id()
 
@@ -222,10 +235,10 @@ func resourceADCertificateSigningRequestUpdate(ctx context.Context, d *schema.Re
 		}
 	}
 
-	return resourceADCertificateSigningRequestRead(ctx, d, m)
+	return resourceADCertificateRequestRead(ctx, d, m)
 }
 
-func resourceADCertificateSigningRequestDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADCertificateRequestDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 	certificateId := d.Id()

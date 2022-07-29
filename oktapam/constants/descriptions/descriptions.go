@@ -105,7 +105,7 @@ const (
 	FilterUserType = "Valid types are `human` and `service`. If left unspecified, both types will be included."
 
 	// Resource Descriptions -- resources are dynamic, and state is kept up to date on POST / PUT / DELETE
-	ResourceADCertificateSigningRequest = "A Certificate Signing Request for AD Passwordless certificates"
+	ResourceADCertificateRequest = "A Certificate Request to generate AD Passwordless Self Signed Certificate or Certificate Signing Request(CSR)."
 	ResourceADConnection                = "An Active Directory (AD) Connection to query AD Domain for available servers."
 	ResourceADTaskSettings              = "Settings for Active Directory (AD) task for server discovery"
 	ResourceGatewaySetupToken           = "A token for ASA Gateway enrollment."

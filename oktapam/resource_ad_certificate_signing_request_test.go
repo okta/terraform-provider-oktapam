@@ -19,7 +19,7 @@ const (
 )
 
 func TestAccADCertificateSigningRequest(t *testing.T) {
-	resourceName := "oktapam_ad_certificate_signing_request.test-csr"
+	resourceName := "oktapam_ad_certificate_request.test-csr"
 	csrName := fmt.Sprintf("test-acc-csr-%s", randSeq(10))
 
 	resource.Test(t, resource.TestCase{
@@ -48,7 +48,7 @@ func adCSRExists(id string) (bool, error) {
 }
 
 const testAccCSRCreateConfigFormat = `
-resource "oktapam_ad_certificate_signing_request" "test-csr" {
+resource "oktapam_ad_certificate_request" "test-csr" {
   display_name = "%s"
   common_name = "testacc"
   details {
