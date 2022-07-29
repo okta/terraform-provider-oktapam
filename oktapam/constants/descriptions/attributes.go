@@ -22,6 +22,7 @@ const (
 	CertificateCommonName            = "Common Name or FQDN to which certificate is issued to."
 	CertificateContent               = "Certificate Signing Request (CSR)/ Self Signed Certificate content."
 	CertificateID                    = "Certificate ID used for password less access method."
+	CertificateRequestType           = "Specifies the type of certificate request - Certificate Signing Request (CSR)/ Self Signed Certificate."
 	CertificateStatus                = "Certificate status - Valid/Request Created."
 	CloudProvider                    = "Cloud provider name of the host where gateway is running."
 	ClusterGroupClaims               = "A map of claims that will be included in credentials issued to users that are used to authenticate to Kubernetes clusters. Claims correspond to pre-configured role bindings on the cluster."
