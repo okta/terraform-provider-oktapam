@@ -53,12 +53,14 @@ func resourceProjectGroup() *schema.Resource {
 			},
 			attributes.ServerAccess: {
 				Type:        schema.TypeBool,
-				Required:    true,
+				Optional:    true,
+				Default:     false,
 				Description: descriptions.ServerAccess,
 			},
 			attributes.ServerAdmin: {
 				Type:        schema.TypeBool,
-				Required:    true,
+				Optional:    true,
+				Default:     false,
 				Description: descriptions.ServerAdmin,
 			},
 			attributes.ServersSelector: {

@@ -17,13 +17,13 @@ Returns a previously created ASA Group assigned to a given ASA Project. For more
 
 ### Required
 
-- `group_name` (String) The human-readable name of the ASA Group. Values are case-sensitive.
 - `project_name` (String) The human-readable name of the ASA Project. Values are case-sensitive.
 
 ### Read-Only
 
 - `create_server_group` (Boolean) If 'true', `sftd` (ASA Server Agent) creates a corresponding local (unix or windows) group in the ASA Project's servers.
 - `deleted_at` (String) The UTC time of resource creation. Format is `2022-01-01 00:00:00 +0000 UTC`.
+- `group_name` (String) The human-readable name of the ASA Group. Values are case-sensitive.
 - `id` (String) The ID of this resource.
 - `removed_at` (String) UTC time of resource removal from parent resource. Format is `2022-01-01 00:00:00 +0000 UTC`.
 - `server_access` (Boolean) If 'true', members of this ASA Group have access to the ASA Project servers.

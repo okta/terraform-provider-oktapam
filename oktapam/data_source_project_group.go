@@ -20,13 +20,11 @@ func dataSourceProjectGroup() *schema.Resource {
 			attributes.ProjectName: {
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 				Description: descriptions.ProjectName,
 			},
 			attributes.GroupName: {
 				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
+				Computed:    true,
 				Description: descriptions.GroupName,
 			},
 			attributes.DeletedAt: {

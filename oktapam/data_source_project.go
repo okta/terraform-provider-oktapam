@@ -20,7 +20,6 @@ func dataSourceProject() *schema.Resource {
 			attributes.Name: {
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 				Description: descriptions.Name,
 			},
 			attributes.ID: {
@@ -46,7 +45,6 @@ func dataSourceProject() *schema.Resource {
 			attributes.CreateServerUsers: {
 				Type:        schema.TypeBool,
 				Computed:    true,
-				Optional:    true,
 				Description: descriptions.CreateServerUsers,
 			},
 			attributes.DeletedAt: {
@@ -57,37 +55,31 @@ func dataSourceProject() *schema.Resource {
 			attributes.ForwardTraffic: {
 				Type:        schema.TypeBool,
 				Computed:    true,
-				Optional:    true,
 				Description: descriptions.ForwardTraffic,
 			},
 			attributes.RDPSessionRecording: {
 				Type:        schema.TypeBool,
 				Computed:    true,
-				Optional:    true,
 				Description: descriptions.RDPSessionRecording,
 			},
 			attributes.RequirePreauthForCreds: {
 				Type:        schema.TypeBool,
 				Computed:    true,
-				Optional:    true,
 				Description: descriptions.RequirePreauthForCreds,
 			},
 			attributes.SSHSessionRecording: {
 				Type:        schema.TypeBool,
 				Computed:    true,
-				Optional:    true,
 				Description: descriptions.SSHSessionRecording,
 			},
 			attributes.GatewaySelector: {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Optional:    true,
 				Description: descriptions.GatewaySelector,
 			},
 			attributes.SSHCertificateType: {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Optional:    true,
 				Description: descriptions.SSHCertificateType,
 			},
 		},

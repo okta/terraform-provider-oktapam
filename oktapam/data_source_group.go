@@ -20,7 +20,6 @@ func dataSourceGroup() *schema.Resource {
 			attributes.Name: {
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 				Description: descriptions.Name,
 			},
 			attributes.ID: {

@@ -42,6 +42,7 @@ func resourceGroup() *schema.Resource {
 					Type: schema.TypeString,
 				},
 				Optional:    true,
+				Default:     []string{"access_user"},
 				Description: descriptions.Roles,
 			},
 		},
