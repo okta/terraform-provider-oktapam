@@ -2,9 +2,10 @@ package oktapam
 
 import (
 	"context"
+	"strings"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/typed_strings"
-	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,21 +16,19 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 )
 
+/*
+	Below variables are used to define ConflictsWith contraint in the terraform resource schema.
+	ConflictsWith is a set of attribute paths, including this attribute, whose configurations cannot be set simultaneously.
+	This implements the validation logic declaratively within the schema and can trigger earlier in Terraform operations,
+	rather than using create or update logic which in Terraform operations, rather than using create or update logic which only triggers during apply.
 
-// Below variables are used to define ConflictsWith contraint in the terraform resource schema
-// ConflictsWith is a set of attribute paths, including this attribute,
-// whose configurations cannot be set simultaneously. This implements the
-// validation logic declaratively within the schema and can trigger earlier
-// in Terraform operations, rather than using create or update logic which
-// only triggers during apply.
-//
-// Only absolute attribute paths, ones starting with top level attribute
-// names, are supported. Attribute paths cannot be accurately declared
-// for TypeList (if MaxItems is greater than 1), TypeMap, or TypeSet
-// attributes. To reference an attribute under a single configuration block
-// (TypeList with Elem of *Resource and MaxItems of 1), the syntax is
-// "parent_block_name.0.child_attribute_name".
-// Reference: https://github.com/hashicorp/terraform-plugin-sdk/blob/main/helper/schema/schema.go#L257
+	Only absolute attribute paths, ones starting with top level attribute names, are supported. Attribute paths cannot be accurately declared
+	for TypeList (if MaxItems is greater than 1), TypeMap, or TypeSet attributes. To reference an attribute under a single configuration block
+	(TypeList with Elem of *Resource and MaxItems of 1), the syntax is "parent_block_name.0.child_attribute_name".
+
+	Reference: https://github.com/hashicorp/terraform-plugin-sdk/blob/main/helper/schema/schema.go#L257
+
+*/
 var certDetailsOrganization = strings.Join([]string{attributes.Details, "0", attributes.Organization}, ".")
 var certDetailsOrganizationalUnit = strings.Join([]string{attributes.Details, "0", attributes.OrganizationalUnit}, ".")
 var certDetailsLocality = strings.Join([]string{attributes.Details, "0", attributes.Locality}, ".")
@@ -61,16 +60,16 @@ func resourceADCertificateRequest() *schema.Resource {
 				Description: descriptions.CertificateCommonName,
 			},
 			attributes.Details: {
-				Type:         schema.TypeList,
-				Required:     true,
-				ForceNew:     true,
-				MinItems:     1,
-				MaxItems:     1,
-				Description:  descriptions.CSRDetails,
+				Type:        schema.TypeList,
+				Required:    true,
+				ForceNew:    true,
+				MinItems:    1,
+				MaxItems:    1,
+				Description: descriptions.CSRDetails,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						attributes.Organization: {
-							Type: schema.TypeString,
+							Type:          schema.TypeString,
 							ConflictsWith: []string{certDetailsTTLDays},
 							Optional:      true,
 							ForceNew:      true,
@@ -100,10 +99,10 @@ func resourceADCertificateRequest() *schema.Resource {
 							ForceNew:      true,
 						},
 						attributes.TTLDays: {
-							Type: schema.TypeInt,
+							Type:          schema.TypeInt,
 							ConflictsWith: []string{certDetailsOrganization, certDetailsOrganizationalUnit, certDetailsLocality, certDetailsProvince, certDetailsCountry},
-							Optional: true,
-							ForceNew: true,
+							Optional:      true,
+							ForceNew:      true,
 						},
 					},
 				},
@@ -231,7 +230,6 @@ func resourceADCertificateRequestUpdate(ctx context.Context, d *schema.ResourceD
 }
 
 func resourceADCertificateRequestDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 	certificateId := d.Id()
 
@@ -241,5 +239,5 @@ func resourceADCertificateRequestDelete(ctx context.Context, d *schema.ResourceD
 	}
 
 	d.SetId("")
-	return diags
+	return nil
 }
