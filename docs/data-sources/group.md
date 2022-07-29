@@ -3,12 +3,12 @@
 page_title: "oktapam_group Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of ASA Groups. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm on ASA Groups.
+  Returns a previously created ASA Group. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm on ASA Groups.
 ---
 
 # oktapam_group (Data Source)
 
-Returns a list of ASA Groups. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm) on ASA Groups.
+Returns a previously created ASA Group. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm) on ASA Groups.
 
 
 

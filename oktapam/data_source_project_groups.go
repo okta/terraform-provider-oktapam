@@ -7,13 +7,13 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 )
 
 func dataSourceProjectGroups() *schema.Resource {
 	return &schema.Resource{
+		Description: descriptions.SourceProjectGroups,
 		ReadContext: dataSourceProjectGroupList,
 		Schema: map[string]*schema.Schema{
 			// Query parameter values
@@ -108,6 +108,6 @@ func dataSourceProjectGroupList(ctx context.Context, d *schema.ResourceData, m i
 		return diag.FromErr(err)
 	}
 
-	d.SetId(resource.UniqueId())
+	d.SetId(project)
 	return nil
 }

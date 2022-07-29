@@ -3,8 +3,6 @@ package oktapam
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 
@@ -15,6 +13,7 @@ import (
 
 func dataSourceGroups() *schema.Resource {
 	return &schema.Resource{
+		Description: descriptions.SourceGroups,
 		ReadContext: dataSourceGroupList,
 		Schema: map[string]*schema.Schema{
 			// Query parameter values
@@ -89,6 +88,6 @@ func dataSourceGroupList(ctx context.Context, d *schema.ResourceData, m interfac
 		return diag.FromErr(err)
 	}
 
-	d.SetId(resource.UniqueId())
+	d.SetId(c.Team)
 	return diags
 }

@@ -6,7 +6,6 @@ import (
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/errors"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 
@@ -78,7 +77,6 @@ func dataSourceServerEnrollmentTokenFetch(ctx context.Context, d *schema.Resourc
 		return diag.Errorf("%s %s does not exist", providerServerEnrollmentTokenKey, id)
 	}
 
-	d.SetId(resource.UniqueId())
 	return nil
 }
 

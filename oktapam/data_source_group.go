@@ -14,7 +14,7 @@ import (
 
 func dataSourceGroup() *schema.Resource {
 	return &schema.Resource{
-		Description: descriptions.SourceGroups,
+		Description: descriptions.SourceGroup,
 		ReadContext: dataSourceGroupFetch,
 		Schema: map[string]*schema.Schema{
 			attributes.Name: {

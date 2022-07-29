@@ -49,7 +49,7 @@ func dataSourceGatewaySetupTokensRead(ctx context.Context, d *schema.ResourceDat
 	if err := d.Set(attributes.IDs, ids); err != nil {
 		return diag.FromErr(err)
 	}
-	// Gateway tokens correspond to Team
+
 	d.SetId(c.Team)
 	return nil
 }

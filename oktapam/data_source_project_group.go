@@ -14,7 +14,7 @@ import (
 
 func dataSourceProjectGroup() *schema.Resource {
 	return &schema.Resource{
-		Description: descriptions.SourceProjectGroups,
+		Description: descriptions.SourceProjectGroup,
 		ReadContext: dataSourceProjectGroupFetch,
 		Schema: map[string]*schema.Schema{
 			attributes.ProjectName: {
