@@ -22,7 +22,7 @@ const (
 	teamKey         = "oktapam_team"
 
 	providerADCertificateObjectKey         = "oktapam_ad_certificate_object"
-	providerADCertificateSigningRequestKey = "oktapam_ad_certificate_request"
+	providerADCertificateRequestKey        = "oktapam_ad_certificate_request"
 	providerADConnectionKey                = "oktapam_ad_connection"
 	providerADTaskSettingsKey              = "oktapam_ad_task_settings"
 	providerGatewayKey                     = "oktapam_gateway"
@@ -68,7 +68,7 @@ func Provider() *schema.Provider {
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			providerADCertificateObjectKey:         resourceADCertificateObject(),
-			providerADCertificateSigningRequestKey: resourceADCertificateRequest(),
+			providerADCertificateRequestKey:        resourceADCertificateRequest(),
 			providerADConnectionKey:                resourceADConnection(),
 			providerADTaskSettingsKey:              resourceADTaskSettings(),
 			providerGatewaySetupTokenKey:           resourceGatewaySetupToken(),
