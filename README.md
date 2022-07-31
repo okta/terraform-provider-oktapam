@@ -1,4 +1,4 @@
-Terraform Provider for Okta's Priviledged Access Management (Okta's PAM)
+Terraform Provider for Okta's Privileged Access Management (Okta's PAM)
 =========================
 
 Requirements
