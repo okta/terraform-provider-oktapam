@@ -2,7 +2,6 @@ package typed_strings
 
 type UserStatus string
 type UserType string
-type ADCertificateType string
 
 const (
 	UserStatusActive   UserStatus = "ACTIVE"
@@ -11,9 +10,6 @@ const (
 
 	UserTypeHuman   UserType = "human"
 	UserTypeService UserType = "service"
-
-	ADCertificateTypeSigningRequest ADCertificateType = "certificate_signing_request"
-	ADCertificateTypeSelfSigned     ADCertificateType = "self_signed"
 )
 
 func (ut UserType) String() string {
@@ -22,8 +18,4 @@ func (ut UserType) String() string {
 
 func (ut UserStatus) String() string {
 	return string(ut)
-}
-
-func (certType ADCertificateType) String() string {
-	return string(certType)
 }
