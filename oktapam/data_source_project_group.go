@@ -24,7 +24,7 @@ func dataSourceProjectGroup() *schema.Resource {
 			},
 			attributes.GroupName: {
 				Type:        schema.TypeString,
-				Computed:    true,
+				Required:    true,
 				Description: descriptions.GroupName,
 			},
 			attributes.DeletedAt: {
