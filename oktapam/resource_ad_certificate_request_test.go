@@ -3,8 +3,9 @@ package oktapam
 import (
 	"context"
 	"fmt"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/typed_strings"
 	"testing"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/typed_strings"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
@@ -17,7 +18,7 @@ import (
 
 const (
 	csrStatusCreated = "request_created"
-	certStatusValid	 = "valid"
+	certStatusValid  = "valid"
 )
 
 func TestAccADCertificateRequest_CSR(t *testing.T) {
