@@ -24,7 +24,7 @@ A token for enrolling servers to an ASA Project. For more information check out 
 
 - `created_by_user` (String) The ASA User that created the resource.
 - `id` (String) The ID of this resource.
-- `issued_at` (String) The UTC issuance time of the resource. Format is `2022-01-01 00:00:00 +0000 UTC`.
+- `issued_at` (String) The UTC issuance time of the resource. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `token` (String) The secret used for resource enrollment.
 
 

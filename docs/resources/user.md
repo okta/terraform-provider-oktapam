@@ -18,15 +18,15 @@ An ASA User. Valid user types are `human` and `service`. For more information ch
 ### Required
 
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
-- `user_type` (String) The user type. Valid types are `human` and `service`.
+- `user_type` (String) The user type. Valid types are 'human' and 'service'.
 
 ### Optional
 
-- `status` (String) The status of the ASA User. Valid statuses are `ACTIVE`, `DISABLED`, and `DELETED`.
+- `status` (String) The status of the ASA User. Valid statuses are 'ACTIVE', 'DISABLED', and 'DELETED'.
 
 ### Read-Only
 
-- `deleted_at` (String) The UTC time of resource creation. Format is `2022-01-01 00:00:00 +0000 UTC`.
+- `deleted_at` (String) The UTC time of resource creation. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `id` (String) The ID of this resource.
 - `server_user_name` (String) The name of the corresponding ASA Server User.
 - `team_name` (String) The human-readable name of the ASA Team that owns the resource. Values are lower-case.

@@ -19,12 +19,12 @@ Assigns an ASA Group to a Project and configures how that group is created on se
 
 - `group_name` (String) The human-readable name of the ASA Group. Values are case-sensitive.
 - `project_name` (String) The human-readable name of the ASA Project. Values are case-sensitive.
-- `server_access` (Boolean) If 'true', members of this ASA Group have access to the ASA Project servers.
-- `server_admin` (Boolean) If 'true', members of ASA Group have sudo permissions on ASA Project servers.
+- `server_access` (Boolean) If `true`, members of this ASA Group have access to the ASA Project servers.
+- `server_admin` (Boolean) If `true`, members of ASA Group have sudo permissions on ASA Project servers.
 
 ### Optional
 
-- `create_server_group` (Boolean) If 'true', `sftd` (ASA Server Agent) creates a corresponding local (unix or windows) group in the ASA Project's servers.
+- `create_server_group` (Boolean) If `true`, 'sftd' (ASA Server Agent) creates a corresponding local (unix or windows) group in the ASA Project's servers.
 - `servers_selector` (Map of String) Enables access to ASA Servers with labels matching all selectors. Only available to customers that have the Early Access Policy Sync feature enabled on their team.
 
 ### Read-Only

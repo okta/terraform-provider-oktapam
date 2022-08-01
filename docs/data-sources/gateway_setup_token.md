@@ -17,7 +17,7 @@ Returns a previously created ASA Gateway Setup Token. For more information check
 
 ### Read-Only
 
-- `created_at` (String) The UTC time of resource deletion. Format is `2022-01-01 00:00:00 +0000 UTC`.
+- `created_at` (String) The UTC time of resource deletion. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `description` (String) The human-readable description of the resource.
 - `id` (String) The ID of this resource.
 - `labels` (Map of String) A map of key-value pairings that define access to the ASA Gateway.
