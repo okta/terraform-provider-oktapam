@@ -1,33 +1,7 @@
-terraform {
-  required_version = ">= 0.12.0"
-
-  required_providers {
-    oktapam = {
-      version = "0.1.4"
-      source  = "okta.com/pam/oktapam"
-    }
-    google = {
-      source = "hashicorp/google"
-      version = "4.30.0"
-    }
-  }
-}
-
-provider "google" {
-    # Configuration options
-    project	= "asa-demo-316514"
-    region	= "us-central1"
-    zone	= "us-central1-a"
-}
-
 # Create gateway setup token
 resource "oktapam_gateway_setup_token" "test-gw" {
   description          = "tf-gw"
   labels               = {env:"prod"}
-}
-
-output "gw_id" {
-  value = oktapam_gateway_setup_token.test-gw.id
 }
 
 data "template_file" "startup_script" {
