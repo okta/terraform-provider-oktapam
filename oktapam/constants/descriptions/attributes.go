@@ -1,6 +1,12 @@
 package descriptions
 
-const (
+import (
+	"fmt"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/typed_strings"
+)
+
+var (
 	// Attribute Descriptions
 	AccessAddress                    = "Access Address of the gateway."
 	AccessAddressAttribute           = "AD Attribute mapped to IP address or DNS name used by the gateway to connect to a discovered server."
@@ -70,9 +76,9 @@ const (
 	ServersSelector                  = "Enables access to ASA Servers with labels matching all selectors. Only available to customers that have the Early Access Policy Sync feature enabled on their team."
 	ServiceAccountUsername           = "The username of the service account that can be used to query the domain."
 	ServiceAccountPassword           = "The password of the service account that can be used to query the domain."
-	SSHCertificateType               = "The SSH certificate type used by access requests. Options include: `CERT_TYPE_ED25519_01`, `CERT_TYPE_ECDSA_521_01`, `CERT_TYPE_ECDSA_384_01`, `CERT_TYPE_ECDSA_256_01` and `CERT_TYPE_RSA_01`. `CERT_TYPE_RSA_01` is a deprecated key algorithm type. " +
-		"This option should only be used to connect to legacy systems that cannot use newer SSH versions. If you do need to use `CERT_TYPE_RSA_01`, it is recommended to connect via a gateway with traffic forwarding. " +
-		"Otherwise, please use a more current key algorithm. If left unspecified, `CERT_TYPE_ED25519_01` is used by default."
+	SSHCertificateType               = fmt.Sprintf("The SSH certificate type used by access requests. Options include: [%s]. `%s` is a deprecated key algorithm type. "+
+		"This option should only be used to connect to legacy systems that cannot use newer SSH versions. If you do need to use `%s`, it is recommended to connect via a gateway with traffic forwarding. "+
+		"Otherwise, please use a more current key algorithm. If left unspecified, `%s` is used by default.", typed_strings.SSHCertTypeListFormat(), typed_strings.CertTypeRsa, typed_strings.CertTypeRsa, typed_strings.CertTypeEd25519)
 	SSHSessionRecording = "If 'true', enables ssh recording on server access requests."
 	Status              = "The status of the ASA User. Valid statuses are `ACTIVE`, `DISABLED`, and `DELETED`."
 	TeamName            = "The human-readable name of the ASA Team that owns the resource. Values are lower-case."
