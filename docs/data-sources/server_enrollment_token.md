@@ -3,12 +3,12 @@
 page_title: "oktapam_server_enrollment_token Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a previously created ASA Server Enrollment Token associated with a specifica ASA Project. For details, see Enroll a server https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm.
+  Returns a previously created ASA Server Enrollment Token associated with a specific ASA Project. For details, see Enroll a server https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm.
 ---
 
 # oktapam_server_enrollment_token (Data Source)
 
-Returns a previously created ASA Server Enrollment Token associated with a specifica ASA Project. For details, see [Enroll a server](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm).
+Returns a previously created ASA Server Enrollment Token associated with a specific ASA Project. For details, see [Enroll a server](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm).
 
 
 
