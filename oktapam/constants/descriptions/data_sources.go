@@ -7,7 +7,7 @@ var (
 
 	// Fetch
 	SourceGatewaySetupToken     = fmt.Sprintf("Returns a previously created ASA Gateway Setup Token associated with the ASA Team specified in the OKTAPAM_TEAM environment variable. %s", LinkGatewaySetupToken)
-	SourceServerEnrollmentToken = fmt.Sprintf("Returns a previously created ASA Server Enrollment Token associated with a specifica ASA Project. %s", LinkServerEnrollmentToken)
+	SourceServerEnrollmentToken = fmt.Sprintf("Returns a previously created ASA Server Enrollment Token associated with a specific ASA Project. %s", LinkServerEnrollmentToken)
 
 	// List
 	SourceGatewaySetupTokens     = fmt.Sprintf("Returns a list of ASA Gateway Setup Token IDs associated with the ASA Team specified in the OKTAPAM_TEAM environment variable. %s", LinkGatewaySetupToken)
