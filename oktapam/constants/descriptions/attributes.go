@@ -35,7 +35,7 @@ var (
 	ClusterSelector                  = "A label selector to used to match Kubernetes clusters."
 	CreateServerGroup                = "If `true`, 'sftd' (ASA Server Agent) creates a corresponding local (unix or windows) group in the ASA Project's servers."
 	CreateServerUsers                = "If `true`, 'sftd' (ASA Server Agent) creates corresponding local (unix or windows) user accounts in the ASA Project's servers."
-	CreatedAt                        = "The UTC time of resource deletion. Format is '2022-01-01 00:00:00 +0000 UTC'."
+	CreatedAt                        = "The UTC time when the resource was created. Format is '2022-01-01 00:00:00 +0000 UTC'."
 	CreatedByUser                    = "The ASA User that created the resource."
 	CSRDetails                       = "Certificate Signing Request (CSR) Details."
 	DefaultAddress                   = "Default address of the gateway."
