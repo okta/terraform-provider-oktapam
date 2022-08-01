@@ -20,7 +20,7 @@ Settings for Active Directory (AD) task for server discovery. For more informati
 - `connection_id` (String) UUID of the AD Connection with which this AD Task Settings is associated.
 - `frequency` (Number) Frequency of the AD Task
 - `host_name_attribute` (String) AD Attribute mapped to hostname used to identify a discovered server within Advanced Server Access.
-- `is_active` (Boolean) If 'true', enables AD task
+- `is_active` (Boolean) If `true`, enables AD task
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
 - `os_attribute` (String) AD Attribute mapped to server operating system of a discovered server.
 - `rule_assignments` (Block Set, Min: 1) Assignment rules determine how servers are synced from Active Directory (AD) and assigned to projects. (see [below for nested schema](#nestedblock--rule_assignments))
@@ -31,7 +31,7 @@ Settings for Active Directory (AD) task for server discovery. For more informati
 - `additional_attribute_mapping` (Block Set, Max: 10) Additional AD attributes mappings to Advanced Server Access labels. (see [below for nested schema](#nestedblock--additional_attribute_mapping))
 - `alt_names_attributes` (Set of String) AD Attribute mapped to alternative hostnames or DNS entries used to resolve a discovered server.
 - `bastion_attribute` (String) AD Attribute mapped to bastion host that Advanced Server Access clients can use to tunnel traffic to a discovered server.
-- `run_test` (Boolean) If 'true', test is performed based on specified AD Task Settings
+- `run_test` (Boolean) If `true`, test is performed based on specified AD Task Settings
 - `start_hour_utc` (Number) If AD task is scheduled to run daily, then specify start hour in UTC
 
 ### Read-Only

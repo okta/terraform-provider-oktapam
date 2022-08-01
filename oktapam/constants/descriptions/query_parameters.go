@@ -15,9 +15,9 @@ var (
 	FilterIncludeRemoved         = "If 'true', the results include removed resources."
 	FilterProjectName            = "If a value is provided, the results are filtered to only contain resources belonging to the ASA Project."
 	FilterSelf                   = "If 'true', only lists the ASA Projects that the ASA User making this request has been assigned."
-	FilterGatewayID              = "If 'true', the results only include the connections which has the same gateway id."
-	FilterCertificateID          = "If 'true', the results only include the connections which has the same certificate id."
-	FilterIncludeCertDetails     = "If 'true', the results include the certificate details "
+	FilterGatewayID              = "If 'true', only connections with a matching gateway ID are returned."
+	FilterCertificateID          = "If 'true', only connections with a matching certificate ID are returned."
+	FilterIncludeCertDetails     = "If 'true', results also include certificate details "
 	FilterStartsWith             = "If a value is provided, includes ASA Users with name that begins with the value."
 	FilterStatus                 = "If a value is provided, includes ASA Users with specified statuses. Valid statuses include: `ACTIVE`, `DISABLED`, and `DELETED`."
 

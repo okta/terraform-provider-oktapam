@@ -16,7 +16,7 @@ var (
 	// Features In Progress
 
 	// Fetch
-	SourceADConnections = "Returns a list of ASA AD Connections, corresponding to an ASA Team."
+	SourceADConnections = "A list of ASA AD Connections associated with an ASA Team."
 	SourceGateways      = fmt.Sprintf("Returns a list of ASA Gateways, corresponding to an ASA Team. %s", LinkGateway)
 	SourceGroup         = fmt.Sprintf("Returns a previously created ASA Group. %s", LinkGroup)
 	SourceProject       = fmt.Sprintf("Returns a previously created ASA Project. %s", LinkProject)

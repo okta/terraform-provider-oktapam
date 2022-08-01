@@ -22,15 +22,15 @@ Assigns an ASA Group to a Project and configures how that group is created on se
 
 ### Optional
 
-- `create_server_group` (Boolean) If 'true', `sftd` (ASA Server Agent) creates a corresponding local (unix or windows) group in the ASA Project's servers.
-- `server_access` (Boolean) If 'true', members of this ASA Group have access to the ASA Project servers.
-- `server_admin` (Boolean) If 'true', members of ASA Group have sudo permissions on ASA Project servers.
+- `create_server_group` (Boolean) If `true`, 'sftd' (ASA Server Agent) creates a corresponding local (unix or windows) group in the ASA Project's servers.
+- `server_access` (Boolean) If `true`, members of this ASA Group have access to the ASA Project servers.
+- `server_admin` (Boolean) If `true`, members of ASA Group have sudo permissions on ASA Project servers.
 - `servers_selector` (Map of String) Enables access to ASA Servers with labels matching all selectors. Only available to customers that have the Early Access Policy Sync feature enabled on their team.
 
 ### Read-Only
 
-- `deleted_at` (String) The UTC time of resource creation. Format is `2022-01-01 00:00:00 +0000 UTC`.
+- `deleted_at` (String) The UTC time of resource creation. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `id` (String) The ID of this resource.
-- `removed_at` (String) UTC time of resource removal from parent resource. Format is `2022-01-01 00:00:00 +0000 UTC`.
+- `removed_at` (String) UTC time of resource removal from parent resource. Format is '2022-01-01 00:00:00 +0000 UTC'.
 
 

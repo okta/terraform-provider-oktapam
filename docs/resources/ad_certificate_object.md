@@ -22,7 +22,7 @@ Upload the Enterprise Signed certificate to ASA. For more information check out 
 
 ### Read-Only
 
-- `enterprise_signed` (Boolean) If 'true', certificate is signed by AD Certificate Services.
+- `enterprise_signed` (Boolean) If `true`, certificate is signed by AD Certificate Services.
 - `id` (String) The ID of this resource.
 - `status` (String) Certificate status - Valid/Request Created.
 
