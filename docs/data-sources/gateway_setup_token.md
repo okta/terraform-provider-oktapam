@@ -3,12 +3,12 @@
 page_title: "oktapam_gateway_setup_token Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a previously created ASA Gateway Setup Token. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm on how ASA Gateway enrollment and how enrollment tokens are used.
+  Returns a previously created ASA Gateway Setup Token associated with the ASA Team specified in the OKTAPAMTEAM environment variable. For details, see [Configure an Advanced Server Access gateway](https://help.okta.com/asa/en-us/Content/Topics/AdvServer_Access/docs/gateway-configure.htm).
 ---
 
 # oktapam_gateway_setup_token (Data Source)
 
-Returns a previously created ASA Gateway Setup Token. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm) on how ASA Gateway enrollment and how enrollment tokens are used.
+Returns a previously created ASA Gateway Setup Token associated with the ASA Team specified in the OKTAPAM_TEAM environment variable. For details, see [Configure an Advanced Server Access gateway](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm).
 
 
 
@@ -17,7 +17,7 @@ Returns a previously created ASA Gateway Setup Token. For more information check
 
 ### Read-Only
 
-- `created_at` (String) The UTC time of resource deletion. Format is '2022-01-01 00:00:00 +0000 UTC'.
+- `created_at` (String) The UTC time when the resource was created. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `description` (String) The human-readable description of the resource.
 - `id` (String) The ID of this resource.
 - `labels` (Map of String) A map of key-value pairings that define access to the ASA Gateway.
