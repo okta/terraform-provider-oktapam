@@ -29,7 +29,7 @@ Assigns an ASA Group to a Project and configures how that group is created on se
 
 ### Read-Only
 
-- `deleted_at` (String) The UTC time of resource creation. Format is '2022-01-01 00:00:00 +0000 UTC'.
+- `deleted_at` (String) The UTC time of resource deletion. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `id` (String) The ID of this resource.
 - `removed_at` (String) UTC time of resource removal from parent resource. Format is '2022-01-01 00:00:00 +0000 UTC'.
 

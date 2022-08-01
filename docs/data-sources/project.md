@@ -22,7 +22,7 @@ Returns a previously created ASA Project. For details, [Projects](https://help.o
 ### Read-Only
 
 - `create_server_users` (Boolean) If `true`, 'sftd' (ASA Server Agent) creates corresponding local (unix or windows) user accounts in the ASA Project's servers.
-- `deleted_at` (String) The UTC time of resource creation. Format is '2022-01-01 00:00:00 +0000 UTC'.
+- `deleted_at` (String) The UTC time of resource deletion. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `forward_traffic` (Boolean) If `true`, all traffic in the ASA Project be forwarded through selected ASA Gateways.
 - `gateway_selector` (String) Assigns ASA Gateways with labels matching all selectors. At least one selector is required for traffic forwarding.
 - `id` (String) The ID of this resource.
