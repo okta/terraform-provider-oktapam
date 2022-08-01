@@ -4,7 +4,7 @@ import "fmt"
 
 var (
 	// Query Parameter Descriptions
-	FilterContains               = "If a value is provided, the results are filtered to only contain resources whose name contains that value."
+	FilterContains               = "If a value is provided, the results are filtered to only contain resources that contain the value in the name field."
 	FilterCreateServerGroup      = "If 'true', the results only include the ASA Project Groups that have 'create_server_group' field set to 'true'."
 	FilterDescriptionContains    = "If a value is provided, the results are filtered to only contain resources whose name contains that value."
 	FilterDisconnectedModeOnOnly = fmt.Sprintf("If 'true', the results only include resources with disconnected mode enabled. %s", WarningBetaDisconnectMode)

@@ -17,7 +17,7 @@ Returns a list of ASA Projects. For more information check out the [documentatio
 
 ### Optional
 
-- `contains` (String) If a value is provided, the results are filtered to only contain resources whose name contains that value.
+- `contains` (String) If a value is provided, the results are filtered to only contain resources that contain the value in the name field.
 - `self` (Boolean) If 'true', only lists the ASA Projects that the ASA User making this request has been assigned.
 
 ### Read-Only
