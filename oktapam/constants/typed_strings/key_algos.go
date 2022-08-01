@@ -23,12 +23,12 @@ func (certType SSHCertificateType) String() string {
 
 // Valid Key Algorithms
 var ValidCertTypes = []string{
+	CertTypeEd25519,
 	CertTypeEcdsa521,
 	CertTypeEcdsa384,
 	CertTypeEcdsa256,
-	CertTypeEd25519,
-	CertTypeRsa512,
-	CertTypeRsa256,
+	// CertTypeRsa512,
+	// CertTypeRsa256,
 	CertTypeRsa,
 }
 
