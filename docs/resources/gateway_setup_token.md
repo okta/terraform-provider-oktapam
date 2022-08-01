@@ -3,12 +3,12 @@
 page_title: "oktapam_gateway_setup_token Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A token for ASA Gateway enrollment. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm on how ASA Gateway enrollment and how enrollment tokens are used.
+  A token for ASA Gateway enrollment. For details, see Configure an Advanced Server Access gateway https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm.
 ---
 
 # oktapam_gateway_setup_token (Resource)
 
-A token for ASA Gateway enrollment. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm) on how ASA Gateway enrollment and how enrollment tokens are used.
+A token for ASA Gateway enrollment. For details, see [Configure an Advanced Server Access gateway](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm).
 
 
 
@@ -22,7 +22,7 @@ A token for ASA Gateway enrollment. For more information check out the [document
 
 ### Read-Only
 
-- `created_at` (String) The UTC time of resource deletion. Format is `2022-01-01 00:00:00 +0000 UTC`.
+- `created_at` (String) The UTC time when the resource was created. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `id` (String) The ID of this resource.
 - `token` (String) The secret used for resource enrollment.
 

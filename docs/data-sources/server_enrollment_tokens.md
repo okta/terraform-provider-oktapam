@@ -3,12 +3,12 @@
 page_title: "oktapam_server_enrollment_tokens Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A list of tokens for ASA Server enrollment, corresponding to an ASA Project. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm on ASA Server enrollment and how enrollment tokens are used.
+  A list of all ASA Server Enrollment Tokens associated with a specific ASA Project. For details, see Enroll a server https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm.
 ---
 
 # oktapam_server_enrollment_tokens (Data Source)
 
-A list of tokens for ASA Server enrollment, corresponding to an ASA Project. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm) on ASA Server enrollment and how enrollment tokens are used.
+A list of all ASA Server Enrollment Tokens associated with a specific ASA Project. For details, see [Enroll a server](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm).
 
 
 
@@ -17,7 +17,7 @@ A list of tokens for ASA Server enrollment, corresponding to an ASA Project. For
 
 ### Required
 
-- `project_name` (String) If a value is provided, the results are filtered to only contain resources belonging to the ASA Project.
+- `project_name` (String) The name of an ASA Project. Results are returned for only this Project. Values are case-sensitive.
 
 ### Read-Only
 

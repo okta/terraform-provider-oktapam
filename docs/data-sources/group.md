@@ -3,12 +3,12 @@
 page_title: "oktapam_group Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a previously created ASA Group. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm on ASA Groups.
+  Returns a previously created ASA Group. For details, see Groups https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm.
 ---
 
 # oktapam_group (Data Source)
 
-Returns a previously created ASA Group. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm) on ASA Groups.
+Returns a previously created ASA Group. For details, see [Groups](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm).
 
 
 
@@ -21,8 +21,8 @@ Returns a previously created ASA Group. For more information check out the [docu
 
 ### Read-Only
 
-- `deleted_at` (String) The UTC time of resource creation. Format is `2022-01-01 00:00:00 +0000 UTC`.
+- `deleted_at` (String) The UTC time of resource deletion. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `id` (String) The ID of this resource.
-- `roles` (Set of String) A list of roles for the ASA Group. Options are `access_user`, `access_admin`, and `reporting_user`.
+- `roles` (Set of String) A list of roles for the ASA Group. Options are 'access_user', 'access_admin', and 'reporting_user'.
 
 
