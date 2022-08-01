@@ -17,7 +17,7 @@ Returns a list of ASA Groups. For more information check out the [documentation]
 
 ### Optional
 
-- `contains` (String) If a value is provided, the results are filtered to only contain resources whose name contains that value.
+- `contains` (String) If a value is provided, the results are filtered to only contain resources that contain the value in the name field.
 - `disconnected_mode_on_only` (Boolean) If 'true', the results only include resources with disconnected mode enabled. NOTE: This is only available if the ASA Team has the Disconnected Mode Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
 - `include_deleted` (Boolean) If 'true', the results include deleted resources.
 - `only_include_deleted` (Boolean) If 'true', the results only include deleted resources.
