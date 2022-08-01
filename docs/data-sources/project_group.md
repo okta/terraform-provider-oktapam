@@ -3,12 +3,12 @@
 page_title: "oktapam_project_group Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of ASA Project Groups, corespondibng to an ASA Project. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm on assigning ASA Groups to Projects.
+  A list of ASA Project Groups associated with an ASA Project. For details, see Add a Group to a Project https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm.
 ---
 
 # oktapam_project_group (Data Source)
 
-Returns a list of ASA Project Groups, corespondibng to an ASA Project. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm) on assigning ASA Groups to Projects.
+A list of ASA Project Groups associated with an ASA Project. For details, see [Add a Group to a Project](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm).
 
 
 
@@ -17,20 +17,20 @@ Returns a list of ASA Project Groups, corespondibng to an ASA Project. For more 
 
 ### Required
 
-- `project_name` (String) If a value is provided, the results are filtered to only contain resources belonging to the ASA Project.
+- `project_name` (String) The name of an ASA Project. Results are returned for only this Project. Values are case-sensitive.
 
 ### Optional
 
-- `create_server_group` (Boolean) If 'true', the results only include the ASA Project Groups that have 'create_server_group' field set to 'true'.
-- `disconnected_mode_on_only` (Boolean) If 'true', the results only include resources with disconnected mode enabled. NOTE: This is only available if the ASA Team has the Disconnected Mode Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
-- `has_no_selectors` (Boolean) If 'true', the results only include resources with empty label selectors. NOTE: This is only available if the ASA Team has the Early Access PolicySync feature enabled.
-- `has_selectors` (Boolean) If 'true', the results only include resources with label selectors set. NOTE: This is only available if the ASA Team has the Early Access PolicySync feature enabled.
-- `include_removed` (Boolean) If 'true', the results include removed resources.
+- `create_server_group` (Boolean) If `true`, results only include ASA Project Groups that have 'create_server_group' option set to `true`.
+- `disconnected_mode_on_only` (Boolean) If `true`, the results only include resources with disconnected mode enabled. NOTE: This is only available if the ASA Team has the Disconnected Mode Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
+- `has_no_selectors` (Boolean) If `true`, the results only include resources with empty label selectors. NOTE: This is only available if the ASA Team has the Early Access PolicySync feature enabled.
+- `has_selectors` (Boolean) If `true`, the results only include resources with label selectors set. NOTE: This is only available if the ASA Team has the Early Access PolicySync feature enabled.
+- `include_removed` (Boolean) If `true`, the results also include resources that were previously removed.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `project_groups` (List of Object) Returns a list of ASA Project Groups, corespondibng to an ASA Project. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm) on assigning ASA Groups to Projects. (see [below for nested schema](#nestedatt--project_groups))
+- `project_groups` (List of Object) A list of ASA Project Groups associated with an ASA Project. For details, see [Add a Group to a Project](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm). (see [below for nested schema](#nestedatt--project_groups))
 
 <a id="nestedatt--project_groups"></a>
 ### Nested Schema for `project_groups`

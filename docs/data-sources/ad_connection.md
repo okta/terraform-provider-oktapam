@@ -17,9 +17,9 @@ A list of ASA AD Connections associated with an ASA Team.
 
 ### Optional
 
-- `certificate_id` (String) If 'true', only connections with a matching certificate ID are returned.
-- `gateway_id` (String) If 'true', only connections with a matching gateway ID are returned.
-- `include_cert_details` (Boolean) If 'true', results also include certificate details
+- `certificate_id` (String) If `true`, only connections with a matching certificate ID are returned.
+- `gateway_id` (String) If `true`, only connections with a matching gateway ID are returned.
+- `include_cert_details` (Boolean) If `true`, results also include certificate details
 
 ### Read-Only
 
