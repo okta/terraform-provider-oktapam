@@ -25,7 +25,6 @@ func resourceKubernetesClusterConnection() *schema.Resource {
 			},
 			attributes.ClusterID: {
 				Type:        schema.TypeString,
-				Computed:    false,
 				Required:    true,
 				ForceNew:    true,
 				Description: descriptions.KubernetesClusterID,

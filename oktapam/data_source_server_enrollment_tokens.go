@@ -20,7 +20,6 @@ func dataSourceServerEnrollmentTokens() *schema.Resource {
 			attributes.ProjectName: {
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 				Description: descriptions.FilterProjectName,
 			},
 			// Return value

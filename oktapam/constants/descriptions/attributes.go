@@ -48,7 +48,6 @@ var (
 	ForwardTraffic                   = "If 'true', all traffic in the ASA Project be forwarded through selected ASA Gateways."
 	GatewayID                        = "The UUID of the Gateway with which this AD Connection is associated."
 	GatewaySelector                  = "Assigns ASA Gateways with labels matching all selectors. At least one selector is required for traffic forwarding."
-	GroupID                          = "The ID corresponding to a ASA Group."
 	GroupName                        = "The human-readable name of the ASA Group. Values are case-sensitive."
 	HostnameAttribute                = "AD Attribute mapped to hostname used to identify a discovered server within Advanced Server Access."
 	IssuedAt                         = "The UTC issuance time of the resource. Format is `2022-01-01 00:00:00 +0000 UTC`."

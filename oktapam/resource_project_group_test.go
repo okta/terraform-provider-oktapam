@@ -108,7 +108,6 @@ func testAccProjectGroupCheckExists(rn string, expectedProjectGroup client.Proje
 		} else if projectGroup == nil {
 			return fmt.Errorf("project group does not exist")
 		}
-		expectedProjectGroup.GroupID = projectGroup.GroupID
 
 		comparison := pretty.Compare(expectedProjectGroup, projectGroup)
 		if comparison != "" {
