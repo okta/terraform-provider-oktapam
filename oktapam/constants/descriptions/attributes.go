@@ -39,7 +39,7 @@ var (
 	CreatedByUser                    = "The ASA User that created the resource."
 	CSRDetails                       = "Certificate Signing Request (CSR) Details."
 	DefaultAddress                   = "Default address of the gateway."
-	DeletedAt                        = "The UTC time of resource creation. Format is '2022-01-01 00:00:00 +0000 UTC'."
+	DeletedAt                        = "The UTC time of resource deletion. Format is '2022-01-01 00:00:00 +0000 UTC'."
 	Description                      = "The human-readable description of the resource."
 	DescriptionContains              = "If a value is provided, the results are filtered to only contain resources whose description contains that value."
 	Domain                           = "The domain against which to query."
