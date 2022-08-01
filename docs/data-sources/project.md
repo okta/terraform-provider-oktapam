@@ -3,12 +3,12 @@
 page_title: "oktapam_project Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a previously created ASA Project. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/projects.htm on ASA Projects.
+  Returns a previously created ASA Project. For details, Projects https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/projects.htm.
 ---
 
 # oktapam_project (Data Source)
 
-Returns a previously created ASA Project. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/projects.htm) on ASA Projects.
+Returns a previously created ASA Project. For details, [Projects](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/projects.htm).
 
 
 
