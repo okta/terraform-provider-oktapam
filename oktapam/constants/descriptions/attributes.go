@@ -51,7 +51,7 @@ var (
 	GroupID                          = "The ID corresponding to a ASA Group."
 	GroupName                        = "The human-readable name of the ASA Group. Values are case-sensitive."
 	HostnameAttribute                = "AD Attribute mapped to hostname used to identify a discovered server within Advanced Server Access."
-	IssuedAt                         = "The UTC issuance time of the resource. Format is '2022-01-01 00:00:00 +0000 UTC'."
+	IssuedAt                         = "The UTC time when the token was issued. Format is '2022-01-01 00:00:00 +0000 UTC'."
 	KubernetesAuthMechanism          = "Mechanism to provide auth details to your Kubernetes cluster (eg. OIDC_RSA2048, NONE)"
 	KubernetesAPIURL                 = "The URL to access the control plane of the Kubernetes cluster."
 	KubernetesClusterID              = "The ASA ID of a Kubernetes cluster."
