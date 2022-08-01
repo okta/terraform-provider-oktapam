@@ -10,8 +10,8 @@ var (
 	FilterDisconnectedModeOnOnly = fmt.Sprintf("If 'true', the results only include resources with disconnected mode enabled. %s", WarningBetaDisconnectMode)
 	FilterHasNoSelectors         = fmt.Sprintf("If 'true', the results only include resources with empty label selectors. %s", WarningEarlyAccessPolicySync)
 	FilterHasSelectors           = fmt.Sprintf("If 'true', the results only include resources with label selectors set. %s", WarningEarlyAccessPolicySync)
-	FilterIncludeDeleted         = "If 'true', the results include deleted resources."
-	FilterOnlyIncludeDeleted     = "If 'true', the results only include deleted resources."
+	FilterIncludeDeleted         = "If 'true', results also include deleted resources."
+	FilterOnlyIncludeDeleted     = "If 'true', results only include deleted resources."
 	FilterIncludeRemoved         = "If 'true', the results include removed resources."
 	FilterProjectName            = "If a value is provided, the results are filtered to only contain resources belonging to the ASA Project."
 	FilterSelf                   = "If 'true', only lists the ASA Projects that the ASA User making this request has been assigned."

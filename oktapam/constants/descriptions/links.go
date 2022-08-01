@@ -7,7 +7,7 @@ const (
 	LinkADServerDiscovery     = "For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm) on AD server discovery."
 	LinkGateway               = "For details, see [Advanced Access Server Gateways](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateways-and-bastions.htm) on ASA Gateways and bastions."
 	LinkGatewaySetupToken     = "For details, see [Configure an Advanced Server Access gateway](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm)."
-	LinkGroup                 = "For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm) on ASA Groups."
+	LinkGroup                 = "For details, see [Groups](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm)."
 	LinkProject               = "For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/projects.htm) on ASA Projects."
 	LinkProjectGroup          = "For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm) on assigning ASA Groups to Projects."
 	LinkServerEnrollmentToken = "For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm) on ASA Server enrollment and how enrollment tokens are used."

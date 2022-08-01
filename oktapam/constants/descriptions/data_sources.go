@@ -23,7 +23,7 @@ var (
 	SourceProjectGroup  = fmt.Sprintf("Returns a previously created ASA Group assigned to a given ASA Project. %s", LinkProjectGroup)
 
 	// List
-	SourceGroups        = fmt.Sprintf("Returns a list of ASA Groups. %s", LinkGroup)
-	SourceProjects      = fmt.Sprintf("Returns a list of ASA Projects. %s", LinkProject)
+	SourceGroups        = fmt.Sprintf("Returns a list of all ASA Groups associated with the ASA Team specified in the OKTAPAM_TEAM environment variable. %s", LinkGroup)
+	SourceProjects      = fmt.Sprintf("Returns a list of ASA Projects associated with the ASA Team specified in the OKTAPAM_TEAM environment variable. %s", LinkProject)
 	SourceProjectGroups = fmt.Sprintf("Returns a list of ASA Project Groups, corespondibng to an ASA Project. %s", LinkProjectGroup)
 )
