@@ -88,3 +88,7 @@ Releasing the Provider
 2. Add last version to `tag-checks.yml`.
 3. Merge and make tag corresponding to the new version.
 4. Make release corresponding to new tag.
+
+Warnings
+--------------------------
+- In the `oktapam_project` resource the public key algorithm for certificate signing and validation can be set. By default, projects use the `ssh-ed25519` algorithm, but admins can configure the project to use the `ssh-rsa` to support legacy servers. `ssh-rsa` has been [deprecated by OpenSSH](https://www.openssh.com/txt/release-8.3) and should not be used, if possible.
