@@ -36,12 +36,12 @@ func TestAccDatasourceADConnections(t *testing.T) {
 }
 
 const testAccDatasourceADConnectionsConfigFormat = `
-data oktapam_gateway "gateways" {
+data "oktapam_gateways" "gateways" {
 }
 
 resource "oktapam_ad_connection" "test_acc_ad_connection_1" {
 	 name                     = "%[1]s"
-	 gateway_id               = data.oktapam_gateway.gateways.gateways[0].id
+	 gateway_id               = data.oktapam_gateways.gateways.gateways[0].id
 	 domain                   = "testacc.example.com"
 	 service_account_username = "user@testacc.example.com"
 	 service_account_password = "password"
@@ -49,7 +49,7 @@ resource "oktapam_ad_connection" "test_acc_ad_connection_1" {
 }
 
 data "oktapam_ad_connections" "test_acc_datasource_ad_connections_1" {
-    gateway_id = data.oktapam_gateway.gateways.gateways[0].id
+    gateway_id = data.oktapam_gateways.gateways.gateways[0].id
     depends_on = [oktapam_ad_connection.test_acc_ad_connection_1]
 }
 `

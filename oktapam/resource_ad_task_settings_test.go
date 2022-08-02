@@ -135,12 +135,12 @@ func testAccADTaskCheckDestroy(adConnectionResourceName string, adTaskSettingsRe
 const testAccADTaskPreConfigFormat = `
 
 # Query pre-existing gateway. It doesn't matter for acceptance testing if gateway is enabled for RDP.
-data oktapam_gateway "gateways" {
+data "oktapam_gateways" "gateways" {
 }
 
 resource "oktapam_ad_connection" "test_acc_ad_connection" {
 name                     = "%[1]s"
-gateway_id               = data.oktapam_gateway.gateways.gateways[0].id
+gateway_id               = data.oktapam_gateways.gateways.gateways[0].id
 domain                   = "example.com"
 service_account_username = "user@test.com"
 service_account_password = "password"

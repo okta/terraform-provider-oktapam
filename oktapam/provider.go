@@ -26,7 +26,7 @@ const (
 	providerADConnectionKey                = "oktapam_ad_connection"
 	providerADConnectionsKey               = "oktapam_ad_connections"
 	providerADTaskSettingsKey              = "oktapam_ad_task_settings"
-	providerGatewayKey                     = "oktapam_gateway"
+	providerGatewaysKey                    = "oktapam_gateways"
 	providerGatewaySetupTokenKey           = "oktapam_gateway_setup_token"
 	providerGatewaySetupTokensKey          = "oktapam_gateway_setup_tokens"
 	providerGroupKey                       = "oktapam_group"
@@ -86,7 +86,7 @@ func Provider() *schema.Provider {
 
 		DataSourcesMap: map[string]*schema.Resource{
 			providerADConnectionsKey:          dataSourceADConnections(),
-			providerGatewayKey:                dataSourceGateways(),
+			providerGatewaysKey:               dataSourceGateways(),
 			providerGatewaySetupTokenKey:      dataSourceGatewaySetupToken(),
 			providerGatewaySetupTokensKey:     dataSourceGatewaySetupTokens(),
 			providerGroupKey:                  dataSourceGroups(),

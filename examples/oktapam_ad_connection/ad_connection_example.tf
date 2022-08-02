@@ -13,14 +13,14 @@ resource "oktapam_project" "test-project" {
 }
 
 # Creating gateway is not supported. Get the gateway id using datasource
-data "oktapam_gateway" "gateway-list" {
+data "oktapam_gateways" "gateway-list" {
   contains = "ubuntu" # Filter gateway that contains given name
 }
 
 # Create active Directory Connection
 resource "oktapam_ad_connection" "test-ad-connection" {
   name                     = "test-ad-connection"
-  gateway_id               = data.oktapam_gateway.gateways.gateways[0].id
+  gateway_id               = data.oktapam_gateways.gateway-list.gateways[0].id
   domain                   = "dev-test.test.com"
   service_account_username = "ldap@dev-test"
   service_account_password = "secret"
