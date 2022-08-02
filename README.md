@@ -85,6 +85,6 @@ $ make testacc
 Releasing the Provider
 ---------------------------
 1. Bump version in `Makefile`.
-2. Add version to `tag-checks.yml`.
+2. Add last version to `tag-checks.yml`.
 3. Merge and make tag corresponding to the new version.
 4. Make release corresponding to new tag.
