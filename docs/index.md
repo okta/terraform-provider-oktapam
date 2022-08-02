@@ -17,6 +17,8 @@ The Okta PAM Terraform Provider is used to interact with Okta's Advanced Server 
 
 Additionally, this provider adds support for Beta features. Users should not use resources marked as 'Beta' in production environments and before confirming that the Beta feature has been enabled for your ASA team.
 
+Additionally, this provider adds support for specific Beta features. Users should not use resources marked as 'Beta' in production environments and before confirming that the Beta feature has been enabled for your ASA team.
+
 ## Authentication
 The Okta PAM Providers requires a Service User account that is granted the 'Admin' role be created. This Service User account will be used by the Provider to authenticate to ASA.
 

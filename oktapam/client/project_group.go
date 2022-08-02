@@ -18,7 +18,6 @@ import (
 type ProjectGroup struct {
 	Project           *string `json:"_"`
 	Group             *string `json:"group"`
-	GroupID           *string `json:"group_id,omitempty"`
 	DeletedAt         *string `json:"deleted_at,omitempty"`
 	RemovedAt         *string `json:"removed_at,omitempty"`
 	CreateServerGroup bool    `json:"create_server_group"`
@@ -39,8 +38,6 @@ func ProjectGroupFromMap(m map[string]interface{}) (*ProjectGroup, error) {
 			p.Project = utils.AsStringPtr(v.(string))
 		case attributes.GroupName:
 			p.Group = utils.AsStringPtr(v.(string))
-		case attributes.GroupID:
-			p.GroupID = utils.AsStringPtr(v.(string))
 		case attributes.DeletedAt:
 			p.DeletedAt = utils.AsStringPtr(v.(string))
 		case attributes.RemovedAt:
@@ -126,9 +123,6 @@ func (p *ProjectGroup) ToResourceMap() (map[string]interface{}, error) {
 	}
 	if p.Group != nil {
 		m[attributes.GroupName] = *p.Group
-	}
-	if p.GroupID != nil {
-		m[attributes.GroupID] = *p.GroupID
 	}
 	if p.DeletedAt != nil {
 		m[attributes.DeletedAt] = *p.DeletedAt

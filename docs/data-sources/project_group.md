@@ -3,12 +3,12 @@
 page_title: "oktapam_project_group Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A list of ASA Project Groups associated with an ASA Project. For details, see Add a Group to a Project https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm.
+  Returns a previously created ASA Group assigned to a given ASA Project. For details, see Add a Group to a Project https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm.
 ---
 
 # oktapam_project_group (Data Source)
 
-A list of ASA Project Groups associated with an ASA Project. For details, see [Add a Group to a Project](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm).
+Returns a previously created ASA Group assigned to a given ASA Project. For details, see [Add a Group to a Project](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm).
 
 
 
@@ -17,34 +17,17 @@ A list of ASA Project Groups associated with an ASA Project. For details, see [A
 
 ### Required
 
-- `project_name` (String) The name of an ASA Project. Results are returned for only this Project. Values are case-sensitive.
-
-### Optional
-
-- `create_server_group` (Boolean) If `true`, results only include ASA Project Groups that have 'create_server_group' option set to `true`.
-- `disconnected_mode_on_only` (Boolean) If `true`, the results only include resources with disconnected mode enabled. NOTE: This is only available if the ASA Team has the Disconnected Mode Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
-- `has_no_selectors` (Boolean) If `true`, the results only include resources with empty label selectors. NOTE: This is only available if the ASA Team has the Early Access PolicySync feature enabled.
-- `has_selectors` (Boolean) If `true`, the results only include resources with label selectors set. NOTE: This is only available if the ASA Team has the Early Access PolicySync feature enabled.
-- `include_removed` (Boolean) If `true`, the results also include resources that were previously removed.
+- `group_name` (String) The human-readable name of the ASA Group. Values are case-sensitive.
+- `project_name` (String) The human-readable name of the ASA Project. Values are case-sensitive.
 
 ### Read-Only
 
+- `create_server_group` (Boolean) If `true`, 'sftd' (ASA Server Agent) creates a corresponding local (unix or windows) group in the ASA Project's servers.
+- `deleted_at` (String) The UTC time of resource deletion. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `id` (String) The ID of this resource.
-- `project_groups` (List of Object) A list of ASA Project Groups associated with an ASA Project. For details, see [Add a Group to a Project](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm). (see [below for nested schema](#nestedatt--project_groups))
-
-<a id="nestedatt--project_groups"></a>
-### Nested Schema for `project_groups`
-
-Read-Only:
-
-- `create_server_group` (Boolean)
-- `deleted_at` (String)
-- `group_id` (String)
-- `group_name` (String)
-- `project_name` (String)
-- `removed_at` (String)
-- `server_access` (Boolean)
-- `server_admin` (Boolean)
-- `servers_selector` (Map of String)
+- `removed_at` (String) UTC time of resource removal from parent resource. Format is '2022-01-01 00:00:00 +0000 UTC'.
+- `server_access` (Boolean) If `true`, members of this ASA Group have access to the ASA Project servers.
+- `server_admin` (Boolean) If `true`, members of ASA Group have sudo permissions on ASA Project servers.
+- `servers_selector` (Map of String) Enables access to ASA Servers with labels matching all selectors. Only available to customers that have the Early Access Policy Sync feature enabled on their team.
 
 
