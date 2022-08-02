@@ -15,8 +15,6 @@ The Okta PAM Terraform Provider is used to interact with Okta's Advanced Server 
 - Adds support for configuring Active Directory connections for supporting AD Joined user authentication.
 - Data sources are now available for AD connections, Gateway Setup and Server Enrollment tokens and Projects/Project Groups.
 
-Additionally, this provider adds support for Beta features. Users should not use resources marked as 'Beta' in production environments and before confirming that the Beta feature has been enabled for your ASA team.
-
 Additionally, this provider adds support for specific Beta features. Users should not use resources marked as 'Beta' in production environments and before confirming that the Beta feature has been enabled for your ASA team.
 
 ## Authentication
