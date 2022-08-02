@@ -13,11 +13,13 @@ The Okta PAM Terraform Provider is used to interact with Okta's Advanced Server 
 - ASA Users can be assigned to ASA Groups.
 - Introduces support for Gateway Setup Tokens as a resource type, enabling Provider users to automate the creation and deployment of ASA Gateways.
 - Adds support for configuring Active Directory connections for supporting AD Joined user authentication.
+- Data sources are now available for AD connections, Gateway Setup and Server Enrollment tokens and Projects/Project Groups.
+
+Additionally, this provider adds support for Beta features. Users should not use resources marked as 'Beta' in production environments and before confirming that the Beta feature has been enabled for your ASA team.
 
 ## Authentication
 The Okta PAM Providers requires a Service User account that is granted the 'Admin' role be created. This Service User account will be used by the Provider to authenticate to ASA.
 
-Additionally, this provider adds support for specific Beta features. Users should not use resources marked as 'Beta' in production environments and before confirming that the Beta feature has been enabled for your ASA team.
 
 1) Follow the [guide](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/service-users.htm) to create a Service User account with Admin permissions
 - Use your ASA Team name (same team that the service account in step 1 resides in) as the value for the 'oktapam_team' value.
