@@ -3,8 +3,8 @@ terraform {
 
   required_providers {
     oktapam = {
-      version = ">=0.1.4"
-      source  = "okta.com/pam/oktapam"
+      version = ">=0.2.0"
+      source  = "okta/oktapam"
     }
     google = {
       source = "hashicorp/google"
