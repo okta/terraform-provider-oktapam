@@ -181,14 +181,10 @@ func resourceADTaskSettingsRead(ctx context.Context, d *schema.ResourceData, m i
 	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
-	logging.Debugf("Sachin: AD Task Settings resource id %s", d.Id())
 	adConnId, adTaskSettingsId, err := parseADTaskSettingsResourceID(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
 	}
-
-	logging.Debugf("Sachin: AD Task Settings id %s", adTaskSettingsId)
-	logging.Debugf("Sachin: AD connection id %s", adConnId)
 
 	adTaskSettings, err := c.GetADTaskSettings(ctx, adConnId, adTaskSettingsId)
 	if err != nil {
