@@ -1,6 +1,5 @@
 name: Tag Checks
 on:
-  push:
   schedule:
     # Run every day. Uses POSIX cron syntax: https://crontab.guru/#0_0_*/1
     - cron: "0 0 */1 * *"
