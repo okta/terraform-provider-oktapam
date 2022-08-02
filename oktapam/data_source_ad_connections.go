@@ -89,8 +89,6 @@ func dataSourceADConnections() *schema.Resource {
 }
 
 func dataSourceADConnectionsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var diags diag.Diagnostics
-
 	c := m.(client.OktaPAMClient)
 	parameters := client.ListADConnectionsParameters{}
 
@@ -123,5 +121,5 @@ func dataSourceADConnectionsRead(ctx context.Context, d *schema.ResourceData, m 
 	}
 
 	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
-	return diags
+	return nil
 }
