@@ -15,7 +15,7 @@ terraform {
 
 provider "google" {
     # Configuration options
-    project	= "asa-demo-316514"
+    project	= "asa-demo-project"
     region	= "us-central1"
     zone	= "us-central1-a"
 }
