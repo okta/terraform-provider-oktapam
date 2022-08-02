@@ -48,7 +48,6 @@ export OKTAPAM_API_HOST="https://my.testing.domain"
 export OKTAPAM_TRUSTED_DOMAIN_OVERRIDE="my.testing.domain"
 ```
 
-
 Developing the Provider
 ---------------------------
 To compile the provider, run `make build`. This will build the provider and put in the project directory
@@ -82,3 +81,10 @@ In order to run the full suite of Acceptance tests, run `make testacc`.
 ```sh
 $ make testacc
 ```
+
+Releasing the Provider
+---------------------------
+1. Bump version in `Makefile`.
+2. Add version to `tag-checks.yml`.
+3. Merge and make tag corresponding to the new version.
+4. Make release corresponding to new tag.

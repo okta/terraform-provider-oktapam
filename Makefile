@@ -3,7 +3,7 @@ NAMESPACE=pam
 NAME=oktapam
 BINARY=terraform-provider-${NAME}
 # On verion changes, update tag-checks.yml
-VERSION=0.1.5
+VERSION=0.2.1
 OS_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
 PLUGIN_DIR=~/.terraform.d/plugins
 
