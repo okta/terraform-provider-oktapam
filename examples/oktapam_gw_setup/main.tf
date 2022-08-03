@@ -3,8 +3,8 @@ terraform {
 
   required_providers {
     oktapam = {
-      version = ">=0.1.4"
-      source  = "okta.com/pam/oktapam"
+      version = ">=0.2.0"
+      source  = "okta/oktapam"
     }
     google = {
       source = "hashicorp/google"
@@ -15,7 +15,7 @@ terraform {
 
 provider "google" {
     # Configuration options
-    project	= "asa-demo-316514"
+    project	= "asa-demo-project"
     region	= "us-central1"
     zone	= "us-central1-a"
 }
