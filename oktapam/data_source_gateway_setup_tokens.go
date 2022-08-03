@@ -16,11 +16,13 @@ func dataSourceGatewaySetupTokens() *schema.Resource {
 		Description: descriptions.SourceGatewaySetupTokens,
 		ReadContext: dataSourceGatewaySetupTokensRead,
 		Schema: map[string]*schema.Schema{
+			// Query filter
 			attributes.DescriptionContains: {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: descriptions.FilterDescriptionContains,
 			},
+			// Return values
 			attributes.IDs: {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -47,7 +49,7 @@ func dataSourceGatewaySetupTokensRead(ctx context.Context, d *schema.ResourceDat
 	if err := d.Set(attributes.IDs, ids); err != nil {
 		return diag.FromErr(err)
 	}
-	// Gateway tokens correspond to Team
+
 	d.SetId(c.Team)
 	return nil
 }

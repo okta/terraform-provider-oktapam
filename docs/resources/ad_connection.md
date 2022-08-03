@@ -27,11 +27,11 @@ An Active Directory (AD) Connection to query AD Domain for available servers. Fo
 
 - `certificate_id` (String) Certificate ID used for password less access method.
 - `domain_controllers` (Set of String) A comma-separated list of the specific domain controller(s) that should be used to query the domain. Can be specified as a hostname or IP.
-- `use_passwordless` (Boolean) if 'true', Users will not need password to login.
+- `use_passwordless` (Boolean) if `true`, Users will not need password to login.
 
 ### Read-Only
 
-- `deleted_at` (String) The UTC time of resource creation. Format is `2022-01-01 00:00:00 +0000 UTC`.
+- `deleted_at` (String) The UTC time of resource deletion. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `id` (String) The ID of this resource.
 
 

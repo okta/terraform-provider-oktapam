@@ -38,7 +38,7 @@ type ADCertificateDetails struct {
 	Locality           *string `json:"locality,omitempty"`
 	Province           *string `json:"province,omitempty"`
 	Country            *string `json:"country,omitempty"`
-	TTLDays            *int64  `json:"ttl_days,omitempty"`
+	TTLDays            *int    `json:"ttl_days,omitempty"`
 }
 
 type UpdateADCertificateRequest struct {

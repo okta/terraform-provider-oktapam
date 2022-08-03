@@ -2,170 +2,99 @@ package oktapam
 
 import (
 	"context"
-	"strconv"
-	"time"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
+	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 )
 
-func dataSourceProjectGroups() *schema.Resource {
+func dataSourceProjectGroup() *schema.Resource {
 	return &schema.Resource{
-		Description: descriptions.SourceProjectGroups,
-		ReadContext: dataSourceProjectGroupsRead,
+		Description: descriptions.SourceProjectGroup,
+		ReadContext: dataSourceProjectGroupFetch,
 		Schema: map[string]*schema.Schema{
-			// Query parameter values
 			attributes.ProjectName: {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: descriptions.FilterProjectName,
+				Description: descriptions.ProjectName,
 			},
-			attributes.IncludeRemoved: {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Description: descriptions.FilterIncludeRemoved,
+			attributes.GroupName: {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: descriptions.GroupName,
+			},
+			attributes.DeletedAt: {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: descriptions.DeletedAt,
+			},
+			attributes.RemovedAt: {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: descriptions.RemovedAt,
 			},
 			attributes.CreateServerGroup: {
 				Type:        schema.TypeBool,
-				Optional:    true,
-				Description: descriptions.FilterCreateServerGroup,
-			},
-			attributes.HasSelectors: {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Description: descriptions.FilterHasSelectors,
-			},
-			attributes.HasNoSelectors: {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Description: descriptions.FilterHasNoSelectors,
-			},
-			attributes.DisconnectedModeOnOnly: {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Description: descriptions.FilterDisconnectedModeOnOnly,
-			},
-			// Return value
-			attributes.ProjectGroups: {
-				Type:        schema.TypeList,
 				Computed:    true,
-				Description: descriptions.SourceProjectGroups,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						attributes.ProjectName: {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: descriptions.ProjectName,
-						},
-						attributes.GroupName: {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: descriptions.GroupName,
-						},
-						attributes.GroupID: {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: descriptions.GroupID,
-						},
-						attributes.DeletedAt: {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: descriptions.DeletedAt,
-						},
-						attributes.RemovedAt: {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: descriptions.RemovedAt,
-						},
-						attributes.CreateServerGroup: {
-							Type:        schema.TypeBool,
-							Computed:    true,
-							Description: descriptions.CreateServerGroup,
-						},
-						attributes.ServerAccess: {
-							Type:        schema.TypeBool,
-							Computed:    true,
-							Description: descriptions.ServerAccess,
-						},
-						attributes.ServerAdmin: {
-							Type:        schema.TypeBool,
-							Computed:    true,
-							Description: descriptions.ServerAdmin,
-						},
-						attributes.ServersSelector: {
-							Type: schema.TypeMap,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-							Computed:    true,
-							Description: descriptions.ServersSelector,
-						},
-					},
+				Description: descriptions.CreateServerGroup,
+			},
+			attributes.ServerAccess: {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: descriptions.ServerAccess,
+			},
+			attributes.ServerAdmin: {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: descriptions.ServerAdmin,
+			},
+			attributes.ServersSelector: {
+				Type: schema.TypeMap,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
 				},
+				Computed:    true,
+				Description: descriptions.ServersSelector,
 			},
 		},
 	}
 }
 
-func dataSourceProjectGroupsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceProjectGroupFetch(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
+
+	group := d.Get(attributes.GroupName).(string)
+	if group == "" {
+		return diag.Errorf("%s cannot be blank", attributes.GroupName)
+	}
+
 	project := d.Get(attributes.ProjectName).(string)
 	if project == "" {
 		return diag.Errorf("%s cannot be blank", attributes.ProjectName)
 	}
-	parameters := client.ListProjectGroupsParameters{}
-	includeRemoved, err := getOkBool(attributes.IncludeRemoved, d)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	parameters.IncludeRemoved = includeRemoved
 
-	createServerGroup, err := getOkBool(attributes.CreateServerGroup, d)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	parameters.CreateServerGroup = createServerGroup
-
-	hasSelectors, err := getOkBool(attributes.HasSelectors, d)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	parameters.HasSelectors = hasSelectors
-
-	hasNoSelectors, err := getOkBool(attributes.HasNoSelectors, d)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	parameters.HasNoSelectors = hasNoSelectors
-
-	disconnectedModeOnOnly, err := getOkBool(attributes.DisconnectedModeOnOnly, d)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	parameters.DisconnectedModeOnOnly = disconnectedModeOnOnly
-
-	assignmentsList, err := c.ListProjectGroups(ctx, project, parameters)
+	projectGroup, err := c.GetProjectGroup(ctx, project, group)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	assignments := make([]map[string]interface{}, len(assignmentsList))
-	for idx, assignment := range assignmentsList {
-		m, err := assignment.ToResourceMap()
+	if projectGroup != nil {
+		d.SetId(createProjectGroupResourceID(*projectGroup.Project, *projectGroup.Group))
+		resourceMap, err := projectGroup.ToResourceMap()
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		assignments[idx] = m
+
+		for key, value := range resourceMap {
+			d.Set(key, value)
+		}
+	} else {
+		logging.Infof("project group belonging to project %s and group %s does not exist", *projectGroup.Project, *projectGroup.Group)
 	}
 
-	if err := d.Set(attributes.ProjectGroups, assignments); err != nil {
-		return diag.FromErr(err)
-	}
-
-	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
 	return nil
 }

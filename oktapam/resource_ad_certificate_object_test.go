@@ -1,16 +1,13 @@
 package oktapam
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
-	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 )
 
 const (
@@ -18,7 +15,7 @@ const (
 )
 
 func TestAccADCertificateObject(t *testing.T) {
-	certificateUploadResourceName := "oktapam_ad_certificate_object.test-upload-cert"
+	certificateUploadResourceName := "oktapam_ad_certificate_object.test_upload_cert"
 	csrDisplayName := fmt.Sprintf("test-acc-csr-%s", randSeq(10))
 
 	// Hashicorp TLS provider generate CA certificate and create signed certificate. It is added as external provider dependency
@@ -33,7 +30,7 @@ func TestAccADCertificateObject(t *testing.T) {
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
 		ExternalProviders: externalProviders,
-		CheckDestroy:      utils.CreateCheckResourceDestroy(providerADCertificateSigningRequestKey, adCertificateExists),
+		CheckDestroy:      utils.CreateCheckResourceDestroy(providerADCertificateRequestKey, adCertificateExists),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccADCertificateUploadConfig(csrDisplayName),
@@ -47,29 +44,30 @@ func TestAccADCertificateObject(t *testing.T) {
 }
 
 const testAccADCertificateUploadConfigFormat = `
-resource "oktapam_ad_certificate_signing_request" "test_csr" {
+resource "oktapam_ad_certificate_request" "test_csr" {
   display_name = "%s"
-  common_name = "testacc"
+  common_name  = "testacc"
+  type         = "certificate_signing_request"
   details {
-    organization = "test"
-    organizational_unit = "asa"
-    locality = "SF"
-    province = "CA"
-    country = "US"
+    organization        = "Okta"
+    organizational_unit = "Okta Unit"
+    locality            = "San Francisco"
+    province            = "CA"
+    country             = "US"
   }
 }
 
-resource "tls_private_key" "ca-private-key" {
+resource "tls_private_key" "ca_private_key" {
   algorithm   = "RSA"
   rsa_bits = "4096"
 }
 
-resource "tls_self_signed_cert" "ca-cert" {
-  private_key_pem = tls_private_key.ca-private-key.private_key_pem
+resource "tls_self_signed_cert" "ca_cert" {
+  private_key_pem = tls_private_key.ca_private_key.private_key_pem
 
   subject {
     common_name  = "example.com"
-    organization = "Acc Test"
+    organization = "Example, Inc"
   }
 
   validity_period_hours = 12
@@ -82,10 +80,10 @@ resource "tls_self_signed_cert" "ca-cert" {
   ]
 }
 
-resource "tls_locally_signed_cert" "signed-cert" {
-  cert_request_pem   = oktapam_ad_certificate_signing_request.test_csr.content
-  ca_private_key_pem = tls_private_key.ca-private-key.private_key_pem
-  ca_cert_pem        = tls_self_signed_cert.ca-cert.cert_pem
+resource "tls_locally_signed_cert" "signed_cert" {
+  cert_request_pem   = oktapam_ad_certificate_request.test_csr.content
+  ca_private_key_pem = tls_private_key.ca_private_key.private_key_pem
+  ca_cert_pem        = tls_self_signed_cert.ca_cert.cert_pem
 
   validity_period_hours = 12
   is_ca_certificate = true
@@ -97,20 +95,12 @@ resource "tls_locally_signed_cert" "signed-cert" {
   ]
 }
 
-resource "oktapam_ad_certificate_object" "test-upload-cert" {
-  certificate_id = oktapam_ad_certificate_signing_request.test_csr.id
-  source = tls_locally_signed_cert.signed-cert.cert_pem
+resource "oktapam_ad_certificate_object" "test_upload_cert" {
+  certificate_id = oktapam_ad_certificate_request.test_csr.id
+  source = tls_locally_signed_cert.signed_cert.cert_pem
 }
 `
 
 func createTestAccADCertificateUploadConfig(csrDisplayName string) string {
 	return fmt.Sprintf(testAccADCertificateUploadConfigFormat, csrDisplayName)
-}
-
-func adCertificateExists(id string) (bool, error) {
-	client := testAccProvider.Meta().(client.OktaPAMClient)
-	logging.Debugf("Checking if resource deleted %s", id)
-	adCertificate, err := client.GetADSmartcardCertificate(context.Background(), id)
-
-	return adCertificate != nil && adCertificate.Exists() && err == nil, err
 }

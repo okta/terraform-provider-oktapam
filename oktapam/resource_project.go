@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/typed_strings"
+
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -99,15 +101,15 @@ func resourceProject() *schema.Resource {
 					var diags diag.Diagnostics
 					s := i.(string)
 
-					valid := []string{"CERT_TYPE_RSA_01", "CERT_TYPE_RSA_SHA2_256_01", "CERT_TYPE_RSA_SHA2_512_01", "CERT_TYPE_ED25519_01"}
-
-					for _, v := range valid {
+					for _, v := range typed_strings.ValidCertTypes {
 						if v == s {
-							if s == "CERT_TYPE_RSA_01" {
+							if s == typed_strings.CertTypeRsa {
 								diag := diag.Diagnostic{
 									Severity: diag.Warning,
 									Summary:  "deprecated value",
-									Detail:   "CERT_TYPE_RSA_01 is a deprecated key algorithm type. This option should only be used to connect to legacy systems that cannot use newer SSH versions. If you do need to use CERT_TYPE_RSA_01, it is recommended to connect via a gateway with traffic forwarding. Otherwise, please use a more current key algorithm. ",
+									Detail: fmt.Sprintf("%s is a deprecated key algorithm type. This option should only be used to connect to legacy systems that cannot use newer SSH versions. "+
+										"If you do need to use %s, it is recommended to connect via a gateway with traffic forwarding. "+
+										"Otherwise, please use a more current key algorithm. ", typed_strings.CertTypeRsa, typed_strings.CertTypeRsa),
 								}
 								return append(diags, diag)
 							}
@@ -118,7 +120,7 @@ func resourceProject() *schema.Resource {
 					diag := diag.Diagnostic{
 						Severity: diag.Error,
 						Summary:  "invalid value",
-						Detail:   fmt.Sprintf("%q is not one of %q", s, valid),
+						Detail:   fmt.Sprintf("%q is not one of %q", s, typed_strings.ValidCertTypes),
 					}
 
 					return append(diags, diag)

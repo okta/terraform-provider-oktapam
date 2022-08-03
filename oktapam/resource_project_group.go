@@ -35,10 +35,15 @@ func resourceProjectGroup() *schema.Resource {
 				ForceNew:    true,
 				Description: descriptions.GroupName,
 			},
-			attributes.GroupID: {
+			attributes.DeletedAt: {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: descriptions.GroupID,
+				Description: descriptions.DeletedAt,
+			},
+			attributes.RemovedAt: {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: descriptions.RemovedAt,
 			},
 			attributes.CreateServerGroup: {
 				Type:        schema.TypeBool,
@@ -48,12 +53,14 @@ func resourceProjectGroup() *schema.Resource {
 			},
 			attributes.ServerAccess: {
 				Type:        schema.TypeBool,
-				Required:    true,
+				Optional:    true,
+				Default:     false,
 				Description: descriptions.ServerAccess,
 			},
 			attributes.ServerAdmin: {
 				Type:        schema.TypeBool,
-				Required:    true,
+				Optional:    true,
+				Default:     false,
 				Description: descriptions.ServerAdmin,
 			},
 			attributes.ServersSelector: {

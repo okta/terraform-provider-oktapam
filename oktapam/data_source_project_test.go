@@ -4,121 +4,60 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/terraform-provider-oktapam/oktapam/client"
-	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 )
 
-func TestAccDatasourceProject(t *testing.T) {
-	resourceName := "data.oktapam_project.test_projects"
-	projectNamePrefix := fmt.Sprintf("test-acc-datasource-project-%s", randSeq(10))
-	expectedProjects := map[string]client.Project{
-		projectNamePrefix + "-one": {
-			Name:        utils.AsStringPtr(projectNamePrefix + "-one"),
-			NextUnixUID: utils.AsIntPtr(60120),
-			NextUnixGID: utils.AsIntPtr(63020),
-		},
-		projectNamePrefix + "-two": {
-			Name:        utils.AsStringPtr(projectNamePrefix + "-two"),
-			NextUnixUID: utils.AsIntPtr(60220),
-			NextUnixGID: utils.AsIntPtr(63120),
-		},
-	}
+func TestAccDatasourceProjectFetch(t *testing.T) {
+	resourceName := "oktapam_project.test-1"
+	dataSourceName := "data.oktapam_project.target"
+
+	identifier := randSeq(10)
+
+	testConfig := createTestAccDatasourceProjectInitConfig(identifier)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
+		CheckDestroy:      testAccProjectsCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{
-				Config: createTestAccDatasourceProjectCreateConfig(projectNamePrefix),
-			},
-			{
-				Config: createTestAccDatasourceProjectsConfig(projectNamePrefix),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Projects), "2"),
-					testAccDatasourceProjectsCheck(resourceName, expectedProjects),
+				Config: testConfig,
+				Check: resource.ComposeAggregateTestCheckFunc(
+					checkResourcesEqual(resourceName, dataSourceName),
 				),
 			},
 		},
 	})
 }
 
-func testAccDatasourceProjectsCheck(rn string, expectedProjects map[string]client.Project) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[rn]
-		if !ok {
-			return fmt.Errorf("resource not found: %s", rn)
-		}
-		mappings, err := getIndexMappingFromResource(rs, attributes.Projects, attributes.Name, len(expectedProjects))
-		if err != nil {
-			return fmt.Errorf("error mapping resources to indices: %w", err)
-		}
-		primaryAttributes := rs.Primary.Attributes
-		for name, project := range expectedProjects {
-			// tests some attributes to ensure we are obtaining some attributes that were set by the original create resource and some that were computed
-			idx, ok := mappings[name]
-			if !ok {
-				return fmt.Errorf("could not find resource with %s: %s", attributes.Name, name)
-			}
-			if name != *project.Name {
-				return fmt.Errorf("%s attributes did not match for project %q, expected %q, got %q", attributes.Name, name, *project.Name, name)
-			}
-			nextUnixUID, ok := primaryAttributes[fmt.Sprintf("%s.%s.%s", attributes.Projects, idx, attributes.NextUnixUID)]
-			if !ok {
-				return fmt.Errorf("%s attribute not set for project %q", attributes.NextUnixUID, name)
-			}
-			expectedNextUnixUID := fmt.Sprintf("%d", *project.NextUnixUID)
-			if nextUnixUID != expectedNextUnixUID {
-				return fmt.Errorf("mismatch for %s value, expected %q, got %q", attributes.NextUnixUID, expectedNextUnixUID, nextUnixUID)
-			}
-			nextUnixGID, ok := primaryAttributes[fmt.Sprintf("%s.%s.%s", attributes.Projects, idx, attributes.NextUnixGID)]
-			if !ok {
-				return fmt.Errorf("%s attribute not set for project %q", attributes.NextUnixGID, name)
-			}
-			expectedNextUnixGID := fmt.Sprintf("%d", *project.NextUnixGID)
-			if nextUnixGID != expectedNextUnixGID {
-				return fmt.Errorf("mismatch for %s value, expected %q, got %q", attributes.NextUnixGID, expectedNextUnixGID, nextUnixGID)
-			}
-			createServerUsers, ok := primaryAttributes[fmt.Sprintf("%s.%s.%s", attributes.Projects, idx, attributes.CreateServerUsers)]
-			if !ok {
-				return fmt.Errorf("%s attribute not set for project %q", attributes.CreateServerUsers, name)
-			}
-			expectedCreateServerUsers := project.CreateServerUsers != nil && *project.CreateServerUsers
-			if createServerUsers != fmt.Sprint(expectedCreateServerUsers) {
-				return fmt.Errorf("mismatch for %s attribute, expected %q, got %q", attributes.CreateServerUsers, fmt.Sprint(expectedCreateServerUsers), createServerUsers)
-			}
-		}
-		return nil
-	}
-}
+// NOTE: This config (1) creates two new resources (2) lists the existing resources with the matching identifier
+// and (3) get the new resource as a data source.
+// The test then compares the resource with its data source to ensure they are equal.
 
-const testAccDatasourceProjectsConfigFormat = `
-data "oktapam_project" "test_projects" {
-	contains = "%s"
-}
-`
-
-func createTestAccDatasourceProjectsConfig(prefix string) string {
-	return fmt.Sprintf(testAccDatasourceProjectsConfigFormat, prefix)
-}
-
-const testAccDatasourceProjectCreateConfigFormat = `
-resource "oktapam_project" "test-project-one" {
-	name = "%s-one"
+const testAccDatasourceProjectInitListFetchConfigFormat = `
+resource "oktapam_project" "test-1" {
+	name = "%s-1"
   	next_unix_uid = 60120
   	next_unix_gid = 63020
 }
 
-resource "oktapam_project" "test-project-two" {
-	name = "%s-two"
+resource "oktapam_project" "test-2" {
+	name = "%s-2"
   	next_unix_uid = 60220
   	next_unix_gid = 63120
 }
+
+data "oktapam_projects" "list" {
+	depends_on = [oktapam_project.test-1]
+	contains = "%s"
+}
+
+data "oktapam_project" "target" {
+	depends_on = [data.oktapam_projects.list]
+	name = data.oktapam_projects.list.names[0]
+}
 `
 
-func createTestAccDatasourceProjectCreateConfig(groupName string) string {
-	return fmt.Sprintf(testAccDatasourceProjectCreateConfigFormat, groupName, groupName)
+func createTestAccDatasourceProjectInitConfig(identifier string) string {
+	return fmt.Sprintf(testAccDatasourceProjectInitListFetchConfigFormat, identifier, identifier, identifier)
 }

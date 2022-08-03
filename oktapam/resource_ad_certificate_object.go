@@ -17,7 +17,7 @@ func resourceADCertificateObject() *schema.Resource {
 		CreateContext: resourceADCertificateUploadCreate,
 		ReadContext:   resourceADCertificateRead,
 		DeleteContext: resourceADCertificateDelete,
-		Description:   descriptions.ResourceADCertificateSigningRequest,
+		Description:   descriptions.ResourceADCertificateObject,
 		Schema: map[string]*schema.Schema{
 			attributes.ID: {
 				Type:     schema.TypeString,

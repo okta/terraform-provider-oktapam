@@ -41,7 +41,10 @@ func resourceGroup() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Optional:    true,
+				Optional: true,
+				DefaultFunc: func() (interface{}, error) {
+					return []string{"access_user"}, nil
+				},
 				Description: descriptions.Roles,
 			},
 		},
