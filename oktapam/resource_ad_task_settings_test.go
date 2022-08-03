@@ -18,9 +18,11 @@ func TestAccADTaskSettings(t *testing.T) {
 	adTaskResourceName := "oktapam_ad_task_settings.test_acc_ad_task_settings"
 	adConnectionResourceName := "oktapam_ad_connection.test_acc_ad_connection"
 
-	adTaskName := fmt.Sprintf("test_acc_ad_task_settings_%s", randSeq(10))
-	adConnectionName := fmt.Sprintf("test_acc_ad_connection_%s", randSeq(10))
-	projectName := fmt.Sprintf("test_acc_project_%s", randSeq(10))
+	nameIdentifier := randSeq(10)
+	adTaskName := fmt.Sprintf("test_acc_ad_task_settings_%s", nameIdentifier)
+	adConnectionName := fmt.Sprintf("test_acc_ad_connection_%s", nameIdentifier)
+	projectName := fmt.Sprintf("test_acc_project_%s", nameIdentifier)
+	domainName := fmt.Sprintf("%s.example.com", nameIdentifier)
 
 	//Update schedule
 	updatedFreq := 24
@@ -33,7 +35,7 @@ func TestAccADTaskSettings(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				//Step 1: Create AD Task Settings
-				Config: createTestAccADTaskSettingsCreateConfig(adConnectionName, projectName, adTaskName),
+				Config: createTestAccADTaskSettingsCreateConfig(adConnectionName, projectName, adTaskName, domainName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccADTaskCheckExists(adConnectionResourceName, adTaskResourceName),
 					resource.TestCheckResourceAttr(adTaskResourceName, attributes.Name, adTaskName),
@@ -45,7 +47,7 @@ func TestAccADTaskSettings(t *testing.T) {
 			},
 			{
 				//Step 2: Update AD Task Settings Schedule to 24 hours with additional start hour attribute
-				Config: createTestAccADTaskSettingsUpdateScheduleConfig(adTaskName, projectName, adTaskName, updatedFreq, updatedStartHourUTC),
+				Config: createTestAccADTaskSettingsUpdateScheduleConfig(adTaskName, projectName, adTaskName, domainName, updatedFreq, updatedStartHourUTC),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(adTaskResourceName, attributes.IsActive, "true"),
 					resource.TestCheckResourceAttr(adTaskResourceName, attributes.Frequency, strconv.Itoa(updatedFreq)),
@@ -57,7 +59,7 @@ func TestAccADTaskSettings(t *testing.T) {
 			},
 			{
 				//Step 3: Update AD Task Rules. AD Task Rule Assignments is immutable attribute and force creating new AD Task Settings resource
-				Config: createTestAccADTaskSettingsUpdateRulesConfig(adTaskName, projectName, adTaskName),
+				Config: createTestAccADTaskSettingsUpdateRulesConfig(adTaskName, projectName, domainName, adTaskName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(adTaskResourceName, attributes.IsActive, "true"),
 					//Check if there are exactly two ad rule assignments
@@ -67,7 +69,7 @@ func TestAccADTaskSettings(t *testing.T) {
 			},
 			{
 				//Step 4: Deactivate AD Task Settings
-				Config: createTestAccADTaskSettingsUpdateStatusConfig(adTaskName, projectName, adTaskName, updatedFreq, updatedStartHourUTC),
+				Config: createTestAccADTaskSettingsUpdateStatusConfig(adTaskName, projectName, adTaskName, domainName, updatedFreq, updatedStartHourUTC),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(adTaskResourceName, attributes.IsActive, "false"),
 				),
@@ -141,7 +143,8 @@ data "oktapam_gateways" "gateways" {
 resource "oktapam_ad_connection" "test_acc_ad_connection" {
 name                     = "%[1]s"
 gateway_id               = data.oktapam_gateways.gateways.gateways[0].id
-domain                   = "example.com"
+# Domain name is unique for a team and no two connections can have the same domain. To avoid conflicts adding random suffix
+domain                   = "example-%[3]s.com"
 service_account_username = "user@test.com"
 service_account_password = "password"
 use_passwordless         = false
@@ -160,11 +163,6 @@ resource "oktapam_project" "test_acc_project" {
  forward_traffic  = true
  gateway_selector = "env=test"
 }
-
-# Project Data source to get the project id
-data "oktapam_project" "test_acc_project_data" {
-  contains = oktapam_project.test_acc_project.name
-}
 `
 
 const testAccADTaskCreateConfigFormat = `
@@ -179,16 +177,16 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = data.oktapam_project.test_acc_project_data.projects[0].id
+   project_id        = oktapam_project.test_acc_project.project_id
    priority          = 1
  } 
  # Force dependency on project so that resources destroy works correctly. Project Id is fetched from data and not resource.	
  depends_on = [oktapam_project.test_acc_project]
 }
 `
-func createTestAccADTaskSettingsCreateConfig(adConnectionName string, projectName string, adTaskName string) string {
+func createTestAccADTaskSettingsCreateConfig(adConnectionName string, projectName string, adTaskName string, domainName string) string {
 	logging.Debugf("creating config")
-	return fmt.Sprintf(testAccADTaskPreConfigFormat, adConnectionName, projectName) +
+	return fmt.Sprintf(testAccADTaskPreConfigFormat, adConnectionName, projectName, domainName) +
 		fmt.Sprintf(testAccADTaskCreateConfigFormat, adTaskName)
 }
 
@@ -205,7 +203,7 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = data.oktapam_project.test_acc_project_data.projects[0].id
+   project_id        = oktapam_project.test_acc_project.project_id
    priority          = 1
  }
  # Force dependency on project so that resources destroy works correctly. Project Id is fetched from data and not resource.	
@@ -213,9 +211,9 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
 }
 `
 
-func createTestAccADTaskSettingsUpdateScheduleConfig(adConnectionName string, projectName string, adTaskName string, updatedFreq int, updatedStartHourUTC int) string {
+func createTestAccADTaskSettingsUpdateScheduleConfig(adConnectionName string, projectName string, adTaskName string, domainName string, updatedFreq int, updatedStartHourUTC int) string {
 	logging.Debugf("creating config")
-	return fmt.Sprintf(testAccADTaskPreConfigFormat, adConnectionName, projectName) +
+	return fmt.Sprintf(testAccADTaskPreConfigFormat, adConnectionName, projectName, domainName) +
 		fmt.Sprintf(testAccADTaskUpdateScheduleConfigFormat, adTaskName, updatedFreq, updatedStartHourUTC)
 }
 
@@ -232,7 +230,7 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = data.oktapam_project.test_acc_project_data.projects[0].id
+   project_id        = oktapam_project.test_acc_project.project_id
    priority          = 1
  }
  # Force dependency on project so that resources destroy works correctly. Project Id is fetched from data and not resource.	
@@ -240,9 +238,9 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
 }
 `
 
-func createTestAccADTaskSettingsUpdateStatusConfig(adConnectionName string, projectName string, adTaskName string, updatedFreq int, updatedStartHourUTC int) string {
+func createTestAccADTaskSettingsUpdateStatusConfig(adConnectionName string, projectName string, adTaskName string, domainName string, updatedFreq int, updatedStartHourUTC int) string {
 	logging.Debugf("creating config")
-	return fmt.Sprintf(testAccADTaskPreConfigFormat, adConnectionName, projectName) +
+	return fmt.Sprintf(testAccADTaskPreConfigFormat, adConnectionName, projectName, domainName) +
 		fmt.Sprintf(testAccADTaskUpdateStatusConfigFormat, adTaskName, updatedFreq, updatedStartHourUTC)
 }
 
@@ -259,13 +257,13 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = data.oktapam_project.test_acc_project_data.projects[0].id
+   project_id        = oktapam_project.test_acc_project.project_id
    priority          = 1
  }
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = data.oktapam_project.test_acc_project_data.projects[0].id
+   project_id        = oktapam_project.test_acc_project.project_id
    priority          = 2
  }
  # Force dependency on project so that resources destroy works correctly. Project Id is fetched from data and not resource.	
@@ -273,8 +271,8 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
 }
 `
 
-func createTestAccADTaskSettingsUpdateRulesConfig(adConnectionName string, projectName string, adTaskName string) string {
+func createTestAccADTaskSettingsUpdateRulesConfig(adConnectionName string, projectName string, adTaskName string, domainName string) string {
 	logging.Debugf("creating config")
-	return fmt.Sprintf(testAccADTaskPreConfigFormat, adConnectionName, projectName) +
+	return fmt.Sprintf(testAccADTaskPreConfigFormat, adConnectionName, projectName, domainName) +
 		fmt.Sprintf(testAccADTaskUpdateRulesConfigFormat, adTaskName)
 }

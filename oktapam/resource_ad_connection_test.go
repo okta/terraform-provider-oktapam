@@ -14,7 +14,9 @@ import (
 
 func TestAccADConnection(t *testing.T) {
 	resourceName := "oktapam_ad_connection.test_acc_ad_connection"
-	connectionName := fmt.Sprintf("test_acc_ad_connection-%s", randSeq(10))
+	nameIdentifier := randSeq(10)
+	connectionName := fmt.Sprintf("test_acc_ad_connection-%s", nameIdentifier)
+	domainName := fmt.Sprintf("%s.example.com", nameIdentifier)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -22,28 +24,26 @@ func TestAccADConnection(t *testing.T) {
 		CheckDestroy:      utils.CreateCheckResourceDestroy(providerADConnectionKey, adConnectionExists),
 		Steps: []resource.TestStep{
 			{
-				Config: createTestAccADConnectionCreateConfig(connectionName),
+				Config: createTestAccADConnectionCreateConfig(connectionName, domainName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					utils.CheckResourceExists(resourceName, adConnectionExists),
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.Name, connectionName,
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.Domain, "example.com",
+						resourceName, attributes.Domain, domainName,
 					),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.DomainControllers), "2"),
 				),
 			},
 			{
-				Config: createTestAccADConnectionUpdateConfig(connectionName),
+				Config: createTestAccADConnectionUpdateConfig(connectionName, domainName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					utils.CheckResourceExists(resourceName, adConnectionExists),
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.Name, connectionName,
 					),
-					resource.TestCheckResourceAttr(
-						resourceName, attributes.Domain, "updated.example.com",
-					),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.DomainControllers), "3"),
 				),
 			},
 			{
@@ -70,9 +70,9 @@ data "oktapam_gateways" "gateways" {
 }
 
 resource "oktapam_ad_connection" "test_acc_ad_connection" {
- name                     = "%s"
+ name                     = "%[1]s"
  gateway_id               = data.oktapam_gateways.gateways.gateways[0].id
- domain                   = "example.com"
+ domain                   = "%[2]s"
  service_account_username = "user@example.com"
  service_account_password = "password"
  use_passwordless         = false
@@ -80,9 +80,9 @@ resource "oktapam_ad_connection" "test_acc_ad_connection" {
 }
 `
 
-func createTestAccADConnectionCreateConfig(adConnectionName string) string {
+func createTestAccADConnectionCreateConfig(adConnectionName string, domainName string) string {
 	logging.Debugf("creating config")
-	return fmt.Sprintf(testAccADConnectionCreateConfigFormat, adConnectionName)
+	return fmt.Sprintf(testAccADConnectionCreateConfigFormat, adConnectionName, domainName)
 }
 
 const testAccADConnectionUpdateConfigFormat = `
@@ -90,15 +90,15 @@ data "oktapam_gateways" "gateways" {
 }
 
 resource "oktapam_ad_connection" "test_acc_ad_connection" {
-name                     = "%s"
+name                     = "%[1]s"
 gateway_id               = data.oktapam_gateways.gateways.gateways[0].id
-domain                   = "updated.example.com"
+domain                   = "%[2]s"
 service_account_username = "account@example.com"
 service_account_password = "password"
 use_passwordless         = false
-domain_controllers       = ["dc1.example.com", "dc2.example.com"]
+domain_controllers       = ["dc1.example.com", "dc2.example.com", "dc3.example.com"]
 }`
 
-func createTestAccADConnectionUpdateConfig(adConnectionName string) string {
-	return fmt.Sprintf(testAccADConnectionUpdateConfigFormat, adConnectionName)
+func createTestAccADConnectionUpdateConfig(adConnectionName string, domainName string) string {
+	return fmt.Sprintf(testAccADConnectionUpdateConfigFormat, adConnectionName, domainName)
 }
