@@ -17,6 +17,7 @@ var (
 	ResourceGroup                 = fmt.Sprintf("A set of ASA Users. %s", LinkGroup)
 	ResourceProject               = fmt.Sprintf("An ASA construct that contains servers and is used to grant end users access to server infrastructure. %s", LinkProject)
 	ResourceProjectGroup          = fmt.Sprintf("Assigns an ASA Group to a Project and configures how that group is created on servers. %s", LinkGroup)
+	ResourceProjectUserAttribute  = fmt.Sprintf("Project-level mapping of user attributes and values. It overrides user attributes values at Team-level. %s", LinkProjectUserAttribute)
 	ResourceServerEnrollmentToken = fmt.Sprintf("A token used to enroll servers in an ASA Project. %s", LinkServerEnrollmentToken)
 	ResourceUser                  = fmt.Sprintf("An ASA User. Valid user types are `%s` and `%s`. %s", typed_strings.UserTypeHuman, typed_strings.UserTypeService, LinkServiceUser)
 

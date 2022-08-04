@@ -37,6 +37,7 @@ const (
 	providerProjectsKey                    = "oktapam_projects"
 	providerProjectGroupKey                = "oktapam_project_group"
 	providerProjectGroupsKey               = "oktapam_project_groups"
+	providerProjectUserAttributeKey        = "oktapam_project_user_attribute"
 	providerServerEnrollmentTokenKey       = "oktapam_server_enrollment_token"
 	providerServerEnrollmentTokensKey      = "oktapam_server_enrollment_tokens"
 	providerUserKey                        = "oktapam_user"
@@ -82,6 +83,7 @@ func Provider() *schema.Provider {
 			providerKubernetesClusterGroupKey:      resourceKubernetesClusterGroup(),
 			providerProjectGroupKey:                resourceProjectGroup(),
 			providerProjectKey:                     resourceProject(),
+			providerProjectUserAttributeKey:        resourceProjectUserAttribute(),
 			providerServerEnrollmentTokenKey:       resourceServerEnrollmentToken(),
 			providerUserKey:                        resourceUser(),
 		},

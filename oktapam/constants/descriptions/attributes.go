@@ -64,6 +64,8 @@ var (
 	OIDCIssuerURL                    = "The OIDC Issuer URL to use when configuring your Kubernetes cluster. "
 	OSAttribute                      = "AD Attribute mapped to server operating system of a discovered server."
 	ProjectName                      = "The human-readable name of the ASA Project. Values are case-sensitive."
+	ProjectUserAttribute             = "Project-level mappings of user attribute name and value."
+	ProjectUserName                  = "Username of the user to whom project is assigned."
 	RDPSessionRecording              = "If `true`, enable remote desktop protocol (RDP) recording on all servers in the ASA Project."
 	RefuseConnections                = "If `true`, gateway refuse connection."
 	RemovedAt                        = "UTC time of resource removal from parent resource. Format is '2022-01-01 00:00:00 +0000 UTC'."
