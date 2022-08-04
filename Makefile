@@ -9,7 +9,7 @@ PLUGIN_DIR=~/.terraform.d/plugins
 INSTALL_TARGET=${PLUGIN_DIR}/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
 TEMP_DIR=/tmp
 
-SET_VERSION=-ldflags -X github.com/okta/terraform-provider-oktapam/oktapam/version.Version=${VERSION}
+SET_VERSION=-ldflags "-X github.com/okta/terraform-provider-oktapam/oktapam/version.Version=${VERSION}"
 
 .DEFAULT_GOAL := install
 
