@@ -2,18 +2,19 @@ HOSTNAME=okta.com
 NAMESPACE=pam
 NAME=oktapam
 BINARY=terraform-provider-${NAME}
-# On verion changes, update tag-checks.yml
-VERSION=0.3.1
+# On version changes, update tag-checks.yml
+VERSION=0.2.1
 OS_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
 PLUGIN_DIR=~/.terraform.d/plugins
-DOCGEN_RESOURCES_DIR=docgen-resources
+INSTALL_TARGET=${PLUGIN_DIR}/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
+TEMP_DIR=/tmp
 
 SET_VERSION=-ldflags "-X github.com/okta/terraform-provider-oktapam/oktapam/version.Version=${VERSION}"
 
 .DEFAULT_GOAL := install
 
 build:
-	go build -ldflags "-X github.com/okta/terraform-provider-oktapam/oktapam/version.Version=${VERSION}dev" -o ${BINARY}
+	go build "${SET_VERSION}dev" -o ${BINARY}
 
 release:
 	GOOS=darwin GOARCH=amd64 go build ${SET_VERSION} -o ./bin/${BINARY}_${VERSION}_darwin_amd64
@@ -31,12 +32,13 @@ release:
 	GOOS=windows GOARCH=amd64 go build ${SET_VERSION} -o ./bin/${BINARY}_${VERSION}_windows_amd64
 
 install: build
-	mkdir -p ${PLUGIN_DIR}/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
-	cp ${BINARY} ${PLUGIN_DIR}/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
+	mkdir -p ${INSTALL_TARGET}
+	cp ${BINARY} ${TEMP_DIR}
+	mv ${BINARY} ${INSTALL_TARGET}
 
 link_legacy:
 	mkdir -p ${PLUGIN_DIR}
-	ln -s ${PLUGIN_DIR}/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}/${BINARY} ${PLUGIN_DIR}/${BINARY}
+	ln -s ${INSTALL_DIR}/${BINARY} ${PLUGIN_DIR}/${BINARY}
 
 test: 
 # TESTARGS here can be used to pass arbitrary flags to go test, e.g. '-run TestMyTest'
