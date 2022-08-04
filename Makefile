@@ -14,7 +14,7 @@ SET_VERSION=-ldflags -X github.com/okta/terraform-provider-oktapam/oktapam/versi
 .DEFAULT_GOAL := install
 
 compile:
-	go build ${SET_VERSION}dev -o ${BINARY}
+	go build -o ${BINARY} ${SET_VERSION}dev
 
 release:
 	GOOS=darwin GOARCH=amd64 go build ${SET_VERSION} -o ./bin/${BINARY}_${VERSION}_darwin_amd64
