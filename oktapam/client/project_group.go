@@ -16,6 +16,7 @@ import (
 )
 
 type ProjectGroup struct {
+	ID                *string `json:"id"`
 	Project           *string `json:"_"`
 	Group             *string `json:"group"`
 	DeletedAt         *string `json:"deleted_at,omitempty"`
@@ -174,6 +175,10 @@ func (p ListProjectGroupsParameters) toQueryParametersMap() map[string]string {
 	}
 
 	return m
+}
+
+func (pg ProjectGroup) Exists() bool {
+	return utils.IsNonEmpty(pg.ID)
 }
 
 type ProjectGroupsListResponse struct {

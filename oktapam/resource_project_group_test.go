@@ -83,6 +83,7 @@ func TestAccProjectGroup(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateIdFunc: testAccProjectGroupImportStateId(resourceName),
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -106,6 +107,8 @@ func testAccProjectGroupCheckExists(rn string, expectedProjectGroup client.Proje
 			return fmt.Errorf("project group does not exist")
 		}
 
+		//"ID" is computed after resource creation, so make it same to avoid comparison diff.
+		expectedProjectGroup.ID = projectGroup.ID
 		comparison := pretty.Compare(expectedProjectGroup, projectGroup)
 		if comparison != "" {
 			return fmt.Errorf("expected project group does not match returned project.\n%s", comparison)
