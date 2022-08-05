@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 
@@ -73,7 +75,7 @@ func resourceProjectGroup() *schema.Resource {
 			},
 		},
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: importState,
 		},
 	}
 }
@@ -123,22 +125,17 @@ func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m i
 		return diag.FromErr(err)
 	}
 
-	d.SetId(createProjectGroupResourceID(*projectGroup.Project, *projectGroup.Group))
-
+	d.SetId(resource.UniqueId())
 	return resourceProjectGroupRead(ctx, d, m)
 }
 
 func resourceProjectGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
-	project, group, err := parseProjectGroupResourceID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	if project == "" {
-		return diag.Errorf("blank project name from id %s", d.Id())
-	}
 
-	projectGroup, err := c.GetProjectGroup(ctx, project, group)
+	projectName := d.Get(attributes.ProjectName).(string)
+	groupName := d.Get(attributes.GroupName).(string)
+
+	projectGroup, err := c.GetProjectGroup(ctx, projectName, groupName)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -146,13 +143,13 @@ func resourceProjectGroupRead(ctx context.Context, d *schema.ResourceData, m int
 	ignorableValues := map[string]bool{attributes.DeletedAt: true, attributes.RemovedAt: true}
 	if projectGroup != nil && utils.IsNonEmpty(projectGroup.Group) {
 		if utils.IsNonEmpty(projectGroup.DeletedAt) {
-			logging.Infof("Group %s was deleted", group)
+			logging.Infof("Group %s was deleted", groupName)
 			d.SetId("")
 		} else if utils.IsNonEmpty(projectGroup.RemovedAt) {
-			logging.Infof("Group %s was removed from project %s", group, project)
+			logging.Infof("Group %s was removed from project %s", groupName, projectName)
 			d.SetId("")
 		} else {
-			d.SetId(createProjectGroupResourceID(*projectGroup.Project, *projectGroup.Group))
+			//d.SetId(createProjectGroupResourceID(*projectGroup.Project, *projectGroup.Group))
 			attrs, err := projectGroup.ToResourceMap()
 			if err != nil {
 				return diag.FromErr(err)
@@ -167,7 +164,7 @@ func resourceProjectGroupRead(ctx context.Context, d *schema.ResourceData, m int
 			}
 		}
 	} else {
-		logging.Infof("Group %s is not assigned to project %s", group, project)
+		logging.Infof("Group %s is not assigned to project %s", groupName, projectName)
 		d.SetId("")
 	}
 
@@ -223,12 +220,11 @@ func resourceProjectGroupUpdate(ctx context.Context, d *schema.ResourceData, m i
 
 func resourceProjectGroupDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
-	project, group, err := parseProjectGroupResourceID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
-	}
 
-	err = c.DeleteProjectGroup(ctx, project, group)
+	project := d.Get(attributes.ProjectName).(string)
+	group := d.Get(attributes.GroupName).(string)
+
+	err := c.DeleteProjectGroup(ctx, project, group)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -247,4 +243,24 @@ func parseProjectGroupResourceID(resourceId string) (string, string, error) {
 		return "", "", fmt.Errorf("oktapam_project_group id must be in the format of <project name>|<group name>, received: %s", resourceId)
 	}
 	return split[0], split[1], nil
+}
+
+func importState(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	// d.Id() here is the last argument passed to the `terraform import RESOURCE_TYPE.RESOURCE_NAME RESOURCE_ID` command
+	// Here we use a function to parse the import ID (like the example above) to simplify our logic
+	projectName, groupName, err := parseProjectGroupResourceID(d.Id())
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := d.Set(attributes.ProjectName, projectName); err != nil {
+		return nil, err
+	}
+	if err := d.Set(attributes.GroupName, groupName); err != nil {
+		return nil, err
+	}
+
+	d.SetId(resource.UniqueId())
+	return []*schema.ResourceData{d}, nil
 }
