@@ -80,8 +80,10 @@ func TestAccProjectGroup(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
+				ResourceName: resourceName,
+				ImportState:  true,
+				//Used to dynamically generate the ID from the terraform state.
+				//Terraform Resource ID is set to ASA ProjectGroup UUID but read requires "Project Name" and "Group Name" to retrieve the resource
 				ImportStateIdFunc: testAccProjectGroupImportStateId(resourceName),
 				ImportStateVerify: true,
 			},
