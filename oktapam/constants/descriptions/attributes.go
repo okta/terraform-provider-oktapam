@@ -63,7 +63,6 @@ var (
 	NextUnixUID                      = "The UID to use when creating a new ASA Server User. Default value starts at 60001."
 	OIDCIssuerURL                    = "The OIDC Issuer URL to use when configuring your Kubernetes cluster. "
 	OSAttribute                      = "AD Attribute mapped to server operating system of a discovered server."
-	ProjectID                        = "UUID of ASA Project."
 	ProjectName                      = "The human-readable name of the ASA Project. Values are case-sensitive."
 	RDPSessionRecording              = "If `true`, enable remote desktop protocol (RDP) recording on all servers in the ASA Project."
 	RefuseConnections                = "If `true`, gateway refuse connection."

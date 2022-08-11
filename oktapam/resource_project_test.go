@@ -85,6 +85,7 @@ func TestAccProject(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateIdFunc: testAccProjectImportStateId(resourceName),
 			},
 		},
 	})
@@ -100,9 +101,6 @@ func testAccProjectCheckExists(rn string, expectedProject client.Project) resour
 		resourceID := rs.Primary.ID
 		if resourceID == "" {
 			return fmt.Errorf("resource id not set")
-		}
-		if *expectedProject.Name != resourceID {
-			return fmt.Errorf("resource id not set to expected value.  expected %s, got %s", *expectedProject.Name, resourceID)
 		}
 
 		client := testAccProvider.Meta().(client.OktaPAMClient)
@@ -166,4 +164,14 @@ resource "oktapam_project" "test_project" {
 
 func createTestAccProjectUpdateConfig(projectName string) string {
 	return fmt.Sprintf(testAccProjectUpdateConfigFormat, projectName)
+}
+
+func testAccProjectImportStateId(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return "", fmt.Errorf("Not found: %s", resourceName)
+		}
+		return rs.Primary.Attributes[attributes.Name], nil
+	}
 }

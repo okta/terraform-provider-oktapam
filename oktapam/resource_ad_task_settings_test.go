@@ -197,7 +197,7 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = oktapam_project.test_acc_project.project_id
+   project_id        = oktapam_project.test_acc_project.id
    priority          = 1
  }
 }
@@ -221,7 +221,7 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = oktapam_project.test_acc_project.project_id
+   project_id        = oktapam_project.test_acc_project.id
    priority          = 1
  }
 }
@@ -246,7 +246,7 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = oktapam_project.test_acc_project.project_id
+   project_id        = oktapam_project.test_acc_project.id
    priority          = 1
  }
 }
@@ -271,7 +271,7 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = oktapam_project.test_acc_project.project_id
+   project_id        = oktapam_project.test_acc_project.id
    priority          = 1
  }
  additional_attribute_mapping {
@@ -301,13 +301,13 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = oktapam_project.test_acc_project.project_id
+   project_id        = oktapam_project.test_acc_project.id
    priority          = 1
  }
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = oktapam_project.test_acc_project.project_id
+   project_id        = oktapam_project.test_acc_project.id
    priority          = 2
  }
 
