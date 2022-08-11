@@ -17,6 +17,12 @@ import (
 )
 
 func resourceADTaskSettings() *schema.Resource {
+	/** ADTaskSettings is immutable. Only updateable attributes are status and task frequency/start time
+		ADTaskSettings resource has update endpoint, but internally it's a transactional delete & then create operation
+		Terraform resource id change and deletion of existing resource confuse terraform. Not sure if there is any way to handle it properly.
+		For now, I have marked all the immutable attributes as "ForceNew". If update ADTaskSettings endpoint has additional logic then we need to revisit this.
+	    TF Reference - https://www.terraform.io/plugin/sdkv2/schemas/schema-behaviors#forcenew
+	*/
 	return &schema.Resource{
 		Description:   descriptions.ResourceADTaskSettings,
 		CreateContext: resourceADTaskSettingsCreate,
@@ -32,7 +38,12 @@ func resourceADTaskSettings() *schema.Resource {
 			attributes.Name: {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: descriptions.Name,
+			},
+			attributes.ID: {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			attributes.Frequency: {
 				Type:         schema.TypeInt,
@@ -60,26 +71,31 @@ func resourceADTaskSettings() *schema.Resource {
 			attributes.HostnameAttribute: {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: descriptions.HostnameAttribute,
 			},
 			attributes.AccessAddressAttribute: {
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 				Description: descriptions.AccessAddressAttribute,
 			},
 			attributes.OSAttribute: {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: descriptions.OSAttribute,
 			},
 			attributes.BastionAttribute: {
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 				Description: descriptions.BastionAttribute,
 			},
 			attributes.AltNamesAttributes: {
 				Type:     schema.TypeSet,
 				Optional: true,
+				ForceNew: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -88,6 +104,7 @@ func resourceADTaskSettings() *schema.Resource {
 			attributes.AdditionalAttributeMapping: {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				ForceNew:    true,
 				Description: descriptions.AdditionalAttributeMapping,
 				MaxItems:    10,
 				Elem:        additionalAttributeMappingResource,
@@ -101,7 +118,7 @@ func resourceADTaskSettings() *schema.Resource {
 			},
 		},
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: importADTaskSettingsState,
 		},
 	}
 }
@@ -159,19 +176,19 @@ var adRuleAssignmentsResource = &schema.Resource{
 func resourceADTaskSettingsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	adConnId := d.Get(attributes.ADConnectionID).(string)
+	adConnID := d.Get(attributes.ADConnectionID).(string)
 
 	//Build ADTaskSettings Api Object
 	adTaskSettingsReq := expandADTaskSettings(d)
 
 	//Call api client
-	if createdADTS, err := c.CreateADTaskSettings(ctx, adConnId, adTaskSettingsReq); err != nil {
+	if createdADTS, err := c.CreateADTaskSettings(ctx, adConnID, adTaskSettingsReq); err != nil {
 		return diag.FromErr(err)
 	} else if createdADTS == nil {
 		d.SetId("")
 	} else {
 		//Set returned id
-		d.SetId(createADTaskSettingsResourceID(adConnId, *createdADTS.ID))
+		d.SetId(*createdADTS.ID)
 	}
 
 	return resourceADTaskSettingsRead(ctx, d, m)
@@ -181,12 +198,10 @@ func resourceADTaskSettingsRead(ctx context.Context, d *schema.ResourceData, m i
 	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
-	adConnId, adTaskSettingsId, err := parseADTaskSettingsResourceID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	adConnID := d.Get(attributes.ADConnectionID).(string)
+	adTaskSettingsID := d.Id()
 
-	adTaskSettings, err := c.GetADTaskSettings(ctx, adConnId, adTaskSettingsId)
+	adTaskSettings, err := c.GetADTaskSettings(ctx, adConnID, adTaskSettingsID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -196,7 +211,7 @@ func resourceADTaskSettingsRead(ctx context.Context, d *schema.ResourceData, m i
 			_ = d.Set(key, value)
 		}
 	} else {
-		logging.Infof("ADTaskSettings %s does not exist", adTaskSettingsId)
+		logging.Infof("ADTaskSettings %s does not exist", adTaskSettingsID)
 	}
 
 	return diags
@@ -205,49 +220,27 @@ func resourceADTaskSettingsRead(ctx context.Context, d *schema.ResourceData, m i
 func resourceADTaskSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	adConnId, adTaskSettingsId, err := parseADTaskSettingsResourceID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	adConnID := d.Get(attributes.ADConnectionID).(string)
+	adTaskSettingsID := d.Id()
 
-	if d.HasChangesExcept(attributes.Name,
-		attributes.HostnameAttribute,
-		attributes.AccessAddressAttribute,
-		attributes.OSAttribute,
-		attributes.BastionAttribute,
-		attributes.AltNamesAttributes,
-		attributes.AdditionalAttributeMapping,
-		attributes.ADRuleAssignments) {
-		//If deactivated
-		if _, active := d.GetChange(attributes.IsActive); d.HasChange(attributes.IsActive) && active != nil && !active.(bool) {
-			//Deactivate task
-			err := c.DeactivateADTaskSettings(ctx, adConnId, adTaskSettingsId)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-		} else if d.HasChanges(attributes.Frequency,
-			attributes.IsActive,
-			attributes.StartHourUTC) {
-			schedule := client.ADTaskSettingsSchedule{
-				Frequency:    getIntPtr(attributes.Frequency, d, false),
-				StartHourUTC: getIntPtr(attributes.StartHourUTC, d, false),
-			}
-			err := c.UpdateADTaskSettingsSchedule(ctx, adConnId, adTaskSettingsId, schedule)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-		}
-	} else {
-		//ADTask Settings is immutable and update will create new
-		adTaskSettingsReq := expandADTaskSettings(d)
-		//Call api client
-		if updatedADTS, err := c.UpdateADTaskSettings(ctx, adConnId, adTaskSettingsId, adTaskSettingsReq); err != nil {
+
+	//If deactivated
+	if _, active := d.GetChange(attributes.IsActive); d.HasChange(attributes.IsActive) && active != nil && !active.(bool) {
+		//Deactivate task
+		err := c.DeactivateADTaskSettings(ctx, adConnID, adTaskSettingsID)
+		if err != nil {
 			return diag.FromErr(err)
-		} else if updatedADTS == nil {
-			d.SetId("")
-		} else {
-			//Set returned id
-			d.SetId(*updatedADTS.ID)
+		}
+	} else if d.HasChanges(attributes.Frequency,
+		attributes.IsActive,
+		attributes.StartHourUTC) { //If task become active or schedule change
+		schedule := client.ADTaskSettingsSchedule{
+			Frequency:    getIntPtr(attributes.Frequency, d, false),
+			StartHourUTC: getIntPtr(attributes.StartHourUTC, d, false),
+		}
+		err := c.UpdateADTaskSettingsSchedule(ctx, adConnID, adTaskSettingsID, schedule)
+		if err != nil {
+			return diag.FromErr(err)
 		}
 	}
 
@@ -258,12 +251,10 @@ func resourceADTaskSettingsDelete(ctx context.Context, d *schema.ResourceData, m
 	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
-	adConnId, adTaskSettingsId, err := parseADTaskSettingsResourceID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	adConnID := d.Get(attributes.ADConnectionID).(string)
+	adTaskSettingsID := d.Id()
 
-	err = c.DeleteADTaskSettings(ctx, adConnId, adTaskSettingsId)
+	err := c.DeleteADTaskSettings(ctx, adConnID, adTaskSettingsID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -307,7 +298,7 @@ func expandADTaskSettings(d *schema.ResourceData) client.ADTaskSettings {
 }
 
 func expandAdditionalAttributeMappings(tfList []interface{}) []*client.ADAdditionalAttribute {
-	apiObjects := make([]*client.ADAdditionalAttribute, len(tfList))
+	apiObjects := make([]*client.ADAdditionalAttribute, 0, len(tfList))
 
 	for _, tfMapRaw := range tfList {
 		tfMap, ok := tfMapRaw.(map[string]interface{})
@@ -354,6 +345,9 @@ func expandADRuleAssignments(tfList []interface{}) []*client.ADRuleAssignment {
 func flattenADTaskSettings(taskSettings *client.ADTaskSettings) map[string]interface{} {
 	m := make(map[string]interface{}, 2)
 
+	if taskSettings.ID != nil {
+		m[attributes.ID] = *taskSettings.ID
+	}
 	if taskSettings.Name != nil {
 		m[attributes.Name] = *taskSettings.Name
 	}
@@ -414,14 +408,27 @@ func flattenADTaskSettings(taskSettings *client.ADTaskSettings) map[string]inter
 	return m
 }
 
-func createADTaskSettingsResourceID(adConnectionId string, adTaskSettingsId string) string {
-	return fmt.Sprintf("%s|%s", adConnectionId, adTaskSettingsId)
-}
-
 func parseADTaskSettingsResourceID(resourceId string) (string, string, error) {
 	split := strings.Split(resourceId, "|")
 	if len(split) != 2 {
 		return "", "", fmt.Errorf("oktapam_ad_task_settings id must be in the format of <ad connection id>|<ad task settings id>, received: %s", resourceId)
 	}
 	return split[0], split[1], nil
+}
+
+func importADTaskSettingsState(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	// d.Id() here is the last argument passed to the `terraform import RESOURCE_TYPE.RESOURCE_NAME RESOURCE_ID` command
+	// Here we use a function to parse the import ID (like the example above) to simplify our logic
+	adConnectionID, adTaskSettingsID, err := parseADTaskSettingsResourceID(d.Id())
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := d.Set(attributes.ADConnectionID, adConnectionID); err != nil {
+		return nil, err
+	}
+
+	d.SetId(adTaskSettingsID)
+	return []*schema.ResourceData{d}, nil
 }
