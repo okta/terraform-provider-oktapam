@@ -13,7 +13,7 @@ SET_VERSION=-ldflags "-X github.com/okta/terraform-provider-oktapam/oktapam/vers
 
 .DEFAULT_GOAL := install
 
-build:
+compile:
 	go build -o ${BINARY} ${SET_VERSION}dev
 
 release:
@@ -31,7 +31,7 @@ release:
 	GOOS=windows GOARCH=386 go build ${SET_VERSION} -o ./bin/${BINARY}_${VERSION}_windows_386
 	GOOS=windows GOARCH=amd64 go build ${SET_VERSION} -o ./bin/${BINARY}_${VERSION}_windows_amd64
 
-install: build
+install: compile
 	mkdir -p ${INSTALL_TARGET}
 	cp ${BINARY} ${TEMP_DIR}
 	mv ${BINARY} ${INSTALL_TARGET}
