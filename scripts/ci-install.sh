@@ -7,7 +7,6 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 
 cd "${DIR}/.."
 
-set -x
 # create artifact directory
 mkdir artifacts
 # remove container first, if it happens to exist
