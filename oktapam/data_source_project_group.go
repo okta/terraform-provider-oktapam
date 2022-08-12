@@ -66,10 +66,10 @@ func dataSourceProjectGroup() *schema.Resource {
 func dataSourceProjectGroupFetch(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	project := d.Get(attributes.ProjectName).(string)
-	group := d.Get(attributes.GroupName).(string)
+	projectName := d.Get(attributes.ProjectName).(string)
+	groupName := d.Get(attributes.GroupName).(string)
 
-	projectGroup, err := c.GetProjectGroup(ctx, project, group)
+	projectGroup, err := c.GetProjectGroup(ctx, projectName, groupName)
 	if err != nil {
 		return diag.FromErr(err)
 	}
