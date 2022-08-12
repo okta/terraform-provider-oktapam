@@ -52,6 +52,7 @@ func TestAccGroup(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateIdFunc: testAccGroupImportStateId(resourceName),
 			},
 		},
 	})
@@ -67,9 +68,6 @@ func testAccGroupCheckExists(rn string, expectedGroup client.Group) resource.Tes
 		resourceID := rs.Primary.ID
 		if resourceID == "" {
 			return fmt.Errorf("resource id not set")
-		}
-		if *expectedGroup.Name != resourceID {
-			return fmt.Errorf("resource id not set to expected value.  expected %s, got %s", *expectedGroup.Name, resourceID)
 		}
 
 		client := testAccProvider.Meta().(client.OktaPAMClient)
@@ -125,4 +123,14 @@ resource "oktapam_group" "test_group" {
 
 func createTestAccGroupUpdateConfig(groupName string) string {
 	return fmt.Sprintf(testAccGroupUpdateConfigFormat, groupName)
+}
+
+func testAccGroupImportStateId(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return "", fmt.Errorf("Not found: %s", resourceName)
+		}
+		return rs.Primary.Attributes[attributes.Name], nil
+	}
 }

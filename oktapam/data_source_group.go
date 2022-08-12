@@ -57,9 +57,11 @@ func dataSourceGroupFetch(ctx context.Context, d *schema.ResourceData, m interfa
 	}
 
 	if group != nil {
-		d.SetId(*group.Name)
+		d.SetId(*group.ID)
 		for key, value := range group.ToResourceMap() {
-			d.Set(key, value)
+			if err := d.Set(key, value); err != nil {
+				return diag.FromErr(err)
+			}
 		}
 	} else {
 		logging.Infof("group %s does not exist", name)

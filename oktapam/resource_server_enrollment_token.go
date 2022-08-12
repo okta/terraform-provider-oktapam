@@ -56,7 +56,7 @@ func resourceServerEnrollmentToken() *schema.Resource {
 			},
 		},
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: importResourceServerEnrollmentTokenState,
 		},
 	}
 }
@@ -64,13 +64,10 @@ func resourceServerEnrollmentToken() *schema.Resource {
 func resourceServerEnrollmentTokenRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	resourceId := d.Id()
-	project, id, err := parseServerEnrollmentTokenResourceID(resourceId)
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	serverEnrollmentTokenID := d.Id()
+	projectName := d.Get(attributes.ProjectName).(string)
 
-	token, err := c.GetServerEnrollmentToken(ctx, project, id)
+	token, err := c.GetServerEnrollmentToken(ctx, projectName, serverEnrollmentTokenID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -83,7 +80,9 @@ func resourceServerEnrollmentTokenRead(ctx context.Context, d *schema.ResourceDa
 
 	for key, value := range token.ToResourceMap() {
 		logging.Debugf("setting %s to %v", key, value)
-		d.Set(key, value)
+		if err := d.Set(key, value); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	return nil
@@ -92,15 +91,15 @@ func resourceServerEnrollmentTokenRead(ctx context.Context, d *schema.ResourceDa
 func resourceServerEnrollmentTokenCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	project := d.Get(attributes.ProjectName).(string)
+	projectName := d.Get(attributes.ProjectName).(string)
 	description := d.Get(attributes.Description).(string)
 
-	token, err := c.CreateServerEnrollmentToken(ctx, project, description)
+	token, err := c.CreateServerEnrollmentToken(ctx, projectName, description)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	d.SetId(createServerEnrollmentTokenResourceID(*token.Project, *token.ID))
+	d.SetId(*token.ID)
 
 	return resourceServerEnrollmentTokenRead(ctx, d, m)
 }
@@ -108,13 +107,10 @@ func resourceServerEnrollmentTokenCreate(ctx context.Context, d *schema.Resource
 func resourceServerEnrollmentTokenDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	resourceId := d.Id()
-	project, id, err := parseServerEnrollmentTokenResourceID(resourceId)
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	serverEnrollmentTokenID := d.Id()
+	projectName := d.Get(attributes.ProjectName).(string)
 
-	err = c.DeleteServerEnrollmentToken(ctx, project, id)
+	err := c.DeleteServerEnrollmentToken(ctx, projectName, serverEnrollmentTokenID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -131,7 +127,25 @@ func createServerEnrollmentTokenResourceID(project string, tokenID string) strin
 func parseServerEnrollmentTokenResourceID(resourceId string) (string, string, error) {
 	split := strings.Split(resourceId, "|")
 	if len(split) != 2 {
-		return "", "", fmt.Errorf("oktapam_server_enrollment_token id must be in the format of <project name>|<enrollment token id>, received: %s", resourceId)
+		return "", "", fmt.Errorf("oktapam_server_enrollment_token id must be in the format of <project name>|<server enrollment token id>, received: %s", resourceId)
 	}
 	return split[0], split[1], nil
+}
+
+func importResourceServerEnrollmentTokenState(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	// d.Id() here is the last argument passed to the `terraform import RESOURCE_TYPE.RESOURCE_NAME RESOURCE_ID` command
+	// Id provided for import is in the format <project name>|<server enrollment token id>.
+	// Both project name and ASA resource UUID is required to read resource back
+	projectName, serverEnrollmentTokenID, err := parseServerEnrollmentTokenResourceID(d.Id())
+	if err != nil {
+		return nil, err
+	}
+
+	if err := d.Set(attributes.ProjectName, projectName); err != nil {
+		return nil, err
+	}
+	//Set id to ASA resource UUID
+	d.SetId(serverEnrollmentTokenID)
+
+	return []*schema.ResourceData{d}, nil
 }

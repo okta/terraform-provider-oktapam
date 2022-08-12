@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 
@@ -80,7 +78,7 @@ func resourceProjectGroup() *schema.Resource {
 			},
 		},
 		Importer: &schema.ResourceImporter{
-			StateContext: importState,
+			StateContext: importResourceProjectGroupState,
 		},
 	}
 }
@@ -245,9 +243,10 @@ func parseProjectGroupResourceID(resourceId string) (string, string, error) {
 	return split[0], split[1], nil
 }
 
-func importState(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+
+func importResourceProjectGroupState(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// d.Id() here is the last argument passed to the `terraform import RESOURCE_TYPE.RESOURCE_NAME RESOURCE_ID` command
-	// Here we use a function to parse the import ID (like the example above) to simplify our logic
+	// Id provided for import is in the format <project name>|<group name>
 	projectName, groupName, err := parseProjectGroupResourceID(d.Id())
 
 	if err != nil {
@@ -261,6 +260,5 @@ func importState(ctx context.Context, d *schema.ResourceData, meta interface{}) 
 		return nil, err
 	}
 
-	d.SetId(resource.UniqueId())
 	return []*schema.ResourceData{d}, nil
 }
