@@ -67,9 +67,11 @@ func dataSourceServerEnrollmentTokenFetch(ctx context.Context, d *schema.Resourc
 	}
 
 	if token != nil {
-		d.SetId(createServerEnrollmentTokenResourceID(*token.Project, *token.ID))
+		d.SetId(*token.ID)
 		for key, value := range token.ToResourceMap() {
-			d.Set(key, value)
+			if err := d.Set(key, value); err != nil {
+				return diag.FromErr(err)
+			}
 		}
 	} else {
 		return diag.Errorf("%s %s does not exist", providerServerEnrollmentTokenKey, id)
