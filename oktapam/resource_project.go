@@ -154,10 +154,6 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m interf
 		return diag.FromErr(err)
 	}
 
-	if err := d.Set(attributes.Name, *project.Name); err != nil {
-		return diag.FromErr(err)
-	}
-
 	return resourceProjectRead(ctx, d, m)
 }
 
@@ -167,7 +163,6 @@ func resourceProjectReadWithIgnorable(ctx context.Context, d *schema.ResourceDat
 	//Get project api require project name not ASA Project UUID to read resource back
 	projectName := d.Get(attributes.Name).(string)
 
-	logging.Debugf("sachin : project name %s", projectName)
 	proj, err := c.GetProject(ctx, projectName, false)
 	if err != nil {
 		return nil, err

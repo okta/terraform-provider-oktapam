@@ -35,7 +35,6 @@ An ASA construct that contains servers and is used to grant end users access to 
 
 - `deleted_at` (String) The UTC time of resource deletion. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `id` (String) The ID of this resource.
-- `project_id` (String) UUID of ASA Project.
 - `team` (String) The human-readable name of the ASA Team that owns the resource. Values are lower-case.
 
 
