@@ -22,6 +22,10 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.2.7
       - name: Run unit tests
         run: |
           ./scripts/ci-tests.sh
@@ -34,6 +38,10 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.2.7
       - name: Run unit tests
         run: |
           ./scripts/ci-acceptance-tests.sh
