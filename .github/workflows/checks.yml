@@ -5,6 +5,8 @@ on:
     # Run every hour. Uses POSIX cron syntax
     - cron: "0 */1 * * *"
 
+env:
+  TERRAFORM_VERSION: 1.2.7
 jobs:
   check1:
     name: Compile
@@ -25,7 +27,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: 1.2.7
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
       - name: Run unit tests
         run: |
           ./scripts/ci-tests.sh
@@ -41,7 +43,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: 1.2.7
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
       - name: Run unit tests
         run: |
           ./scripts/ci-acceptance-tests.sh

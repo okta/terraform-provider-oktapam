@@ -4,6 +4,8 @@ on:
     # Run every day. Uses POSIX cron syntax: https://crontab.guru/#0_0_*/1
     - cron: "0 0 */1 * *"
 
+env:
+  TERRAFORM_VERSION: 1.2.7
 jobs:
   check:
     name: Acceptance Tests on Tag
@@ -21,7 +23,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: 1.2.7
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
       - name: Check out repository code of tag
         uses: actions/checkout@v3
         with:
