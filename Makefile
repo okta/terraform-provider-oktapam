@@ -6,8 +6,8 @@ BINARY=terraform-provider-${NAME}
 VERSION=0.2.1
 OS_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
 PLUGIN_DIR=~/.terraform.d/plugins
-TF_ACC_TERRAFORM_PATH=testacc/terraform-cli/terraform
-TF_ACC_TERRAFORM_VERSION=1.2.7
+TERRAFORM_PATH=testacc/terraform-cli/terraform
+TERRAFORM_VERSION=1.2.7
 
 SET_VERSION=-ldflags "-X github.com/okta/terraform-provider-oktapam/oktapam/version.Version=${VERSION}"
 
@@ -41,11 +41,11 @@ link_legacy:
 
 test: 
 # TESTARGS here can be used to pass arbitrary flags to go test, e.g. '-run TestMyTest'
-	TF_ACC_TERRAFORM_PATH TF_ACC_TERRAFORM_VERSION go test ./... -v $(TESTARGS)
+	TF_ACC_TERRAFORM_PATH=TERRAFORM_PATH TF_ACC_TERRAFORM_VERSION=TERRAFORM_VERSION go test ./... -v $(TESTARGS)
 
 testacc: 
 # TESTARGS here can be used to pass arbitrary flags to go test, e.g. '-run TestMyTest'
-	TF_ACC=1 TF_ACC_TERRAFORM_PATH TF_ACC_TERRAFORM_VERSION go test ./... -v $(TESTARGS) -timeout 120m
+	TF_ACC=1 TF_ACC_TERRAFORM_PATH=TERRAFORM_PATH TF_ACC_TERRAFORM_VERSION=TERRAFORM_VERSION go test ./... -v $(TESTARGS) -timeout 120m
 
 generate:
 	go generate ./...
