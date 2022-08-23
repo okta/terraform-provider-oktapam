@@ -27,6 +27,13 @@ jobs:
         run: |
           git fetch origin master
           git checkout origin/master Makefile.ci oktapam/client/okta_pam_client.go
+      - name: Get Terraform CLI Version
+        id: vars
+        run: echo ::set-output name=tf-version::$(cat .terraform-version)
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ steps.vars.outputs.tf-version }}
       - name: Run unit tests
         run: |
           ./scripts/ci-acceptance-tests.sh
