@@ -31,7 +31,7 @@ jobs:
         id: vars
         run: echo ::set-output name=tf-version::$(cat .terraform-version)
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ steps.vars.outputs.tf-version }}
       - name: Run unit tests
