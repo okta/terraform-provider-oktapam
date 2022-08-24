@@ -34,6 +34,7 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ steps.vars.outputs.tf-version }}
+          terraform_wrapper: false
       - name: Run unit tests
         run: |
           ./scripts/ci-acceptance-tests.sh
