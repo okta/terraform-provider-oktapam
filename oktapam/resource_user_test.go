@@ -58,8 +58,11 @@ func TestAccUser(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName1,
-				ImportState:       true,
+				ResourceName: resourceName1,
+				ImportState:  true,
+				//Used to dynamically generate the ID from the terraform state.
+				//Terraform Resource ID is set to ASA User UUID but read requires "User Name" and "Type" to retrieve the resource
+				ImportStateIdFunc: testAccUserImportStateId(resourceName1),
 				ImportStateVerify: true,
 			},
 			{
@@ -113,10 +116,6 @@ func testAccServiceUserCheckExists(rn string, expectedUser client.User) resource
 			return fmt.Errorf("resource id not set")
 		}
 
-		if expectedUser.Name == nil || createUserID(*expectedUser.Name, expectedUser.UserType.String()) != resourceID {
-			return fmt.Errorf("resource id not set to expected value. expected %s, got %s", *expectedUser.Name, resourceID)
-		}
-
 		c := testAccProvider.Meta().(client.OktaPAMClient)
 		user, err := c.GetServiceUser(context.Background(), *expectedUser.Name)
 		if err != nil {
@@ -126,6 +125,7 @@ func testAccServiceUserCheckExists(rn string, expectedUser client.User) resource
 			return fmt.Errorf("service user %s does not exist", *expectedUser.Name)
 		}
 		expectedUser.DeletedAt = user.DeletedAt
+		expectedUser.ID = user.ID
 		comparison := pretty.Compare(user, expectedUser)
 		if comparison != "" {
 			return fmt.Errorf("expected service user does not match returned service user.\n%s", comparison)
@@ -171,3 +171,13 @@ resource "oktapam_user" "%s" {
 	user_type = "%s"
 }
 `
+
+func testAccUserImportStateId(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return "", fmt.Errorf("Not found: %s", resourceName)
+		}
+		return fmt.Sprintf("%s/%s", rs.Primary.Attributes[attributes.Name], rs.Primary.Attributes[attributes.UserType]), nil
+	}
+}

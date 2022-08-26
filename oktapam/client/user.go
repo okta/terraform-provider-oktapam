@@ -17,6 +17,7 @@ import (
 )
 
 type User struct {
+	ID             *string                   `json:"id"`
 	Name           *string                   `json:"name"`
 	TeamName       *string                   `json:"team_name"`
 	ServerUserName *string                   `json:"server_user_name,omitempty"`
@@ -51,6 +52,9 @@ func UserFromMap(m map[string]interface{}) (*User, error) {
 func (su User) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{}, 2)
 
+	if su.ID != nil {
+		m[attributes.ID] = *su.ID
+	}
 	if su.Name != nil {
 		m[attributes.Name] = *su.Name
 	}

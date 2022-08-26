@@ -121,7 +121,7 @@ func resourceServerEnrollmentTokenDelete(ctx context.Context, d *schema.Resource
 }
 
 func parseServerEnrollmentTokenResourceID(resourceId string) (string, string, error) {
-	split := strings.Split(resourceId, "|")
+	split := strings.Split(resourceId, "/")
 	if len(split) != 2 {
 		return "", "", fmt.Errorf("expected format: <project_name>/<id>, received: %s", resourceId)
 	}
