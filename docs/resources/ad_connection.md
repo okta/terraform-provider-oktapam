@@ -34,4 +34,11 @@ An Active Directory (AD) Connection to query AD Domain for available servers. Fo
 - `deleted_at` (String) The UTC time of resource deletion. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `id` (String) The ID of this resource.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Gateway Setup Token can be imported using ID of this resource, e.g.,
+terraform import oktapam_ad_connection.example {{id}}
+```

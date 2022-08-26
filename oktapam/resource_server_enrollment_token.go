@@ -120,25 +120,21 @@ func resourceServerEnrollmentTokenDelete(ctx context.Context, d *schema.Resource
 	return nil
 }
 
-func createServerEnrollmentTokenResourceID(project string, tokenID string) string {
-	return fmt.Sprintf("%s|%s", project, tokenID)
-}
-
 func parseServerEnrollmentTokenResourceID(resourceId string) (string, string, error) {
 	split := strings.Split(resourceId, "|")
 	if len(split) != 2 {
-		return "", "", fmt.Errorf("oktapam_server_enrollment_token id must be in the format of <project name>|<server enrollment token id>, received: %s", resourceId)
+		return "", "", fmt.Errorf("expected format: <project_name>/<id>, received: %s", resourceId)
 	}
 	return split[0], split[1], nil
 }
 
 func importResourceServerEnrollmentTokenState(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// d.Id() here is the last argument passed to the `terraform import RESOURCE_TYPE.RESOURCE_NAME RESOURCE_ID` command
-	// Id provided for import is in the format <project name>|<server enrollment token id>.
+	// Id provided for import is in the format <project_name>/<id>.
 	// Both project name and ASA resource UUID is required to read resource back
 	projectName, serverEnrollmentTokenID, err := parseServerEnrollmentTokenResourceID(d.Id())
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid resource import specifier; %w", err)
 	}
 
 	if err := d.Set(attributes.ProjectName, projectName); err != nil {

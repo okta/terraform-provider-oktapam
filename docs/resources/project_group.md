@@ -33,4 +33,11 @@ Assigns an ASA Group to a Project and configures how that group is created on se
 - `id` (String) The ID of this resource.
 - `removed_at` (String) UTC time of resource removal from parent resource. Format is '2022-01-01 00:00:00 +0000 UTC'.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Project Group can be imported using Project Name and Group Name separated by a forward slash (/), e.g.,
+terraform import oktapam_project_group.example {{project_name}}>/{{group_name}}
+```

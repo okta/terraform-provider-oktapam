@@ -28,4 +28,11 @@ A set of ASA Users. For details, see [Groups](https://help.okta.com/asa/en-us/Co
 - `deleted_at` (String) The UTC time of resource deletion. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `id` (String) The ID of this resource.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Group can be imported using Group Name, e.g.,
+terraform import oktapam_group.example {{name}}
+```

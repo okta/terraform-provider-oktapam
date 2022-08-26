@@ -236,9 +236,9 @@ func resourceProjectGroupDelete(ctx context.Context, d *schema.ResourceData, m i
 }
 
 func parseProjectGroupResourceID(resourceId string) (string, string, error) {
-	split := strings.Split(resourceId, "|")
+	split := strings.Split(resourceId, "/")
 	if len(split) != 2 {
-		return "", "", fmt.Errorf("oktapam_project_group id must be in the format of <project name>|<group name>, received: %s", resourceId)
+		return "", "", fmt.Errorf("expected format: <project_name>/<group_name>, received: %s", resourceId)
 	}
 	return split[0], split[1], nil
 }
@@ -246,11 +246,11 @@ func parseProjectGroupResourceID(resourceId string) (string, string, error) {
 
 func importResourceProjectGroupState(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// d.Id() here is the last argument passed to the `terraform import RESOURCE_TYPE.RESOURCE_NAME RESOURCE_ID` command
-	// Id provided for import is in the format <project name>|<group name>
+	// Id provided for import is in the format <project_name>/<group_name>
 	projectName, groupName, err := parseProjectGroupResourceID(d.Id())
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid resource import specifier; %w", err)
 	}
 
 	if err := d.Set(attributes.ProjectName, projectName); err != nil {

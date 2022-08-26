@@ -28,4 +28,11 @@ Beta Feature: A mapping of Kubernetes cluster to an ASA Group. Members of the pr
 
 - `id` (String) The ID of this resource.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Kubernetes Cluster Group can be imported using ID of this resource, e.g.,
+terraform import oktapam_kubernetes_cluster_group.example {{id}}
+```

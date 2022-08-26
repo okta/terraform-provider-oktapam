@@ -37,4 +37,11 @@ An ASA construct that contains servers and is used to grant end users access to 
 - `id` (String) The ID of this resource.
 - `team` (String) The human-readable name of the ASA Team that owns the resource. Values are lower-case.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Project can be imported using Project Name, e.g.,
+terraform import oktapam_project.example {{name}}
+```

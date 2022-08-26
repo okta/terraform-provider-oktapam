@@ -27,4 +27,11 @@ A token used to enroll servers in an ASA Project. For details, see [Enroll a ser
 - `issued_at` (String) The UTC time when the token was issued. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `token` (String) The secret used for resource enrollment.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Server Enrollment Token can be imported using Project Name and ID of the resource separated by a forward slash (/), e.g.,
+terraform import oktapam_server_enrollment_token.example {{project_name}}/{{id}}
+```

@@ -29,4 +29,11 @@ Beta Feature: Represents a Kubernetes cluster that has been registered with ASA.
 - `id` (String) The ID of this resource.
 - `oidc_issuer_url` (String) The OIDC Issuer URL to use when configuring your Kubernetes cluster.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Kubernetes Cluster can be imported using ID of this resource, e.g.,
+terraform import oktapam_kubernetes_cluster.example {{id}}
+```

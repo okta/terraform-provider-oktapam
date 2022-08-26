@@ -81,10 +81,6 @@ func dataSourceServerEnrollmentTokenFetch(ctx context.Context, d *schema.Resourc
 }
 
 func getRequiredServerEnrollmentTokenAttributes(d *schema.ResourceData) (string, string, error) {
-	if d.Id() != "" {
-		return parseServerEnrollmentTokenResourceID(d.Id())
-	}
-
 	id := getStringPtr(attributes.ID, d, false)
 	if id == nil {
 		return "", "", fmt.Errorf(errors.MissingAttributeError, attributes.ID)

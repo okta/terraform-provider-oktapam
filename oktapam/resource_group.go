@@ -107,6 +107,7 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{
 		}
 	} else {
 		logging.Infof("Group %s does not exist", groupName)
+		d.SetId("")
 	}
 
 	return nil
