@@ -3,9 +3,10 @@ NAMESPACE=pam
 NAME=oktapam
 BINARY=terraform-provider-${NAME}
 # On verion changes, update tag-checks.yml
-VERSION=0.2.1
+VERSION=0.2.2
 OS_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
 PLUGIN_DIR=~/.terraform.d/plugins
+DOCGEN_RESOURCES_DIR=docgen-resources
 
 SET_VERSION=-ldflags "-X github.com/okta/terraform-provider-oktapam/oktapam/version.Version=${VERSION}"
 
