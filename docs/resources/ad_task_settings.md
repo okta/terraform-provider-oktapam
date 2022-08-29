@@ -65,4 +65,11 @@ Optional:
 
 - `is_guid` (Boolean) Identifies an AD attribute as a Globally Unique Identifier (GUID)
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# AD Task Settings can be imported using AD Connection ID and ID of this resource separated by a forward slash (/), e.g.,
+terraform import oktapam_ad_task_settings.example {{connection_id}}/{{id}}
+```
