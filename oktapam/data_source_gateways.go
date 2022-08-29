@@ -15,7 +15,7 @@ import (
 func dataSourceGateways() *schema.Resource {
 	return &schema.Resource{
 		Description: descriptions.SourceGateways,
-		ReadContext: dataSourceGatewayRead,
+		ReadContext: dataSourceGatewaysRead,
 		Schema: map[string]*schema.Schema{
 			// Query parameter values
 			attributes.Contains: {
@@ -80,7 +80,7 @@ func dataSourceGateways() *schema.Resource {
 	}
 }
 
-func dataSourceGatewayRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceGatewaysRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	parameters := client.ListGatewayParameters{}
 
