@@ -41,7 +41,7 @@ resource "oktapam_ad_task_settings" "test_ad_task_settings" {
   rule_assignments {
     base_dn           = "ou=real,dc=dev-test,dc=sudo,dc=wtf"
     ldap_query_filter = "(objectclass=computer)"
-    project_id        = oktapam_project.test_project.id
+    project_id        = oktapam_project.test_project.project_id
     priority          = 1
   }
 }

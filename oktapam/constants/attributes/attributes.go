@@ -74,6 +74,7 @@ const (
 	OrganizationalUnit               = "organizational_unit"
 	OSAttribute                      = "os_attribute"
 	ProjectGroups                    = "project_groups"
+	ProjectID						 = "project_id"
 	ProjectName                      = "project_name"
 	ProjectNames                     = "project_names"
 	Projects                         = "projects"
