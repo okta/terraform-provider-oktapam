@@ -409,7 +409,7 @@ func flattenADTaskSettings(taskSettings *client.ADTaskSettings) map[string]inter
 }
 
 func parseADTaskSettingsResourceID(resourceId string) (string, string, error) {
-	split := strings.Split(resourceId, "|")
+	split := strings.Split(resourceId, "/")
 	if len(split) != 2 {
 		return "", "", fmt.Errorf("expected format: <connection_id>/<id>, received: %s", resourceId)
 	}

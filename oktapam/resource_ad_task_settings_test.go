@@ -326,6 +326,6 @@ func testAccADTaskSettingsImportStateId(resourceName string) resource.ImportStat
 		if !ok {
 			return "", fmt.Errorf("Not found: %s", resourceName)
 		}
-		return fmt.Sprintf("%s|%s", rs.Primary.Attributes[attributes.ADConnectionID], rs.Primary.Attributes[attributes.ID]), nil
+		return fmt.Sprintf("%s/%s", rs.Primary.Attributes[attributes.ADConnectionID], rs.Primary.Attributes[attributes.ID]), nil
 	}
 }
