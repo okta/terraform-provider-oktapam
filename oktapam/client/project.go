@@ -37,7 +37,7 @@ func (p Project) ToResourceMap() map[string]interface{} {
 		m[attributes.Name] = *p.Name
 	}
 	if p.ID != nil {
-		m[attributes.ID] = *p.ID
+		m[attributes.ProjectID] = *p.ID
 	}
 	if p.Team != nil {
 		m[attributes.Team] = *p.Team
