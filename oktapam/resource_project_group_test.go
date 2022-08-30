@@ -80,8 +80,11 @@ func TestAccProjectGroup(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
+				ResourceName: resourceName,
+				ImportState:  true,
+				//Used to dynamically generate the ID from the terraform state.
+				//Terraform Resource ID is set to ASA ProjectGroup UUID but read requires "Project Name" and "Group Name" to retrieve the resource
+				ImportStateIdFunc: testAccProjectGroupImportStateId(resourceName),
 				ImportStateVerify: true,
 			},
 		},
@@ -95,11 +98,8 @@ func testAccProjectGroupCheckExists(rn string, expectedProjectGroup client.Proje
 			return fmt.Errorf("resource not found: %s", rn)
 		}
 
-		resourceID := rs.Primary.ID
-		project, group, err := parseProjectGroupResourceID(resourceID)
-		if err != nil {
-			return fmt.Errorf("error parsing resource id: %w", err)
-		}
+		project := rs.Primary.Attributes[attributes.ProjectName]
+		group := rs.Primary.Attributes[attributes.GroupName]
 
 		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
 		projectGroup, err := pamClient.GetProjectGroup(context.Background(), project, group)
@@ -109,6 +109,8 @@ func testAccProjectGroupCheckExists(rn string, expectedProjectGroup client.Proje
 			return fmt.Errorf("project group does not exist")
 		}
 
+		//"ID" is computed after resource creation, so make it same to avoid comparison diff.
+		expectedProjectGroup.ID = projectGroup.ID
 		comparison := pretty.Compare(expectedProjectGroup, projectGroup)
 		if comparison != "" {
 			return fmt.Errorf("expected project group does not match returned project.\n%s", comparison)
@@ -185,4 +187,14 @@ resource "oktapam_project_group" "test_acc_project_group" {
 
 func createTestAccProjectGroupUpdateConfig(projectGroup client.ProjectGroup) string {
 	return fmt.Sprintf(testAccProjectGroupUpdateConfigFormat, *projectGroup.Project, *projectGroup.Group)
+}
+
+func testAccProjectGroupImportStateId(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return "", fmt.Errorf("Not found: %s", resourceName)
+		}
+		return fmt.Sprintf("%s/%s", rs.Primary.Attributes[attributes.ProjectName], rs.Primary.Attributes[attributes.GroupName]), nil
+	}
 }

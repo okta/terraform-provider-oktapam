@@ -98,6 +98,7 @@ func TestAccADTaskSettings(t *testing.T) {
 				ResourceName:      adTaskResourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateIdFunc: testAccADTaskSettingsImportStateId(adTaskResourceName),
 			},
 		},
 	})
@@ -109,10 +110,8 @@ func testAccADTaskCheckExists(adTaskSettingsResourceName string) resource.TestCh
 		if !ok {
 			return fmt.Errorf("resource not found: %s", adTaskSettingsResourceName)
 		}
-		adConnID, adTaskSettingsID, err := parseADTaskSettingsResourceID(adTaskRS.Primary.ID)
-		if err != nil {
-			return err
-		}
+		adConnID := adTaskRS.Primary.Attributes[attributes.ADConnectionID]
+		adTaskSettingsID := adTaskRS.Primary.ID
 
 		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
 		adTaskSettings, err := pamClient.GetADTaskSettings(context.Background(), adConnID, adTaskSettingsID)
@@ -134,10 +133,8 @@ func testAccADTaskCheckDestroy(adTaskSettingsResourceName string) resource.TestC
 			return fmt.Errorf("resource not found: %s", adTaskSettingsResourceName)
 		}
 
-		adConnID, adTaskSettingsID, err := parseADTaskSettingsResourceID(adTaskRS.Primary.ID)
-		if err != nil {
-			return err
-		}
+		adConnID := adTaskRS.Primary.Attributes[attributes.ADConnectionID]
+		adTaskSettingsID := adTaskRS.Primary.ID
 
 		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
 		adTask, err := pamClient.GetADTaskSettings(context.Background(), adConnID, adTaskSettingsID)
@@ -200,7 +197,7 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = oktapam_project.test_acc_project.project_id
+   project_id        = oktapam_project.test_acc_project.id
    priority          = 1
  }
 }
@@ -224,7 +221,7 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = oktapam_project.test_acc_project.project_id
+   project_id        = oktapam_project.test_acc_project.id
    priority          = 1
  }
 }
@@ -249,7 +246,7 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = oktapam_project.test_acc_project.project_id
+   project_id        = oktapam_project.test_acc_project.id
    priority          = 1
  }
 }
@@ -274,7 +271,7 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = oktapam_project.test_acc_project.project_id
+   project_id        = oktapam_project.test_acc_project.id
    priority          = 1
  }
  additional_attribute_mapping {
@@ -304,13 +301,13 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = oktapam_project.test_acc_project.project_id
+   project_id        = oktapam_project.test_acc_project.id
    priority          = 1
  }
  rule_assignments {
    base_dn           = "dc=example,dc=com"
    ldap_query_filter = "(objectclass=computer)"
-   project_id        = oktapam_project.test_acc_project.project_id
+   project_id        = oktapam_project.test_acc_project.id
    priority          = 2
  }
 
@@ -321,4 +318,14 @@ func createTestAccADTaskSettingsUpdateRulesConfig(preConfig string, adTaskName s
 	logging.Debugf("creating config")
 	return preConfig +
 		fmt.Sprintf(testAccADTaskUpdateRulesConfigFormat, adTaskName)
+}
+
+func testAccADTaskSettingsImportStateId(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return "", fmt.Errorf("Not found: %s", resourceName)
+		}
+		return fmt.Sprintf("%s/%s", rs.Primary.Attributes[attributes.ADConnectionID], rs.Primary.Attributes[attributes.ID]), nil
+	}
 }

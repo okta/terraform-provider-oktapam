@@ -2,7 +2,6 @@ package oktapam
 
 import (
 	"context"
-
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
@@ -67,30 +66,25 @@ func dataSourceProjectGroup() *schema.Resource {
 func dataSourceProjectGroupFetch(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	group := d.Get(attributes.GroupName).(string)
-	if group == "" {
-		return diag.Errorf("%s cannot be blank", attributes.GroupName)
-	}
+	projectName := d.Get(attributes.ProjectName).(string)
+	groupName := d.Get(attributes.GroupName).(string)
 
-	project := d.Get(attributes.ProjectName).(string)
-	if project == "" {
-		return diag.Errorf("%s cannot be blank", attributes.ProjectName)
-	}
-
-	projectGroup, err := c.GetProjectGroup(ctx, project, group)
+	projectGroup, err := c.GetProjectGroup(ctx, projectName, groupName)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	if projectGroup != nil {
-		d.SetId(createProjectGroupResourceID(*projectGroup.Project, *projectGroup.Group))
+		d.SetId(*projectGroup.ID)
 		resourceMap, err := projectGroup.ToResourceMap()
 		if err != nil {
 			return diag.FromErr(err)
 		}
 
 		for key, value := range resourceMap {
-			d.Set(key, value)
+			if err := d.Set(key, value); err != nil {
+				return diag.FromErr(err)
+			}
 		}
 	} else {
 		logging.Infof("project group belonging to project %s and group %s does not exist", *projectGroup.Project, *projectGroup.Group)

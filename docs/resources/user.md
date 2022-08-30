@@ -31,4 +31,11 @@ An ASA User. Valid user types are `human` and `service`. For more information ch
 - `server_user_name` (String) The name of the corresponding ASA Server User.
 - `team_name` (String) The human-readable name of the ASA Team that owns the resource. Values are lower-case.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# User can be imported using User Name and User Type of the resource separated by a forward slash (/), e.g.,
+terraform import oktapam_user.example {{name}}/{{type}}
+```

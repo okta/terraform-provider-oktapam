@@ -44,6 +44,7 @@ func TestAccServerEnrollmentToken(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateIdFunc: testAccServerEnrollmentTokenImportStateId(resourceName),
 			},
 		},
 	})
@@ -56,22 +57,19 @@ func testAccServerEnrollmentTokenCheckExists(rn string, expectedServerEnrollment
 			return fmt.Errorf("resource not found: %s", rn)
 		}
 
-		resourceID := rs.Primary.ID
-		projectName, tokenID, err := parseServerEnrollmentTokenResourceID(resourceID)
-		if err != nil {
-			return fmt.Errorf("error parsing resource id: %w", err)
-		}
+		serverEnrollmentTokenId := rs.Primary.ID
+		projectName := rs.Primary.Attributes[attributes.ProjectName]
 		if projectName != *expectedServerEnrollmentToken.Project {
 			return fmt.Errorf("resource id did not have the expected project. expected %s, got %s", *expectedServerEnrollmentToken.Project, projectName)
 		}
 
 		client := testAccProvider.Meta().(client.OktaPAMClient)
-		token, err := client.GetServerEnrollmentToken(context.Background(), projectName, tokenID)
+		token, err := client.GetServerEnrollmentToken(context.Background(), projectName, serverEnrollmentTokenId)
 		if err != nil {
 			return fmt.Errorf("error getting server enrollment token: %w", err)
 		}
 		if token == nil || utils.IsBlank(token.ID) {
-			return fmt.Errorf("server enrollment token for project %s with id %s does not exist", projectName, tokenID)
+			return fmt.Errorf("server enrollment token for project %s with id %s does not exist", projectName, serverEnrollmentTokenId)
 		}
 		if *token.Description != *expectedServerEnrollmentToken.Description {
 			return fmt.Errorf("expected description does not match returned description for server enrollment token.  expected: %s, got: %s", *expectedServerEnrollmentToken.Description, *token.Description)
@@ -123,4 +121,14 @@ resource "oktapam_server_enrollment_token" "test_server_enrollment_token" {
 
 func createTestAccServerEnrollmentTokenCreateConfig(token client.ServerEnrollmentToken) string {
 	return fmt.Sprintf(testAccServerEnrollmentTokenCreateConfigFormat, *token.Project, *token.Description)
+}
+
+func testAccServerEnrollmentTokenImportStateId(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return "", fmt.Errorf("Not found: %s", resourceName)
+		}
+		return fmt.Sprintf("%s/%s", rs.Primary.Attributes[attributes.ProjectName], rs.Primary.ID), nil
+	}
 }

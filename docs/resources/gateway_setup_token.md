@@ -26,4 +26,11 @@ A token for ASA Gateway enrollment. For details, see [Configure an Advanced Serv
 - `id` (String) The ID of this resource.
 - `token` (String) The secret used for resource enrollment.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Gateway Setup Token can be imported using ID of this resource, e.g.,
+terraform import oktapam_gateway_setup_token.example {{id}}
+```

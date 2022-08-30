@@ -49,7 +49,7 @@ func resourceGroup() *schema.Resource {
 			},
 		},
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: importResourceGroupState,
 		},
 	}
 }
@@ -78,15 +78,15 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interfac
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(*group.Name)
+
 	return resourceGroupRead(ctx, d, m)
 }
 
 func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
-	groupName := d.Id()
+	//Get group api require group name not ASA Group UUID to read resource back
+	groupName := d.Get(attributes.Name).(string)
 	group, err := c.GetGroup(ctx, groupName, false)
 	if err != nil {
 		return diag.FromErr(err)
@@ -95,24 +95,27 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{
 	if group != nil && utils.IsNonEmpty(group.Name) {
 		if utils.IsBlank(group.DeletedAt) {
 			logging.Infof("Group %s exists", *group.Name)
-			d.SetId(*group.Name)
+			d.SetId(*group.ID)
 		} else {
 			logging.Infof("Group %s was removed", groupName)
 			d.SetId("")
 		}
 		for key, value := range group.ToResourceMap() {
-			d.Set(key, value)
+			if err := d.Set(key, value); err != nil {
+				return diag.FromErr(err)
+			}
 		}
 	} else {
 		logging.Infof("Group %s does not exist", groupName)
+		d.SetId("")
 	}
 
-	return diags
+	return nil
 }
 
 func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
-	groupName := d.Id()
+	groupName := d.Get(attributes.Name).(string)
 
 	changed := false
 	updates := make(map[string]interface{})
@@ -146,7 +149,7 @@ func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
-	groupName := d.Id()
+	groupName := d.Get(attributes.Name).(string)
 
 	err := c.DeleteGroup(ctx, groupName)
 	if err != nil {
@@ -155,4 +158,13 @@ func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, m interfac
 
 	d.SetId("")
 	return diags
+}
+
+func importResourceGroupState(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	// d.Id() here is the last argument passed to the `terraform import RESOURCE_TYPE.RESOURCE_NAME RESOURCE_ID` command
+	// Set the passed id as group name to make read work
+	if err := d.Set(attributes.Name, d.Id()); err != nil {
+		return nil, err
+	}
+	return []*schema.ResourceData{d}, nil
 }
