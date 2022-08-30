@@ -11,6 +11,8 @@ jobs:
     if: github.repository == 'okta/terraform-provider-oktapam' || github.event.label.name == 'run-tag-tests'
     runs-on: ubuntu-latest
     strategy:
+      # 409 with resource already exist errors occurred when attempting to run all of these at the same time so we limit to half
+      max-parallel: 6
       matrix:
         # On version change, add new version here
         # On breaking changes, by definition past version mays no longer work. Wipe version at that point.
@@ -26,7 +28,7 @@ jobs:
       - name: Check out most recent files for testing purposes
         run: |
           git fetch origin master
-          git checkout origin/master Makefile.ci oktapam/client/okta_pam_client.go
+          git checkout origin/master Makefile.ci oktapam/client/okta_pam_client.go .terraform-version scripts/ci-acceptance-tests.sh
       - name: Get Terraform CLI Version
         id: vars
         run: echo ::set-output name=tf-version::$(cat .terraform-version)
