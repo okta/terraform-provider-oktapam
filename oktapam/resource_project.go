@@ -92,6 +92,11 @@ func resourceProject() *schema.Resource {
 				Optional:    true,
 				Description: descriptions.GatewaySelector,
 			},
+			attributes.UserOnDemandPeriod: {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: descriptions.UserOnDemandPeriod,
+			},
 			attributes.SSHCertificateType: {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -147,6 +152,7 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m interf
 		SSHSessionRecording:    getBoolPtr(attributes.SSHSessionRecording, d, false),
 		GatewaySelector:        getStringPtr(attributes.GatewaySelector, d, false),
 		SSHCertificateType:     getStringPtr(attributes.SSHCertificateType, d, false),
+		UserOnDemandPeriod:     getIntPtr(attributes.UserOnDemandPeriod, d, false),
 	}
 
 	err := c.CreateProject(ctx, project)
@@ -230,6 +236,7 @@ func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, m interf
 		attributes.RequirePreauthForCreds,
 		attributes.SSHSessionRecording,
 		attributes.GatewaySelector,
+		attributes.UserOnDemandPeriod,
 	}
 
 	for _, attribute := range changeableAttributes {

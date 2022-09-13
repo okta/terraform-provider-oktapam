@@ -27,6 +27,7 @@ func TestAccProject(t *testing.T) {
 		RDPSessionRecording:    utils.AsBoolPtrZero(false, true),
 		SSHSessionRecording:    utils.AsBoolPtrZero(false, true),
 		SSHCertificateType:     utils.AsStringPtr("CERT_TYPE_ED25519_01"),
+		UserOnDemandPeriod:     utils.AsIntPtr(1),
 	}
 	updatedProject := client.Project{
 		Name:                   &projectName,
@@ -39,6 +40,7 @@ func TestAccProject(t *testing.T) {
 		SSHSessionRecording:    utils.AsBoolPtrZero(true, true),
 		GatewaySelector:        utils.AsStringPtr("env=test"),
 		SSHCertificateType:     utils.AsStringPtr("CERT_TYPE_ED25519_01"),
+		UserOnDemandPeriod:     utils.AsIntPtr(10),
 	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -61,6 +63,9 @@ func TestAccProject(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.SSHCertificateType, "CERT_TYPE_ED25519_01",
 					),
+					resource.TestCheckResourceAttr(
+						resourceName, attributes.UserOnDemandPeriod, "1",
+					),
 				),
 			},
 			{
@@ -78,6 +83,9 @@ func TestAccProject(t *testing.T) {
 					),
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.SSHCertificateType, "CERT_TYPE_ED25519_01",
+					),
+					resource.TestCheckResourceAttr(
+						resourceName, attributes.UserOnDemandPeriod, "10",
 					),
 				),
 			},
