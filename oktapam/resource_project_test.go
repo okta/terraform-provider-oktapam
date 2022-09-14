@@ -147,10 +147,11 @@ func testAccProjectCheckDestroy(projectName string) resource.TestCheckFunc {
 
 const testAccProjectCreateConfigFormat = `
 resource "oktapam_project" "test_project" {
-    name                 = "%s"
-  	next_unix_uid        = 60120
-  	next_unix_gid        = 63020
-	ssh_certificate_type = "CERT_TYPE_ED25519_01"
+	name                  = "%s"
+	next_unix_uid         = 60120
+	next_unix_gid         = 63020
+	ssh_certificate_type  = "CERT_TYPE_ED25519_01"
+	user_on_demand_period = 1
 }`
 
 func createTestAccProjectCreateConfig(projectName string) string {
@@ -168,6 +169,7 @@ resource "oktapam_project" "test_project" {
 	ssh_session_recording     = true
 	gateway_selector          = "env=test"
 	ssh_certificate_type      = "CERT_TYPE_ED25519_01"
+	user_on_demand_period     = 10
 }`
 
 func createTestAccProjectUpdateConfig(projectName string) string {
