@@ -143,7 +143,8 @@ func (p *ProjectGroup) ToResourceMap() (map[string]interface{}, error) {
 		}
 		m[attributes.ServersSelector] = selectorsMap
 	} else {
-		m[attributes.ServersSelector] = ""
+		var ss map[string]interface{}
+		m[attributes.ServersSelector] = ss
 	}
 
 	return m, nil
