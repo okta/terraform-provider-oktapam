@@ -24,7 +24,7 @@ type ProjectGroup struct {
 	CreateServerGroup bool    `json:"create_server_group"`
 	ServerAccess      bool    `json:"server_access"`
 	ServerAdmin       bool    `json:"server_admin"`
-	ServersSelector   string  `json:"servers_selector,omitempty"`
+	ServersSelector   *string `json:"servers_selector,omitempty"`
 }
 
 func ProjectGroupFromMap(m map[string]interface{}) (*ProjectGroup, error) {
@@ -67,7 +67,7 @@ func ProjectGroupFromMap(m map[string]interface{}) (*ProjectGroup, error) {
 				return nil, err
 			}
 
-			p.ServersSelector = serversSelectorString
+			p.ServersSelector = &serversSelectorString
 		default:
 			return nil, fmt.Errorf("uknown key: %s", k)
 		}
@@ -136,15 +136,12 @@ func (p *ProjectGroup) ToResourceMap() (map[string]interface{}, error) {
 	}
 	m[attributes.ServerAccess] = p.ServerAccess
 	m[attributes.ServerAdmin] = p.ServerAdmin
-	if p.ServersSelector != "" {
-		selectorsMap, err := parseServersSelectorString(p.ServersSelector)
+	if p.ServersSelector != nil {
+		selectorsMap, err := parseServersSelectorString(*p.ServersSelector)
 		if err != nil {
 			return nil, err
 		}
 		m[attributes.ServersSelector] = selectorsMap
-	} else {
-		var ss map[string]interface{}
-		m[attributes.ServersSelector] = ss
 	}
 
 	return m, nil

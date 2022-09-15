@@ -120,7 +120,7 @@ func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m i
 		ServerAccess:      serverAccess,
 		ServerAdmin:       serverAdmin,
 		CreateServerGroup: createServerGroup,
-		ServersSelector:   serversSelectorString,
+		ServersSelector:   &serversSelectorString,
 	}
 
 	err = c.CreateProjectGroup(ctx, projectGroup)
