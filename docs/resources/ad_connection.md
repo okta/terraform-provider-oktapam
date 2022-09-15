@@ -39,6 +39,6 @@ An Active Directory (AD) Connection to query AD Domain for available servers. Fo
 Import is supported using the following syntax:
 
 ```shell
-# Gateway Setup Token can be imported using ID of this resource, e.g.,
+# AD Connection can be imported using ID of this resource, e.g.,
 terraform import oktapam_ad_connection.example {{id}}
 ```
