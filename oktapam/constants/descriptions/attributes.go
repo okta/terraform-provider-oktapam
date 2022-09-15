@@ -84,5 +84,6 @@ var (
 	TeamName            = "The human-readable name of the ASA Team that owns the resource. Values are lower-case."
 	Token               = "The secret used for resource enrollment."
 	UsePasswordless     = "if `true`, Users will not need password to login."
+	UserOnDemandPeriod  = "If defined, set time period in seconds that an on-demand user account exists on the server following an access request."
 	UserType            = "The user type. Valid types are 'human' and 'service'."
 )

@@ -30,6 +30,7 @@ An ASA construct that contains servers and is used to grant end users access to 
 - `require_preauth_for_creds` (Boolean) If `true`, require preauthorization before an ASA User can retrieve credentials to sign in.
 - `ssh_certificate_type` (String) The SSH certificate type used by access requests. Options include: [`CERT_TYPE_ED25519_01`, `CERT_TYPE_ECDSA_521_01`, `CERT_TYPE_ECDSA_384_01`, `CERT_TYPE_ECDSA_256_01`, `CERT_TYPE_RSA_01`]. 'CERT_TYPE_RSA_01' is a deprecated key algorithm type. This option should only be used to connect to legacy systems that cannot use newer SSH versions. If you do need to use 'CERT_TYPE_RSA_01', it is recommended to connect via a gateway with traffic forwarding. Otherwise, please use a more current key algorithm. If left unspecified, 'CERT_TYPE_ED25519_01' is used by default.
 - `ssh_session_recording` (Boolean) If `true`, enables ssh recording on server access requests.
+- `user_on_demand_period` (Number) If defined, set time period in seconds that an on-demand user account exists on the server following an access request.
 
 ### Read-Only
 

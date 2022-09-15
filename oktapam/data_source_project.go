@@ -82,6 +82,11 @@ func dataSourceProject() *schema.Resource {
 				Computed:    true,
 				Description: descriptions.SSHCertificateType,
 			},
+			attributes.UserOnDemandPeriod: {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: descriptions.UserOnDemandPeriod,
+			},
 		},
 	}
 }

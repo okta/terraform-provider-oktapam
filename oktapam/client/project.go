@@ -28,6 +28,7 @@ type Project struct {
 	SSHSessionRecording    *bool   `json:"ssh_session_recording,omitempty"`
 	GatewaySelector        *string `json:"gateway_selector,omitempty"`
 	SSHCertificateType     *string `json:"ssh_certificate_type,omitempty"`
+	UserOnDemandPeriod     *int    `json:"user_on_demand_period,omitempty"`
 }
 
 func (p Project) ToResourceMap() map[string]interface{} {
@@ -72,6 +73,9 @@ func (p Project) ToResourceMap() map[string]interface{} {
 	}
 	if p.SSHCertificateType != nil {
 		m[attributes.SSHCertificateType] = *p.SSHCertificateType
+	}
+	if p.UserOnDemandPeriod != nil {
+		m[attributes.UserOnDemandPeriod] = *p.UserOnDemandPeriod
 	}
 
 	return m
