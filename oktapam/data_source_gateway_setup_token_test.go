@@ -61,7 +61,7 @@ func checkResourcesEqual(resourceName1 string, resourceName2 string) resource.Te
 
 		comparison := pretty.Compare(resource1.Primary.Attributes, resource2.Primary.Attributes)
 		if comparison != "" {
-			return fmt.Errorf("resources are not equal")
+			return fmt.Errorf("resources are not equal: %s", comparison)
 		}
 		return nil
 	}
