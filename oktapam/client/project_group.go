@@ -131,9 +131,7 @@ func (p *ProjectGroup) ToResourceMap() (map[string]interface{}, error) {
 	if p.RemovedAt != nil {
 		m[attributes.RemovedAt] = *p.RemovedAt
 	}
-	if p.CreateServerGroup {
-		m[attributes.CreateServerGroup] = p.CreateServerGroup
-	}
+	m[attributes.CreateServerGroup] = p.CreateServerGroup
 	m[attributes.ServerAccess] = p.ServerAccess
 	m[attributes.ServerAdmin] = p.ServerAdmin
 	if p.ServersSelector != "" {
