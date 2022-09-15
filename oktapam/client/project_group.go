@@ -142,6 +142,8 @@ func (p *ProjectGroup) ToResourceMap() (map[string]interface{}, error) {
 			return nil, err
 		}
 		m[attributes.ServersSelector] = selectorsMap
+	} else {
+		m[attributes.ServersSelector] = ""
 	}
 
 	return m, nil
