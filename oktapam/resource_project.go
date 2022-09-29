@@ -237,6 +237,7 @@ func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, m interf
 		attributes.SSHSessionRecording,
 		attributes.GatewaySelector,
 		attributes.UserOnDemandPeriod,
+		attributes.SSHCertificateType,
 	}
 
 	for _, attribute := range changeableAttributes {
