@@ -21,7 +21,7 @@ func TestAccProject(t *testing.T) {
 		Name:                   &projectName,
 		NextUnixUID:            utils.AsIntPtr(60120),
 		NextUnixGID:            utils.AsIntPtr(63020),
-		CreateServerUsers:      utils.AsBoolPtrZero(false, true),
+		CreateServerUsers:      utils.AsBoolPtrZero(true, true),
 		ForwardTraffic:         utils.AsBoolPtrZero(false, true),
 		RequirePreAuthForCreds: utils.AsBoolPtrZero(false, true),
 		RDPSessionRecording:    utils.AsBoolPtrZero(false, true),

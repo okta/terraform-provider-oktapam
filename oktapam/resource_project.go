@@ -55,7 +55,7 @@ func resourceProject() *schema.Resource {
 			attributes.CreateServerUsers: {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Default:     false,
+				Default:     true,
 				Description: descriptions.CreateServerUsers,
 			},
 			attributes.DeletedAt: {
