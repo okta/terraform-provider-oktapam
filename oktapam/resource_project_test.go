@@ -39,7 +39,7 @@ func TestAccProject(t *testing.T) {
 		RDPSessionRecording:    utils.AsBoolPtrZero(true, true),
 		SSHSessionRecording:    utils.AsBoolPtrZero(true, true),
 		GatewaySelector:        utils.AsStringPtr("env=test"),
-		SSHCertificateType:     utils.AsStringPtr("CERT_TYPE_ED25519_01"),
+		SSHCertificateType:     utils.AsStringPtr("CERT_TYPE_RSA_01"),
 		UserOnDemandPeriod:     utils.AsIntPtr(10),
 	}
 	resource.Test(t, resource.TestCase{
@@ -82,7 +82,7 @@ func TestAccProject(t *testing.T) {
 						resourceName, attributes.NextUnixGID, "63400",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.SSHCertificateType, "CERT_TYPE_ED25519_01",
+						resourceName, attributes.SSHCertificateType, "CERT_TYPE_RSA_01",
 					),
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.UserOnDemandPeriod, "10",
@@ -168,7 +168,7 @@ resource "oktapam_project" "test_project" {
 	rdp_session_recording     = true
 	ssh_session_recording     = true
 	gateway_selector          = "env=test"
-	ssh_certificate_type      = "CERT_TYPE_ED25519_01"
+	ssh_certificate_type      = "CERT_TYPE_RSA_01"
 	user_on_demand_period     = 10
 }`
 
