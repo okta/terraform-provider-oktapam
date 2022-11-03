@@ -9,26 +9,24 @@ import (
 )
 
 func TestAccDatasourceADConnections(t *testing.T) {
-	adConnectionNamePrefix := fmt.Sprintf("test_acc_datasource_ad_connection_%s", randSeq(10))
-	adConnectionName1 := fmt.Sprintf("%s_1", adConnectionNamePrefix)
-
-	adConnectionResNamePrefix := "oktapam_ad_connection.test_acc_ad_connection"
-	adConnectionResName1 := fmt.Sprintf("%s_1", adConnectionResNamePrefix)
-
-	resourceNamePrefix := "data.oktapam_ad_connections.test_acc_datasource_ad_connections"
-	dataSource1 := fmt.Sprintf("%s_1", resourceNamePrefix)
+	nameIdentifier := randSeq(10)
+	prefix := "test_acc_datasource_ad_connection"
+	adConnectionTFResourceName := "oktapam_ad_connection.test_acc_ad_connection"
+	adConnectionName := fmt.Sprintf("%s-%s", prefix, nameIdentifier)
+	domainName := fmt.Sprintf("%s-%s.example.com", prefix, nameIdentifier)
+	datasourceTFResourceName := "data.oktapam_ad_connections.test_acc_datasource_ad_connections"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				//Check if datasource returns pre-existing AD Connections
-				Config: createTestAccDatasourceADConnectionsConfig(adConnectionName1),
+				//Check if datasource returns AD Connections based on the certificateId filter
+				Config: createTestAccDatasourceADConnectionsConfig(adConnectionName, domainName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(dataSource1, fmt.Sprintf("%s.#", attributes.ADConnections), "1"),
-					resource.TestCheckResourceAttrPair(dataSource1, fmt.Sprintf("%s.0.%s", attributes.ADConnections, attributes.Name),
-						adConnectionResName1, attributes.Name),
+					resource.TestCheckResourceAttr(datasourceTFResourceName, fmt.Sprintf("%s.#", attributes.ADConnections), "1"),
+					resource.TestCheckResourceAttrPair(datasourceTFResourceName, fmt.Sprintf("%s.0.%s", attributes.ADConnections, attributes.Name),
+						adConnectionTFResourceName, attributes.Name),
 				),
 			},
 		},
@@ -39,21 +37,31 @@ const testAccDatasourceADConnectionsConfigFormat = `
 data "oktapam_gateways" "gateways" {
 }
 
-resource "oktapam_ad_connection" "test_acc_ad_connection_1" {
-	 name                     = "%[1]s"
-	 gateway_id               = data.oktapam_gateways.gateways.gateways[0].id
-	 domain                   = "testacc.example.com"
-	 service_account_username = "user@testacc.example.com"
-	 service_account_password = "password"
-	 use_passwordless         = false
+resource "oktapam_ad_certificate_request" "self_signed_cert" {
+  display_name = "test_acc"
+  common_name  = "test_acc"
+  type         = "self_signed"
+  details {
+	ttl_days = 1
+  }
 }
 
-data "oktapam_ad_connections" "test_acc_datasource_ad_connections_1" {
-    gateway_id = data.oktapam_gateways.gateways.gateways[0].id
-    depends_on = [oktapam_ad_connection.test_acc_ad_connection_1]
+resource "oktapam_ad_connection" "test_acc_ad_connection" {
+	 name                     = "%[1]s"
+	 gateway_id               = data.oktapam_gateways.gateways.gateways[0].id
+	 domain                   = "%[2]s"
+	 service_account_username = "user@testacc.example.com"
+	 service_account_password = "password"
+	 use_passwordless         = true
+     certificate_id  		  = oktapam_ad_certificate_request.self_signed_cert.id
+}
+
+data "oktapam_ad_connections" "test_acc_datasource_ad_connections" {
+    certificate_id = oktapam_ad_certificate_request.self_signed_cert.id
+    depends_on = [oktapam_ad_connection.test_acc_ad_connection, oktapam_ad_certificate_request.self_signed_cert]
 }
 `
 
-func createTestAccDatasourceADConnectionsConfig(adConnectionName1 string) string {
-	return fmt.Sprintf(testAccDatasourceADConnectionsConfigFormat, adConnectionName1)
+func createTestAccDatasourceADConnectionsConfig(adConnectionName string, domainName string) string {
+	return fmt.Sprintf(testAccDatasourceADConnectionsConfigFormat, adConnectionName, domainName)
 }
