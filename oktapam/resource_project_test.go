@@ -16,7 +16,7 @@ import (
 
 func TestAccProject(t *testing.T) {
 	resourceName := "oktapam_project.test_project"
-	projectName := fmt.Sprintf("test_acc_project_%s", randSeq(10))
+	projectName := fmt.Sprintf("test_acc_project_%s", randSeq())
 	initialProject := client.Project{
 		Name:                   &projectName,
 		NextUnixUID:            utils.AsIntPtr(60120),

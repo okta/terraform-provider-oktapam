@@ -47,9 +47,9 @@ func testAccPreCheck(t *testing.T) {
 
 var randChars = []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
 
-func randSeq(n int) string {
+func randSeq() string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	b := make([]rune, n)
+	b := make([]rune, 20) // Character length
 	for i := range b {
 		b[i] = randChars[r.Intn(len(randChars))]
 	}

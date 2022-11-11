@@ -23,7 +23,7 @@ func TestAccUser(t *testing.T) {
 	resource2 := "test_user_2"
 	resourceType := "oktapam_user"
 	resourceName1 := fmt.Sprintf("%s.%s", resourceType, resource1)
-	identifier := randSeq(20)
+	identifier := randSeq()
 	userName := "tf_acceptance_test_user_" + identifier
 	teamName := DefaultTestTeam
 	userType := typed_strings.UserTypeService

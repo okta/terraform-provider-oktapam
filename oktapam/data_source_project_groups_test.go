@@ -16,7 +16,7 @@ func TestAccDatasourceProjectGroupList(t *testing.T) {
 	prefix := "data.oktapam_project_groups"
 
 	// Generate details
-	identifier := randSeq(10)
+	identifier := randSeq()
 
 	// Config 1: create two project groups
 	initConfig := createTestAccDatasourceProjectGroupsInitConfig(identifier)

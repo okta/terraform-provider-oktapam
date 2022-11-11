@@ -14,7 +14,7 @@ import (
 
 func TestAccADConnection(t *testing.T) {
 	resourceName := "oktapam_ad_connection.test_acc_ad_connection"
-	nameIdentifier := randSeq(10)
+	nameIdentifier := randSeq()
 	connectionName := fmt.Sprintf("test_acc_ad_connection-%s", nameIdentifier)
 	domainName := fmt.Sprintf("%s.example.com", nameIdentifier)
 

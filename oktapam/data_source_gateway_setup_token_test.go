@@ -16,7 +16,7 @@ func TestAccDatasourceGatewaySetupTokenFetch(t *testing.T) {
 	resourceName := "oktapam_gateway_setup_token.test-gateway-setup-token-1"
 	dataSourceName := "data.oktapam_gateway_setup_token.target_token"
 
-	identifier := randSeq(10)
+	identifier := randSeq()
 	description := fmt.Sprintf("Acceptance Test Setup Token Set %s: 1", identifier)
 	labels := constructLabels(10)
 
@@ -40,8 +40,8 @@ func TestAccDatasourceGatewaySetupTokenFetch(t *testing.T) {
 func constructLabels(length int) map[string]string {
 	labels := make(map[string]string)
 	for i := 0; i < length; i++ {
-		key := fmt.Sprintf("key-%s", randSeq(10))
-		value := fmt.Sprintf("value-%s", randSeq(10))
+		key := fmt.Sprintf("key-%s", randSeq())
+		value := fmt.Sprintf("value-%s", randSeq())
 		labels[key] = value
 	}
 	return labels

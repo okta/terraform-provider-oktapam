@@ -15,7 +15,7 @@ import (
 
 func TestAccGroup(t *testing.T) {
 	resourceName := "oktapam_group.test_group"
-	groupName := fmt.Sprintf("test_acc_group_%s", randSeq(10))
+	groupName := fmt.Sprintf("test_acc_group_%s", randSeq())
 	initialGroup := client.Group{
 		Name:  &groupName,
 		Roles: make([]string, 0),

@@ -16,7 +16,7 @@ import (
 
 func TestAccServerEnrollmentToken(t *testing.T) {
 	resourceName := "oktapam_server_enrollment_token.test_server_enrollment_token"
-	identifier := randSeq(10)
+	identifier := randSeq()
 	description := fmt.Sprintf("Acceptance Test Token Set %s, Token 1", identifier)
 	projectName := fmt.Sprintf("test_acc_server_enrollment_token_project_%s", identifier)
 	enrollmentToken := client.ServerEnrollmentToken{

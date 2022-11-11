@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccDatasourceADConnections(t *testing.T) {
-	nameIdentifier := randSeq(10)
+	nameIdentifier := randSeq()
 	prefix := "test_acc_datasource_ad_connection"
 	adConnectionTFResourceName := "oktapam_ad_connection.test_acc_ad_connection"
 	adConnectionName := fmt.Sprintf("%s-%s", prefix, nameIdentifier)

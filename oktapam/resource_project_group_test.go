@@ -16,8 +16,8 @@ import (
 
 func TestAccProjectGroup(t *testing.T) {
 	resourceName := "oktapam_project_group.test_acc_project_group"
-	projectName := fmt.Sprintf("test_acc_project_group_project_%s", randSeq(10))
-	groupName := fmt.Sprintf("test_acc_project_group_group_%s", randSeq(10))
+	projectName := fmt.Sprintf("test_acc_project_group_project_%s", randSeq())
+	groupName := fmt.Sprintf("test_acc_project_group_group_%s", randSeq())
 
 	initialProjectGroup := client.ProjectGroup{
 		Project:      &projectName,

@@ -13,7 +13,7 @@ func TestAccDatasourceServerEnrollmentTokenList(t *testing.T) {
 	dataSourceName := fmt.Sprintf("data.%s.tokens_list", providerServerEnrollmentTokensKey)
 
 	// Generate details
-	identifier := randSeq(10)
+	identifier := randSeq()
 	projectName := fmt.Sprintf("test-acc-datasource-server-enrollment-token-project-%s", identifier)
 	description1 := fmt.Sprintf("Datasource Acceptance Test Token Set %s, Token 1", identifier)
 	description2 := fmt.Sprintf("Datasource Acceptance Test Token Set %s, Token 2", identifier)

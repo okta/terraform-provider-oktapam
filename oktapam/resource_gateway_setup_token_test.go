@@ -17,7 +17,7 @@ import (
 func TestAccGatewaySetupToken(t *testing.T) {
 	resourceName := "oktapam_gateway_setup_token.test_gateway_setup_token"
 
-	identifier := randSeq(10)
+	identifier := randSeq()
 	description := fmt.Sprintf("Acceptance Test Setup Token: %s", identifier)
 	labels := constructLabels(10)
 

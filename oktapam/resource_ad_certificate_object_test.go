@@ -16,7 +16,7 @@ const (
 
 func TestAccADCertificateObject(t *testing.T) {
 	certificateUploadResourceName := "oktapam_ad_certificate_object.test_upload_cert"
-	csrDisplayName := fmt.Sprintf("test-acc-csr-%s", randSeq(10))
+	csrDisplayName := fmt.Sprintf("test-acc-csr-%s", randSeq())
 
 	// Hashicorp TLS provider generate CA certificate and create signed certificate. It is added as external provider dependency
 	tlsExternalProvider := resource.ExternalProvider{
