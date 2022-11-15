@@ -11,7 +11,7 @@ func TestAccDatasourceProjectGroupFetch(t *testing.T) {
 	resourceName := "oktapam_project_group.test-1"
 	dataSourceName := "data.oktapam_project_group.target"
 
-	identifier := randSeq(10)
+	identifier := randSeq()
 
 	testConfig := createTestAccDatasourceProjectGroupInitConfig(identifier)
 

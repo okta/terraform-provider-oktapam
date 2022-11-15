@@ -11,7 +11,7 @@ func TestAccDatasourceServerEnrollmentTokenFetch(t *testing.T) {
 	resourceName := "oktapam_server_enrollment_token.test_server_enrollment_token_1"
 	dataSourceName := "data.oktapam_server_enrollment_token.target_token"
 
-	identifier := randSeq(10)
+	identifier := randSeq()
 	projectName := fmt.Sprintf("test_acc_datasource_server_enrollment_token_project_%s", identifier)
 	description := fmt.Sprintf("Datasource Acceptance Test Token Set %s, Token 1", identifier)
 

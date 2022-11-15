@@ -14,7 +14,7 @@ func TestAccDatasourceGatewaySetupTokenList(t *testing.T) {
 	prefix := "data.oktapam_gateway_setup_tokens"
 
 	// Generate details
-	identifier := randSeq(10)
+	identifier := randSeq()
 	description1 := fmt.Sprintf("Acceptance Test Setup Token Set %s: 1", identifier)
 	description2 := fmt.Sprintf("Acceptance Test Setup Token Set %s: 2", identifier)
 	labels := constructLabels(10)

@@ -243,7 +243,6 @@ func parseProjectGroupResourceID(resourceId string) (string, string, error) {
 	return split[0], split[1], nil
 }
 
-
 func importResourceProjectGroupState(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// d.Id() here is the last argument passed to the `terraform import RESOURCE_TYPE.RESOURCE_NAME RESOURCE_ID` command
 	// Id provided for import is in the format <project_name>/<group_name>

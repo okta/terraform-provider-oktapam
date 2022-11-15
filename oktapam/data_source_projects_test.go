@@ -16,7 +16,7 @@ func TestAccDatasourceProjectList(t *testing.T) {
 	prefix := "data.oktapam_projects"
 
 	// Generate details
-	identifier := randSeq(10)
+	identifier := randSeq()
 
 	// Config 1: create two tokens
 	initConfig := createTestAccDatasourceProjectsInitConfig(identifier)

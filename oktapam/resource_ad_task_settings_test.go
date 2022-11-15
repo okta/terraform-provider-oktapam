@@ -17,7 +17,7 @@ import (
 func TestAccADTaskSettings(t *testing.T) {
 	adTaskResourceName := "oktapam_ad_task_settings.test_acc_ad_task_settings"
 
-	nameIdentifier := randSeq(10)
+	nameIdentifier := randSeq()
 	adTaskName := fmt.Sprintf("test_acc_ad_task_settings_%s", nameIdentifier)
 	adConnectionName := fmt.Sprintf("test_acc_ad_connection_%s", nameIdentifier)
 	projectName := fmt.Sprintf("test_acc_project_%s", nameIdentifier)

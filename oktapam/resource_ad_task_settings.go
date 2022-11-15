@@ -223,7 +223,6 @@ func resourceADTaskSettingsUpdate(ctx context.Context, d *schema.ResourceData, m
 	adConnID := d.Get(attributes.ADConnectionID).(string)
 	adTaskSettingsID := d.Id()
 
-
 	//If deactivated
 	if _, active := d.GetChange(attributes.IsActive); d.HasChange(attributes.IsActive) && active != nil && !active.(bool) {
 		//Deactivate task

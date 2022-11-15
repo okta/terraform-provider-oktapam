@@ -23,7 +23,7 @@ const (
 
 func TestAccADCertificateRequest_CSR(t *testing.T) {
 	resourceName := "oktapam_ad_certificate_request.test_csr"
-	csrName := fmt.Sprintf("test-acc-csr-%s", randSeq(10))
+	csrName := fmt.Sprintf("test-acc-csr-%s", randSeq())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -45,7 +45,7 @@ func TestAccADCertificateRequest_CSR(t *testing.T) {
 
 func TestAccADCertificateRequest_SelfSigned(t *testing.T) {
 	resourceName := "oktapam_ad_certificate_request.test_self_signed_cert"
-	certName := fmt.Sprintf("test-acc-self-signed-cert-%s", randSeq(10))
+	certName := fmt.Sprintf("test-acc-self-signed-cert-%s", randSeq())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

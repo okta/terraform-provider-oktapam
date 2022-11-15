@@ -17,7 +17,7 @@ func TestAccDatasourceGroupList(t *testing.T) {
 	prefix := "data.oktapam_groups"
 
 	// Generate details
-	identifier := randSeq(10)
+	identifier := randSeq()
 
 	// Config 1: create two tokens
 	initConfig := createTestAccDatasourceGroupsInitConfig(identifier)
