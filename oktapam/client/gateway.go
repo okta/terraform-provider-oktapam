@@ -87,3 +87,56 @@ func (c OktaPAMClient) ListGateways(ctx context.Context, parameters ListGatewayP
 
 	return gateways, nil
 }
+
+func (c OktaPAMClient) GetGateway(ctx context.Context, id string) (*Gateway, error) {
+	if id == "" {
+		return nil, fmt.Errorf("supplied blank gateway id")
+	}
+	requestURL := fmt.Sprintf("/v1/teams/%s/gateways/%s", url.PathEscape(c.Team), url.PathEscape(id))
+
+	logging.Tracef("making GET request to %s", requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetResult(&Gateway{}).Get(requestURL)
+	if err != nil {
+		logging.Errorf("received error while making request to %s", requestURL)
+		return nil, err
+	}
+	if statusCode, err := checkStatusCode(resp, http.StatusOK, http.StatusNotFound); err != nil {
+		return nil, err
+	} else if statusCode == http.StatusNotFound {
+		return nil, nil
+	}
+
+	gateway := resp.Result().(*Gateway)
+	return gateway, nil
+}
+
+func (c OktaPAMClient) UpdateGateway(ctx context.Context, id string, updates map[string]interface{}) error {
+	requestURL := fmt.Sprintf("/v1/teams/%s/gateways/%s", url.PathEscape(c.Team), url.PathEscape(id))
+	logging.Tracef("making PUT request to %s", requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetBody(updates).Put(requestURL)
+	if err != nil {
+		logging.Errorf("received error while making request to %s", requestURL)
+		return err
+	}
+	_, err = checkStatusCode(resp, http.StatusNoContent)
+	return err
+}
+
+func (c OktaPAMClient) DeleteGateway(ctx context.Context, id string) error {
+	if id == "" {
+		return fmt.Errorf("supplied blank gateway id")
+	}
+	requestURL := fmt.Sprintf("/v1/teams/%s/gateways/%s", url.PathEscape(c.Team), url.PathEscape(id))
+	logging.Tracef("making DELETE request to %s", requestURL)
+	resp, err := c.CreateBaseRequest(ctx).Delete(requestURL)
+	if err != nil {
+		logging.Errorf("received error while making request to %s", requestURL)
+		return err
+	}
+	if _, err := checkStatusCode(resp, http.StatusNoContent); err != nil {
+		logging.Tracef("unexpected status code: %d", resp.StatusCode())
+		return err
+	}
+
+	return nil
+}
