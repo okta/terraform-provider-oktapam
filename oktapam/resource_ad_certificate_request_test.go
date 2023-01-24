@@ -66,9 +66,9 @@ func TestAccADCertificateRequest_SelfSigned(t *testing.T) {
 }
 
 func adCertificateExists(id string) (bool, error) {
-	client := testAccProvider.Meta().(client.OktaPAMClient)
+	c := testAccProvider.Meta().(client.OktaPAMClient)
 	logging.Debugf("Checking if resource deleted %s", id)
-	adCertificate, err := client.GetADSmartcardCertificate(context.Background(), id)
+	adCertificate, err := c.GetADSmartcardCertificate(context.Background(), id)
 
 	return adCertificate != nil && adCertificate.Exists() && err == nil, err
 }

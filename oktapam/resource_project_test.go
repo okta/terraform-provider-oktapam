@@ -111,8 +111,8 @@ func testAccProjectCheckExists(rn string, expectedProject client.Project) resour
 			return fmt.Errorf("resource id not set")
 		}
 
-		client := testAccProvider.Meta().(client.OktaPAMClient)
-		proj, err := client.GetProject(context.Background(), *expectedProject.Name, false)
+		c := testAccProvider.Meta().(client.OktaPAMClient)
+		proj, err := c.GetProject(context.Background(), *expectedProject.Name, false)
 		if err != nil {
 			return fmt.Errorf("error getting project :%w", err)
 		}
@@ -120,7 +120,7 @@ func testAccProjectCheckExists(rn string, expectedProject client.Project) resour
 			return fmt.Errorf("project %s does not exist", *expectedProject.Name)
 		}
 		expectedProject.ID = proj.ID
-		expectedProject.Team = &client.Team
+		expectedProject.Team = &c.Team
 		comparison := pretty.Compare(proj, expectedProject)
 		if comparison != "" {
 			return fmt.Errorf("expected project does not match returned project.\n%s", comparison)
@@ -131,8 +131,8 @@ func testAccProjectCheckExists(rn string, expectedProject client.Project) resour
 
 func testAccProjectCheckDestroy(projectName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(client.OktaPAMClient)
-		proj, err := client.GetProject(context.Background(), projectName, false)
+		c := testAccProvider.Meta().(client.OktaPAMClient)
+		proj, err := c.GetProject(context.Background(), projectName, false)
 		if err != nil {
 			return fmt.Errorf("error getting project: %w", err)
 		}

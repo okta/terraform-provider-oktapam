@@ -101,8 +101,8 @@ func testAccProjectGroupCheckExists(rn string, expectedProjectGroup client.Proje
 		project := rs.Primary.Attributes[attributes.ProjectName]
 		group := rs.Primary.Attributes[attributes.GroupName]
 
-		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
-		projectGroup, err := pamClient.GetProjectGroup(context.Background(), project, group)
+		c := testAccProvider.Meta().(client.OktaPAMClient)
+		projectGroup, err := c.GetProjectGroup(context.Background(), project, group)
 		if err != nil {
 			return fmt.Errorf("error getting project group: %w", err)
 		} else if projectGroup == nil {
@@ -121,22 +121,22 @@ func testAccProjectGroupCheckExists(rn string, expectedProjectGroup client.Proje
 
 func testAccProjectGroupCheckDestroy(projectGroup client.ProjectGroup) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
-		pg, err := pamClient.GetProjectGroup(context.Background(), *projectGroup.Project, *projectGroup.Group)
+		c := testAccProvider.Meta().(client.OktaPAMClient)
+		pg, err := c.GetProjectGroup(context.Background(), *projectGroup.Project, *projectGroup.Group)
 		if err != nil {
 			return fmt.Errorf("error getting project group: %w", err)
 		}
 		if pg != nil && utils.IsNonEmpty(pg.Project) && utils.IsNonEmpty(pg.Group) && utils.IsBlank(pg.DeletedAt) && utils.IsBlank(pg.RemovedAt) {
 			return fmt.Errorf("project group still exists")
 		}
-		group, err := pamClient.GetGroup(context.Background(), *projectGroup.Group, false)
+		group, err := c.GetGroup(context.Background(), *projectGroup.Group, false)
 		if err != nil {
 			return fmt.Errorf("error getting group associated with project group: %w", err)
 		}
 		if group != nil && utils.IsNonEmpty(group.ID) {
 			return fmt.Errorf("group still exists: %s", *projectGroup.Group)
 		}
-		project, err := pamClient.GetProject(context.Background(), *projectGroup.Project, false)
+		project, err := c.GetProject(context.Background(), *projectGroup.Project, false)
 		if err != nil {
 			return fmt.Errorf("error getting project associated with project group: %w", err)
 		}

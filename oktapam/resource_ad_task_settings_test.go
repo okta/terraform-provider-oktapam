@@ -113,8 +113,8 @@ func testAccADTaskCheckExists(adTaskSettingsResourceName string) resource.TestCh
 		adConnID := adTaskRS.Primary.Attributes[attributes.ADConnectionID]
 		adTaskSettingsID := adTaskRS.Primary.ID
 
-		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
-		adTaskSettings, err := pamClient.GetADTaskSettings(context.Background(), adConnID, adTaskSettingsID)
+		c := testAccProvider.Meta().(client.OktaPAMClient)
+		adTaskSettings, err := c.GetADTaskSettings(context.Background(), adConnID, adTaskSettingsID)
 		if err != nil {
 			return fmt.Errorf("error getting ad task settings: %w", err)
 		} else if !adTaskSettings.Exists() {
@@ -136,8 +136,8 @@ func testAccADTaskCheckDestroy(adTaskSettingsResourceName string) resource.TestC
 		adConnID := adTaskRS.Primary.Attributes[attributes.ADConnectionID]
 		adTaskSettingsID := adTaskRS.Primary.ID
 
-		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
-		adTask, err := pamClient.GetADTaskSettings(context.Background(), adConnID, adTaskSettingsID)
+		c := testAccProvider.Meta().(client.OktaPAMClient)
+		adTask, err := c.GetADTaskSettings(context.Background(), adConnID, adTaskSettingsID)
 		if err != nil {
 			return fmt.Errorf("error getting ad task settings: %w", err)
 		}

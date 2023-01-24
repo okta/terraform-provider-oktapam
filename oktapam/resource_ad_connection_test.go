@@ -58,9 +58,9 @@ func TestAccADConnection(t *testing.T) {
 }
 
 func adConnectionExists(id string) (bool, error) {
-	client := testAccProvider.Meta().(client.OktaPAMClient)
+	c := testAccProvider.Meta().(client.OktaPAMClient)
 	logging.Debugf("Checking if resource deleted %s", id)
-	adConnection, err := client.GetADConnection(context.Background(), id, false)
+	adConnection, err := c.GetADConnection(context.Background(), id, false)
 
 	return adConnection != nil && adConnection.Exists() && err == nil, err
 }

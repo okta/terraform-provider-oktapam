@@ -70,8 +70,8 @@ func testAccGroupCheckExists(rn string, expectedGroup client.Group) resource.Tes
 			return fmt.Errorf("resource id not set")
 		}
 
-		client := testAccProvider.Meta().(client.OktaPAMClient)
-		group, err := client.GetGroup(context.Background(), *expectedGroup.Name, false)
+		c := testAccProvider.Meta().(client.OktaPAMClient)
+		group, err := c.GetGroup(context.Background(), *expectedGroup.Name, false)
 		if err != nil {
 			return fmt.Errorf("error getting group :%w", err)
 		}
@@ -89,8 +89,8 @@ func testAccGroupCheckExists(rn string, expectedGroup client.Group) resource.Tes
 
 func testAccGroupCheckDestroy(groupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(client.OktaPAMClient)
-		group, err := client.GetGroup(context.Background(), groupName, false)
+		c := testAccProvider.Meta().(client.OktaPAMClient)
+		group, err := c.GetGroup(context.Background(), groupName, false)
 		if err != nil {
 			return fmt.Errorf("error getting group: %w", err)
 		}

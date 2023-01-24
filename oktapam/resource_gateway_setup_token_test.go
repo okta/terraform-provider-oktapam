@@ -58,8 +58,8 @@ func testAccGatewaySetupTokenCheckExists(rn string, expectedGatewaySetupToken cl
 
 		resourceID := rs.Primary.ID
 
-		client := testAccProvider.Meta().(client.OktaPAMClient)
-		token, err := client.GetGatewaySetupToken(context.Background(), resourceID)
+		c := testAccProvider.Meta().(client.OktaPAMClient)
+		token, err := c.GetGatewaySetupToken(context.Background(), resourceID)
 		if err != nil {
 			return fmt.Errorf("error getting gateway setup token: %w", err)
 		}
@@ -83,8 +83,8 @@ func testAccGatewaySetupTokenCheckExists(rn string, expectedGatewaySetupToken cl
 
 func testAccGatewaySetupTokenCheckDestroy(identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(client.OktaPAMClient)
-		tokens, err := client.ListGatewaySetupTokens(context.Background(), identifier)
+		c := testAccProvider.Meta().(client.OktaPAMClient)
+		tokens, err := c.ListGatewaySetupTokens(context.Background(), identifier)
 		if err != nil {
 			return fmt.Errorf("error getting tokens: %w", err)
 		}
