@@ -86,4 +86,14 @@ var (
 	UsePasswordless     = "if `true`, Users will not need password to login."
 	UserOnDemandPeriod  = "If defined, set time period in seconds that an on-demand user account exists on the server following an access request."
 	UserType            = "The user type. Valid types are 'human' and 'service'."
+	// TODO(lehar): Reorder vars
+	ApproveDeviceWithoutInteraction = "If enabled, ASA auto-approves devices for ASA Users that are authenticated into this Team."
+	ReactivateUsersViaIDP           = "If a disabled or deleted ASA User is able to authenticate through the IdP, their ASA User is re-enabled."
+	PostDeviceEnrollmentURL         = "If post device enrollment is configured, this is the URL that an ASA User is directed to after enrolling a device in ASA."
+	PostLogoutURL                   = "If post login is configured, this is the URL that an ASA User who hasn't recently been authenticated is directed to after being validated by their IdP."
+	PostLoginURL                    = "If post logout is configured, this is the URL that an ASA User is redirected to after signing out."
+	WebSessionDuration              = "Defines the duration of the web session. Configure the web session to be between 30 minutes and 25 hours."
+	ClientSessionDuration           = "Defines the Client session duration. Value should be in hours between 1 hour and 25 hours."
+	UserProvisioningExactUserName   = "If true, ASA has ASA Users configured through SCIM to maintain the exact username that is specified."
+	IncludeUserSID                  = "Write description"
 )

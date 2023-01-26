@@ -39,6 +39,6 @@ func dataSourceTeamSettingsFetch(ctx context.Context, d *schema.ResourceData, m 
 			d.Set(key, value)
 		}
 	}
-	//TODO(lehar) : should I return an error when team settings is not created?
+	//TODO(lehar) : should I return an error when team settings does not exist?
 	return nil
 }

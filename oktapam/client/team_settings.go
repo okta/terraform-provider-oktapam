@@ -39,7 +39,7 @@ func (s TeamSettings) ToResourceMap() map[string]interface{} {
 		m[attributes.PostDeviceEnrollmentURL] = *s.PostDeviceEnrollmentURL
 	}
 	if s.PostLoginURL != nil {
-		m[attributes.ReactivateUsersViaIDP] = *s.PostLoginURL
+		m[attributes.PostLoginURL] = *s.PostLoginURL
 	}
 	if s.PostLogoutURL != nil {
 		m[attributes.PostLogoutURL] = *s.PostLogoutURL
@@ -88,11 +88,11 @@ func (c OktaPAMClient) GetTeamSettings(ctx context.Context) (*TeamSettings, erro
 	return nil, createErrorForInvalidCode(resp, http.StatusOK, http.StatusNotFound)
 }
 
-func (c OktaPAMClient) UpdateTeamSettings(ctx context.Context, updates map[string]interface{}) error {
+func (c OktaPAMClient) UpdateTeamSettings(ctx context.Context, teamSettings TeamSettings) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/settings", url.PathEscape(c.Team))
 	logging.Tracef("making PUT request to %s", requestURL)
 
-	resp, err := c.CreateBaseRequest(ctx).SetBody(updates).Put(requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetBody(teamSettings).Put(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err

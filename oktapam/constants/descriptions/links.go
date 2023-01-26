@@ -12,4 +12,5 @@ const (
 	LinkProjectGroup          = "For details, see [Add a Group to a Project](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm)."
 	LinkServerEnrollmentToken = "For details, see [Enroll a server](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm)."
 	LinkServiceUser           = "For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/service-users.htm) on ASA Service Users and how they are used."
+	LinkTeamSettings          = "Add description [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/service-users.htm) on ASA Service Users and how they are used."
 )
