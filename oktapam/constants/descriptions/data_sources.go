@@ -21,6 +21,7 @@ var (
 	SourceGroup         = fmt.Sprintf("Returns a previously created ASA Group. %s", LinkGroup)
 	SourceProject       = fmt.Sprintf("Returns a previously created ASA Project. %s", LinkProject)
 	SourceProjectGroup  = fmt.Sprintf("Returns a previously created ASA Group assigned to a given ASA Project. %s", LinkProjectGroup)
+	SourceTeamSettings = fmt.Sprintf("Returns Team-level settings for a specific Team, such as authentication and enrollment details")
 
 	// List
 	SourceGroups        = fmt.Sprintf("Returns a list of all ASA Groups associated with the ASA Team specified in the OKTAPAM_TEAM environment variable. %s", LinkGroup)
