@@ -57,7 +57,7 @@ const (
 	IncludeDeleted                   = "include_deleted"
 	IncludeRemoved                   = "include_removed"
 	IncludeServiceUsers              = "include_service_users"
-	IncludeUserSID                   = "include_user_SID"
+	IncludeUserSID                   = "include_user_sid"
 	IsActive                         = "is_active"
 	IsGuid                           = "is_guid"
 	IssuedAt                         = "issued_at"

@@ -16,6 +16,7 @@ func dataSourceTeamSettings() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			attributes.Team: {
 				Type:        schema.TypeString,
+				Computed:    true,
 				Description: descriptions.TeamName,
 			},
 		},

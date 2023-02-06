@@ -12,8 +12,10 @@ import (
 func resourceTeamSettings() *schema.Resource {
 	return &schema.Resource{
 		Description:   descriptions.ResourceTeamSettings,
+		CreateContext: resourceTeamSettingsCreate,
 		ReadContext:   resourceTeamSettingsRead,
 		UpdateContext: resourceTeamSettingsUpdate,
+		DeleteContext: resourceTeamSettingsDelete,
 		Schema: map[string]*schema.Schema{
 			attributes.Team: {
 				Type:        schema.TypeString,
@@ -72,6 +74,29 @@ func resourceTeamSettings() *schema.Resource {
 	}
 }
 
+func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(client.OktaPAMClient)
+
+	settings := client.TeamSettings{
+		ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, true),
+		ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, true),
+		PostDeviceEnrollmentURL:         getStringPtr(attributes.PostDeviceEnrollmentURL, d, true),
+		PostLogoutURL:                   getStringPtr(attributes.PostLogoutURL, d, true),
+		PostLoginURL:                    getStringPtr(attributes.PostLoginURL, d, true),
+		UserProvisioningExactUserName:   getBoolPtr(attributes.UserProvisioningExactUserName, d, true),
+		ClientSessionDuration:           getIntPtr(attributes.ClientSessionDuration, d, true),
+		WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, true),
+		IncludeUserSID:                  getStringPtr(attributes.IncludeUserSID, d, true),
+	}
+
+	err := c.UpdateTeamSettings(ctx, settings)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return resourceTeamSettingsRead(ctx, d, m)
+}
+
 func resourceTeamSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
@@ -117,4 +142,18 @@ func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m i
 	}
 
 	return resourceADConnectionRead(ctx, d, m)
+}
+
+func resourceTeamSettingsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	//var diags diag.Diagnostics
+	c := m.(client.OktaPAMClient)
+	teamName := d.Get(attributes.TeamName).(string)
+
+	err := c.DeleteTeamSettings(ctx, teamName)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	d.SetId("")
+	return nil
 }

@@ -85,6 +85,7 @@ func Provider() *schema.Provider {
 			providerProjectGroupKey:                resourceProjectGroup(),
 			providerProjectKey:                     resourceProject(),
 			providerServerEnrollmentTokenKey:       resourceServerEnrollmentToken(),
+			providerTeamSettingsKey:                resourceTeamSettings(),
 			providerUserKey:                        resourceUser(),
 		},
 
