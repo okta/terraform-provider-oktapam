@@ -145,7 +145,7 @@ func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m i
 }
 
 func resourceTeamSettingsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//var diags diag.Diagnostics
+	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 	teamName := d.Get(attributes.TeamName).(string)
 
@@ -155,5 +155,5 @@ func resourceTeamSettingsDelete(ctx context.Context, d *schema.ResourceData, m i
 	}
 
 	d.SetId("")
-	return nil
+	return diags
 }
