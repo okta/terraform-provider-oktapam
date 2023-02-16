@@ -71,6 +71,7 @@ var (
 	RequirePreauthForCreds           = "If `true`, require preauthorization before an ASA User can retrieve credentials to sign in."
 	Roles                            = "A list of roles for the ASA Group. Options are 'access_user', 'access_admin', and 'reporting_user'."
 	ServerAccess                     = "If `true`, members of this ASA Group have access to the ASA Project servers."
+	ServerAccountManagement          = "If `true`, servers associated with the project will be eligible for the passwords of local accounts being managed by PAM.  Only available to customers that have the PAM Beta feature enabled on their team."
 	ServerAdmin                      = "If `true`, members of ASA Group have sudo permissions on ASA Project servers."
 	ServerUserName                   = "The name of the corresponding ASA Server User."
 	ServersSelector                  = "Enables access to ASA Servers with labels matching all selectors. Only available to customers that have the Early Access Policy Sync feature enabled on their team."

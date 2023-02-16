@@ -131,6 +131,11 @@ func resourceProject() *schema.Resource {
 					return append(diags, diag)
 				},
 			},
+			attributes.ServerAccountManagement: {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: descriptions.ServerAccountManagement,
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceProjectReadImport,

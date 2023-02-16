@@ -15,20 +15,21 @@ import (
 )
 
 type Project struct {
-	Name                   *string `json:"name"`
-	ID                     *string `json:"id,omitempty"`
-	Team                   *string `json:"team,omitempty"`
-	DeletedAt              *string `json:"deleted_at,omitempty"`
-	NextUnixGID            *int    `json:"next_unix_gid,omitempty"`
-	NextUnixUID            *int    `json:"next_unix_uid,omitempty"`
-	CreateServerUsers      *bool   `json:"create_server_users,omitempty"`
-	ForwardTraffic         *bool   `json:"forward_traffic,omitempty"`
-	RDPSessionRecording    *bool   `json:"rdp_session_recording,omitempty"`
-	RequirePreAuthForCreds *bool   `json:"require_preauth_for_creds,omitempty"`
-	SSHSessionRecording    *bool   `json:"ssh_session_recording,omitempty"`
-	GatewaySelector        *string `json:"gateway_selector,omitempty"`
-	SSHCertificateType     *string `json:"ssh_certificate_type,omitempty"`
-	UserOnDemandPeriod     *int    `json:"user_on_demand_period,omitempty"`
+	Name                    *string `json:"name"`
+	ID                      *string `json:"id,omitempty"`
+	Team                    *string `json:"team,omitempty"`
+	DeletedAt               *string `json:"deleted_at,omitempty"`
+	NextUnixGID             *int    `json:"next_unix_gid,omitempty"`
+	NextUnixUID             *int    `json:"next_unix_uid,omitempty"`
+	CreateServerUsers       *bool   `json:"create_server_users,omitempty"`
+	ForwardTraffic          *bool   `json:"forward_traffic,omitempty"`
+	RDPSessionRecording     *bool   `json:"rdp_session_recording,omitempty"`
+	RequirePreAuthForCreds  *bool   `json:"require_preauth_for_creds,omitempty"`
+	SSHSessionRecording     *bool   `json:"ssh_session_recording,omitempty"`
+	GatewaySelector         *string `json:"gateway_selector,omitempty"`
+	SSHCertificateType      *string `json:"ssh_certificate_type,omitempty"`
+	UserOnDemandPeriod      *int    `json:"user_on_demand_period,omitempty"`
+	ServerAccountManagement *bool   `json:"server_account_management,omitempty"`
 }
 
 func (p Project) ToResourceMap() map[string]interface{} {
@@ -76,6 +77,9 @@ func (p Project) ToResourceMap() map[string]interface{} {
 	}
 	if p.UserOnDemandPeriod != nil {
 		m[attributes.UserOnDemandPeriod] = *p.UserOnDemandPeriod
+	}
+	if p.ServerAccountManagement != nil {
+		m[attributes.ServerAccountManagement] = *p.ServerAccountManagement
 	}
 
 	return m

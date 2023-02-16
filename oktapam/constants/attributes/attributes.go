@@ -88,6 +88,7 @@ const (
 	RunTest                          = "run_test"
 	Self                             = "self"
 	ServerAccess                     = "server_access"
+	ServerAccountManagement          = "server_account_management"
 	ServerAdmin                      = "server_admin"
 	ServerEnrollmentTokens           = "server_enrollment_tokens"
 	ServerUserName                   = "server_user_name"

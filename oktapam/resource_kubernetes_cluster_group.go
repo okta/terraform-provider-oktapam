@@ -142,10 +142,7 @@ func claimsCSVToMap(claimsIn map[string]interface{}) map[string][]string {
 	claimsMap := make(map[string][]string)
 
 	for k, csvValues := range claimsIn {
-		var values []string
-		for _, value := range strings.Split(fmt.Sprint(csvValues), ",") {
-			values = append(values, value)
-		}
+		values := strings.Split(fmt.Sprint(csvValues), ",")
 		claimsMap[k] = values
 	}
 
