@@ -51,7 +51,7 @@ jobs:
           OKTAPAM_TEAM: ${{ secrets.OKTA_499446_OKTAPAM_TEAM }}
           OKTAPAM_API_HOST: ${{ secrets.OKTA_499446_OKTAPAM_API_HOST }}
       - name: If the acceptance tests fail, retry. Intended for failed locks and dependency download timeouts.
-          if: failure()
+          if: ${{ failure() }}
           run: |
             ./scripts/ci-acceptance-tests.sh
           env:
