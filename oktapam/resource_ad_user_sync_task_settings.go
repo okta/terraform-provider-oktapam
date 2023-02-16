@@ -3,8 +3,9 @@ package oktapam
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"strings"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -109,15 +110,15 @@ func resourceADUserSyncTaskSettingsCreate(ctx context.Context, d *schema.Resourc
 
 	//Build ADUserSyncTaskSettings Api Object
 	adUserSyncTaskSettingsReq := client.ADUserSyncTaskSettings{
-		Name:            getStringPtr(attributes.Name, d, false),
-		Frequency:       getIntPtr(attributes.Frequency, d, false),
-		StartHourUTC:    getIntPtr(attributes.StartHourUTC, d, false),
-		BaseDN:          getStringPtr(attributes.BaseDN, d, false),
-		LDAPQueryFilter: getStringPtr(attributes.LDAPQueryFilter, d, false),
-		UPNField:        getStringPtr(attributes.UPNField, d, false),
-		SIDField:        getStringPtr(attributes.SIDField, d, false),
-		IsActive:        getBoolPtr(attributes.IsActive, d, true),
-		RunTest:         getBoolPtr(attributes.RunTest, d, true),
+		Name:            GetStringPtrFromResource(attributes.Name, d, false),
+		Frequency:       GetIntPtrFromResource(attributes.Frequency, d, false),
+		StartHourUTC:    GetIntPtrFromResource(attributes.StartHourUTC, d, false),
+		BaseDN:          GetStringPtrFromResource(attributes.BaseDN, d, false),
+		LDAPQueryFilter: GetStringPtrFromResource(attributes.LDAPQueryFilter, d, false),
+		UPNField:        GetStringPtrFromResource(attributes.UPNField, d, false),
+		SIDField:        GetStringPtrFromResource(attributes.SIDField, d, false),
+		IsActive:        GetBoolPtrFromResource(attributes.IsActive, d, true),
+		RunTest:         GetBoolPtrFromResource(attributes.RunTest, d, true),
 	}
 
 	//Call api client
@@ -165,8 +166,8 @@ func resourceADUserSyncTaskSettingsUpdate(ctx context.Context, d *schema.Resourc
 
 	if d.HasChanges(attributes.Frequency, attributes.StartHourUTC) {
 		schedule := client.ADUserSyncTaskSettingsSchedule{
-			Frequency:    getIntPtr(attributes.Frequency, d, false),
-			StartHourUTC: getIntPtr(attributes.StartHourUTC, d, false),
+			Frequency:    GetIntPtrFromResource(attributes.Frequency, d, false),
+			StartHourUTC: GetIntPtrFromResource(attributes.StartHourUTC, d, false),
 		}
 		err := c.UpdateADUserSyncTaskSettingsSchedule(ctx, adConnID, adUserSyncTaskSettingsID, schedule)
 		if err != nil {

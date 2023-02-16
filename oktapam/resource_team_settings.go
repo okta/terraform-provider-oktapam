@@ -3,6 +3,7 @@ package oktapam
 import (
 	"context"
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -77,12 +78,12 @@ func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m a
 	c := m.(client.OktaPAMClient)
 
 	settings := client.TeamSettings{
-		ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, true),
-		ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, true),
-		UserProvisioningExactUserName:   getBoolPtr(attributes.UserProvisioningExactUserName, d, false),
-		ClientSessionDuration:           getIntPtr(attributes.ClientSessionDuration, d, false),
-		WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, false),
-		IncludeUserSID:                  getStringPtr(attributes.IncludeUserSID, d, false),
+		ReactivateUsersViaIDP:           GetBoolPtrFromResource(attributes.ReactivateUsersViaIDP, d, true),
+		ApproveDeviceWithoutInteraction: GetBoolPtrFromResource(attributes.ApproveDeviceWithoutInteraction, d, true),
+		UserProvisioningExactUserName:   GetBoolPtrFromResource(attributes.UserProvisioningExactUserName, d, false),
+		ClientSessionDuration:           GetIntPtrFromResource(attributes.ClientSessionDuration, d, false),
+		WebSessionDuration:              GetIntPtrFromResource(attributes.WebSessionDuration, d, false),
+		IncludeUserSID:                  GetStringPtrFromResource(attributes.IncludeUserSID, d, false),
 	}
 	if err := c.CreateTeamSettings(ctx, settings); err != nil {
 		return diag.FromErr(err)
@@ -117,12 +118,12 @@ func resourceTeamSettingsRead(ctx context.Context, d *schema.ResourceData, m any
 func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	settings := client.TeamSettings{
-		ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, true),
-		ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, true),
-		UserProvisioningExactUserName:   getBoolPtr(attributes.UserProvisioningExactUserName, d, false),
-		ClientSessionDuration:           getIntPtr(attributes.ClientSessionDuration, d, false),
-		WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, false),
-		IncludeUserSID:                  getStringPtr(attributes.IncludeUserSID, d, false),
+		ReactivateUsersViaIDP:           GetBoolPtrFromResource(attributes.ReactivateUsersViaIDP, d, true),
+		ApproveDeviceWithoutInteraction: GetBoolPtrFromResource(attributes.ApproveDeviceWithoutInteraction, d, true),
+		UserProvisioningExactUserName:   GetBoolPtrFromResource(attributes.UserProvisioningExactUserName, d, false),
+		ClientSessionDuration:           GetIntPtrFromResource(attributes.ClientSessionDuration, d, false),
+		WebSessionDuration:              GetIntPtrFromResource(attributes.WebSessionDuration, d, false),
+		IncludeUserSID:                  GetStringPtrFromResource(attributes.IncludeUserSID, d, false),
 	}
 	if err := c.UpdateTeamSettings(ctx, settings); err != nil {
 		return diag.FromErr(err)

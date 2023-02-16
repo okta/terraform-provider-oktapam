@@ -70,7 +70,7 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m any) dia
 	}
 
 	group := client.Group{
-		Name:  getStringPtr(attributes.Name, d, true),
+		Name:  GetStringPtrFromResource(attributes.Name, d, true),
 		Roles: roles,
 	}
 

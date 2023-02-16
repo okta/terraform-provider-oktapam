@@ -50,8 +50,8 @@ func resourceKubernetesClusterConnectionCreate(ctx context.Context, d *schema.Re
 	c := m.(client.OktaPAMClient)
 
 	clusterID := d.Get(attributes.ClusterID).(string)
-	apiURL := getStringPtr(attributes.KubernetesAPIURL, d, true)
-	publicCertificate := getStringPtr(attributes.PublicCertificate, d, true)
+	apiURL := GetStringPtrFromResource(attributes.KubernetesAPIURL, d, true)
+	publicCertificate := GetStringPtrFromResource(attributes.PublicCertificate, d, true)
 
 	connectionDetails := make(map[string]any)
 

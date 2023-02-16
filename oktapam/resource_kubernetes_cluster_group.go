@@ -50,8 +50,8 @@ func resourceKubernetesClusterGroup() *schema.Resource {
 
 func resourceKubernetesClusterGroupCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
-	groupName := getStringPtr(attributes.GroupName, d, true)
-	clusterSelector := getStringPtr(attributes.ClusterSelector, d, true)
+	groupName := GetStringPtrFromResource(attributes.GroupName, d, true)
+	clusterSelector := GetStringPtrFromResource(attributes.ClusterSelector, d, true)
 
 	clusterGroupSpec := client.KubernetesClusterGroup{
 		GroupName:       groupName,
@@ -142,10 +142,7 @@ func claimsCSVToMap(claimsIn map[string]any) map[string][]string {
 	claimsMap := make(map[string][]string)
 
 	for k, csvValues := range claimsIn {
-		var values []string
-		for _, value := range strings.Split(fmt.Sprint(csvValues), ",") {
-			values = append(values, value)
-		}
+		values := strings.Split(fmt.Sprint(csvValues), ",")
 		claimsMap[k] = values
 	}
 

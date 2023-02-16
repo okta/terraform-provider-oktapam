@@ -232,12 +232,12 @@ func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m any) diag
 }
 
 func getRequiredUserAttributes(d *schema.ResourceData) (string, string, error) {
-	userName := getStringPtr(attributes.Name, d, false)
+	userName := GetStringPtrFromResource(attributes.Name, d, false)
 	if userName == nil {
 		return "", "", fmt.Errorf(errors.MissingAttributeError, attributes.Name)
 	}
 
-	userType := getStringPtr(attributes.UserType, d, false)
+	userType := GetStringPtrFromResource(attributes.UserType, d, false)
 	if userType == nil {
 		return "", "", fmt.Errorf(errors.MissingAttributeError, attributes.UserType)
 	}

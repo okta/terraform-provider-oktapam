@@ -64,31 +64,31 @@ func dataSourceProjectGroupList(ctx context.Context, d *schema.ResourceData, m a
 		return diag.Errorf("%s cannot be blank", attributes.ProjectName)
 	}
 	parameters := client.ListProjectGroupsParameters{}
-	includeRemoved, err := getOkBool(attributes.IncludeRemoved, d)
+	includeRemoved, err := GetOkBoolFromResource(attributes.IncludeRemoved, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	parameters.IncludeRemoved = includeRemoved
 
-	createServerGroup, err := getOkBool(attributes.CreateServerGroup, d)
+	createServerGroup, err := GetOkBoolFromResource(attributes.CreateServerGroup, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	parameters.CreateServerGroup = createServerGroup
 
-	hasSelectors, err := getOkBool(attributes.HasSelectors, d)
+	hasSelectors, err := GetOkBoolFromResource(attributes.HasSelectors, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	parameters.HasSelectors = hasSelectors
 
-	hasNoSelectors, err := getOkBool(attributes.HasNoSelectors, d)
+	hasNoSelectors, err := GetOkBoolFromResource(attributes.HasNoSelectors, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	parameters.HasNoSelectors = hasNoSelectors
 
-	disconnectedModeOnOnly, err := getOkBool(attributes.DisconnectedModeOnOnly, d)
+	disconnectedModeOnOnly, err := GetOkBoolFromResource(attributes.DisconnectedModeOnOnly, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}

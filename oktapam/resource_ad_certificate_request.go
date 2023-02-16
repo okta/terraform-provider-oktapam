@@ -160,9 +160,9 @@ func resourceADCertificateRequestCreate(ctx context.Context, d *schema.ResourceD
 
 	//Build Certificate API Request Object
 	csrReq := client.ADSmartCardCertificate{
-		DisplayName: getStringPtr(attributes.DisplayName, d, false),
-		CommonName:  getStringPtr(attributes.CommonName, d, false),
-		Type:        getStringPtr(attributes.Type, d, false),
+		DisplayName: GetStringPtrFromResource(attributes.DisplayName, d, false),
+		CommonName:  GetStringPtrFromResource(attributes.CommonName, d, false),
+		Type:        GetStringPtrFromResource(attributes.Type, d, false),
 		Details:     certRequestDetails,
 	}
 

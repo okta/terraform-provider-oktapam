@@ -2,5 +2,5 @@ package descriptions
 
 const (
 	PrefixBeta = "Beta Feature:"
-	PrefixDev = "Feature under development:"
+	PrefixDev  = "Feature under development:"
 )

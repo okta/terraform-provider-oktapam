@@ -234,8 +234,8 @@ func resourceADTaskSettingsUpdate(ctx context.Context, d *schema.ResourceData, m
 		attributes.IsActive,
 		attributes.StartHourUTC) { //If task become active or schedule change
 		schedule := client.ADTaskSettingsSchedule{
-			Frequency:    getIntPtr(attributes.Frequency, d, false),
-			StartHourUTC: getIntPtr(attributes.StartHourUTC, d, false),
+			Frequency:    GetIntPtrFromResource(attributes.Frequency, d, false),
+			StartHourUTC: GetIntPtrFromResource(attributes.StartHourUTC, d, false),
 		}
 		err := c.UpdateADTaskSettingsSchedule(ctx, adConnID, adTaskSettingsID, schedule)
 		if err != nil {
@@ -279,15 +279,15 @@ func expandADTaskSettings(d *schema.ResourceData) client.ADTaskSettings {
 	}
 
 	adTaskSettings := client.ADTaskSettings{
-		Name:                       getStringPtr(attributes.Name, d, false),
-		Frequency:                  getIntPtr(attributes.Frequency, d, false),
-		StartHourUTC:               getIntPtr(attributes.StartHourUTC, d, false),
-		IsActive:                   getBoolPtr(attributes.IsActive, d, true),
-		RunTest:                    getBoolPtr(attributes.RunTest, d, true),
-		HostnameAttribute:          getStringPtr(attributes.HostnameAttribute, d, false),
-		AccessAddressAttribute:     getStringPtr(attributes.AccessAddressAttribute, d, false),
-		OSAttribute:                getStringPtr(attributes.OSAttribute, d, false),
-		BastionAttribute:           getStringPtr(attributes.BastionAttribute, d, false),
+		Name:                       GetStringPtrFromResource(attributes.Name, d, false),
+		Frequency:                  GetIntPtrFromResource(attributes.Frequency, d, false),
+		StartHourUTC:               GetIntPtrFromResource(attributes.StartHourUTC, d, false),
+		IsActive:                   GetBoolPtrFromResource(attributes.IsActive, d, true),
+		RunTest:                    GetBoolPtrFromResource(attributes.RunTest, d, true),
+		HostnameAttribute:          GetStringPtrFromResource(attributes.HostnameAttribute, d, false),
+		AccessAddressAttribute:     GetStringPtrFromResource(attributes.AccessAddressAttribute, d, false),
+		OSAttribute:                GetStringPtrFromResource(attributes.OSAttribute, d, false),
+		BastionAttribute:           GetStringPtrFromResource(attributes.BastionAttribute, d, false),
 		AltNamesAttributes:         altNamesAttrs,
 		AdditionalAttributeMapping: attrMapping,
 		RuleAssignments:            ruleAssignments,
