@@ -108,7 +108,7 @@ like terraform plan/apply etc.
 for more details.
 
 **Note:** If the test configuration file has references to multiple providers and for some of them you don't want development
-overrides then this may not be a preferred approach. Please refer [open issue](https://github.com/hashicorp/terraform/issues/27459)
+overrides then this may not be a preferred approach. Please refer [githhub open issue](https://github.com/hashicorp/terraform/issues/27459).
 
 ### Running Tests
 
