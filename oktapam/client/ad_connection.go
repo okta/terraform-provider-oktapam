@@ -80,7 +80,7 @@ type ADUserSyncTaskSettings struct {
 	Frequency    *int    `json:"frequency"`
 	StartHourUTC *int    `json:"start_hour_utc,omitempty"`
 	IsActive     *bool   `json:"is_active"`
-	//RunTest                    *bool                    `json:"run_test"`
+	RunTest      *bool   `json:"run_test"`
 	BaseDN          *string `json:"base_dn"`
 	LDAPQueryFilter *string `json:"ldap_query_filter"`
 	UPNField        *string `json:"upn_field"`
@@ -406,9 +406,9 @@ func (adUserSyncTaskSettings ADUserSyncTaskSettings) ToResourceMap() map[string]
 	if adUserSyncTaskSettings.IsActive != nil {
 		m[attributes.IsActive] = *adUserSyncTaskSettings.IsActive
 	}
-	/*if adUserSyncTaskSettings.RunTest != nil {
+	if adUserSyncTaskSettings.RunTest != nil {
 		m[attributes.RunTest] = *adUserSyncTaskSettings.RunTest
-	}*/
+	}
 
 	return m
 }

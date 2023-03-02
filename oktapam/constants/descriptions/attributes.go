@@ -34,6 +34,7 @@ var (
 	ADUserSyncTaskSettingsSIDField = "AD SID"
 	ADUserSyncTaskSettingsIsActive = "If `true`, enables AD user sync task"
 	ADUserSyncTaskSettingsRunTest  = "If `true`, test is performed based on specified AD User Sync Task Settings"
+	ADUserSyncTaskRunTest          = "If `true`, test is performed based on specified AD User Sync Task Settings"
 	CertificateCommonName          = "Common Name or FQDN to which certificate is issued to."
 	CertificateContent             = "Certificate Signing Request (CSR)/ Self Signed Certificate content."
 	CertificateID                  = "Certificate ID used for password less access method."
