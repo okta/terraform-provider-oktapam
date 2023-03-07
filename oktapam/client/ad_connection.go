@@ -75,23 +75,16 @@ type ADConnectionsListResponse struct {
 }
 
 type ADUserSyncTaskSettings struct {
-	ID           *string `json:"id,omitempty"`
-	Name         *string `json:"name"`
-	Frequency    *int    `json:"frequency"`
-	StartHourUTC *int    `json:"start_hour_utc,omitempty"`
-	IsActive     *bool   `json:"is_active"`
-	RunTest      *bool   `json:"run_test"`
+	ID              *string `json:"id,omitempty"`
+	Name            *string `json:"name"`
+	Frequency       *int    `json:"frequency"`
+	StartHourUTC    *int    `json:"start_hour_utc,omitempty"`
+	IsActive        *bool   `json:"is_active"`
+	RunTest         *bool   `json:"run_test"`
 	BaseDN          *string `json:"base_dn"`
 	LDAPQueryFilter *string `json:"ldap_query_filter"`
 	UPNField        *string `json:"upn_field"`
 	SIDField        *string `json:"sid_field"`
-	//AccessAddressAttribute     *string                  `json:"access_address_attribute,omitempty"`
-	//OSAttribute                *string                  `json:"os_attribute"`
-	//BastionAttribute           *string                  `json:"bastion_attribute,omitempty"`
-	//AltNamesAttributes         []string                 `json:"alt_names_attributes,omitempty"`
-	//AdditionalAttributeMapping []*ADAdditionalAttribute `json:"additional_attribute_mapping,omitempty"`
-	//RuleAssignments are not sorted in any order, consumers may want to sort by priority.
-	//RuleAssignments []*ADRuleAssignment `json:"rule_assignments"`*/
 }
 
 type ADUserSyncTaskSettingsSchedule struct {

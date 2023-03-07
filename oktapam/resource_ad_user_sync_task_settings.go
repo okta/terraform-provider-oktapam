@@ -90,7 +90,7 @@ func resourceADUserSyncTaskSettings() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Computed:    true,
-				Description: descriptions.ADUserSyncTaskRunTest,
+				Description: descriptions.ADUserSyncTaskSettingsRunTest,
 			},
 		},
 		Importer: &schema.ResourceImporter{
