@@ -50,8 +50,8 @@ func resourceKubernetesClusterGroup() *schema.Resource {
 
 func resourceKubernetesClusterGroupCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
-	groupName := getStringPtr(attributes.GroupName, d, true)
-	clusterSelector := getStringPtr(attributes.ClusterSelector, d, true)
+	groupName := GetStringPtrFromResource(attributes.GroupName, d, true)
+	clusterSelector := GetStringPtrFromResource(attributes.ClusterSelector, d, true)
 
 	clusterGroupSpec := client.KubernetesClusterGroup{
 		GroupName:       groupName,

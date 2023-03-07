@@ -99,7 +99,7 @@ func dataSourceADConnectionsRead(ctx context.Context, d *schema.ResourceData, m 
 		parameters.CertificateID = certificateID.(string)
 	}
 
-	self, err := getOkBool(attributes.IncludeCertDetails, d)
+	self, err := GetOkBoolFromResource(attributes.IncludeCertDetails, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}

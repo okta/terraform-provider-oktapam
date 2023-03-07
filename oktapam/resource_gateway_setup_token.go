@@ -82,7 +82,7 @@ func resourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, 
 func resourceGatewaySetupTokenCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	description := getStringPtr(attributes.Description, d, true)
+	description := GetStringPtrFromResource(attributes.Description, d, true)
 	labels := d.Get(attributes.Labels).(map[string]interface{})
 
 	labelsMap := make(map[string]string, len(labels))

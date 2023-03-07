@@ -182,3 +182,13 @@ func parseBool(i interface{}) (bool, error) {
 		return false, fmt.Errorf("cannot convert %T to bool", v)
 	}
 }
+
+func stringSliceToInterfaceSlice(arr []string) []interface{} {
+	arrI := make([]interface{}, len(arr))
+
+	for idx, s := range arr {
+		arrI[idx] = s
+	}
+
+	return arrI
+}
