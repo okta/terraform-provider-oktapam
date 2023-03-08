@@ -195,6 +195,24 @@ func resourceADCertificateRequestRead(ctx context.Context, d *schema.ResourceDat
 		for key, value := range adCertificate.ToResourceMap() {
 			_ = d.Set(key, value)
 		}
+
+		if details, ok := d.Get(attributes.Details).([]map[string]any); ok && len(details) == 1 {
+			// API doesn't return certificate details so that need to be set again from the current config
+			// If we don't set it then terraform report differences without making any changes between proposed state and real-world infra
+			flattenedCertDetails := make([]any, 1)
+			flattenedCertDetail := make(map[string]any)
+			flattenedCertDetail[attributes.Organization] = details[0][attributes.Organization]
+			flattenedCertDetail[attributes.OrganizationalUnit] = details[0][attributes.OrganizationalUnit]
+			flattenedCertDetail[attributes.Locality] = details[0][attributes.Locality]
+			flattenedCertDetail[attributes.Province] = details[0][attributes.Province]
+			flattenedCertDetail[attributes.Country] = details[0][attributes.Country]
+			flattenedCertDetail[attributes.TTLDays] = details[0][attributes.TTLDays]
+
+			flattenedCertDetails[0] = flattenedCertDetail
+			if err := d.Set(attributes.Details, flattenedCertDetails); err != nil {
+				return diag.FromErr(err)
+			}
+		}
 	} else {
 		logging.Infof("ADSmartCardCertificate %s does not exist", certificateID)
 	}
