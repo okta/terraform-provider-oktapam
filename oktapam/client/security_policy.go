@@ -80,22 +80,22 @@ func (p SecurityPolicy) ToResourceMap() map[string]interface{} {
 }
 
 type SecurityPolicyPrincipals struct {
-	UserGroupIds []NamedObject `json:"user_group_ids"`
-	UserIds      []NamedObject `json:"user_ids"`
+	UserGroups []NamedObject `json:"user_groups"`
+	Users      []NamedObject `json:"users"`
 }
 
 func (p *SecurityPolicyPrincipals) ToResourceMap() map[string]interface{} {
 	m := make(map[string]interface{})
 
-	userIds := make([]interface{}, len(p.UserIds))
-	for idx, userId := range p.UserIds {
+	userIds := make([]interface{}, len(p.Users))
+	for idx, userId := range p.Users {
 		u := userId
 		userIds[idx] = *u.Id
 	}
 	m[attributes.Users] = userIds
 
-	groupIds := make([]interface{}, len(p.UserGroupIds))
-	for idx, groupId := range p.UserGroupIds {
+	groupIds := make([]interface{}, len(p.UserGroups))
+	for idx, groupId := range p.UserGroups {
 		g := groupId
 		groupIds[idx] = *g.Id
 	}

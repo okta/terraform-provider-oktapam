@@ -743,7 +743,7 @@ func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPol
 		if usersDiag != nil {
 			diags = append(diags, usersDiag...)
 		} else {
-			principals.UserIds = ConvertToNamedObjectSlice(users, client.UserNamedObjectType)
+			principals.Users = ConvertToNamedObjectSlice(users, client.UserNamedObjectType)
 		}
 	}
 	if usersAttr, ok := principalMap[attributes.Groups]; ok {
@@ -751,11 +751,11 @@ func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPol
 		if groupsDiag != nil {
 			diags = append(diags, groupsDiag...)
 		} else {
-			principals.UserGroupIds = ConvertToNamedObjectSlice(groups, client.UserGroupNamedObjectType)
+			principals.UserGroups = ConvertToNamedObjectSlice(groups, client.UserGroupNamedObjectType)
 		}
 	}
 
-	if diags == nil && len(principals.UserIds) == 0 && len(principals.UserGroupIds) == 0 {
+	if diags == nil && len(principals.Users) == 0 && len(principals.UserGroups) == 0 {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "must include at least one user or group in principals",
