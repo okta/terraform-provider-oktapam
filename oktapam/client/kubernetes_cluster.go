@@ -21,8 +21,8 @@ type KubernetesCluster struct {
 	OIDCIssuerURL *string
 }
 
-func (t KubernetesCluster) ToResourceMap() map[string]interface{} {
-	m := make(map[string]interface{})
+func (t KubernetesCluster) ToResourceMap() map[string]any {
+	m := make(map[string]any)
 
 	if t.ID != nil {
 		m[attributes.ID] = *t.ID
@@ -111,7 +111,7 @@ func (c OktaPAMClient) GetKubernetesCluster(ctx context.Context, id string) (*Ku
 	return cluster, nil
 }
 
-func (c OktaPAMClient) UpdateKubernetesCluster(ctx context.Context, clusterID string, updates map[string]interface{}) error {
+func (c OktaPAMClient) UpdateKubernetesCluster(ctx context.Context, clusterID string, updates map[string]any) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/kubernetes/clusters/%s", url.PathEscape(c.Team), url.PathEscape(clusterID))
 	logging.Tracef("making PUT request to %s", requestURL)
 

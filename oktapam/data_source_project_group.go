@@ -64,7 +64,7 @@ func dataSourceProjectGroup() *schema.Resource {
 	}
 }
 
-func dataSourceProjectGroupFetch(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceProjectGroupFetch(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	projectName := d.Get(attributes.ProjectName).(string)

@@ -42,7 +42,7 @@ func resourceGroup() *schema.Resource {
 					Type: schema.TypeString,
 				},
 				Optional: true,
-				DefaultFunc: func() (interface{}, error) {
+				DefaultFunc: func() (any, error) {
 					return []string{"access_user"}, nil
 				},
 				Description: descriptions.Roles,
@@ -54,7 +54,7 @@ func resourceGroup() *schema.Resource {
 	}
 }
 
-func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	var roles []string
 	if r, ok := d.GetOk(attributes.Roles); ok {
@@ -82,7 +82,7 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interfac
 	return resourceGroupRead(ctx, d, m)
 }
 
-func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	//Get group api require group name not ASA Group UUID to read resource back
@@ -113,12 +113,12 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{
 	return nil
 }
 
-func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	groupName := d.Get(attributes.Name).(string)
 
 	changed := false
-	updates := make(map[string]interface{})
+	updates := make(map[string]any)
 
 	changeableAttributes := []string{
 		attributes.Roles,
@@ -146,7 +146,7 @@ func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 	return resourceGroupRead(ctx, d, m)
 }
 
-func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 	groupName := d.Get(attributes.Name).(string)
@@ -160,7 +160,7 @@ func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, m interfac
 	return diags
 }
 
-func importResourceGroupState(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func importResourceGroupState(ctx context.Context, d *schema.ResourceData, meta any) ([]*schema.ResourceData, error) {
 	// d.Id() here is the last argument passed to the `terraform import RESOURCE_TYPE.RESOURCE_NAME RESOURCE_ID` command
 	// Set the passed id as group name to make read work
 	if err := d.Set(attributes.Name, d.Id()); err != nil {

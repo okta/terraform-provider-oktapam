@@ -26,7 +26,7 @@ type User struct {
 	UserType       *typed_strings.UserType   `json:"user_type"`
 }
 
-func UserFromMap(m map[string]interface{}) (*User, error) {
+func UserFromMap(m map[string]any) (*User, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -49,8 +49,8 @@ func UserFromMap(m map[string]interface{}) (*User, error) {
 	return &su, nil
 }
 
-func (su User) ToResourceMap() map[string]interface{} {
-	m := make(map[string]interface{}, 2)
+func (su User) ToResourceMap() map[string]any {
+	m := make(map[string]any, 2)
 
 	if su.ID != nil {
 		m[attributes.ID] = *su.ID
@@ -253,7 +253,7 @@ func (c OktaPAMClient) GetServiceUser(ctx context.Context, serviceUserName strin
 func (c OktaPAMClient) CreateServiceUser(ctx context.Context, userName string) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/service_users", url.PathEscape(c.Team))
 
-	request := map[string]interface{}{
+	request := map[string]any{
 		attributes.Name: userName,
 	}
 	logging.Tracef("making POST request to %s", requestURL)

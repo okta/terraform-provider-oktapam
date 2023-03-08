@@ -58,12 +58,12 @@ func resourceKubernetesCluster() *schema.Resource {
 	}
 }
 
-func resourceKubernetesClusterCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceKubernetesClusterCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	clusterKey := getStringPtr(attributes.KubernetesClusterKey, d, false)
 	authMechanism := getStringPtr(attributes.KubernetesAuthMechanism, d, false)
-	labels := d.Get(attributes.Labels).(map[string]interface{})
+	labels := d.Get(attributes.Labels).(map[string]any)
 
 	labelsMap := make(map[string]string, len(labels))
 	for k, v := range labels {
@@ -87,7 +87,7 @@ func resourceKubernetesClusterCreate(ctx context.Context, d *schema.ResourceData
 	return resourceKubernetesClusterRead(ctx, d, m)
 }
 
-func resourceKubernetesClusterRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceKubernetesClusterRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	cluster, err := c.GetKubernetesCluster(ctx, d.Id())
@@ -111,12 +111,12 @@ func resourceKubernetesClusterRead(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
-func resourceKubernetesClusterUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceKubernetesClusterUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	id := d.Id()
 
 	changed := false
-	updates := make(map[string]interface{})
+	updates := make(map[string]any)
 
 	changeableAttributes := []string{
 		attributes.Labels,
@@ -138,7 +138,7 @@ func resourceKubernetesClusterUpdate(ctx context.Context, d *schema.ResourceData
 	return resourceKubernetesClusterRead(ctx, d, m)
 }
 
-func resourceKubernetesClusterDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceKubernetesClusterDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	if err := c.DeleteKubernetesCluster(ctx, d.Id()); err != nil {
