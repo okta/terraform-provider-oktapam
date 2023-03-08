@@ -34,8 +34,8 @@ func (p ListGatewayParameters) toQueryParametersMap() map[string]string {
 	return m
 }
 
-func (gateway Gateway) ToResourceMap() map[string]interface{} {
-	m := make(map[string]interface{})
+func (gateway Gateway) ToResourceMap() map[string]any {
+	m := make(map[string]any)
 	m[attributes.Name] = gateway.Name
 	m[attributes.ID] = gateway.Id
 	m[attributes.AccessAddress] = gateway.AccessAddress

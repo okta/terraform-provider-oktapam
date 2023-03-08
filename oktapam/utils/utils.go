@@ -55,7 +55,7 @@ func ExpandStringSet(v *schema.Set) []string {
 	return ExpandStringList(v.List())
 }
 
-func ExpandStringList(vI []interface{}) []string {
+func ExpandStringList(vI []any) []string {
 	vs := make([]string, len(vI))
 	for idx, v := range vI {
 		val, ok := v.(string)
@@ -67,7 +67,7 @@ func ExpandStringList(vI []interface{}) []string {
 }
 
 func ConvertStringSliceToSet(strings []string) *schema.Set {
-	arr := make([]interface{}, len(strings))
+	arr := make([]any, len(strings))
 	for i, str := range strings {
 		arr[i] = str
 	}

@@ -87,7 +87,7 @@ func dataSourceADConnections() *schema.Resource {
 	}
 }
 
-func dataSourceADConnectionsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceADConnectionsRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	parameters := client.ListADConnectionsParameters{}
 
@@ -110,7 +110,7 @@ func dataSourceADConnectionsRead(ctx context.Context, d *schema.ResourceData, m 
 		return diag.FromErr(err)
 	}
 
-	adConnections := make([]map[string]interface{}, len(adConnectionsList))
+	adConnections := make([]map[string]any, len(adConnectionsList))
 	for idx, adConnection := range adConnectionsList {
 		adConnections[idx] = adConnection.ToResourceMap()
 	}

@@ -74,8 +74,8 @@ type ADConnectionsListResponse struct {
 	ADConnections []ADConnection `json:"list"`
 }
 
-func (adConn ADConnection) ToResourceMap() map[string]interface{} {
-	m := make(map[string]interface{})
+func (adConn ADConnection) ToResourceMap() map[string]any {
+	m := make(map[string]any)
 
 	if adConn.Name != nil {
 		m[attributes.Name] = *adConn.Name

@@ -78,7 +78,7 @@ func createServiceToken(apiKey, apiKeySecret, apiHost, team string) (*ServiceTok
 
 	resp, err := client.R().
 		SetHeader("User-Agent", terraformUserAgent).
-		SetBody(map[string]interface{}{"key_id": apiKey, "key_secret": apiKeySecret}).
+		SetBody(map[string]any{"key_id": apiKey, "key_secret": apiKeySecret}).
 		SetHeaders(map[string]string{"Accept": "application/json", "Content-Type": "application/json"}).
 		SetResult(&ServiceToken{}).
 		Post(authorizationURL)
@@ -166,7 +166,7 @@ func createErrorForInvalidCode(resp *resty.Response, allowed ...int) error {
 	return fmt.Errorf("call to %s resulted in status of %d, expected one of %v.\nResponse Body: %s", resp.Request.URL, resp.StatusCode(), allowed, string(resp.Body()))
 }
 
-func parseBool(i interface{}) (bool, error) {
+func parseBool(i any) (bool, error) {
 	switch v := i.(type) {
 	case bool:
 		return v, nil

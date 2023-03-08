@@ -53,7 +53,7 @@ func dataSourceServerEnrollmentToken() *schema.Resource {
 	}
 }
 
-func dataSourceServerEnrollmentTokenFetch(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceServerEnrollmentTokenFetch(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	id, projectName, err := getRequiredServerEnrollmentTokenAttributes(d)

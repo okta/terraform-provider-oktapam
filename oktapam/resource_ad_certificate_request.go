@@ -139,13 +139,13 @@ func resourceADCertificateRequest() *schema.Resource {
 	}
 }
 
-func resourceADCertificateRequestCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADCertificateRequestCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	var certRequestDetails *client.ADCertificateDetails
 	if v, ok := d.GetOk(attributes.Details); ok {
-		list := v.([]interface{})
-		detailsMap := list[0].(map[string]interface{})
+		list := v.([]any)
+		detailsMap := list[0].(map[string]any)
 		certRequestDetails = &client.ADCertificateDetails{
 			Organization:       utils.AsStringPtr(detailsMap[attributes.Organization].(string)),
 			OrganizationalUnit: utils.AsStringPtr(detailsMap[attributes.OrganizationalUnit].(string)),
@@ -182,7 +182,7 @@ func resourceADCertificateRequestCreate(ctx context.Context, d *schema.ResourceD
 	return resourceADCertificateRequestRead(ctx, d, m)
 }
 
-func resourceADCertificateRequestRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADCertificateRequestRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	certificateID := d.Id()
@@ -202,12 +202,12 @@ func resourceADCertificateRequestRead(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func resourceADCertificateRequestUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADCertificateRequestUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	id := d.Id()
 
 	changed := false
-	updates := make(map[string]interface{})
+	updates := make(map[string]any)
 
 	changeableAttributes := []string{
 		attributes.DisplayName,
@@ -229,7 +229,7 @@ func resourceADCertificateRequestUpdate(ctx context.Context, d *schema.ResourceD
 	return resourceADCertificateRequestRead(ctx, d, m)
 }
 
-func resourceADCertificateRequestDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADCertificateRequestDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	certificateId := d.Id()
 

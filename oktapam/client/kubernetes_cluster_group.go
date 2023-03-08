@@ -21,8 +21,8 @@ type KubernetesClusterGroup struct {
 	Claims          map[string][]string `json:"claims,omitempty"`
 }
 
-func (t KubernetesClusterGroup) ToResourceMap() map[string]interface{} {
-	m := make(map[string]interface{})
+func (t KubernetesClusterGroup) ToResourceMap() map[string]any {
+	m := make(map[string]any)
 
 	if t.ID != nil {
 		m[attributes.ID] = *t.ID
@@ -141,7 +141,7 @@ func (c OktaPAMClient) CreateKubernetesClusterGroup(ctx context.Context, cluster
 	return createdClusterGroup, nil
 }
 
-func (c OktaPAMClient) UpdateKubernetesClusterGroup(ctx context.Context, clusterGroupID string, updates map[string]interface{}) error {
+func (c OktaPAMClient) UpdateKubernetesClusterGroup(ctx context.Context, clusterGroupID string, updates map[string]any) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/kubernetes/cluster_groups/%s", url.PathEscape(c.Team), url.PathEscape(clusterGroupID))
 	logging.Tracef("making PUT request to %s -> %+v", requestURL, updates)
 

@@ -83,7 +83,7 @@ func resourceADConnection() *schema.Resource {
 	}
 }
 
-func resourceADConnectionCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADConnectionCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	//Build ADConnection API Request Object
@@ -116,7 +116,7 @@ func resourceADConnectionCreate(ctx context.Context, d *schema.ResourceData, m i
 	return resourceADConnectionRead(ctx, d, m)
 }
 
-func resourceADConnectionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADConnectionRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
@@ -137,7 +137,7 @@ func resourceADConnectionRead(ctx context.Context, d *schema.ResourceData, m int
 	return diags
 }
 
-func resourceADConnectionUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADConnectionUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	adConnId := d.Id()
 
@@ -170,7 +170,7 @@ func resourceADConnectionUpdate(ctx context.Context, d *schema.ResourceData, m i
 	return resourceADConnectionRead(ctx, d, m)
 }
 
-func resourceADConnectionDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADConnectionDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 	adConnId := d.Id()

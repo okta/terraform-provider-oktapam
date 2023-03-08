@@ -102,7 +102,7 @@ func resourceProject() *schema.Resource {
 				Optional:    true,
 				Default:     "CERT_TYPE_ED25519_01",
 				Description: descriptions.SSHCertificateType,
-				ValidateDiagFunc: func(i interface{}, p cty.Path) diag.Diagnostics {
+				ValidateDiagFunc: func(i any, p cty.Path) diag.Diagnostics {
 					var diags diag.Diagnostics
 					s := i.(string)
 
@@ -138,7 +138,7 @@ func resourceProject() *schema.Resource {
 	}
 }
 
-func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	project := client.Project{
@@ -163,7 +163,7 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m interf
 	return resourceProjectRead(ctx, d, m)
 }
 
-func resourceProjectReadWithIgnorable(ctx context.Context, d *schema.ResourceData, m interface{}, ignoreValues bool) (*schema.ResourceData, error) {
+func resourceProjectReadWithIgnorable(ctx context.Context, d *schema.ResourceData, m any, ignoreValues bool) (*schema.ResourceData, error) {
 	c := m.(client.OktaPAMClient)
 
 	//Get project api require project name not ASA Project UUID to read resource back
@@ -199,7 +199,7 @@ func resourceProjectReadWithIgnorable(ctx context.Context, d *schema.ResourceDat
 	return d, nil
 }
 
-func resourceProjectReadImport(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+func resourceProjectReadImport(ctx context.Context, d *schema.ResourceData, m any) ([]*schema.ResourceData, error) {
 	// d.Id() here is the last argument passed to the `terraform import RESOURCE_TYPE.RESOURCE_NAME RESOURCE_ID` command
 	// Set the passed id as project name to make read work
 	if err := d.Set(attributes.Name, d.Id()); err != nil {
@@ -212,7 +212,7 @@ func resourceProjectReadImport(ctx context.Context, d *schema.ResourceData, m in
 	return []*schema.ResourceData{projectResource}, nil
 }
 
-func resourceProjectRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceProjectRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	_, err := resourceProjectReadWithIgnorable(ctx, d, m, true)
 	if err != nil {
 		return diag.FromErr(err)
@@ -220,12 +220,12 @@ func resourceProjectRead(ctx context.Context, d *schema.ResourceData, m interfac
 	return nil
 }
 
-func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	projectName := d.Get(attributes.Name).(string)
 
 	changed := false
-	updates := make(map[string]interface{})
+	updates := make(map[string]any)
 
 	changeableAttributes := []string{
 		attributes.NextUnixGID,
@@ -257,7 +257,7 @@ func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, m interf
 	return resourceProjectRead(ctx, d, m)
 }
 
-func resourceProjectDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceProjectDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 	projectName := d.Get(attributes.Name).(string)

@@ -18,8 +18,8 @@ type KubernetesClusterConnection struct {
 	PublicCertificate *string `json:"public_certificate,omitempty"`
 }
 
-func (t KubernetesClusterConnection) ToResourceMap() map[string]interface{} {
-	m := make(map[string]interface{})
+func (t KubernetesClusterConnection) ToResourceMap() map[string]any {
+	m := make(map[string]any)
 
 	if t.APIURL != nil {
 		m[attributes.KubernetesAPIURL] = *t.APIURL
@@ -64,7 +64,7 @@ func (c OktaPAMClient) DeleteKubernetesClusterConnection(ctx context.Context, cl
 		return errors.New("supplied blank kubernetes cluster connection id")
 	}
 
-	emptyConnection := map[string]interface{}{
+	emptyConnection := map[string]any{
 		"api_url":            "",
 		"public_certificate": "",
 	}

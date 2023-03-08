@@ -45,8 +45,8 @@ type UpdateADCertificateRequest struct {
 	DisplayName *string `json:"display_name,omitempty"`
 }
 
-func (t ADSmartCardCertificate) ToResourceMap() map[string]interface{} {
-	m := make(map[string]interface{})
+func (t ADSmartCardCertificate) ToResourceMap() map[string]any {
+	m := make(map[string]any)
 
 	if t.ID != nil {
 		m[attributes.ID] = *t.ID
@@ -58,8 +58,8 @@ func (t ADSmartCardCertificate) ToResourceMap() map[string]interface{} {
 		m[attributes.CommonName] = *t.CommonName
 	}
 	if t.Details != nil {
-		flattenedCertDetails := make([]interface{}, 1)
-		flattenedCertDetail := make(map[string]interface{})
+		flattenedCertDetails := make([]any, 1)
+		flattenedCertDetail := make(map[string]any)
 
 		if t.Details.Organization != nil {
 			flattenedCertDetail[attributes.Organization] = *t.Details.Organization
@@ -153,7 +153,7 @@ func (c OktaPAMClient) GetADSmartcardCertificate(ctx context.Context, certificat
 	return nil, createErrorForInvalidCode(resp, http.StatusOK, http.StatusNotFound)
 }
 
-func (c OktaPAMClient) UpdateADSmartcardCertificateName(ctx context.Context, certificateID string, updates map[string]interface{}) error {
+func (c OktaPAMClient) UpdateADSmartcardCertificateName(ctx context.Context, certificateID string, updates map[string]any) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/certificates/%s", url.PathEscape(c.Team), url.PathEscape(certificateID))
 	logging.Tracef("making PUT request to %s", requestURL)
 
