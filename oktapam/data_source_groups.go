@@ -47,7 +47,7 @@ func dataSourceGroups() *schema.Resource {
 	}
 }
 
-func dataSourceGroupList(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceGroupList(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	c := m.(client.OktaPAMClient)

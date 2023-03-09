@@ -173,7 +173,7 @@ var adRuleAssignmentsResource = &schema.Resource{
 	},
 }
 
-func resourceADTaskSettingsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADTaskSettingsCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	adConnID := d.Get(attributes.ADConnectionID).(string)
@@ -194,7 +194,7 @@ func resourceADTaskSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 	return resourceADTaskSettingsRead(ctx, d, m)
 }
 
-func resourceADTaskSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADTaskSettingsRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
@@ -217,7 +217,7 @@ func resourceADTaskSettingsRead(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func resourceADTaskSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADTaskSettingsUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	adConnID := d.Get(attributes.ADConnectionID).(string)
@@ -246,7 +246,7 @@ func resourceADTaskSettingsUpdate(ctx context.Context, d *schema.ResourceData, m
 	return resourceADTaskSettingsRead(ctx, d, m)
 }
 
-func resourceADTaskSettingsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADTaskSettingsDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
@@ -296,11 +296,11 @@ func expandADTaskSettings(d *schema.ResourceData) client.ADTaskSettings {
 	return adTaskSettings
 }
 
-func expandAdditionalAttributeMappings(tfList []interface{}) []*client.ADAdditionalAttribute {
+func expandAdditionalAttributeMappings(tfList []any) []*client.ADAdditionalAttribute {
 	apiObjects := make([]*client.ADAdditionalAttribute, 0, len(tfList))
 
 	for _, tfMapRaw := range tfList {
-		tfMap, ok := tfMapRaw.(map[string]interface{})
+		tfMap, ok := tfMapRaw.(map[string]any)
 
 		if !ok {
 			continue
@@ -318,10 +318,10 @@ func expandAdditionalAttributeMappings(tfList []interface{}) []*client.ADAdditio
 	return apiObjects
 }
 
-func expandADRuleAssignments(tfList []interface{}) []*client.ADRuleAssignment {
+func expandADRuleAssignments(tfList []any) []*client.ADRuleAssignment {
 	apiObjects := make([]*client.ADRuleAssignment, 0, len(tfList))
 	for _, tfMapRaw := range tfList {
-		tfMap, ok := tfMapRaw.(map[string]interface{})
+		tfMap, ok := tfMapRaw.(map[string]any)
 
 		if !ok {
 			continue
@@ -341,8 +341,8 @@ func expandADRuleAssignments(tfList []interface{}) []*client.ADRuleAssignment {
 }
 
 //Convert API Object to flat map for saving in terraform state
-func flattenADTaskSettings(taskSettings *client.ADTaskSettings) map[string]interface{} {
-	m := make(map[string]interface{}, 2)
+func flattenADTaskSettings(taskSettings *client.ADTaskSettings) map[string]any {
+	m := make(map[string]any, 2)
 
 	if taskSettings.ID != nil {
 		m[attributes.ID] = *taskSettings.ID
@@ -379,9 +379,9 @@ func flattenADTaskSettings(taskSettings *client.ADTaskSettings) map[string]inter
 	}
 	if taskSettings.AdditionalAttributeMapping != nil {
 		attrMappings := taskSettings.AdditionalAttributeMapping
-		var flattenedAttrMap []interface{}
+		var flattenedAttrMap []any
 		for _, attrMapping := range attrMappings {
-			flattenedAttrMap = append(flattenedAttrMap, map[string]interface{}{
+			flattenedAttrMap = append(flattenedAttrMap, map[string]any{
 				attributes.Label:  attrMapping.Label,
 				attributes.Value:  attrMapping.Value,
 				attributes.IsGuid: attrMapping.IsGuid,
@@ -391,9 +391,9 @@ func flattenADTaskSettings(taskSettings *client.ADTaskSettings) map[string]inter
 	}
 	if taskSettings.RuleAssignments != nil {
 		rules := taskSettings.RuleAssignments
-		var flattenedRules []interface{}
+		var flattenedRules []any
 		for _, rule := range rules {
-			flattenedRules = append(flattenedRules, map[string]interface{}{
+			flattenedRules = append(flattenedRules, map[string]any{
 				attributes.ID:                               rule.ID,
 				attributes.ADRuleAssignmentsBaseDN:          rule.BaseDN,
 				attributes.ADRuleAssignmentsLDAPQueryFilter: rule.LDAPQueryFilter,
@@ -415,7 +415,7 @@ func parseADTaskSettingsResourceID(resourceId string) (string, string, error) {
 	return split[0], split[1], nil
 }
 
-func importADTaskSettingsState(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func importADTaskSettingsState(ctx context.Context, d *schema.ResourceData, meta any) ([]*schema.ResourceData, error) {
 	// d.Id() here is the last argument passed to the `terraform import RESOURCE_TYPE.RESOURCE_NAME RESOURCE_ID` command
 	// Id provided for import is in the format <connection_id>/<id>
 	adConnectionID, adTaskSettingsID, err := parseADTaskSettingsResourceID(d.Id())

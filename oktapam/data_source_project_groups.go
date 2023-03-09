@@ -57,7 +57,7 @@ func dataSourceProjectGroups() *schema.Resource {
 	}
 }
 
-func dataSourceProjectGroupList(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceProjectGroupList(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	project := d.Get(attributes.ProjectName).(string)
 	if project == "" {

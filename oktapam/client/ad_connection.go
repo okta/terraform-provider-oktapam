@@ -92,8 +92,8 @@ type ADUserSyncTaskSettingsSchedule struct {
 	StartHourUTC *int `json:"start_hour_utc"`
 }
 
-func (adConn ADConnection) ToResourceMap() map[string]interface{} {
-	m := make(map[string]interface{})
+func (adConn ADConnection) ToResourceMap() map[string]any {
+	m := make(map[string]any)
 
 	if adConn.Name != nil {
 		m[attributes.Name] = *adConn.Name

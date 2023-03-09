@@ -21,8 +21,8 @@ type ServerEnrollmentToken struct {
 	IssuedAt      *string `json:"issued_at,omitempty"`
 }
 
-func (t ServerEnrollmentToken) ToResourceMap() map[string]interface{} {
-	m := make(map[string]interface{})
+func (t ServerEnrollmentToken) ToResourceMap() map[string]any {
+	m := make(map[string]any)
 
 	if t.Project != nil {
 		m[attributes.ProjectName] = *t.Project
@@ -133,7 +133,7 @@ func (c OktaPAMClient) CreateServerEnrollmentToken(ctx context.Context, project,
 	}
 	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s/server_enrollment_tokens", url.PathEscape(c.Team), url.PathEscape(project))
 
-	request := map[string]interface{}{
+	request := map[string]any{
 		attributes.Description: description,
 	}
 	token := ServerEnrollmentToken{}

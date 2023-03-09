@@ -51,7 +51,7 @@ func resourceADCertificateObject() *schema.Resource {
 	}
 }
 
-func resourceADCertificateUploadCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADCertificateUploadCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	certificateID := d.Get(attributes.CertificateID).(string)
@@ -66,7 +66,7 @@ func resourceADCertificateUploadCreate(ctx context.Context, d *schema.ResourceDa
 	return resourceADCertificateRead(ctx, d, m)
 }
 
-func resourceADCertificateRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADCertificateRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	certificateID := d.Id()
@@ -92,7 +92,7 @@ func resourceADCertificateRead(ctx context.Context, d *schema.ResourceData, m in
 	return nil
 }
 
-func resourceADCertificateDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADCertificateDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	certificateId := d.Id()
 

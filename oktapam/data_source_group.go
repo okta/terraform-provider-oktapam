@@ -44,7 +44,7 @@ func dataSourceGroup() *schema.Resource {
 	}
 }
 
-func dataSourceGroupFetch(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceGroupFetch(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	name := d.Get(attributes.Name).(string)
 	if name == "" {

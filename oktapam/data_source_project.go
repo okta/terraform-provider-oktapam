@@ -91,7 +91,7 @@ func dataSourceProject() *schema.Resource {
 	}
 }
 
-func dataSourceProjectFetch(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceProjectFetch(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	name := d.Get(attributes.Name).(string)
 	if name == "" {

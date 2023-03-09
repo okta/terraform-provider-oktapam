@@ -49,7 +49,7 @@ func dataSourceGatewaySetupToken() *schema.Resource {
 	}
 }
 
-func dataSourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	tokenID := d.Get(attributes.ID).(string)
 	if tokenID == "" {

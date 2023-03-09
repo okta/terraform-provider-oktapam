@@ -32,7 +32,7 @@ func dataSourceGatewaySetupTokens() *schema.Resource {
 	}
 }
 
-func dataSourceGatewaySetupTokensRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceGatewaySetupTokensRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	contains := d.Get(attributes.DescriptionContains).(string)

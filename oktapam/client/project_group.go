@@ -27,7 +27,7 @@ type ProjectGroup struct {
 	ServersSelector   *string `json:"servers_selector,omitempty"`
 }
 
-func ProjectGroupFromMap(m map[string]interface{}) (*ProjectGroup, error) {
+func ProjectGroupFromMap(m map[string]any) (*ProjectGroup, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -62,7 +62,7 @@ func ProjectGroupFromMap(m map[string]interface{}) (*ProjectGroup, error) {
 			}
 			p.ServerAdmin = b
 		case attributes.ServersSelector:
-			serversSelectorString, err := FormatServersSelectorString(v.(map[string]interface{}))
+			serversSelectorString, err := FormatServersSelectorString(v.(map[string]any))
 			if err != nil {
 				return nil, err
 			}
@@ -80,7 +80,7 @@ func invalidSelectorPart(s string) bool {
 	return strings.ContainsAny(s, "=,")
 }
 
-func FormatServersSelectorString(m map[string]interface{}) (string, error) {
+func FormatServersSelectorString(m map[string]any) (string, error) {
 	selectors := make([]string, 0, len(m))
 	for key, value := range m {
 		if invalidSelectorPart(key) {
@@ -95,12 +95,12 @@ func FormatServersSelectorString(m map[string]interface{}) (string, error) {
 	return strings.Join(selectors, ","), nil
 }
 
-func parseServersSelectorString(s string) (map[string]interface{}, error) {
+func parseServersSelectorString(s string) (map[string]any, error) {
 	if len(s) == 0 {
 		return nil, nil
 	}
 
-	m := make(map[string]interface{})
+	m := make(map[string]any)
 
 	selectors := strings.Split(s, ",")
 	for _, selector := range selectors {
@@ -116,8 +116,8 @@ func parseServersSelectorString(s string) (map[string]interface{}, error) {
 	return m, nil
 }
 
-func (p *ProjectGroup) ToResourceMap() (map[string]interface{}, error) {
-	m := make(map[string]interface{})
+func (p *ProjectGroup) ToResourceMap() (map[string]any, error) {
+	m := make(map[string]any)
 
 	if p.Project != nil {
 		m[attributes.ProjectName] = *p.Project

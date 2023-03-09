@@ -56,7 +56,7 @@ func resourceGatewaySetupToken() *schema.Resource {
 	}
 }
 
-func resourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	tokenID := d.Id()
@@ -79,11 +79,11 @@ func resourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
-func resourceGatewaySetupTokenCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGatewaySetupTokenCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	description := getStringPtr(attributes.Description, d, true)
-	labels := d.Get(attributes.Labels).(map[string]interface{})
+	labels := d.Get(attributes.Labels).(map[string]any)
 
 	labelsMap := make(map[string]string, len(labels))
 
@@ -106,7 +106,7 @@ func resourceGatewaySetupTokenCreate(ctx context.Context, d *schema.ResourceData
 	return resourceGatewaySetupTokenRead(ctx, d, m)
 }
 
-func resourceGatewaySetupTokenDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGatewaySetupTokenDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	id := d.Id()
