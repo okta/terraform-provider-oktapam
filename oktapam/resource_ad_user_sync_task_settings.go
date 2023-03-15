@@ -173,16 +173,13 @@ func resourceADUserSyncTaskSettingsUpdate(ctx context.Context, d *schema.Resourc
 	}
 
 	if _, active := d.GetChange(attributes.IsActive); d.HasChange(attributes.IsActive) && active != nil {
-		if active.(bool) {
-			err := c.ActivateADUserSyncTaskSettings(ctx, adConnID, adUserSyncTaskSettingsID)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-		} else {
-			err := c.DeactivateADUserSyncTaskSettings(ctx, adConnID, adUserSyncTaskSettingsID)
-			if err != nil {
-				return diag.FromErr(err)
-			}
+		isActive := active.(bool)
+		newState := client.ADUserSyncTaskSettingsState{
+			IsActive: &isActive,
+		}
+		err := c.UpdateADUserSyncTaskSettingsState(ctx, adConnID, adUserSyncTaskSettingsID, newState)
+		if err != nil {
+			return diag.FromErr(err)
 		}
 	}
 

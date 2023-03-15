@@ -92,6 +92,10 @@ type ADUserSyncTaskSettingsSchedule struct {
 	StartHourUTC *int `json:"start_hour_utc"`
 }
 
+type ADUserSyncTaskSettingsState struct {
+	IsActive *bool `json:"is_active"`
+}
+
 func (adConn ADConnection) ToResourceMap() map[string]any {
 	m := make(map[string]any)
 
@@ -449,26 +453,6 @@ func (c OktaPAMClient) CreateADUserSyncTaskSettings(ctx context.Context, adConnI
 	return createdADUserSyncTaskSettings, nil
 }
 
-// TODO can we get rid of this
-func (c OktaPAMClient) UpdateADUserSyncTaskSettings(ctx context.Context, adConnId string, adUserSyncTaskSettingsId string, adUserSyncTaskSettings ADUserSyncTaskSettings) (*ADUserSyncTaskSettings, error) {
-	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s/user_sync_task_settings/%s", url.PathEscape(c.Team),
-		url.PathEscape(adConnId), url.PathEscape(adUserSyncTaskSettingsId))
-	logging.Tracef("making PUT request to %s", requestURL)
-	resp, err := c.CreateBaseRequest(ctx).SetBody(adUserSyncTaskSettings).SetResult(&ADUserSyncTaskSettings{}).Put(requestURL)
-
-	if err != nil {
-		logging.Errorf("received error while making request to %s", requestURL)
-		return nil, err
-	}
-	if _, err := checkStatusCode(resp, http.StatusNoContent); err != nil {
-		logging.Tracef("unexpected status code: %d", resp.StatusCode())
-		return nil, err
-	}
-
-	updatedADUserSyncTaskSettings := resp.Result().(*ADUserSyncTaskSettings)
-	return updatedADUserSyncTaskSettings, nil
-}
-
 func (c OktaPAMClient) DeleteADUserSyncTaskSettings(ctx context.Context, adConnId string, adUserSyncTaskSettingsId string) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s/user_sync_task_settings/%s", url.PathEscape(c.Team),
 		url.PathEscape(adConnId), url.PathEscape(adUserSyncTaskSettingsId))
@@ -499,25 +483,13 @@ func (c OktaPAMClient) UpdateADUserSyncTaskSettingsSchedule(ctx context.Context,
 	return err
 }
 
-func (c OktaPAMClient) ActivateADUserSyncTaskSettings(ctx context.Context, adConnId string, adUserSyncTaskSettingsId string) error {
-	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s/user_sync_task_settings/%s/activate", url.PathEscape(c.Team),
+func (c OktaPAMClient) UpdateADUserSyncTaskSettingsState(ctx context.Context, adConnId string, adUserSyncTaskSettingsId string,
+	state ADUserSyncTaskSettingsState) error {
+
+	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s/user_sync_task_settings/%s/state", url.PathEscape(c.Team),
 		url.PathEscape(adConnId), url.PathEscape(adUserSyncTaskSettingsId))
 	logging.Tracef("making POST request to %s", requestURL)
-	resp, err := c.CreateBaseRequest(ctx).Post(requestURL)
-	if err != nil {
-		logging.Errorf("received error while making request to %s", requestURL)
-		return err
-	}
-
-	_, err = checkStatusCode(resp, http.StatusNoContent)
-	return err
-}
-
-func (c OktaPAMClient) DeactivateADUserSyncTaskSettings(ctx context.Context, adConnId string, adUserSyncTaskSettingsId string) error {
-	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s/user_sync_task_settings/%s/deactivate", url.PathEscape(c.Team),
-		url.PathEscape(adConnId), url.PathEscape(adUserSyncTaskSettingsId))
-	logging.Tracef("making POST request to %s", requestURL)
-	resp, err := c.CreateBaseRequest(ctx).Post(requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetBody(state).Post(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
