@@ -71,13 +71,15 @@ func resourceADUserSyncTaskSettings() *schema.Resource {
 			},
 			attributes.UPNField: {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Default:     "userPrincipalName",
 				ForceNew:    true,
 				Description: descriptions.ADUserSyncTaskSettingsUPNField,
 			},
 			attributes.SIDField: {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Default:     "objectSID",
 				ForceNew:    true,
 				Description: descriptions.ADUserSyncTaskSettingsSIDField,
 			},
