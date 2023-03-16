@@ -14,10 +14,55 @@ func dataSourceTeamSettings() *schema.Resource {
 		Description: descriptions.SourceTeamSettings,
 		ReadContext: dataSourceTeamSettingsFetch,
 		Schema: map[string]*schema.Schema{
-			attributes.Team: {
+			attributes.ID: {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description:descriptions.TeamSettingsID,
+			},
+			attributes.ReactivateUsersViaIDP: {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: descriptions.ReactivateUsersViaIDP,
+			},
+			attributes.ApproveDeviceWithoutInteraction: {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: descriptions.ApproveDeviceWithoutInteraction,
+			},
+			attributes.PostDeviceEnrollmentURL: {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: descriptions.TeamName,
+				Description: descriptions.PostDeviceEnrollmentURL,
+			},
+			attributes.PostLoginURL: {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: descriptions.PostLoginURL,
+			},
+			attributes.PostLogoutURL: {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: descriptions.PostLogoutURL,
+			},
+			attributes.UserProvisioningExactUserName: {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: descriptions.UserProvisioningExactUserName,
+			},
+			attributes.ClientSessionDuration: {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: descriptions.ClientSessionDuration,
+			},
+			attributes.WebSessionDuration: {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: descriptions.WebSessionDuration,
+			},
+			attributes.IncludeUserSID: {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: descriptions.IncludeUserSID,
 			},
 		},
 	}
@@ -39,7 +84,8 @@ func dataSourceTeamSettingsFetch(ctx context.Context, d *schema.ResourceData, m 
 		for key, value := range settings.ToResourceMap() {
 			d.Set(key, value)
 		}
+	}else {
+		return diag.Errorf("Team settings does not exist for the team %s", c.Team)
 	}
-	//TODO(lehar) : should I return an error when team settings does not exist?
 	return nil
 }
