@@ -101,17 +101,3 @@ func (c OktaPAMClient) UpdateTeamSettings(ctx context.Context, teamSettings Team
 	_, err = checkStatusCode(resp, http.StatusOK)
 	return err
 }
-
-func (c OktaPAMClient) DeleteTeamSettings(ctx context.Context) error {
-	//requestURL := fmt.Sprintf("/v1/teams/%s/settings", url.PathEscape(c.Team))
-	//logging.Tracef("making DELETE request to %s", requestURL)
-	//
-	//resp, err := c.CreateBaseRequest(ctx).Delete(requestURL)
-	//if err != nil {
-	//	logging.Errorf("received error while making request to %s", requestURL)
-	//	return err
-	//}
-	//
-	//_, err = checkStatusCode(resp, http.StatusNoContent, http.StatusNotFound)
-	return nil
-}

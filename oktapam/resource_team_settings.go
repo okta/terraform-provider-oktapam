@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"context"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -9,8 +10,6 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/typed_strings"
-	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
-	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 )
 
 func resourceTeamSettings() *schema.Resource {
@@ -168,41 +167,10 @@ func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m i
 
 func resourceTeamSettingsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
-	teamSettingsRequest := &client.TeamSettings{
-		Team: getStringPtr(c.Team, d, false),
+	diag := diag.Diagnostic{
+		Severity: diag.Warning,
+		Summary:  "Can't delete team settings resource.",
+		Detail: fmt.Sprintf("Team settings resource does not support delete operation. If you don't want to see this warning, plese remove this resource from the terraform state manually."),
 	}
-	const defaultValAlways string = "Always"
-	const defaultValIf_Available = "If_Available"
-
-	//Get the remote team settings
-	settings, err := c.GetTeamSettings(ctx)
-
-	// Get the terraform managed team settings
-
-	// Compare if the attributes are same
-	// For the same attributes, set the default value
-	// For different attributes, leave as is
-	oldVal, newVal := d.GetChange(attributes.IncludeUserSID)
-	logging.Debugf("includeuserSID old val: %s ; includeuserSID new val: %s",oldVal, newVal)
-	if oldVal==settings.IncludeUserSID {
-		teamSettingsRequest.IncludeUserSID = utils.AsStringPtr(defaultValAlways)
-	}
-	teamSettingsRequest.IncludeUserSID =  utils.AsStringPtr(defaultValIf_Available)
-	//approveDeviceWithoutInteractionHasChange := d.HasChange(attributes.ApproveDeviceWithoutInteraction)
-	//postDeviceEnrollmentURLHasChange := d.HasChange(attributes.PostDeviceEnrollmentURL)
-	//postLogoutURLHasChange := d.HasChange(attributes.PostLogoutURL)
-	//postLoginURLHasChange := d.HasChange(attributes.PostLoginURL)
-	//userProvisioningExactUserNameHasChange := d.HasChange(attributes.UserProvisioningExactUserName)
-	//clientSessionDurationHasChange := d.HasChange(attributes.ClientSessionDuration)
-	//webSessionDurationHasChange := d.HasChange(attributes.WebSessionDuration)
-	//includeUserSIDHasChange := d.HasChange(attributes.IncludeUserSID)
-	err = c.UpdateTeamSettings(ctx,*teamSettingsRequest)
-	err = c.DeleteTeamSettings(ctx)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	d.SetId("")
-	return diags
+	return append(diags,diag)
 }
