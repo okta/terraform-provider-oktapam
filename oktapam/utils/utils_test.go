@@ -6,7 +6,7 @@ import (
 )
 
 func TestExpandStringList(t *testing.T) {
-	input := []interface{}{"foo", "bar", "foo"}
+	input := []any{"foo", "bar", "foo"}
 	outputList := ExpandStringList(input)
 	expected := []string{
 		"foo",

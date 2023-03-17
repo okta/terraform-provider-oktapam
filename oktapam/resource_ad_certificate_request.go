@@ -139,13 +139,13 @@ func resourceADCertificateRequest() *schema.Resource {
 	}
 }
 
-func resourceADCertificateRequestCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADCertificateRequestCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	var certRequestDetails *client.ADCertificateDetails
 	if v, ok := d.GetOk(attributes.Details); ok {
-		list := v.([]interface{})
-		detailsMap := list[0].(map[string]interface{})
+		list := v.([]any)
+		detailsMap := list[0].(map[string]any)
 		certRequestDetails = &client.ADCertificateDetails{
 			Organization:       utils.AsStringPtr(detailsMap[attributes.Organization].(string)),
 			OrganizationalUnit: utils.AsStringPtr(detailsMap[attributes.OrganizationalUnit].(string)),
@@ -182,7 +182,7 @@ func resourceADCertificateRequestCreate(ctx context.Context, d *schema.ResourceD
 	return resourceADCertificateRequestRead(ctx, d, m)
 }
 
-func resourceADCertificateRequestRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADCertificateRequestRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	certificateID := d.Id()
@@ -195,6 +195,24 @@ func resourceADCertificateRequestRead(ctx context.Context, d *schema.ResourceDat
 		for key, value := range adCertificate.ToResourceMap() {
 			_ = d.Set(key, value)
 		}
+
+		if details, ok := d.Get(attributes.Details).([]map[string]any); ok && len(details) == 1 {
+			// API doesn't return certificate details so that need to be set again from the current config
+			// If we don't set it then terraform report differences without making any changes between proposed state and real-world infra
+			flattenedCertDetails := make([]any, 1)
+			flattenedCertDetail := make(map[string]any)
+			flattenedCertDetail[attributes.Organization] = details[0][attributes.Organization]
+			flattenedCertDetail[attributes.OrganizationalUnit] = details[0][attributes.OrganizationalUnit]
+			flattenedCertDetail[attributes.Locality] = details[0][attributes.Locality]
+			flattenedCertDetail[attributes.Province] = details[0][attributes.Province]
+			flattenedCertDetail[attributes.Country] = details[0][attributes.Country]
+			flattenedCertDetail[attributes.TTLDays] = details[0][attributes.TTLDays]
+
+			flattenedCertDetails[0] = flattenedCertDetail
+			if err := d.Set(attributes.Details, flattenedCertDetails); err != nil {
+				return diag.FromErr(err)
+			}
+		}
 	} else {
 		logging.Infof("ADSmartCardCertificate %s does not exist", certificateID)
 	}
@@ -202,12 +220,12 @@ func resourceADCertificateRequestRead(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func resourceADCertificateRequestUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADCertificateRequestUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	id := d.Id()
 
 	changed := false
-	updates := make(map[string]interface{})
+	updates := make(map[string]any)
 
 	changeableAttributes := []string{
 		attributes.DisplayName,
@@ -229,7 +247,7 @@ func resourceADCertificateRequestUpdate(ctx context.Context, d *schema.ResourceD
 	return resourceADCertificateRequestRead(ctx, d, m)
 }
 
-func resourceADCertificateRequestDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceADCertificateRequestDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	certificateId := d.Id()
 

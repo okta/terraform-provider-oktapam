@@ -37,7 +37,7 @@ func dataSourceProjects() *schema.Resource {
 	}
 }
 
-func dataSourceProjectList(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceProjectList(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	c := m.(client.OktaPAMClient)

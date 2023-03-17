@@ -31,8 +31,8 @@ type Project struct {
 	UserOnDemandPeriod     *int    `json:"user_on_demand_period,omitempty"`
 }
 
-func (p Project) ToResourceMap() map[string]interface{} {
-	m := make(map[string]interface{}, 2)
+func (p Project) ToResourceMap() map[string]any {
+	m := make(map[string]any, 2)
 
 	if p.Name != nil {
 		m[attributes.Name] = *p.Name
@@ -181,7 +181,7 @@ func (c OktaPAMClient) CreateProject(ctx context.Context, proj Project) error {
 	return err
 }
 
-func (c OktaPAMClient) UpdateProject(ctx context.Context, projectName string, updates map[string]interface{}) error {
+func (c OktaPAMClient) UpdateProject(ctx context.Context, projectName string, updates map[string]any) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/projects/%s", url.PathEscape(c.Team), url.PathEscape(projectName))
 	logging.Tracef("making PUT request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(updates).Put(requestURL)

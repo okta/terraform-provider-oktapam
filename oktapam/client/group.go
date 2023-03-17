@@ -21,8 +21,8 @@ type Group struct {
 	Roles     []string `json:"roles"`
 }
 
-func (g Group) ToResourceMap() map[string]interface{} {
-	m := make(map[string]interface{}, 2)
+func (g Group) ToResourceMap() map[string]any {
+	m := make(map[string]any, 2)
 
 	if g.Name != nil {
 		m[attributes.Name] = *g.Name
@@ -148,7 +148,7 @@ func (c OktaPAMClient) CreateGroup(ctx context.Context, group Group) error {
 	return err
 }
 
-func (c OktaPAMClient) UpdateGroup(ctx context.Context, groupName string, updates map[string]interface{}) error {
+func (c OktaPAMClient) UpdateGroup(ctx context.Context, groupName string, updates map[string]any) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/groups/%s", url.PathEscape(c.Team), url.PathEscape(groupName))
 	logging.Tracef("making PUT request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(updates).Put(requestURL)

@@ -80,7 +80,7 @@ func dataSourceGateways() *schema.Resource {
 	}
 }
 
-func dataSourceGatewaysRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceGatewaysRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	parameters := client.ListGatewayParameters{}
 
@@ -93,7 +93,7 @@ func dataSourceGatewaysRead(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	gateways := make([]map[string]interface{}, len(gatewayList))
+	gateways := make([]map[string]any, len(gatewayList))
 	for idx, token := range gatewayList {
 		gateways[idx] = token.ToResourceMap()
 	}

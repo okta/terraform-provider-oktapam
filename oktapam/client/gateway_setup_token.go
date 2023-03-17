@@ -33,8 +33,8 @@ type GatewaySetupTokenLabelDetails struct {
 	Labels map[string]string `json:"labels,omitempty"`
 }
 
-func (t GatewaySetupToken) ToResourceMap() map[string]interface{} {
-	m := make(map[string]interface{})
+func (t GatewaySetupToken) ToResourceMap() map[string]any {
+	m := make(map[string]any)
 
 	m[attributes.Description] = *t.Description
 

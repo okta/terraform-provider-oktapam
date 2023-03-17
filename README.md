@@ -1,14 +1,11 @@
-Terraform Provider for Okta's Privileged Access Management (Okta's PAM)
-=========================
+# Terraform Provider for Okta's Privileged Access Management (Okta's PAM)
 
-Requirements
-------------
+## Requirements
 
 -	[Terraform](https://www.terraform.io/downloads.html) 0.13.x
--	[Go](https://golang.org/doc/install) 1.17+ (to build the provider plugin)
+-	[Go](https://golang.org/doc/install) 1.18+ (to build the provider plugin)
 
-Building The Provider
----------------------
+## Building The Provider
 
 Clone repository to: `$PROJECT_DIR/terraform-provider-oktapam`
 
@@ -25,8 +22,8 @@ $ cd $PROJECT_DIR/terraform-provider-oktapam
 $ make build
 ```
 
-Using the provider
-----------------------
+## Using the provider
+
 You will need to create a team a service user.  Then set the following environment variables prior to running: Okta's PAM API key, secret and team name. 
 
 ```
@@ -48,8 +45,9 @@ export OKTAPAM_API_HOST="https://my.testing.domain"
 export OKTAPAM_TRUSTED_DOMAIN_OVERRIDE="my.testing.domain"
 ```
 
-Developing the Provider
----------------------------
+## Developing the Provider
+
+### Building Provider
 To compile the provider, run `make build`. This will build the provider and put in the project directory
 
 ```sh
@@ -68,6 +66,52 @@ If you are using terraform 0.12.x, you will need to run `make link_legacy`.  Thi
 $ make link_legacy
 ```
 
+### Terraform Settings for Dev Environment
+
+#### dev_overrides
+
+While developing provider if you want to try a test configuration against development build of a provider then dev_overrides
+setting comes handy. 
+
+*Terraform init* command creates .terraform.lock.hcl file to store the version and checksums for the required providers.
+Normally, Terraform verifies version and checksums to ensure operations are made with the intended version of a provider. 
+These version and checksum rules are inconvenient while developing a provider, because every time you build a new binary checksum
+is going to be different and require developer to delete the exiting .terraform.lock.hcl file and re-initialize it via init
+command.
+
+To avoid all this hassle, set the dev_overrides in terraform config file. By default, terraform look for .terraformrc file
+under ${HOME} directory. If you want to change it then set TF_CLI_CONFIG_FILE env variable. 
+
+```sh
+export TF_CLI_CONFIG_FILE=/home/developer/tmp/dev.tfrc
+```
+
+Terraform config file content:
+
+```
+provider_installation {
+  dev_overrides {
+    "okta.com/pam/oktapam" = "<path to terraform-provider-oktapam locally built binary>" 
+  }
+  
+  # For all other providers, install them directly from their origin provider
+  # registries as normal. If you omit this, Terraform will _only_ use
+  # the dev_overrides block, and so no other providers will be available.
+  direct {}
+}
+```
+
+After performing above steps, there is no need to run *terraform init* command. You can directly perform other operations
+like terraform plan/apply etc.
+
+[Terraform Documentation](https://developer.hashicorp.com/terraform/cli/config/config-file#development-overrides-for-provider-developers)
+for more details.
+
+**Note:** If the test configuration file has references to multiple providers and for some of them you don't want development
+overrides then this may not be a preferred approach. Please refer [githhub open issue](https://github.com/hashicorp/terraform/issues/27459).
+
+### Running Tests
+
 In order to test the provider, you can simply run `make test`.
 
 ```sh
@@ -82,13 +126,20 @@ In order to run the full suite of Acceptance tests, run `make testacc`.
 $ make testacc
 ```
 
-Releasing the Provider
----------------------------
+If you want to run specific acceptance tests then set TESTARGS variable. TestCaseFunctionName(t *testing.T) can be a regular 
+expression too.
+
+```sh
+$ TESTARGS='-run TestcaseFunctionName' make testacc
+```
+
+# Releasing the Provider
+
 1. Bump version in `Makefile`.
 2. Add last version to `tag-checks.yml`.
 3. Merge and make tag corresponding to the new version.
 4. Make release corresponding to new tag.
 
-Warnings
---------------------------
+# Warnings
+
 - In the `oktapam_project` resource the public key algorithm for certificate signing and validation can be set. By default, projects use the `ssh-ed25519` algorithm, but admins can configure the project to use the `ssh-rsa` to support legacy servers. `ssh-rsa` has been [deprecated by OpenSSH](https://www.openssh.com/txt/release-8.3) and should not be used, if possible.

@@ -83,7 +83,7 @@ func resourceProjectGroup() *schema.Resource {
 	}
 }
 
-func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	serverAdmin, err := getOkBool(attributes.ServerAdmin, d)
@@ -104,9 +104,9 @@ func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m i
 		return diag.FromErr(err)
 	}
 
-	var serversSelector map[string]interface{}
+	var serversSelector map[string]any
 	if ss, ok := d.GetOk(attributes.ServersSelector); ok {
-		serversSelector = ss.(map[string]interface{})
+		serversSelector = ss.(map[string]any)
 	}
 
 	serversSelectorString, err := client.FormatServersSelectorString(serversSelector)
@@ -131,7 +131,7 @@ func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m i
 	return resourceProjectGroupRead(ctx, d, m)
 }
 
-func resourceProjectGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceProjectGroupRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	projectName := d.Get(attributes.ProjectName).(string)
@@ -173,11 +173,11 @@ func resourceProjectGroupRead(ctx context.Context, d *schema.ResourceData, m int
 	return nil
 }
 
-func resourceProjectGroupUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceProjectGroupUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	changed := false
-	updates := make(map[string]interface{})
+	updates := make(map[string]any)
 
 	changeableAttributes := []string{
 		attributes.ServerAccess,
@@ -220,7 +220,7 @@ func resourceProjectGroupUpdate(ctx context.Context, d *schema.ResourceData, m i
 	return resourceProjectGroupRead(ctx, d, m)
 }
 
-func resourceProjectGroupDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceProjectGroupDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	project := d.Get(attributes.ProjectName).(string)
@@ -243,7 +243,7 @@ func parseProjectGroupResourceID(resourceId string) (string, string, error) {
 	return split[0], split[1], nil
 }
 
-func importResourceProjectGroupState(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func importResourceProjectGroupState(ctx context.Context, d *schema.ResourceData, meta any) ([]*schema.ResourceData, error) {
 	// d.Id() here is the last argument passed to the `terraform import RESOURCE_TYPE.RESOURCE_NAME RESOURCE_ID` command
 	// Id provided for import is in the format <project_name>/<group_name>
 	projectName, groupName, err := parseProjectGroupResourceID(d.Id())
