@@ -4,9 +4,11 @@ import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/typed_strings"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 )
@@ -37,16 +39,19 @@ func resourceTeamSettings() *schema.Resource {
 			attributes.PostDeviceEnrollmentURL: {
 				Type:        schema.TypeString,
 				Optional:    true,
+				ValidateFunc: validation.IsURLWithHTTPorHTTPS,
 				Description: descriptions.PostDeviceEnrollmentURL,
 			},
 			attributes.PostLoginURL: {
 				Type:        schema.TypeString,
 				Optional:    true,
+				ValidateFunc: validation.IsURLWithHTTPorHTTPS,
 				Description: descriptions.PostLoginURL,
 			},
 			attributes.PostLogoutURL: {
 				Type:        schema.TypeString,
 				Optional:    true,
+				ValidateFunc: validation.IsURLWithHTTPorHTTPS,
 				Description: descriptions.PostLogoutURL,
 			},
 			attributes.UserProvisioningExactUserName: {
@@ -57,16 +62,24 @@ func resourceTeamSettings() *schema.Resource {
 			attributes.ClientSessionDuration: {
 				Type:        schema.TypeInt,
 				Optional:    true,
+				ValidateFunc: validation.IntBetween(60*60, 25*60*60),
 				Description: descriptions.ClientSessionDuration,
 			},
 			attributes.WebSessionDuration: {
 				Type:        schema.TypeInt,
 				Optional:    true,
+				ValidateFunc: validation.IntBetween(30*60, 25*60*60),
 				Description: descriptions.WebSessionDuration,
 			},
 			attributes.IncludeUserSID: {
 				Type:        schema.TypeString,
 				Optional:    true,
+				ValidateFunc: validation.StringInSlice(
+					[]string{
+						typed_strings.IncludeUserSIDNever.String(),
+						typed_strings.IncludeUserSIDAlways.String(),
+						typed_strings.IncludeUserSIDIfAvailable.String(),
+					}, false),
 				Description: descriptions.IncludeUserSID,
 			},
 		},
