@@ -23,8 +23,8 @@ type TeamSettings struct {
 	IncludeUserSID                  *string `json:"include_user_SID,omitempty"`
 }
 
-func (s TeamSettings) ToResourceMap() map[string]interface{} {
-	m := make(map[string]interface{}, 2)
+func (s TeamSettings) ToResourceMap() map[string]any {
+	m := make(map[string]any, 2)
 
 	if s.Team != nil {
 		m[attributes.TeamName] = *s.Team
