@@ -92,15 +92,15 @@ func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m i
 	c := m.(client.OktaPAMClient)
 
 	settings := client.TeamSettings{
-		ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, true),
-		ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, true),
-		PostDeviceEnrollmentURL:         getStringPtr(attributes.PostDeviceEnrollmentURL, d, true),
-		PostLogoutURL:                   getStringPtr(attributes.PostLogoutURL, d, true),
-		PostLoginURL:                    getStringPtr(attributes.PostLoginURL, d, true),
-		UserProvisioningExactUserName:   getBoolPtr(attributes.UserProvisioningExactUserName, d, true),
-		ClientSessionDuration:           getIntPtr(attributes.ClientSessionDuration, d, true),
-		WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, true),
-		IncludeUserSID:                  getStringPtr(attributes.IncludeUserSID, d, true),
+		ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, false),
+		ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, false),
+		PostDeviceEnrollmentURL:         getStringPtr(attributes.PostDeviceEnrollmentURL, d, false),
+		PostLogoutURL:                   getStringPtr(attributes.PostLogoutURL, d, false),
+		PostLoginURL:                    getStringPtr(attributes.PostLoginURL, d, false),
+		UserProvisioningExactUserName:   getBoolPtr(attributes.UserProvisioningExactUserName, d, false),
+		ClientSessionDuration:           getIntPtr(attributes.ClientSessionDuration, d, false),
+		WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, false),
+		IncludeUserSID:                  getStringPtr(attributes.IncludeUserSID, d, false),
 	}
 
 	err := c.UpdateTeamSettings(ctx, settings)
@@ -143,12 +143,11 @@ func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m i
 
 		//Build API Client Request Object
 		teamSettingsRequest := client.TeamSettings{
-			Team:                            getStringPtr(c.Team, d, false),
 			ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, false),
 			ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, false),
 			PostDeviceEnrollmentURL:         getStringPtr(attributes.PostDeviceEnrollmentURL, d, false),
 			PostLogoutURL:                   getStringPtr(attributes.PostLogoutURL, d, false),
-			PostLoginURL:                    getStringPtr(attributes.PostLoginURL, d, true),
+			PostLoginURL:                    getStringPtr(attributes.PostLoginURL, d, false),
 			UserProvisioningExactUserName:   getBoolPtr(attributes.UserProvisioningExactUserName, d, false),
 			ClientSessionDuration:           getIntPtr(attributes.ClientSessionDuration, d, false),
 			WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, false),

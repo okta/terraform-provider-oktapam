@@ -5,13 +5,11 @@ import (
 	"fmt"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
-	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 	"net/http"
 	"net/url"
 )
 
 type TeamSettings struct {
-	Team                            *string `json:"team,omitempty"`
 	ReactivateUsersViaIDP           *bool   `json:"reactivate_users_via_idp,omitempty"`
 	ApproveDeviceWithoutInteraction *bool   `json:"approve_device_without_interaction,omitempty"`
 	PostDeviceEnrollmentURL         *string `json:"post_device_enrollment_url,omitempty"`
@@ -26,9 +24,6 @@ type TeamSettings struct {
 func (s TeamSettings) ToResourceMap() map[string]any {
 	m := make(map[string]any, 2)
 
-	if s.Team != nil {
-		m[attributes.TeamName] = *s.Team
-	}
 	if s.ReactivateUsersViaIDP != nil {
 		m[attributes.ReactivateUsersViaIDP] = *s.ReactivateUsersViaIDP
 	}
@@ -60,10 +55,6 @@ func (s TeamSettings) ToResourceMap() map[string]any {
 	return m
 }
 
-func (s TeamSettings) Exists() bool {
-	return utils.IsNonEmpty(s.Team)
-}
-
 func (c OktaPAMClient) GetTeamSettings(ctx context.Context) (*TeamSettings, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/settings", url.PathEscape(c.Team))
 	logging.Tracef("making GET request to %s", requestURL)
@@ -77,10 +68,7 @@ func (c OktaPAMClient) GetTeamSettings(ctx context.Context) (*TeamSettings, erro
 
 	if statusCode == http.StatusOK {
 		settings := resp.Result().(*TeamSettings)
-		if settings.Exists() {
-			return settings, nil
-		}
-		return nil, nil
+		return settings, nil
 	} else if statusCode == http.StatusNotFound {
 		return nil, nil
 	}
