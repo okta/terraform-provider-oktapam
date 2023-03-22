@@ -103,7 +103,7 @@ func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m i
 		IncludeUserSID:                  getStringPtr(attributes.IncludeUserSID, d, false),
 	}
 
-	err := c.UpdateTeamSettings(ctx, settings)
+	err := c.CreateTeamSettings(ctx, settings)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -138,30 +138,58 @@ func resourceTeamSettingsRead(ctx context.Context, d *schema.ResourceData, m int
 func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	if d.HasChanges(attributes.ReactivateUsersViaIDP, attributes.ApproveDeviceWithoutInteraction, attributes.PostDeviceEnrollmentURL, attributes.PostLoginURL,
-		attributes.PostLogoutURL, attributes.UserProvisioningExactUserName, attributes.ClientSessionDuration, attributes.WebSessionDuration, attributes.IncludeUserSID) {
+	//if d.HasChanges(attributes.ReactivateUsersViaIDP, attributes.ApproveDeviceWithoutInteraction, attributes.PostDeviceEnrollmentURL, attributes.PostLoginURL,
+	//	attributes.PostLogoutURL, attributes.UserProvisioningExactUserName, attributes.ClientSessionDuration, attributes.WebSessionDuration, attributes.IncludeUserSID) {
+	//
+	//	//Build API Client Request Object
+	//	teamSettingsRequest := client.TeamSettings{
+	//		ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, false),
+	//		ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, false),
+	//		PostDeviceEnrollmentURL:         getStringPtr(attributes.PostDeviceEnrollmentURL, d, false),
+	//		PostLogoutURL:                   getStringPtr(attributes.PostLogoutURL, d, false),
+	//		PostLoginURL:                    getStringPtr(attributes.PostLoginURL, d, false),
+	//		UserProvisioningExactUserName:   getBoolPtr(attributes.UserProvisioningExactUserName, d, false),
+	//		ClientSessionDuration:           getIntPtr(attributes.ClientSessionDuration, d, false),
+	//		WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, false),
+	//		IncludeUserSID:                  getStringPtr(attributes.IncludeUserSID, d, false),
+	//	}
+	//
+	//	err := c.UpdateTeamSettings(ctx, teamSettingsRequest)
+	//	if err != nil {
+	//		return diag.FromErr(err)
+	//	}
+	//}
 
-		//Build API Client Request Object
-		teamSettingsRequest := client.TeamSettings{
-			ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, false),
-			ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, false),
-			PostDeviceEnrollmentURL:         getStringPtr(attributes.PostDeviceEnrollmentURL, d, false),
-			PostLogoutURL:                   getStringPtr(attributes.PostLogoutURL, d, false),
-			PostLoginURL:                    getStringPtr(attributes.PostLoginURL, d, false),
-			UserProvisioningExactUserName:   getBoolPtr(attributes.UserProvisioningExactUserName, d, false),
-			ClientSessionDuration:           getIntPtr(attributes.ClientSessionDuration, d, false),
-			WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, false),
-			IncludeUserSID:                  getStringPtr(attributes.IncludeUserSID, d, false),
+	changed := false
+	updates := make(map[string]any)
+
+	changeableAttributes := []string{
+		attributes.ReactivateUsersViaIDP,
+		attributes.ApproveDeviceWithoutInteraction,
+		attributes.PostDeviceEnrollmentURL,
+		attributes.PostLoginURL,
+		attributes.PostLogoutURL,
+		attributes.UserProvisioningExactUserName,
+		attributes.ClientSessionDuration,
+		attributes.WebSessionDuration,
+		attributes.IncludeUserSID,
+	}
+
+	for _, attribute := range changeableAttributes {
+		if d.HasChange(attribute) {
+			updates[attribute] = d.Get(attribute)
+			changed = true
 		}
+	}
 
-		err := c.UpdateTeamSettings(ctx, teamSettingsRequest)
+	if changed {
+		err := c.UpdateTeamSettings(ctx, updates)
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		d.SetId(c.Team)
 	}
 
-	return resourceADConnectionRead(ctx, d, m)
+	return resourceTeamSettingsRead(ctx, d, m)
 }
 
 func resourceTeamSettingsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
