@@ -87,7 +87,7 @@ var (
 	UserOnDemandPeriod  = "If defined, set time period in seconds that an on-demand user account exists on the server following an access request."
 	UserType            = "The user type. Valid types are 'human' and 'service'."
 	// TODO(lehar): Reorder vars
-	TeamSettingsID = "Team name is populates ad the ID for team settings."
+	TeamSettingsID = "Team name is populated as the ID for team settings."
 	ApproveDeviceWithoutInteraction = "If enabled, ASA auto-approves devices for ASA Users that are authenticated into this Team."
 	ReactivateUsersViaIDP           = "If a disabled or deleted ASA User is able to authenticate through the IdP, their ASA User is re-enabled."
 	PostDeviceEnrollmentURL         = "If post device enrollment is configured, this is the URL that an ASA User is directed to after enrolling a device in ASA."

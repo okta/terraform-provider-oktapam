@@ -16,8 +16,13 @@ func dataSourceTeamSettings() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			attributes.ID: {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
 				Description:descriptions.TeamSettingsID,
+			},
+			attributes.Team: {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description:descriptions.TeamName,
 			},
 			attributes.ReactivateUsersViaIDP: {
 				Type:        schema.TypeBool,
@@ -70,9 +75,9 @@ func dataSourceTeamSettings() *schema.Resource {
 
 func dataSourceTeamSettingsFetch(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
-	name := d.Get(attributes.Name).(string)
+	name := d.Get(attributes.ID).(string)
 	if name == "" {
-		return diag.Errorf("%s cannot be blank", attributes.Name)
+		return diag.Errorf("%s cannot be blank", attributes.ID)
 	}
 
 	settings, err := c.GetTeamSettings(ctx)
@@ -84,6 +89,7 @@ func dataSourceTeamSettingsFetch(ctx context.Context, d *schema.ResourceData, m 
 		for key, value := range settings.ToResourceMap() {
 			d.Set(key, value)
 		}
+		d.SetId(name)
 	}else {
 		return diag.Errorf("Team settings does not exist for the team %s", c.Team)
 	}
