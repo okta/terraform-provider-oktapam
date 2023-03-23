@@ -96,6 +96,14 @@ type ADUserSyncTaskSettingsState struct {
 	IsActive *bool `json:"is_active"`
 }
 
+type ListADUserSyncTaskSettingsParameters struct {
+	Status string
+}
+
+type ADUserSyncTaskSettingsListResponse struct {
+	ADUserSyncTaskSettingsList []ADUserSyncTaskSettings `json:"list"`
+}
+
 func (adConn ADConnection) ToResourceMap() map[string]any {
 	m := make(map[string]any)
 
@@ -497,4 +505,55 @@ func (c OktaPAMClient) UpdateADUserSyncTaskSettingsState(ctx context.Context, ad
 
 	_, err = checkStatusCode(resp, http.StatusNoContent)
 	return err
+}
+
+func (c OktaPAMClient) ListADUserSyncTaskSettings(ctx context.Context, connectionID string, parameters ListADUserSyncTaskSettingsParameters) ([]ADUserSyncTaskSettings, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s/user_sync_task_settings", url.PathEscape(c.Team),
+		connectionID)
+	adUserSyncTaskSettingsList := make([]ADUserSyncTaskSettings, 0)
+
+	for {
+		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
+		logging.Tracef("making GET request to %s", requestURL)
+
+		resp, err := c.CreateBaseRequest(ctx).SetQueryParams(parameters.toQueryParametersMap()).SetResult(&ADUserSyncTaskSettingsListResponse{}).Get(requestURL)
+		if err != nil {
+			logging.Errorf("received error while making request to %s", requestURL)
+			return nil, err
+		}
+		if _, err := checkStatusCode(resp, http.StatusOK); err != nil {
+			return nil, err
+		}
+
+		adUserSyncTaskSettingsListResponse := resp.Result().(*ADUserSyncTaskSettingsListResponse)
+		adUserSyncTaskSettingsList = append(adUserSyncTaskSettingsList, adUserSyncTaskSettingsListResponse.ADUserSyncTaskSettingsList...)
+
+		linkHeader := resp.Header().Get("Link")
+		//No more results to fetch
+		if linkHeader == "" {
+			break
+		}
+		links := linkheader.Parse(linkHeader)
+		requestURL = ""
+
+		//Set the request url with next link
+		for _, link := range links {
+			if link.Rel == "next" {
+				requestURL = link.URL
+				break
+			}
+		}
+	}
+
+	return adUserSyncTaskSettingsList, nil
+}
+
+func (p ListADUserSyncTaskSettingsParameters) toQueryParametersMap() map[string]string {
+	m := make(map[string]string, 1)
+
+	if p.Status != "" {
+		m[attributes.ADUserSyncTaskSettingsStatus] = p.Status
+	}
+
+	return m
 }

@@ -27,6 +27,7 @@ const (
 	providerADConnectionsKey               = "oktapam_ad_connections"
 	providerADTaskSettingsKey              = "oktapam_ad_task_settings"
 	providerADUserSyncTaskSettingsKey      = "oktapam_ad_user_sync_task_settings"
+	providerADUserSyncTaskSettingsListKey  = "oktapam_ad_user_sync_task_settings_list"
 	providerGatewaysKey                    = "oktapam_gateways"
 	providerGatewaySetupTokenKey           = "oktapam_gateway_setup_token"
 	providerGatewaySetupTokensKey          = "oktapam_gateway_setup_tokens"
@@ -102,6 +103,8 @@ func Provider() *schema.Provider {
 			providerProjectGroupsKey:          dataSourceProjectGroups(),
 			providerServerEnrollmentTokenKey:  dataSourceServerEnrollmentToken(),
 			providerServerEnrollmentTokensKey: dataSourceServerEnrollmentTokens(),
+			providerADUserSyncTaskSettingsKey: dataSourceADUserSyncTaskSettings(),
+			providerADUserSyncTaskSettingsListKey: dataSourceADUserSyncTaskSettingsList(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
