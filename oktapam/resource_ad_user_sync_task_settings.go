@@ -91,7 +91,7 @@ func resourceADUserSyncTaskSettings() *schema.Resource {
 			attributes.RunTest: {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Computed:    true,
+				Default:     false,
 				Description: descriptions.ADUserSyncTaskSettingsRunTest,
 			},
 		},
