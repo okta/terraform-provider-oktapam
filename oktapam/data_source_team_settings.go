@@ -19,11 +19,6 @@ func dataSourceTeamSettings() *schema.Resource {
 				Required: true,
 				Description:descriptions.TeamSettingsID,
 			},
-			attributes.Team: {
-				Type:     schema.TypeString,
-				Optional: true,
-				Description:descriptions.TeamName,
-			},
 			attributes.ReactivateUsersViaIDP: {
 				Type:        schema.TypeBool,
 				Computed:    true,

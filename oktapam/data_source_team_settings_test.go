@@ -1,6 +1,8 @@
 package oktapam
 
 import (
+	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -9,13 +11,16 @@ import (
 func TestAccDatasourceTeamSettingsFetch(t *testing.T) {
 	resourceName := "oktapam_team_settings.test_team_setting-1"
 	dataSourceName := "data.oktapam_team_settings.target"
+	team := os.Getenv(teamSchemaEnvVar)
+
+	testConfig := createTestAccDatasourceTeamSettingsInitConfig(team)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDatasourceTeamSettingsInitListFetchConfigFormat,
+				Config: testConfig,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					checkResourcesEqual(resourceName, dataSourceName),
 				),
@@ -28,7 +33,7 @@ func TestAccDatasourceTeamSettingsFetch(t *testing.T) {
 // and (3) get the new resource as a data source.
 // The test then compares the resource with its data source to ensure they are equal.
 
-const testAccDatasourceTeamSettingsInitListFetchConfigFormat = `
+const testAccDatasourceTeamSettingsInitConfigFormat = `
 resource "oktapam_team_settings" "test_team_setting-1" {
   reactivate_users_via_idp           = "false"
   client_session_duration            = 3600
@@ -38,8 +43,11 @@ resource "oktapam_team_settings" "test_team_setting-1" {
   post_login_url                     = "https://test1.com"
   approve_device_without_interaction = "false"
 }
-
 data "oktapam_team_settings" "target" {
-	id = "asa"
+  id = "%s"
 }
 `
+
+func createTestAccDatasourceTeamSettingsInitConfig(identifier string) string {
+	return fmt.Sprintf(testAccDatasourceTeamSettingsInitConfigFormat, identifier)
+}

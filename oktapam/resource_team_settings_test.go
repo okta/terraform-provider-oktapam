@@ -30,10 +30,10 @@ func TestAccTeamSettings(t *testing.T) {
 						resourceName, attributes.IncludeUserSID, "Always",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.PostLogoutURL, "https://test.com",
+						resourceName, attributes.PostLogoutURL, "https://okta.com",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.PostLoginURL, "https://test.com",
+						resourceName, attributes.PostLoginURL, "https://okta.com",
 					),
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.ApproveDeviceWithoutInteraction, "true",
@@ -56,10 +56,10 @@ func TestAccTeamSettings(t *testing.T) {
 						resourceName, attributes.IncludeUserSID, "Never",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.PostLogoutURL, "https://test1.com",
+						resourceName, attributes.PostLogoutURL, "https://okta.com",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.PostLoginURL, "https://test1.com",
+						resourceName, attributes.PostLoginURL, "https://okta.com",
 					),
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.ApproveDeviceWithoutInteraction, "false",
@@ -74,10 +74,9 @@ const testAccTeamSettingsCreateConfig = `
 resource "oktapam_team_settings" "test_team_setting" {
   reactivate_users_via_idp           = "true"
   client_session_duration            = 4200
-  web_session_duration               = 4200
   include_user_sid                   = "Always"
-  post_logout_url                    = "https://test.com"
-  post_login_url                     = "https://test.com"
+  post_logout_url                    = "https://okta.com"
+  post_login_url                     = "https://okta.com"
   approve_device_without_interaction = "true"
 }
 `
@@ -88,7 +87,5 @@ resource "oktapam_team_settings" "test_team_setting" {
   client_session_duration            = 3600
   web_session_duration               = 3600
   include_user_sid                   = "Never"
-  post_logout_url                    = "https://test1.com"
-  post_login_url                     = "https://test1.com"
   approve_device_without_interaction = "false"
 }`
