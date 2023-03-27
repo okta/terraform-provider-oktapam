@@ -24,7 +24,7 @@ func TestAccTeamSettings(t *testing.T) {
 						resourceName, attributes.ClientSessionDuration, "4200",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.WebSessionDuration, "4200",
+						resourceName, attributes.WebSessionDuration, "3600",
 					),
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.IncludeUserSID, "Always",
