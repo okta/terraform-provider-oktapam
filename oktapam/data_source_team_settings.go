@@ -73,7 +73,7 @@ func dataSourceTeamSettings() *schema.Resource {
 	}
 }
 
-func dataSourceTeamSettingsFetch(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceTeamSettingsFetch(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	name := d.Get(attributes.ID).(string)
 	if name == "" {

@@ -93,7 +93,7 @@ func resourceTeamSettings() *schema.Resource {
 	}
 }
 
-func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
 	settings := client.TeamSettings{
@@ -117,7 +117,7 @@ func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m i
 	return resourceTeamSettingsRead(ctx, d, m)
 }
 
-func resourceTeamSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceTeamSettingsRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
@@ -140,30 +140,8 @@ func resourceTeamSettingsRead(ctx context.Context, d *schema.ResourceData, m int
 	return diags
 }
 
-func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
-
-	//if d.HasChanges(attributes.ReactivateUsersViaIDP, attributes.ApproveDeviceWithoutInteraction, attributes.PostDeviceEnrollmentURL, attributes.PostLoginURL,
-	//	attributes.PostLogoutURL, attributes.UserProvisioningExactUserName, attributes.ClientSessionDuration, attributes.WebSessionDuration, attributes.IncludeUserSID) {
-	//
-	//	//Build API Client Request Object
-	//	teamSettingsRequest := client.TeamSettings{
-	//		ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, false),
-	//		ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, false),
-	//		PostDeviceEnrollmentURL:         getStringPtr(attributes.PostDeviceEnrollmentURL, d, false),
-	//		PostLogoutURL:                   getStringPtr(attributes.PostLogoutURL, d, false),
-	//		PostLoginURL:                    getStringPtr(attributes.PostLoginURL, d, false),
-	//		UserProvisioningExactUserName:   getBoolPtr(attributes.UserProvisioningExactUserName, d, false),
-	//		ClientSessionDuration:           getIntPtr(attributes.ClientSessionDuration, d, false),
-	//		WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, false),
-	//		IncludeUserSID:                  getStringPtr(attributes.IncludeUserSID, d, false),
-	//	}
-	//
-	//	err := c.UpdateTeamSettings(ctx, teamSettingsRequest)
-	//	if err != nil {
-	//		return diag.FromErr(err)
-	//	}
-	//}
 
 	changed := false
 	updates := make(map[string]any)
@@ -197,12 +175,14 @@ func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m i
 	return resourceTeamSettingsRead(ctx, d, m)
 }
 
-func resourceTeamSettingsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceTeamSettingsDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 	diag := diag.Diagnostic{
 		Severity: diag.Warning,
 		Summary:  "Can't delete team settings resource.",
-		Detail: fmt.Sprintf("Team settings resource does not support delete operation. If you don't want to see this warning, plese remove this resource from the terraform state manually."),
+		Detail: fmt.Sprintf("Team settings resource does not support delete operation. If you don't want to " +
+			"manage team settings via terraform, then remove it from the terraform state manually using \"state rm\" " +
+			"command."),
 	}
 	return append(diags,diag)
 }

@@ -4,7 +4,7 @@ type IncludeUserSID string
 
 const (
 	IncludeUserSIDNever IncludeUserSID = "Never"
-	IncludeUserSIDIfAvailable IncludeUserSID = "If_available"
+	IncludeUserSIDIfAvailable IncludeUserSID = "If_Available"
 	IncludeUserSIDAlways     IncludeUserSID = "Always"
 )
 
