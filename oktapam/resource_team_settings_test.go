@@ -89,5 +89,7 @@ resource "oktapam_team_settings" "test_team_setting" {
   client_session_duration            = 3600
   web_session_duration               = 3600
   include_user_sid                   = "Never"
+  post_logout_url                    = "https://okta.com"
+  post_login_url                     = "https://okta.com"
   approve_device_without_interaction = "false"
 }`
