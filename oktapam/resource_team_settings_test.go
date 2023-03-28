@@ -13,6 +13,7 @@ func TestAccTeamSettings(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
+		CheckDestroy: testAccTeamSettingCheckDestroy(),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccTeamSettingsCreateConfig,

@@ -176,8 +176,8 @@ func resourceTeamSettingsDelete(ctx context.Context, d *schema.ResourceData, m a
 		Severity: diag.Warning,
 		Summary:  "Can't delete team settings resource.",
 		Detail: fmt.Sprintf("Team settings resource does not support delete operation. If you don't want to " +
-			"manage team settings via terraform, then remove it from the terraform state manually using \"state rm\" " +
-			"command."),
+			"manage team settings via terraform, then remove it from the terraform state manually using " +
+			"\"terraform state rm\" command."),
 	}
 	return append(diags,diag)
 }

@@ -1,7 +1,10 @@
 package oktapam
 
 import (
+	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"os"
 	"testing"
 
@@ -18,6 +21,7 @@ func TestAccDatasourceTeamSettingsFetch(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
+		CheckDestroy:      testAccTeamSettingCheckDestroy(),
 		Steps: []resource.TestStep{
 			{
 				Config: testConfig,
@@ -29,8 +33,22 @@ func TestAccDatasourceTeamSettingsFetch(t *testing.T) {
 	})
 }
 
-// NOTE: This config (1) creates two new resources (2) lists the existing resources with the matching identifier
-// and (3) get the new resource as a data source.
+func testAccTeamSettingCheckDestroy() resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		client := testAccProvider.Meta().(client.OktaPAMClient)
+		teamSettings, err := client.GetTeamSettings(context.Background())
+		if err!=nil {
+			return fmt.Errorf("error getting team settings: %w", err)
+		}
+		if teamSettings == nil{
+			return fmt.Errorf("team settings got deleted even when it can not be deleted")
+		}
+
+		return nil
+	}
+}
+
+// NOTE: This config creates a team settings resource and gets the new resource as a data source.
 // The test then compares the resource with its data source to ensure they are equal.
 
 const testAccDatasourceTeamSettingsInitConfigFormat = `
