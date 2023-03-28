@@ -75,6 +75,7 @@ const testAccTeamSettingsCreateConfig = `
 resource "oktapam_team_settings" "test_team_setting" {
   reactivate_users_via_idp           = "true"
   client_session_duration            = 4200
+  web_session_duration               = 3600
   include_user_sid                   = "Always"
   post_logout_url                    = "https://okta.com"
   post_login_url                     = "https://okta.com"
