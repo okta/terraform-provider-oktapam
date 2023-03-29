@@ -3,12 +3,11 @@ package typed_strings
 type IncludeUserSID string
 
 const (
-	IncludeUserSIDNever IncludeUserSID = "Never"
+	IncludeUserSIDNever       IncludeUserSID = "Never"
 	IncludeUserSIDIfAvailable IncludeUserSID = "If_Available"
-	IncludeUserSIDAlways     IncludeUserSID = "Always"
+	IncludeUserSIDAlways      IncludeUserSID = "Always"
 )
 
 func (includeUserSID IncludeUserSID) String() string {
 	return string(includeUserSID)
 }
-
