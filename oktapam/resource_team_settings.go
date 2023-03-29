@@ -60,18 +60,21 @@ func resourceTeamSettings() *schema.Resource {
 			},
 			attributes.ClientSessionDuration: {
 				Type:        schema.TypeInt,
+				Computed: true,
 				Optional:    true,
 				ValidateFunc: validation.IntBetween(60*60, 25*60*60),
 				Description: descriptions.ClientSessionDuration,
 			},
 			attributes.WebSessionDuration: {
 				Type:        schema.TypeInt,
+				Computed: true,
 				Optional:    true,
 				ValidateFunc: validation.IntBetween(30*60, 25*60*60),
 				Description: descriptions.WebSessionDuration,
 			},
 			attributes.IncludeUserSID: {
 				Type:        schema.TypeString,
+				Computed: true,
 				Optional:    true,
 				ValidateFunc: validation.StringInSlice(
 					[]string{
@@ -113,7 +116,6 @@ func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m a
 }
 
 func resourceTeamSettingsRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
 	settings, err := c.GetTeamSettings(ctx)
@@ -132,7 +134,7 @@ func resourceTeamSettingsRead(ctx context.Context, d *schema.ResourceData, m any
 		return diag.Errorf("Team settings does not exist for the team %s", c.Team)
 	}
 
-	return diags
+	return nil
 }
 
 func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
@@ -154,6 +156,7 @@ func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m a
 	}
 
 	for _, attribute := range changeableAttributes {
+		// Check if the value is nil
 		if d.HasChange(attribute) {
 			updates[attribute] = d.Get(attribute)
 			changed = true
