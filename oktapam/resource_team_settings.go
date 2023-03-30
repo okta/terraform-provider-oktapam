@@ -105,9 +105,7 @@ func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m a
 		WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, false),
 		IncludeUserSID:                  getStringPtr(attributes.IncludeUserSID, d, false),
 	}
-
-	err := c.CreateTeamSettings(ctx, settings)
-	if err != nil {
+	if err := c.CreateTeamSettings(ctx, settings); err!=nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(c.Team)

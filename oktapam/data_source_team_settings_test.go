@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/kylelemons/godebug/pretty"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"os"
 	"testing"
@@ -12,7 +13,7 @@ import (
 )
 
 func TestAccDatasourceTeamSettingsFetch(t *testing.T) {
-	resourceName := "oktapam_team_settings.test_team_setting-1"
+	resourceName := "oktapam_team_settings.test_team_setting"
 	dataSourceName := "data.oktapam_team_settings.target"
 	team := os.Getenv(teamSchemaEnvVar)
 
@@ -26,7 +27,7 @@ func TestAccDatasourceTeamSettingsFetch(t *testing.T) {
 			{
 				Config: testConfig,
 				Check: resource.ComposeAggregateTestCheckFunc(
-					checkResourcesEqual(resourceName, dataSourceName),
+					checkTeamSettingsResourcesEqual(resourceName, dataSourceName),
 				),
 			},
 		},
@@ -52,16 +53,38 @@ func testAccTeamSettingCheckDestroy() resource.TestCheckFunc {
 // The test then compares the resource with its data source to ensure they are equal.
 
 const testAccDatasourceTeamSettingsInitConfigFormat = `
-resource "oktapam_team_settings" "test_team_setting-1" {
+resource "oktapam_team_settings" "test_team_setting" {
   reactivate_users_via_idp           = "false"
   include_user_sid                   = "Never"
   post_logout_url                    = "https://okta.com"
+  post_login_url                     = "https://okta.com"
 }
 data "oktapam_team_settings" "target" {
+  depends_on = [oktapam_team_settings.test_team_setting]
   id = "%s"
 }
 `
 
 func createTestAccDatasourceTeamSettingsInitConfig(identifier string) string {
 	return fmt.Sprintf(testAccDatasourceTeamSettingsInitConfigFormat, identifier)
+}
+
+func checkTeamSettingsResourcesEqual(resourceName1 string, resourceName2 string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		resource1, ok := s.RootModule().Resources[resourceName1]
+		if !ok {
+			return fmt.Errorf("resource 1 not found: %s", resourceName1)
+		}
+
+		resource2, ok := s.RootModule().Resources[resourceName2]
+		if !ok {
+			return fmt.Errorf("resource 2 not found: %s", resourceName2)
+		}
+
+		comparison := pretty.Compare(resource1.Primary.Attributes, resource2.Primary.Attributes)
+		if comparison != "" {
+			return fmt.Errorf("resources are not equal: %s", comparison)
+		}
+		return nil
+	}
 }
