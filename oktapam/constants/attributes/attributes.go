@@ -11,7 +11,7 @@ const (
 	ADRuleAssignmentsLDAPQueryFilter = "ldap_query_filter"
 	ADRuleAssignmentsProjectID       = "project_id"
 	ADRuleAssignmentsPriority        = "priority"
-	ADUserSyncTaskSettingsList       = "ad_user_sync_task_settings_list"
+	ADUserSyncTaskSettingsIDList     = "ad_user_sync_task_settings_id_list"
 	ADUserSyncTaskSettingsStatus     = "status"
 	AltNamesAttributes               = "alt_names_attributes"
 	BaseDN                           = "base_dn"

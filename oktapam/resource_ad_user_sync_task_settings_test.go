@@ -15,11 +15,13 @@ import (
 )
 
 func TestAccADUserSyncTaskSettings(t *testing.T) {
-	adUserSyncTaskSettingsResourceName := "oktapam_ad_user_sync_task_settings.test_acc_ad_user_sync_task_settings"
+	adUserSyncTaskSettingsResourceName1 := "oktapam_ad_user_sync_task_settings.test_acc_ad_user_sync_task_settings_1"
+	adUserSyncTaskSettingsResourceName2 := "oktapam_ad_user_sync_task_settings.test_acc_ad_user_sync_task_settings_2"
 	adConnectionResourceName := "oktapam_ad_connection.test_acc_ad_connection"
 
 	nameIdentifier := randSeq()
-	adUserSyncTaskName := fmt.Sprintf("test_acc_ad_user_sync_task_settings_%s", nameIdentifier)
+	adUserSyncTaskName1 := fmt.Sprintf("test_acc_ad_user_sync_task_settings_%s_1", nameIdentifier)
+	adUserSyncTaskName2 := fmt.Sprintf("test_acc_ad_user_sync_task_settings_%s_2", nameIdentifier)
 	adConnectionName := fmt.Sprintf("test_acc_ad_connection_%s", nameIdentifier)
 	projectName := fmt.Sprintf("test_acc_project_%s", nameIdentifier)
 	//Only one connection can exist per domain per team
@@ -29,6 +31,7 @@ func TestAccADUserSyncTaskSettings(t *testing.T) {
 	preConfig := createTestAccADUserSyncTaskSettingsPreConfig(adConnectionName, projectName, domainName)
 
 	//Update schedule
+	origFreq := 12
 	updatedFreq := 24
 	updatedStartHourUTC := 6
 
@@ -38,35 +41,44 @@ func TestAccADUserSyncTaskSettings(t *testing.T) {
 		CheckDestroy:      testAccADUserSyncTaskCheckDestroy(adConnectionResourceName),
 		Steps: []resource.TestStep{
 			{
-				//Step 1: Create AD User Sync Task Settings
-				Config: createTestAccADUserSyncTaskSettingsCreateConfig(preConfig, adUserSyncTaskName),
+				//Step 1: Create couple of AD User Sync Task Settings
+				Config: createTestAccADUserSyncTaskSettingsCreateConfig(preConfig, adUserSyncTaskName1, adUserSyncTaskName2, origFreq),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					testAccADUserSyncTaskCheckExists(adUserSyncTaskSettingsResourceName),
-					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName, attributes.Name, adUserSyncTaskName),
-					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName, attributes.IsActive, "true"),
+					testAccADUserSyncTaskCheckExists(adUserSyncTaskSettingsResourceName1),
+					testAccADUserSyncTaskCheckExists(adUserSyncTaskSettingsResourceName2),
+					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName1, attributes.Name, adUserSyncTaskName1),
+					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName1, attributes.IsActive, "true"),
+					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName1, attributes.Frequency, strconv.Itoa(origFreq)),
+					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName2, attributes.Name, adUserSyncTaskName2),
+					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName2, attributes.IsActive, "true"),
+					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName2, attributes.Frequency, strconv.Itoa(origFreq)),
 				),
 			},
 			{
-				//Step 2: Update AD User Sync Task Settings Schedule to 24 hours with additional start hour attribute
-				Config: createTestAccADUserSyncTaskSettingsUpdateScheduleConfig(preConfig, adUserSyncTaskName, updatedFreq, updatedStartHourUTC),
+				//Step 2: Update first AD User Sync Task Settings Schedule to 24 hours with additional start hour attribute
+				Config: createTestAccADUserSyncTaskSettingsUpdateScheduleConfig(preConfig, adUserSyncTaskName1, adUserSyncTaskName2,
+					updatedFreq, updatedStartHourUTC, origFreq),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName, attributes.IsActive, "true"),
-					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName, attributes.Frequency, strconv.Itoa(updatedFreq)),
-					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName, attributes.StartHourUTC, strconv.Itoa(updatedStartHourUTC)),
+					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName1, attributes.IsActive, "true"),
+					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName1, attributes.Frequency, strconv.Itoa(updatedFreq)),
+					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName1, attributes.StartHourUTC, strconv.Itoa(updatedStartHourUTC)),
+					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName2, attributes.Frequency, strconv.Itoa(origFreq)),
 				),
 			},
 			{
-				//Step 3: Deactivate AD User Sync Task Settings
-				Config: createTestAccADUserSyncTaskSettingsUpdateStateConfig(preConfig, adUserSyncTaskName),
+				//Step 3: Deactivate second AD User Sync Task Settings
+				Config: createTestAccADUserSyncTaskSettingsUpdateStateConfig(preConfig, adUserSyncTaskName1, adUserSyncTaskName2,
+					updatedFreq, updatedStartHourUTC, origFreq),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName, attributes.IsActive, "false"),
+					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName1, attributes.IsActive, "true"),
+					resource.TestCheckResourceAttr(adUserSyncTaskSettingsResourceName2, attributes.IsActive, "false"),
 				),
 			},
 			{
-				ResourceName:      adUserSyncTaskSettingsResourceName,
+				ResourceName:      adUserSyncTaskSettingsResourceName1,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc: testAccADUserSyncTaskSettingsImportStateId(adUserSyncTaskSettingsResourceName),
+				ImportStateIdFunc: testAccADUserSyncTaskSettingsImportStateId(adUserSyncTaskSettingsResourceName1),
 			},
 		},
 	})
@@ -153,11 +165,21 @@ func createTestAccADUserSyncTaskSettingsPreConfig(adConnectionName string, proje
 }
 
 const testAccADUserSyncTaskCreateConfigFormat = `
-resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settings" {
+resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settings_1" {
  connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
  name                     = "%[1]s"
  is_active                = true
- frequency                = 12 # Every 12 hours Note: If 24 hours then start_hour_utc is required
+ frequency                = "%[3]d"
+ sid_field                = "objectSID"
+ upn_field                = "userPrincipalName"
+ base_dn                  = "dc=tilt,dc=scaleft,dc=com"
+ ldap_query_filter        = "(objectclass=user)"
+}
+resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settings_2" {
+ connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
+ name                     = "%[2]s"
+ is_active                = true
+ frequency                = "%[3]d"
  sid_field                = "objectSID"
  upn_field                = "userPrincipalName"
  base_dn                  = "dc=tilt,dc=scaleft,dc=com"
@@ -165,45 +187,67 @@ resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settin
 }
 `
 
-func createTestAccADUserSyncTaskSettingsCreateConfig(preConfig string, adUserSyncTaskName string) string {
+func createTestAccADUserSyncTaskSettingsCreateConfig(preConfig string, adUserSyncTaskName1 string, adUserSyncTaskName2 string, origFreq int) string {
 	logging.Debugf("creating config")
-	return preConfig + fmt.Sprintf(testAccADUserSyncTaskCreateConfigFormat, adUserSyncTaskName)
+	return preConfig + fmt.Sprintf(testAccADUserSyncTaskCreateConfigFormat, adUserSyncTaskName1, adUserSyncTaskName2, origFreq)
 }
 
 const testAccADUserSyncTaskUpdateScheduleConfigFormat = `
-resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settings" {
+resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settings_1" {
  connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
  name                     = "%[1]s"
  is_active                = true
- frequency                = "%[2]d" # Every 12 hours Note: If 24 hours then start_hour_utc is required
- start_hour_utc 		  = "%[3]d"
+ frequency                = "%[3]d"
+ start_hour_utc           = "%[4]d"
+ base_dn                  = "dc=tilt,dc=scaleft,dc=com"
+ ldap_query_filter        = "(objectclass=user)"
+}
+resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settings_2" {
+ connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
+ name                     = "%[2]s"
+ is_active                = true
+ frequency                = "%[5]d"
+ sid_field                = "objectSID"
+ upn_field                = "userPrincipalName"
  base_dn                  = "dc=tilt,dc=scaleft,dc=com"
  ldap_query_filter        = "(objectclass=user)"
 }
 `
 
-func createTestAccADUserSyncTaskSettingsUpdateScheduleConfig(preConfig string, adUserSyncTaskName string, updatedFreq int, updatedStartHourUTC int) string {
+func createTestAccADUserSyncTaskSettingsUpdateScheduleConfig(preConfig string, adUserSyncTaskName1 string, adUserSyncTaskName2 string,
+	updatedFreq int, updatedStartHourUTC int, origFreq int) string {
 	logging.Debugf("creating config")
 	return preConfig +
-		fmt.Sprintf(testAccADUserSyncTaskUpdateScheduleConfigFormat, adUserSyncTaskName, updatedFreq, updatedStartHourUTC)
+		fmt.Sprintf(testAccADUserSyncTaskUpdateScheduleConfigFormat, adUserSyncTaskName1, adUserSyncTaskName2, updatedFreq, updatedStartHourUTC, origFreq)
 }
 
 const testAccADUserSyncTaskUpdateStateConfigFormat = `
-resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settings" {
+resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settings_1" {
  connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
  name                     = "%[1]s"
+ is_active                = true
+ frequency                = "%[3]d"
+ start_hour_utc           = "%[4]d"
+ base_dn                  = "dc=tilt,dc=scaleft,dc=com"
+ ldap_query_filter        = "(objectclass=user)"
+}
+resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settings_2" {
+ connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
+ name                     = "%[2]s"
  is_active                = false
- frequency                = "24" # If 24 hours then start_hour_utc is required
- start_hour_utc 		  = "6"
+ frequency                = "%[5]d"
+ sid_field                = "objectSID"
+ upn_field                = "userPrincipalName"
  base_dn                  = "dc=tilt,dc=scaleft,dc=com"
  ldap_query_filter        = "(objectclass=user)"
 }
 `
 
-func createTestAccADUserSyncTaskSettingsUpdateStateConfig(preConfig string, adUserSyncTaskName string) string {
+func createTestAccADUserSyncTaskSettingsUpdateStateConfig(preConfig string, adUserSyncTaskName1 string, adUserSyncTaskName2 string,
+	updatedFreq int, updatedStartHourUTC int, origFreq int) string {
 	logging.Debugf("creating config")
 	return preConfig +
-		fmt.Sprintf(testAccADUserSyncTaskUpdateStateConfigFormat, adUserSyncTaskName)
+		fmt.Sprintf(testAccADUserSyncTaskUpdateStateConfigFormat, adUserSyncTaskName1, adUserSyncTaskName2, updatedFreq, updatedStartHourUTC, origFreq)
 }
 
 func testAccADUserSyncTaskSettingsImportStateId(resourceName string) resource.ImportStateIdFunc {

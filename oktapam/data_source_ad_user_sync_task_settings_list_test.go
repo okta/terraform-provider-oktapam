@@ -3,21 +3,19 @@ package oktapam
 import (
 	"fmt"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
-	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 )
 
-//TestAccDataSourceADUserSyncTaskSettingsList creates a few  managed user-sync task-settings, then reads them as list,
+// TestAccDataSourceADUserSyncTaskSettingsIDList creates a few  managed user-sync task-settings, then reads them as list,
 // so that it can be checked for length and its elements accessed.
-func TestAccDataSourceADUserSyncTaskSettingsList(t *testing.T) {
+func TestAccDataSourceADUserSyncTaskSettingsIDList(t *testing.T) {
 	adConnectionResourceName := "oktapam_ad_connection.test_acc_ad_connection"
-	dataSourceResourceName := "data.oktapam_ad_user_sync_task_settings_list.test_acc_data_source_ad_user_sync_task_settings_list"
+	dataSourceResourceName := "data.oktapam_ad_user_sync_task_settings_id_list.test_acc_data_source_ad_user_sync_task_settings_id_list"
 	nameIdentifier := randSeq()
 	adUserSyncTaskNamePrefix := fmt.Sprintf("test_acc_ad_user_sync_task_settings_%s", nameIdentifier)
-	reTaskName := regexp.MustCompile(`test_acc_ad_user_sync_task_settings_[0-9A-Z]*_[1-3]`)
 	adConnectionName := fmt.Sprintf("test_acc_ad_connection_%s", nameIdentifier)
 	projectName := fmt.Sprintf("test_acc_project_%s", nameIdentifier)
 	//Only one connection can exist per domain per team
@@ -32,19 +30,16 @@ func TestAccDataSourceADUserSyncTaskSettingsList(t *testing.T) {
 		CheckDestroy:      testAccADUserSyncTaskCheckDestroy(adConnectionResourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: createTestAccDataSourceADUserSyncTaskSettingsListInitConfig(preConfig, adUserSyncTaskNamePrefix),
+				Config: createTestAccDataSourceADUserSyncTaskSettingsIDListInitConfig(preConfig, adUserSyncTaskNamePrefix),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(dataSourceResourceName, fmt.Sprintf("%s.#", attributes.ADUserSyncTaskSettingsList), "3"),
-					resource.TestMatchResourceAttr(dataSourceResourceName, fmt.Sprintf("%s.0.%s", attributes.ADUserSyncTaskSettingsList, attributes.Name), reTaskName),
-					resource.TestMatchResourceAttr(dataSourceResourceName, fmt.Sprintf("%s.1.%s", attributes.ADUserSyncTaskSettingsList, attributes.Name), reTaskName),
-					resource.TestMatchResourceAttr(dataSourceResourceName, fmt.Sprintf("%s.2.%s", attributes.ADUserSyncTaskSettingsList, attributes.Name), reTaskName),
+					resource.TestCheckResourceAttr(dataSourceResourceName, fmt.Sprintf("%s.#", attributes.ADUserSyncTaskSettingsIDList), "3"),
 				),
 			},
 		},
 	})
 }
 
-const testAccDataSourceADUserSyncTaskSettingsListInitFormat = `
+const testAccDataSourceADUserSyncTaskSettingsIDListInitFormat = `
 resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settings_1" {
     connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
     name                     = "%[1]s"
@@ -80,14 +75,14 @@ resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settin
     ldap_query_filter        = "(objectclass=user)"
 }
 
-data "oktapam_ad_user_sync_task_settings_list" "test_acc_data_source_ad_user_sync_task_settings_list" {
+data "oktapam_ad_user_sync_task_settings_id_list" "test_acc_data_source_ad_user_sync_task_settings_id_list" {
     depends_on = [oktapam_ad_user_sync_task_settings.test_acc_ad_user_sync_task_settings_3]
     connection_id = oktapam_ad_connection.test_acc_ad_connection.id
 }
 `
 
-func createTestAccDataSourceADUserSyncTaskSettingsListInitConfig(preConfig string, adUserSyncTaskNamePrefix string) string {
+func createTestAccDataSourceADUserSyncTaskSettingsIDListInitConfig(preConfig string, adUserSyncTaskNamePrefix string) string {
 	logging.Debugf("creating config")
-	return preConfig + fmt.Sprintf(testAccDataSourceADUserSyncTaskSettingsListInitFormat, adUserSyncTaskNamePrefix+"_1",
+	return preConfig + fmt.Sprintf(testAccDataSourceADUserSyncTaskSettingsIDListInitFormat, adUserSyncTaskNamePrefix+"_1",
 		adUserSyncTaskNamePrefix+"_2", adUserSyncTaskNamePrefix+"_3")
 }

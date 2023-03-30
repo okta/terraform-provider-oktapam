@@ -16,12 +16,12 @@ import (
 )
 
 func resourceADUserSyncTaskSettings() *schema.Resource {
-	/** ADUserSyncTaskSettings is immutable. Only updatable attributes are active status and task frequency/start time.
-		ADUserSyncTaskSettings resource has update endpoint, but internally it's a transactional delete & then create
-	    operation. Terraform resource id change and deletion of existing resource confuse terraform. Not sure if there is
-	    any way to handle it properly. For now, I have marked all the immutable attributes as "ForceNew". If update
-	    ADUserSyncTaskSettings endpoint has additional logic then we need to revisit this.
-	    TF Reference - https://www.terraform.io/plugin/sdkv2/schemas/schema-behaviors#forcenew
+	/*
+	 ADUserSyncTaskSettings is immutable. Only updatable attributes are active status and task frequency/start time.
+	 ADUserSyncTaskSettings resource has update endpoint, but internally it's a transactional delete & then create
+	 operation. Terraform resource id change and deletion of existing resource confuse terraform. That is why all the
+	 immutable attributes are marked here as "ForceNew".
+	 TF Reference - https://www.terraform.io/plugin/sdkv2/schemas/schema-behaviors#forcenew
 	*/
 	return &schema.Resource{
 		Description:   descriptions.ResourceADUserSyncTaskSettings,
@@ -133,7 +133,6 @@ func resourceADUserSyncTaskSettingsCreate(ctx context.Context, d *schema.Resourc
 }
 
 func resourceADUserSyncTaskSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
 	adConnID := d.Get(attributes.ADConnectionID).(string)
@@ -152,7 +151,7 @@ func resourceADUserSyncTaskSettingsRead(ctx context.Context, d *schema.ResourceD
 		logging.Infof("ADUserSyncTaskSettings %s does not exist", adUserSyncTaskSettingsID)
 	}
 
-	return diags
+	return nil
 }
 
 func resourceADUserSyncTaskSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

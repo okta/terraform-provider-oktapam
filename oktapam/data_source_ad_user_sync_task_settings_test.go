@@ -51,13 +51,13 @@ resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settin
     ldap_query_filter        = "(objectclass=user)"
 }
 
-data "oktapam_ad_user_sync_task_settings_list" "adusts_list" {
+data "oktapam_ad_user_sync_task_settings_id_list" "adusts_list" {
     depends_on = [oktapam_ad_user_sync_task_settings.test_acc_ad_user_sync_task_settings]
     connection_id = oktapam_ad_connection.test_acc_ad_connection.id
 }
 
 data "oktapam_ad_user_sync_task_settings" "test_acc_datasource_ad_user_sync_task_settings" {
-    id = data.oktapam_ad_user_sync_task_settings_list.adusts_list.ad_user_sync_task_settings_list[0].id
+    id = data.oktapam_ad_user_sync_task_settings_id_list.adusts_list.ad_user_sync_task_settings_id_list[0]
     connection_id = oktapam_ad_connection.test_acc_ad_connection.id
 }
 `
