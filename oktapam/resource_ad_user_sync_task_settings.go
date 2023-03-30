@@ -25,6 +25,7 @@ func resourceADUserSyncTaskSettings() *schema.Resource {
 	*/
 	return &schema.Resource{
 		Description:   descriptions.ResourceADUserSyncTaskSettings,
+		CustomizeDiff: resourceADUserSyncTaskSettingsCustomizeDiff,
 		CreateContext: resourceADUserSyncTaskSettingsCreate,
 		ReadContext:   resourceADUserSyncTaskSettingsRead,
 		UpdateContext: resourceADUserSyncTaskSettingsUpdate,
@@ -47,7 +48,7 @@ func resourceADUserSyncTaskSettings() *schema.Resource {
 			},
 			attributes.Frequency: {
 				Type:         schema.TypeInt,
-				Required:     true,
+				Optional:     true,
 				ValidateFunc: validation.IntBetween(1, 24),
 				Description:  descriptions.ADUserSyncTaskSettingsFrequency,
 			},
@@ -226,4 +227,22 @@ func importADUserSyncTaskSettingsState(ctx context.Context, d *schema.ResourceDa
 
 	d.SetId(adUserSyncTaskSettingsID)
 	return []*schema.ResourceData{d}, nil
+}
+
+func resourceADUserSyncTaskSettingsCustomizeDiff(ctx context.Context, diff *schema.ResourceDiff, v interface{}) error {
+	if diff.HasChanges(attributes.Frequency, attributes.StartHourUTC, attributes.IsActive) {
+		Frequency := diff.Get(attributes.Frequency).(int)
+		StartHourUTC := diff.Get(attributes.StartHourUTC).(int)
+		IsActive := diff.Get(attributes.IsActive).(bool)
+		if IsActive && Frequency < 1 {
+			return fmt.Errorf("frequency must be specified when scheduling a production task")
+		}
+		if Frequency == 24 && StartHourUTC <= 0 {
+			return fmt.Errorf("start_hour_utc must be specified when frequency is 24 hours")
+		}
+		if Frequency != 24 && StartHourUTC > 0 {
+			return fmt.Errorf("start_hour_utc can be specified ONLY when frequency is 24 hours")
+		}
+	}
+	return nil
 }
