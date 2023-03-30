@@ -235,7 +235,7 @@ func resourceADUserSyncTaskSettingsCustomizeDiff(ctx context.Context, diff *sche
 		StartHourUTC := diff.Get(attributes.StartHourUTC).(int)
 		IsActive := diff.Get(attributes.IsActive).(bool)
 		if IsActive && Frequency < 1 {
-			return fmt.Errorf("frequency must be specified when scheduling a production task")
+			return fmt.Errorf("frequency must be specified when scheduling an active AD user sync task")
 		}
 		if Frequency == 24 && StartHourUTC <= 0 {
 			return fmt.Errorf("start_hour_utc must be specified when frequency is 24 hours")
