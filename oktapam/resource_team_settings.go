@@ -154,8 +154,7 @@ func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m a
 	}
 
 	for _, attribute := range changeableAttributes {
-		// Check if the value is nil
-		if d.HasChange(attribute) {
+		if d.HasChange(attribute) && d.Get(attribute) != nil {
 			updates[attribute] = d.Get(attribute)
 			changed = true
 		}

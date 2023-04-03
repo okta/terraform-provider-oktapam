@@ -54,7 +54,7 @@ func testAccTeamSettingCheckDestroy() resource.TestCheckFunc {
 
 const testAccDatasourceTeamSettingsInitConfigFormat = `
 resource "oktapam_team_settings" "test_team_setting" {
-  reactivate_users_via_idp           = "false"
+  reactivate_users_via_idp           = "true"
   include_user_sid                   = "Never"
   post_logout_url                    = "https://okta.com"
   post_login_url                     = "https://okta.com"
