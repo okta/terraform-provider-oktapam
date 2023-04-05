@@ -62,7 +62,7 @@ func TestAccTeamSettings(t *testing.T) {
 						resourceName, attributes.PostLoginURL, "https://okta.com",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.ApproveDeviceWithoutInteraction, "false",
+						resourceName, attributes.ApproveDeviceWithoutInteraction, "true",
 					),
 				),
 			},
@@ -92,5 +92,5 @@ resource "oktapam_team_settings" "test_team_setting" {
 	include_user_sid                   = "Never"
 	post_logout_url                    = "https://okta.com"
 	post_login_url                     = "https://okta.com"
-	approve_device_without_interaction = false
+	approve_device_without_interaction = true
 }`

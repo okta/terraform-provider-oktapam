@@ -21,9 +21,9 @@ func resourceTeamSettings() *schema.Resource {
 		DeleteContext: resourceTeamSettingsDelete,
 		Schema: map[string]*schema.Schema{
 			attributes.ID: {
-				Type:     schema.TypeString,
-				Computed: true,
-				Description:descriptions.TeamSettingsID,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: descriptions.TeamSettingsID,
 			},
 			attributes.ReactivateUsersViaIDP: {
 				Type:        schema.TypeBool,
@@ -36,22 +36,22 @@ func resourceTeamSettings() *schema.Resource {
 				Description: descriptions.ApproveDeviceWithoutInteraction,
 			},
 			attributes.PostDeviceEnrollmentURL: {
-				Type:        schema.TypeString,
-				Optional:    true,
+				Type:         schema.TypeString,
+				Optional:     true,
 				ValidateFunc: validation.IsURLWithHTTPorHTTPS,
-				Description: descriptions.PostDeviceEnrollmentURL,
+				Description:  descriptions.PostDeviceEnrollmentURL,
 			},
 			attributes.PostLoginURL: {
-				Type:        schema.TypeString,
-				Optional:    true,
+				Type:         schema.TypeString,
+				Optional:     true,
 				ValidateFunc: validation.IsURLWithHTTPorHTTPS,
-				Description: descriptions.PostLoginURL,
+				Description:  descriptions.PostLoginURL,
 			},
 			attributes.PostLogoutURL: {
-				Type:        schema.TypeString,
-				Optional:    true,
+				Type:         schema.TypeString,
+				Optional:     true,
 				ValidateFunc: validation.IsURLWithHTTPorHTTPS,
-				Description: descriptions.PostLogoutURL,
+				Description:  descriptions.PostLogoutURL,
 			},
 			attributes.UserProvisioningExactUserName: {
 				Type:        schema.TypeBool,
@@ -59,23 +59,23 @@ func resourceTeamSettings() *schema.Resource {
 				Description: descriptions.UserProvisioningExactUserName,
 			},
 			attributes.ClientSessionDuration: {
-				Type:        schema.TypeInt,
-				Default: 36000,
-				Optional:    true,
+				Type:         schema.TypeInt,
+				Default:      36000,
+				Optional:     true,
 				ValidateFunc: validation.IntBetween(60*60, 25*60*60),
-				Description: descriptions.ClientSessionDuration,
+				Description:  descriptions.ClientSessionDuration,
 			},
 			attributes.WebSessionDuration: {
-				Type:        schema.TypeInt,
-				Default: 36000,
-				Optional:    true,
+				Type:         schema.TypeInt,
+				Default:      36000,
+				Optional:     true,
 				ValidateFunc: validation.IntBetween(30*60, 25*60*60),
-				Description: descriptions.WebSessionDuration,
+				Description:  descriptions.WebSessionDuration,
 			},
 			attributes.IncludeUserSID: {
-				Type:        schema.TypeString,
-				Default: typed_strings.IncludeUserSIDNever.String(),
-				Optional:    true,
+				Type:     schema.TypeString,
+				Default:  typed_strings.IncludeUserSIDNever.String(),
+				Optional: true,
 				ValidateFunc: validation.StringInSlice(
 					[]string{
 						typed_strings.IncludeUserSIDNever.String(),
@@ -95,8 +95,8 @@ func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m a
 	c := m.(client.OktaPAMClient)
 
 	settings := client.TeamSettings{
-		ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, false),
-		ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, false),
+		ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, true),
+		ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, true),
 		PostDeviceEnrollmentURL:         getStringPtr(attributes.PostDeviceEnrollmentURL, d, false),
 		PostLogoutURL:                   getStringPtr(attributes.PostLogoutURL, d, false),
 		PostLoginURL:                    getStringPtr(attributes.PostLoginURL, d, false),
@@ -105,7 +105,7 @@ func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m a
 		WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, false),
 		IncludeUserSID:                  getStringPtr(attributes.IncludeUserSID, d, false),
 	}
-	if err := c.CreateTeamSettings(ctx, settings); err!=nil {
+	if err := c.CreateTeamSettings(ctx, settings); err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(c.Team)
@@ -138,8 +138,8 @@ func resourceTeamSettingsRead(ctx context.Context, d *schema.ResourceData, m any
 func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	settings := client.TeamSettings{
-		ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, false),
-		ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, false),
+		ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, true),
+		ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, true),
 		PostDeviceEnrollmentURL:         getStringPtr(attributes.PostDeviceEnrollmentURL, d, false),
 		PostLogoutURL:                   getStringPtr(attributes.PostLogoutURL, d, false),
 		PostLoginURL:                    getStringPtr(attributes.PostLoginURL, d, false),
@@ -148,7 +148,7 @@ func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m a
 		WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, false),
 		IncludeUserSID:                  getStringPtr(attributes.IncludeUserSID, d, false),
 	}
-	if err := c.UpdateTeamSettings(ctx, settings); err!=nil {
+	if err := c.UpdateTeamSettings(ctx, settings); err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(c.Team)
@@ -165,5 +165,5 @@ func resourceTeamSettingsDelete(ctx context.Context, d *schema.ResourceData, m a
 			"manage team settings via terraform, then remove it from the terraform state manually using " +
 			"\"terraform state rm\" command."),
 	}
-	return append(diags,diag)
+	return append(diags, diag)
 }
