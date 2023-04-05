@@ -60,21 +60,21 @@ func resourceTeamSettings() *schema.Resource {
 			},
 			attributes.ClientSessionDuration: {
 				Type:        schema.TypeInt,
-				Computed: true,
+				Default: 36000,
 				Optional:    true,
 				ValidateFunc: validation.IntBetween(60*60, 25*60*60),
 				Description: descriptions.ClientSessionDuration,
 			},
 			attributes.WebSessionDuration: {
 				Type:        schema.TypeInt,
-				Computed: true,
+				Default: 36000,
 				Optional:    true,
 				ValidateFunc: validation.IntBetween(30*60, 25*60*60),
 				Description: descriptions.WebSessionDuration,
 			},
 			attributes.IncludeUserSID: {
 				Type:        schema.TypeString,
-				Computed: true,
+				Default: typed_strings.IncludeUserSIDNever.String(),
 				Optional:    true,
 				ValidateFunc: validation.StringInSlice(
 					[]string{
@@ -137,38 +137,21 @@ func resourceTeamSettingsRead(ctx context.Context, d *schema.ResourceData, m any
 
 func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
-
-	changed := false
-	updates := make(map[string]any)
-
-	changeableAttributes := []string{
-		attributes.ReactivateUsersViaIDP,
-		attributes.ApproveDeviceWithoutInteraction,
-		attributes.PostDeviceEnrollmentURL,
-		attributes.PostLoginURL,
-		attributes.PostLogoutURL,
-		attributes.UserProvisioningExactUserName,
-		attributes.ClientSessionDuration,
-		attributes.WebSessionDuration,
-		attributes.IncludeUserSID,
+	settings := client.TeamSettings{
+		ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, false),
+		ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, false),
+		PostDeviceEnrollmentURL:         getStringPtr(attributes.PostDeviceEnrollmentURL, d, false),
+		PostLogoutURL:                   getStringPtr(attributes.PostLogoutURL, d, false),
+		PostLoginURL:                    getStringPtr(attributes.PostLoginURL, d, false),
+		UserProvisioningExactUserName:   getBoolPtr(attributes.UserProvisioningExactUserName, d, false),
+		ClientSessionDuration:           getIntPtr(attributes.ClientSessionDuration, d, false),
+		WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, false),
+		IncludeUserSID:                  getStringPtr(attributes.IncludeUserSID, d, false),
 	}
-
-	for _, attribute := range changeableAttributes {
-		if d.HasChange(attribute) {
-			val, ok := d.GetOk(attribute)
-			if ok {
-				updates[attribute] = val
-				changed = true
-			}
-		}
+	if err := c.UpdateTeamSettings(ctx, settings); err!=nil {
+		return diag.FromErr(err)
 	}
-
-	if changed {
-		err := c.UpdateTeamSettings(ctx, updates)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	}
+	d.SetId(c.Team)
 
 	return resourceTeamSettingsRead(ctx, d, m)
 }

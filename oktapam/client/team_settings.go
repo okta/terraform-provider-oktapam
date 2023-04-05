@@ -12,9 +12,9 @@ import (
 type TeamSettings struct {
 	ReactivateUsersViaIDP           *bool   `json:"reactivate_users_via_idp,omitempty"`
 	ApproveDeviceWithoutInteraction *bool   `json:"approve_device_without_interaction,omitempty"`
-	PostDeviceEnrollmentURL         *string `json:"post_device_enrollment_url,omitempty"`
-	PostLogoutURL                   *string `json:"post_logout_url,omitempty"`
-	PostLoginURL                    *string `json:"post_login_url,omitempty"`
+	PostDeviceEnrollmentURL         *string `json:"post_device_enrollment_url"`
+	PostLogoutURL                   *string `json:"post_logout_url"`
+	PostLoginURL                    *string `json:"post_login_url"`
 	UserProvisioningExactUserName   *bool   `json:"user_provisioning_exact_username,omitempty"`
 	ClientSessionDuration           *int    `json:"client_session_duration,omitempty"`
 	WebSessionDuration              *int    `json:"web_session_duration,omitempty"`
@@ -76,11 +76,11 @@ func (c OktaPAMClient) GetTeamSettings(ctx context.Context) (*TeamSettings, erro
 	return nil, createErrorForInvalidCode(resp, http.StatusOK, http.StatusNotFound)
 }
 
-func (c OktaPAMClient) UpdateTeamSettings(ctx context.Context, updates map[string]any) error {
+func (c OktaPAMClient) UpdateTeamSettings(ctx context.Context, settings TeamSettings) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/settings", url.PathEscape(c.Team))
 	logging.Tracef("making PUT request to %s", requestURL)
 
-	resp, err := c.CreateBaseRequest(ctx).SetBody(updates).Put(requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetBody(settings).Put(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err
