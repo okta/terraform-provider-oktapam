@@ -18,7 +18,7 @@ func TestAccTeamSettings(t *testing.T) {
 				Config: testAccTeamSettingsCreateConfig,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.ReactivateUsersViaIDP, "false",
+						resourceName, attributes.ReactivateUsersViaIDP, "true",
 					),
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.ClientSessionDuration, "4200",
@@ -36,7 +36,7 @@ func TestAccTeamSettings(t *testing.T) {
 						resourceName, attributes.PostLoginURL, "https://okta.com",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.ApproveDeviceWithoutInteraction, "false",
+						resourceName, attributes.ApproveDeviceWithoutInteraction, "true",
 					),
 				),
 			},
@@ -44,7 +44,7 @@ func TestAccTeamSettings(t *testing.T) {
 				Config: testAccTeamSettingsUpdateConfig,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.ReactivateUsersViaIDP, "true",
+						resourceName, attributes.ReactivateUsersViaIDP, "false",
 					),
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.ClientSessionDuration, "3600",
@@ -62,7 +62,7 @@ func TestAccTeamSettings(t *testing.T) {
 						resourceName, attributes.PostLoginURL, "https://okta.com",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.ApproveDeviceWithoutInteraction, "true",
+						resourceName, attributes.ApproveDeviceWithoutInteraction, "false",
 					),
 				),
 			},
@@ -72,13 +72,13 @@ func TestAccTeamSettings(t *testing.T) {
 
 const testAccTeamSettingsCreateConfig = `
 resource "oktapam_team_settings" "test_team_setting" {
-  	reactivate_users_via_idp           = false
+  	reactivate_users_via_idp           = true
 	client_session_duration            = 4200
 	web_session_duration               = 3600
 	include_user_sid                   = "Always"
 	post_logout_url                    = "https://okta.com"
 	post_login_url                     = "https://okta.com"
-	approve_device_without_interaction = false
+	approve_device_without_interaction = true
 }
 `
 
@@ -86,11 +86,11 @@ resource "oktapam_team_settings" "test_team_setting" {
 
 const testAccTeamSettingsUpdateConfig = `
 resource "oktapam_team_settings" "test_team_setting" {
-	reactivate_users_via_idp           = true
+	reactivate_users_via_idp           = false
 	client_session_duration            = 3600
 	web_session_duration               = 3600
 	include_user_sid                   = "Never"
 	post_logout_url                    = "https://okta.com"
 	post_login_url                     = "https://okta.com"
-	approve_device_without_interaction = true
+	approve_device_without_interaction = false
 }`
