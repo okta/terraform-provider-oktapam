@@ -104,5 +104,5 @@ var (
 	WebSessionDuration              = "Defines the duration of the web session. Configure the web session to be between 30 minutes and 25 hours."
 	ClientSessionDuration           = "Defines the Client session duration. Value should be in hours between 1 hour and 25 hours."
 	UserProvisioningExactUserName   = "If true, ASA has ASA Users configured through SCIM to maintain the exact username that is specified."
-	IncludeUserSID                  = "Write description"
+	IncludeUserSID                  = "The configuration option for including the User Security Identifier (SID) in the certificate during an RDP connection to a Windows Active Directory (AD) server offers three settings: Never, If_Available, and Always. The selection of this option determines the inclusion or exclusion of the User SID in the certificate presented during the RDP connection."
 )
