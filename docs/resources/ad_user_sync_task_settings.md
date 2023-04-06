@@ -20,16 +20,16 @@ Feature under development: Settings for Active Directory (AD) task for user SID 
 - `base_dn` (String) Specifies where the rule searches for users.
 - `connection_id` (String) UUID of the AD Connection with which this AD Task Settings is associated.
 - `is_active` (Boolean) If `true`, enables AD user sync task
-- `ldap_query_filter` (String) Specifies the specific criteria used to filter users.
+- `ldap_query_filter` (String) Specifies the criteria used to filter users.
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
 
 ### Optional
 
 - `frequency` (Number) Frequency of the AD User Sync Task
 - `run_test` (Boolean) If `true`, test is performed based on specified AD User Sync Task Settings
-- `sid_field` (String) Name of the AD SID field in User Sync queries
+- `sid_field` (String) AD attribute mapped to user security identifier
 - `start_hour_utc` (Number) If AD user sync task is scheduled to run daily, then specify start hour in UTC
-- `upn_field` (String) Name of the User Principal Name field in User Sync queries
+- `upn_field` (String) AD attribute mapped to user principal name
 
 ### Read-Only
 
