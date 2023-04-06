@@ -29,21 +29,6 @@ func dataSourceTeamSettings() *schema.Resource {
 				Computed:    true,
 				Description: descriptions.ApproveDeviceWithoutInteraction,
 			},
-			attributes.PostDeviceEnrollmentURL: {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: descriptions.PostDeviceEnrollmentURL,
-			},
-			attributes.PostLoginURL: {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: descriptions.PostLoginURL,
-			},
-			attributes.PostLogoutURL: {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: descriptions.PostLogoutURL,
-			},
 			attributes.UserProvisioningExactUserName: {
 				Type:        schema.TypeBool,
 				Computed:    true,

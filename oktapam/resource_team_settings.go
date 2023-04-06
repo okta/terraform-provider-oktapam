@@ -35,24 +35,6 @@ func resourceTeamSettings() *schema.Resource {
 				Optional:    true,
 				Description: descriptions.ApproveDeviceWithoutInteraction,
 			},
-			attributes.PostDeviceEnrollmentURL: {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.IsURLWithHTTPorHTTPS,
-				Description:  descriptions.PostDeviceEnrollmentURL,
-			},
-			attributes.PostLoginURL: {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.IsURLWithHTTPorHTTPS,
-				Description:  descriptions.PostLoginURL,
-			},
-			attributes.PostLogoutURL: {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.IsURLWithHTTPorHTTPS,
-				Description:  descriptions.PostLogoutURL,
-			},
 			attributes.UserProvisioningExactUserName: {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -97,9 +79,6 @@ func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m a
 	settings := client.TeamSettings{
 		ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, true),
 		ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, true),
-		PostDeviceEnrollmentURL:         getStringPtr(attributes.PostDeviceEnrollmentURL, d, false),
-		PostLogoutURL:                   getStringPtr(attributes.PostLogoutURL, d, false),
-		PostLoginURL:                    getStringPtr(attributes.PostLoginURL, d, false),
 		UserProvisioningExactUserName:   getBoolPtr(attributes.UserProvisioningExactUserName, d, false),
 		ClientSessionDuration:           getIntPtr(attributes.ClientSessionDuration, d, false),
 		WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, false),
@@ -140,9 +119,6 @@ func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m a
 	settings := client.TeamSettings{
 		ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, true),
 		ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, true),
-		PostDeviceEnrollmentURL:         getStringPtr(attributes.PostDeviceEnrollmentURL, d, false),
-		PostLogoutURL:                   getStringPtr(attributes.PostLogoutURL, d, false),
-		PostLoginURL:                    getStringPtr(attributes.PostLoginURL, d, false),
 		UserProvisioningExactUserName:   getBoolPtr(attributes.UserProvisioningExactUserName, d, false),
 		ClientSessionDuration:           getIntPtr(attributes.ClientSessionDuration, d, false),
 		WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, false),

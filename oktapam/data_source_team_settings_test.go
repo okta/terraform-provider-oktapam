@@ -57,8 +57,6 @@ resource "oktapam_team_settings" "test_team_setting" {
   reactivate_users_via_idp           = false
   approve_device_without_interaction = false
   include_user_sid                   = "Never"
-  post_logout_url                    = "https://okta.com"
-  post_login_url                     = "https://okta.com"
 }
 data "oktapam_team_settings" "target" {
   depends_on = [oktapam_team_settings.test_team_setting]

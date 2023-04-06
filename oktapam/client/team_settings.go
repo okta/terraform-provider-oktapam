@@ -12,9 +12,6 @@ import (
 type TeamSettings struct {
 	ReactivateUsersViaIDP           *bool   `json:"reactivate_users_via_idp,omitempty"`
 	ApproveDeviceWithoutInteraction *bool   `json:"approve_device_without_interaction,omitempty"`
-	PostDeviceEnrollmentURL         *string `json:"post_device_enrollment_url"`
-	PostLogoutURL                   *string `json:"post_logout_url"`
-	PostLoginURL                    *string `json:"post_login_url"`
 	UserProvisioningExactUserName   *bool   `json:"user_provisioning_exact_username,omitempty"`
 	ClientSessionDuration           *int    `json:"client_session_duration,omitempty"`
 	WebSessionDuration              *int    `json:"web_session_duration,omitempty"`
@@ -29,15 +26,6 @@ func (s TeamSettings) ToResourceMap() map[string]any {
 	}
 	if s.ApproveDeviceWithoutInteraction != nil {
 		m[attributes.ApproveDeviceWithoutInteraction] = *s.ApproveDeviceWithoutInteraction
-	}
-	if s.PostDeviceEnrollmentURL != nil {
-		m[attributes.PostDeviceEnrollmentURL] = *s.PostDeviceEnrollmentURL
-	}
-	if s.PostLoginURL != nil {
-		m[attributes.PostLoginURL] = *s.PostLoginURL
-	}
-	if s.PostLogoutURL != nil {
-		m[attributes.PostLogoutURL] = *s.PostLogoutURL
 	}
 	if s.UserProvisioningExactUserName != nil {
 		m[attributes.UserProvisioningExactUserName] = *s.UserProvisioningExactUserName

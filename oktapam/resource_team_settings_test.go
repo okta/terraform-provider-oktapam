@@ -30,12 +30,6 @@ func TestAccTeamSettings(t *testing.T) {
 						resourceName, attributes.IncludeUserSID, "Always",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.PostLogoutURL, "https://okta.com",
-					),
-					resource.TestCheckResourceAttr(
-						resourceName, attributes.PostLoginURL, "https://okta.com",
-					),
-					resource.TestCheckResourceAttr(
 						resourceName, attributes.ApproveDeviceWithoutInteraction, "true",
 					),
 				),
@@ -56,12 +50,6 @@ func TestAccTeamSettings(t *testing.T) {
 						resourceName, attributes.IncludeUserSID, "Never",
 					),
 					resource.TestCheckResourceAttr(
-						resourceName, attributes.PostLogoutURL, "https://okta.com",
-					),
-					resource.TestCheckResourceAttr(
-						resourceName, attributes.PostLoginURL, "https://okta.com",
-					),
-					resource.TestCheckResourceAttr(
 						resourceName, attributes.ApproveDeviceWithoutInteraction, "true",
 					),
 				),
@@ -76,8 +64,6 @@ resource "oktapam_team_settings" "test_team_setting" {
 	client_session_duration            = 4200
 	web_session_duration               = 3600
 	include_user_sid                   = "Always"
-	post_logout_url                    = "https://okta.com"
-	post_login_url                     = "https://okta.com"
 	approve_device_without_interaction = true
 }
 `
@@ -90,7 +76,5 @@ resource "oktapam_team_settings" "test_team_setting" {
 	client_session_duration            = 3600
 	web_session_duration               = 3600
 	include_user_sid                   = "Never"
-	post_logout_url                    = "https://okta.com"
-	post_login_url                     = "https://okta.com"
 	approve_device_without_interaction = true
 }`
