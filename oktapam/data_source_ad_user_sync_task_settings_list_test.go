@@ -31,6 +31,9 @@ func TestAccDataSourceADUserSyncTaskSettingsIDList(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccDataSourceADUserSyncTaskSettingsIDListInitConfig(preConfig, adUserSyncTaskNamePrefix),
+			},
+			{
+				Config: createTestAccDataSourceADUserSyncTaskSettingsIDListDataConfig(preConfig),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(dataSourceResourceName, fmt.Sprintf("%s.#", attributes.ADUserSyncTaskSettingsIDList), "3"),
 				),
@@ -52,7 +55,6 @@ resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settin
 }
 
 resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settings_2" {
-    depends_on               = [oktapam_ad_user_sync_task_settings.test_acc_ad_user_sync_task_settings_1]
     connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
     name                     = "%[2]s"
     is_active                = true
@@ -64,7 +66,6 @@ resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settin
 }
 
 resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settings_3" {
-    depends_on               = [oktapam_ad_user_sync_task_settings.test_acc_ad_user_sync_task_settings_2]
     connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
     name                     = "%[3]s"
     is_active                = true
@@ -74,15 +75,20 @@ resource "oktapam_ad_user_sync_task_settings" "test_acc_ad_user_sync_task_settin
     base_dn                  = "dc=tilt,dc=scaleft,dc=com"
     ldap_query_filter        = "(objectclass=user)"
 }
-
-data "oktapam_ad_user_sync_task_settings_id_list" "test_acc_data_source_ad_user_sync_task_settings_id_list" {
-    depends_on = [oktapam_ad_user_sync_task_settings.test_acc_ad_user_sync_task_settings_3]
-    connection_id = oktapam_ad_connection.test_acc_ad_connection.id
-}
 `
 
 func createTestAccDataSourceADUserSyncTaskSettingsIDListInitConfig(preConfig string, adUserSyncTaskNamePrefix string) string {
 	logging.Debugf("creating config")
 	return preConfig + fmt.Sprintf(testAccDataSourceADUserSyncTaskSettingsIDListInitFormat, adUserSyncTaskNamePrefix+"_1",
 		adUserSyncTaskNamePrefix+"_2", adUserSyncTaskNamePrefix+"_3")
+}
+
+const testAccDataSourceADUserSyncTaskSettingsIDListDataFormat = `
+data "oktapam_ad_user_sync_task_settings_id_list" "test_acc_data_source_ad_user_sync_task_settings_id_list" {
+    connection_id = oktapam_ad_connection.test_acc_ad_connection.id
+}`
+
+func createTestAccDataSourceADUserSyncTaskSettingsIDListDataConfig(preConfig string) string {
+	logging.Debugf("creating data config")
+	return preConfig + fmt.Sprintf(testAccDataSourceADUserSyncTaskSettingsIDListDataFormat)
 }
