@@ -357,7 +357,7 @@ func flattenADTaskSettings(taskSettings *client.ADTaskSettings) map[string]any {
 		m[attributes.IsActive] = *taskSettings.IsActive
 	}
 	if taskSettings.RunTest != nil {
-		m[attributes.RunTest] = *taskSettings.IsActive
+		m[attributes.RunTest] = *taskSettings.RunTest
 	}
 	if taskSettings.StartHourUTC != nil {
 		m[attributes.StartHourUTC] = *taskSettings.StartHourUTC
