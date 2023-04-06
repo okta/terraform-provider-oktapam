@@ -42,6 +42,7 @@ const (
 	providerProjectGroupsKey               = "oktapam_project_groups"
 	providerServerEnrollmentTokenKey       = "oktapam_server_enrollment_token"
 	providerServerEnrollmentTokensKey      = "oktapam_server_enrollment_tokens"
+	providerTeamSettingsKey                = "oktapam_team_settings"
 	providerUserKey                        = "oktapam_user"
 )
 
@@ -87,6 +88,7 @@ func Provider() *schema.Provider {
 			providerProjectGroupKey:                resourceProjectGroup(),
 			providerProjectKey:                     resourceProject(),
 			providerServerEnrollmentTokenKey:       resourceServerEnrollmentToken(),
+			providerTeamSettingsKey:                resourceTeamSettings(),
 			providerUserKey:                        resourceUser(),
 		},
 
@@ -103,6 +105,7 @@ func Provider() *schema.Provider {
 			providerProjectGroupsKey:          dataSourceProjectGroups(),
 			providerServerEnrollmentTokenKey:  dataSourceServerEnrollmentToken(),
 			providerServerEnrollmentTokensKey: dataSourceServerEnrollmentTokens(),
+			providerTeamSettingsKey:           dataSourceTeamSettings(),
 			providerADUserSyncTaskSettingsKey: dataSourceADUserSyncTaskSettings(),
 			providerADUserSyncTaskSettingsIDListKey: dataSourceADUserSyncTaskSettingsIDList(),
 		},

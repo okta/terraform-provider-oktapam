@@ -21,6 +21,7 @@ var (
 	SourceGroup         = fmt.Sprintf("Returns a previously created ASA Group. %s", LinkGroup)
 	SourceProject       = fmt.Sprintf("Returns a previously created ASA Project. %s", LinkProject)
 	SourceProjectGroup  = fmt.Sprintf("Returns a previously created ASA Group assigned to a given ASA Project. %s", LinkProjectGroup)
+	SourceTeamSettings = fmt.Sprintf("Returns Team-level settings for a specific Team, such as authentication and enrollment details")
 	SourceADUserSyncTaskSettings = fmt.Sprintf("Returns a previously created ASA AD User Sync Task Settings. %s", LinkADUserDiscovery)
 
 	// List

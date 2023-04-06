@@ -19,6 +19,7 @@ var (
 	ResourceProject               = fmt.Sprintf("An ASA construct that contains servers and is used to grant end users access to server infrastructure. %s", LinkProject)
 	ResourceProjectGroup          = fmt.Sprintf("Assigns an ASA Group to a Project and configures how that group is created on servers. %s", LinkGroup)
 	ResourceServerEnrollmentToken = fmt.Sprintf("A token used to enroll servers in an ASA Project. %s", LinkServerEnrollmentToken)
+	ResourceTeamSettings          = fmt.Sprintf("Team-level settings for a specific Team, such as authentication and enrollment details. %s", LinkTeamSettings)
 	ResourceUser                  = fmt.Sprintf("An ASA User. Valid user types are `%s` and `%s`. %s", typed_strings.UserTypeHuman, typed_strings.UserTypeService, LinkServiceUser)
 
 	// EA/Beta Features:

@@ -87,6 +87,9 @@ func TestAccProject(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.UserOnDemandPeriod, "10",
 					),
+					resource.TestCheckResourceAttr(
+						resourceName, attributes.RDPSessionRecording, "true",
+					),
 				),
 			},
 			{
