@@ -22,9 +22,11 @@ var (
 	SourceProject       = fmt.Sprintf("Returns a previously created ASA Project. %s", LinkProject)
 	SourceProjectGroup  = fmt.Sprintf("Returns a previously created ASA Group assigned to a given ASA Project. %s", LinkProjectGroup)
 	SourceTeamSettings = fmt.Sprintf("Returns Team-level settings for a specific Team, such as authentication and enrollment details")
+	SourceADUserSyncTaskSettings = fmt.Sprintf("Returns a previously created ASA AD User Sync Task Settings. %s", LinkADUserDiscovery)
 
 	// List
 	SourceGroups        = fmt.Sprintf("Returns a list of all ASA Groups associated with the ASA Team specified in the OKTAPAM_TEAM environment variable. %s", LinkGroup)
 	SourceProjects      = fmt.Sprintf("Returns a list of ASA Projects associated with the ASA Team specified in the OKTAPAM_TEAM environment variable. %s", LinkProject)
 	SourceProjectGroups = fmt.Sprintf("A list of ASA Project Groups associated with an ASA Project. %s", LinkProjectGroup)
+	SourceADUserSyncTaskSettingsIDList = fmt.Sprintf("Returns a list of previously created ASA AD User Sync Task Settings IDs for an AD connection. %s", LinkADUserDiscovery)
 )

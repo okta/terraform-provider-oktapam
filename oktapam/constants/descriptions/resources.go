@@ -13,6 +13,7 @@ var (
 	ResourceADConnection          = fmt.Sprintf("An Active Directory (AD) Connection to query AD Domain for available servers. %s", LinkADConnection)
 	ResourceADRuleAssignment      = fmt.Sprintf("Assign an Active Directory (AD) Rule to an ASA Project. %s", LinkADRuleAssignment)
 	ResourceADTaskSettings        = fmt.Sprintf("Settings for Active Directory (AD) task for server discovery. %s", LinkADServerDiscovery)
+	ResourceADUserSyncTaskSettings = fmt.Sprintf("%s Settings for Active Directory (AD) task for user SID discovery. %s", PrefixDev, LinkADUserDiscovery)
 	ResourceGatewaySetupToken     = fmt.Sprintf("A token for ASA Gateway enrollment. %s", LinkGatewaySetupToken)
 	ResourceGroup                 = fmt.Sprintf("A set of ASA Users. %s", LinkGroup)
 	ResourceProject               = fmt.Sprintf("An ASA construct that contains servers and is used to grant end users access to server infrastructure. %s", LinkProject)
