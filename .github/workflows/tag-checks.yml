@@ -16,7 +16,7 @@ jobs:
       matrix:
         # On version change, add new version here
         # On breaking changes, by definition past version mays no longer work. Remove previous versions from the github action.
-        tag: []
+        tag: [v0.3.2]
       fail-fast: false
     steps:
       - name: Check out repository code of tag
