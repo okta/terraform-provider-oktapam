@@ -411,9 +411,6 @@ func (adUserSyncTaskSettings ADUserSyncTaskSettings) ToResourceMap() map[string]
 	if adUserSyncTaskSettings.IsActive != nil {
 		m[attributes.IsActive] = *adUserSyncTaskSettings.IsActive
 	}
-	if adUserSyncTaskSettings.RunTest != nil {
-		m[attributes.RunTest] = *adUserSyncTaskSettings.RunTest
-	}
 
 	return m
 }

@@ -52,6 +52,7 @@ func TestAccADTaskSettings(t *testing.T) {
 					//Check if there is exactly one ad rule assignment
 					//.#: Number of elements in list or set
 					resource.TestCheckResourceAttr(adTaskResourceName, fmt.Sprintf("%s.#", attributes.ADRuleAssignments), "1"),
+					resource.TestCheckResourceAttr(adTaskResourceName, attributes.RunTest, "true"),
 				),
 			},
 			{
@@ -99,6 +100,7 @@ func TestAccADTaskSettings(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: testAccADTaskSettingsImportStateId(adTaskResourceName),
+				ImportStateVerifyIgnore: []string{attributes.RunTest},
 			},
 		},
 	})
@@ -200,6 +202,7 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
    project_id        = oktapam_project.test_acc_project.id
    priority          = 1
  }
+ run_test = true
 }
 `
 

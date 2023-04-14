@@ -58,8 +58,8 @@ func resourceADTaskSettings() *schema.Resource {
 			},
 			attributes.RunTest: {
 				Type:        schema.TypeBool,
+				Default:     false,
 				Optional:    true,
-				Computed:    true,
 				Description: descriptions.ADTaskRunTest,
 			},
 			attributes.StartHourUTC: {
@@ -355,9 +355,6 @@ func flattenADTaskSettings(taskSettings *client.ADTaskSettings) map[string]any {
 	}
 	if taskSettings.IsActive != nil {
 		m[attributes.IsActive] = *taskSettings.IsActive
-	}
-	if taskSettings.RunTest != nil {
-		m[attributes.RunTest] = *taskSettings.RunTest
 	}
 	if taskSettings.StartHourUTC != nil {
 		m[attributes.StartHourUTC] = *taskSettings.StartHourUTC
