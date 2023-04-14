@@ -340,7 +340,11 @@ func expandADRuleAssignments(tfList []any) []*client.ADRuleAssignment {
 	return apiObjects
 }
 
-//Convert API Object to flat map for saving in terraform state
+// flattenADTaskSettings Convert API Object to flat map for saving in terraform state
+// API always return false for attribute run_test, regardless of what is passed while creating/updating the resource.
+// Don't set Run_Test attribute  while reading the resource back, to avoid tf showing drift during plan while comparing
+// it with the previous state (if run_test was set to 'true' initially). In this case, whatever value is coming as
+// part of tf config (proposed state) will be set in the tf state.
 func flattenADTaskSettings(taskSettings *client.ADTaskSettings) map[string]any {
 	m := make(map[string]any, 2)
 
