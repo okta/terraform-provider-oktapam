@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 )
@@ -31,8 +33,19 @@ func TestAccDataSourceADUserSyncTaskSettings(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccDataSourceADUserSyncTaskSettingsInitConfig(preConfig, adUserSyncTaskName),
-				Check: resource.ComposeAggregateTestCheckFunc(checkResourcesEqual(
-					adUserSyncTaskSettingsResourceName, dataSourceResourceName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrPair(dataSourceResourceName, attributes.Name,
+					adUserSyncTaskSettingsResourceName, attributes.Name),
+					resource.TestCheckResourceAttrPair(dataSourceResourceName, attributes.Frequency,
+						adUserSyncTaskSettingsResourceName, attributes.Frequency),
+					resource.TestCheckResourceAttrPair(dataSourceResourceName, attributes.SIDField,
+						adUserSyncTaskSettingsResourceName, attributes.SIDField),
+					resource.TestCheckResourceAttrPair(dataSourceResourceName, attributes.UPNField,
+						adUserSyncTaskSettingsResourceName, attributes.UPNField),
+					resource.TestCheckResourceAttrPair(dataSourceResourceName, attributes.BaseDN,
+						adUserSyncTaskSettingsResourceName, attributes.BaseDN),
+					resource.TestCheckResourceAttrPair(dataSourceResourceName, attributes.LDAPQueryFilter,
+						adUserSyncTaskSettingsResourceName, attributes.LDAPQueryFilter),
 				),
 			},
 		},

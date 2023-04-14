@@ -79,6 +79,7 @@ func TestAccADUserSyncTaskSettings(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: testAccADUserSyncTaskSettingsImportStateId(adUserSyncTaskSettingsResourceName1),
+				ImportStateVerifyIgnore: []string{attributes.RunTest},
 			},
 		},
 	})
