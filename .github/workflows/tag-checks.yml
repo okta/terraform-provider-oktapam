@@ -1,8 +1,9 @@
 name: Tag Checks
-on:
-  schedule:
+# NOTE: Disable tag check until there are available past tags to test 
+#on:
+  # schedule:
     # Run every day. Uses POSIX cron syntax: https://crontab.guru/#0_0_*/1
-    - cron: "0 0 */1 * *"
+    # - cron: "0 0 */1 * *"
 
 jobs:
   check:
@@ -16,7 +17,7 @@ jobs:
       matrix:
         # On version change, add new version here
         # On breaking changes, by definition past version mays no longer work. Remove previous versions from the github action.
-        tag: [v0.3.2]
+        tag: []
       fail-fast: false
     steps:
       - name: Check out repository code of tag
