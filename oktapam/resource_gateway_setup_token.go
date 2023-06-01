@@ -57,6 +57,7 @@ func resourceGatewaySetupToken() *schema.Resource {
 }
 
 func resourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
 	tokenID := d.Id()
@@ -73,10 +74,12 @@ func resourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, 
 
 	for key, value := range token.ToResourceMap() {
 		logging.Debugf("setting %s to %v", key, value)
-		d.Set(key, value)
+		if err := d.Set(key, value); err != nil {
+			diags = append(diags, diag.FromErr(err)...)
+		}
 	}
 
-	return nil
+	return diags
 }
 
 func resourceGatewaySetupTokenCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {

@@ -94,6 +94,7 @@ func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m a
 }
 
 func resourceTeamSettingsRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
 	settings, err := c.GetTeamSettings(ctx)
@@ -103,16 +104,15 @@ func resourceTeamSettingsRead(ctx context.Context, d *schema.ResourceData, m any
 
 	if settings != nil {
 		for key, value := range settings.ToResourceMap() {
-			err = d.Set(key, value)
-			if err != nil {
-				return diag.FromErr(err)
+			if err = d.Set(key, value); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
 			}
 		}
 	} else {
 		return diag.Errorf("Team settings does not exist for the team %s", c.Team)
 	}
 
-	return nil
+	return diags
 }
 
 func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {

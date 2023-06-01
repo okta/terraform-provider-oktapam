@@ -208,7 +208,9 @@ func resourceADTaskSettingsRead(ctx context.Context, d *schema.ResourceData, m a
 
 	if adTaskSettings != nil && utils.IsNonEmpty(adTaskSettings.ID) {
 		for key, value := range flattenADTaskSettings(adTaskSettings) {
-			_ = d.Set(key, value)
+			if err := d.Set(key, value); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
 		}
 	} else {
 		logging.Infof("ADTaskSettings %s does not exist", adTaskSettingsID)

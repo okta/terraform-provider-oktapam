@@ -188,7 +188,9 @@ func resourceProjectReadWithIgnorable(ctx context.Context, d *schema.ResourceDat
 		}
 		for key, value := range proj.ToResourceMap() {
 			if _, ok := ignorableValues[key]; !ignoreValues || !ok {
-				d.Set(key, value)
+				if err := d.Set(key, value); err != nil {
+					return nil, err
+				}
 			}
 		}
 	} else {

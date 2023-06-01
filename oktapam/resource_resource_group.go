@@ -78,6 +78,7 @@ func resourceResourceGroup() *schema.Resource {
 }
 
 func resourceResourceGroupRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
 	id := d.Id()
@@ -91,11 +92,13 @@ func resourceResourceGroupRead(ctx context.Context, d *schema.ResourceData, m an
 		if k == attributes.ID {
 			d.SetId(v.(string))
 		} else {
-			d.Set(k, v)
+			if err := d.Set(k, v); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
 		}
 	}
 
-	return nil
+	return diags
 }
 
 func resourceResourceGroupCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {

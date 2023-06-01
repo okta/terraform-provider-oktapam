@@ -33,6 +33,7 @@ const (
 	NoneAccountSelectorType     = AccountSelectorType("none")
 
 	AccessRequestConditionType = ConditionType("access_request")
+	GatewayConditionType       = ConditionType("gateway")
 )
 
 type SecurityPolicy struct {
@@ -122,6 +123,8 @@ func (c *SecurityPolicyRuleConditionContainer) UnmarshalJSON(data []byte) error 
 	switch tmp.ConditionType {
 	case AccessRequestConditionType:
 		c.ConditionValue = &AccessRequestCondition{}
+	case GatewayConditionType:
+		c.ConditionValue = &GatewayCondition{}
 	default:
 		return fmt.Errorf("received unknown condition type: %s", tmp.ConditionType)
 	}
@@ -154,6 +157,24 @@ func (c *AccessRequestCondition) ToResourceMap() map[string]any {
 
 func (*AccessRequestCondition) ConditionType() ConditionType {
 	return AccessRequestConditionType
+}
+
+type GatewayCondition struct {
+	TrafficForwarding *bool `json:"traffic_forwarding"`
+	SessionRecording  *bool `json:"session_recording"`
+}
+
+func (c *GatewayCondition) ToResourceMap() map[string]any {
+	m := make(map[string]any)
+
+	m[attributes.TrafficForwarding] = *c.TrafficForwarding
+	m[attributes.SessionRecording] = *c.SessionRecording
+
+	return m
+}
+
+func (*GatewayCondition) ConditionType() ConditionType {
+	return GatewayConditionType
 }
 
 type SecurityPolicyRuleResourceSelector interface {
@@ -256,7 +277,7 @@ func (s *ServerLabelBasedSubSelector) ToResourceMap() map[string]any {
 		usernamesArr = stringSliceToInterfaceSlice(s.AccountSelector.(*UsernameAccountSelector).Usernames)
 	}
 
-	serverLabelsM[attributes.Usernames] = usernamesArr
+	m[attributes.Usernames] = usernamesArr
 
 	return m
 }
@@ -469,7 +490,6 @@ func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 	}
 	m[attributes.Resources] = resources
 
-	privileges := make([]any, len(r.Privileges))
 	if r.Privileges != nil {
 		privilegesM := make(map[string]any, 4)
 		passwordCheckoutRDP := make([]any, 0, 1)
@@ -495,22 +515,28 @@ func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 		privilegesM[attributes.PasswordCheckoutSSH] = passwordCheckoutSSH
 		privilegesM[attributes.PrincipalAccountRDP] = principalAccountRDP
 		privilegesM[attributes.PrincipalAccountSSH] = principalAccountSSH
-	}
-	m[attributes.Privileges] = privileges
 
-	conditions := make([]any, 0, len(r.Conditions))
+		privileges := []any{privilegesM}
+		m[attributes.Privileges] = privileges
+	}
+
+	conditions := make([]any, 0, 1)
 	if r.Conditions != nil {
 		conditionsM := make(map[string]any, 1)
 		accessRequests := make([]any, 0, len(r.Conditions))
+		gateways := make([]any, 0, len(r.Conditions))
 
 		for _, condition := range r.Conditions {
 			switch condition.ConditionType {
 			case AccessRequestConditionType:
 				accessRequests = append(accessRequests, condition.ConditionValue.ToResourceMap())
+			case GatewayConditionType:
+				gateways = append(gateways, condition.ConditionValue.ToResourceMap())
 			}
 		}
 
 		conditionsM[attributes.AccessRequest] = accessRequests
+		conditionsM[attributes.Gateway] = gateways
 		conditions = append(conditions, conditionsM)
 	}
 	m[attributes.Conditions] = conditions

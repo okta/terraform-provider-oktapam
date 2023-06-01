@@ -10,10 +10,16 @@ DOCGEN_RESOURCES_DIR=docgen-resources
 
 SET_VERSION=-ldflags "-X github.com/okta/terraform-provider-oktapam/oktapam/version.Version=${VERSION}"
 
+ifneq ($(DEBUG), )
+  GOFLAGS :=${GOFLAGS} -gcflags=all="-N -l"
+else
+  GOFLAGS :=${GOFLAGS} -trimpath
+endif
+
 .DEFAULT_GOAL := install
 
 build:
-	go build -ldflags "-X github.com/okta/terraform-provider-oktapam/oktapam/version.Version=${VERSION}dev" -o ${BINARY}
+	go build ${GOFLAGS} -ldflags "-X github.com/okta/terraform-provider-oktapam/oktapam/version.Version=${VERSION}dev" -o ${BINARY}
 
 release:
 	GOOS=darwin GOARCH=amd64 go build ${SET_VERSION} -o ./bin/${BINARY}_${VERSION}_darwin_amd64

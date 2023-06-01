@@ -262,6 +262,25 @@ func resourceSecurityPolicy() *schema.Resource {
 											},
 										},
 									},
+									attributes.Gateway: {
+										Type:     schema.TypeList,
+										Optional: true,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												attributes.TrafficForwarding: {
+													Type:        schema.TypeBool,
+													Required:    true,
+													Description: "", // TODO: add description
+												},
+												attributes.SessionRecording: {
+													Type:        schema.TypeBool,
+													Required:    true,
+													Description: "", // TODO: add description
+												},
+											},
+										},
+									},
 								},
 							},
 						},
@@ -291,7 +310,9 @@ func resourceSecurityPolicyRead(ctx context.Context, d *schema.ResourceData, m a
 		if k == attributes.ID {
 			d.SetId(v.(string))
 		} else {
-			d.Set(k, v)
+			if err := d.Set(k, v); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
 		}
 	}
 
@@ -474,6 +495,26 @@ func readConditions(conditionsAttr []any) ([]*client.SecurityPolicyRuleCondition
 			conditions = append(conditions, &client.SecurityPolicyRuleConditionContainer{
 				ConditionType:  accessRequest.ConditionType(),
 				ConditionValue: accessRequest,
+			})
+		}
+	}
+
+	if gatewayAttr, ok := conditionsM[attributes.Gateway]; ok {
+		gatewayArr := gatewayAttr.([]any)
+
+		for _, gatewayI := range gatewayArr {
+			gatewayM := gatewayI.(map[string]any)
+			trafficForwarding := gatewayM[attributes.TrafficForwarding].(bool)
+			sessionRecording := gatewayM[attributes.SessionRecording].(bool)
+
+			gateway := &client.GatewayCondition{
+				TrafficForwarding: &trafficForwarding,
+				SessionRecording:  &sessionRecording,
+			}
+
+			conditions = append(conditions, &client.SecurityPolicyRuleConditionContainer{
+				ConditionType:  gateway.ConditionType(),
+				ConditionValue: gateway,
 			})
 		}
 	}

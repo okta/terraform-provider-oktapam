@@ -106,6 +106,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m any) diag
 }
 
 func resourceUserRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
 	userName, userType, err := getRequiredUserAttributes(d)
@@ -129,14 +130,16 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m any) diag.D
 	if user != nil {
 		d.SetId(*user.ID)
 		for key, value := range user.ToResourceMap() {
-			d.Set(key, value)
+			if err := d.Set(key, value); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
 		}
 	} else {
 		d.SetId("")
 		logging.Infof("%s user %s does not exist", userType, userName)
 	}
 
-	return nil
+	return diags
 }
 
 func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {

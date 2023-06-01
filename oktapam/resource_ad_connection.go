@@ -128,7 +128,9 @@ func resourceADConnectionRead(ctx context.Context, d *schema.ResourceData, m any
 
 	if adConnection != nil && utils.IsNonEmpty(adConnection.ID) {
 		for key, value := range adConnection.ToResourceMap() {
-			_ = d.Set(key, value)
+			if err := d.Set(key, value); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
 		}
 	} else {
 		logging.Infof("ADConnection %s does not exist", adConnectionId)

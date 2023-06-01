@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
@@ -15,9 +16,9 @@ func dataSourceTeamSettings() *schema.Resource {
 		ReadContext: dataSourceTeamSettingsFetch,
 		Schema: map[string]*schema.Schema{
 			attributes.ID: {
-				Type:     schema.TypeString,
-				Required: true,
-				Description:descriptions.TeamSettingsID,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: descriptions.TeamSettingsID,
 			},
 			attributes.ReactivateUsersViaIDP: {
 				Type:        schema.TypeBool,
@@ -54,6 +55,7 @@ func dataSourceTeamSettings() *schema.Resource {
 }
 
 func dataSourceTeamSettingsFetch(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 	name := d.Get(attributes.ID).(string)
 	if name == "" {
@@ -67,11 +69,13 @@ func dataSourceTeamSettingsFetch(ctx context.Context, d *schema.ResourceData, m 
 
 	if settings != nil {
 		for key, value := range settings.ToResourceMap() {
-			d.Set(key, value)
+			if err := d.Set(key, value); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
 		}
 		d.SetId(name)
-	}else {
+	} else {
 		return diag.Errorf("Team settings does not exist for the team %s", c.Team)
 	}
-	return nil
+	return diags
 }

@@ -2,8 +2,9 @@ package oktapam
 
 import (
 	"fmt"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"testing"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
@@ -90,5 +91,5 @@ data "oktapam_ad_user_sync_task_settings_id_list" "test_acc_data_source_ad_user_
 
 func createTestAccDataSourceADUserSyncTaskSettingsIDListDataConfig(preConfig string) string {
 	logging.Debugf("creating data config")
-	return preConfig + fmt.Sprintf(testAccDataSourceADUserSyncTaskSettingsIDListDataFormat)
+	return preConfig + testAccDataSourceADUserSyncTaskSettingsIDListDataFormat
 }

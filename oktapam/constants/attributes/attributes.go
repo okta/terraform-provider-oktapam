@@ -55,6 +55,7 @@ const (
 	FilterStatus                      = "filter_status" // NOTE: This attribute exists to avoid conflicts with Status
 	ForwardTraffic                    = "forward_traffic"
 	Frequency                         = "frequency"
+	Gateway                           = "gateway"
 	GatewayID                         = "gateway_id"
 	Gateways                          = "gateways"
 	GatewaySelector                   = "gateway_selector"
@@ -137,6 +138,7 @@ const (
 	ServersSelector                   = "servers_selector"
 	ServiceAccountUsername            = "service_account_username"
 	ServiceAccountPassword            = "service_account_password"
+	SessionRecording                  = "session_recording"
 	SIDField                          = "sid_field"
 	Source                            = "source"
 	SSHCertificateType                = "ssh_certificate_type"
@@ -148,6 +150,7 @@ const (
 	TeamName                          = "team_name"
 	Token                             = "token"
 	TTLDays                           = "ttl_days"
+	TrafficForwarding                 = "traffic_forwarding"
 	Type                              = "type"
 	UpperCase                         = "upper_case"
 	UPNField                          = "upn_field"

@@ -151,7 +151,9 @@ func resourcePasswordSettingsRead(ctx context.Context, d *schema.ResourceData, m
 	}
 	if passwordSettings != nil && len(passwordSettings.ManagedPrivilegedAccountsConfig) > 0 {
 		for k, v := range passwordSettings.ToResourceMap() {
-			d.Set(k, v)
+			if err := d.Set(k, v); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
 		}
 	} else {
 		d.SetId("")

@@ -135,6 +135,7 @@ func resourceADUserSyncTaskSettingsCreate(ctx context.Context, d *schema.Resourc
 }
 
 func resourceADUserSyncTaskSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
 	adConnID := d.Get(attributes.ADConnectionID).(string)
@@ -147,13 +148,15 @@ func resourceADUserSyncTaskSettingsRead(ctx context.Context, d *schema.ResourceD
 
 	if adUserSyncTaskSettings != nil && utils.IsNonEmpty(adUserSyncTaskSettings.ID) {
 		for key, value := range adUserSyncTaskSettings.ToResourceMap() {
-			_ = d.Set(key, value)
+			if err := d.Set(key, value); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
 		}
 	} else {
 		logging.Infof("ADUserSyncTaskSettings %s does not exist", adUserSyncTaskSettingsID)
 	}
 
-	return nil
+	return diags
 }
 
 func resourceADUserSyncTaskSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

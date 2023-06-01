@@ -190,6 +190,7 @@ func resourceResourceGroupProjectCreate(ctx context.Context, d *schema.ResourceD
 }
 
 func resourceResourceGroupProjectReadWithIgnorable(ctx context.Context, d *schema.ResourceData, m any, ignoreValues bool) (*schema.ResourceData, diag.Diagnostics) {
+	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
 	projectID := d.Id()
@@ -214,7 +215,9 @@ func resourceResourceGroupProjectReadWithIgnorable(ctx context.Context, d *schem
 		}
 		for key, value := range proj.ToResourceMap() {
 			if _, ok := ignorableValues[key]; !ignoreValues || !ok {
-				d.Set(key, value)
+				if err := d.Set(key, value); err != nil {
+					diags = append(diags, diag.FromErr(err)...)
+				}
 			}
 		}
 	} else {
@@ -222,7 +225,7 @@ func resourceResourceGroupProjectReadWithIgnorable(ctx context.Context, d *schem
 		d.SetId("")
 	}
 
-	return d, nil
+	return d, diags
 }
 
 func resourceResourceGroupProjectReadImport(ctx context.Context, d *schema.ResourceData, m any) ([]*schema.ResourceData, error) {
@@ -232,7 +235,9 @@ func resourceResourceGroupProjectReadImport(ctx context.Context, d *schema.Resou
 	if err != nil {
 		return nil, err
 	}
-	d.Set(attributes.ResourceGroup, resourceGroupID)
+	if err := d.Set(attributes.ResourceGroup, resourceGroupID); err != nil {
+		return nil, err
+	}
 	d.SetId(projectID)
 
 	projectResource, diags := resourceResourceGroupProjectReadWithIgnorable(ctx, d, m, false)
