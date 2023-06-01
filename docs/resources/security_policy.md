@@ -152,6 +152,7 @@ Required:
 Optional:
 
 - `access_request` (Block List) (see [below for nested schema](#nestedblock--rule--conditions--access_request))
+- `gateway` (Block List, Max: 1) (see [below for nested schema](#nestedblock--rule--conditions--gateway))
 
 <a id="nestedblock--rule--conditions--access_request"></a>
 ### Nested Schema for `rule.conditions.access_request`
@@ -160,5 +161,14 @@ Required:
 
 - `request_type_id` (String)
 - `request_type_name` (String)
+
+
+<a id="nestedblock--rule--conditions--gateway"></a>
+### Nested Schema for `rule.conditions.gateway`
+
+Required:
+
+- `session_recording` (Boolean)
+- `traffic_forwarding` (Boolean)
 
 
