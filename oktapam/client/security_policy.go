@@ -222,7 +222,7 @@ type ServerBasedResourceSubSelector interface {
 }
 
 type IndividualServerSubSelector struct {
-	ServerId NamedObject `json:"server_id"`
+	ServerId NamedObject `json:"server"`
 }
 
 func (*IndividualServerSubSelector) ServerBasedResourceSubSelectorType() ServerBasedResourceSubSelectorType {
@@ -236,7 +236,7 @@ func (s *IndividualServerSubSelector) ToResourceMap() map[string]any {
 }
 
 type IndividualServerAccountSubSelector struct {
-	ServerId NamedObject `json:"server_id"`
+	ServerId NamedObject `json:"server"`
 	Username *string     `json:"username"`
 }
 
