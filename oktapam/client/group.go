@@ -14,6 +14,8 @@ import (
 	"github.com/tomnomnom/linkheader"
 )
 
+var ignorableGroupRoles = map[string]bool{"delegated_resource_admin": true}
+
 type Group struct {
 	Name      *string  `json:"name"`
 	ID        *string  `json:"id,omitempty"`
@@ -124,6 +126,7 @@ func (c OktaPAMClient) GetGroup(ctx context.Context, name string, allowDeleted b
 
 	if statusCode == http.StatusOK {
 		group := resp.Result().(*Group)
+		group.Roles = filterGroupRoles(group.Roles)
 		if group.Exists() || allowDeleted {
 			return group, nil
 		}
@@ -133,6 +136,18 @@ func (c OktaPAMClient) GetGroup(ctx context.Context, name string, allowDeleted b
 	}
 
 	return nil, createErrorForInvalidCode(resp, http.StatusOK, http.StatusNotFound)
+}
+
+func filterGroupRoles(roles []string) []string {
+	filtered := make([]string, 0, len(roles))
+
+	for _, r := range roles {
+		if _, ok := ignorableGroupRoles[r]; !ok {
+			filtered = append(filtered, r)
+		}
+	}
+
+	return filtered
 }
 
 func (c OktaPAMClient) CreateGroup(ctx context.Context, group Group) error {

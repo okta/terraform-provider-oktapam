@@ -10,12 +10,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 )
 
 func resourcePasswordSettings() *schema.Resource {
 	return &schema.Resource{
-		Description:   "", // TODO: add description
+		Description:   descriptions.ResourcePasswordSettings,
 		CreateContext: resourcePasswordSettingsCreate,
 		ReadContext:   resourcePasswordSettingsRead,
 		UpdateContext: resourcePasswordSettingsUpdate,
@@ -29,71 +30,72 @@ func resourcePasswordSettings() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "", // TODO: add description
+				Description: descriptions.ResourceGroupID,
 			},
 			attributes.Project: {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "", // TODO: add description
+				Description: descriptions.ProjectID,
 			},
 			attributes.ManagedPrivilegedAccounts: {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Required: true,
 				MinItems: 1,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+				Description: descriptions.ManagedPrivilegedAccounts,
 			},
 			attributes.EnablePeriodicRotation: {
 				Type:        schema.TypeBool,
 				Required:    true,
-				Description: "", // TODO: add description
+				Description: descriptions.EnablePeriodicRotation,
 			},
 			attributes.PeriodicRotationDurationInSeconds: {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Default:     0,
-				Description: "", // TODO add description
+				Description: descriptions.PeriodicRotationDurationInSeconds,
 			},
 			attributes.MinLength: {
 				Type:         schema.TypeInt,
 				Required:     true,
-				Description:  "", // TODO: add description
+				Description:  descriptions.PasswordMinLength,
 				ValidateFunc: validation.IntAtLeast(1),
 			},
 			attributes.MaxLength: {
 				Type:         schema.TypeInt,
 				Required:     true,
-				Description:  "", // TODO: add description
+				Description:  descriptions.PasswordMaxLength,
 				ValidateFunc: validation.IntAtLeast(1),
 			},
 			attributes.CharacterOptions: {
-				Type:     schema.TypeList,
-				Required: true,
-				MinItems: 1,
-				MaxItems: 1,
+				Type:        schema.TypeList,
+				Required:    true,
+				MinItems:    1,
+				MaxItems:    1,
+				Description: descriptions.CharacterOptions,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						attributes.UpperCase: {
 							Type:        schema.TypeBool,
 							Required:    true,
-							Description: "", // TODO: add description
+							Description: descriptions.CharacterOptionsUpperCase,
 						},
 						attributes.LowerCase: {
 							Type:        schema.TypeBool,
 							Required:    true,
-							Description: "", // TODO: add description
+							Description: descriptions.CharacterOptionsLowerCase,
 						},
 						attributes.Digits: {
 							Type:        schema.TypeBool,
 							Required:    true,
-							Description: "", // TODO: add description
+							Description: descriptions.CharacterOptionsDigits,
 						},
 						attributes.Punctuation: {
 							Type:        schema.TypeBool,
 							Required:    true,
-							Description: "", // TODO: add description
+							Description: descriptions.CharacterOptionsPunctuation,
 						},
 					},
 				},
@@ -187,11 +189,16 @@ func resourcePasswordSettingsDelete(ctx context.Context, d *schema.ResourceData,
 	projectID := d.Get(attributes.Project).(string)
 
 	passwordSettings := &client.PasswordSettings{
-		EnablePeriodicRotation:            utils.AsBoolPtrZero(false, true),
-		PeriodicRotationDurationInSeconds: utils.AsIntPtrZero(0, true),
-		MinLengthInBytes:                  utils.AsIntPtr(8),
-		MaxLengthInBytes:                  utils.AsIntPtr(64),
-		ManagedPrivilegedAccountsConfig:   []string{},
+		EnablePeriodicRotation:          utils.AsBoolPtrZero(false, true),
+		MinLengthInBytes:                utils.AsIntPtr(8),
+		MaxLengthInBytes:                utils.AsIntPtr(64),
+		ManagedPrivilegedAccountsConfig: []string{},
+		CharacterOptions: &client.CharacterOptions{
+			UpperCase:   utils.AsBoolPtr(true),
+			LowerCase:   utils.AsBoolPtr(true),
+			Digits:      utils.AsBoolPtr(true),
+			Punctuation: utils.AsBoolPtr(true),
+		},
 	}
 
 	if err := c.UpdatePasswordSettings(ctx, resourceGroupID, projectID, passwordSettings); err != nil {
@@ -240,7 +247,7 @@ func readPasswordSettingsFromResource(d *schema.ResourceData) (*client.PasswordS
 
 	passwordSettings := &client.PasswordSettings{
 		EnablePeriodicRotation:            GetBoolPtrFromResource(attributes.EnablePeriodicRotation, d, true),
-		PeriodicRotationDurationInSeconds: GetIntPtrFromResource(attributes.PeriodicRotationDurationInSeconds, d, true),
+		PeriodicRotationDurationInSeconds: GetIntPtrFromResource(attributes.PeriodicRotationDurationInSeconds, d, false),
 		MinLengthInBytes:                  GetIntPtrFromResource(attributes.MinLength, d, true),
 		MaxLengthInBytes:                  GetIntPtrFromResource(attributes.MaxLength, d, true),
 		CharacterOptions:                  characterOptions,
@@ -259,7 +266,7 @@ func readPasswordSettingsFromResource(d *schema.ResourceData) (*client.PasswordS
 			Severity: diag.Error,
 			Summary:  fmt.Sprintf("%s must be set to a positive, non-zero value when %s is set to true in %s", attributes.PeriodicRotationDurationInSeconds, attributes.EnablePeriodicRotation, attributes.PasswordSettings),
 		})
-	} else if !*passwordSettings.EnablePeriodicRotation && *passwordSettings.PeriodicRotationDurationInSeconds != 0 {
+	} else if !*passwordSettings.EnablePeriodicRotation && passwordSettings.PeriodicRotationDurationInSeconds != nil && *passwordSettings.PeriodicRotationDurationInSeconds != 0 {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Warning,
 			Summary:  fmt.Sprintf("%s will be ignored since %s is set to false in %s", attributes.PeriodicRotationDurationInSeconds, attributes.EnablePeriodicRotation, attributes.PasswordSettings),

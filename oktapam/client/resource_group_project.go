@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"strconv"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
@@ -15,21 +14,16 @@ import (
 )
 
 type ResourceGroupProject struct {
-	Name                *string `json:"name"`
-	ID                  *string `json:"id,omitempty"`
-	Team                *string `json:"team,omitempty"`
-	ResourceGroupID     *string `json:"resource_group_id,omitempty"`
-	DeletedAt           *string `json:"deleted_at,omitempty"`
-	NextUnixGID         *int    `json:"next_unix_gid,omitempty"`
-	NextUnixUID         *int    `json:"next_unix_uid,omitempty"`
-	CreateServerUsers   *bool   `json:"create_server_users,omitempty"`
-	ForwardTraffic      *bool   `json:"forward_traffic,omitempty"`
-	RDPSessionRecording *bool   `json:"rdp_session_recording,omitempty"`
-	SSHSessionRecording *bool   `json:"ssh_session_recording,omitempty"`
-	GatewaySelector     *string `json:"gateway_selector,omitempty"`
-	SSHCertificateType  *string `json:"ssh_certificate_type,omitempty"`
-	UserOnDemandPeriod  *int    `json:"user_on_demand_period,omitempty"`
-	AccountDiscovery    *bool   `json:"server_account_management,omitempty"`
+	Name               *string `json:"name"`
+	ID                 *string `json:"id,omitempty"`
+	Team               *string `json:"team,omitempty"`
+	ResourceGroupID    *string `json:"resource_group_id,omitempty"`
+	DeletedAt          *string `json:"deleted_at,omitempty"`
+	NextUnixGID        *int    `json:"next_unix_gid,omitempty"`
+	NextUnixUID        *int    `json:"next_unix_uid,omitempty"`
+	GatewaySelector    *string `json:"gateway_selector,omitempty"`
+	SSHCertificateType *string `json:"ssh_certificate_type,omitempty"`
+	AccountDiscovery   *bool   `json:"server_account_management,omitempty"`
 }
 
 func (p ResourceGroupProject) ToResourceMap() map[string]any {
@@ -56,23 +50,8 @@ func (p ResourceGroupProject) ToResourceMap() map[string]any {
 	if p.GatewaySelector != nil {
 		m[attributes.GatewaySelector] = *p.GatewaySelector
 	}
-	if p.CreateServerUsers != nil {
-		m[attributes.CreateServerUsers] = *p.CreateServerUsers
-	}
-	if p.ForwardTraffic != nil {
-		m[attributes.ForwardTraffic] = *p.ForwardTraffic
-	}
-	if p.RDPSessionRecording != nil {
-		m[attributes.RDPSessionRecording] = *p.RDPSessionRecording
-	}
-	if p.SSHSessionRecording != nil {
-		m[attributes.SSHSessionRecording] = *p.SSHSessionRecording
-	}
 	if p.SSHCertificateType != nil {
 		m[attributes.SSHCertificateType] = *p.SSHCertificateType
-	}
-	if p.UserOnDemandPeriod != nil {
-		m[attributes.UserOnDemandPeriod] = *p.UserOnDemandPeriod
 	}
 	if p.AccountDiscovery != nil {
 		m[attributes.AccountDiscovery] = *p.AccountDiscovery
@@ -85,38 +64,19 @@ func (p ResourceGroupProject) Exists() bool {
 	return utils.IsNonEmpty(p.ID) && utils.IsBlank(p.DeletedAt)
 }
 
-type ListResourceGroupProjectsParameters struct {
-	ResourceGroupID string
-	Self            bool
-	Contains        string
-}
-
-func (p ListResourceGroupProjectsParameters) toQueryParametersMap() map[string]string {
-	m := make(map[string]string, 2)
-
-	if p.Self {
-		m[attributes.Self] = strconv.FormatBool(p.Self)
-	}
-	if p.Contains != "" {
-		m[attributes.Contains] = p.Contains
-	}
-
-	return m
-}
-
 type ResourceGroupProjectsListResponse struct {
 	ResourceGroupProjects []ResourceGroupProject `json:"list"`
 }
 
-func (c OktaPAMClient) ListResourceGroupProjects(ctx context.Context, parameters ListResourceGroupProjectsParameters) ([]ResourceGroupProject, error) {
-	requestURL := fmt.Sprintf("/v1/teams/%s/resource_groups/%s/projects", url.PathEscape(c.Team), url.PathEscape(parameters.ResourceGroupID))
+func (c OktaPAMClient) ListResourceGroupProjects(ctx context.Context, resourceGroupID string) ([]ResourceGroupProject, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/resource_groups/%s/projects", url.PathEscape(c.Team), url.PathEscape(resourceGroupID))
 	projects := make([]ResourceGroupProject, 0)
 
 	for {
 		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
 		logging.Tracef("making GET request to %s", requestURL)
 
-		resp, err := c.CreateBaseRequest(ctx).SetQueryParams(parameters.toQueryParametersMap()).SetResult(&ResourceGroupProjectsListResponse{}).Get(requestURL)
+		resp, err := c.CreateBaseRequest(ctx).SetResult(&ResourceGroupProjectsListResponse{}).Get(requestURL)
 		if err != nil {
 			logging.Errorf("received error while making request to %s", requestURL)
 			return nil, err

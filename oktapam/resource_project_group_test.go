@@ -15,6 +15,7 @@ import (
 )
 
 func TestAccProjectGroup(t *testing.T) {
+	checkTeamApplicable(t, false)
 	resourceName := "oktapam_project_group.test_acc_project_group"
 	projectName := fmt.Sprintf("test_acc_project_group_project_%s", randSeq())
 	groupName := fmt.Sprintf("test_acc_project_group_group_%s", randSeq())

@@ -32,7 +32,7 @@ func resourceServerEnrollmentToken() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: descriptions.DescriptionContains,
+				Description: descriptions.Description,
 			},
 			attributes.Token: {
 				Type:        schema.TypeString,

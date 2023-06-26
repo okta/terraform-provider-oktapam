@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
@@ -14,7 +15,7 @@ import (
 
 func resourceSecurityPolicy() *schema.Resource {
 	return &schema.Resource{
-		Description:   "SECURITY POLICY DESCRIPTION", // TODO: change this
+		Description:   descriptions.ResourceSecurityPolicy,
 		CreateContext: resourceSecurityPolicyCreate,
 		ReadContext:   resourceSecurityPolicyRead,
 		DeleteContext: resourceSecurityPolicyDelete,
@@ -29,7 +30,29 @@ func resourceSecurityPolicy() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: descriptions.Name,
-				// TODO: validation function
+				ValidateDiagFunc: func(i any, p cty.Path) diag.Diagnostics {
+					var diags diag.Diagnostics
+					if s, ok := i.(string); ok {
+						if s == "" {
+							diags = append(diags, diag.Diagnostic{
+								Severity: diag.Error,
+								Summary:  fmt.Sprintf("value for %s must not be empty", attributes.Name),
+							})
+						} else if len(s) > 255 {
+							diags = append(diags, diag.Diagnostic{
+								Severity: diag.Error,
+								Summary:  fmt.Sprintf("value for %s must be between 1 and 255 characters, inclusive", attributes.Name),
+							})
+						}
+					} else {
+						diags = append(diags, diag.Diagnostic{
+							Severity: diag.Error,
+							Summary:  fmt.Sprintf("value for %s must be a string", attributes.Name),
+						})
+					}
+
+					return diags
+				},
 			},
 			attributes.Description: {
 				Type:        schema.TypeString,
@@ -39,31 +62,23 @@ func resourceSecurityPolicy() *schema.Resource {
 			attributes.Active: {
 				Type:        schema.TypeBool,
 				Required:    true,
-				Description: "", // TODO: add description
+				Description: descriptions.SecurityPolicyActive,
 			},
 			attributes.Principals: {
 				Type:        schema.TypeList,
 				Required:    true,
 				MinItems:    1,
 				MaxItems:    1,
-				Description: "", // TODO: add description
+				Description: descriptions.SecurityPolicyPrincipals,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						attributes.Users: {
-							Type: schema.TypeList,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-							Optional:    true,
-							Description: "", // TODO: add description
-						},
 						attributes.Groups: {
-							Type: schema.TypeList,
+							Type: schema.TypeSet,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
 							Optional:    true,
-							Description: "", // TODO: add description
+							Description: descriptions.PrincipalGroupIDs,
 						},
 					},
 				},
@@ -73,13 +88,9 @@ func resourceSecurityPolicy() *schema.Resource {
 				Required:    true,
 				MinItems:    1,
 				MaxItems:    20,
-				Description: "", // TODO: add description
+				Description: descriptions.SecurityPolicyRule,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						attributes.ID: {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
 						attributes.Name: {
 							Type:        schema.TypeString,
 							Required:    true,
@@ -90,27 +101,27 @@ func resourceSecurityPolicy() *schema.Resource {
 							Required:    true,
 							MinItems:    1,
 							MaxItems:    1,
-							Description: "", // TODO: add description
+							Description: descriptions.SecurityPolicyResources,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									attributes.Servers: {
 										Type:        schema.TypeList,
-										Required:    true, // TODO: when we have other resource type, this would be optional?
+										Required:    true,
 										MinItems:    1,
 										MaxItems:    1,
-										Description: "", // TODO: add description
+										Description: descriptions.SecurityPolicyServers,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												attributes.Server: {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: "", // TODO: add description
+													Description: descriptions.SecurityPolicyServer,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
-															attributes.ServerId: {
+															attributes.ServerID: {
 																Type:        schema.TypeString,
 																Required:    true,
-																Description: "", // TODO: add description
+																Description: descriptions.ServerID,
 															},
 														},
 													},
@@ -118,18 +129,18 @@ func resourceSecurityPolicy() *schema.Resource {
 												attributes.ServerAccount: {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: "", // TODO: add description
+													Description: descriptions.SecurityPolicyServerAccount,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
-															attributes.ServerId: {
+															attributes.ServerID: {
 																Type:        schema.TypeString,
 																Required:    true,
-																Description: "", // TODO: add description
+																Description: descriptions.ServerID,
 															},
-															attributes.Username: {
+															attributes.Account: {
 																Type:        schema.TypeString,
 																Required:    true,
-																Description: "", // TODO: add description
+																Description: descriptions.LocalAccount,
 															},
 														},
 													},
@@ -138,21 +149,21 @@ func resourceSecurityPolicy() *schema.Resource {
 													Type:        schema.TypeList,
 													Optional:    true,
 													MaxItems:    1,
-													Description: "", // TODO: add description
+													Description: descriptions.SecurityPolicyLabelSelectors,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															attributes.ServerLabels: {
 																Type:        schema.TypeMap,
 																Required:    true,
-																Description: "", // TODO: add description
+																Description: descriptions.SecurityPolicyServerLabels,
 																Elem: &schema.Schema{
 																	Type: schema.TypeString,
 																},
 															},
-															attributes.Usernames: {
+															attributes.Accounts: {
 																Type:        schema.TypeList,
 																Optional:    true,
-																Description: "", // TODO: add description
+																Description: descriptions.LocalAccounts,
 																Elem: &schema.Schema{
 																	Type: schema.TypeString,
 																},
@@ -171,20 +182,20 @@ func resourceSecurityPolicy() *schema.Resource {
 							Required:    true,
 							MinItems:    1,
 							MaxItems:    1,
-							Description: "", // TODO: add description
+							Description: descriptions.Privileges,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									attributes.PasswordCheckoutRDP: {
 										Type:        schema.TypeList,
 										Optional:    true,
 										MaxItems:    1,
-										Description: "", // TODO: add description
+										Description: descriptions.PrivilegePasswordCheckoutRDP,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												attributes.Enabled: {
 													Type:        schema.TypeBool,
 													Required:    true,
-													Description: "", // TODO: add description
+													Description: descriptions.PrivilegeEnabled,
 												},
 											},
 										},
@@ -193,13 +204,13 @@ func resourceSecurityPolicy() *schema.Resource {
 										Type:        schema.TypeList,
 										Optional:    true,
 										MaxItems:    1,
-										Description: "",
+										Description: descriptions.PrivilegePasswordCheckoutSSH,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												attributes.Enabled: {
 													Type:        schema.TypeBool,
 													Required:    true,
-													Description: "", // TODO: add description
+													Description: descriptions.PrivilegeEnabled,
 												},
 											},
 										},
@@ -208,13 +219,13 @@ func resourceSecurityPolicy() *schema.Resource {
 										Type:        schema.TypeList,
 										Optional:    true,
 										MaxItems:    1,
-										Description: "",
+										Description: descriptions.PrivilegePrincipalAccountRDP,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												attributes.Enabled: {
 													Type:        schema.TypeBool,
 													Required:    true,
-													Description: "", // TODO: add description
+													Description: descriptions.PrivilegeEnabled,
 												},
 											},
 										},
@@ -223,13 +234,13 @@ func resourceSecurityPolicy() *schema.Resource {
 										Type:        schema.TypeList,
 										Optional:    true,
 										MaxItems:    1,
-										Description: "",
+										Description: descriptions.PrivilegePrincipalAccountSSH,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												attributes.Enabled: {
 													Type:        schema.TypeBool,
 													Required:    true,
-													Description: "", // TODO: add description
+													Description: descriptions.PrivilegeEnabled,
 												},
 											},
 										},
@@ -241,42 +252,49 @@ func resourceSecurityPolicy() *schema.Resource {
 							Type:        schema.TypeList,
 							Optional:    true,
 							MaxItems:    1,
-							Description: "", // TODO: add description
+							Description: descriptions.Conditions,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									attributes.AccessRequest: {
-										Type:     schema.TypeList,
-										Optional: true,
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: descriptions.ConditionAccessRequest,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												attributes.RequestTypeId: {
 													Type:        schema.TypeString,
 													Required:    true,
-													Description: "", // TODO: add description
+													Description: descriptions.ConditionAccessRequestRequestTypeID,
 												},
 												attributes.RequestTypeName: {
 													Type:        schema.TypeString,
 													Required:    true,
-													Description: "", // TODO: add description
+													Description: descriptions.ConditionAccessRequestRequestTypeName,
+												},
+												attributes.ExpiresAfterSeconds: {
+													Type:        schema.TypeInt,
+													Optional:    true,
+													Description: descriptions.ConditionAccessRequestExpiresAfterSeconds,
 												},
 											},
 										},
 									},
 									attributes.Gateway: {
-										Type:     schema.TypeList,
-										Optional: true,
-										MaxItems: 1,
+										Type:        schema.TypeList,
+										Optional:    true,
+										MaxItems:    1,
+										Description: descriptions.ConditionGateway,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												attributes.TrafficForwarding: {
 													Type:        schema.TypeBool,
 													Required:    true,
-													Description: "", // TODO: add description
+													Description: descriptions.ConditionTrafficForwarding,
 												},
 												attributes.SessionRecording: {
 													Type:        schema.TypeBool,
 													Required:    true,
-													Description: "", // TODO: add description
+													Description: descriptions.ConditionSessionRecording,
 												},
 											},
 										},
@@ -287,6 +305,9 @@ func resourceSecurityPolicy() *schema.Resource {
 					},
 				},
 			},
+		},
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
@@ -375,9 +396,10 @@ func readPolicyFromResourceData(d *schema.ResourceData) (client.SecurityPolicy, 
 		id = &idS
 	}
 	policy := client.SecurityPolicy{
-		ID:     id,
-		Name:   GetStringPtrFromResource(attributes.Name, d, false),
-		Active: GetBoolPtrFromResource(attributes.Active, d, false),
+		ID:          id,
+		Name:        GetStringPtrFromResource(attributes.Name, d, false),
+		Active:      GetBoolPtrFromResource(attributes.Active, d, false),
+		Description: GetStringPtrFromResource(attributes.Description, d, false),
 	}
 
 	if principals, principalsDiags := readPrincipalsFromResourceData(d); principalsDiags != nil {
@@ -465,6 +487,13 @@ func readConditions(conditionsAttr []any) ([]*client.SecurityPolicyRuleCondition
 		return nil, nil
 	}
 
+	if conditionsAttr[0] == nil {
+		return nil, diag.Diagnostics{diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "conditions block should not be empty",
+		}}
+	}
+
 	var diags diag.Diagnostics
 	var conditions []*client.SecurityPolicyRuleConditionContainer
 	conditionsM := conditionsAttr[0].(map[string]any)
@@ -487,9 +516,17 @@ func readConditions(conditionsAttr []any) ([]*client.SecurityPolicyRuleCondition
 					Summary:  fmt.Sprintf("%s must be between 1 and 1024 characters, inclusive", attributes.RequestTypeName),
 				})
 			}
+
+			var expiresAfterSeconds *int
+			if expiresAfterSecondsAttr, ok := accessRequestM[attributes.ExpiresAfterSeconds]; ok {
+				expiresAfterSecondsI := expiresAfterSecondsAttr.(int)
+				expiresAfterSeconds = &expiresAfterSecondsI
+			}
+
 			accessRequest := &client.AccessRequestCondition{
-				RequestTypeID:   &requestTypeId,
-				RequestTypeName: &requestTypeName,
+				RequestTypeID:       &requestTypeId,
+				RequestTypeName:     &requestTypeName,
+				ExpiresAfterSeconds: expiresAfterSeconds,
 			}
 
 			conditions = append(conditions, &client.SecurityPolicyRuleConditionContainer{
@@ -525,6 +562,14 @@ func readConditions(conditionsAttr []any) ([]*client.SecurityPolicyRuleCondition
 func readResourceSelector(resourcesAttr []any) (client.SecurityPolicyRuleResourceSelector, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
+	if len(resourcesAttr) == 0 {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "must supply at least one resource selector",
+		})
+		return nil, diags
+	}
+
 	resourcesI := resourcesAttr[0].(map[string]any)
 
 	if serversI, ok := resourcesI[attributes.Servers]; ok {
@@ -546,6 +591,13 @@ func readServersSelector(serversAttr any) ([]client.ServerBasedResourceSubSelect
 	subSelectors := make([]client.ServerBasedResourceSubSelectorContainer, 0, 5)
 
 	serversArr := serversAttr.([]any)
+	if len(serversArr) == 0 || serversArr[0] == nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  fmt.Sprintf("selector within %s block must be supplied", attributes.Servers),
+		})
+		return nil, diags
+	}
 	serversM := serversArr[0].(map[string]any)
 
 	if serversAttr, ok := serversM[attributes.Server]; ok {
@@ -626,18 +678,18 @@ func readServerLabelBasedSubSelectors(labelSelectorsArr []any) ([]*client.Server
 			Labels: serverLabels,
 		}
 
-		usernamesI := labelSelectorsM[attributes.Usernames]
-		usernamesArr := usernamesI.([]any)
+		accountsI := labelSelectorsM[attributes.Accounts]
+		accountsArr := accountsI.([]any)
 
 		var accountSelector client.AccountSelector
-		if len(usernamesArr) == 0 {
+		if len(accountsArr) == 0 {
 			accountSelector = &client.NoneAccountSelector{}
 		} else {
-			usernames := make([]string, len(usernamesArr))
-			for uIdx, usernameI := range usernamesArr {
-				usernames[uIdx] = usernameI.(string)
+			accounts := make([]string, len(accountsArr))
+			for aIdx, accountI := range accountsArr {
+				accounts[aIdx] = accountI.(string)
 			}
-			accountSelector = &client.UsernameAccountSelector{Usernames: usernames}
+			accountSelector = &client.UsernameAccountSelector{Usernames: accounts}
 		}
 		subSelector.AccountSelector = accountSelector
 		subSelector.AccountSelectorType = accountSelector.AccountSelectorType()
@@ -655,12 +707,12 @@ func readIndividualServerAccountSubSelectors(serverAccountsArr []any) ([]*client
 
 	for idx, serverI := range serverAccountsArr {
 		serverM := serverI.(map[string]any)
-		serverId := serverM[attributes.ServerId].(string)
-		username := serverM[attributes.Username].(string)
+		serverId := serverM[attributes.ServerID].(string)
+		account := serverM[attributes.Account].(string)
 		if MatchesUUID(serverId) {
 			subSelectors[idx] = &client.IndividualServerAccountSubSelector{
-				ServerId: ConvertToNamedObject(serverId, client.ServerNamedObjectType),
-				Username: &username,
+				Server:   ConvertToNamedObject(serverId, client.ServerNamedObjectType),
+				Username: &account,
 			}
 		} else {
 			diags = append(diags, diag.Diagnostic{
@@ -680,11 +732,11 @@ func readIndividualServerSubSelectors(serversArr []any) ([]*client.IndividualSer
 
 	for idx, serverI := range serversArr {
 		serverM := serverI.(map[string]any)
-		serverIdI := serverM[attributes.ServerId]
+		serverIdI := serverM[attributes.ServerID]
 		serverId := serverIdI.(string)
 		if MatchesUUID(serverId) {
 			subSelectors[idx] = &client.IndividualServerSubSelector{
-				ServerId: ConvertToNamedObject(serverId, client.ServerNamedObjectType),
+				Server: ConvertToNamedObject(serverId, client.ServerNamedObjectType),
 			}
 		} else {
 			diags = append(diags, diag.Diagnostic{
@@ -701,6 +753,13 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 	var diags diag.Diagnostics
 
 	privileges := make([]*client.SecurityPolicyRulePrivilegeContainer, 0, 4)
+	if len(privilegesAttr) == 0 || privilegesAttr[0] == nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "must include privileges for rule",
+		})
+		return nil, diags
+	}
 	privilegesM := privilegesAttr[0].(map[string]any)
 
 	if passwordCheckoutRDPI, ok := privilegesM[attributes.PasswordCheckoutRDP]; ok {
@@ -770,23 +829,26 @@ func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPol
 	var diags diag.Diagnostics
 	principals := &client.SecurityPolicyPrincipals{}
 
-	principalsAttr := d.Get("principals").([]any)
+	principalsAttr := d.Get(attributes.Principals).([]any)
 	if len(principalsAttr) != 1 {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "must have exactly one principal block",
-		})
+		return nil, diag.Diagnostics{
+			diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("must have exactly one %s block", attributes.Principals),
+			},
+		}
+	}
+
+	if principalsAttr[0] == nil {
+		return nil, diag.Diagnostics{
+			diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("cannot have an empty %s block", attributes.Principals),
+			},
+		}
 	}
 
 	principalMap := principalsAttr[0].(map[string]any)
-	if usersAttr, ok := principalMap[attributes.Users]; ok {
-		users, usersDiag := GetUUIDSlice(usersAttr, attributes.Users)
-		if usersDiag != nil {
-			diags = append(diags, usersDiag...)
-		} else {
-			principals.Users = ConvertToNamedObjectSlice(users, client.UserNamedObjectType)
-		}
-	}
 	if usersAttr, ok := principalMap[attributes.Groups]; ok {
 		groups, groupsDiag := GetUUIDSlice(usersAttr, attributes.Groups)
 		if groupsDiag != nil {
@@ -796,10 +858,10 @@ func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPol
 		}
 	}
 
-	if diags == nil && len(principals.Users) == 0 && len(principals.UserGroups) == 0 {
+	if diags == nil && len(principals.UserGroups) == 0 {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
-			Summary:  "must include at least one user or group in principals",
+			Summary:  "must include at least one group in principals",
 		})
 	}
 

@@ -18,7 +18,7 @@ import (
 
 func resourceResourceGroupProject() *schema.Resource {
 	return &schema.Resource{
-		Description:   "", // TODO: add description
+		Description:   descriptions.ResourceResourceGroupProject,
 		CreateContext: resourceResourceGroupProjectCreate,
 		ReadContext:   resourceResourceGroupProjectRead,
 		UpdateContext: resourceResourceGroupProjectUpdate,
@@ -39,7 +39,7 @@ func resourceResourceGroupProject() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "", // TODO: add description
+				Description: descriptions.ResourceGroupID,
 			},
 			attributes.Team: {
 				Type:        schema.TypeString,
@@ -58,44 +58,15 @@ func resourceResourceGroupProject() *schema.Resource {
 				Default:     60001,
 				Description: descriptions.NextUnixUID,
 			},
-			attributes.CreateServerUsers: {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     true,
-				Description: descriptions.CreateServerUsers,
-			},
 			attributes.DeletedAt: {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: descriptions.DeletedAt,
 			},
-			attributes.ForwardTraffic: {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: descriptions.ForwardTraffic,
-			},
-			attributes.RDPSessionRecording: {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: descriptions.RDPSessionRecording,
-			},
-			attributes.SSHSessionRecording: {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: descriptions.SSHSessionRecording,
-			},
 			attributes.GatewaySelector: {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: descriptions.GatewaySelector,
-			},
-			attributes.UserOnDemandPeriod: {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: descriptions.UserOnDemandPeriod,
 			},
 			attributes.SSHCertificateType: {
 				Type:        schema.TypeString,
@@ -134,16 +105,7 @@ func resourceResourceGroupProject() *schema.Resource {
 			attributes.AccountDiscovery: {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "", // TODO: add description
-			},
-			attributes.PasswordSettings: {
-				Type:     schema.TypeList,
-				Optional: true,
-				MinItems: 1,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{},
-				},
+				Description: descriptions.AccountDiscovery,
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -164,18 +126,13 @@ func resourceResourceGroupProjectCreate(ctx context.Context, d *schema.ResourceD
 	c := m.(client.OktaPAMClient)
 
 	project := client.ResourceGroupProject{
-		Name:                GetStringPtrFromResource(attributes.Name, d, true),
-		ResourceGroupID:     GetStringPtrFromResource(attributes.ResourceGroup, d, true),
-		NextUnixGID:         GetIntPtrFromResource(attributes.NextUnixGID, d, false),
-		NextUnixUID:         GetIntPtrFromResource(attributes.NextUnixUID, d, false),
-		CreateServerUsers:   GetBoolPtrFromResource(attributes.CreateServerUsers, d, false),
-		ForwardTraffic:      GetBoolPtrFromResource(attributes.ForwardTraffic, d, false),
-		RDPSessionRecording: GetBoolPtrFromResource(attributes.RDPSessionRecording, d, false),
-		SSHSessionRecording: GetBoolPtrFromResource(attributes.SSHSessionRecording, d, false),
-		GatewaySelector:     GetStringPtrFromResource(attributes.GatewaySelector, d, false),
-		SSHCertificateType:  GetStringPtrFromResource(attributes.SSHCertificateType, d, false),
-		UserOnDemandPeriod:  GetIntPtrFromResource(attributes.UserOnDemandPeriod, d, false),
-		AccountDiscovery:    GetBoolPtrFromResource(attributes.AccountDiscovery, d, false),
+		Name:               GetStringPtrFromResource(attributes.Name, d, true),
+		ResourceGroupID:    GetStringPtrFromResource(attributes.ResourceGroup, d, true),
+		NextUnixGID:        GetIntPtrFromResource(attributes.NextUnixGID, d, false),
+		NextUnixUID:        GetIntPtrFromResource(attributes.NextUnixUID, d, false),
+		GatewaySelector:    GetStringPtrFromResource(attributes.GatewaySelector, d, false),
+		SSHCertificateType: GetStringPtrFromResource(attributes.SSHCertificateType, d, false),
+		AccountDiscovery:   GetBoolPtrFromResource(attributes.AccountDiscovery, d, false),
 	}
 
 	resultingProject, err := c.CreateResourceGroupProject(ctx, project)
@@ -268,12 +225,7 @@ func resourceResourceGroupProjectUpdate(ctx context.Context, d *schema.ResourceD
 	changeableAttributes := []string{
 		attributes.NextUnixGID,
 		attributes.NextUnixUID,
-		attributes.CreateServerUsers,
-		attributes.ForwardTraffic,
-		attributes.RDPSessionRecording,
-		attributes.SSHSessionRecording,
 		attributes.GatewaySelector,
-		attributes.UserOnDemandPeriod,
 		attributes.SSHCertificateType,
 		attributes.AccountDiscovery,
 	}

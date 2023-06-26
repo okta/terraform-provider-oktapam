@@ -9,6 +9,7 @@ import (
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
+	"github.com/tomnomnom/linkheader"
 )
 
 type PrivilegeType string
@@ -80,20 +81,54 @@ func (p SecurityPolicy) ToResourceMap() map[string]any {
 	return m
 }
 
+type SecurityPoliciesListResponse struct {
+	SecurityPolicies []SecurityPolicy `json:"list"`
+}
+
+func (c OktaPAMClient) ListSecurityPolicies(ctx context.Context) ([]SecurityPolicy, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/security_policy", url.PathEscape(c.Team))
+	securityPolicies := make([]SecurityPolicy, 0)
+
+	for {
+		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
+		logging.Tracef("making GET request to %s", requestURL)
+
+		resp, err := c.CreateBaseRequest(ctx).SetResult(&SecurityPoliciesListResponse{}).Get(requestURL)
+		if err != nil {
+			logging.Errorf("received error while making request to %s", requestURL)
+			return nil, err
+		}
+		if _, err := checkStatusCode(resp, http.StatusOK); err != nil {
+			return nil, err
+		}
+
+		securityPoliciesListResponse := resp.Result().(*SecurityPoliciesListResponse)
+		securityPolicies = append(securityPolicies, securityPoliciesListResponse.SecurityPolicies...)
+
+		linkHeader := resp.Header().Get("Link")
+		if linkHeader == "" {
+			break
+		}
+		links := linkheader.Parse(linkHeader)
+		requestURL = ""
+
+		for _, link := range links {
+			if link.Rel == "next" {
+				requestURL = link.URL
+				break
+			}
+		}
+	}
+
+	return securityPolicies, nil
+}
+
 type SecurityPolicyPrincipals struct {
 	UserGroups []NamedObject `json:"user_groups"`
-	Users      []NamedObject `json:"users"`
 }
 
 func (p *SecurityPolicyPrincipals) ToResourceMap() map[string]any {
 	m := make(map[string]any)
-
-	userIds := make([]any, len(p.Users))
-	for idx, userId := range p.Users {
-		u := userId
-		userIds[idx] = *u.Id
-	}
-	m[attributes.Users] = userIds
 
 	groupIds := make([]any, len(p.UserGroups))
 	for idx, groupId := range p.UserGroups {
@@ -142,8 +177,9 @@ type SecurityPolicyRuleCondition interface {
 }
 
 type AccessRequestCondition struct {
-	RequestTypeID   *string `json:"request_type_id"`
-	RequestTypeName *string `json:"request_type_name"`
+	RequestTypeID       *string `json:"request_type_id"`
+	RequestTypeName     *string `json:"request_type_name"`
+	ExpiresAfterSeconds *int    `json:"expires_after_seconds"`
 }
 
 func (c *AccessRequestCondition) ToResourceMap() map[string]any {
@@ -151,6 +187,9 @@ func (c *AccessRequestCondition) ToResourceMap() map[string]any {
 
 	m[attributes.RequestTypeId] = *c.RequestTypeID
 	m[attributes.RequestTypeName] = *c.RequestTypeName
+	if c.ExpiresAfterSeconds != nil {
+		m[attributes.ExpiresAfterSeconds] = *c.ExpiresAfterSeconds
+	}
 
 	return m
 }
@@ -222,7 +261,7 @@ type ServerBasedResourceSubSelector interface {
 }
 
 type IndividualServerSubSelector struct {
-	ServerId NamedObject `json:"server"`
+	Server NamedObject `json:"server"`
 }
 
 func (*IndividualServerSubSelector) ServerBasedResourceSubSelectorType() ServerBasedResourceSubSelectorType {
@@ -231,12 +270,12 @@ func (*IndividualServerSubSelector) ServerBasedResourceSubSelectorType() ServerB
 
 func (s *IndividualServerSubSelector) ToResourceMap() map[string]any {
 	m := make(map[string]any)
-	m[attributes.ServerId] = *s.ServerId.Id
+	m[attributes.ServerID] = *s.Server.Id
 	return m
 }
 
 type IndividualServerAccountSubSelector struct {
-	ServerId NamedObject `json:"server"`
+	Server   NamedObject `json:"server"`
 	Username *string     `json:"username"`
 }
 
@@ -246,8 +285,8 @@ func (*IndividualServerAccountSubSelector) ServerBasedResourceSubSelectorType() 
 
 func (s *IndividualServerAccountSubSelector) ToResourceMap() map[string]any {
 	m := make(map[string]any)
-	m[attributes.ServerId] = *s.ServerId.Id
-	m[attributes.Username] = *s.Username
+	m[attributes.ServerID] = *s.Server.Id
+	m[attributes.Account] = *s.Username
 	return m
 }
 
@@ -277,7 +316,7 @@ func (s *ServerLabelBasedSubSelector) ToResourceMap() map[string]any {
 		usernamesArr = stringSliceToInterfaceSlice(s.AccountSelector.(*UsernameAccountSelector).Usernames)
 	}
 
-	m[attributes.Usernames] = usernamesArr
+	m[attributes.Accounts] = usernamesArr
 
 	return m
 }
@@ -521,7 +560,7 @@ func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 	}
 
 	conditions := make([]any, 0, 1)
-	if r.Conditions != nil {
+	if len(r.Conditions) != 0 {
 		conditionsM := make(map[string]any, 1)
 		accessRequests := make([]any, 0, len(r.Conditions))
 		gateways := make([]any, 0, len(r.Conditions))

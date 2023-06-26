@@ -13,6 +13,7 @@ import (
 )
 
 func TestAccDatasourceProjectList(t *testing.T) {
+	checkTeamApplicable(t, false)
 	prefix := "data.oktapam_projects"
 
 	// Generate details

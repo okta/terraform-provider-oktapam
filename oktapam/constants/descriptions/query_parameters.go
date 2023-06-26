@@ -22,6 +22,7 @@ var (
 	FilterStatus                       = "If a value is provided, includes ASA Users with specified statuses. Valid statuses include: `ACTIVE`, `DISABLED`, and `DELETED`."
 	FilterConnectionID                 = "The id of an ASA AD Connection. Results are returned for only this Connection."
 	FilterADUserSyncTaskSettingsStatus = "If a value is provided, includes ASA user sync task settings with specified status. Valid statuses are `ACTIVE` and `INACTIVE`."
+	FilterName                         = "The name of the resource"
 
 	// Client-Side Filter
 	FilterUserType = "Valid types are `human` and `service`. If left unspecified, both types will be included."

@@ -14,7 +14,7 @@ import (
 
 func resourceResourceGroup() *schema.Resource {
 	return &schema.Resource{
-		Description:   "", // TODO: change this
+		Description:   descriptions.ResourceResourceGroup,
 		CreateContext: resourceResourceGroupCreate,
 		ReadContext:   resourceResourceGroupRead,
 		DeleteContext: resourceResourceGroupDelete,
@@ -42,13 +42,11 @@ func resourceResourceGroup() *schema.Resource {
 								Severity: diag.Error,
 								Summary:  fmt.Sprintf("value for %s must be between 1 and 255 characters, inclusive", attributes.Name),
 							})
-						} else {
-							if !MatchesSimpleName(s) {
-								diags = append(diags, diag.Diagnostic{
-									Severity: diag.Error,
-									Summary:  fmt.Sprintf("value for %s may only contain alphanumeric characters (a-Z, 0-9), hyphens (-), underscores (_), and periods (.)", attributes.Name),
-								})
-							}
+						} else if !MatchesSimpleName(s) {
+							diags = append(diags, diag.Diagnostic{
+								Severity: diag.Error,
+								Summary:  fmt.Sprintf("value for %s may only contain alphanumeric characters (a-Z, 0-9), hyphens (-), underscores (_), and periods (.)", attributes.Name),
+							})
 						}
 					} else {
 						diags = append(diags, diag.Diagnostic{
@@ -66,13 +64,16 @@ func resourceResourceGroup() *schema.Resource {
 				Description: descriptions.Description,
 			},
 			attributes.DelegatedResourceAdminGroups: {
-				Type: schema.TypeList,
+				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 				Required:    true,
 				Description: descriptions.DelegatedAdminGroups,
 			},
+		},
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }

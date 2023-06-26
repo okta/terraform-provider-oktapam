@@ -16,13 +16,18 @@ import (
 func TestAccGroup(t *testing.T) {
 	resourceName := "oktapam_group.test_group"
 	groupName := fmt.Sprintf("test_acc_group_%s", randSeq())
+	roleName := "access_user"
+	if isExecutingPAMTest() {
+		roleName = "end_user"
+	}
+
 	initialGroup := client.Group{
 		Name:  &groupName,
 		Roles: make([]string, 0),
 	}
 	updatedGroup := client.Group{
 		Name:  &groupName,
-		Roles: []string{"access_user"},
+		Roles: []string{roleName},
 	}
 
 	resource.Test(t, resource.TestCase{
@@ -40,7 +45,7 @@ func TestAccGroup(t *testing.T) {
 				),
 			},
 			{
-				Config: createTestAccGroupUpdateConfig(groupName),
+				Config: createTestAccGroupUpdateConfig(groupName, roleName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccGroupCheckExists(resourceName, updatedGroup),
 					resource.TestCheckResourceAttr(
@@ -117,12 +122,12 @@ func createTestAccGroupCreateConfig(groupName string) string {
 const testAccGroupUpdateConfigFormat = `
 resource "oktapam_group" "test_group" {
 	name = "%s"
-	roles = ["access_user"]
+	roles = ["%s"]
 }
 `
 
-func createTestAccGroupUpdateConfig(groupName string) string {
-	return fmt.Sprintf(testAccGroupUpdateConfigFormat, groupName)
+func createTestAccGroupUpdateConfig(groupName, roleName string) string {
+	return fmt.Sprintf(testAccGroupUpdateConfigFormat, groupName, roleName)
 }
 
 func testAccGroupImportStateId(resourceName string) resource.ImportStateIdFunc {

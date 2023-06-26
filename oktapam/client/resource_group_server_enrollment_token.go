@@ -13,23 +13,23 @@ import (
 )
 
 type ResourceGroupServerEnrollmentToken struct {
-	Project       *string `json:"-"`
-	ResourceGroup *string `json:"-"`
-	Description   *string `json:"description"`
-	Token         *string `json:"token,omitempty"`
-	ID            *string `json:"id,omitempty"`
-	CreatedByUser *string `json:"created_by_user,omitempty"`
-	IssuedAt      *string `json:"issued_at,omitempty"`
+	ProjectID       *string `json:"-"`
+	ResourceGroupID *string `json:"-"`
+	Description     *string `json:"description"`
+	Token           *string `json:"token,omitempty"`
+	ID              *string `json:"id,omitempty"`
+	CreatedByUser   *string `json:"created_by_user,omitempty"`
+	IssuedAt        *string `json:"issued_at,omitempty"`
 }
 
 func (t ResourceGroupServerEnrollmentToken) ToResourceMap() map[string]any {
 	m := make(map[string]any)
 
-	if t.Project != nil {
-		m[attributes.Project] = *t.Project
+	if t.ProjectID != nil {
+		m[attributes.Project] = *t.ProjectID
 	}
-	if t.ResourceGroup != nil {
-		m[attributes.ResourceGroup] = *t.ResourceGroup
+	if t.ResourceGroupID != nil {
+		m[attributes.ResourceGroup] = *t.ResourceGroupID
 	}
 	if t.Description != nil {
 		m[attributes.Description] = *t.Description
@@ -103,8 +103,8 @@ func (c OktaPAMClient) ListResourceGroupServerEnrollmentTokens(ctx context.Conte
 	}
 
 	for idx, token := range tokens {
-		token.Project = &projectID
-		token.ResourceGroup = &resourceGroupID
+		token.ProjectID = &projectID
+		token.ResourceGroupID = &resourceGroupID
 		tokens[idx] = token
 	}
 
@@ -133,8 +133,8 @@ func (c OktaPAMClient) GetResourceGroupServerEnrollmentToken(ctx context.Context
 		return nil, err
 	}
 	token := resp.Result().(*ResourceGroupServerEnrollmentToken)
-	token.Project = &projectID
-	token.ResourceGroup = &resourceGroupID
+	token.ProjectID = &projectID
+	token.ResourceGroupID = &resourceGroupID
 
 	return token, nil
 }
@@ -162,8 +162,8 @@ func (c OktaPAMClient) CreateResourceGroupServerEnrollmentToken(ctx context.Cont
 		logging.Tracef("unexpected status code: %d", resp.StatusCode())
 		return ResourceGroupServerEnrollmentToken{}, err
 	}
-	token.Project = &projectID
-	token.ResourceGroup = &resourceGroupID
+	token.ProjectID = &projectID
+	token.ResourceGroupID = &resourceGroupID
 
 	return token, nil
 }

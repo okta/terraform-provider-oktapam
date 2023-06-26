@@ -31,47 +31,48 @@ func GetStringSliceFromResource(attrName string, d *schema.ResourceData, optiona
 	return GetStringSlice(attrsI, attrName)
 }
 
-func GetStringSlice(attr any, attrName string) ([]string, diag.Diagnostics) {
-	var diags diag.Diagnostics
-	attrsI := attr.([]any)
-	strs := make([]string, len(attrsI))
-	for idx, strI := range attrsI {
-		if str, ok := strI.(string); ok {
-			strs[idx] = str
-		} else {
-			diags = append(diags, diag.Diagnostic{
-				Severity: diag.Error,
-				Summary:  fmt.Sprintf("values for %s must be strings", attrName),
-			})
-		}
+func GetUUIDSlice(attr any, attrName string) ([]string, diag.Diagnostics) {
+	uuids, diags := GetStringSlice(attr, attrName)
+	if diags != nil {
+		return nil, diags
 	}
 
-	return strs, diags
-}
-
-func GetUUIDSlice(attr any, attrName string) ([]string, diag.Diagnostics) {
-	var diags diag.Diagnostics
-	attrsI := attr.([]any)
-	uuids := make([]string, len(attrsI))
-	for idx, uuidI := range attrsI {
-		if uuid, ok := uuidI.(string); ok {
-			if !MatchesUUID(uuid) {
-				diags = append(diags, diag.Diagnostic{
-					Severity: diag.Error,
-					Summary:  fmt.Sprintf("value for %s must be a UUID: %s", attrName, uuid),
-				})
-			} else {
-				uuids[idx] = uuid
-			}
-		} else {
+	for _, uuid := range uuids {
+		if !MatchesUUID(uuid) {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Error,
-				Summary:  fmt.Sprintf("values for %s must be strings", attrName),
+				Summary:  fmt.Sprintf("value for %s must be a UUID: %s", attrName, uuid),
 			})
 		}
 	}
 
 	return uuids, diags
+}
+
+func GetStringSlice(attr any, attrName string) ([]string, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	switch attrsI := attr.(type) {
+	case []any:
+		strs := make([]string, len(attrsI))
+		for idx, strI := range attrsI {
+			if str, ok := strI.(string); ok {
+				strs[idx] = str
+			} else {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Error,
+					Summary:  fmt.Sprintf("values for %s must be strings", attrName),
+				})
+			}
+		}
+
+		return strs, diags
+	case *schema.Set:
+		return GetStringSlice(attrsI.List(), attrName)
+	default:
+		panic(fmt.Sprintf("cannot convert type to string slice: %T", attr))
+	}
+
 }
 
 func ConvertToNamedObject(id string, objectType client.NamedObjectType) client.NamedObject {

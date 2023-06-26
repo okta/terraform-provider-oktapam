@@ -15,6 +15,7 @@ import (
 )
 
 func TestAccADTaskSettings(t *testing.T) {
+	checkTeamApplicable(t, false)
 	adTaskResourceName := "oktapam_ad_task_settings.test_acc_ad_task_settings"
 
 	nameIdentifier := randSeq()
@@ -96,10 +97,10 @@ func TestAccADTaskSettings(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      adTaskResourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: testAccADTaskSettingsImportStateId(adTaskResourceName),
+				ResourceName:            adTaskResourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       testAccADTaskSettingsImportStateId(adTaskResourceName),
 				ImportStateVerifyIgnore: []string{attributes.RunTest},
 			},
 		},

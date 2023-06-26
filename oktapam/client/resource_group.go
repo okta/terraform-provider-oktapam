@@ -8,6 +8,7 @@ import (
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
+	"github.com/tomnomnom/linkheader"
 )
 
 type ResourceGroup struct {
@@ -16,6 +17,48 @@ type ResourceGroup struct {
 	TeamID                       *string       `json:"team_id,omitempty"`
 	Description                  *string       `json:"description"`
 	DelegatedResourceAdminGroups []NamedObject `json:"delegated_resource_admin_groups"`
+}
+
+type ResourceGroupsListResponse struct {
+	ResourceGroups []ResourceGroup `json:"list"`
+}
+
+func (c OktaPAMClient) ListResourceGroups(ctx context.Context) ([]ResourceGroup, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/resource_groups", url.PathEscape(c.Team))
+	resourceGroups := make([]ResourceGroup, 0)
+
+	for {
+		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
+		logging.Tracef("making GET request to %s", requestURL)
+
+		resp, err := c.CreateBaseRequest(ctx).SetResult(&ResourceGroupsListResponse{}).Get(requestURL)
+		if err != nil {
+			logging.Errorf("received error while making request to %s", requestURL)
+			return nil, err
+		}
+		if _, err := checkStatusCode(resp, http.StatusOK); err != nil {
+			return nil, err
+		}
+
+		resourceGroupsListResponse := resp.Result().(*ResourceGroupsListResponse)
+		resourceGroups = append(resourceGroups, resourceGroupsListResponse.ResourceGroups...)
+
+		linkHeader := resp.Header().Get("Link")
+		if linkHeader == "" {
+			break
+		}
+		links := linkheader.Parse(linkHeader)
+		requestURL = ""
+
+		for _, link := range links {
+			if link.Rel == "next" {
+				requestURL = link.URL
+				break
+			}
+		}
+	}
+
+	return resourceGroups, nil
 }
 
 func (rg ResourceGroup) ToResourceMap() map[string]any {

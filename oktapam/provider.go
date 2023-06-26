@@ -21,34 +21,38 @@ const (
 	apiKeySecretKey = "oktapam_secret"
 	teamKey         = "oktapam_team"
 
-	providerADCertificateObjectKey                = "oktapam_ad_certificate_object"
-	providerADCertificateRequestKey               = "oktapam_ad_certificate_request"
-	providerADConnectionKey                       = "oktapam_ad_connection"
-	providerADConnectionsKey                      = "oktapam_ad_connections"
-	providerADTaskSettingsKey                     = "oktapam_ad_task_settings"
-	providerADUserSyncTaskSettingsKey             = "oktapam_ad_user_sync_task_settings"
-	providerADUserSyncTaskSettingsIDListKey       = "oktapam_ad_user_sync_task_settings_id_list"
-	providerGatewaysKey                           = "oktapam_gateways"
-	providerGatewaySetupTokenKey                  = "oktapam_gateway_setup_token"
-	providerGatewaySetupTokensKey                 = "oktapam_gateway_setup_tokens"
-	providerGroupKey                              = "oktapam_group"
-	providerGroupsKey                             = "oktapam_groups"
-	providerKubernetesClusterKey                  = "oktapam_kubernetes_cluster"
-	providerKubernetesClusterConnectionKey        = "oktapam_kubernetes_cluster_connection"
-	providerKubernetesClusterGroupKey             = "oktapam_kubernetes_cluster_group"
-	providerPasswordSettingsKey                   = "oktapam_password_settings"
-	providerProjectKey                            = "oktapam_project"
-	providerProjectsKey                           = "oktapam_projects"
-	providerProjectGroupKey                       = "oktapam_project_group"
-	providerProjectGroupsKey                      = "oktapam_project_groups"
-	providerResourceGroupKey                      = "oktapam_resource_group"
-	providerResourceGroupProjectKey               = "oktapam_resource_group_project"
-	providerResourceGroupServerEnrollmentTokenKey = "oktapam_resource_group_server_enrollment_token"
-	providerSecurityPolicyKey                     = "oktapam_security_policy"
-	providerServerEnrollmentTokenKey              = "oktapam_server_enrollment_token"
-	providerServerEnrollmentTokensKey             = "oktapam_server_enrollment_tokens"
-	providerTeamSettingsKey                       = "oktapam_team_settings"
-	providerUserKey                               = "oktapam_user"
+	providerADCertificateObjectKey                 = "oktapam_ad_certificate_object"
+	providerADCertificateRequestKey                = "oktapam_ad_certificate_request"
+	providerADConnectionKey                        = "oktapam_ad_connection"
+	providerADConnectionsKey                       = "oktapam_ad_connections"
+	providerADTaskSettingsKey                      = "oktapam_ad_task_settings"
+	providerADUserSyncTaskSettingsKey              = "oktapam_ad_user_sync_task_settings"
+	providerADUserSyncTaskSettingsIDListKey        = "oktapam_ad_user_sync_task_settings_id_list"
+	providerGatewaysKey                            = "oktapam_gateways"
+	providerGatewaySetupTokenKey                   = "oktapam_gateway_setup_token"
+	providerGatewaySetupTokensKey                  = "oktapam_gateway_setup_tokens"
+	providerGroupKey                               = "oktapam_group"
+	providerGroupsKey                              = "oktapam_groups"
+	providerKubernetesClusterKey                   = "oktapam_kubernetes_cluster"
+	providerKubernetesClusterConnectionKey         = "oktapam_kubernetes_cluster_connection"
+	providerKubernetesClusterGroupKey              = "oktapam_kubernetes_cluster_group"
+	providerPasswordSettingsKey                    = "oktapam_password_settings"
+	providerProjectKey                             = "oktapam_project"
+	providerProjectsKey                            = "oktapam_projects"
+	providerProjectGroupKey                        = "oktapam_project_group"
+	providerProjectGroupsKey                       = "oktapam_project_groups"
+	providerResourceGroupKey                       = "oktapam_resource_group"
+	providerResourceGroupsKey                      = "oktapam_resource_groups"
+	providerResourceGroupProjectKey                = "oktapam_resource_group_project"
+	providerResourceGroupProjectsKey               = "oktapam_resource_group_projects"
+	providerResourceGroupServerEnrollmentTokenKey  = "oktapam_resource_group_server_enrollment_token"
+	providerResourceGroupServerEnrollmentTokensKey = "oktapam_resource_group_server_enrollment_tokens"
+	providerSecurityPoliciesKey                    = "oktapam_security_policies"
+	providerSecurityPolicyKey                      = "oktapam_security_policy"
+	providerServerEnrollmentTokenKey               = "oktapam_server_enrollment_token"
+	providerServerEnrollmentTokensKey              = "oktapam_server_enrollment_tokens"
+	providerTeamSettingsKey                        = "oktapam_team_settings"
+	providerUserKey                                = "oktapam_user"
 )
 
 func Provider() *schema.Provider {
@@ -103,21 +107,30 @@ func Provider() *schema.Provider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			providerADConnectionsKey:                dataSourceADConnections(),
-			providerGatewaysKey:                     dataSourceGateways(),
-			providerGatewaySetupTokenKey:            dataSourceGatewaySetupToken(),
-			providerGatewaySetupTokensKey:           dataSourceGatewaySetupTokens(),
-			providerGroupKey:                        dataSourceGroup(),
-			providerGroupsKey:                       dataSourceGroups(),
-			providerProjectKey:                      dataSourceProject(),
-			providerProjectsKey:                     dataSourceProjects(),
-			providerProjectGroupKey:                 dataSourceProjectGroup(),
-			providerProjectGroupsKey:                dataSourceProjectGroups(),
-			providerServerEnrollmentTokenKey:        dataSourceServerEnrollmentToken(),
-			providerServerEnrollmentTokensKey:       dataSourceServerEnrollmentTokens(),
-			providerTeamSettingsKey:                 dataSourceTeamSettings(),
-			providerADUserSyncTaskSettingsKey:       dataSourceADUserSyncTaskSettings(),
-			providerADUserSyncTaskSettingsIDListKey: dataSourceADUserSyncTaskSettingsIDList(),
+			providerADConnectionsKey:                       dataSourceADConnections(),
+			providerGatewaysKey:                            dataSourceGateways(),
+			providerGatewaySetupTokenKey:                   dataSourceGatewaySetupToken(),
+			providerGatewaySetupTokensKey:                  dataSourceGatewaySetupTokens(),
+			providerGroupKey:                               dataSourceGroup(),
+			providerGroupsKey:                              dataSourceGroups(),
+			providerPasswordSettingsKey:                    dataSourcePasswordSettings(),
+			providerProjectKey:                             dataSourceProject(),
+			providerProjectsKey:                            dataSourceProjects(),
+			providerProjectGroupKey:                        dataSourceProjectGroup(),
+			providerProjectGroupsKey:                       dataSourceProjectGroups(),
+			providerResourceGroupsKey:                      dataSourceResourceGroups(),
+			providerResourceGroupKey:                       dataSourceResourceGroup(),
+			providerResourceGroupProjectKey:                dataSourceResourceGroupProject(),
+			providerResourceGroupProjectsKey:               dataSourceResourceGroupProjects(),
+			providerResourceGroupServerEnrollmentTokenKey:  dataSourceResourceGroupServerEnrollmentToken(),
+			providerResourceGroupServerEnrollmentTokensKey: dataSourceResourceGroupServerEnrollmentTokens(),
+			providerSecurityPoliciesKey:                    dataSourceSecurityPolicies(),
+			providerSecurityPolicyKey:                      dataSourceSecurityPolicy(),
+			providerServerEnrollmentTokenKey:               dataSourceServerEnrollmentToken(),
+			providerServerEnrollmentTokensKey:              dataSourceServerEnrollmentTokens(),
+			providerTeamSettingsKey:                        dataSourceTeamSettings(),
+			providerADUserSyncTaskSettingsKey:              dataSourceADUserSyncTaskSettings(),
+			providerADUserSyncTaskSettingsIDListKey:        dataSourceADUserSyncTaskSettingsIDList(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

@@ -22,6 +22,7 @@ const (
 )
 
 func TestAccADCertificateRequest_CSR(t *testing.T) {
+	checkTeamApplicable(t, false)
 	resourceName := "oktapam_ad_certificate_request.test_csr"
 	csrName := fmt.Sprintf("test-acc-csr-%s", randSeq())
 
