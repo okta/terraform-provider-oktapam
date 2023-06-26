@@ -3,12 +3,12 @@
 page_title: "oktapam_resource_group Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  
+  Limited Early Access Feature: A PAM construct that contains a group of projects. For details, see Resource Groups https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-resource-groups.htm.
 ---
 
 # oktapam_resource_group (Resource)
 
-
+Limited Early Access Feature: A PAM construct that contains a group of projects. For details, see [Resource Groups](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-resource-groups.htm).
 
 
 
@@ -17,7 +17,7 @@ description: |-
 
 ### Required
 
-- `delegated_resource_admin_groups` (List of String) The ids of the groups for users who are designated as delegated admins for the resource group
+- `delegated_resource_admin_groups` (Set of String) The ids of the groups for users who are designated as delegated admins for the resource group
 - `description` (String) The human-readable description of the resource.
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
 

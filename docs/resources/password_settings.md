@@ -3,12 +3,12 @@
 page_title: "oktapam_password_settings Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  
+  Limited Early Access Feature: The settings for passwords set on resources within the project. For details, see Projects https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm
 ---
 
 # oktapam_password_settings (Resource)
 
-
+Limited Early Access Feature: The settings for passwords set on resources within the project. For details, see [Projects](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm)
 
 
 
@@ -17,17 +17,17 @@ description: |-
 
 ### Required
 
-- `character_options` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--character_options))
-- `enable_periodic_rotation` (Boolean)
-- `managed_privileged_accounts` (List of String)
-- `max_length` (Number)
-- `min_length` (Number)
-- `project` (String)
-- `resource_group` (String)
+- `character_options` (Block List, Min: 1, Max: 1) The specific characters rules required by the password settings. (see [below for nested schema](#nestedblock--character_options))
+- `enable_periodic_rotation` (Boolean) If `true`, requires passwords to be rotated after a period of time has passed. You must also set the periodic_rotation_duration_in_seconds param.
+- `managed_privileged_accounts` (Set of String) An array of managed accounts for password rotation.
+- `max_length` (Number) The maximum length allowed for the password.
+- `min_length` (Number) The minimum length allowed for the password.
+- `project` (String) The UUID of PAM Project.
+- `resource_group` (String) The UUID of PAM Resource Group.
 
 ### Optional
 
-- `periodic_rotation_duration_in_seconds` (Number)
+- `periodic_rotation_duration_in_seconds` (Number) If periodic rotation is enabled, specifies how often passwords are rotated.
 
 ### Read-Only
 
@@ -38,9 +38,9 @@ description: |-
 
 Required:
 
-- `digits` (Boolean)
-- `lower_case` (Boolean)
-- `punctuation` (Boolean)
-- `upper_case` (Boolean)
+- `digits` (Boolean) If `true`, passwords can include one or more numeric characters.
+- `lower_case` (Boolean) If `true`, passwords can include one or more lowercase characters.
+- `punctuation` (Boolean) If `true`, passwords can include one or more punctuation/symbol characters.
+- `upper_case` (Boolean) If `true`, passwords can include one or more uppercase characters.
 
 

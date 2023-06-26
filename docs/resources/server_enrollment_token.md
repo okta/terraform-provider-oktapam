@@ -17,7 +17,7 @@ A token used to enroll servers in an ASA Project. For details, see [Enroll a ser
 
 ### Required
 
-- `description` (String) If a value is provided, the results are filtered to only contain resources whose description contains that value.
+- `description` (String) The human-readable description of the resource.
 - `project_name` (String) The human-readable name of the ASA Project. Values are case-sensitive.
 
 ### Read-Only

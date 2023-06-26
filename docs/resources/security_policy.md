@@ -3,12 +3,12 @@
 page_title: "oktapam_security_policy Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  SECURITY POLICY DESCRIPTION
+  Limited Early Access Feature: A policy which defines how users can gain access to resources. For details, see Manage security policy https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-policy.htm.
 ---
 
 # oktapam_security_policy (Resource)
 
-SECURITY POLICY DESCRIPTION
+Limited Early Access Feature: A policy which defines how users can gain access to resources. For details, see [Manage security policy](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-policy.htm).
 
 
 
@@ -17,10 +17,10 @@ SECURITY POLICY DESCRIPTION
 
 ### Required
 
-- `active` (Boolean)
+- `active` (Boolean) If true, indicates that the Security Policy is active.
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
-- `principals` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--principals))
-- `rule` (Block List, Min: 1, Max: 20) (see [below for nested schema](#nestedblock--rule))
+- `principals` (Block List, Min: 1, Max: 1) Defines what users are bound to the security policy. (see [below for nested schema](#nestedblock--principals))
+- `rule` (Block List, Min: 1, Max: 20) Defines privileges available for matching resources. (see [below for nested schema](#nestedblock--rule))
 
 ### Optional
 
@@ -35,8 +35,7 @@ SECURITY POLICY DESCRIPTION
 
 Optional:
 
-- `groups` (List of String)
-- `users` (List of String)
+- `groups` (Set of String) The UUIDs of PAM groups.
 
 
 <a id="nestedblock--rule"></a>
@@ -45,33 +44,29 @@ Optional:
 Required:
 
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
-- `privileges` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--rule--privileges))
-- `resources` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--rule--resources))
+- `privileges` (Block List, Min: 1, Max: 1) The specific privileges granted to Principals on matching resources. (see [below for nested schema](#nestedblock--rule--privileges))
+- `resources` (Block List, Min: 1, Max: 1) Defines the resources that are targeted by the security policy. (see [below for nested schema](#nestedblock--rule--resources))
 
 Optional:
 
-- `conditions` (Block List, Max: 1) (see [below for nested schema](#nestedblock--rule--conditions))
-
-Read-Only:
-
-- `id` (String) The ID of this resource.
+- `conditions` (Block List, Max: 1) The conditions required before a privilege is made available to the Principals. All conditions must be met. (see [below for nested schema](#nestedblock--rule--conditions))
 
 <a id="nestedblock--rule--privileges"></a>
 ### Nested Schema for `rule.privileges`
 
 Optional:
 
-- `password_checkout_rdp` (Block List, Max: 1) (see [below for nested schema](#nestedblock--rule--privileges--password_checkout_rdp))
-- `password_checkout_ssh` (Block List, Max: 1) (see [below for nested schema](#nestedblock--rule--privileges--password_checkout_ssh))
-- `principal_account_rdp` (Block List, Max: 1) (see [below for nested schema](#nestedblock--rule--privileges--principal_account_rdp))
-- `principal_account_ssh` (Block List, Max: 1) (see [below for nested schema](#nestedblock--rule--privileges--principal_account_ssh))
+- `password_checkout_rdp` (Block List, Max: 1) Defines the privilege to RDP to a server via a local account using a vaulted password. (see [below for nested schema](#nestedblock--rule--privileges--password_checkout_rdp))
+- `password_checkout_ssh` (Block List, Max: 1) Defines the privilege to RDP to a server via a local account using a vaulted password. (see [below for nested schema](#nestedblock--rule--privileges--password_checkout_ssh))
+- `principal_account_rdp` (Block List, Max: 1) Defines the privilege to RDP to a server via the user's principal account. (see [below for nested schema](#nestedblock--rule--privileges--principal_account_rdp))
+- `principal_account_ssh` (Block List, Max: 1) Defines the privilege to SSH to a server via the user's principal account. (see [below for nested schema](#nestedblock--rule--privileges--principal_account_ssh))
 
 <a id="nestedblock--rule--privileges--password_checkout_rdp"></a>
 ### Nested Schema for `rule.privileges.password_checkout_rdp`
 
 Required:
 
-- `enabled` (Boolean)
+- `enabled` (Boolean) If `true`, grant the privilege to Principals on matching resources.
 
 
 <a id="nestedblock--rule--privileges--password_checkout_ssh"></a>
@@ -79,7 +74,7 @@ Required:
 
 Required:
 
-- `enabled` (Boolean)
+- `enabled` (Boolean) If `true`, grant the privilege to Principals on matching resources.
 
 
 <a id="nestedblock--rule--privileges--principal_account_rdp"></a>
@@ -87,7 +82,7 @@ Required:
 
 Required:
 
-- `enabled` (Boolean)
+- `enabled` (Boolean) If `true`, grant the privilege to Principals on matching resources.
 
 
 <a id="nestedblock--rule--privileges--principal_account_ssh"></a>
@@ -95,7 +90,7 @@ Required:
 
 Required:
 
-- `enabled` (Boolean)
+- `enabled` (Boolean) If `true`, grant the privilege to Principals on matching resources.
 
 
 
@@ -104,27 +99,27 @@ Required:
 
 Required:
 
-- `servers` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--rule--resources--servers))
+- `servers` (Block List, Min: 1, Max: 1) Defines the server-based resources that are targeted by the security policy rule. (see [below for nested schema](#nestedblock--rule--resources--servers))
 
 <a id="nestedblock--rule--resources--servers"></a>
 ### Nested Schema for `rule.resources.servers`
 
 Optional:
 
-- `label_selectors` (Block List, Max: 1) (see [below for nested schema](#nestedblock--rule--resources--servers--label_selectors))
-- `server` (Block List) (see [below for nested schema](#nestedblock--rule--resources--servers--server))
-- `server_account` (Block List) (see [below for nested schema](#nestedblock--rule--resources--servers--server_account))
+- `label_selectors` (Block List, Max: 1) Defines what resources that are targeted by the security policy via label selectors. (see [below for nested schema](#nestedblock--rule--resources--servers--label_selectors))
+- `server` (Block List) Define a server to match as a target within a security policy rule. (see [below for nested schema](#nestedblock--rule--resources--servers--server))
+- `server_account` (Block List) Define a local account on a server to match as a target within a security policy rule. (see [below for nested schema](#nestedblock--rule--resources--servers--server_account))
 
 <a id="nestedblock--rule--resources--servers--label_selectors"></a>
 ### Nested Schema for `rule.resources.servers.server_account`
 
 Required:
 
-- `server_labels` (Map of String)
+- `server_labels` (Map of String) The map of key-value pairings that are used to match servers.
 
 Optional:
 
-- `usernames` (List of String)
+- `accounts` (List of String) The usernames of a local accounts on a server.
 
 
 <a id="nestedblock--rule--resources--servers--server"></a>
@@ -132,7 +127,7 @@ Optional:
 
 Required:
 
-- `server_id` (String)
+- `server_id` (String) The UUID of the PAM server record.
 
 
 <a id="nestedblock--rule--resources--servers--server_account"></a>
@@ -140,8 +135,8 @@ Required:
 
 Required:
 
-- `server_id` (String)
-- `username` (String)
+- `account` (String) The username of a local account on a server.
+- `server_id` (String) The UUID of the PAM server record.
 
 
 
@@ -151,16 +146,20 @@ Required:
 
 Optional:
 
-- `access_request` (Block List) (see [below for nested schema](#nestedblock--rule--conditions--access_request))
-- `gateway` (Block List, Max: 1) (see [below for nested schema](#nestedblock--rule--conditions--gateway))
+- `access_request` (Block List) Identifies an existing Request Type in Access Requests. (see [below for nested schema](#nestedblock--rule--conditions--access_request))
+- `gateway` (Block List, Max: 1) Configures traffic settings for an existing PAM Gateway. (see [below for nested schema](#nestedblock--rule--conditions--gateway))
 
 <a id="nestedblock--rule--conditions--access_request"></a>
 ### Nested Schema for `rule.conditions.access_request`
 
 Required:
 
-- `request_type_id` (String)
-- `request_type_name` (String)
+- `request_type_id` (String) The ID of the Access Request.
+- `request_type_name` (String) The name of the Access Request.
+
+Optional:
+
+- `expires_after_seconds` (Number) The number of seconds the approval remains valid.
 
 
 <a id="nestedblock--rule--conditions--gateway"></a>
@@ -168,7 +167,7 @@ Required:
 
 Required:
 
-- `session_recording` (Boolean)
-- `traffic_forwarding` (Boolean)
+- `session_recording` (Boolean) Whether to record sessions made through an PAM Gateway.
+- `traffic_forwarding` (Boolean) Whether to forward traffic through an PAM Gateway.
 
 
