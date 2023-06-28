@@ -84,7 +84,7 @@ var (
 	KubernetesClusterKey                      = "The human-friendly key to associate with the Kubernetes cluster. Must be simple alphanumeric without spaces."
 	KubernetesClusterLabels                   = "Map of labels to assign to the Kubernetes cluster."
 	KubernetesPublicCertificate               = "The certificate expected when connecting to the Kubernetes cluster."
-	Labels                                    = "A map of key-value pairings that define access to the ASA Gateway."
+	Labels                                    = "A map of key-value pairings that define access to a Gateway."
 	LocalAccount                              = "The username of a local account on a server."
 	LocalAccounts                             = "The usernames of a local accounts on a server."
 	ManagedPrivilegedAccounts                 = "An array of managed accounts for password rotation."
