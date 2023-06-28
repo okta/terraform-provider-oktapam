@@ -60,11 +60,12 @@ func checkTrustedDomain(apiHost string) error {
 		}
 	}
 
-	if hostname == os.Getenv(TRUSTED_DOMAIN_OVERRIDE_ENV_VAR) {
+	override := os.Getenv(TRUSTED_DOMAIN_OVERRIDE_ENV_VAR)
+	if hostname == override {
 		return nil
 	}
 
-	return fmt.Errorf("configured api host is not within a trusted domain")
+	return fmt.Errorf("configured api host is not within a trusted domain.  host: %q, override: %q", hostname, override)
 }
 
 func createServiceToken(apiKey, apiKeySecret, apiHost, team string) (*ServiceToken, error) {
