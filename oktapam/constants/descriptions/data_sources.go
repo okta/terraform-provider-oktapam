@@ -16,26 +16,26 @@ var (
 	// Features In Progress
 
 	// Fetch
-	SourceADConnections                      = "A list of ASA AD Connections associated with an ASA Team."
-	SourceGateways                           = fmt.Sprintf("Returns a list of all ASA Gateways connected to the ASA Team specified in the OKTAPAM_TEAM environment variable. %s", LinkGateway)
-	SourceGroup                              = fmt.Sprintf("Returns a previously created ASA Group. %s", LinkGroup)
-	SourcePasswordSettings                   = fmt.Sprintf("Returns a previously configured password settings for a PAM project.  %s", LinkPasswordSettings)
-	SourceProject                            = fmt.Sprintf("Returns a previously created ASA Project. %s", LinkProject)
-	SourceProjectGroup                       = fmt.Sprintf("Returns a previously created ASA Group assigned to a given ASA Project. %s", LinkProjectGroup)
-	SourceResourceGroup                      = fmt.Sprintf("Returns a previously created PAM resource group. %s", LinkResourceGroup)
-	SourceResourceGroupProject               = fmt.Sprintf("Returns a previously created PAM project associated with a specific PAM resource group. %s", LinkResourceGroupProject)
-	SourceResourceGroupServerEnrollmentToken = fmt.Sprintf("Returns a previously created PAM server enrollment token associated with a specific PAM project. %s", LinkResourceGroupServerEnrollmentToken)
-	SourceSecurityPolicy                     = fmt.Sprintf("Returns a previously created PAM security policy. %s", LinkSecurityPolicy)
-	SourceTeamSettings                       = "Returns Team-level settings for a specific Team, such as authentication and enrollment details"
-	SourceADUserSyncTaskSettings             = fmt.Sprintf("Returns a previously created ASA AD User Sync Task Settings. %s", LinkADUserDiscovery)
+	SourceADConnections                      = "A list of AD Connections associated with your Team."
+	SourceGateways                           = fmt.Sprintf("Returns a list of all Gateways connected to the Team specified in the OKTAPAM_TEAM environment variable. %s", LinkGateway)
+	SourceGroup                              = fmt.Sprintf("Returns an existing Group. %s", LinkGroup)
+	SourcePasswordSettings                   = fmt.Sprintf("Returns an existing Password Policy for a PAM Project.  %s", LinkPasswordSettings)
+	SourceProject                            = fmt.Sprintf("Returns an existing Project. %s", LinkProject)
+	SourceProjectGroup                       = fmt.Sprintf("Returns an existing Group assigned to a specified Project. %s", LinkProjectGroup)
+	SourceResourceGroup                      = fmt.Sprintf("Returns an existing PAM Resource Group. %s", LinkResourceGroup)
+	SourceResourceGroupProject               = fmt.Sprintf("Returns an existing PAM Project associated with a specific PAM Resource Group. %s", LinkResourceGroupProject)
+	SourceResourceGroupServerEnrollmentToken = fmt.Sprintf("Returns an existing PAM Server Enrollment Token associated with a specific PAM project. %s", LinkResourceGroupServerEnrollmentToken)
+	SourceSecurityPolicy                     = fmt.Sprintf("Returns an existing PAM Security Policy. %s", LinkSecurityPolicy)
+	SourceTeamSettings                       = "Returns Team-level settings, such as authentication and enrollment details, for your Team."
+	SourceADUserSyncTaskSettings             = fmt.Sprintf("Returns an existing AD user sync job. %s", LinkADUserDiscovery)
 
 	// List
-	SourceADUserSyncTaskSettingsIDList        = fmt.Sprintf("Returns a list of previously created ASA AD User Sync Task Settings IDs for an AD connection. %s", LinkADUserDiscovery)
-	SourceGroups                              = fmt.Sprintf("Returns a list of all ASA Groups associated with the ASA Team specified in the OKTAPAM_TEAM environment variable. %s", LinkGroup)
-	SourceProjects                            = fmt.Sprintf("Returns a list of ASA Projects associated with the ASA Team specified in the OKTAPAM_TEAM environment variable. %s", LinkProject)
-	SourceProjectGroups                       = fmt.Sprintf("A list of ASA Project Groups associated with an ASA Project. %s", LinkProjectGroup)
-	SourceResourceGroups                      = fmt.Sprintf("A list of PAM resource groups associated with the PAM team specified in the OKTAPAM_TEAM environment variable. %s", LinkResourceGroup)
-	SourceResourceGroupProjects               = fmt.Sprintf("A list of PAM resource group projects associated with a PAM resource group. %s", LinkResourceGroupProject)
-	SourceResourceGroupServerEnrollmentTokens = fmt.Sprintf("A list of PAM server enrollment tokens associated with a specific PAM project. %s", LinkResourceGroupServerEnrollmentToken)
-	SourceSecurityPolicies                    = fmt.Sprintf("A list of PAM security policies associated with the PAM team specified in the OKTAPAM_TEAM environment variable. %s", LinkSecurityPolicy)
+	SourceADUserSyncTaskSettingsIDList        = fmt.Sprintf("Returns a list of all AD user sync jobs a specified AD Connection. %s", LinkADUserDiscovery)
+	SourceGroups                              = fmt.Sprintf("Returns a list of all Groups associated with the Team specified by the OKTAPAM_TEAM environment variable. %s", LinkGroup)
+	SourceProjects                            = fmt.Sprintf("Returns a list of all Projects associated with the Team specified by the OKTAPAM_TEAM environment variable. %s", LinkProject)
+	SourceProjectGroups                       = fmt.Sprintf("Returns a list of Project Groups associated with a Project. %s", LinkProjectGroup)
+	SourceResourceGroups                      = fmt.Sprintf("Returns a list of Resource Groups associated with the Team specified by the OKTAPAM_TEAM environment variable. %s", LinkResourceGroup)
+	SourceResourceGroupProjects               = fmt.Sprintf("Returns a list of Projects associated with an existing Resource Group. %s", LinkResourceGroupProject)
+	SourceResourceGroupServerEnrollmentTokens = fmt.Sprintf("Returns a list of Server Enrollment Tokens associated with a specific Project. %s", LinkResourceGroupServerEnrollmentToken)
+	SourceSecurityPolicies                    = fmt.Sprintf("Returns a list of Security Policies associated with the Team specified by the OKTAPAM_TEAM environment variable. %s", LinkSecurityPolicy)
 )
