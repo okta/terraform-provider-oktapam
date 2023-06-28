@@ -9,7 +9,7 @@ import (
 var (
 	// Supported Resource
 	ResourceADCertificateObject    = fmt.Sprintf("Upload the Enterprise Signed certificate to ASA. %s", LinkADCertificates)
-	ResourceADCertificateRequest   = fmt.Sprintf("A Certificate Request to generate AD Passwordless Self Signed Certificate or Certificate Signing Request(CSR). %s", LinkADCertificates)
+	ResourceADCertificateRequest   = fmt.Sprintf("A Certificate Request to generate an AD Passwordless Self Signed Certificate or Certificate Signing Request(CSR). %s", LinkADCertificates)
 	ResourceADConnection           = fmt.Sprintf("An Active Directory (AD) Connection to query AD Domain for available servers. %s", LinkADConnection)
 	ResourceADRuleAssignment       = fmt.Sprintf("Assign an Active Directory (AD) Rule to an ASA Project. %s", LinkADRuleAssignment)
 	ResourceADTaskSettings         = fmt.Sprintf("Settings for Active Directory (AD) task for server discovery. %s", LinkADServerDiscovery)
