@@ -3,20 +3,12 @@
 page_title: "oktapam_ad_user_sync_task_settings Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-<<<<<<< HEAD
-  Feature under development: Settings for an Active Directory (AD) task that discovers user SIDs. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm on AD user discovery.
-=======
-  Settings for Active Directory (AD) task for user SID discovery. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-user-sync.htm on AD user discovery.
->>>>>>> master
+  Settings for an Active Directory (AD) task that discovers user SIDs. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-user-sync.htm on AD user discovery.
 ---
 
 # oktapam_ad_user_sync_task_settings (Resource)
 
-<<<<<<< HEAD
-Feature under development: Settings for an Active Directory (AD) task that discovers user SIDs. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm) on AD user discovery.
-=======
-Settings for Active Directory (AD) task for user SID discovery. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-user-sync.htm) on AD user discovery.
->>>>>>> master
+Settings for an Active Directory (AD) task that discovers user SIDs. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-user-sync.htm) on AD user discovery.
 
 
 

@@ -17,17 +17,10 @@ Team-level settings for a specific Team, such as authentication and enrollment d
 
 ### Optional
 
-<<<<<<< HEAD
 - `approve_device_without_interaction` (Boolean) If `true`, devices are automatically approved for authenticated Users.
 - `client_session_duration` (Number) The maximum time before a Client session expires. The duration can be from 3600 – 90000 seconds.
-- `include_user_sid` (String) Feature under development: Options for including the User Security Identifier (SID) in the certificate used for Passwordless authentication to a Windows server via RDP. Possible values: `Never`, `If_Available`, and `Always`.
+- `include_user_sid` (String) Options for including the User Security Identifier (SID) in the certificate used for Passwordless authentication to a Windows server via RDP. Possible values: `Never`, `If_Available`, and `Always`.
 - `reactivate_users_via_idp` (Boolean) If a disabled or deleted User is able to authenticate through the IdP, their user settings are re-enabled.
-=======
-- `approve_device_without_interaction` (Boolean) If enabled, ASA auto-approves devices for ASA Users that are authenticated into this Team.
-- `client_session_duration` (Number) Defines the Client session duration. Value should be in hours between 1 hour and 25 hours.
-- `include_user_sid` (String) Options for including the User Security Identifier (SID) in the certificate used for Passwordless authentication to a Windows server via RDP : Never, If_Available, and Always.
-- `reactivate_users_via_idp` (Boolean) If a disabled or deleted ASA User is able to authenticate through the IdP, their ASA User is re-enabled.
->>>>>>> master
 - `user_provisioning_exact_username` (Boolean) If true, ASA has ASA Users configured through SCIM to maintain the exact username that is specified.
 - `web_session_duration` (Number) Defines the duration of the web session. Configure the web session to be between 30 minutes and 25 hours.
 
