@@ -45,6 +45,7 @@ func TestAccADCertificateRequest_CSR(t *testing.T) {
 }
 
 func TestAccADCertificateRequest_SelfSigned(t *testing.T) {
+	checkTeamApplicable(t, false)
 	resourceName := "oktapam_ad_certificate_request.test_self_signed_cert"
 	certName := fmt.Sprintf("test-acc-self-signed-cert-%s", randSeq())
 

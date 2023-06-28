@@ -13,6 +13,7 @@ import (
 // TestAccDataSourceADUserSyncTaskSettingsIDList creates a few  managed user-sync task-settings, then reads them as list,
 // so that it can be checked for length and its elements accessed.
 func TestAccDataSourceADUserSyncTaskSettingsIDList(t *testing.T) {
+	checkTeamApplicable(t, false)
 	adConnectionResourceName := "oktapam_ad_connection.test_acc_ad_connection"
 	dataSourceResourceName := "data.oktapam_ad_user_sync_task_settings_id_list.test_acc_data_source_ad_user_sync_task_settings_id_list"
 	nameIdentifier := randSeq()

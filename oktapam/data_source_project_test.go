@@ -8,6 +8,7 @@ import (
 )
 
 func TestAccDatasourceProjectFetch(t *testing.T) {
+	checkTeamApplicable(t, false)
 	resourceName := "oktapam_project.test-1"
 	dataSourceName := "data.oktapam_project.target"
 
