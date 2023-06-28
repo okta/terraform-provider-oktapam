@@ -3,12 +3,12 @@
 page_title: "oktapam_resource_group_projects Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A list of PAM resource group projects associated with a PAM resource group. For details, see Projects https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm.
+  A list of Resource Group Projects associated with a Resource Group. For details, see Projects https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm.
 ---
 
 # oktapam_resource_group_projects (Data Source)
 
-A list of PAM resource group projects associated with a PAM resource group. For details, see [Projects](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm).
+A list of Resource Group Projects associated with a Resource Group. For details, see [Projects](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm).
 
 
 
@@ -17,7 +17,7 @@ A list of PAM resource group projects associated with a PAM resource group. For 
 
 ### Required
 
-- `resource_group` (String) The UUID of PAM Resource Group.
+- `resource_group` (String) The UUID of the Resource Group.
 
 ### Optional
 

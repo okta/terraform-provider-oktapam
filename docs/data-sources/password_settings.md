@@ -3,12 +3,12 @@
 page_title: "oktapam_password_settings Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a previously configured password settings for a PAM project.  For details, see Projects https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm
+  Returns a previously configured Password Settings for a project.  For details, see Projects https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm
 ---
 
 # oktapam_password_settings (Data Source)
 
-Returns a previously configured password settings for a PAM project.  For details, see [Projects](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm)
+Returns a previously configured Password Settings for a project.  For details, see [Projects](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm)
 
 
 
@@ -17,8 +17,8 @@ Returns a previously configured password settings for a PAM project.  For detail
 
 ### Required
 
-- `project` (String) The UUID of PAM Project.
-- `resource_group` (String) The UUID of PAM Resource Group.
+- `project` (String) The UUID of the Project.
+- `resource_group` (String) The UUID of the Resource Group.
 
 ### Read-Only
 

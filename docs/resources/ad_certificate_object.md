@@ -3,12 +3,12 @@
 page_title: "oktapam_ad_certificate_object Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Upload the Enterprise Signed certificate to ASA. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-certs.htm on AD Passwordless Certificates lifecycle & management.
+  Upload the Enterprise Signed certificate to ASA/PAM. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-certs.htm on AD Passwordless Certificates lifecycle & management.
 ---
 
 # oktapam_ad_certificate_object (Resource)
 
-Upload the Enterprise Signed certificate to ASA. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-certs.htm) on AD Passwordless Certificates lifecycle & management.
+Upload the Enterprise Signed certificate to ASA/PAM. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-certs.htm) on AD Passwordless Certificates lifecycle & management.
 
 
 

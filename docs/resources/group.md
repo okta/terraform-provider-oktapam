@@ -3,12 +3,12 @@
 page_title: "oktapam_group Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A set of ASA Users. For details, see Groups https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm.
+  A set of Users. For details, see Groups https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm.
 ---
 
 # oktapam_group (Resource)
 
-A set of ASA Users. For details, see [Groups](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm).
+A set of Users. For details, see [Groups](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm).
 
 
 
@@ -21,7 +21,7 @@ A set of ASA Users. For details, see [Groups](https://help.okta.com/asa/en-us/Co
 
 ### Optional
 
-- `roles` (Set of String) A list of roles for the ASA Group. Options are 'access_user', 'access_admin', and 'reporting_user'.
+- `roles` (Set of String) A list of roles for the Group. Options are 'access_user', 'access_admin', and 'reporting_user'.
 
 ### Read-Only
 

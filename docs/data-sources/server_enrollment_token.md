@@ -3,12 +3,12 @@
 page_title: "oktapam_server_enrollment_token Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a previously created ASA Server Enrollment Token associated with a specific ASA Project. For details, see Enroll a server https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm.
+  Returns a previously created Server Enrollment Token associated with a specific Project. For details, see Enroll a server https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm.
 ---
 
 # oktapam_server_enrollment_token (Data Source)
 
-Returns a previously created ASA Server Enrollment Token associated with a specific ASA Project. For details, see [Enroll a server](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm).
+Returns a previously created Server Enrollment Token associated with a specific Project. For details, see [Enroll a server](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm).
 
 
 
@@ -17,11 +17,11 @@ Returns a previously created ASA Server Enrollment Token associated with a speci
 
 ### Required
 
-- `project_name` (String) The human-readable name of the ASA Project. Values are case-sensitive.
+- `project_name` (String) The human-readable name of the Project. Values are case-sensitive.
 
 ### Read-Only
 
-- `created_by_user` (String) The ASA User that created the resource.
+- `created_by_user` (String) The User that created the resource.
 - `description` (String) The human-readable description of the resource.
 - `id` (String) The ID of this resource.
 - `issued_at` (String) The UTC time when the token was issued. Format is '2022-01-01 00:00:00 +0000 UTC'.

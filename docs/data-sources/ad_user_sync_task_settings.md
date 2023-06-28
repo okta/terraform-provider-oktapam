@@ -3,12 +3,12 @@
 page_title: "oktapam_ad_user_sync_task_settings Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a previously created ASA AD User Sync Task Settings. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm on AD user discovery.
+  Returns a previously created AD User Sync Task Settings. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm on AD user discovery.
 ---
 
 # oktapam_ad_user_sync_task_settings (Data Source)
 
-Returns a previously created ASA AD User Sync Task Settings. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm) on AD user discovery.
+Returns a previously created AD User Sync Task Settings. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm) on AD user discovery.
 
 
 

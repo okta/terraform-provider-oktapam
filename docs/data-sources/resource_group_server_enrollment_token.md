@@ -3,12 +3,12 @@
 page_title: "oktapam_resource_group_server_enrollment_token Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a previously created PAM server enrollment token associated with a specific PAM project. For details, see Server Enrollment https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/server-agent/pam-enroll-a-server.htm.
+  Returns a previously created Server Enrollment Token associated with a specific Project. For details, see Server Enrollment https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/server-agent/pam-enroll-a-server.htm.
 ---
 
 # oktapam_resource_group_server_enrollment_token (Data Source)
 
-Returns a previously created PAM server enrollment token associated with a specific PAM project. For details, see [Server Enrollment](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/server-agent/pam-enroll-a-server.htm).
+Returns a previously created Server Enrollment Token associated with a specific Project. For details, see [Server Enrollment](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/server-agent/pam-enroll-a-server.htm).
 
 
 
@@ -17,12 +17,12 @@ Returns a previously created PAM server enrollment token associated with a speci
 
 ### Required
 
-- `project` (String) The UUID of PAM Project.
-- `resource_group` (String) The UUID of PAM Resource Group.
+- `project` (String) The UUID of the Project.
+- `resource_group` (String) The UUID of the Resource Group.
 
 ### Read-Only
 
-- `created_by_user` (String) The ASA User that created the resource.
+- `created_by_user` (String) The User that created the resource.
 - `description` (String) The human-readable description of the resource.
 - `id` (String) The ID of this resource.
 - `issued_at` (String) The UTC time when the token was issued. Format is '2022-01-01 00:00:00 +0000 UTC'.

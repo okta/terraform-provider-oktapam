@@ -35,7 +35,7 @@ Limited Early Access Feature: A policy which defines how users can gain access t
 
 Optional:
 
-- `groups` (Set of String) The UUIDs of PAM groups.
+- `groups` (Set of String) The UUIDs of User Groups.
 
 
 <a id="nestedblock--rule"></a>
@@ -127,7 +127,7 @@ Optional:
 
 Required:
 
-- `server_id` (String) The UUID of the PAM server record.
+- `server_id` (String) The UUID of the Server record.
 
 
 <a id="nestedblock--rule--resources--servers--server_account"></a>
@@ -136,7 +136,7 @@ Required:
 Required:
 
 - `account` (String) The username of a local account on a server.
-- `server_id` (String) The UUID of the PAM server record.
+- `server_id` (String) The UUID of the Server record.
 
 
 
@@ -147,7 +147,7 @@ Required:
 Optional:
 
 - `access_request` (Block List) Identifies an existing Request Type in Access Requests. (see [below for nested schema](#nestedblock--rule--conditions--access_request))
-- `gateway` (Block List, Max: 1) Configures traffic settings for an existing PAM Gateway. (see [below for nested schema](#nestedblock--rule--conditions--gateway))
+- `gateway` (Block List, Max: 1) Configures traffic settings for an existing Gateway. (see [below for nested schema](#nestedblock--rule--conditions--gateway))
 
 <a id="nestedblock--rule--conditions--access_request"></a>
 ### Nested Schema for `rule.conditions.access_request`
@@ -167,7 +167,7 @@ Optional:
 
 Required:
 
-- `session_recording` (Boolean) Whether to record sessions made through an PAM Gateway.
-- `traffic_forwarding` (Boolean) Whether to forward traffic through an PAM Gateway.
+- `session_recording` (Boolean) Whether to record sessions made through an Gateway.
+- `traffic_forwarding` (Boolean) Whether to forward traffic through an Gateway.
 
 

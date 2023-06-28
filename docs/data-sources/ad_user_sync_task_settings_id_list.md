@@ -3,12 +3,12 @@
 page_title: "oktapam_ad_user_sync_task_settings_id_list Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of previously created ASA AD User Sync Task Settings IDs for an AD connection. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm on AD user discovery.
+  Returns a list of previously created AD User Sync Task Settings IDs for an AD connection. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm on AD user discovery.
 ---
 
 # oktapam_ad_user_sync_task_settings_id_list (Data Source)
 
-Returns a list of previously created ASA AD User Sync Task Settings IDs for an AD connection. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm) on AD user discovery.
+Returns a list of previously created AD User Sync Task Settings IDs for an AD connection. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm) on AD user discovery.
 
 
 
@@ -17,11 +17,11 @@ Returns a list of previously created ASA AD User Sync Task Settings IDs for an A
 
 ### Required
 
-- `connection_id` (String) The id of an ASA AD Connection. Results are returned for only this Connection.
+- `connection_id` (String) The id of an AD Connection. Results are returned for only this Connection.
 
 ### Optional
 
-- `status` (String) If a value is provided, includes ASA user sync task settings with specified status. Valid statuses are `ACTIVE` and `INACTIVE`.
+- `status` (String) If a value is provided, includes user sync task settings with specified status. Valid statuses are `ACTIVE` and `INACTIVE`.
 
 ### Read-Only
 

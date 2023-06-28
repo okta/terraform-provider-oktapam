@@ -58,8 +58,8 @@ Read-Only:
 
 Required:
 
-- `label` (String) ASA label
-- `value` (String) AD Attribute mapped to ASA label
+- `label` (String) Label
+- `value` (String) AD Attribute mapped to a label
 
 Optional:
 

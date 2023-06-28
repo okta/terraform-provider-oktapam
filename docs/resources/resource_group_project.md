@@ -18,20 +18,18 @@ Limited Early Access Feature: A PAM construct that contains a collection of reso
 ### Required
 
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
-- `resource_group` (String) The UUID of PAM Resource Group.
+- `resource_group` (String) The UUID of the Resource Group.
 
 ### Optional
 
 - `account_discovery` (Boolean) If `true`, will enable the discovery of local accounts on servers within the project.
-- `gateway_selector` (String) Assigns ASA Gateways with labels matching all selectors. At least one selector is required for traffic forwarding.
-- `next_unix_gid` (Number) The GID to use when creating a new ASA Server User. Default value starts at 63001.
-- `next_unix_uid` (Number) The UID to use when creating a new ASA Server User. Default value starts at 60001.
+- `gateway_selector` (String) Assigns Gateways with labels matching all selectors. At least one selector is required for traffic forwarding.
 - `ssh_certificate_type` (String) The SSH certificate type used by access requests. Options include: [`CERT_TYPE_ED25519_01`, `CERT_TYPE_ECDSA_521_01`, `CERT_TYPE_ECDSA_384_01`, `CERT_TYPE_ECDSA_256_01`, `CERT_TYPE_RSA_01`]. 'CERT_TYPE_RSA_01' is a deprecated key algorithm type. This option should only be used to connect to legacy systems that cannot use newer SSH versions. If you do need to use 'CERT_TYPE_RSA_01', it is recommended to connect via a gateway with traffic forwarding. Otherwise, please use a more current key algorithm. If left unspecified, 'CERT_TYPE_ED25519_01' is used by default.
 
 ### Read-Only
 
 - `deleted_at` (String) The UTC time of resource deletion. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `id` (String) The ID of this resource.
-- `team` (String) The human-readable name of the ASA Team that owns the resource. Values are lower-case.
+- `team` (String) The human-readable name of the Team that owns the resource. Values are lower-case.
 
 

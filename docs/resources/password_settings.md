@@ -22,8 +22,8 @@ Limited Early Access Feature: The settings for passwords set on resources within
 - `managed_privileged_accounts` (Set of String) An array of managed accounts for password rotation.
 - `max_length` (Number) The maximum length allowed for the password.
 - `min_length` (Number) The minimum length allowed for the password.
-- `project` (String) The UUID of PAM Project.
-- `resource_group` (String) The UUID of PAM Resource Group.
+- `project` (String) The UUID of the Project.
+- `resource_group` (String) The UUID of the Resource Group.
 
 ### Optional
 

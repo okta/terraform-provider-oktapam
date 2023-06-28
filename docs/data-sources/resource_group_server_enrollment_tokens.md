@@ -3,12 +3,12 @@
 page_title: "oktapam_resource_group_server_enrollment_tokens Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A list of PAM server enrollment tokens associated with a specific PAM project. For details, see Server Enrollment https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/server-agent/pam-enroll-a-server.htm.
+  A list of Server Enrollment Tokens associated with a specific Project. For details, see Server Enrollment https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/server-agent/pam-enroll-a-server.htm.
 ---
 
 # oktapam_resource_group_server_enrollment_tokens (Data Source)
 
-A list of PAM server enrollment tokens associated with a specific PAM project. For details, see [Server Enrollment](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/server-agent/pam-enroll-a-server.htm).
+A list of Server Enrollment Tokens associated with a specific Project. For details, see [Server Enrollment](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/server-agent/pam-enroll-a-server.htm).
 
 
 
@@ -17,8 +17,8 @@ A list of PAM server enrollment tokens associated with a specific PAM project. F
 
 ### Required
 
-- `project` (String) The UUID of PAM Project.
-- `resource_group` (String) The UUID of PAM Resource Group.
+- `project` (String) The UUID of the Project.
+- `resource_group` (String) The UUID of the Resource Group.
 
 ### Read-Only
 

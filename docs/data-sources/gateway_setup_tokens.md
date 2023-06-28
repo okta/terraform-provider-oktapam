@@ -3,12 +3,12 @@
 page_title: "oktapam_gateway_setup_tokens Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of ASA Gateway Setup Token IDs associated with the ASA Team specified in the OKTAPAMTEAM environment variable. For details, see [Configure an Advanced Server Access gateway](https://help.okta.com/asa/en-us/Content/Topics/AdvServer_Access/docs/gateway-configure.htm).
+  Returns a list of Gateway Setup Token IDs associated with the Team specified in the OKTAPAMTEAM environment variable. For details, see [Configure an Advanced Server Access gateway](https://help.okta.com/asa/en-us/Content/Topics/AdvServer_Access/docs/gateway-configure.htm).
 ---
 
 # oktapam_gateway_setup_tokens (Data Source)
 
-Returns a list of ASA Gateway Setup Token IDs associated with the ASA Team specified in the OKTAPAM_TEAM environment variable. For details, see [Configure an Advanced Server Access gateway](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm).
+Returns a list of Gateway Setup Token IDs associated with the Team specified in the OKTAPAM_TEAM environment variable. For details, see [Configure an Advanced Server Access gateway](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm).
 
 
 

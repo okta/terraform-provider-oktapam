@@ -18,12 +18,12 @@ Limited Early Access Feature: A token used to enroll servers in an PAM Project. 
 ### Required
 
 - `description` (String) The human-readable description of the resource.
-- `project` (String) The UUID of PAM Project.
-- `resource_group` (String) The UUID of PAM Resource Group.
+- `project` (String) The UUID of the Project.
+- `resource_group` (String) The UUID of the Resource Group.
 
 ### Read-Only
 
-- `created_by_user` (String) The ASA User that created the resource.
+- `created_by_user` (String) The User that created the resource.
 - `id` (String) The ID of this resource.
 - `issued_at` (String) The UTC time when the token was issued. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `token` (String) The secret used for resource enrollment.
