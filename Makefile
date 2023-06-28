@@ -52,6 +52,11 @@ testacc:
 # TESTARGS here can be used to pass arbitrary flags to go test, e.g. '-run TestMyTest'
 	TF_ACC=1 go test ./... -v $(TESTARGS) -timeout 120m   
 
+testaccpam:
+# TESTARGS here can be used to pass arbitrary flags to go test, e.g. '-run TestMyTest'
+	TF_ACC=1 TF_ACC_PAM=1 go test ./... -v $(TESTARGS) -timeout 120m   
+
+
 generate:
 	go generate ./...
 

@@ -118,13 +118,22 @@ In order to test the provider, you can simply run `make test`.
 $ make test
 ```
 
-In order to run the full suite of Acceptance tests, run `make testacc`.
+We have two sets of acceptance tests, one for an Advanced Server Access team, and one for an Okta Privileged Access team.  There are some tests that are shared between the two suites. 
 
 *Note:* Acceptance tests create real resources, and often cost money to run.  If you wish to test against a dev/test server, ensure that you have the `OKTAPAM_API_HOST` variable set.
+
+To run the full test suite of Acceptance tests for ASA, run `make testacc`.:
 
 ```sh
 $ make testacc
 ```
+
+To run the full test suite of Acceptance tests for Okta PA, run `make testaccpam`.:
+
+```sh
+$ make testaccpam
+```
+
 
 If you want to run specific acceptance tests then set TESTARGS variable. TestCaseFunctionName(t *testing.T) can be a regular 
 expression too.
@@ -132,6 +141,8 @@ expression too.
 ```sh
 $ TESTARGS='-run TestcaseFunctionName' make testacc
 ```
+
+Note that you'll need to sub `testacc` for `testaccpam` if the tests is an Okta PA test.
 
 # Releasing the Provider
 

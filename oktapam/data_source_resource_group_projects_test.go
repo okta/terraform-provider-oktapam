@@ -86,15 +86,11 @@ resource "oktapam_resource_group" "test-resource-group" {
 resource "oktapam_resource_group_project" "test-resource-group-project-1" {
 	name = "%s-1"
 	resource_group =      oktapam_resource_group.test-resource-group.id
-	next_unix_uid         = 60120
-	next_unix_gid         = 63020
 	ssh_certificate_type  = "CERT_TYPE_ED25519_01"
 }
 resource "oktapam_resource_group_project" "test-resource-group-project-2" {
 	name = "%s-2"
 	resource_group       = oktapam_resource_group.test-resource-group.id
-  	next_unix_uid        = 61200
-  	next_unix_gid        = 63400
 	gateway_selector     = "env=test"
 	ssh_certificate_type = "CERT_TYPE_RSA_01"
 	account_discovery 	 = true

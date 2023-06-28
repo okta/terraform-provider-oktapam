@@ -37,16 +37,6 @@ func dataSourceResourceGroupProject() *schema.Resource {
 				Computed:    true,
 				Description: descriptions.TeamName,
 			},
-			attributes.NextUnixGID: {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: descriptions.NextUnixGID,
-			},
-			attributes.NextUnixUID: {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: descriptions.NextUnixUID,
-			},
 			attributes.DeletedAt: {
 				Type:        schema.TypeString,
 				Computed:    true,

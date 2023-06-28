@@ -27,10 +27,11 @@ func TestAccResourceGroupServerEnrollmentToken(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccResourceGroupServerEnrollmentTokenCheckDestroy(resourceGroupName, resourceGroupProjectName),
+		// use the resource group check destroy since we create a new one here and deletion of the resource group will cascade delete the projects / tokens
+		CheckDestroy: testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
 			{
-				Config: createTestAccResourceGroupServerEnrollmentTokenCreateConfig(delegatedAdminGroupName, resourceGroupName, resourceGroupName, tokenDescription),
+				Config: createTestAccResourceGroupServerEnrollmentTokenCreateConfig(delegatedAdminGroupName, resourceGroupName, resourceGroupProjectName, tokenDescription),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccResourceGroupServerEnrollmentTokenCheckExists(resourceName, serverEnrollmentToken),
 					resource.TestCheckResourceAttr(
@@ -106,8 +107,6 @@ resource "oktapam_resource_group" "test_acc_resource_group" {
 resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
 	name = "%s"
 	resource_group = oktapam_resource_group.test_acc_resource_group.id
-	next_unix_uid         = 60120
-	next_unix_gid         = 63020
 	ssh_certificate_type  = "CERT_TYPE_ED25519_01"
 }
 resource "oktapam_resource_group_server_enrollment_token" "test_acc_resource_group_server_enrollment_token" {

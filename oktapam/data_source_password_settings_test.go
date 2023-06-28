@@ -75,8 +75,6 @@ resource "oktapam_resource_group" "test-resource-group" {
 resource "oktapam_resource_group_project" "test-resource-group-project" {
 	name = "%s"
 	resource_group =      oktapam_resource_group.test-resource-group.id
-	next_unix_uid         = 60120
-	next_unix_gid         = 63020
 	ssh_certificate_type  = "CERT_TYPE_ED25519_01"
 	account_discovery     = true
 }

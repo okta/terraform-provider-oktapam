@@ -46,18 +46,6 @@ func resourceResourceGroupProject() *schema.Resource {
 				Computed:    true,
 				Description: descriptions.TeamName,
 			},
-			attributes.NextUnixGID: {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Default:     63001,
-				Description: descriptions.NextUnixGID,
-			},
-			attributes.NextUnixUID: {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Default:     60001,
-				Description: descriptions.NextUnixUID,
-			},
 			attributes.DeletedAt: {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -128,8 +116,6 @@ func resourceResourceGroupProjectCreate(ctx context.Context, d *schema.ResourceD
 	project := client.ResourceGroupProject{
 		Name:               GetStringPtrFromResource(attributes.Name, d, true),
 		ResourceGroupID:    GetStringPtrFromResource(attributes.ResourceGroup, d, true),
-		NextUnixGID:        GetIntPtrFromResource(attributes.NextUnixGID, d, false),
-		NextUnixUID:        GetIntPtrFromResource(attributes.NextUnixUID, d, false),
 		GatewaySelector:    GetStringPtrFromResource(attributes.GatewaySelector, d, false),
 		SSHCertificateType: GetStringPtrFromResource(attributes.SSHCertificateType, d, false),
 		AccountDiscovery:   GetBoolPtrFromResource(attributes.AccountDiscovery, d, false),
@@ -141,8 +127,6 @@ func resourceResourceGroupProjectCreate(ctx context.Context, d *schema.ResourceD
 	}
 
 	d.SetId(*resultingProject.ID)
-	// TODO: move this to be its own resource since it's lifecycle is outside of project
-
 	return resourceResourceGroupProjectRead(ctx, d, m)
 }
 
@@ -223,8 +207,6 @@ func resourceResourceGroupProjectUpdate(ctx context.Context, d *schema.ResourceD
 	}
 
 	changeableAttributes := []string{
-		attributes.NextUnixGID,
-		attributes.NextUnixUID,
 		attributes.GatewaySelector,
 		attributes.SSHCertificateType,
 		attributes.AccountDiscovery,

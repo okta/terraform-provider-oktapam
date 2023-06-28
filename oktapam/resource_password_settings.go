@@ -216,17 +216,10 @@ func resourcePasswordSettingsReadImport(ctx context.Context, d *schema.ResourceD
 
 	resourceGroupID, projectID, err := parsePasswordSettingsID(d.Id())
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid resource import specifier: %w", err)
 	}
 	d.Set(attributes.ResourceGroup, resourceGroupID)
 	d.Set(attributes.Project, projectID)
-
-	diags := resourcePasswordSettingsRead(ctx, d, m)
-	for _, d := range diags {
-		if d.Severity == diag.Error {
-			return nil, fmt.Errorf(d.Summary)
-		}
-	}
 
 	return []*schema.ResourceData{d}, nil
 }

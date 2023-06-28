@@ -95,6 +95,7 @@ func dataSourcePasswordSettingsFetch(ctx context.Context, d *schema.ResourceData
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	// password settings are considered to not exist if they aren't set or there are no managed accounts set
 	if passwordSettings != nil && len(passwordSettings.ManagedPrivilegedAccountsConfig) > 0 {
 		for k, v := range passwordSettings.ToResourceMap() {
 			if err := d.Set(k, v); err != nil {

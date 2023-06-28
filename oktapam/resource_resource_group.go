@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
@@ -29,34 +29,10 @@ func resourceResourceGroup() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: descriptions.Name,
-				ValidateDiagFunc: func(i any, p cty.Path) diag.Diagnostics {
-					var diags diag.Diagnostics
-					if s, ok := i.(string); ok {
-						if s == "" {
-							diags = append(diags, diag.Diagnostic{
-								Severity: diag.Error,
-								Summary:  fmt.Sprintf("value for %s must not be empty", attributes.Name),
-							})
-						} else if len(s) > 255 {
-							diags = append(diags, diag.Diagnostic{
-								Severity: diag.Error,
-								Summary:  fmt.Sprintf("value for %s must be between 1 and 255 characters, inclusive", attributes.Name),
-							})
-						} else if !MatchesSimpleName(s) {
-							diags = append(diags, diag.Diagnostic{
-								Severity: diag.Error,
-								Summary:  fmt.Sprintf("value for %s may only contain alphanumeric characters (a-Z, 0-9), hyphens (-), underscores (_), and periods (.)", attributes.Name),
-							})
-						}
-					} else {
-						diags = append(diags, diag.Diagnostic{
-							Severity: diag.Error,
-							Summary:  fmt.Sprintf("value for %s must be a string", attributes.Name),
-						})
-					}
-
-					return diags
-				},
+				ValidateDiagFunc: validation.ToDiagFunc(validation.All(
+					validation.StringLenBetween(1, 255),
+					validation.StringMatch(nameMatcher, fmt.Sprintf("value for %s may only contain alphanumeric characters (a-Z, 0-9), hyphens (-), underscores (_), and periods (.)", attributes.Name)),
+				)),
 			},
 			attributes.Description: {
 				Type:        schema.TypeString,
@@ -90,9 +66,7 @@ func resourceResourceGroupRead(ctx context.Context, d *schema.ResourceData, m an
 
 	resourceMap := resourceGroup.ToResourceMap()
 	for k, v := range resourceMap {
-		if k == attributes.ID {
-			d.SetId(v.(string))
-		} else {
+		if k != attributes.ID {
 			if err := d.Set(k, v); err != nil {
 				diags = append(diags, diag.FromErr(err)...)
 			}

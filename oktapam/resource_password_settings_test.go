@@ -51,7 +51,8 @@ func TestAccResourceGroupPasswordSettings(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccPasswordSettingsCheckDestroy(resourceGroupName, projectName),
+		// use the resource group check destroy since we create a new one here and deletion of the resource group will cascade delete the project / password settings
+		CheckDestroy: testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccPasswordSettingsCreateConfig(delegatedAdminGroupName, resourceGroupName, projectName),
@@ -160,24 +161,6 @@ func insertComputedValuesForPasswordSettings(expectedPasswordSettings, actualPas
 	return nil
 }
 
-func testAccPasswordSettingsCheckDestroy(resourceGroupName string, projectNames ...string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(client.OktaPAMClient)
-		resourceGroups, err := client.ListResourceGroups(context.Background())
-		if err != nil {
-			return fmt.Errorf("error getting resource groups: %w", err)
-		}
-
-		for _, rg := range resourceGroups {
-			if *rg.Name == resourceGroupName {
-				return fmt.Errorf("resource group still exists")
-			}
-		}
-
-		return nil
-	}
-}
-
 const testAccPasswordSettingsCreateConfigFormat = `
 resource "oktapam_group" "test_resource_group_dga_group" {
 	name = "%s"
@@ -190,8 +173,6 @@ resource "oktapam_resource_group" "test_acc_resource_group" {
 resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
 	name = "%s"
 	resource_group = oktapam_resource_group.test_acc_resource_group.id
-	next_unix_uid         = 60120
-	next_unix_gid         = 63020
 	ssh_certificate_type  = "CERT_TYPE_ED25519_01"
 	account_discovery     = true
 }
@@ -228,8 +209,6 @@ resource "oktapam_resource_group" "test_acc_resource_group" {
 resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
 	name = "%s"
 	resource_group = oktapam_resource_group.test_acc_resource_group.id
-	next_unix_uid         = 60120
-	next_unix_gid         = 63020
 	ssh_certificate_type  = "CERT_TYPE_ED25519_01"
 	account_discovery     = true
 }

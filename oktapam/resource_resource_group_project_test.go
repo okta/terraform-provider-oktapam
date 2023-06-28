@@ -24,15 +24,11 @@ func TestAccResourceGroupProject(t *testing.T) {
 
 	initialResourceGroupProject := &client.ResourceGroupProject{
 		Name:               &initialResourceGroupProjectName,
-		NextUnixUID:        utils.AsIntPtr(60120),
-		NextUnixGID:        utils.AsIntPtr(63020),
 		SSHCertificateType: utils.AsStringPtr("CERT_TYPE_ED25519_01"),
 		AccountDiscovery:   utils.AsBoolPtrZero(false, true),
 	}
 	updatedResourceGroupProject := &client.ResourceGroupProject{
 		Name:               &updatedResourceGroupProjectName,
-		NextUnixUID:        utils.AsIntPtr(61200),
-		NextUnixGID:        utils.AsIntPtr(63400),
 		SSHCertificateType: utils.AsStringPtr("CERT_TYPE_RSA_01"),
 		GatewaySelector:    utils.AsStringPtr("env=test"),
 		AccountDiscovery:   utils.AsBoolPtrZero(true, true),
@@ -41,7 +37,8 @@ func TestAccResourceGroupProject(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccResourceGroupProjectCheckDestroy(resourceGroupName, initialResourceGroupProjectName, updatedResourceGroupProjectName),
+		// use the resource group check destroy since we create a new one here and deletion of the resource group will cascade delete the projects
+		CheckDestroy: testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccResourceGroupProjectCreateConfig(delegatedAdminGroupName, resourceGroupName, initialResourceGroupProjectName),
@@ -49,12 +46,6 @@ func TestAccResourceGroupProject(t *testing.T) {
 					testAccResourceGroupProjectCheckExists(resourceName, initialResourceGroupProject),
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.Name, initialResourceGroupProjectName,
-					),
-					resource.TestCheckResourceAttr(
-						resourceName, attributes.NextUnixUID, "60120",
-					),
-					resource.TestCheckResourceAttr(
-						resourceName, attributes.NextUnixGID, "63020",
 					),
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.SSHCertificateType, "CERT_TYPE_ED25519_01",
@@ -70,12 +61,6 @@ func TestAccResourceGroupProject(t *testing.T) {
 					testAccResourceGroupProjectCheckExists(resourceName, updatedResourceGroupProject),
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.Name, updatedResourceGroupProjectName,
-					),
-					resource.TestCheckResourceAttr(
-						resourceName, attributes.NextUnixUID, "61200",
-					),
-					resource.TestCheckResourceAttr(
-						resourceName, attributes.NextUnixGID, "63400",
 					),
 					resource.TestCheckResourceAttr(
 						resourceName, attributes.SSHCertificateType, "CERT_TYPE_RSA_01",
@@ -135,24 +120,6 @@ func insertComputedValuesForResourceGroupProject(expectedResourceGroupProject, a
 	return nil
 }
 
-func testAccResourceGroupProjectCheckDestroy(resourceGroupName string, projectNames ...string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(client.OktaPAMClient)
-		resourceGroups, err := client.ListResourceGroups(context.Background())
-		if err != nil {
-			return fmt.Errorf("error getting resource groups: %w", err)
-		}
-
-		for _, rg := range resourceGroups {
-			if *rg.Name == resourceGroupName {
-				return fmt.Errorf("resource group still exists")
-			}
-		}
-
-		return nil
-	}
-}
-
 const testAccResourceGroupProjectCreateConfigFormat = `
 resource "oktapam_group" "test_resource_group_dga_group" {
 	name = "%s"
@@ -165,8 +132,6 @@ resource "oktapam_resource_group" "test_acc_resource_group" {
 resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
 	name = "%s"
 	resource_group = oktapam_resource_group.test_acc_resource_group.id
-	next_unix_uid         = 60120
-	next_unix_gid         = 63020
 	ssh_certificate_type  = "CERT_TYPE_ED25519_01"
 }
 `
@@ -187,8 +152,6 @@ resource "oktapam_resource_group" "test_acc_resource_group" {
 resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
 	name                 = "%s"
 	resource_group       = oktapam_resource_group.test_acc_resource_group.id
-  	next_unix_uid        = 61200
-  	next_unix_gid        = 63400
 	gateway_selector     = "env=test"
 	ssh_certificate_type = "CERT_TYPE_RSA_01"
 	account_discovery 	 = true

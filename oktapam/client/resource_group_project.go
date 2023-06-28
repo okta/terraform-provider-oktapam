@@ -19,8 +19,6 @@ type ResourceGroupProject struct {
 	Team               *string `json:"team,omitempty"`
 	ResourceGroupID    *string `json:"resource_group_id,omitempty"`
 	DeletedAt          *string `json:"deleted_at,omitempty"`
-	NextUnixGID        *int    `json:"next_unix_gid,omitempty"`
-	NextUnixUID        *int    `json:"next_unix_uid,omitempty"`
 	GatewaySelector    *string `json:"gateway_selector,omitempty"`
 	SSHCertificateType *string `json:"ssh_certificate_type,omitempty"`
 	AccountDiscovery   *bool   `json:"server_account_management,omitempty"`
@@ -40,12 +38,6 @@ func (p ResourceGroupProject) ToResourceMap() map[string]any {
 	}
 	if p.DeletedAt != nil {
 		m[attributes.DeletedAt] = *p.DeletedAt
-	}
-	if p.NextUnixGID != nil {
-		m[attributes.NextUnixGID] = *p.NextUnixGID
-	}
-	if p.NextUnixUID != nil {
-		m[attributes.NextUnixUID] = *p.NextUnixUID
 	}
 	if p.GatewaySelector != nil {
 		m[attributes.GatewaySelector] = *p.GatewaySelector
