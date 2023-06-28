@@ -73,7 +73,7 @@ var (
 	EnterpriseSigned                          = "If `true`, certificate is signed by AD Certificate Services."
 	ForwardTraffic                            = "If `true`, all traffic in the ASA Project be forwarded through selected ASA Gateways."
 	GatewayID                                 = "The UUID of the Gateway with which this AD Connection is associated."
-	GatewaySelector                           = "Assigns ASA Gateways with labels matching all selectors. At least one selector is required for traffic forwarding."
+	GatewaySelector                           = "Assigns Gateways with labels matching all selectors. At least one selector is required to forward traffic through a Gateway."
 	GroupName                                 = "The human-readable name of the ASA Group. Values are case-sensitive."
 	HostnameAttribute                         = "AD Attribute mapped to hostname used to identify a discovered server within Advanced Server Access."
 	IncludeUserSID                            = fmt.Sprintf("%s Options for including the User Security Identifier (SID) in the certificate used for Passwordless authentication to a Windows server via RDP : Never, If_Available, and Always.", PrefixDev)
