@@ -73,24 +73,27 @@ func testAccResourceGroupsCheckDestroy(identifiers ...string) resource.TestCheck
 }
 
 const testAccDatasourceResourceGroupsCreateConfigFormat = `
-resource "oktapam_group" "test_group" {
-	name = "dra-test-group-%s"
+resource "oktapam_group" "test_group-1" {
+	name = "dra-test-group-%s-1"
+}
+resource "oktapam_group" "test_group-2" {
+	name = "dra-test-group-%s-2"
 }
 resource "oktapam_resource_group" "test-resource-group-1" {
 	name = "%s-1"
 	description = "terraform test rg"
-	delegated_resource_admin_groups = [oktapam_group.test_group.id]
+	delegated_resource_admin_groups = [oktapam_group.test_group-1.id]
 }
 
 resource "oktapam_resource_group" "test-resource-group-2" {
 	name = "%s-2"
 	description = "terraform test rg"
-	delegated_resource_admin_groups = [oktapam_group.test_group.id]
+	delegated_resource_admin_groups = [oktapam_group.test_group-2.id]
 }
 `
 
 func createTestAccDatasourceResourceGroupsInitConfig(identifier string) string {
-	return fmt.Sprintf(testAccDatasourceResourceGroupsCreateConfigFormat, identifier, identifier, identifier)
+	return fmt.Sprintf(testAccDatasourceResourceGroupsCreateConfigFormat, identifier, identifier, identifier, identifier)
 }
 
 const testAccDatasourceResourceGroupsFormat = `
