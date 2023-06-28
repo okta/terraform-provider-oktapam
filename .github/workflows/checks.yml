@@ -84,8 +84,8 @@ jobs:
           OKTAPAM_SECRET: ${{ secrets.OKTA_623529_PAM_TEAM_OKTAPAM_SECRET }}
           OKTAPAM_KEY: ${{ secrets.OKTA_623529_PAM_TEAM_OKTAPAM_KEY }}
           OKTAPAM_TEAM: ${{ secrets.OKTA_623529_PAM_TEAM_OKTAPAM_TEAM }}
-          OKTAPAM_API_HOST: ${{ secrets.OKTA_623529_PAM_TEAM_OKTAPAM_API_HOST }}
           OKTAPAM_TRUSTED_DOMAIN_OVERRIDE: ${{ secrets.OKTA_623529_PAM_TEAM_OKTAPAM_TRUSTED_DOMAIN_OVERRIDE }}
+          OKTAPAM_API_HOST: ${{ secrets.OKTA_623529_PAM_TEAM_OKTAPAM_API_HOST }}
       - name: If the acceptance tests fail, retry. Intended for failed locks and dependency download timeouts.
         if: failure()
         run: |
@@ -95,8 +95,8 @@ jobs:
           OKTAPAM_SECRET: ${{ secrets.OKTA_623529_PAM_TEAM_OKTAPAM_SECRET }}
           OKTAPAM_KEY: ${{ secrets.OKTA_623529_PAM_TEAM_OKTAPAM_KEY }}
           OKTAPAM_TEAM: ${{ secrets.OKTA_623529_PAM_TEAM_OKTAPAM_TEAM }}
-          OKTAPAM_API_HOST: ${{ secrets.OKTA_623529_PAM_TEAM_OKTAPAM_API_HOST }}
           OKTAPAM_TRUSTED_DOMAIN_OVERRIDE: ${{ secrets.OKTA_623529_PAM_TEAM_OKTAPAM_TRUSTED_DOMAIN_OVERRIDE }}
+          OKTAPAM_API_HOST: ${{ secrets.OKTA_623529_PAM_TEAM_OKTAPAM_API_HOST }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
   check5:
     name: Doc Generation
