@@ -35,7 +35,7 @@ var (
 	AltNamesAttributes                        = "AD Attribute mapped to alternative hostnames or DNS entries used to resolve a discovered server."
 	ApproveDeviceWithoutInteraction           = "If enabled, ASA auto-approves devices for ASA Users that are authenticated into this Team."
 	BastionAttribute                          = "AD Attribute mapped to bastion host that Advanced Server Access clients can use to tunnel traffic to a discovered server."
-	CertificateCommonName                     = "Common Name or FQDN to which certificate is issued to."
+	CertificateCommonName                     = "The Common Name or FQDN associated with the certificate."
 	CertificateContent                        = "Certificate Signing Request (CSR)/ Self Signed Certificate content."
 	CertificateID                             = "Certificate ID used for password less access method."
 	CertificateRequestType                    = "Specifies the type of certificate request - Certificate Signing Request (CSR)/ Self Signed Certificate."
