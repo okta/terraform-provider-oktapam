@@ -34,6 +34,7 @@ ci-acceptance-test: ci-container
 		-e OKTAPAM_SECRET \
 		-e OKTAPAM_TEAM \
 		-e OKTAPAM_API_HOST \
+		-e OKTAPAM_TRUSTED_DOMAIN_OVERRIDE \
 		-e TF_ACC_TERRAFORM_PATH=/usr/local/bin/terraform \
 		-e TF_ACC_TERRAFORM_VERSION \
 		-v ${TF_ACC_TERRAFORM_PATH}:/usr/local/bin/terraform \
