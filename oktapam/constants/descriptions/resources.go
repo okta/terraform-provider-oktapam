@@ -25,7 +25,7 @@ var (
 	// EA/Beta Features:
 	ResourceKubernetesCluster           = fmt.Sprintf("%s Represents a Kubernetes cluster that has been registered with ASA. This resource will create configuration items in ASA needed in order to configure a Kubernetes cluster to authenticate user access with ASA. %s", PrefixBeta, WarningBetaK8s)
 	ResourceKubernetesClusterConnection = fmt.Sprintf("%s A set of details describing how to connect to an existing Kubernetes Cluster. %s", PrefixBeta, WarningBetaK8s)
-	ResourceKubernetesClusterGroup      = fmt.Sprintf("%s A mapping of Kubernetes cluster to an ASA Group. Members of the provided ASA group will be granted access to clusters which match the specified cluster_selectors. %s", PrefixBeta, WarningBetaK8s)
+	ResourceKubernetesClusterGroup      = fmt.Sprintf("%s A mapping of Kubernetes cluster to a Group. Members of the specified Group are granted access to clusters which match the specified cluster_selectors. %s", PrefixBeta, WarningBetaK8s)
 
 	// PAM LEA Features
 	ResourcePasswordSettings                   = fmt.Sprintf("%s The settings for passwords set on resources within the project. %s", PrefixLEA, LinkPasswordSettings)
