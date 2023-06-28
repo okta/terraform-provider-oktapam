@@ -5,7 +5,7 @@ const (
 	LinkADConnection          = "For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-connections.htm) on AD Connection creation and usage."
 	LinkADRuleAssignment      = "For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync-assignment.htm) on AD rule assignment."
 	LinkADServerDiscovery     = "For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm) on AD server discovery."
-	LinkADUserDiscovery       = "For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm) on AD user discovery."
+	LinkADUserDiscovery       = "For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-user-sync.htm) on AD user discovery."
 	LinkGateway               = "For details, see [Advanced Access Server Gateways](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateways-and-bastions.htm) on ASA Gateways and bastions."
 	LinkGatewaySetupToken     = "For details, see [Configure an Advanced Server Access gateway](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm)."
 	LinkGroup                 = "For details, see [Groups](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm)."
