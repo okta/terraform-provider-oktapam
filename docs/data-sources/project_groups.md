@@ -3,12 +3,12 @@
 page_title: "oktapam_project_groups Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A list of ASA Project Groups associated with an ASA Project. For details, see Add a Group to a Project https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm.
+  Returns a list of Project Groups associated with a Project. For details, see Add a Group to a Project https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm.
 ---
 
 # oktapam_project_groups (Data Source)
 
-A list of ASA Project Groups associated with an ASA Project. For details, see [Add a Group to a Project](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm).
+Returns a list of Project Groups associated with a Project. For details, see [Add a Group to a Project](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm).
 
 
 

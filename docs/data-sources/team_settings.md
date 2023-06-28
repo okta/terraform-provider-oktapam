@@ -3,12 +3,12 @@
 page_title: "oktapam_team_settings Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns Team-level settings for a specific Team, such as authentication and enrollment details
+  Returns Team-level settings, such as authentication and enrollment details, for your Team.
 ---
 
 # oktapam_team_settings (Data Source)
 
-Returns Team-level settings for a specific Team, such as authentication and enrollment details
+Returns Team-level settings, such as authentication and enrollment details, for your Team.
 
 
 

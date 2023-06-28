@@ -3,12 +3,12 @@
 page_title: "oktapam_password_settings Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a previously configured password settings for a PAM project.  For details, see Projects https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm
+  Returns an existing Password Policy for a PAM Project.  For details, see Projects https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm
 ---
 
 # oktapam_password_settings (Data Source)
 
-Returns a previously configured password settings for a PAM project.  For details, see [Projects](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm)
+Returns an existing Password Policy for a PAM Project.  For details, see [Projects](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm)
 
 
 

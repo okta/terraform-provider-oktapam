@@ -3,12 +3,12 @@
 page_title: "oktapam_ad_user_sync_task_settings_id_list Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of previously created ASA AD User Sync Task Settings IDs for an AD connection. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-user-sync.htm on AD user discovery.
+  Returns a list of all AD user sync jobs a specified AD Connection. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-user-sync.htm on AD user discovery.
 ---
 
 # oktapam_ad_user_sync_task_settings_id_list (Data Source)
 
-Returns a list of previously created ASA AD User Sync Task Settings IDs for an AD connection. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-user-sync.htm) on AD user discovery.
+Returns a list of all AD user sync jobs a specified AD Connection. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-user-sync.htm) on AD user discovery.
 
 
 

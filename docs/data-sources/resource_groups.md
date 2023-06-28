@@ -3,12 +3,12 @@
 page_title: "oktapam_resource_groups Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A list of PAM resource groups associated with the PAM team specified in the OKTAPAM_TEAM environment variable. For details, see Resource Groups https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-resource-groups.htm.
+  Returns a list of Resource Groups associated with the Team specified by the OKTAPAM_TEAM environment variable. For details, see Resource Groups https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-resource-groups.htm.
 ---
 
 # oktapam_resource_groups (Data Source)
 
-A list of PAM resource groups associated with the PAM team specified in the OKTAPAM_TEAM environment variable. For details, see [Resource Groups](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-resource-groups.htm).
+Returns a list of Resource Groups associated with the Team specified by the OKTAPAM_TEAM environment variable. For details, see [Resource Groups](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-resource-groups.htm).
 
 
 

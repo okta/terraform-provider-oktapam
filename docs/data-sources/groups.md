@@ -3,12 +3,12 @@
 page_title: "oktapam_groups Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of all ASA Groups associated with the ASA Team specified in the OKTAPAMTEAM environment variable. For details, see [Groups](https://help.okta.com/asa/en-us/Content/Topics/AdvServer_Access/docs/setup/groups.htm).
+  Returns a list of all Groups associated with the Team specified by the OKTAPAMTEAM environment variable. For details, see [Groups](https://help.okta.com/asa/en-us/Content/Topics/AdvServer_Access/docs/setup/groups.htm).
 ---
 
 # oktapam_groups (Data Source)
 
-Returns a list of all ASA Groups associated with the ASA Team specified in the OKTAPAM_TEAM environment variable. For details, see [Groups](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm).
+Returns a list of all Groups associated with the Team specified by the OKTAPAM_TEAM environment variable. For details, see [Groups](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm).
 
 
 
