@@ -3,12 +3,12 @@
 page_title: "oktapam_ad_user_sync_task_settings Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a previously created AD User Sync Task Settings. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm on AD user discovery.
+  Returns a previously created ASA AD User Sync Task Settings. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm on AD user discovery.
 ---
 
 # oktapam_ad_user_sync_task_settings (Data Source)
 
-Returns a previously created AD User Sync Task Settings. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm) on AD user discovery.
+Returns a previously created ASA AD User Sync Task Settings. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm) on AD user discovery.
 
 
 
@@ -17,19 +17,19 @@ Returns a previously created AD User Sync Task Settings. For more information ch
 
 ### Required
 
-- `connection_id` (String) UUID of the AD Connection with which this AD Task Settings is associated.
+- `connection_id` (String) The UUID of an associated AD connection.
 
 ### Read-Only
 
-- `base_dn` (String) Specifies where the rule searches for users.
-- `frequency` (Number) Frequency of the AD User Sync Task
+- `base_dn` (String) Specifies the domain to search for user accounts.
+- `frequency` (Number) Indicates how often the user sync job runs. Possible values: `1`, `6`, `12`, `24`.
 - `id` (String) The ID of this resource.
-- `is_active` (Boolean) If `true`, enables AD user sync task
-- `ldap_query_filter` (String) Specifies the criteria used to filter users.
+- `is_active` (Boolean) If `true`, enables the user sync job.
+- `ldap_query_filter` (String) The criteria used to filter user accounts.
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
-- `run_test` (Boolean) If `true`, test is performed based on specified AD User Sync Task Settings
-- `sid_field` (String) AD attribute mapped to user security identifier
-- `start_hour_utc` (Number) If AD user sync task is scheduled to run daily, then specify start hour in UTC
-- `upn_field` (String) AD attribute mapped to user principal name
+- `run_test` (Boolean) If `true`, performs a test run for the user sync job.
+- `sid_field` (String) The AD attribute that defines the security identifier (SID) for accounts. Most AD tenants use `objectSID`.
+- `start_hour_utc` (Number) A UTC timestamp that indicates the hour range when the user sync job runs. Only used if `frequency`is set to 24.
+- `upn_field` (String) The AD attribute that defines the User Principal Name (UPN) for accounts. Most AD tenants use `userPrincipalName`.
 
 

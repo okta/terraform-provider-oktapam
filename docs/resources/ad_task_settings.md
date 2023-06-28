@@ -3,12 +3,12 @@
 page_title: "oktapam_ad_task_settings Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Settings for Active Directory (AD) task for server discovery. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm on AD server discovery.
+  Settings for an Active Directory (AD) task that discovers servers. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm on AD server discovery.
 ---
 
 # oktapam_ad_task_settings (Resource)
 
-Settings for Active Directory (AD) task for server discovery. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm) on AD server discovery.
+Settings for an Active Directory (AD) task that discovers servers. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-sync.htm) on AD server discovery.
 
 
 
@@ -17,22 +17,22 @@ Settings for Active Directory (AD) task for server discovery. For more informati
 
 ### Required
 
-- `connection_id` (String) UUID of the AD Connection with which this AD Task Settings is associated.
-- `frequency` (Number) Frequency of the AD Task
-- `host_name_attribute` (String) AD Attribute mapped to hostname used to identify a discovered server within Advanced Server Access.
-- `is_active` (Boolean) If `true`, enables AD task
+- `connection_id` (String) The UUID of an associated AD connection.
+- `frequency` (Number) Indicates how often the server sync job runs. Possible values: `1`, `6`, `12`, `24`.
+- `host_name_attribute` (String) The AD attribute that defines the hostname for a server. This is used to identify discovered servers.
+- `is_active` (Boolean) If `true`, the AD server sync job is enabled.
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
-- `os_attribute` (String) AD Attribute mapped to server operating system of a discovered server.
-- `rule_assignments` (Block Set, Min: 1) Assignment rules determine how servers are synced from Active Directory (AD) and assigned to projects. (see [below for nested schema](#nestedblock--rule_assignments))
+- `os_attribute` (String) The AD attribute that defines the operating system of discovered servers.
+- `rule_assignments` (Block Set, Min: 1) The rules used to assign discovered servers to Projects. (see [below for nested schema](#nestedblock--rule_assignments))
 
 ### Optional
 
-- `access_address_attribute` (String) AD Attribute mapped to IP address or DNS name used by the gateway to connect to a discovered server.
-- `additional_attribute_mapping` (Block Set, Max: 10) Additional AD attributes mappings to Advanced Server Access labels. (see [below for nested schema](#nestedblock--additional_attribute_mapping))
-- `alt_names_attributes` (Set of String) AD Attribute mapped to alternative hostnames or DNS entries used to resolve a discovered server.
-- `bastion_attribute` (String) AD Attribute mapped to bastion host that Advanced Server Access clients can use to tunnel traffic to a discovered server.
-- `run_test` (Boolean) If `true`, test is performed based on specified AD Task Settings
-- `start_hour_utc` (Number) If AD task is scheduled to run daily, then specify start hour in UTC
+- `access_address_attribute` (String) The AD attribute that defines an IP address or DNS name for a server. This is used by the Gateway to connect to discovered servers.
+- `additional_attribute_mapping` (Block Set, Max: 10) Additional AD attributes used to map information to specified labels. (see [below for nested schema](#nestedblock--additional_attribute_mapping))
+- `alt_names_attributes` (Set of String) The AD attribute that defines alternative hostnames or DNS entries. These are used to resolve discovered servers.
+- `bastion_attribute` (String) The AD attribute that defines the bastion host for a server. Clients use this bastion to tunnel traffic to discovered servers..
+- `run_test` (Boolean) If `true`, performs a test run for the server sync job.
+- `start_hour_utc` (Number) A UTC timestamp that indicates the hour range when the server sync job runs. Only used if `frequency` is set to 24.
 
 ### Read-Only
 
@@ -43,10 +43,10 @@ Settings for Active Directory (AD) task for server discovery. For more informati
 
 Required:
 
-- `base_dn` (String) Specifies where the rule searches for servers.
-- `ldap_query_filter` (String) Specifies the specific criteria used to filter servers.
+- `base_dn` (String) The domain to search for servers.
+- `ldap_query_filter` (String) The criteria used to filter discovered servers.
 - `priority` (Number)
-- `project_id` (String) Specifies a project to associate with matching servers
+- `project_id` (String) The UUID for an existing Project. Discovered servers that match the rules are assigned to this Project.
 
 Read-Only:
 
@@ -58,12 +58,12 @@ Read-Only:
 
 Required:
 
-- `label` (String) Label
-- `value` (String) AD Attribute mapped to a label
+- `label` (String) An existing ASA label
+- `value` (String) The AD attribute to map to the specified ASA label
 
 Optional:
 
-- `is_guid` (Boolean) Identifies an AD attribute as a Globally Unique Identifier (GUID)
+- `is_guid` (Boolean) If `true`, the AD attribute is identified as a Globally Unique Identifier (GUID)
 
 ## Import
 

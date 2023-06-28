@@ -17,17 +17,17 @@ Limited Early Access Feature: The settings for passwords set on resources within
 
 ### Required
 
-- `character_options` (Block List, Min: 1, Max: 1) The specific characters rules required by the password settings. (see [below for nested schema](#nestedblock--character_options))
-- `enable_periodic_rotation` (Boolean) If `true`, requires passwords to be rotated after a period of time has passed. You must also set the periodic_rotation_duration_in_seconds param.
+- `character_options` (Block List, Min: 1, Max: 1) The specific characters rules required by the Password Policy. (see [below for nested schema](#nestedblock--character_options))
+- `enable_periodic_rotation` (Boolean) If `true`, requires passwords to be rotated after a period of time has passed. You must also set the `periodic_rotation_duration_in_seconds` param.
 - `managed_privileged_accounts` (Set of String) An array of managed accounts for password rotation.
 - `max_length` (Number) The maximum length allowed for the password.
 - `min_length` (Number) The minimum length allowed for the password.
-- `project` (String) The UUID of the Project.
-- `resource_group` (String) The UUID of the Resource Group.
+- `project` (String) The UUID of a Project.
+- `resource_group` (String) The UUID of a PAM Resource Group.
 
 ### Optional
 
-- `periodic_rotation_duration_in_seconds` (Number) If periodic rotation is enabled, specifies how often passwords are rotated.
+- `periodic_rotation_duration_in_seconds` (Number) If `periodic_rotation` is enabled, specifies how often passwords are rotated.
 
 ### Read-Only
 

@@ -21,8 +21,8 @@ Limited Early Access Feature: A policy which defines how users can gain access t
 - `description` (String) The human-readable description of the resource.
 - `id` (String) The ID of this resource.
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
-- `principals` (List of Object) Defines what users are bound to the security policy. (see [below for nested schema](#nestedatt--principals))
-- `rule` (List of Object) Defines privileges available for matching resources. (see [below for nested schema](#nestedatt--rule))
+- `principals` (List of Object) Defines the users bound to the Security Policy. (see [below for nested schema](#nestedatt--principals))
+- `rule` (List of Object) Defines the privileges available to resources matched to the Security Policy. (see [below for nested schema](#nestedatt--rule))
 
 <a id="nestedatt--principals"></a>
 ### Nested Schema for `principals`

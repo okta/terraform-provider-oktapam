@@ -3,12 +3,12 @@
 page_title: "oktapam_server_enrollment_token Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A token used to enroll servers in an Project. For details, see Enroll a server https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm.
+  A token used to enroll servers in a Project. For details, see Enroll a server https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm.
 ---
 
 # oktapam_server_enrollment_token (Resource)
 
-A token used to enroll servers in an Project. For details, see [Enroll a server](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm).
+A token used to enroll servers in a Project. For details, see [Enroll a server](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/enrolling-a-server.htm).
 
 
 
@@ -22,7 +22,7 @@ A token used to enroll servers in an Project. For details, see [Enroll a server]
 
 ### Read-Only
 
-- `created_by_user` (String) The User that created the resource.
+- `created_by_user` (String) The User that originally created the resource.
 - `id` (String) The ID of this resource.
 - `issued_at` (String) The UTC time when the token was issued. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `token` (String) The secret used for resource enrollment.

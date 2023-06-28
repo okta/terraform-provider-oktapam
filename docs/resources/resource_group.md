@@ -17,7 +17,7 @@ Limited Early Access Feature: A PAM construct that contains a group of projects.
 
 ### Required
 
-- `delegated_resource_admin_groups` (Set of String) The ids of the groups for users who are designated as delegated admins for the resource group
+- `delegated_resource_admin_groups` (Set of String) The UUIDs of the Groups designated as Delegated Admins for the Resource Group.
 - `description` (String) The human-readable description of the resource.
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
 

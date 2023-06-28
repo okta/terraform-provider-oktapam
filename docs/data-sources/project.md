@@ -3,12 +3,12 @@
 page_title: "oktapam_project Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a previously created Project. For details, Projects https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/projects.htm.
+  Returns a previously created ASA Project. For details, Projects https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/projects.htm.
 ---
 
 # oktapam_project (Data Source)
 
-Returns a previously created Project. For details, [Projects](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/projects.htm).
+Returns a previously created ASA Project. For details, [Projects](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/projects.htm).
 
 
 
@@ -21,18 +21,18 @@ Returns a previously created Project. For details, [Projects](https://help.okta.
 
 ### Read-Only
 
-- `create_server_users` (Boolean) If `true`, 'sftd' (Server Agent) creates corresponding local (unix or windows) user accounts in the Project's servers.
-- `deleted_at` (String) The UTC time of resource deletion. Format is '2022-01-01 00:00:00 +0000 UTC'.
-- `forward_traffic` (Boolean) If `true`, all traffic in the Project be forwarded through selected Gateways.
-- `gateway_selector` (String) Assigns Gateways with labels matching all selectors. At least one selector is required for traffic forwarding.
+- `create_server_users` (Boolean) If `true`, creates local (unix or windows) user accounts on enrolled Project servers.
+- `deleted_at` (String) The UTC time when the resource was deleted. Format is '2022-01-01 00:00:00 +0000 UTC'.
+- `forward_traffic` (Boolean) If `true`, all traffic in the Project is forwarded through selected Gateways.
+- `gateway_selector` (String) Assigns Gateways with labels matching all selectors. At least one selector is required to forward traffic through a Gateway.
 - `id` (String) The ID of this resource.
 - `next_unix_gid` (Number) The GID to use when creating a new Server User. Default value starts at 63001.
 - `next_unix_uid` (Number) The UID to use when creating a new Server User. Default value starts at 60001.
-- `rdp_session_recording` (Boolean) If `true`, enable remote desktop protocol (RDP) recording on all servers in the Project.
-- `require_preauth_for_creds` (Boolean) If `true`, require preauthorization before a User can retrieve credentials to sign in.
+- `rdp_session_recording` (Boolean) If `true`, enables remote desktop protocol (RDP) recording on all servers in the Project.
+- `require_preauth_for_creds` (Boolean) If `true`, requires preauthorization before a User can retrieve credentials to sign in.
 - `ssh_certificate_type` (String) The SSH certificate type used by access requests. Options include: [`CERT_TYPE_ED25519_01`, `CERT_TYPE_ECDSA_521_01`, `CERT_TYPE_ECDSA_384_01`, `CERT_TYPE_ECDSA_256_01`, `CERT_TYPE_RSA_01`]. 'CERT_TYPE_RSA_01' is a deprecated key algorithm type. This option should only be used to connect to legacy systems that cannot use newer SSH versions. If you do need to use 'CERT_TYPE_RSA_01', it is recommended to connect via a gateway with traffic forwarding. Otherwise, please use a more current key algorithm. If left unspecified, 'CERT_TYPE_ED25519_01' is used by default.
 - `ssh_session_recording` (Boolean) If `true`, enables ssh recording on server access requests.
-- `team` (String) The human-readable name of the Team that owns the resource. Values are lower-case.
+- `team` (String) The human-readable name of the ASA Team that owns the resource. Values are lower-case.
 - `user_on_demand_period` (Number) If defined, set time period in seconds that an on-demand user account exists on the server following an access request.
 
 

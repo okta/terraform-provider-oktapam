@@ -3,12 +3,12 @@
 page_title: "oktapam_kubernetes_cluster_connection Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Beta Feature: A set of details describing how to connect to an existing Kubernetes Cluster. NOTE: This is only available if the Team has the Kubernetes Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
+  Beta Feature: A set of details describing how to connect to an existing Kubernetes cluster. NOTE: This is only available if the ASA Team has the Kubernetes Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
 ---
 
 # oktapam_kubernetes_cluster_connection (Resource)
 
-Beta Feature: A set of details describing how to connect to an existing Kubernetes Cluster. NOTE: This is only available if the Team has the Kubernetes Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
+Beta Feature: A set of details describing how to connect to an existing Kubernetes cluster. NOTE: This is only available if the ASA Team has the Kubernetes Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
 
 
 
@@ -17,11 +17,11 @@ Beta Feature: A set of details describing how to connect to an existing Kubernet
 
 ### Required
 
-- `cluster_id` (String) The ASA/PAM ID of a Kubernetes cluster.
+- `cluster_id` (String) The UUID of an Kubernetes cluster.
 
 ### Optional
 
-- `api_url` (String) The URL to access the control plane of the Kubernetes cluster.
+- `api_url` (String) The URL used to access the control plane of the Kubernetes cluster.
 - `public_certificate` (String) The certificate expected when connecting to the Kubernetes cluster.
 
 ### Read-Only

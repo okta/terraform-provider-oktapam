@@ -3,12 +3,12 @@
 page_title: "oktapam_gateway_setup_token Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A token for Gateway enrollment. For details, see Configure an Advanced Server Access gateway https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm.
+  A token used to enroll a Gateway. For details, see Configure an Advanced Server Access gateway https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm.
 ---
 
 # oktapam_gateway_setup_token (Resource)
 
-A token for Gateway enrollment. For details, see [Configure an Advanced Server Access gateway](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm).
+A token used to enroll a Gateway. For details, see [Configure an Advanced Server Access gateway](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateway-configure.htm).
 
 
 
@@ -18,7 +18,7 @@ A token for Gateway enrollment. For details, see [Configure an Advanced Server A
 ### Required
 
 - `description` (String) The human-readable description of the resource.
-- `labels` (Map of String) A map of key-value pairings that define access to the Gateway.
+- `labels` (Map of String) A map of key-value pairings that define access to a Gateway.
 
 ### Read-Only
 

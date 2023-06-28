@@ -3,12 +3,12 @@
 page_title: "oktapam_password_settings Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a previously configured Password Settings for a project.  For details, see Projects https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm
+  Returns a previously configured password settings for a PAM project.  For details, see Projects https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm
 ---
 
 # oktapam_password_settings (Data Source)
 
-Returns a previously configured Password Settings for a project.  For details, see [Projects](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm)
+Returns a previously configured password settings for a PAM project.  For details, see [Projects](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm)
 
 
 
@@ -17,18 +17,18 @@ Returns a previously configured Password Settings for a project.  For details, s
 
 ### Required
 
-- `project` (String) The UUID of the Project.
-- `resource_group` (String) The UUID of the Resource Group.
+- `project` (String) The UUID of a Project.
+- `resource_group` (String) The UUID of a PAM Resource Group.
 
 ### Read-Only
 
 - `character_options` (List of Object) (see [below for nested schema](#nestedatt--character_options))
-- `enable_periodic_rotation` (Boolean) If `true`, requires passwords to be rotated after a period of time has passed. You must also set the periodic_rotation_duration_in_seconds param.
+- `enable_periodic_rotation` (Boolean) If `true`, requires passwords to be rotated after a period of time has passed. You must also set the `periodic_rotation_duration_in_seconds` param.
 - `id` (String) The ID of this resource.
 - `managed_privileged_accounts` (List of String) An array of managed accounts for password rotation.
 - `max_length` (Number) The maximum length allowed for the password.
 - `min_length` (Number) The minimum length allowed for the password.
-- `periodic_rotation_duration_in_seconds` (Number) If periodic rotation is enabled, specifies how often passwords are rotated.
+- `periodic_rotation_duration_in_seconds` (Number) If `periodic_rotation` is enabled, specifies how often passwords are rotated.
 
 <a id="nestedatt--character_options"></a>
 ### Nested Schema for `character_options`

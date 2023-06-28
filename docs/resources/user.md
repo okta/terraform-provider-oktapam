@@ -3,12 +3,12 @@
 page_title: "oktapam_user Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A User. Valid user types are human and service. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/service-users.htm on Service Users and how they are used.
+  An ASA User. Valid user types are human and service. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/service-users.htm on ASA Service Users and how they are used.
 ---
 
 # oktapam_user (Resource)
 
-A User. Valid user types are `human` and `service`. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/service-users.htm) on Service Users and how they are used.
+An ASA User. Valid user types are `human` and `service`. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/service-users.htm) on ASA Service Users and how they are used.
 
 
 
@@ -22,14 +22,14 @@ A User. Valid user types are `human` and `service`. For more information check o
 
 ### Optional
 
-- `status` (String) The status of the User. Valid statuses are 'ACTIVE', 'DISABLED', and 'DELETED'.
+- `status` (String) The status of the ASA User. Valid statuses are 'ACTIVE', 'DISABLED', and 'DELETED'.
 
 ### Read-Only
 
-- `deleted_at` (String) The UTC time of resource deletion. Format is '2022-01-01 00:00:00 +0000 UTC'.
+- `deleted_at` (String) The UTC time when the resource was deleted. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `id` (String) The ID of this resource.
 - `server_user_name` (String) The name of the corresponding Server User.
-- `team_name` (String) The human-readable name of the Team that owns the resource. Values are lower-case.
+- `team_name` (String) The human-readable name of the ASA Team that owns the resource. Values are lower-case.
 
 ## Import
 

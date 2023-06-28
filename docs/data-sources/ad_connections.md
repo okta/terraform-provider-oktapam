@@ -3,12 +3,12 @@
 page_title: "oktapam_ad_connections Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A list of AD Connections associated with an Team.
+  A list of ASA AD Connections associated with an ASA Team.
 ---
 
 # oktapam_ad_connections (Data Source)
 
-A list of AD Connections associated with an Team.
+A list of ASA AD Connections associated with an ASA Team.
 
 
 
@@ -23,7 +23,7 @@ A list of AD Connections associated with an Team.
 
 ### Read-Only
 
-- `ad_connections` (List of Object) A list of AD Connections associated with an Team. (see [below for nested schema](#nestedatt--ad_connections))
+- `ad_connections` (List of Object) A list of ASA AD Connections associated with an ASA Team. (see [below for nested schema](#nestedatt--ad_connections))
 - `id` (String) The ID of this resource.
 
 <a id="nestedatt--ad_connections"></a>

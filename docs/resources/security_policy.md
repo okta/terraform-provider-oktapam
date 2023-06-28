@@ -19,8 +19,8 @@ Limited Early Access Feature: A policy which defines how users can gain access t
 
 - `active` (Boolean) If true, indicates that the Security Policy is active.
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
-- `principals` (Block List, Min: 1, Max: 1) Defines what users are bound to the security policy. (see [below for nested schema](#nestedblock--principals))
-- `rule` (Block List, Min: 1, Max: 20) Defines privileges available for matching resources. (see [below for nested schema](#nestedblock--rule))
+- `principals` (Block List, Min: 1, Max: 1) Defines the users bound to the Security Policy. (see [below for nested schema](#nestedblock--principals))
+- `rule` (Block List, Min: 1, Max: 20) Defines the privileges available to resources matched to the Security Policy. (see [below for nested schema](#nestedblock--rule))
 
 ### Optional
 
@@ -35,7 +35,7 @@ Limited Early Access Feature: A policy which defines how users can gain access t
 
 Optional:
 
-- `groups` (Set of String) The UUIDs of User Groups.
+- `groups` (Set of String) The UUIDs of existing Groups.
 
 
 <a id="nestedblock--rule"></a>
@@ -45,7 +45,7 @@ Required:
 
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
 - `privileges` (Block List, Min: 1, Max: 1) The specific privileges granted to Principals on matching resources. (see [below for nested schema](#nestedblock--rule--privileges))
-- `resources` (Block List, Min: 1, Max: 1) Defines the resources that are targeted by the security policy. (see [below for nested schema](#nestedblock--rule--resources))
+- `resources` (Block List, Min: 1, Max: 1) Defines the resources targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources))
 
 Optional:
 
@@ -56,17 +56,17 @@ Optional:
 
 Optional:
 
-- `password_checkout_rdp` (Block List, Max: 1) Defines the privilege to RDP to a server via a local account using a vaulted password. (see [below for nested schema](#nestedblock--rule--privileges--password_checkout_rdp))
-- `password_checkout_ssh` (Block List, Max: 1) Defines the privilege to RDP to a server via a local account using a vaulted password. (see [below for nested schema](#nestedblock--rule--privileges--password_checkout_ssh))
-- `principal_account_rdp` (Block List, Max: 1) Defines the privilege to RDP to a server via the user's principal account. (see [below for nested schema](#nestedblock--rule--privileges--principal_account_rdp))
-- `principal_account_ssh` (Block List, Max: 1) Defines the privilege to SSH to a server via the user's principal account. (see [below for nested schema](#nestedblock--rule--privileges--principal_account_ssh))
+- `password_checkout_rdp` (Block List, Max: 1) Defines the privilege to make RDP connections to a server with a vaulted password. (see [below for nested schema](#nestedblock--rule--privileges--password_checkout_rdp))
+- `password_checkout_ssh` (Block List, Max: 1) Defines the privilege to make SSH connections to a server with a vaulted password. (see [below for nested schema](#nestedblock--rule--privileges--password_checkout_ssh))
+- `principal_account_rdp` (Block List, Max: 1) Defines the privilege to make RDP connections to a server with the user's principal account. (see [below for nested schema](#nestedblock--rule--privileges--principal_account_rdp))
+- `principal_account_ssh` (Block List, Max: 1) Defines the privilege to make SSH connections to a server with the user's principal account. (see [below for nested schema](#nestedblock--rule--privileges--principal_account_ssh))
 
 <a id="nestedblock--rule--privileges--password_checkout_rdp"></a>
 ### Nested Schema for `rule.privileges.password_checkout_rdp`
 
 Required:
 
-- `enabled` (Boolean) If `true`, grant the privilege to Principals on matching resources.
+- `enabled` (Boolean) If `true`, grants the privilege to Principals on matching resources.
 
 
 <a id="nestedblock--rule--privileges--password_checkout_ssh"></a>
@@ -74,7 +74,7 @@ Required:
 
 Required:
 
-- `enabled` (Boolean) If `true`, grant the privilege to Principals on matching resources.
+- `enabled` (Boolean) If `true`, grants the privilege to Principals on matching resources.
 
 
 <a id="nestedblock--rule--privileges--principal_account_rdp"></a>
@@ -82,7 +82,7 @@ Required:
 
 Required:
 
-- `enabled` (Boolean) If `true`, grant the privilege to Principals on matching resources.
+- `enabled` (Boolean) If `true`, grants the privilege to Principals on matching resources.
 
 
 <a id="nestedblock--rule--privileges--principal_account_ssh"></a>
@@ -90,7 +90,7 @@ Required:
 
 Required:
 
-- `enabled` (Boolean) If `true`, grant the privilege to Principals on matching resources.
+- `enabled` (Boolean) If `true`, grants the privilege to Principals on matching resources.
 
 
 
@@ -99,23 +99,23 @@ Required:
 
 Required:
 
-- `servers` (Block List, Min: 1, Max: 1) Defines the server-based resources that are targeted by the security policy rule. (see [below for nested schema](#nestedblock--rule--resources--servers))
+- `servers` (Block List, Min: 1, Max: 1) Defines the server-based resources targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--servers))
 
 <a id="nestedblock--rule--resources--servers"></a>
 ### Nested Schema for `rule.resources.servers`
 
 Optional:
 
-- `label_selectors` (Block List, Max: 1) Defines what resources that are targeted by the security policy via label selectors. (see [below for nested schema](#nestedblock--rule--resources--servers--label_selectors))
-- `server` (Block List) Define a server to match as a target within a security policy rule. (see [below for nested schema](#nestedblock--rule--resources--servers--server))
-- `server_account` (Block List) Define a local account on a server to match as a target within a security policy rule. (see [below for nested schema](#nestedblock--rule--resources--servers--server_account))
+- `label_selectors` (Block List, Max: 1) Defines the label selectors used to target resources by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--servers--label_selectors))
+- `server` (Block List) Defines a specific server targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--servers--server))
+- `server_account` (Block List) Defines a local server account targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--servers--server_account))
 
 <a id="nestedblock--rule--resources--servers--label_selectors"></a>
 ### Nested Schema for `rule.resources.servers.server_account`
 
 Required:
 
-- `server_labels` (Map of String) The map of key-value pairings that are used to match servers.
+- `server_labels` (Map of String) Defines a map of key-value pairs used to match servers.
 
 Optional:
 
@@ -127,7 +127,7 @@ Optional:
 
 Required:
 
-- `server_id` (String) The UUID of the Server record.
+- `server_id` (String) The UUID of the server.
 
 
 <a id="nestedblock--rule--resources--servers--server_account"></a>
@@ -136,7 +136,7 @@ Required:
 Required:
 
 - `account` (String) The username of a local account on a server.
-- `server_id` (String) The UUID of the Server record.
+- `server_id` (String) The UUID of the server.
 
 
 
@@ -167,7 +167,7 @@ Optional:
 
 Required:
 
-- `session_recording` (Boolean) Whether to record sessions made through an Gateway.
-- `traffic_forwarding` (Boolean) Whether to forward traffic through an Gateway.
+- `session_recording` (Boolean) Whether to record sessions made through a Gateway.
+- `traffic_forwarding` (Boolean) Whether to forward traffic through a Gateway.
 
 

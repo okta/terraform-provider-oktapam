@@ -3,12 +3,12 @@
 page_title: "oktapam_resource_group Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a previously created Resource Group. For details, see Resource Groups https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-resource-groups.htm.
+  Returns a previously created PAM resource group. For details, see Resource Groups https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-resource-groups.htm.
 ---
 
 # oktapam_resource_group (Data Source)
 
-Returns a previously created Resource Group. For details, see [Resource Groups](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-resource-groups.htm).
+Returns a previously created PAM resource group. For details, see [Resource Groups](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-resource-groups.htm).
 
 
 
@@ -17,7 +17,7 @@ Returns a previously created Resource Group. For details, see [Resource Groups](
 
 ### Read-Only
 
-- `delegated_resource_admin_groups` (Set of String) The ids of the groups for users who are designated as delegated admins for the resource group
+- `delegated_resource_admin_groups` (Set of String) The UUIDs of the Groups designated as Delegated Admins for the Resource Group.
 - `description` (String) The human-readable description of the resource.
 - `id` (String) The ID of this resource.
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.

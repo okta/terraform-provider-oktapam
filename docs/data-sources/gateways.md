@@ -3,12 +3,12 @@
 page_title: "oktapam_gateways Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of all Gateways connected to the Team specified in the OKTAPAMTEAM environment variable. For details, see [Advanced Access Server Gateways](https://help.okta.com/asa/en-us/Content/Topics/AdvServer_Access/docs/gateways-and-bastions.htm) on Gateways and bastions.
+  Returns a list of all ASA Gateways connected to the ASA Team specified in the OKTAPAMTEAM environment variable. For details, see [Advanced Access Server Gateways](https://help.okta.com/asa/en-us/Content/Topics/AdvServer_Access/docs/gateways-and-bastions.htm) on ASA Gateways and bastions.
 ---
 
 # oktapam_gateways (Data Source)
 
-Returns a list of all Gateways connected to the Team specified in the OKTAPAM_TEAM environment variable. For details, see [Advanced Access Server Gateways](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateways-and-bastions.htm) on Gateways and bastions.
+Returns a list of all ASA Gateways connected to the ASA Team specified in the OKTAPAM_TEAM environment variable. For details, see [Advanced Access Server Gateways](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateways-and-bastions.htm) on ASA Gateways and bastions.
 
 
 
@@ -21,7 +21,7 @@ Returns a list of all Gateways connected to the Team specified in the OKTAPAM_TE
 
 ### Read-Only
 
-- `gateways` (List of Object) Returns a list of all Gateways connected to the Team specified in the OKTAPAM_TEAM environment variable. For details, see [Advanced Access Server Gateways](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateways-and-bastions.htm) on Gateways and bastions. (see [below for nested schema](#nestedatt--gateways))
+- `gateways` (List of Object) Returns a list of all ASA Gateways connected to the ASA Team specified in the OKTAPAM_TEAM environment variable. For details, see [Advanced Access Server Gateways](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/gateways-and-bastions.htm) on ASA Gateways and bastions. (see [below for nested schema](#nestedatt--gateways))
 - `id` (String) The ID of this resource.
 
 <a id="nestedatt--gateways"></a>

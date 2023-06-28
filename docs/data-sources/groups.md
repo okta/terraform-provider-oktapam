@@ -3,12 +3,12 @@
 page_title: "oktapam_groups Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of all User Groups associated with the Team specified in the OKTAPAMTEAM environment variable. For details, see [Groups](https://help.okta.com/asa/en-us/Content/Topics/AdvServer_Access/docs/setup/groups.htm).
+  Returns a list of all ASA Groups associated with the ASA Team specified in the OKTAPAMTEAM environment variable. For details, see [Groups](https://help.okta.com/asa/en-us/Content/Topics/AdvServer_Access/docs/setup/groups.htm).
 ---
 
 # oktapam_groups (Data Source)
 
-Returns a list of all User Groups associated with the Team specified in the OKTAPAM_TEAM environment variable. For details, see [Groups](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm).
+Returns a list of all ASA Groups associated with the ASA Team specified in the OKTAPAM_TEAM environment variable. For details, see [Groups](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/groups.htm).
 
 
 
@@ -18,7 +18,7 @@ Returns a list of all User Groups associated with the Team specified in the OKTA
 ### Optional
 
 - `contains` (String) If a value is provided, the results are filtered to only contain resources that contain the value in the name field.
-- `disconnected_mode_on_only` (Boolean) If `true`, the results only include resources with disconnected mode enabled. NOTE: This is only available if the Team has the Disconnected Mode Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
+- `disconnected_mode_on_only` (Boolean) If `true`, the results only include resources with disconnected mode enabled. NOTE: This is only available if the ASA Team has the Disconnected Mode Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
 - `include_deleted` (Boolean) If `true`, results also include deleted resources.
 - `only_include_deleted` (Boolean) If `true`, results only include deleted resources.
 

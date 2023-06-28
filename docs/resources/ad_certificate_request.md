@@ -3,12 +3,12 @@
 page_title: "oktapam_ad_certificate_request Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A Certificate Request to generate AD Passwordless Self Signed Certificate or Certificate Signing Request(CSR). For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-certs.htm on AD Passwordless Certificates lifecycle & management.
+  A Certificate Request to generate an AD Passwordless Self Signed Certificate or Certificate Signing Request(CSR). For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-certs.htm on AD Passwordless Certificates lifecycle & management.
 ---
 
 # oktapam_ad_certificate_request (Resource)
 
-A Certificate Request to generate AD Passwordless Self Signed Certificate or Certificate Signing Request(CSR). For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-certs.htm) on AD Passwordless Certificates lifecycle & management.
+A Certificate Request to generate an AD Passwordless Self Signed Certificate or Certificate Signing Request(CSR). For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/ad-certs.htm) on AD Passwordless Certificates lifecycle & management.
 
 
 
@@ -17,15 +17,15 @@ A Certificate Request to generate AD Passwordless Self Signed Certificate or Cer
 
 ### Required
 
-- `common_name` (String) Common Name or FQDN to which certificate is issued to.
-- `details` (Block List, Min: 1, Max: 1) Certificate Signing Request (CSR) Details. (see [below for nested schema](#nestedblock--details))
+- `common_name` (String) The Common Name or FQDN associated with the certificate.
+- `details` (Block List, Min: 1, Max: 1) Specific details on the Certificate Signing Request (CSR). (see [below for nested schema](#nestedblock--details))
 - `display_name` (String) The human-readable name of the resource. Values are case-sensitive.
 - `type` (String) Specifies the type of certificate request - Certificate Signing Request (CSR)/ Self Signed Certificate.
 
 ### Read-Only
 
 - `content` (String) Certificate Signing Request (CSR)/ Self Signed Certificate content.
-- `enterprise_signed` (Boolean) If `true`, certificate is signed by AD Certificate Services.
+- `enterprise_signed` (Boolean) If `true`, indicates the certificate is signed by AD Certificate Services.
 - `id` (String) The ID of this resource.
 - `status` (String) Certificate status - Valid/Request Created.
 
