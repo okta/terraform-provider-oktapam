@@ -24,7 +24,7 @@ A Certificate Request to generate an AD Passwordless Self Signed Certificate or 
 
 ### Read-Only
 
-- `content` (String) Certificate Signing Request (CSR)/ Self Signed Certificate content.
+- `content` (String) The returned Certificate Signing Request (CSR) or Self Signed Certificate.
 - `enterprise_signed` (Boolean) If `true`, indicates the certificate is signed by AD Certificate Services.
 - `id` (String) The ID of this resource.
 - `status` (String) Certificate status - Valid/Request Created.

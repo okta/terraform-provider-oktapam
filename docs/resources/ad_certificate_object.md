@@ -18,7 +18,7 @@ Upload the Enterprise Signed certificate for use with an AD Connection. For more
 ### Required
 
 - `certificate_id` (String)
-- `source` (String) Certificate Signing Request (CSR)/ Self Signed Certificate content.
+- `source` (String) The returned Certificate Signing Request (CSR) or Self Signed Certificate.
 
 ### Read-Only
 
