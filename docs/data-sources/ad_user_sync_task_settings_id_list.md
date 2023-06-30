@@ -17,11 +17,11 @@ Returns a list of all AD user sync jobs a specified AD Connection. For more info
 
 ### Required
 
-- `connection_id` (String) The id of an ASA AD Connection. Results are returned for only this Connection.
+- `connection_id` (String) If defined, results only include resources associated with the specified AD Connection.
 
 ### Optional
 
-- `status` (String) If a value is provided, includes ASA user sync task settings with specified status. Valid statuses are `ACTIVE` and `INACTIVE`.
+- `status` (String) If defined, results only include user sync jobs with the specified status. Possible values: `ACTIVE` and `INACTIVE`.
 
 ### Read-Only
 

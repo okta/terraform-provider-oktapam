@@ -17,8 +17,8 @@ Returns a list of all Projects associated with the Team specified by the OKTAPAM
 
 ### Optional
 
-- `contains` (String) If a value is provided, the results are filtered to only contain resources that contain the value in the name field.
-- `self` (Boolean) If `true`, only lists the ASA Projects that the ASA User making this request has been assigned.
+- `contains` (String) If defined, results only contain resources that include the specified value in the `name` field.
+- `self` (Boolean) If `true`, only lists the ASA Projects that the User making this request has been assigned.
 
 ### Read-Only
 

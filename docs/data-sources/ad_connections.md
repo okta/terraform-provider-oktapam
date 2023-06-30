@@ -17,8 +17,8 @@ A list of AD Connections associated with your Team.
 
 ### Optional
 
-- `certificate_id` (String) If `true`, only connections with a matching certificate ID are returned.
-- `gateway_id` (String) If `true`, only connections with a matching gateway ID are returned.
+- `certificate_id` (String) If `true`, results only include AD Connections associated with the specified certificate ID.
+- `gateway_id` (String) If `true`, results only include AD Connections associated with the specified Gateway ID.
 - `include_cert_details` (Boolean) If `true`, results also include certificate details
 
 ### Read-Only

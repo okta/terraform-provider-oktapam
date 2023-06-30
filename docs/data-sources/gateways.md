@@ -17,7 +17,7 @@ Returns a list of all Gateways connected to the Team specified in the OKTAPAM_TE
 
 ### Optional
 
-- `contains` (String) If a value is provided, the results are filtered to only contain resources that contain the value in the name field.
+- `contains` (String) If defined, results only contain resources that include the specified value in the `name` field.
 
 ### Read-Only
 

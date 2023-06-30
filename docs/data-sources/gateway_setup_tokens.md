@@ -17,7 +17,7 @@ Returns a list of ASA Gateway Setup Token IDs associated with the ASA Team speci
 
 ### Optional
 
-- `description_contains` (String) If a value is provided, the results are filtered to only contain resources whose name contains that value.
+- `description_contains` (String) If defined, results only contain resources that include the specified value in the `name` field.
 
 ### Read-Only
 
