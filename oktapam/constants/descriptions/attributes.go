@@ -36,7 +36,7 @@ var (
 	ApproveDeviceWithoutInteraction           = "If `true`, devices are automatically approved for authenticated Users."
 	BastionAttribute                          = "The AD attribute that defines the bastion host for a server. Clients use this bastion to tunnel traffic to discovered servers.."
 	CertificateCommonName                     = "The Common Name or FQDN associated with the certificate."
-	CertificateContent                        = "Certificate Signing Request (CSR)/ Self Signed Certificate content."
+	CertificateContent                        = "The returned Certificate Signing Request (CSR) or Self Signed Certificate."
 	CertificateID                             = "The UUID for a Certificate used for Passwordless authentication."
 	CertificateRequestType                    = "Specifies the type of certificate request - Certificate Signing Request (CSR)/ Self Signed Certificate."
 	CertificateStatus                         = "Certificate status - Valid/Request Created."
