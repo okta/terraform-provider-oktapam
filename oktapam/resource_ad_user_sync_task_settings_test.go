@@ -15,6 +15,7 @@ import (
 )
 
 func TestAccADUserSyncTaskSettings(t *testing.T) {
+	checkTeamApplicable(t, false)
 	adUserSyncTaskSettingsResourceName1 := "oktapam_ad_user_sync_task_settings.test_acc_ad_user_sync_task_settings_1"
 	adUserSyncTaskSettingsResourceName2 := "oktapam_ad_user_sync_task_settings.test_acc_ad_user_sync_task_settings_2"
 	adConnectionResourceName := "oktapam_ad_connection.test_acc_ad_connection"
@@ -75,10 +76,10 @@ func TestAccADUserSyncTaskSettings(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      adUserSyncTaskSettingsResourceName1,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: testAccADUserSyncTaskSettingsImportStateId(adUserSyncTaskSettingsResourceName1),
+				ResourceName:            adUserSyncTaskSettingsResourceName1,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       testAccADUserSyncTaskSettingsImportStateId(adUserSyncTaskSettingsResourceName1),
 				ImportStateVerifyIgnore: []string{attributes.RunTest},
 			},
 		},

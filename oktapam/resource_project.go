@@ -142,17 +142,17 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m any) d
 	c := m.(client.OktaPAMClient)
 
 	project := client.Project{
-		Name:                   getStringPtr(attributes.Name, d, true),
-		NextUnixGID:            getIntPtr(attributes.NextUnixGID, d, false),
-		NextUnixUID:            getIntPtr(attributes.NextUnixUID, d, false),
-		CreateServerUsers:      getBoolPtr(attributes.CreateServerUsers, d, false),
-		ForwardTraffic:         getBoolPtr(attributes.ForwardTraffic, d, false),
-		RDPSessionRecording:    getBoolPtr(attributes.RDPSessionRecording, d, false),
-		RequirePreAuthForCreds: getBoolPtr(attributes.RequirePreauthForCreds, d, false),
-		SSHSessionRecording:    getBoolPtr(attributes.SSHSessionRecording, d, false),
-		GatewaySelector:        getStringPtr(attributes.GatewaySelector, d, false),
-		SSHCertificateType:     getStringPtr(attributes.SSHCertificateType, d, false),
-		UserOnDemandPeriod:     getIntPtr(attributes.UserOnDemandPeriod, d, false),
+		Name:                   GetStringPtrFromResource(attributes.Name, d, true),
+		NextUnixGID:            GetIntPtrFromResource(attributes.NextUnixGID, d, false),
+		NextUnixUID:            GetIntPtrFromResource(attributes.NextUnixUID, d, false),
+		CreateServerUsers:      GetBoolPtrFromResource(attributes.CreateServerUsers, d, false),
+		ForwardTraffic:         GetBoolPtrFromResource(attributes.ForwardTraffic, d, false),
+		RDPSessionRecording:    GetBoolPtrFromResource(attributes.RDPSessionRecording, d, false),
+		RequirePreAuthForCreds: GetBoolPtrFromResource(attributes.RequirePreauthForCreds, d, false),
+		SSHSessionRecording:    GetBoolPtrFromResource(attributes.SSHSessionRecording, d, false),
+		GatewaySelector:        GetStringPtrFromResource(attributes.GatewaySelector, d, false),
+		SSHCertificateType:     GetStringPtrFromResource(attributes.SSHCertificateType, d, false),
+		UserOnDemandPeriod:     GetIntPtrFromResource(attributes.UserOnDemandPeriod, d, false),
 	}
 
 	err := c.CreateProject(ctx, project)
@@ -188,7 +188,9 @@ func resourceProjectReadWithIgnorable(ctx context.Context, d *schema.ResourceDat
 		}
 		for key, value := range proj.ToResourceMap() {
 			if _, ok := ignorableValues[key]; !ignoreValues || !ok {
-				d.Set(key, value)
+				if err := d.Set(key, value); err != nil {
+					return nil, err
+				}
 			}
 		}
 	} else {

@@ -15,6 +15,7 @@ const (
 )
 
 func TestAccADCertificateObject(t *testing.T) {
+	checkTeamApplicable(t, false)
 	certificateUploadResourceName := "oktapam_ad_certificate_object.test_upload_cert"
 	csrDisplayName := fmt.Sprintf("test-acc-csr-%s", randSeq())
 

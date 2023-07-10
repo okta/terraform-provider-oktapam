@@ -19,8 +19,13 @@ func TestAccDatasourceGroupList(t *testing.T) {
 	// Generate details
 	identifier := randSeq()
 
+	role := "access_user"
+	if isExecutingPAMTest() {
+		role = "end_user"
+	}
+
 	// Config 1: create two tokens
-	initConfig := createTestAccDatasourceGroupsInitConfig(identifier)
+	initConfig := createTestAccDatasourceGroupsInitConfig(identifier, role)
 
 	// Config 2: list using filter that returns both
 	dataName := "data1"
@@ -67,17 +72,17 @@ func testAccGroupsCheckDestroy(identifier string) resource.TestCheckFunc {
 const testAccDatasourceGroupsInitConfigFormat = `
 resource "oktapam_group" "test-group-1" {
 	name = "%s-1"
-	roles = ["access_user"]
+	roles = ["%s"]
 }
 
 resource "oktapam_group" "test-group-2" {
 	name = "%s-2"
-	roles = ["access_user"]
+	roles = ["%s"]
 }
 `
 
-func createTestAccDatasourceGroupsInitConfig(identifier string) string {
-	return fmt.Sprintf(testAccDatasourceGroupsInitConfigFormat, identifier, identifier)
+func createTestAccDatasourceGroupsInitConfig(identifier string, role string) string {
+	return fmt.Sprintf(testAccDatasourceGroupsInitConfigFormat, identifier, role, identifier, role)
 }
 
 const testAccDatasourceGroupsContainsFormat = `

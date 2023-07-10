@@ -57,19 +57,19 @@ func dataSourceGroupList(ctx context.Context, d *schema.ResourceData, m any) dia
 		parameters.Contains = contains.(string)
 	}
 
-	includeDeleted, err := getOkBool(attributes.IncludeDeleted, d)
+	includeDeleted, err := GetOkBoolFromResource(attributes.IncludeDeleted, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	parameters.IncludeDeleted = includeDeleted
 
-	onlyIncludeDeleted, err := getOkBool(attributes.OnlyIncludeDeleted, d)
+	onlyIncludeDeleted, err := GetOkBoolFromResource(attributes.OnlyIncludeDeleted, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	parameters.OnlyIncludeDeleted = onlyIncludeDeleted
 
-	disconnectedModeOnOnly, err := getOkBool(attributes.DisconnectedModeOnOnly, d)
+	disconnectedModeOnOnly, err := GetOkBoolFromResource(attributes.DisconnectedModeOnOnly, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}

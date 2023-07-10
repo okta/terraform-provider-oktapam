@@ -3,12 +3,12 @@
 page_title: "oktapam_ad_connections Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A list of ASA AD Connections associated with an ASA Team.
+  A list of AD Connections associated with your Team.
 ---
 
 # oktapam_ad_connections (Data Source)
 
-A list of ASA AD Connections associated with an ASA Team.
+A list of AD Connections associated with your Team.
 
 
 
@@ -17,13 +17,13 @@ A list of ASA AD Connections associated with an ASA Team.
 
 ### Optional
 
-- `certificate_id` (String) If `true`, only connections with a matching certificate ID are returned.
-- `gateway_id` (String) If `true`, only connections with a matching gateway ID are returned.
+- `certificate_id` (String) If `true`, results only include AD Connections associated with the specified certificate ID.
+- `gateway_id` (String) If `true`, results only include AD Connections associated with the specified Gateway ID.
 - `include_cert_details` (Boolean) If `true`, results also include certificate details
 
 ### Read-Only
 
-- `ad_connections` (List of Object) A list of ASA AD Connections associated with an ASA Team. (see [below for nested schema](#nestedatt--ad_connections))
+- `ad_connections` (List of Object) A list of AD Connections associated with your Team. (see [below for nested schema](#nestedatt--ad_connections))
 - `id` (String) The ID of this resource.
 
 <a id="nestedatt--ad_connections"></a>

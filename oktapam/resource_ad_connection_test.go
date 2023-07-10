@@ -13,6 +13,7 @@ import (
 )
 
 func TestAccADConnection(t *testing.T) {
+	checkTeamApplicable(t, false)
 	resourceName := "oktapam_ad_connection.test_acc_ad_connection"
 	nameIdentifier := randSeq()
 	connectionName := fmt.Sprintf("test_acc_ad_connection-%s", nameIdentifier)

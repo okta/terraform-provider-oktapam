@@ -13,6 +13,7 @@ import (
 // Creates a managed user-sync task-settings, then read it using data source, use list function as we need to find ID of
 // the user sync task settings first
 func TestAccDataSourceADUserSyncTaskSettings(t *testing.T) {
+	checkTeamApplicable(t, false)
 	adUserSyncTaskSettingsResourceName := "oktapam_ad_user_sync_task_settings.test_acc_ad_user_sync_task_settings"
 	adConnectionResourceName := "oktapam_ad_connection.test_acc_ad_connection"
 	dataSourceResourceName := "data.oktapam_ad_user_sync_task_settings.test_acc_datasource_ad_user_sync_task_settings"
@@ -35,7 +36,7 @@ func TestAccDataSourceADUserSyncTaskSettings(t *testing.T) {
 				Config: createTestAccDataSourceADUserSyncTaskSettingsInitConfig(preConfig, adUserSyncTaskName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrPair(dataSourceResourceName, attributes.Name,
-					adUserSyncTaskSettingsResourceName, attributes.Name),
+						adUserSyncTaskSettingsResourceName, attributes.Name),
 					resource.TestCheckResourceAttrPair(dataSourceResourceName, attributes.Frequency,
 						adUserSyncTaskSettingsResourceName, attributes.Frequency),
 					resource.TestCheckResourceAttrPair(dataSourceResourceName, attributes.SIDField,

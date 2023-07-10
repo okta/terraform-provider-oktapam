@@ -92,6 +92,7 @@ func dataSourceProject() *schema.Resource {
 }
 
 func dataSourceProjectFetch(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 	name := d.Get(attributes.Name).(string)
 	if name == "" {
@@ -106,10 +107,12 @@ func dataSourceProjectFetch(ctx context.Context, d *schema.ResourceData, m any) 
 	if project != nil {
 		d.SetId(*project.ID)
 		for key, value := range project.ToResourceMap() {
-			d.Set(key, value)
+			if err := d.Set(key, value); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
 		}
 	} else {
 		logging.Infof("project %s does not exist", name)
 	}
-	return nil
+	return diags
 }

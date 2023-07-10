@@ -13,7 +13,12 @@ func TestAccDatasourceGroupFetch(t *testing.T) {
 
 	identifier := randSeq()
 
-	testConfig := createTestAccDatasourceGroupInitConfig(identifier)
+	role := "access_user"
+	if isExecutingPAMTest() {
+		role = "end_user"
+	}
+
+	testConfig := createTestAccDatasourceGroupInitConfig(identifier, role)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -37,12 +42,12 @@ func TestAccDatasourceGroupFetch(t *testing.T) {
 const testAccDatasourceGroupInitListFetchConfigFormat = `
 resource "oktapam_group" "test-1" {
 	name = "%s-1"
-	roles = ["access_user"]
+	roles = ["%s"]
 }
 
 resource "oktapam_group" "test-2" {
 	name = "%s-2"
-	roles = ["access_user"]
+	roles = ["%s"]
 }
 
 data "oktapam_groups" "list" {
@@ -56,6 +61,6 @@ data "oktapam_group" "target" {
 }
 `
 
-func createTestAccDatasourceGroupInitConfig(identifier string) string {
-	return fmt.Sprintf(testAccDatasourceGroupInitListFetchConfigFormat, identifier, identifier, identifier)
+func createTestAccDatasourceGroupInitConfig(identifier string, role string) string {
+	return fmt.Sprintf(testAccDatasourceGroupInitListFetchConfigFormat, identifier, role, identifier, role, identifier)
 }

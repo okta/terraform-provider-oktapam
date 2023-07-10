@@ -81,12 +81,12 @@ func dataSourceServerEnrollmentTokenFetch(ctx context.Context, d *schema.Resourc
 }
 
 func getRequiredServerEnrollmentTokenAttributes(d *schema.ResourceData) (string, string, error) {
-	id := getStringPtr(attributes.ID, d, false)
+	id := GetStringPtrFromResource(attributes.ID, d, false)
 	if id == nil {
 		return "", "", fmt.Errorf(errors.MissingAttributeError, attributes.ID)
 	}
 
-	projectName := getStringPtr(attributes.ProjectName, d, false)
+	projectName := GetStringPtrFromResource(attributes.ProjectName, d, false)
 	if projectName == nil {
 		return "", "", fmt.Errorf(errors.MissingAttributeError, attributes.ProjectName)
 	}

@@ -7,6 +7,7 @@ import (
 	"testing"
 	"text/template"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/id"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
@@ -35,7 +36,7 @@ func TestAccKubernetesClusterConnection(t *testing.T) {
 		ProviderFactories: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: createTestAccKubernetesClusterConnectionConfig(resource.PrefixedUniqueId("cluster-key-"), clusterConnection),
+				Config: createTestAccKubernetesClusterConnectionConfig(id.PrefixedUniqueId("cluster-key-"), clusterConnection),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, attributes.KubernetesAPIURL, apiURL),
 					resource.TestCheckResourceAttr(resourceName, attributes.PublicCertificate, publicCertificate),

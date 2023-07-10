@@ -10,6 +10,7 @@ import (
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/id"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
@@ -22,7 +23,7 @@ func TestAccKubernetesClusterGroup(t *testing.T) {
 
 	resourceName := "oktapam_kubernetes_cluster_group.test_group"
 
-	groupName := resource.PrefixedUniqueId("cluster-group-test-group-")
+	groupName := id.PrefixedUniqueId("cluster-group-test-group-")
 	clusterSelector1 := "select=everything"
 	clusterSelector2 := "select=nothing"
 

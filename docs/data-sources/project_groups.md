@@ -3,12 +3,12 @@
 page_title: "oktapam_project_groups Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A list of ASA Project Groups associated with an ASA Project. For details, see Add a Group to a Project https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm.
+  Returns a list of Project Groups associated with a Project. For details, see Add a Group to a Project https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm.
 ---
 
 # oktapam_project_groups (Data Source)
 
-A list of ASA Project Groups associated with an ASA Project. For details, see [Add a Group to a Project](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm).
+Returns a list of Project Groups associated with a Project. For details, see [Add a Group to a Project](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/add-a-group-to-project.htm).
 
 
 
@@ -17,15 +17,15 @@ A list of ASA Project Groups associated with an ASA Project. For details, see [A
 
 ### Required
 
-- `project_name` (String) The name of an ASA Project. Results are returned for only this Project. Values are case-sensitive.
+- `project_name` (String) If defined, results are only returned for the specified Project. Values are case-sensitive.
 
 ### Optional
 
-- `create_server_group` (Boolean) If `true`, results only include ASA Project Groups that have 'create_server_group' option set to `true`.
-- `disconnected_mode_on_only` (Boolean) If `true`, the results only include resources with disconnected mode enabled. NOTE: This is only available if the ASA Team has the Disconnected Mode Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
-- `has_no_selectors` (Boolean) If `true`, the results only include resources with empty label selectors. NOTE: This is only available if the ASA Team has the Early Access PolicySync feature enabled.
-- `has_selectors` (Boolean) If `true`, the results only include resources with label selectors set. NOTE: This is only available if the ASA Team has the Early Access PolicySync feature enabled.
-- `include_removed` (Boolean) If `true`, the results also include resources that were previously removed.
+- `create_server_group` (Boolean) If `true`, results only include Project Groups that have set the 'create_server_group' option to `true`.
+- `disconnected_mode_on_only` (Boolean) If `true`, results only include resources that have enabled Disconnected Mode. NOTE: This is only available if the ASA Team has the Disconnected Mode Beta feature enabled; contact support@okta.com if you wish to participate in the Beta.
+- `has_no_selectors` (Boolean) If `true`, results only include resources haven't defined any label selectors.
+- `has_selectors` (Boolean) If `true`, results only include resources have defined a label selector.
+- `include_removed` (Boolean) If `true`, results also include resources that were previously removed.
 
 ### Read-Only
 

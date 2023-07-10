@@ -3,6 +3,7 @@ package oktapam
 import (
 	"context"
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -77,12 +78,12 @@ func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m a
 	c := m.(client.OktaPAMClient)
 
 	settings := client.TeamSettings{
-		ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, true),
-		ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, true),
-		UserProvisioningExactUserName:   getBoolPtr(attributes.UserProvisioningExactUserName, d, false),
-		ClientSessionDuration:           getIntPtr(attributes.ClientSessionDuration, d, false),
-		WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, false),
-		IncludeUserSID:                  getStringPtr(attributes.IncludeUserSID, d, false),
+		ReactivateUsersViaIDP:           GetBoolPtrFromResource(attributes.ReactivateUsersViaIDP, d, true),
+		ApproveDeviceWithoutInteraction: GetBoolPtrFromResource(attributes.ApproveDeviceWithoutInteraction, d, true),
+		UserProvisioningExactUserName:   GetBoolPtrFromResource(attributes.UserProvisioningExactUserName, d, false),
+		ClientSessionDuration:           GetIntPtrFromResource(attributes.ClientSessionDuration, d, false),
+		WebSessionDuration:              GetIntPtrFromResource(attributes.WebSessionDuration, d, false),
+		IncludeUserSID:                  GetStringPtrFromResource(attributes.IncludeUserSID, d, false),
 	}
 	if err := c.CreateTeamSettings(ctx, settings); err != nil {
 		return diag.FromErr(err)
@@ -93,6 +94,7 @@ func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m a
 }
 
 func resourceTeamSettingsRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	var diags diag.Diagnostics
 	c := m.(client.OktaPAMClient)
 
 	settings, err := c.GetTeamSettings(ctx)
@@ -102,27 +104,26 @@ func resourceTeamSettingsRead(ctx context.Context, d *schema.ResourceData, m any
 
 	if settings != nil {
 		for key, value := range settings.ToResourceMap() {
-			err = d.Set(key, value)
-			if err != nil {
-				return diag.FromErr(err)
+			if err = d.Set(key, value); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
 			}
 		}
 	} else {
 		return diag.Errorf("Team settings does not exist for the team %s", c.Team)
 	}
 
-	return nil
+	return diags
 }
 
 func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 	settings := client.TeamSettings{
-		ReactivateUsersViaIDP:           getBoolPtr(attributes.ReactivateUsersViaIDP, d, true),
-		ApproveDeviceWithoutInteraction: getBoolPtr(attributes.ApproveDeviceWithoutInteraction, d, true),
-		UserProvisioningExactUserName:   getBoolPtr(attributes.UserProvisioningExactUserName, d, false),
-		ClientSessionDuration:           getIntPtr(attributes.ClientSessionDuration, d, false),
-		WebSessionDuration:              getIntPtr(attributes.WebSessionDuration, d, false),
-		IncludeUserSID:                  getStringPtr(attributes.IncludeUserSID, d, false),
+		ReactivateUsersViaIDP:           GetBoolPtrFromResource(attributes.ReactivateUsersViaIDP, d, true),
+		ApproveDeviceWithoutInteraction: GetBoolPtrFromResource(attributes.ApproveDeviceWithoutInteraction, d, true),
+		UserProvisioningExactUserName:   GetBoolPtrFromResource(attributes.UserProvisioningExactUserName, d, false),
+		ClientSessionDuration:           GetIntPtrFromResource(attributes.ClientSessionDuration, d, false),
+		WebSessionDuration:              GetIntPtrFromResource(attributes.WebSessionDuration, d, false),
+		IncludeUserSID:                  GetStringPtrFromResource(attributes.IncludeUserSID, d, false),
 	}
 	if err := c.UpdateTeamSettings(ctx, settings); err != nil {
 		return diag.FromErr(err)

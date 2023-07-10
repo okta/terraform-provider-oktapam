@@ -8,6 +8,7 @@ import (
 	"testing"
 	"text/template"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/id"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
@@ -21,7 +22,7 @@ func TestAccKubernetesCluster(t *testing.T) {
 
 	resourceName := "oktapam_kubernetes_cluster.acctest_cluster"
 
-	clusterKey := resource.PrefixedUniqueId("cluster-key-")
+	clusterKey := id.PrefixedUniqueId("cluster-key-")
 	authMechanism := "NONE"
 
 	labels1 := map[string]string{

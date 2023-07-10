@@ -93,13 +93,13 @@ func resourceADConnectionCreate(ctx context.Context, d *schema.ResourceData, m a
 	}
 
 	adConnectionReq := client.ADConnection{
-		Name:                   getStringPtr(attributes.Name, d, false),
-		GatewayID:              getStringPtr(attributes.GatewayID, d, false),
-		Domain:                 getStringPtr(attributes.Domain, d, false),
-		ServiceAccountUsername: getStringPtr(attributes.ServiceAccountUsername, d, false),
-		ServiceAccountPassword: getStringPtr(attributes.ServiceAccountPassword, d, false),
-		UsePasswordless:        getBoolPtr(attributes.UsePasswordless, d, true),
-		CertificateId:          getStringPtr(attributes.CertificateID, d, false),
+		Name:                   GetStringPtrFromResource(attributes.Name, d, false),
+		GatewayID:              GetStringPtrFromResource(attributes.GatewayID, d, false),
+		Domain:                 GetStringPtrFromResource(attributes.Domain, d, false),
+		ServiceAccountUsername: GetStringPtrFromResource(attributes.ServiceAccountUsername, d, false),
+		ServiceAccountPassword: GetStringPtrFromResource(attributes.ServiceAccountPassword, d, false),
+		UsePasswordless:        GetBoolPtrFromResource(attributes.UsePasswordless, d, true),
+		CertificateId:          GetStringPtrFromResource(attributes.CertificateID, d, false),
 		DomainControllers:      domainControllers,
 	}
 
@@ -128,7 +128,9 @@ func resourceADConnectionRead(ctx context.Context, d *schema.ResourceData, m any
 
 	if adConnection != nil && utils.IsNonEmpty(adConnection.ID) {
 		for key, value := range adConnection.ToResourceMap() {
-			_ = d.Set(key, value)
+			if err := d.Set(key, value); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
 		}
 	} else {
 		logging.Infof("ADConnection %s does not exist", adConnectionId)
@@ -151,13 +153,13 @@ func resourceADConnectionUpdate(ctx context.Context, d *schema.ResourceData, m a
 
 		//Build API Client Request Object
 		adConnectionReq := client.ADConnection{
-			Name:                   getStringPtr(attributes.Name, d, false),
-			GatewayID:              getStringPtr(attributes.GatewayID, d, false),
-			Domain:                 getStringPtr(attributes.Domain, d, false),
-			ServiceAccountUsername: getStringPtr(attributes.ServiceAccountUsername, d, false),
-			ServiceAccountPassword: getStringPtr(attributes.ServiceAccountPassword, d, false),
-			UsePasswordless:        getBoolPtr(attributes.UsePasswordless, d, true),
-			CertificateId:          getStringPtr(attributes.CertificateID, d, false),
+			Name:                   GetStringPtrFromResource(attributes.Name, d, false),
+			GatewayID:              GetStringPtrFromResource(attributes.GatewayID, d, false),
+			Domain:                 GetStringPtrFromResource(attributes.Domain, d, false),
+			ServiceAccountUsername: GetStringPtrFromResource(attributes.ServiceAccountUsername, d, false),
+			ServiceAccountPassword: GetStringPtrFromResource(attributes.ServiceAccountPassword, d, false),
+			UsePasswordless:        GetBoolPtrFromResource(attributes.UsePasswordless, d, true),
+			CertificateId:          GetStringPtrFromResource(attributes.CertificateID, d, false),
 			DomainControllers:      domainControllers,
 		}
 

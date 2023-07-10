@@ -2,10 +2,11 @@ package oktapam
 
 import (
 	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/id"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/typed_strings"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
@@ -71,6 +72,6 @@ func dataSourceADUserSyncTaskSettingsIDListRead(ctx context.Context, d *schema.R
 		return diag.FromErr(err)
 	}
 
-	d.SetId(resource.UniqueId())
+	d.SetId(id.UniqueId())
 	return nil
 }

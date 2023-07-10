@@ -9,6 +9,7 @@ import (
 )
 
 func TestAccDatasourceADConnections(t *testing.T) {
+	checkTeamApplicable(t, false)
 	nameIdentifier := randSeq()
 	prefix := "test_acc_datasource_ad_connection"
 	adConnectionTFResourceName := "oktapam_ad_connection.test_acc_ad_connection"

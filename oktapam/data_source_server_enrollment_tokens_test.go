@@ -10,6 +10,7 @@ import (
 )
 
 func TestAccDatasourceServerEnrollmentTokenList(t *testing.T) {
+	checkTeamApplicable(t, false)
 	dataSourceName := fmt.Sprintf("data.%s.tokens_list", providerServerEnrollmentTokensKey)
 
 	// Generate details

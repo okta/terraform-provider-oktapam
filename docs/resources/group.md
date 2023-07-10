@@ -25,7 +25,7 @@ A set of ASA Users. For details, see [Groups](https://help.okta.com/asa/en-us/Co
 
 ### Read-Only
 
-- `deleted_at` (String) The UTC time of resource deletion. Format is '2022-01-01 00:00:00 +0000 UTC'.
+- `deleted_at` (String) The UTC time when the resource was deleted. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `id` (String) The ID of this resource.
 
 ## Import

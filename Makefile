@@ -3,17 +3,23 @@ NAMESPACE=pam
 NAME=oktapam
 BINARY=terraform-provider-${NAME}
 # On verion changes, update tag-checks.yml
-VERSION=0.3.3
+VERSION=0.4.0
 OS_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
 PLUGIN_DIR=~/.terraform.d/plugins
 DOCGEN_RESOURCES_DIR=docgen-resources
 
 SET_VERSION=-ldflags "-X github.com/okta/terraform-provider-oktapam/oktapam/version.Version=${VERSION}"
 
+ifneq ($(DEBUG), )
+  GOFLAGS :=${GOFLAGS} -gcflags=all="-N -l"
+else
+  GOFLAGS :=${GOFLAGS} -trimpath
+endif
+
 .DEFAULT_GOAL := install
 
 build:
-	go build -ldflags "-X github.com/okta/terraform-provider-oktapam/oktapam/version.Version=${VERSION}dev" -o ${BINARY}
+	go build ${GOFLAGS} -ldflags "-X github.com/okta/terraform-provider-oktapam/oktapam/version.Version=${VERSION}dev" -o ${BINARY}
 
 release:
 	GOOS=darwin GOARCH=amd64 go build ${SET_VERSION} -o ./bin/${BINARY}_${VERSION}_darwin_amd64
@@ -45,6 +51,11 @@ test:
 testacc: 
 # TESTARGS here can be used to pass arbitrary flags to go test, e.g. '-run TestMyTest'
 	TF_ACC=1 go test ./... -v $(TESTARGS) -timeout 120m   
+
+testaccpam:
+# TESTARGS here can be used to pass arbitrary flags to go test, e.g. '-run TestMyTest'
+	TF_ACC=1 TF_ACC_PAM=1 go test ./... -v $(TESTARGS) -timeout 120m   
+
 
 generate:
 	go generate ./...

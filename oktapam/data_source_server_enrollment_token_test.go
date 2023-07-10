@@ -8,6 +8,7 @@ import (
 )
 
 func TestAccDatasourceServerEnrollmentTokenFetch(t *testing.T) {
+	checkTeamApplicable(t, false)
 	resourceName := "oktapam_server_enrollment_token.test_server_enrollment_token_1"
 	dataSourceName := "data.oktapam_server_enrollment_token.target_token"
 

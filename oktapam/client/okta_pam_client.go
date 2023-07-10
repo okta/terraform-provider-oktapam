@@ -60,11 +60,15 @@ func checkTrustedDomain(apiHost string) error {
 		}
 	}
 
-	if hostname == os.Getenv(TRUSTED_DOMAIN_OVERRIDE_ENV_VAR) {
-		return nil
+	override, present := os.LookupEnv(TRUSTED_DOMAIN_OVERRIDE_ENV_VAR)
+	if present {
+		if hostname == override {
+			return nil
+		}
+		return fmt.Errorf("configured api host is not within a trusted domain.  host: %q, override: %q", hostname, override)
 	}
 
-	return fmt.Errorf("configured api host is not within a trusted domain")
+	return fmt.Errorf("configured api host is not within a trusted domain.  host: %q", hostname)
 }
 
 func createServiceToken(apiKey, apiKeySecret, apiHost, team string) (*ServiceToken, error) {
@@ -181,4 +185,14 @@ func parseBool(i any) (bool, error) {
 	default:
 		return false, fmt.Errorf("cannot convert %T to bool", v)
 	}
+}
+
+func stringSliceToInterfaceSlice(arr []string) []any {
+	arrI := make([]any, len(arr))
+
+	for idx, s := range arr {
+		arrI[idx] = s
+	}
+
+	return arrI
 }

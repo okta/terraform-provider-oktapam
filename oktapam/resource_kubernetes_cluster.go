@@ -61,8 +61,8 @@ func resourceKubernetesCluster() *schema.Resource {
 func resourceKubernetesClusterCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := m.(client.OktaPAMClient)
 
-	clusterKey := getStringPtr(attributes.KubernetesClusterKey, d, false)
-	authMechanism := getStringPtr(attributes.KubernetesAuthMechanism, d, false)
+	clusterKey := GetStringPtrFromResource(attributes.KubernetesClusterKey, d, false)
+	authMechanism := GetStringPtrFromResource(attributes.KubernetesAuthMechanism, d, false)
 	labels := d.Get(attributes.Labels).(map[string]any)
 
 	labelsMap := make(map[string]string, len(labels))

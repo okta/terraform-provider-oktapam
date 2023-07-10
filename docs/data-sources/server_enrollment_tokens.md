@@ -17,7 +17,7 @@ A list of all ASA Server Enrollment Tokens associated with a specific ASA Projec
 
 ### Required
 
-- `project_name` (String) The name of an ASA Project. Results are returned for only this Project. Values are case-sensitive.
+- `project_name` (String) If defined, results are only returned for the specified Project. Values are case-sensitive.
 
 ### Read-Only
 

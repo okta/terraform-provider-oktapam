@@ -46,7 +46,7 @@ func dataSourceProjectList(ctx context.Context, d *schema.ResourceData, m any) d
 		parameters.Contains = contains.(string)
 	}
 
-	self, err := getOkBool(attributes.Self, d)
+	self, err := GetOkBoolFromResource(attributes.Self, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
