@@ -27,7 +27,7 @@ type ADConnection struct {
 	DeletedAt              *string  `json:"deleted_at,omitempty"`
 }
 
-type ADTaskSettings struct {
+type ADServerSyncTaskSettings struct {
 	ID                         *string                  `json:"id,omitempty"`
 	Name                       *string                  `json:"name"`
 	Frequency                  *int                     `json:"frequency"`
@@ -59,7 +59,7 @@ type ADRuleAssignment struct {
 	Priority        int    `json:"priority"`
 }
 
-type ADTaskSettingsSchedule struct {
+type ADServerSyncTaskSettingsSchedule struct {
 	Frequency    *int `json:"frequency"`
 	StartHourUTC *int `json:"start_hour_utc"`
 }
@@ -142,8 +142,8 @@ func (adConn ADConnection) Exists() bool {
 	return utils.IsNonEmpty(adConn.ID) && utils.IsBlank(adConn.DeletedAt)
 }
 
-func (adTaskSettings ADTaskSettings) Exists() bool {
-	return utils.IsNonEmpty(adTaskSettings.ID)
+func (adServerSyncTaskSettings ADServerSyncTaskSettings) Exists() bool {
+	return utils.IsNonEmpty(adServerSyncTaskSettings.ID)
 }
 
 func (adUserSyncTaskSettings ADUserSyncTaskSettings) Exists() bool {
@@ -260,11 +260,11 @@ func (c OktaPAMClient) DeleteADConnection(ctx context.Context, adConnId string) 
 	return err
 }
 
-func (c OktaPAMClient) GetADTaskSettings(ctx context.Context, adConnId string, adTaskSettingsId string) (*ADTaskSettings, error) {
+func (c OktaPAMClient) GetADServerSyncTaskSettings(ctx context.Context, adConnId string, adServerSyncTaskSettingsId string) (*ADServerSyncTaskSettings, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s/task_settings/%s", url.PathEscape(c.Team),
-		url.PathEscape(adConnId), url.PathEscape(adTaskSettingsId))
+		url.PathEscape(adConnId), url.PathEscape(adServerSyncTaskSettingsId))
 	logging.Tracef("making GET request to %s", requestURL)
-	resp, err := c.CreateBaseRequest(ctx).SetResult(&ADTaskSettings{}).Get(requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetResult(&ADServerSyncTaskSettings{}).Get(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return nil, err
@@ -272,9 +272,9 @@ func (c OktaPAMClient) GetADTaskSettings(ctx context.Context, adConnId string, a
 	statusCode := resp.StatusCode()
 
 	if statusCode == http.StatusOK {
-		adTaskSettings := resp.Result().(*ADTaskSettings)
-		if adTaskSettings.Exists() {
-			return adTaskSettings, nil
+		adServerSyncTaskSettings := resp.Result().(*ADServerSyncTaskSettings)
+		if adServerSyncTaskSettings.Exists() {
+			return adServerSyncTaskSettings, nil
 		}
 		return nil, nil
 	} else if statusCode == http.StatusNotFound {
@@ -284,12 +284,12 @@ func (c OktaPAMClient) GetADTaskSettings(ctx context.Context, adConnId string, a
 	return nil, createErrorForInvalidCode(resp, http.StatusOK, http.StatusNotFound)
 }
 
-func (c OktaPAMClient) CreateADTaskSettings(ctx context.Context, adConnId string, adTaskSettings ADTaskSettings) (*ADTaskSettings, error) {
+func (c OktaPAMClient) CreateADServerSyncTaskSettings(ctx context.Context, adConnId string, adServerSyncTaskSettings ADServerSyncTaskSettings) (*ADServerSyncTaskSettings, error) {
 	// Create the ad connection task settings on the api server
 	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s/task_settings", url.PathEscape(c.Team),
 		url.PathEscape(adConnId))
 	logging.Tracef("making POST request to %s", requestURL)
-	resp, err := c.CreateBaseRequest(ctx).SetBody(adTaskSettings).SetResult(&ADTaskSettings{}).Post(requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetBody(adServerSyncTaskSettings).SetResult(&ADServerSyncTaskSettings{}).Post(requestURL)
 
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
@@ -300,15 +300,15 @@ func (c OktaPAMClient) CreateADTaskSettings(ctx context.Context, adConnId string
 		return nil, err
 	}
 
-	createdADTaskSettings := resp.Result().(*ADTaskSettings)
-	return createdADTaskSettings, nil
+	createdADServerSyncTaskSettings := resp.Result().(*ADServerSyncTaskSettings)
+	return createdADServerSyncTaskSettings, nil
 }
 
-func (c OktaPAMClient) UpdateADTaskSettings(ctx context.Context, adConnId string, adTaskSettingsId string, adTaskSettings ADTaskSettings) (*ADTaskSettings, error) {
+func (c OktaPAMClient) UpdateADServerSyncTaskSettings(ctx context.Context, adConnId string, adServerSyncTaskSettingsId string, adServerSyncTaskSettings ADServerSyncTaskSettings) (*ADServerSyncTaskSettings, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s/task_settings/%s", url.PathEscape(c.Team),
-		url.PathEscape(adConnId), url.PathEscape(adTaskSettingsId))
+		url.PathEscape(adConnId), url.PathEscape(adServerSyncTaskSettingsId))
 	logging.Tracef("making PUT request to %s", requestURL)
-	resp, err := c.CreateBaseRequest(ctx).SetBody(adTaskSettings).SetResult(&ADTaskSettings{}).Put(requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetBody(adServerSyncTaskSettings).SetResult(&ADServerSyncTaskSettings{}).Put(requestURL)
 
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
@@ -319,13 +319,13 @@ func (c OktaPAMClient) UpdateADTaskSettings(ctx context.Context, adConnId string
 		return nil, err
 	}
 
-	updatedADTaskSettings := resp.Result().(*ADTaskSettings)
-	return updatedADTaskSettings, nil
+	updatedADServerSyncTaskSettings := resp.Result().(*ADServerSyncTaskSettings)
+	return updatedADServerSyncTaskSettings, nil
 }
 
-func (c OktaPAMClient) DeleteADTaskSettings(ctx context.Context, adConnId string, adTaskSettingsId string) error {
+func (c OktaPAMClient) DeleteADServerSyncTaskSettings(ctx context.Context, adConnId string, adServerSyncTaskSettingsId string) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s/task_settings/%s", url.PathEscape(c.Team),
-		url.PathEscape(adConnId), url.PathEscape(adTaskSettingsId))
+		url.PathEscape(adConnId), url.PathEscape(adServerSyncTaskSettingsId))
 	logging.Tracef("making DELETE request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).Delete(requestURL)
 	if err != nil {
@@ -337,9 +337,9 @@ func (c OktaPAMClient) DeleteADTaskSettings(ctx context.Context, adConnId string
 	return err
 }
 
-func (c OktaPAMClient) UpdateADTaskSettingsSchedule(ctx context.Context, adConnId string, adTaskSettingsId string, schedule ADTaskSettingsSchedule) error {
+func (c OktaPAMClient) UpdateADServerSyncTaskSettingsSchedule(ctx context.Context, adConnId string, adServerSyncTaskSettingsId string, schedule ADServerSyncTaskSettingsSchedule) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s/task_settings/%s/schedule", url.PathEscape(c.Team),
-		url.PathEscape(adConnId), url.PathEscape(adTaskSettingsId))
+		url.PathEscape(adConnId), url.PathEscape(adServerSyncTaskSettingsId))
 	logging.Tracef("making POST request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(schedule).Post(requestURL)
 	if err != nil {
@@ -351,9 +351,9 @@ func (c OktaPAMClient) UpdateADTaskSettingsSchedule(ctx context.Context, adConnI
 	return err
 }
 
-func (c OktaPAMClient) DeactivateADTaskSettings(ctx context.Context, adConnId string, adTaskSettingsId string) error {
+func (c OktaPAMClient) DeactivateADServerSyncTaskSettings(ctx context.Context, adConnId string, adServerSyncTaskSettingsId string) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/integrations/ad_connections/%s/task_settings/%s/deactivate", url.PathEscape(c.Team),
-		url.PathEscape(adConnId), url.PathEscape(adTaskSettingsId))
+		url.PathEscape(adConnId), url.PathEscape(adServerSyncTaskSettingsId))
 	logging.Tracef("making POST request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).Post(requestURL)
 	if err != nil {

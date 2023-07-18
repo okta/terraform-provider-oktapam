@@ -30,7 +30,7 @@ resource "oktapam_ad_connection" "test_ad_connection" {
 
 # AD Joined Server Discovery
 # Each Connection can have multiple server sync Jobs but only one active at a time
-resource "oktapam_ad_task_settings" "test_ad_task_settings" {
+resource "oktapam_ad_server_sync_task_settings" "test_ad_server_sync_task_settings" {
   connection_id            = oktapam_ad_connection.test_ad_connection.id
   name                     = "daily_job"
   is_active                = true
