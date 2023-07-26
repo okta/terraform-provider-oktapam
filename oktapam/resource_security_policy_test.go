@@ -81,12 +81,14 @@ func TestAccSecurityPolicy(t *testing.T) {
 						PrivilegeType: client.PrincipalAccountRDPPrivilegeType,
 						PrivilegeValue: &client.PrincipalAccountRDPPrivilege{
 							Enabled: utils.AsBoolPtr(true),
+							IsAdmin: utils.AsBoolPtr(true),
 						},
 					},
 					{
 						PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
 						PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
 							Enabled: utils.AsBoolPtr(true),
+							IsAdmin: utils.AsBoolPtr(true),
 						},
 					},
 				},
@@ -171,12 +173,14 @@ func TestAccSecurityPolicy(t *testing.T) {
 						PrivilegeType: client.PrincipalAccountRDPPrivilegeType,
 						PrivilegeValue: &client.PrincipalAccountRDPPrivilege{
 							Enabled: utils.AsBoolPtrZero(false, true),
+							IsAdmin: utils.AsBoolPtrZero(false, true),
 						},
 					},
 					{
 						PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
 						PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
 							Enabled: utils.AsBoolPtrZero(false, true),
+							IsAdmin: utils.AsBoolPtrZero(false, true),
 						},
 					},
 				},
