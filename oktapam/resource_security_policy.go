@@ -809,8 +809,10 @@ func readPrivilegeEnabled(privilege any) (bool, bool, bool) {
 	privilegeM := privilegeArr[0].(map[string]any)
 
 	if enabledI, ok := privilegeM[attributes.Enabled]; ok {
-		isAdmin, _ := privilegeM[attributes.IsAdmin];
-		return enabledI.(bool),isAdmin.(bool), true
+		if isAdmin, ok := privilegeM[attributes.IsAdmin]; ok{
+			return enabledI.(bool),isAdmin.(bool), true
+		}
+		return enabledI.(bool),false, true
 	}
 
 	return false, false, true
