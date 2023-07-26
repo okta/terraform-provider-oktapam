@@ -207,7 +207,7 @@ func resourceSecurityPolicy() *schema.Resource {
 												},
 												attributes.IsAdmin: {
 													Type:        schema.TypeBool,
-													Computed:    true,
+													Required:    true,
 													Description: descriptions.IsAdmin,
 												},
 											},
@@ -227,7 +227,7 @@ func resourceSecurityPolicy() *schema.Resource {
 												},
 												attributes.IsAdmin: {
 													Type:        schema.TypeBool,
-													Computed:    true,
+													Required:    true,
 													Description: descriptions.IsAdmin,
 												},
 											},
