@@ -464,6 +464,8 @@ func (*PrincipalAccountRDPPrivilege) isPrivilege() {}
 func (p *PrincipalAccountRDPPrivilege) ToResourceMap() map[string]any {
 	m := make(map[string]any, 1)
 	m[attributes.Enabled] = *p.Enabled
+	logging.Infof("Lehar logs: + ", *p)
+	logging.Infof("Lehar logs: + ", *p.FullAdminAccess)
 	m[attributes.FullAdminAccess] = *p.FullAdminAccess
 	return m
 }
