@@ -186,10 +186,10 @@ func dataSourceSecurityPolicy() *schema.Resource {
 													Computed:    true,
 													Description: descriptions.PrivilegeEnabled,
 												},
-												attributes.IsAdmin: {
+												attributes.FullAdminAccess: {
 													Type:        schema.TypeBool,
 													Computed:    true,
-													Description: descriptions.IsAdmin,
+													Description: descriptions.FullAdminAccess,
 												},
 											},
 										},
@@ -205,10 +205,10 @@ func dataSourceSecurityPolicy() *schema.Resource {
 													Computed:    true,
 													Description: descriptions.PrivilegeEnabled,
 												},
-												attributes.IsAdmin: {
+												attributes.FullAdminAccess: {
 													Type:        schema.TypeBool,
 													Computed:    true,
-													Description: descriptions.IsAdmin,
+													Description: descriptions.FullAdminAccess,
 												},
 											},
 										},

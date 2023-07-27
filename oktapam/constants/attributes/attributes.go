@@ -58,6 +58,7 @@ const (
 	FilterStatus                      = "filter_status" // NOTE: This attribute exists to avoid conflicts with Status
 	ForwardTraffic                    = "forward_traffic"
 	Frequency                         = "frequency"
+	FullAdminAccess 				  = "full_admin_access"
 	Gateway                           = "gateway"
 	GatewayID                         = "gateway_id"
 	Gateways                          = "gateways"
@@ -76,7 +77,6 @@ const (
 	IncludeServiceUsers               = "include_service_users"
 	IncludeUserSID                    = "include_user_sid"
 	IsActive                          = "is_active"
-	IsAdmin 						  = "is_admin"
 	IsGuid                            = "is_guid"
 	IssuedAt                          = "issued_at"
 	KubernetesAPIURL                  = "api_url"

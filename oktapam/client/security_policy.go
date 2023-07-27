@@ -456,7 +456,7 @@ type SecurityPolicyRulePrivilege interface {
 
 type PrincipalAccountRDPPrivilege struct {
 	Enabled *bool `json:"principal_account_rdp"`
-	IsAdmin *bool `json:"local_admin"`
+	FullAdminAccess *bool `json:"full_admin_access"`
 }
 
 func (*PrincipalAccountRDPPrivilege) isPrivilege() {}
@@ -464,13 +464,13 @@ func (*PrincipalAccountRDPPrivilege) isPrivilege() {}
 func (p *PrincipalAccountRDPPrivilege) ToResourceMap() map[string]any {
 	m := make(map[string]any, 1)
 	m[attributes.Enabled] = *p.Enabled
-	m[attributes.IsAdmin] = *p.IsAdmin
+	m[attributes.FullAdminAccess] = *p.FullAdminAccess
 	return m
 }
 
 type PrincipalAccountSSHPrivilege struct {
 	Enabled *bool `json:"principal_account_ssh"`
-	IsAdmin *bool `json:"server_admin"`
+	FullAdminAccess *bool `json:"full_admin_access"`
 }
 
 func (*PrincipalAccountSSHPrivilege) isPrivilege() {}
@@ -478,7 +478,7 @@ func (*PrincipalAccountSSHPrivilege) isPrivilege() {}
 func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
 	m := make(map[string]any, 1)
 	m[attributes.Enabled] = *p.Enabled
-	m[attributes.IsAdmin] = *p.IsAdmin
+	m[attributes.FullAdminAccess] = *p.FullAdminAccess
 	return m
 }
 
