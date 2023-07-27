@@ -102,6 +102,7 @@ Read-Only:
 Read-Only:
 
 - `enabled` (Boolean)
+- `full_admin_access` (Boolean)
 
 
 <a id="nestedobjatt--rule--privileges--principal_account_ssh"></a>
@@ -110,6 +111,7 @@ Read-Only:
 Read-Only:
 
 - `enabled` (Boolean)
+- `full_admin_access` (Boolean)
 
 
 
