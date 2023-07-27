@@ -541,8 +541,8 @@ func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 		privilegesM := make(map[string]any, 4)
 		passwordCheckoutRDP := make([]any, 0, 1)
 		passwordCheckoutSSH := make([]any, 0, 1)
-		principalAccountRDP := make([]any, 0, 1)
-		principalAccountSSH := make([]any, 0, 1)
+		principalAccountRDP := make([]any, 0, 2)
+		principalAccountSSH := make([]any, 0, 2)
 
 		for _, privilege := range r.Privileges {
 			resourceMap := privilege.PrivilegeValue.ToResourceMap()
