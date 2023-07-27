@@ -777,7 +777,7 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
 				PrivilegeType: client.PrincipalAccountRDPPrivilegeType,
 				PrivilegeValue: &client.PrincipalAccountRDPPrivilege{
-					Enabled: &enabled,
+					Enabled:         &enabled,
 					FullAdminAccess: &fullAdminAccess,
 				},
 			})
@@ -789,7 +789,7 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
 				PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
 				PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
-					Enabled: &enabled,
+					Enabled:         &enabled,
 					FullAdminAccess: &fullAdminAccess,
 				},
 			})
@@ -809,10 +809,10 @@ func readPrivilegeEnabled(privilege any) (bool, bool, bool) {
 	privilegeM := privilegeArr[0].(map[string]any)
 
 	if enabledI, ok := privilegeM[attributes.Enabled]; ok {
-		if fullAdminAccess, ok := privilegeM[attributes.FullAdminAccess]; ok{
-			return enabledI.(bool),fullAdminAccess.(bool), true
+		if fullAdminAccess, ok1 := privilegeM[attributes.FullAdminAccess]; ok1 {
+			return enabledI.(bool), fullAdminAccess.(bool), true
 		}
-		return enabledI.(bool),false, true
+		return enabledI.(bool), false, true
 	}
 
 	return false, false, true

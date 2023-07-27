@@ -455,7 +455,7 @@ type SecurityPolicyRulePrivilege interface {
 }
 
 type PrincipalAccountRDPPrivilege struct {
-	Enabled *bool `json:"principal_account_rdp"`
+	Enabled         *bool `json:"principal_account_rdp"`
 	FullAdminAccess *bool `json:"full_admin_access"`
 }
 
@@ -469,7 +469,7 @@ func (p *PrincipalAccountRDPPrivilege) ToResourceMap() map[string]any {
 }
 
 type PrincipalAccountSSHPrivilege struct {
-	Enabled *bool `json:"principal_account_ssh"`
+	Enabled         *bool `json:"principal_account_ssh"`
 	FullAdminAccess *bool `json:"full_admin_access"`
 }
 
