@@ -462,10 +462,8 @@ type PrincipalAccountRDPPrivilege struct {
 func (*PrincipalAccountRDPPrivilege) isPrivilege() {}
 
 func (p *PrincipalAccountRDPPrivilege) ToResourceMap() map[string]any {
-	m := make(map[string]any, 1)
+	m := make(map[string]any, 2)
 	m[attributes.Enabled] = *p.Enabled
-	logging.Infof("Lehar logs: + ", *p)
-	logging.Infof("Lehar logs: + ", *p.FullAdminAccess)
 	m[attributes.FullAdminAccess] = *p.FullAdminAccess
 	return m
 }
@@ -478,10 +476,8 @@ type PrincipalAccountSSHPrivilege struct {
 func (*PrincipalAccountSSHPrivilege) isPrivilege() {}
 
 func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
-	m := make(map[string]any, 1)
+	m := make(map[string]any, 2)
 	m[attributes.Enabled] = *p.Enabled
-	logging.Infof("Lehar logs: + ", *p)
-	logging.Infof("Lehar logs: + ", *p.FullAdminAccess)
 	m[attributes.FullAdminAccess] = *p.FullAdminAccess
 	return m
 }
@@ -541,8 +537,8 @@ func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 		privilegesM := make(map[string]any, 4)
 		passwordCheckoutRDP := make([]any, 0, 1)
 		passwordCheckoutSSH := make([]any, 0, 1)
-		principalAccountRDP := make([]any, 0, 2)
-		principalAccountSSH := make([]any, 0, 2)
+		principalAccountRDP := make([]any, 0, 1)
+		principalAccountSSH := make([]any, 0, 1)
 
 		for _, privilege := range r.Privileges {
 			resourceMap := privilege.PrivilegeValue.ToResourceMap()
