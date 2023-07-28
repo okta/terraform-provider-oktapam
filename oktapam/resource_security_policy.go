@@ -205,10 +205,10 @@ func resourceSecurityPolicy() *schema.Resource {
 													Required:    true,
 													Description: descriptions.PrivilegeEnabled,
 												},
-												attributes.FullAdminAccess: {
+												attributes.AdminLevelPermissions: {
 													Type:        schema.TypeBool,
 													Required:    true,
-													Description: descriptions.FullAdminAccess,
+													Description: descriptions.AdminLevelPermissions,
 												},
 											},
 										},
@@ -225,10 +225,10 @@ func resourceSecurityPolicy() *schema.Resource {
 													Required:    true,
 													Description: descriptions.PrivilegeEnabled,
 												},
-												attributes.FullAdminAccess: {
+												attributes.AdminLevelPermissions: {
 													Type:        schema.TypeBool,
 													Required:    true,
-													Description: descriptions.FullAdminAccess,
+													Description: descriptions.AdminLevelPermissions,
 												},
 											},
 										},
@@ -773,24 +773,24 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 	}
 
 	if principalAccountRDPI, ok := privilegesM[attributes.PrincipalAccountRDP]; ok {
-		if enabled, fullAdminAccess, hasValue := readPrivilegeEnabled(principalAccountRDPI); hasValue {
+		if enabled, adminLevelPermissions, hasValue := readPrivilegeEnabled(principalAccountRDPI); hasValue {
 			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
 				PrivilegeType: client.PrincipalAccountRDPPrivilegeType,
 				PrivilegeValue: &client.PrincipalAccountRDPPrivilege{
-					Enabled:         &enabled,
-					FullAdminAccess: &fullAdminAccess,
+					Enabled:               &enabled,
+					AdminLevelPermissions: &adminLevelPermissions,
 				},
 			})
 		}
 	}
 
 	if principalAccountSSHI, ok := privilegesM[attributes.PrincipalAccountSSH]; ok {
-		if enabled, fullAdminAccess, hasValue := readPrivilegeEnabled(principalAccountSSHI); hasValue {
+		if enabled, adminLevelPermissions, hasValue := readPrivilegeEnabled(principalAccountSSHI); hasValue {
 			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
 				PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
 				PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
-					Enabled:         &enabled,
-					FullAdminAccess: &fullAdminAccess,
+					Enabled:               &enabled,
+					AdminLevelPermissions: &adminLevelPermissions,
 				},
 			})
 		}
@@ -809,8 +809,8 @@ func readPrivilegeEnabled(privilege any) (bool, bool, bool) {
 	privilegeM := privilegeArr[0].(map[string]any)
 
 	if enabledI, ok := privilegeM[attributes.Enabled]; ok {
-		if fullAdminAccess, ok1 := privilegeM[attributes.FullAdminAccess]; ok1 {
-			return enabledI.(bool), fullAdminAccess.(bool), true
+		if adminLevelPermissions, ok := privilegeM[attributes.AdminLevelPermissions]; ok {
+			return enabledI.(bool), adminLevelPermissions.(bool), true
 		}
 		return enabledI.(bool), false, true
 	}

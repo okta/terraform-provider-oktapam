@@ -107,11 +107,11 @@ resource "oktapam_security_policy" "test_ds_security_policies_1" {
 			}
 			principal_account_rdp {
 				enabled = true
-				full_admin_access = true
+				admin_level_permissions = true
 			}
 			principal_account_ssh {
 				enabled = true
-				full_admin_access = true
+				admin_level_permissions = true
 			}
 		}
 		conditions {
@@ -160,11 +160,11 @@ resource "oktapam_security_policy" "test_ds_security_policies_2" {
 			}
 			principal_account_rdp {
 				enabled = false
-				full_admin_access = false
+				admin_level_permissions = false
 			}
 			principal_account_ssh {
 				enabled = false
-				full_admin_access = false
+				admin_level_permissions = false
 			}
 		}
 		conditions {

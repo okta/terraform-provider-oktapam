@@ -80,15 +80,15 @@ func TestAccSecurityPolicy(t *testing.T) {
 					{
 						PrivilegeType: client.PrincipalAccountRDPPrivilegeType,
 						PrivilegeValue: &client.PrincipalAccountRDPPrivilege{
-							Enabled:         utils.AsBoolPtr(true),
-							FullAdminAccess: utils.AsBoolPtr(true),
+							Enabled:               utils.AsBoolPtr(true),
+							AdminLevelPermissions: utils.AsBoolPtr(true),
 						},
 					},
 					{
 						PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
 						PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
-							Enabled:         utils.AsBoolPtr(true),
-							FullAdminAccess: utils.AsBoolPtr(true),
+							Enabled:               utils.AsBoolPtr(true),
+							AdminLevelPermissions: utils.AsBoolPtr(true),
 						},
 					},
 				},
@@ -172,15 +172,15 @@ func TestAccSecurityPolicy(t *testing.T) {
 					{
 						PrivilegeType: client.PrincipalAccountRDPPrivilegeType,
 						PrivilegeValue: &client.PrincipalAccountRDPPrivilege{
-							Enabled:         utils.AsBoolPtrZero(false, true),
-							FullAdminAccess: utils.AsBoolPtrZero(false, true),
+							Enabled:               utils.AsBoolPtrZero(false, true),
+							AdminLevelPermissions: utils.AsBoolPtrZero(false, true),
 						},
 					},
 					{
 						PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
 						PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
-							Enabled:         utils.AsBoolPtrZero(false, true),
-							FullAdminAccess: utils.AsBoolPtrZero(false, true),
+							Enabled:               utils.AsBoolPtrZero(false, true),
+							AdminLevelPermissions: utils.AsBoolPtrZero(false, true),
 						},
 					},
 				},
@@ -349,11 +349,11 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 			}
 			principal_account_rdp {
 				enabled = true
-				full_admin_access = true
+				admin_level_permissions = true
 			}
 			principal_account_ssh {
 				enabled = true
-				full_admin_access = true
+				admin_level_permissions = true
 			}
 		}
 		conditions {
@@ -412,11 +412,11 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 			}
 			principal_account_rdp {
 				enabled = false
-				full_admin_access = false
+				admin_level_permissions = false
 			}
 			principal_account_ssh {
 				enabled = false
-				full_admin_access = false
+				admin_level_permissions = false
 			}
 		}
 		conditions {
