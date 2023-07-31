@@ -207,7 +207,7 @@ func resourceSecurityPolicy() *schema.Resource {
 												},
 												attributes.AdminLevelPermissions: {
 													Type:        schema.TypeBool,
-													Required:    true,
+													Optional:    true,
 													Description: descriptions.AdminLevelPermissions,
 												},
 											},
@@ -227,7 +227,7 @@ func resourceSecurityPolicy() *schema.Resource {
 												},
 												attributes.AdminLevelPermissions: {
 													Type:        schema.TypeBool,
-													Required:    true,
+													Optional:    true,
 													Description: descriptions.AdminLevelPermissions,
 												},
 											},
