@@ -885,7 +885,7 @@ func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.Resou
 	if diff.HasChanges(attributes.PrincipalAccountSSH) {
 		PrincipalAccount :=
 			diff.Get(attributes.PrincipalAccountSSH).(schema.ResourceDiff)
-		if err := resourcePrivilegeCustomizeDiff(PrincipalAccount); err != nil {
+		if err := resourcePrivilegeCustomizeDiff(&PrincipalAccount); err != nil {
 			return err
 		}
 
@@ -893,14 +893,14 @@ func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.Resou
 	if diff.HasChanges(attributes.PrincipalAccountRDP) {
 		PrincipalAccount :=
 			diff.Get(attributes.PrincipalAccountRDP).(schema.ResourceDiff)
-		if err := resourcePrivilegeCustomizeDiff(PrincipalAccount); err != nil {
+		if err := resourcePrivilegeCustomizeDiff(&PrincipalAccount); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func resourcePrivilegeCustomizeDiff(PrincipalAccount schema.ResourceDiff) error {
+func resourcePrivilegeCustomizeDiff(PrincipalAccount *schema.ResourceDiff) error {
 	PrincipalAccountEnabled := PrincipalAccount.Get(attributes.Enabled).(bool)
 	AdminLevelPermissionsEnabled := PrincipalAccount.Get(attributes.AdminLevelPermissions).(bool)
 
