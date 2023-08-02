@@ -882,25 +882,26 @@ func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPol
 func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.ResourceDiff, v interface{}) error {
 	if diff.HasChanges(attributes.PrincipalAccountSSH) {
 		PrincipalAccount :=
-			diff.Get(attributes.PrincipalAccountSSH).(schema.ResourceDiff)
-		if err := resourcePrivilegeCustomizeDiff(&PrincipalAccount); err != nil {
+			diff.Get(attributes.PrincipalAccountSSH).(map[string]any)
+
+		if err := resourcePrivilegeCustomizeDiff(PrincipalAccount); err != nil {
 			return err
 		}
 
 	}
 	if diff.HasChanges(attributes.PrincipalAccountRDP) {
 		PrincipalAccount :=
-			diff.Get(attributes.PrincipalAccountRDP).(schema.ResourceDiff)
-		if err := resourcePrivilegeCustomizeDiff(&PrincipalAccount); err != nil {
+			diff.Get(attributes.PrincipalAccountRDP).(map[string]any)
+		if err := resourcePrivilegeCustomizeDiff(PrincipalAccount); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func resourcePrivilegeCustomizeDiff(PrincipalAccount *schema.ResourceDiff) error {
-	PrincipalAccountEnabled := PrincipalAccount.Get(attributes.Enabled).(bool)
-	AdminLevelPermissionsEnabled := PrincipalAccount.Get(attributes.AdminLevelPermissions).(bool)
+func resourcePrivilegeCustomizeDiff(PrincipalAccount map[string]any) error {
+	PrincipalAccountEnabled := PrincipalAccount[attributes.Enabled].(bool)
+	AdminLevelPermissionsEnabled := PrincipalAccount[attributes.AdminLevelPermissions].(bool)
 
 	if !PrincipalAccountEnabled && AdminLevelPermissionsEnabled {
 		return fmt.Errorf("admin level persmissions privilege for principal account SSH can't be enabled when" +
