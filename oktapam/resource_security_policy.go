@@ -879,8 +879,6 @@ func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPol
 	return principals, diags
 }
 
-context.Context, *ResourceDiff, interface{}
-
 func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.ResourceDiff, v interface{}) error {
 	if diff.HasChange(attributes.AdminLevelPermissions) {
 		PrincipalAccount :=
