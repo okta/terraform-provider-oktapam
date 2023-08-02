@@ -462,9 +462,13 @@ type PrincipalAccountRDPPrivilege struct {
 func (*PrincipalAccountRDPPrivilege) isPrivilege() {}
 
 func (p *PrincipalAccountRDPPrivilege) ToResourceMap() map[string]any {
-	m := make(map[string]any, 1)
+	m := make(map[string]any, 2)
 	m[attributes.Enabled] = *p.Enabled
-	m[attributes.AdminLevelPermissions] = *p.AdminLevelPermissions
+	if p.AdminLevelPermissions != nil {
+		m[attributes.AdminLevelPermissions] = *p.AdminLevelPermissions
+	} else {
+		m[attributes.AdminLevelPermissions] = false
+	}
 	return m
 }
 
@@ -476,9 +480,13 @@ type PrincipalAccountSSHPrivilege struct {
 func (*PrincipalAccountSSHPrivilege) isPrivilege() {}
 
 func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
-	m := make(map[string]any, 1)
+	m := make(map[string]any, 2)
 	m[attributes.Enabled] = *p.Enabled
-	m[attributes.AdminLevelPermissions] = *p.AdminLevelPermissions
+	if p.AdminLevelPermissions != nil {
+		m[attributes.AdminLevelPermissions] = *p.AdminLevelPermissions
+	} else {
+		m[attributes.AdminLevelPermissions] = false
+	}
 	return m
 }
 

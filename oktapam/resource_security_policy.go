@@ -16,6 +16,7 @@ import (
 func resourceSecurityPolicy() *schema.Resource {
 	return &schema.Resource{
 		Description:   descriptions.ResourceSecurityPolicy,
+		CustomizeDiff: resourceSecurityPolicyCustomizeDiff,
 		CreateContext: resourceSecurityPolicyCreate,
 		ReadContext:   resourceSecurityPolicyRead,
 		DeleteContext: resourceSecurityPolicyDelete,
@@ -208,6 +209,8 @@ func resourceSecurityPolicy() *schema.Resource {
 												attributes.AdminLevelPermissions: {
 													Type:        schema.TypeBool,
 													Optional:    true,
+													Default:     false,
+													Computed:    true,
 													Description: descriptions.AdminLevelPermissions,
 												},
 											},
@@ -228,6 +231,8 @@ func resourceSecurityPolicy() *schema.Resource {
 												attributes.AdminLevelPermissions: {
 													Type:        schema.TypeBool,
 													Optional:    true,
+													Default:     false,
+													Computed:    true,
 													Description: descriptions.AdminLevelPermissions,
 												},
 											},
@@ -751,7 +756,7 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 	privilegesM := privilegesAttr[0].(map[string]any)
 
 	if passwordCheckoutRDPI, ok := privilegesM[attributes.PasswordCheckoutRDP]; ok {
-		if enabled, _, hasValue := readPrivilegeEnabled(passwordCheckoutRDPI); hasValue {
+		if enabled, hasValue := readPrivilegeEnabled(passwordCheckoutRDPI); hasValue {
 			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
 				PrivilegeType: client.PasswordCheckoutRDPPrivilegeType,
 				PrivilegeValue: &client.PasswordCheckoutRDPPrivilege{
@@ -762,7 +767,7 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 	}
 
 	if passwordCheckoutSSHI, ok := privilegesM[attributes.PasswordCheckoutSSH]; ok {
-		if enabled, _, hasValue := readPrivilegeEnabled(passwordCheckoutSSHI); hasValue {
+		if enabled, hasValue := readPrivilegeEnabled(passwordCheckoutSSHI); hasValue {
 			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
 				PrivilegeType: client.PasswordCheckoutSSHPrivilegeType,
 				PrivilegeValue: &client.PasswordCheckoutSSHPrivilege{
@@ -773,7 +778,8 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 	}
 
 	if principalAccountRDPI, ok := privilegesM[attributes.PrincipalAccountRDP]; ok {
-		if enabled, adminLevelPermissions, hasValue := readPrivilegeEnabled(principalAccountRDPI); hasValue {
+		if enabled, hasValue := readPrivilegeEnabled(principalAccountRDPI); hasValue {
+			adminLevelPermissions := readAdminLevelPermissionEnabled(principalAccountRDPI)
 			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
 				PrivilegeType: client.PrincipalAccountRDPPrivilegeType,
 				PrivilegeValue: &client.PrincipalAccountRDPPrivilege{
@@ -785,7 +791,8 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 	}
 
 	if principalAccountSSHI, ok := privilegesM[attributes.PrincipalAccountSSH]; ok {
-		if enabled, adminLevelPermissions, hasValue := readPrivilegeEnabled(principalAccountSSHI); hasValue {
+		if enabled, hasValue := readPrivilegeEnabled(principalAccountSSHI); hasValue {
+			adminLevelPermissions := readAdminLevelPermissionEnabled(principalAccountSSHI)
 			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
 				PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
 				PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
@@ -799,23 +806,36 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 	return privileges, diags
 }
 
-func readPrivilegeEnabled(privilege any) (bool, bool, bool) {
+func readPrivilegeEnabled(privilege any) (bool, bool) {
 	privilegeArr := privilege.([]any)
 
 	if len(privilegeArr) == 0 {
-		return false, false, false
+		return false, false
 	}
 
 	privilegeM := privilegeArr[0].(map[string]any)
 
 	if enabledI, ok := privilegeM[attributes.Enabled]; ok {
-		if adminLevelPermissions, ok := privilegeM[attributes.AdminLevelPermissions]; ok {
-			return enabledI.(bool), adminLevelPermissions.(bool), true
-		}
-		return enabledI.(bool), false, true
+		return enabledI.(bool), true
 	}
 
-	return false, false, true
+	return false, true
+}
+
+func readAdminLevelPermissionEnabled(privilege any) bool {
+	privilegeArr := privilege.([]any)
+
+	if len(privilegeArr) == 0 {
+		return false
+	}
+
+	privilegeM := privilegeArr[0].(map[string]any)
+
+	if adminLevelPermissions, ok := privilegeM[attributes.AdminLevelPermissions]; ok {
+		return adminLevelPermissions.(bool)
+	}
+
+	return false
 }
 
 func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPolicyPrincipals, diag.Diagnostics) {
@@ -859,4 +879,34 @@ func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPol
 	}
 
 	return principals, diags
+}
+
+func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.ResourceDiff, v interface{}) error {
+	if diff.HasChanges(attributes.PrincipalAccountSSH) {
+		PrincipalAccount :=
+			diff.Get(attributes.PrincipalAccountSSH).(schema.ResourceDiff)
+		if err := resourcePrivilegeCustomizeDiff(PrincipalAccount); err != nil {
+			return err
+		}
+
+	}
+	if diff.HasChanges(attributes.PrincipalAccountRDP) {
+		PrincipalAccount :=
+			diff.Get(attributes.PrincipalAccountRDP).(schema.ResourceDiff)
+		if err := resourcePrivilegeCustomizeDiff(PrincipalAccount); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func resourcePrivilegeCustomizeDiff(PrincipalAccount schema.ResourceDiff) error {
+	PrincipalAccountEnabled := PrincipalAccount.Get(attributes.Enabled).(bool)
+	AdminLevelPermissionsEnabled := PrincipalAccount.Get(attributes.AdminLevelPermissions).(bool)
+
+	if !PrincipalAccountEnabled && AdminLevelPermissionsEnabled {
+		return fmt.Errorf("admin level persmissions privilege for principal account SSH can't be enabled when" +
+			" principal account SSH is diabled. ")
+	}
+	return nil
 }
