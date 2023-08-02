@@ -881,13 +881,22 @@ func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPol
 
 func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.ResourceDiff, v interface{}) error {
 	if diff.HasChange(attributes.Rule) {
-		//PrincipalAccount :=
-		//	diff.Get(attributes.PrincipalAccountSSH).(client.PrincipalAccountSSHPrivilege)
-		return fmt.Errorf("testing: In if part SSH %+v", diff)
-		//if err := resourcePrivilegeCustomizeDiff(PrincipalAccount); err != nil {
-		//	return err
-		//}
+		Rule :=
+			diff.Get(attributes.Rule).(client.SecurityPolicyRule)
+		for _, privilege := range Rule.Privileges {
+			switch privilege.PrivilegeType {
+			case client.PrincipalAccountSSHPrivilegeType:
+				val := privilege.PrivilegeValue.ToResourceMap()
+				en := val["Enabled"].(bool)
+				adminLevelPerm := val["AdminLevelPermissions"].(bool)
+				if !en && adminLevelPerm {
+					return fmt.Errorf("Testing:  case 1 ")
+				}
+				return fmt.Errorf("Testing:  case 2 ")
+			}
+		}
 
+		return fmt.Errorf("testing: In if part SSH %+v", diff)
 	} else {
 		return fmt.Errorf("testing: In else part SSH %+v", diff)
 	}
