@@ -907,5 +907,6 @@ func resourcePrivilegeCustomizeDiff(PrincipalAccount map[string]any) error {
 		return fmt.Errorf("admin level persmissions privilege for principal account SSH can't be enabled when" +
 			" principal account SSH is diabled. ")
 	}
-	return nil
+	return fmt.Errorf("admin level persmissions privilege for principal account SSH can't be enabled when" +
+		" principal account SSH is diabled. ")
 }
