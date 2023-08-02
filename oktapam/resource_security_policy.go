@@ -885,7 +885,7 @@ func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.Resou
 		if r, ok :=
 			diff.GetOk(attributes.Rule); ok {
 			rule := r.([]interface{})[0].(map[string]interface{})
-			var secRule client.SecurityPolicyRule
+			var secRule *client.SecurityPolicyRule
 			rr, err := json.Marshal(rule)
 			if err != nil {
 				return err
