@@ -472,13 +472,6 @@ func (p *PrincipalAccountRDPPrivilege) ToResourceMap() map[string]any {
 	return m
 }
 
-func (p *PrincipalAccountRDPPrivilege) isValid() bool {
-	if !*p.Enabled && p.AdminLevelPermissions != nil && *p.AdminLevelPermissions {
-		return false
-	}
-	return true
-}
-
 type PrincipalAccountSSHPrivilege struct {
 	Enabled               *bool `json:"principal_account_ssh"`
 	AdminLevelPermissions *bool `json:"admin_level_permissions"`
@@ -495,13 +488,6 @@ func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
 		m[attributes.AdminLevelPermissions] = false
 	}
 	return m
-}
-
-func (p *PrincipalAccountSSHPrivilege) isValid() bool {
-	if !*p.Enabled && p.AdminLevelPermissions != nil && *p.AdminLevelPermissions {
-		return false
-	}
-	return true
 }
 
 type PasswordCheckoutRDPPrivilege struct {
@@ -566,8 +552,6 @@ func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 			resourceMap := privilege.PrivilegeValue.ToResourceMap()
 			switch privilege.PrivilegeType {
 			case PasswordCheckoutRDPPrivilegeType:
-				privilege.PrivilegeValue.
-				()
 				passwordCheckoutRDP = append(passwordCheckoutRDP, resourceMap)
 			case PasswordCheckoutSSHPrivilegeType:
 				passwordCheckoutSSH = append(passwordCheckoutSSH, resourceMap)
