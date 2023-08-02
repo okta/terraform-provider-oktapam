@@ -885,12 +885,12 @@ func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.Resou
 		if r, ok :=
 			diff.GetOk(attributes.Rule); ok {
 			rule := r.([]interface{})[0].(map[string]interface{})
-			var secRule client.SecurityPolicyRule
+			var secRule *client.SecurityPolicyRule
 			rr, err := json.Marshal(rule)
 			if err != nil {
 				return err
 			}
-			json.Unmarshal(rr, secRule)
+			json.Unmarshal(rr, &secRule)
 			return fmt.Errorf("testing: In if part SSH %s \n \n \n %+v \n\n\n %+v", rr, rule, secRule)
 
 			//if p, ok := rule[attributes.Privileges]; ok && len(p.([]interface{})) > 0 && p.([]interface{})[0] != nil {
