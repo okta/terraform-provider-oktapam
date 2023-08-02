@@ -880,16 +880,16 @@ func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPol
 }
 
 func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.ResourceDiff, v interface{}) error {
-	if diff.HasChange(attributes.AdminLevelPermissions) {
+	if diff.HasChange(attributes.Rule) {
 		PrincipalAccount :=
 			diff.Get(attributes.PrincipalAccountSSH).(map[string]any)
-		return fmt.Errorf("Testing: In if part SSH ")
+		return fmt.Errorf("testing: In if part SSH %+v", diff)
 		if err := resourcePrivilegeCustomizeDiff(PrincipalAccount); err != nil {
 			return err
 		}
 
 	} else {
-		return fmt.Errorf("Testing: In else part SSH ")
+		return fmt.Errorf("testing: In else part SSH %+v", diff)
 	}
 	//if diff.HasChange(attributes.PrincipalAccountRDP) {
 	//	PrincipalAccount :=
