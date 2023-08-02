@@ -881,7 +881,7 @@ func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPol
 
 func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.ResourceDiff, v interface{}) error {
 
-	if diff.HasChange(attributes.Privileges) {
+	if diff.HasChange(attributes.Enabled) {
 		PrincipalAccount :=
 			diff.Get(attributes.PrincipalAccountSSH).(map[string]any)
 		return fmt.Errorf("Testing: In if part SSH ")
@@ -892,16 +892,16 @@ func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.Resou
 	} else {
 		return fmt.Errorf("Testing: In else part SSH ")
 	}
-	if diff.HasChange(attributes.PrincipalAccountRDP) {
-		PrincipalAccount :=
-			diff.Get(attributes.PrincipalAccountRDP).(map[string]any)
-		return fmt.Errorf("Testing: In if part RDP ")
-		if err := resourcePrivilegeCustomizeDiff(PrincipalAccount); err != nil {
-			return err
-		}
-	} else {
-		return fmt.Errorf("Testing: In else part RDP ")
-	}
+	//if diff.HasChange(attributes.PrincipalAccountRDP) {
+	//	PrincipalAccount :=
+	//		diff.Get(attributes.PrincipalAccountRDP).(map[string]any)
+	//	return fmt.Errorf("Testing: In if part RDP ")
+	//	if err := resourcePrivilegeCustomizeDiff(PrincipalAccount); err != nil {
+	//		return err
+	//	}
+	//} else {
+	//	return fmt.Errorf("Testing: In else part RDP ")
+	//}
 	return nil
 }
 
