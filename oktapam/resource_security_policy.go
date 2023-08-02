@@ -890,8 +890,9 @@ func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.Resou
 			if err != nil {
 				return err
 			}
-			json.Unmarshal(rr, &secRule)
-			return fmt.Errorf("testing: In if part SSH %s \n \n \n %+v \n\n\n %+v", rr, rule, secRule)
+			err = json.Unmarshal(rr, &secRule)
+
+			return fmt.Errorf("testing: In if part SSH %s \n \n \n %+v \n\n\n %+v \n\n %q", rr, rule, secRule, err)
 
 			//if p, ok := rule[attributes.Privileges]; ok && len(p.([]interface{})) > 0 && p.([]interface{})[0] != nil {
 			//	privilege := p.([]interface{})[0].(map[string]interface{})
