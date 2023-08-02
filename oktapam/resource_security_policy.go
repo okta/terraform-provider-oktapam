@@ -883,18 +883,23 @@ func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.Resou
 	if diff.HasChanges(attributes.PrincipalAccountSSH) {
 		PrincipalAccount :=
 			diff.Get(attributes.PrincipalAccountSSH).(map[string]any)
-
+		return fmt.Errorf("Testing: In if part SSH ")
 		if err := resourcePrivilegeCustomizeDiff(PrincipalAccount); err != nil {
 			return err
 		}
 
+	} else {
+		return fmt.Errorf("Testing: In else part SSH ")
 	}
 	if diff.HasChanges(attributes.PrincipalAccountRDP) {
 		PrincipalAccount :=
 			diff.Get(attributes.PrincipalAccountRDP).(map[string]any)
+		return fmt.Errorf("Testing: In if part RDP ")
 		if err := resourcePrivilegeCustomizeDiff(PrincipalAccount); err != nil {
 			return err
 		}
+	} else {
+		return fmt.Errorf("Testing: In else part RDP ")
 	}
 	return nil
 }
