@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -881,21 +882,33 @@ func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPol
 
 func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.ResourceDiff, v interface{}) error {
 	if diff.HasChange(attributes.Rule) {
-		Rule :=
-			diff.Get(attributes.Rule).(client.SecurityPolicyRule)
-		for _, privilege := range Rule.Privileges {
-			switch privilege.PrivilegeType {
+		if r, ok :=
+			diff.GetOk(attributes.Rule); ok {
+			rule := r.([]interface{})[0].(map[string]interface{})
+			var secRule client.SecurityPolicyRule
+			rr, err := json.Marshal(rule)
+			if err != nil {
+				return err
+			}
+			json.Unmarshal(rr, &secRule)
+			//if p, ok := rule[attributes.Privileges]; ok && len(p.([]interface{})) > 0 && p.([]interface{})[0] != nil {
+			//	privilege := p.([]interface{})[0].(map[string]interface{})
+			//	if s, ok := privilege[attributes.PrincipalAccountSSH]; ok &&
+			//		len(s.([]interface{})) > 0 && s.([]interface{})[0] != nil {
+			//
+			//	}
+			t := secRule.Privileges[0]
+			switch t.PrivilegeType {
 			case client.PrincipalAccountSSHPrivilegeType:
-				val := privilege.PrivilegeValue.ToResourceMap()
-				en := val["Enabled"].(bool)
-				adminLevelPerm := val["AdminLevelPermissions"].(bool)
-				if !en && adminLevelPerm {
-					return fmt.Errorf("Testing:  case 1 ")
+				rm := t.PrivilegeValue.ToResourceMap()
+				en := rm[attributes.Enabled].(bool)
+				adLevelPerm := rm[attributes.AdminLevelPermissions].(bool)
+
+				if !en && adLevelPerm {
+					return fmt.Errorf("Testing: Working for SSH case1 ")
 				}
-				return fmt.Errorf("Testing:  case 2 ")
 			}
 		}
-
 		return fmt.Errorf("testing: In if part SSH %+v", diff)
 	} else {
 		return fmt.Errorf("testing: In else part SSH %+v", diff)
