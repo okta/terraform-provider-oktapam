@@ -879,9 +879,10 @@ func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPol
 	return principals, diags
 }
 
-func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.ResourceDiff, v interface{}) error {
+context.Context, *ResourceDiff, interface{}
 
-	if diff.HasChange(attributes.Enabled) {
+func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.ResourceDiff, v interface{}) error {
+	if diff.HasChange(attributes.AdminLevelPermissions) {
 		PrincipalAccount :=
 			diff.Get(attributes.PrincipalAccountSSH).(map[string]any)
 		return fmt.Errorf("Testing: In if part SSH ")
