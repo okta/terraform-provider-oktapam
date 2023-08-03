@@ -880,47 +880,25 @@ func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPol
 }
 
 func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.ResourceDiff, v interface{}) error {
-	if diff.HasChange(attributes.Rule) {
-		Rule :=
-			diff.Get(attributes.Rule).(client.SecurityPolicyRule)
-		for _, privilege := range Rule.Privileges {
-			switch privilege.PrivilegeType {
-			case client.PrincipalAccountSSHPrivilegeType:
-				val := privilege.PrivilegeValue.ToResourceMap()
-				en := val["Enabled"].(bool)
-				adminLevelPerm := val["AdminLevelPermissions"].(bool)
-				if !en && adminLevelPerm {
-					return fmt.Errorf("Testing:  case 1 ")
-				}
-				return fmt.Errorf("Testing:  case 2 ")
-			}
-		}
-
-		return fmt.Errorf("testing: In if part SSH %+v", diff)
-	} else {
-		return fmt.Errorf("testing: In else part SSH %+v", diff)
-	}
-	//if diff.HasChange(attributes.PrincipalAccountRDP) {
-	//	PrincipalAccount :=
-	//		diff.Get(attributes.PrincipalAccountRDP).(map[string]any)
-	//	return fmt.Errorf("Testing: In if part RDP ")
-	//	if err := resourcePrivilegeCustomizeDiff(PrincipalAccount); err != nil {
-	//		return err
-	//	}
-	//} else {
-	//	return fmt.Errorf("Testing: In else part RDP ")
-	//}
-	return nil
+	return validatePrincipalAccounts(diff)
 }
 
-func resourcePrivilegeCustomizeDiff(PrincipalAccount map[string]any) error {
-	PrincipalAccountEnabled := PrincipalAccount[attributes.Enabled].(bool)
-	AdminLevelPermissionsEnabled := PrincipalAccount[attributes.AdminLevelPermissions].(bool)
-
-	if !PrincipalAccountEnabled && AdminLevelPermissionsEnabled {
-		return fmt.Errorf("admin level persmissions privilege for principal account SSH can't be enabled when" +
-			" principal account SSH is diabled. ")
+func validatePrincipalAccounts(diff *schema.ResourceDiff) error {
+	if diff.HasChange("rule.0.privileges.0.principal_account_ssh") {
+		if principalAccountSSH, ok :=
+			diff.GetOk("rule.0.privileges.0.principal_account_ssh.0.enabled"); !ok || !principalAccountSSH.(bool) {
+			if adminLevelPermissionsEnabled, ok := diff.GetOk("rule.0.privileges.0.principal_account_ssh.0.admin_level_permissions"); ok && adminLevelPermissionsEnabled.(bool) {
+				return fmt.Errorf("admin_level_permissions can not be enabled when principal account ssh privilege is not enabled")
+			}
+		}
 	}
-	return fmt.Errorf("admin level persmissions privilege for principal account SSH can't be enabled when" +
-		" principal account SSH is diabled. ")
+	if diff.HasChange("rule.0.privileges.0.principal_account_rdp") {
+		if principalAccountRDP, ok :=
+			diff.GetOk("rule.0.privileges.0.principal_account_rdp.0.enabled"); !ok || !principalAccountRDP.(bool) {
+			if adminLevelPermissionsEnabled, ok := diff.GetOk("rule.0.privileges.0.principal_account_rdp.0.admin_level_permissions"); ok && adminLevelPermissionsEnabled.(bool) {
+				return fmt.Errorf("admin_level_permissions can not be enabled when principal account rdp privilege is not enabled")
+			}
+		}
+	}
+	return nil
 }

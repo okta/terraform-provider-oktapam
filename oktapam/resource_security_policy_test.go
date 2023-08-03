@@ -3,6 +3,7 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -219,6 +220,11 @@ func TestAccSecurityPolicy(t *testing.T) {
 		CheckDestroy:      testAccSecurityPolicyCheckDestroy(securityPolicyName),
 		Steps: []resource.TestStep{
 			{
+				// Ensure that we get an error when we try to create a policy with invalid config.
+				Config:      createTestAccSecurityPolicyInvalidConfig(group1Name, securityPolicyName),
+				ExpectError: regexp.MustCompile(fmt.Sprintf("admin_level_permissions can not be enabled when principal account ssh privilege is not enabled")),
+			},
+			{
 				Config: createTestAccSecurityPolicyCreateConfig(group1Name, group2Name, securityPolicyName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccSecurityPolicyCheckExists(resourceName, initialSecurityPolicy),
@@ -235,6 +241,11 @@ func TestAccSecurityPolicy(t *testing.T) {
 						resourceName, attributes.Name, securityPolicyName,
 					),
 				),
+			},
+			{
+				// Ensure that we get an error when we try to update an existing policy with invalid config.
+				Config:      createTestAccSecurityPolicyInvalidConfig(group1Name, securityPolicyName),
+				ExpectError: regexp.MustCompile(fmt.Sprintf("admin_level_permissions can not be enabled when principal account ssh privilege is not enabled")),
 			},
 			{
 				ResourceName:      resourceName,
@@ -439,6 +450,71 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 }
 `
 
+// When the principal accounts are not enabled, terraform should not allow the users to enable
+// admin level permissions for those accounts.
+const testAccSecurityPolicyInvalidConfigFormat = `
+resource "oktapam_group" "test_security_policy_group1" {
+	name = "%s"
+}
+resource "oktapam_security_policy" "test_acc_security_policy" {
+	name = "%s"
+	description = "updated description"
+	active = true
+	principals {
+		groups = [oktapam_group.test_security_policy_group1.id]
+	}
+	rule {
+		name = "first rule"
+		resources {
+			servers {
+				server_account {
+					server_id = "9103335f-1147-407b-84d7-dbfc57f75c99"
+					account   = "pamadmin"
+				}
+				label_selectors {
+					server_labels = {
+						"system.os_type" = "windows"
+					}
+					accounts = ["pamadmin"]
+				}
+			}
+		}
+		privileges {
+			password_checkout_rdp {
+				enabled = true
+			}
+			password_checkout_ssh {
+				enabled = true
+			}
+			principal_account_ssh {
+				enabled = false
+				admin_level_permissions = true
+			}
+		}
+		conditions {
+			access_request {
+				request_type_id = "abcd"
+				request_type_name = "foo"
+				expires_after_seconds = 1200
+			}
+			access_request {
+				request_type_id = "wxyz"
+				request_type_name = "bar"
+				expires_after_seconds = 1800
+			}
+			gateway {
+				traffic_forwarding = true
+				session_recording  = true
+			}
+		}
+	}
+}
+`
+
 func createTestAccSecurityPolicyUpdateConfig(group1Name, securityPolicyName string) string {
 	return fmt.Sprintf(testAccSecurityPolicyUpdateConfigFormat, group1Name, securityPolicyName)
+}
+
+func createTestAccSecurityPolicyInvalidConfig(group1Name string, securityPolicyName string) string {
+	return fmt.Sprintf(testAccSecurityPolicyInvalidConfigFormat, group1Name, securityPolicyName)
 }
