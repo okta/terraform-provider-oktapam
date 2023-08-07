@@ -16,7 +16,7 @@ import (
 
 func TestAccADServerSyncTaskSettings(t *testing.T) {
 	checkTeamApplicable(t, false)
-	adTaskResourceName := "oktapam_ad_server_sync_task_settings.test_acc_ad_server_sync_task_settings"
+	adTaskResourceName := "oktapam_ad_task_settings.test_acc_ad_server_sync_task_settings"
 
 	nameIdentifier := randSeq()
 	adTaskName := fmt.Sprintf("test_acc_ad_server_sync_task_settings_%s", nameIdentifier)
@@ -189,7 +189,7 @@ func createTestAccADServerSyncTaskSettingsPreConfig(adConnectionName string, pro
 }
 
 const testAccADTaskCreateConfigFormat = `
-resource "oktapam_ad_server_sync_task_settings" "test_acc_ad_server_sync_task_settings" {
+resource "oktapam_ad_task_settings" "test_acc_ad_server_sync_task_settings" {
  connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
  name                     = "%[1]s"
  is_active                = true
@@ -213,7 +213,7 @@ func createTestAccADServerSyncTaskSettingsCreateConfig(preConfig string, adTaskN
 }
 
 const testAccADTaskUpdateScheduleConfigFormat = `
-resource "oktapam_ad_server_sync_task_settings" "test_acc_ad_server_sync_task_settings" {
+resource "oktapam_ad_task_settings" "test_acc_ad_server_sync_task_settings" {
  connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
  name                     = "%[1]s"
  is_active                = true
@@ -238,7 +238,7 @@ func createTestAccADServerSyncTaskSettingsUpdateScheduleConfig(preConfig string,
 }
 
 const testAccADTaskUpdateStatusConfigFormat = `
-resource "oktapam_ad_server_sync_task_settings" "test_acc_ad_server_sync_task_settings" {
+resource "oktapam_ad_task_settings" "test_acc_ad_server_sync_task_settings" {
  connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
  name                     = "%[1]s"
  is_active                = false
@@ -263,7 +263,7 @@ func createTestAccADServerSyncTaskSettingsUpdateStatusConfig(preConfig string, a
 }
 
 const testAccADTaskUpdateLabelsFormat = `
-resource "oktapam_ad_server_sync_task_settings" "test_acc_ad_server_sync_task_settings" {
+resource "oktapam_ad_task_settings" "test_acc_ad_server_sync_task_settings" {
  connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
  name                     = "%[1]s"
  is_active                = false
@@ -293,7 +293,7 @@ func createTestAccADServerSyncTaskSettingsUpdateLabelsConfig(preConfig string, a
 }
 
 const testAccADTaskUpdateRulesConfigFormat = `
-resource "oktapam_ad_server_sync_task_settings" "test_acc_ad_server_sync_task_settings" {
+resource "oktapam_ad_task_settings" "test_acc_ad_server_sync_task_settings" {
  connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
  name                     = "%[1]s"
  is_active                = true
