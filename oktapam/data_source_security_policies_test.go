@@ -159,8 +159,7 @@ resource "oktapam_security_policy" "test_ds_security_policies_2" {
 				enabled = true
 			}
 			principal_account_rdp {
-				enabled = false
-				admin_level_permissions = false
+				enabled = true
 			}
 			principal_account_ssh {
 				enabled = false
