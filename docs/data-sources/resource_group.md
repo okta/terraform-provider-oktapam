@@ -3,12 +3,12 @@
 page_title: "oktapam_resource_group Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns an existing PAM Resource Group. For details, see Resource Groups https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-resource-groups.htm.
+  Returns an existing PAM Resource Group. For details, see Resource Groups https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-resource-groups.htm.
 ---
 
 # oktapam_resource_group (Data Source)
 
-Returns an existing PAM Resource Group. For details, see [Resource Groups](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-resource-groups.htm).
+Returns an existing PAM Resource Group. For details, see [Resource Groups](https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-resource-groups.htm).
 
 
 

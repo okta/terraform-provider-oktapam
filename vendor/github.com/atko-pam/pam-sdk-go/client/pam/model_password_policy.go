@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The ScaleFT API is a control plane API for operations in Okta Privileged Access (formerly ScaleFT)
+The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -24,14 +24,14 @@ type PasswordPolicy struct {
 	// An array of managed accounts for password rotation
 	ManagedPrivilegedAccountsConfig []string `json:"managed_privileged_accounts_config,omitempty"`
 	// If `true`, rotates account passwords after a period of time has passed. You must also set the `periodic_rotation_duration_in_seconds` param.
-	EnablePeriodicRotation *bool `json:"enable_periodic_rotation,omitempty"`
+	EnablePeriodicRotation bool `json:"enable_periodic_rotation"`
 	// If `enable_periodic_rotation` is enabled, specifies how often the OPA platform rotates account passwords.
-	PeriodicRotationDurationInSeconds *int32                          `json:"periodic_rotation_duration_in_seconds,omitempty"`
-	CharacterOptions                  *PasswordPolicyCharacterOptions `json:"character_options,omitempty"`
+	PeriodicRotationDurationInSeconds *int32                         `json:"periodic_rotation_duration_in_seconds,omitempty"`
+	CharacterOptions                  PasswordPolicyCharacterOptions `json:"character_options"`
 	// The minimum length allowed for the password
-	MinLengthInBytes *int32 `json:"min_length_in_bytes,omitempty"`
+	MinLengthInBytes int32 `json:"min_length_in_bytes"`
 	// The maximum length allowed for the password
-	MaxLengthInBytes *int32 `json:"max_length_in_bytes,omitempty"`
+	MaxLengthInBytes int32 `json:"max_length_in_bytes"`
 	// A timestamp indicating when the Password Policy was last modified
 	ModifiedAt *time.Time `json:"modified_at,omitempty"`
 }
@@ -40,8 +40,12 @@ type PasswordPolicy struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPasswordPolicy() *PasswordPolicy {
+func NewPasswordPolicy(enablePeriodicRotation bool, characterOptions PasswordPolicyCharacterOptions, minLengthInBytes int32, maxLengthInBytes int32) *PasswordPolicy {
 	this := PasswordPolicy{}
+	this.EnablePeriodicRotation = enablePeriodicRotation
+	this.CharacterOptions = characterOptions
+	this.MinLengthInBytes = minLengthInBytes
+	this.MaxLengthInBytes = maxLengthInBytes
 	return &this
 }
 
@@ -86,36 +90,28 @@ func (o *PasswordPolicy) SetManagedPrivilegedAccountsConfig(v []string) *Passwor
 	return o
 }
 
-// GetEnablePeriodicRotation returns the EnablePeriodicRotation field value if set, zero value otherwise.
+// GetEnablePeriodicRotation returns the EnablePeriodicRotation field value
 func (o *PasswordPolicy) GetEnablePeriodicRotation() bool {
-	if o == nil || IsNil(o.EnablePeriodicRotation) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.EnablePeriodicRotation
+
+	return o.EnablePeriodicRotation
 }
 
-// GetEnablePeriodicRotationOk returns a tuple with the EnablePeriodicRotation field value if set, nil otherwise
+// GetEnablePeriodicRotationOk returns a tuple with the EnablePeriodicRotation field value
 // and a boolean to check if the value has been set.
 func (o *PasswordPolicy) GetEnablePeriodicRotationOk() (*bool, bool) {
-	if o == nil || IsNil(o.EnablePeriodicRotation) {
+	if o == nil {
 		return nil, false
 	}
-	return o.EnablePeriodicRotation, true
+	return &o.EnablePeriodicRotation, true
 }
 
-// HasEnablePeriodicRotation returns a boolean if a field has been set.
-func (o *PasswordPolicy) HasEnablePeriodicRotation() bool {
-	if o != nil && !IsNil(o.EnablePeriodicRotation) {
-		return true
-	}
-
-	return false
-}
-
-// SetEnablePeriodicRotation gets a reference to the given bool and assigns it to the EnablePeriodicRotation field.
+// SetEnablePeriodicRotation sets field value
 func (o *PasswordPolicy) SetEnablePeriodicRotation(v bool) *PasswordPolicy {
-	o.EnablePeriodicRotation = &v
+	o.EnablePeriodicRotation = v
 	return o
 }
 
@@ -152,102 +148,78 @@ func (o *PasswordPolicy) SetPeriodicRotationDurationInSeconds(v int32) *Password
 	return o
 }
 
-// GetCharacterOptions returns the CharacterOptions field value if set, zero value otherwise.
+// GetCharacterOptions returns the CharacterOptions field value
 func (o *PasswordPolicy) GetCharacterOptions() PasswordPolicyCharacterOptions {
-	if o == nil || IsNil(o.CharacterOptions) {
+	if o == nil {
 		var ret PasswordPolicyCharacterOptions
 		return ret
 	}
-	return *o.CharacterOptions
+
+	return o.CharacterOptions
 }
 
-// GetCharacterOptionsOk returns a tuple with the CharacterOptions field value if set, nil otherwise
+// GetCharacterOptionsOk returns a tuple with the CharacterOptions field value
 // and a boolean to check if the value has been set.
 func (o *PasswordPolicy) GetCharacterOptionsOk() (*PasswordPolicyCharacterOptions, bool) {
-	if o == nil || IsNil(o.CharacterOptions) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CharacterOptions, true
+	return &o.CharacterOptions, true
 }
 
-// HasCharacterOptions returns a boolean if a field has been set.
-func (o *PasswordPolicy) HasCharacterOptions() bool {
-	if o != nil && !IsNil(o.CharacterOptions) {
-		return true
-	}
-
-	return false
-}
-
-// SetCharacterOptions gets a reference to the given PasswordPolicyCharacterOptions and assigns it to the CharacterOptions field.
+// SetCharacterOptions sets field value
 func (o *PasswordPolicy) SetCharacterOptions(v PasswordPolicyCharacterOptions) *PasswordPolicy {
-	o.CharacterOptions = &v
+	o.CharacterOptions = v
 	return o
 }
 
-// GetMinLengthInBytes returns the MinLengthInBytes field value if set, zero value otherwise.
+// GetMinLengthInBytes returns the MinLengthInBytes field value
 func (o *PasswordPolicy) GetMinLengthInBytes() int32 {
-	if o == nil || IsNil(o.MinLengthInBytes) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.MinLengthInBytes
+
+	return o.MinLengthInBytes
 }
 
-// GetMinLengthInBytesOk returns a tuple with the MinLengthInBytes field value if set, nil otherwise
+// GetMinLengthInBytesOk returns a tuple with the MinLengthInBytes field value
 // and a boolean to check if the value has been set.
 func (o *PasswordPolicy) GetMinLengthInBytesOk() (*int32, bool) {
-	if o == nil || IsNil(o.MinLengthInBytes) {
+	if o == nil {
 		return nil, false
 	}
-	return o.MinLengthInBytes, true
+	return &o.MinLengthInBytes, true
 }
 
-// HasMinLengthInBytes returns a boolean if a field has been set.
-func (o *PasswordPolicy) HasMinLengthInBytes() bool {
-	if o != nil && !IsNil(o.MinLengthInBytes) {
-		return true
-	}
-
-	return false
-}
-
-// SetMinLengthInBytes gets a reference to the given int32 and assigns it to the MinLengthInBytes field.
+// SetMinLengthInBytes sets field value
 func (o *PasswordPolicy) SetMinLengthInBytes(v int32) *PasswordPolicy {
-	o.MinLengthInBytes = &v
+	o.MinLengthInBytes = v
 	return o
 }
 
-// GetMaxLengthInBytes returns the MaxLengthInBytes field value if set, zero value otherwise.
+// GetMaxLengthInBytes returns the MaxLengthInBytes field value
 func (o *PasswordPolicy) GetMaxLengthInBytes() int32 {
-	if o == nil || IsNil(o.MaxLengthInBytes) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.MaxLengthInBytes
+
+	return o.MaxLengthInBytes
 }
 
-// GetMaxLengthInBytesOk returns a tuple with the MaxLengthInBytes field value if set, nil otherwise
+// GetMaxLengthInBytesOk returns a tuple with the MaxLengthInBytes field value
 // and a boolean to check if the value has been set.
 func (o *PasswordPolicy) GetMaxLengthInBytesOk() (*int32, bool) {
-	if o == nil || IsNil(o.MaxLengthInBytes) {
+	if o == nil {
 		return nil, false
 	}
-	return o.MaxLengthInBytes, true
+	return &o.MaxLengthInBytes, true
 }
 
-// HasMaxLengthInBytes returns a boolean if a field has been set.
-func (o *PasswordPolicy) HasMaxLengthInBytes() bool {
-	if o != nil && !IsNil(o.MaxLengthInBytes) {
-		return true
-	}
-
-	return false
-}
-
-// SetMaxLengthInBytes gets a reference to the given int32 and assigns it to the MaxLengthInBytes field.
+// SetMaxLengthInBytes sets field value
 func (o *PasswordPolicy) SetMaxLengthInBytes(v int32) *PasswordPolicy {
-	o.MaxLengthInBytes = &v
+	o.MaxLengthInBytes = v
 	return o
 }
 
@@ -297,21 +269,13 @@ func (o PasswordPolicy) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.ManagedPrivilegedAccountsConfig) {
 		toSerialize["managed_privileged_accounts_config"] = o.ManagedPrivilegedAccountsConfig
 	}
-	if !IsNil(o.EnablePeriodicRotation) {
-		toSerialize["enable_periodic_rotation"] = o.EnablePeriodicRotation
-	}
+	toSerialize["enable_periodic_rotation"] = o.EnablePeriodicRotation
 	if !IsNil(o.PeriodicRotationDurationInSeconds) {
 		toSerialize["periodic_rotation_duration_in_seconds"] = o.PeriodicRotationDurationInSeconds
 	}
-	if !IsNil(o.CharacterOptions) {
-		toSerialize["character_options"] = o.CharacterOptions
-	}
-	if !IsNil(o.MinLengthInBytes) {
-		toSerialize["min_length_in_bytes"] = o.MinLengthInBytes
-	}
-	if !IsNil(o.MaxLengthInBytes) {
-		toSerialize["max_length_in_bytes"] = o.MaxLengthInBytes
-	}
+	toSerialize["character_options"] = o.CharacterOptions
+	toSerialize["min_length_in_bytes"] = o.MinLengthInBytes
+	toSerialize["max_length_in_bytes"] = o.MaxLengthInBytes
 	if !IsNil(o.ModifiedAt) {
 		toSerialize["modified_at"] = o.ModifiedAt
 	}

@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The ScaleFT API is a control plane API for operations in Okta Privileged Access (formerly ScaleFT)
+The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -24,8 +24,8 @@ type ProjectsAPIService service
 type ApiCreateResourceGroupProjectRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
-	resourceGroupId string
 	teamName        string
+	resourceGroupId string
 	project         *Project
 }
 
@@ -46,16 +46,16 @@ func (r ApiCreateResourceGroupProjectRequest) Execute() (*Project, *http.Respons
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param resourceGroupId The UUID of a Resource Group
 	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
 	@return ApiCreateResourceGroupProjectRequest
 */
-func (a *ProjectsAPIService) CreateResourceGroupProject(ctx context.Context, resourceGroupId string, teamName string) ApiCreateResourceGroupProjectRequest {
+func (a *ProjectsAPIService) CreateResourceGroupProject(ctx context.Context, teamName string, resourceGroupId string) ApiCreateResourceGroupProjectRequest {
 	return ApiCreateResourceGroupProjectRequest{
 		ApiService:      a,
 		ctx:             ctx,
-		resourceGroupId: resourceGroupId,
 		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
 	}
 }
 
@@ -72,8 +72,8 @@ func (a *ProjectsAPIService) CreateResourceGroupProjectExecute(r ApiCreateResour
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects"
-	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -100,15 +100,19 @@ func (a *ProjectsAPIService) CreateResourceGroupProjectExecute(r ApiCreateResour
 	localVarPostBody = r.project
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiCreateResourceGroupProjectServerEnrollmentTokenRequest struct {
 	ctx                   context.Context
 	ApiService            *ProjectsAPIService
+	teamName              string
 	resourceGroupId       string
 	projectId             string
-	teamName              string
 	serverEnrollmentToken *ServerEnrollmentToken
 }
 
@@ -129,18 +133,18 @@ func (r ApiCreateResourceGroupProjectServerEnrollmentTokenRequest) Execute() (*S
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	@return ApiCreateResourceGroupProjectServerEnrollmentTokenRequest
 */
-func (a *ProjectsAPIService) CreateResourceGroupProjectServerEnrollmentToken(ctx context.Context, resourceGroupId string, projectId string, teamName string) ApiCreateResourceGroupProjectServerEnrollmentTokenRequest {
+func (a *ProjectsAPIService) CreateResourceGroupProjectServerEnrollmentToken(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiCreateResourceGroupProjectServerEnrollmentTokenRequest {
 	return ApiCreateResourceGroupProjectServerEnrollmentTokenRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 	}
 }
 
@@ -157,9 +161,9 @@ func (a *ProjectsAPIService) CreateResourceGroupProjectServerEnrollmentTokenExec
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_enrollment_tokens"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -186,15 +190,19 @@ func (a *ProjectsAPIService) CreateResourceGroupProjectServerEnrollmentTokenExec
 	localVarPostBody = r.serverEnrollmentToken
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiFetchResourceGroupProjectRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
+	teamName        string
 	resourceGroupId string
 	projectId       string
-	teamName        string
 }
 
 func (r ApiFetchResourceGroupProjectRequest) Execute() (*Project, *http.Response, error) {
@@ -209,18 +217,18 @@ func (r ApiFetchResourceGroupProjectRequest) Execute() (*Project, *http.Response
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	@return ApiFetchResourceGroupProjectRequest
 */
-func (a *ProjectsAPIService) FetchResourceGroupProject(ctx context.Context, resourceGroupId string, projectId string, teamName string) ApiFetchResourceGroupProjectRequest {
+func (a *ProjectsAPIService) FetchResourceGroupProject(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiFetchResourceGroupProjectRequest {
 	return ApiFetchResourceGroupProjectRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 	}
 }
 
@@ -237,9 +245,9 @@ func (a *ProjectsAPIService) FetchResourceGroupProjectExecute(r ApiFetchResource
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -264,15 +272,19 @@ func (a *ProjectsAPIService) FetchResourceGroupProjectExecute(r ApiFetchResource
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiGetPasswordPolicyForProjectRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
+	teamName        string
 	resourceGroupId string
 	projectId       string
-	teamName        string
 }
 
 func (r ApiGetPasswordPolicyForProjectRequest) Execute() (*PasswordPolicy, *http.Response, error) {
@@ -280,25 +292,25 @@ func (r ApiGetPasswordPolicyForProjectRequest) Execute() (*PasswordPolicy, *http
 }
 
 /*
-	GetPasswordPolicyForProject Retrieve a Password Policy for a Project
+	GetPasswordPolicyForProject Retrieve Project Password Policy for Server Accounts
 
 	    Retrieves a Password Policy for a Project in a Resource Group
 
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	@return ApiGetPasswordPolicyForProjectRequest
 */
-func (a *ProjectsAPIService) GetPasswordPolicyForProject(ctx context.Context, resourceGroupId string, projectId string, teamName string) ApiGetPasswordPolicyForProjectRequest {
+func (a *ProjectsAPIService) GetPasswordPolicyForProject(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiGetPasswordPolicyForProjectRequest {
 	return ApiGetPasswordPolicyForProjectRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 	}
 }
 
@@ -315,9 +327,9 @@ func (a *ProjectsAPIService) GetPasswordPolicyForProjectExecute(r ApiGetPassword
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_password_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -342,15 +354,101 @@ func (a *ProjectsAPIService) GetPasswordPolicyForProjectExecute(r ApiGetPassword
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiGetProjectPasswordPolicyForDatabaseResourcesRequest struct {
+	ctx             context.Context
+	ApiService      *ProjectsAPIService
+	teamName        string
+	resourceGroupId string
+	projectId       string
+}
+
+func (r ApiGetProjectPasswordPolicyForDatabaseResourcesRequest) Execute() (*PasswordPolicy, *http.Response, error) {
+	return r.ApiService.GetProjectPasswordPolicyForDatabaseResourcesExecute(r)
+}
+
+/*
+	GetProjectPasswordPolicyForDatabaseResources Retrieve a Project Password Policy for Database Resources
+
+	    Retrieves a Project Password Policy for Database Resources in a Resource Group
+
+This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	    @param projectId The UUID of a Project
+	@return ApiGetProjectPasswordPolicyForDatabaseResourcesRequest
+*/
+func (a *ProjectsAPIService) GetProjectPasswordPolicyForDatabaseResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiGetProjectPasswordPolicyForDatabaseResourcesRequest {
+	return ApiGetProjectPasswordPolicyForDatabaseResourcesRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return PasswordPolicy
+func (a *ProjectsAPIService) GetProjectPasswordPolicyForDatabaseResourcesExecute(r ApiGetProjectPasswordPolicyForDatabaseResourcesRequest) (*PasswordPolicy, *http.Response, error) {
+	var (
+		traceKey            = "projectsapi.getProjectPasswordPolicyForDatabaseResources"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *PasswordPolicy
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/database_resource_password_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiGetResourceGroupProjectServerEnrollmentTokenRequest struct {
 	ctx                     context.Context
 	ApiService              *ProjectsAPIService
+	teamName                string
 	resourceGroupId         string
 	projectId               string
-	teamName                string
 	serverEnrollmentTokenId string
 }
 
@@ -366,19 +464,19 @@ func (r ApiGetResourceGroupProjectServerEnrollmentTokenRequest) Execute() (*Serv
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	    @param serverEnrollmentTokenId The UUID of a Server Enrollment Token
 	@return ApiGetResourceGroupProjectServerEnrollmentTokenRequest
 */
-func (a *ProjectsAPIService) GetResourceGroupProjectServerEnrollmentToken(ctx context.Context, resourceGroupId string, projectId string, teamName string, serverEnrollmentTokenId string) ApiGetResourceGroupProjectServerEnrollmentTokenRequest {
+func (a *ProjectsAPIService) GetResourceGroupProjectServerEnrollmentToken(ctx context.Context, teamName string, resourceGroupId string, projectId string, serverEnrollmentTokenId string) ApiGetResourceGroupProjectServerEnrollmentTokenRequest {
 	return ApiGetResourceGroupProjectServerEnrollmentTokenRequest{
 		ApiService:              a,
 		ctx:                     ctx,
+		teamName:                teamName,
 		resourceGroupId:         resourceGroupId,
 		projectId:               projectId,
-		teamName:                teamName,
 		serverEnrollmentTokenId: serverEnrollmentTokenId,
 	}
 }
@@ -396,9 +494,9 @@ func (a *ProjectsAPIService) GetResourceGroupProjectServerEnrollmentTokenExecute
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_enrollment_tokens/{server_enrollment_token_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"server_enrollment_token_id"+"}", url.PathEscape(parameterValueToString(r.serverEnrollmentTokenId, "serverEnrollmentTokenId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -424,15 +522,19 @@ func (a *ProjectsAPIService) GetResourceGroupProjectServerEnrollmentTokenExecute
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiGetServerAccountDetailsRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
+	teamName        string
 	resourceGroupId string
 	projectId       string
-	teamName        string
 	serverAccountId string
 }
 
@@ -448,19 +550,19 @@ func (r ApiGetServerAccountDetailsRequest) Execute() (*GetServerAccountDetailsRe
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	    @param serverAccountId The UUID of a Server Account
 	@return ApiGetServerAccountDetailsRequest
 */
-func (a *ProjectsAPIService) GetServerAccountDetails(ctx context.Context, resourceGroupId string, projectId string, teamName string, serverAccountId string) ApiGetServerAccountDetailsRequest {
+func (a *ProjectsAPIService) GetServerAccountDetails(ctx context.Context, teamName string, resourceGroupId string, projectId string, serverAccountId string) ApiGetServerAccountDetailsRequest {
 	return ApiGetServerAccountDetailsRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 		serverAccountId: serverAccountId,
 	}
 }
@@ -478,9 +580,9 @@ func (a *ProjectsAPIService) GetServerAccountDetailsExecute(r ApiGetServerAccoun
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_accounts/{server_account_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"server_account_id"+"}", url.PathEscape(parameterValueToString(r.serverAccountId, "serverAccountId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -506,15 +608,19 @@ func (a *ProjectsAPIService) GetServerAccountDetailsExecute(r ApiGetServerAccoun
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiListResourceGroupProjectServerEnrollmentTokensRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
+	teamName        string
 	resourceGroupId string
 	projectId       string
-	teamName        string
 }
 
 func (r ApiListResourceGroupProjectServerEnrollmentTokensRequest) Execute() (*ListResourceGroupProjectServerEnrollmentTokensResponse, *http.Response, error) {
@@ -529,18 +635,18 @@ func (r ApiListResourceGroupProjectServerEnrollmentTokensRequest) Execute() (*Li
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	@return ApiListResourceGroupProjectServerEnrollmentTokensRequest
 */
-func (a *ProjectsAPIService) ListResourceGroupProjectServerEnrollmentTokens(ctx context.Context, resourceGroupId string, projectId string, teamName string) ApiListResourceGroupProjectServerEnrollmentTokensRequest {
+func (a *ProjectsAPIService) ListResourceGroupProjectServerEnrollmentTokens(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiListResourceGroupProjectServerEnrollmentTokensRequest {
 	return ApiListResourceGroupProjectServerEnrollmentTokensRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 	}
 }
 
@@ -557,9 +663,9 @@ func (a *ProjectsAPIService) ListResourceGroupProjectServerEnrollmentTokensExecu
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_enrollment_tokens"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -584,14 +690,18 @@ func (a *ProjectsAPIService) ListResourceGroupProjectServerEnrollmentTokensExecu
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiListResourceGroupProjectsRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
-	resourceGroupId string
 	teamName        string
+	resourceGroupId string
 }
 
 func (r ApiListResourceGroupProjectsRequest) Execute() (*ListResourceGroupProjects, *http.Response, error) {
@@ -606,16 +716,16 @@ func (r ApiListResourceGroupProjectsRequest) Execute() (*ListResourceGroupProjec
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param resourceGroupId The UUID of a Resource Group
 	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
 	@return ApiListResourceGroupProjectsRequest
 */
-func (a *ProjectsAPIService) ListResourceGroupProjects(ctx context.Context, resourceGroupId string, teamName string) ApiListResourceGroupProjectsRequest {
+func (a *ProjectsAPIService) ListResourceGroupProjects(ctx context.Context, teamName string, resourceGroupId string) ApiListResourceGroupProjectsRequest {
 	return ApiListResourceGroupProjectsRequest{
 		ApiService:      a,
 		ctx:             ctx,
-		resourceGroupId: resourceGroupId,
 		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
 	}
 }
 
@@ -632,8 +742,8 @@ func (a *ProjectsAPIService) ListResourceGroupProjectsExecute(r ApiListResourceG
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects"
-	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -658,15 +768,19 @@ func (a *ProjectsAPIService) ListResourceGroupProjectsExecute(r ApiListResourceG
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiListServerAccountsForProjectRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
+	teamName        string
 	resourceGroupId string
 	projectId       string
-	teamName        string
 }
 
 func (r ApiListServerAccountsForProjectRequest) Execute() (*ListServerAccountsForProjectResponse, *http.Response, error) {
@@ -681,18 +795,18 @@ func (r ApiListServerAccountsForProjectRequest) Execute() (*ListServerAccountsFo
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	@return ApiListServerAccountsForProjectRequest
 */
-func (a *ProjectsAPIService) ListServerAccountsForProject(ctx context.Context, resourceGroupId string, projectId string, teamName string) ApiListServerAccountsForProjectRequest {
+func (a *ProjectsAPIService) ListServerAccountsForProject(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiListServerAccountsForProjectRequest {
 	return ApiListServerAccountsForProjectRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 	}
 }
 
@@ -709,9 +823,9 @@ func (a *ProjectsAPIService) ListServerAccountsForProjectExecute(r ApiListServer
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_accounts"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -736,15 +850,19 @@ func (a *ProjectsAPIService) ListServerAccountsForProjectExecute(r ApiListServer
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiListServerAccountsForServerRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
+	teamName        string
 	resourceGroupId string
 	projectId       string
-	teamName        string
 	serverId        string
 }
 
@@ -760,19 +878,19 @@ func (r ApiListServerAccountsForServerRequest) Execute() (*ListServerAccountsFor
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	    @param serverId The UUID of an enrolled Server
 	@return ApiListServerAccountsForServerRequest
 */
-func (a *ProjectsAPIService) ListServerAccountsForServer(ctx context.Context, resourceGroupId string, projectId string, teamName string, serverId string) ApiListServerAccountsForServerRequest {
+func (a *ProjectsAPIService) ListServerAccountsForServer(ctx context.Context, teamName string, resourceGroupId string, projectId string, serverId string) ApiListServerAccountsForServerRequest {
 	return ApiListServerAccountsForServerRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 		serverId:        serverId,
 	}
 }
@@ -790,9 +908,9 @@ func (a *ProjectsAPIService) ListServerAccountsForServerExecute(r ApiListServerA
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/servers/{server_id}/server_accounts"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"server_id"+"}", url.PathEscape(parameterValueToString(r.serverId, "serverId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -818,15 +936,19 @@ func (a *ProjectsAPIService) ListServerAccountsForServerExecute(r ApiListServerA
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiRemoveResourceGroupProjectRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
+	teamName        string
 	resourceGroupId string
 	projectId       string
-	teamName        string
 }
 
 func (r ApiRemoveResourceGroupProjectRequest) Execute() (*http.Response, error) {
@@ -841,18 +963,18 @@ func (r ApiRemoveResourceGroupProjectRequest) Execute() (*http.Response, error) 
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	@return ApiRemoveResourceGroupProjectRequest
 */
-func (a *ProjectsAPIService) RemoveResourceGroupProject(ctx context.Context, resourceGroupId string, projectId string, teamName string) ApiRemoveResourceGroupProjectRequest {
+func (a *ProjectsAPIService) RemoveResourceGroupProject(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiRemoveResourceGroupProjectRequest {
 	return ApiRemoveResourceGroupProjectRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 	}
 }
 
@@ -866,9 +988,9 @@ func (a *ProjectsAPIService) RemoveResourceGroupProjectExecute(r ApiRemoveResour
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -893,15 +1015,19 @@ func (a *ProjectsAPIService) RemoveResourceGroupProjectExecute(r ApiRemoveResour
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
 	return localVarHTTPResponse, err
 }
 
 type ApiRemoveResourceGroupProjectServerEnrollmentTokenRequest struct {
 	ctx                     context.Context
 	ApiService              *ProjectsAPIService
+	teamName                string
 	resourceGroupId         string
 	projectId               string
-	teamName                string
 	serverEnrollmentTokenId string
 }
 
@@ -917,19 +1043,19 @@ func (r ApiRemoveResourceGroupProjectServerEnrollmentTokenRequest) Execute() (*h
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	    @param serverEnrollmentTokenId The UUID of a Server Enrollment Token
 	@return ApiRemoveResourceGroupProjectServerEnrollmentTokenRequest
 */
-func (a *ProjectsAPIService) RemoveResourceGroupProjectServerEnrollmentToken(ctx context.Context, resourceGroupId string, projectId string, teamName string, serverEnrollmentTokenId string) ApiRemoveResourceGroupProjectServerEnrollmentTokenRequest {
+func (a *ProjectsAPIService) RemoveResourceGroupProjectServerEnrollmentToken(ctx context.Context, teamName string, resourceGroupId string, projectId string, serverEnrollmentTokenId string) ApiRemoveResourceGroupProjectServerEnrollmentTokenRequest {
 	return ApiRemoveResourceGroupProjectServerEnrollmentTokenRequest{
 		ApiService:              a,
 		ctx:                     ctx,
+		teamName:                teamName,
 		resourceGroupId:         resourceGroupId,
 		projectId:               projectId,
-		teamName:                teamName,
 		serverEnrollmentTokenId: serverEnrollmentTokenId,
 	}
 }
@@ -944,9 +1070,9 @@ func (a *ProjectsAPIService) RemoveResourceGroupProjectServerEnrollmentTokenExec
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_enrollment_tokens/{server_enrollment_token_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"server_enrollment_token_id"+"}", url.PathEscape(parameterValueToString(r.serverEnrollmentTokenId, "serverEnrollmentTokenId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -972,15 +1098,19 @@ func (a *ProjectsAPIService) RemoveResourceGroupProjectServerEnrollmentTokenExec
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
 	return localVarHTTPResponse, err
 }
 
 type ApiUpdatePasswordPolicyForProjectRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
+	teamName        string
 	resourceGroupId string
 	projectId       string
-	teamName        string
 	passwordPolicy  *PasswordPolicy
 }
 
@@ -994,25 +1124,25 @@ func (r ApiUpdatePasswordPolicyForProjectRequest) Execute() (*PasswordPolicy, *h
 }
 
 /*
-	UpdatePasswordPolicyForProject Update a Password Policy for a Project
+	UpdatePasswordPolicyForProject Update Project Password Policy for Server Accounts
 
 	    Updates a Password Policy for a Project in a Resource Group
 
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	@return ApiUpdatePasswordPolicyForProjectRequest
 */
-func (a *ProjectsAPIService) UpdatePasswordPolicyForProject(ctx context.Context, resourceGroupId string, projectId string, teamName string) ApiUpdatePasswordPolicyForProjectRequest {
+func (a *ProjectsAPIService) UpdatePasswordPolicyForProject(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdatePasswordPolicyForProjectRequest {
 	return ApiUpdatePasswordPolicyForProjectRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 	}
 }
 
@@ -1029,9 +1159,9 @@ func (a *ProjectsAPIService) UpdatePasswordPolicyForProjectExecute(r ApiUpdatePa
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_password_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -1058,15 +1188,109 @@ func (a *ProjectsAPIService) UpdatePasswordPolicyForProjectExecute(r ApiUpdatePa
 	localVarPostBody = r.passwordPolicy
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiUpdateProjectPasswordPolicyForDatabaseResourcesRequest struct {
+	ctx             context.Context
+	ApiService      *ProjectsAPIService
+	teamName        string
+	resourceGroupId string
+	projectId       string
+	passwordPolicy  *PasswordPolicy
+}
+
+func (r ApiUpdateProjectPasswordPolicyForDatabaseResourcesRequest) PasswordPolicy(passwordPolicy PasswordPolicy) ApiUpdateProjectPasswordPolicyForDatabaseResourcesRequest {
+	r.passwordPolicy = &passwordPolicy
+	return r
+}
+
+func (r ApiUpdateProjectPasswordPolicyForDatabaseResourcesRequest) Execute() (*PasswordPolicy, *http.Response, error) {
+	return r.ApiService.UpdateProjectPasswordPolicyForDatabaseResourcesExecute(r)
+}
+
+/*
+	UpdateProjectPasswordPolicyForDatabaseResources Update a Project Password Policy for Database Resources
+
+	    Updates a Project Password Policy for Database Resources in a Resource Group
+
+This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	    @param projectId The UUID of a Project
+	@return ApiUpdateProjectPasswordPolicyForDatabaseResourcesRequest
+*/
+func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForDatabaseResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateProjectPasswordPolicyForDatabaseResourcesRequest {
+	return ApiUpdateProjectPasswordPolicyForDatabaseResourcesRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return PasswordPolicy
+func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForDatabaseResourcesExecute(r ApiUpdateProjectPasswordPolicyForDatabaseResourcesRequest) (*PasswordPolicy, *http.Response, error) {
+	var (
+		traceKey            = "projectsapi.updateProjectPasswordPolicyForDatabaseResources"
+		localVarHTTPMethod  = http.MethodPut
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *PasswordPolicy
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/database_resource_password_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.passwordPolicy
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiUpdateResourceGroupProjectRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
+	teamName        string
 	resourceGroupId string
 	projectId       string
-	teamName        string
 	project         *Project
 }
 
@@ -1087,18 +1311,18 @@ func (r ApiUpdateResourceGroupProjectRequest) Execute() (*Project, *http.Respons
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	@return ApiUpdateResourceGroupProjectRequest
 */
-func (a *ProjectsAPIService) UpdateResourceGroupProject(ctx context.Context, resourceGroupId string, projectId string, teamName string) ApiUpdateResourceGroupProjectRequest {
+func (a *ProjectsAPIService) UpdateResourceGroupProject(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateResourceGroupProjectRequest {
 	return ApiUpdateResourceGroupProjectRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 	}
 }
 
@@ -1115,9 +1339,9 @@ func (a *ProjectsAPIService) UpdateResourceGroupProjectExecute(r ApiUpdateResour
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -1143,6 +1367,10 @@ func (a *ProjectsAPIService) UpdateResourceGroupProjectExecute(r ApiUpdateResour
 	// body params
 	localVarPostBody = r.project
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
 }

@@ -15,10 +15,10 @@ const (
 	LinkServiceUser           = "For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/service-users.htm) on ASA Service Users and how they are used."
 	LinkTeamSettings          = "For more information check out the [documentation](https://developer.okta.com/docs/reference/api/asa/teams/#fetch-team-settings) on ASA Team Settings and it's usage."
 
-	// LEA doc links
-	LinkPasswordSettings                   = "For details, see [Projects](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm)"
-	LinkResourceGroup                      = "For details, see [Resource Groups](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-resource-groups.htm)."
-	LinkResourceGroupProject               = "For details, see [Projects](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm)."
-	LinkResourceGroupServerEnrollmentToken = "For details, see [Server Enrollment](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/server-agent/pam-enroll-a-server.htm)."
-	LinkSecurityPolicy                     = "For details, see [Manage security policy](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-policy.htm)."
+	LinkPasswordSettings                   = "For details, see [Projects](https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-projects.htm)."
+	LinkResourceGroup                      = "For details, see [Resource Groups](https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-resource-groups.htm)."
+	LinkResourceGroupProject               = "For details, see [Projects](https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-projects.htm)."
+	LinkResourceGroupServerEnrollmentToken = "For details, see [Server Enrollment](https://help.okta.com/oie/en-us/content/topics/privileged-access/server-agent/pam-enroll-a-server.htm)."
+	LinkSecretFolder                       = "For details, see [Secret Folders](https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-secrets-folder.htm)"
+	LinkSecurityPolicy                     = "For details, see [Manage security policy](https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-policy.htm)."
 )

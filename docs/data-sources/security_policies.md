@@ -3,12 +3,12 @@
 page_title: "oktapam_security_policies Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of Security Policies associated with the Team specified by the OKTAPAM_TEAM environment variable. For details, see Manage security policy https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-policy.htm.
+  Returns a list of Security Policies associated with the Team specified by the OKTAPAM_TEAM environment variable. For details, see Manage security policy https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-policy.htm.
 ---
 
 # oktapam_security_policies (Data Source)
 
-Returns a list of Security Policies associated with the Team specified by the OKTAPAM_TEAM environment variable. For details, see [Manage security policy](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-policy.htm).
+Returns a list of Security Policies associated with the Team specified by the OKTAPAM_TEAM environment variable. For details, see [Manage security policy](https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-policy.htm).
 
 
 

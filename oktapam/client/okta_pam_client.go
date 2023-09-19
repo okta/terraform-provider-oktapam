@@ -207,7 +207,7 @@ type OktaPAMProviderConfig struct {
 }
 
 type APIClients struct {
-	SDKClient   *pam.APIClient
+	SDKClient   SDKClientWrapper
 	LocalClient *OktaPAMClient
 }
 

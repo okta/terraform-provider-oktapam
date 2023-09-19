@@ -3,12 +3,12 @@
 page_title: "oktapam_resource_group_server_enrollment_token Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Limited Early Access Feature: A token used to enroll servers in a PAM Project. For details, see Server Enrollment https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/server-agent/pam-enroll-a-server.htm.
+  A token used to enroll servers in a PAM Project. For details, see Server Enrollment https://help.okta.com/oie/en-us/content/topics/privileged-access/server-agent/pam-enroll-a-server.htm.
 ---
 
 # oktapam_resource_group_server_enrollment_token (Resource)
 
-Limited Early Access Feature: A token used to enroll servers in a PAM Project. For details, see [Server Enrollment](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/server-agent/pam-enroll-a-server.htm).
+A token used to enroll servers in a PAM Project. For details, see [Server Enrollment](https://help.okta.com/oie/en-us/content/topics/privileged-access/server-agent/pam-enroll-a-server.htm).
 
 
 

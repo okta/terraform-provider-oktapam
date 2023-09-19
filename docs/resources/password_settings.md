@@ -3,12 +3,12 @@
 page_title: "oktapam_password_settings Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Limited Early Access Feature: The settings for passwords set on resources within the project. For details, see Projects https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm
+  The settings for passwords set on resources within the project. For details, see Projects https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-projects.htm.
 ---
 
 # oktapam_password_settings (Resource)
 
-Limited Early Access Feature: The settings for passwords set on resources within the project. For details, see [Projects](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-projects.htm)
+The settings for passwords set on resources within the project. For details, see [Projects](https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-projects.htm).
 
 
 
