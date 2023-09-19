@@ -32,5 +32,6 @@ var (
 	ResourceResourceGroup                      = fmt.Sprintf("%s A PAM construct that contains a group of projects. %s", PrefixLEA, LinkResourceGroup)
 	ResourceResourceGroupProject               = fmt.Sprintf("%s A PAM construct that contains a collection of resources that share settings. %s", PrefixLEA, LinkResourceGroupProject)
 	ResourceResourceGroupServerEnrollmentToken = fmt.Sprintf("%s A token used to enroll servers in a PAM Project. %s", PrefixLEA, LinkResourceGroupServerEnrollmentToken)
+	ResourceSecretFolder                       = fmt.Sprintf("%s A file-system like construct which can contain other secret folders or secrets.", PrefixGA)
 	ResourceSecurityPolicy                     = fmt.Sprintf("%s A policy which defines how users can gain access to resources. %s", PrefixLEA, LinkSecurityPolicy)
 )

@@ -47,6 +47,7 @@ const (
 	providerResourceGroupProjectsKey               = "oktapam_resource_group_projects"
 	providerResourceGroupServerEnrollmentTokenKey  = "oktapam_resource_group_server_enrollment_token"
 	providerResourceGroupServerEnrollmentTokensKey = "oktapam_resource_group_server_enrollment_tokens"
+	providerSecretFolderKey                        = "oktapam_secret_folder"
 	providerSecurityPoliciesKey                    = "oktapam_security_policies"
 	providerSecurityPolicyKey                      = "oktapam_security_policy"
 	providerServerEnrollmentTokenKey               = "oktapam_server_enrollment_token"
@@ -100,6 +101,7 @@ func Provider() *schema.Provider {
 			providerResourceGroupKey:                      resourceResourceGroup(),
 			providerResourceGroupProjectKey:               resourceResourceGroupProject(),
 			providerResourceGroupServerEnrollmentTokenKey: resourceResourceGroupServerEnrollmentToken(),
+			providerSecretFolderKey:                       resourceSecretFolder(),
 			providerSecurityPolicyKey:                     resourceSecurityPolicy(),
 			providerServerEnrollmentTokenKey:              resourceServerEnrollmentToken(),
 			providerTeamSettingsKey:                       resourceTeamSettings(),

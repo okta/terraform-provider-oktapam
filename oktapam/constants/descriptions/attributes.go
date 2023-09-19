@@ -93,6 +93,7 @@ var (
 	NextUnixUID                               = "The UID to use when creating a new Server User. Default value starts at 60001."
 	OIDCIssuerURL                             = "The OIDC Issuer URL to use when configuring your Kubernetes cluster. "
 	OSAttribute                               = "The AD attribute that defines the operating system of discovered servers."
+	ParentFolder                              = "The secret folder which should contain this entity."
 	PasswordMinLength                         = "The minimum length allowed for the password."
 	PasswordMaxLength                         = "The maximum length allowed for the password."
 	PeriodicRotationDurationInSeconds         = "If `periodic_rotation` is enabled, specifies how often passwords are rotated."
