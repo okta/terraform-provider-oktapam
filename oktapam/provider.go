@@ -87,7 +87,7 @@ func Provider() *schema.Provider {
 			providerADCertificateObjectKey:                resourceADCertificateObject(),
 			providerADCertificateRequestKey:               resourceADCertificateRequest(),
 			providerADConnectionKey:                       resourceADConnection(),
-			providerADTaskSettingsKey:                     resourceADTaskSettings(),
+			providerADTaskSettingsKey:                     resourceADServerSyncTaskSettings(),
 			providerADUserSyncTaskSettingsKey:             resourceADUserSyncTaskSettings(),
 			providerGatewaySetupTokenKey:                  resourceGatewaySetupToken(),
 			providerGroupKey:                              resourceGroup(),
