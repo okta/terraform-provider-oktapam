@@ -5,10 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/terraform-provider-oktapam/oktapam/client"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
@@ -42,7 +40,7 @@ func TestAccDatasourceResourceGroupServerEnrollmentTokensList(t *testing.T) {
 
 func testAccResourceGroupServerEnrollmentTokensCheckDestroy(identifiers ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := testAccProvider.Meta().(client.OktaPAMClient)
+		c := getLocalClientFromMetadata(testAccProvider.Meta())
 
 		resourceGroups, err := c.ListResourceGroups(context.Background())
 		if err != nil {

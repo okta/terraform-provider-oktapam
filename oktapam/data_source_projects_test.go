@@ -45,7 +45,7 @@ func TestAccDatasourceProjectList(t *testing.T) {
 
 func testAccProjectsCheckDestroy(identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := testAccProvider.Meta().(client.OktaPAMClient)
+		c := getLocalClientFromMetadata(testAccProvider.Meta())
 
 		params := client.ListProjectsParameters{
 			Contains: identifier,

@@ -59,7 +59,7 @@ func testAccResourceGroupServerEnrollmentTokenCheckExists(rn string, expectedRes
 		resourceGroupID := rs.Primary.Attributes[attributes.ResourceGroup]
 		projectID := rs.Primary.Attributes[attributes.Project]
 		serverEnrollmentTokenID := rs.Primary.Attributes[attributes.ID]
-		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
+		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
 		resourceGroupServerEnrollmentToken, err := pamClient.GetResourceGroupServerEnrollmentToken(context.Background(), resourceGroupID, projectID, serverEnrollmentTokenID)
 		if err != nil {
 			return fmt.Errorf("error getting resource group server enrollment token: %w", err)
@@ -79,7 +79,7 @@ func testAccResourceGroupServerEnrollmentTokenCheckExists(rn string, expectedRes
 
 func testAccResourceGroupServerEnrollmentTokenCheckDestroy(resourceGroupName string, projectNames ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(client.OktaPAMClient)
+		client := getLocalClientFromMetadata(testAccProvider.Meta())
 		resourceGroups, err := client.ListResourceGroups(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting resource groups: %w", err)

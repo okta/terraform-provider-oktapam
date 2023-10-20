@@ -84,7 +84,7 @@ func resourceProjectGroup() *schema.Resource {
 }
 
 func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	serverAdmin, err := GetOkBoolFromResource(attributes.ServerAdmin, d)
 	if err != nil {
@@ -132,7 +132,7 @@ func resourceProjectGroupCreate(ctx context.Context, d *schema.ResourceData, m a
 }
 
 func resourceProjectGroupRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	projectName := d.Get(attributes.ProjectName).(string)
 	groupName := d.Get(attributes.GroupName).(string)
@@ -174,7 +174,7 @@ func resourceProjectGroupRead(ctx context.Context, d *schema.ResourceData, m any
 }
 
 func resourceProjectGroupUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	changed := false
 	updates := make(map[string]any)
@@ -221,7 +221,7 @@ func resourceProjectGroupUpdate(ctx context.Context, d *schema.ResourceData, m a
 }
 
 func resourceProjectGroupDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	project := d.Get(attributes.ProjectName).(string)
 	group := d.Get(attributes.GroupName).(string)

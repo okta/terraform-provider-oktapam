@@ -75,7 +75,7 @@ func resourceTeamSettings() *schema.Resource {
 }
 
 func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	settings := client.TeamSettings{
 		ReactivateUsersViaIDP:           GetBoolPtrFromResource(attributes.ReactivateUsersViaIDP, d, true),
@@ -95,7 +95,7 @@ func resourceTeamSettingsCreate(ctx context.Context, d *schema.ResourceData, m a
 
 func resourceTeamSettingsRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	settings, err := c.GetTeamSettings(ctx)
 	if err != nil {
@@ -116,7 +116,7 @@ func resourceTeamSettingsRead(ctx context.Context, d *schema.ResourceData, m any
 }
 
 func resourceTeamSettingsUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	settings := client.TeamSettings{
 		ReactivateUsersViaIDP:           GetBoolPtrFromResource(attributes.ReactivateUsersViaIDP, d, true),
 		ApproveDeviceWithoutInteraction: GetBoolPtrFromResource(attributes.ApproveDeviceWithoutInteraction, d, true),

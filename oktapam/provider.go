@@ -2,7 +2,9 @@ package oktapam
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
@@ -137,15 +139,64 @@ func Provider() *schema.Provider {
 }
 
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (any, diag.Diagnostics) {
-	apiKey := d.Get(apiKeyKey).(string)
-	apiKeySecret := d.Get(apiKeySecretKey).(string)
-	team := d.Get(teamKey).(string)
-	apiHost := d.Get(apiHostKey).(string)
+	config := &OktaPAMProviderConfig{
+		APIKey:       d.Get(apiKeyKey).(string),
+		APIKeySecret: d.Get(apiKeySecretKey).(string),
+		Team:         d.Get(teamKey).(string),
+		APIHost:      d.Get(apiHostKey).(string),
+	}
 
-	pamClient, err := client.CreateOktaPAMClient(apiKey, apiKeySecret, team, apiHost)
+	sdkClient, err := createSDKClient(config)
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
 
-	return *pamClient, nil
+	localClient, err := createLocalClient(config)
+	if err != nil {
+		return nil, diag.FromErr(err)
+	}
+
+	return &clients{
+		sdkClient:   sdkClient,
+		localClient: localClient,
+	}, nil
+}
+
+type OktaPAMProviderConfig struct {
+	APIKey       string
+	APIKeySecret string
+	Team         string
+	APIHost      string
+}
+
+type clients struct {
+	sdkClient   *pam.APIClient
+	localClient *client.OktaPAMClient
+}
+
+func createSDKClient(providerConfig *OktaPAMProviderConfig) (*pam.APIClient, error) {
+	apiClientConfigOpts := []pam.ConfigOption{
+		pam.WithHost(providerConfig.APIHost),
+		pam.WithTeam(providerConfig.Team),
+		pam.WithAPIKey(providerConfig.APIKey),
+		pam.WithAPISecret(providerConfig.APIKeySecret),
+	}
+
+	pamClient, err := pam.NewAPIClient(apiClientConfigOpts...)
+	if err != nil {
+		return nil, fmt.Errorf("error while creating sdk client: %w", err)
+	}
+	return pamClient, nil
+}
+
+func createLocalClient(providerConfig *OktaPAMProviderConfig) (*client.OktaPAMClient, error) {
+	return client.CreateOktaPAMClient(providerConfig.APIKey, providerConfig.APIKeySecret, providerConfig.Team, providerConfig.APIHost)
+}
+
+func getSDKClientFromMetadata(meta interface{}) *pam.APIClient {
+	return meta.(*clients).sdkClient
+}
+
+func getLocalClientFromMetadata(meta interface{}) *client.OktaPAMClient {
+	return meta.(*clients).localClient
 }

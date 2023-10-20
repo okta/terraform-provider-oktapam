@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/kylelemons/godebug/pretty"
-	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"os"
 	"testing"
 
@@ -36,12 +35,12 @@ func TestAccDatasourceTeamSettingsFetch(t *testing.T) {
 
 func testAccTeamSettingCheckDestroy() resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(client.OktaPAMClient)
+		client := getLocalClientFromMetadata(testAccProvider.Meta())
 		teamSettings, err := client.GetTeamSettings(context.Background())
-		if err!=nil {
+		if err != nil {
 			return fmt.Errorf("error getting team settings: %w", err)
 		}
-		if teamSettings == nil{
+		if teamSettings == nil {
 			return fmt.Errorf("team settings got deleted even when it can not be deleted")
 		}
 

@@ -94,7 +94,7 @@ func createTestAccKubernetesClusterGroupCreateConfig(body string, clusterGroup c
 
 func testAccClusterGroupCheckDestroy(expectedClusterGroup client.KubernetesClusterGroup) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
+		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
 		clusterGroups, err := pamClient.ListKubernetesClusterGroups(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting cluster groups: %w", err)

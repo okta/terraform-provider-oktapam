@@ -58,7 +58,7 @@ func resourceGatewaySetupToken() *schema.Resource {
 
 func resourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	tokenID := d.Id()
 	token, err := c.GetGatewaySetupToken(ctx, tokenID)
@@ -83,7 +83,7 @@ func resourceGatewaySetupTokenRead(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceGatewaySetupTokenCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	description := GetStringPtrFromResource(attributes.Description, d, true)
 	labels := d.Get(attributes.Labels).(map[string]any)
@@ -110,7 +110,7 @@ func resourceGatewaySetupTokenCreate(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceGatewaySetupTokenDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	id := d.Id()
 	err := c.DeleteGatewaySetupToken(ctx, id)

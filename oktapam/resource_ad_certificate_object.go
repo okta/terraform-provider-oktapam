@@ -5,7 +5,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
@@ -52,7 +51,7 @@ func resourceADCertificateObject() *schema.Resource {
 }
 
 func resourceADCertificateUploadCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	certificateID := d.Get(attributes.CertificateID).(string)
 	source := d.Get(attributes.Source).(string)
@@ -67,7 +66,7 @@ func resourceADCertificateUploadCreate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceADCertificateRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	certificateID := d.Id()
 	adCertificate, err := c.GetADSmartcardCertificate(ctx, certificateID)
@@ -93,7 +92,7 @@ func resourceADCertificateRead(ctx context.Context, d *schema.ResourceData, m an
 }
 
 func resourceADCertificateDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	certificateId := d.Id()
 
 	err := c.DeleteADSmartcardCertificate(ctx, certificateId)

@@ -58,7 +58,7 @@ func dataSourceProjectGroups() *schema.Resource {
 }
 
 func dataSourceProjectGroupList(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	project := d.Get(attributes.ProjectName).(string)
 	if project == "" {
 		return diag.Errorf("%s cannot be blank", attributes.ProjectName)

@@ -138,7 +138,7 @@ func testAccPasswordSettingsCheckExists(rn string, expectedPasswordSettings *cli
 		if id != expectedID {
 			return fmt.Errorf("unexpected id: %s, expected: %s", id, expectedID)
 		}
-		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
+		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
 		passwordSettings, err := pamClient.GetPasswordSettings(context.Background(), resourceGroupID, projectID)
 		if err != nil {
 			return fmt.Errorf("error getting password settings: %w", err)
