@@ -217,6 +217,7 @@ func CreateSDKClient(providerConfig *OktaPAMProviderConfig) (*pam.APIClient, err
 		pam.WithTeam(providerConfig.Team),
 		pam.WithAPIKey(providerConfig.APIKey),
 		pam.WithAPISecret(providerConfig.APIKeySecret),
+		pam.WithUserAgent(terraformUserAgent),
 	}
 
 	override, present := os.LookupEnv(TRUSTED_DOMAIN_OVERRIDE_ENV_VAR)
