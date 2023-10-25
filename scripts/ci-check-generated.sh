@@ -7,6 +7,10 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 
 cd "${DIR}/.."
 
+export TF_ACC_TERRAFORM_VERSION=""
+
+TF_BIN=$(which terraform)
+
 if [[ -x "${TF_BIN}" ]]; then
     echo "found terraform at ${TF_BIN}, setting TF_ACC_TERRAFORM_PATH=${TF_BIN}"
     # This path needs to be added to the Docker run command
