@@ -10,7 +10,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 )
@@ -62,7 +61,7 @@ func resourceServerEnrollmentToken() *schema.Resource {
 }
 
 func resourceServerEnrollmentTokenRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	serverEnrollmentTokenID := d.Id()
 	projectName := d.Get(attributes.ProjectName).(string)
@@ -89,7 +88,7 @@ func resourceServerEnrollmentTokenRead(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceServerEnrollmentTokenCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	projectName := d.Get(attributes.ProjectName).(string)
 	description := d.Get(attributes.Description).(string)
@@ -105,7 +104,7 @@ func resourceServerEnrollmentTokenCreate(ctx context.Context, d *schema.Resource
 }
 
 func resourceServerEnrollmentTokenDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	serverEnrollmentTokenID := d.Id()
 	projectName := d.Get(attributes.ProjectName).(string)

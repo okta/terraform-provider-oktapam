@@ -83,7 +83,7 @@ func resourceUser() *schema.Resource {
 }
 
 func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	userName, userType, err := getRequiredUserAttributes(d)
 	if err != nil {
@@ -107,7 +107,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m any) diag
 
 func resourceUserRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	userName, userType, err := getRequiredUserAttributes(d)
 	if err != nil {
@@ -143,7 +143,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m any) diag.D
 }
 
 func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	userName, userType, err := getRequiredUserAttributes(d)
 	if err != nil {
@@ -201,7 +201,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m any) diag
 }
 
 func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	userName, userType, err := getRequiredUserAttributes(d)
 	if err != nil {
 		return diag.FromErr(err)

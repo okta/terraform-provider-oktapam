@@ -115,7 +115,7 @@ func testAccProjectCheckExists(rn string, expectedProject client.Project) resour
 			return fmt.Errorf("resource id not set")
 		}
 
-		client := testAccProvider.Meta().(client.OktaPAMClient)
+		client := getLocalClientFromMetadata(testAccProvider.Meta())
 		proj, err := client.GetProject(context.Background(), *expectedProject.Name, false)
 		if err != nil {
 			return fmt.Errorf("error getting project :%w", err)
@@ -135,7 +135,7 @@ func testAccProjectCheckExists(rn string, expectedProject client.Project) resour
 
 func testAccProjectCheckDestroy(projectName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(client.OktaPAMClient)
+		client := getLocalClientFromMetadata(testAccProvider.Meta())
 		proj, err := client.GetProject(context.Background(), projectName, false)
 		if err != nil {
 			return fmt.Errorf("error getting project: %w", err)

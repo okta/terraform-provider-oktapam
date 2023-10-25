@@ -59,7 +59,7 @@ func resourceKubernetesCluster() *schema.Resource {
 }
 
 func resourceKubernetesClusterCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	clusterKey := GetStringPtrFromResource(attributes.KubernetesClusterKey, d, false)
 	authMechanism := GetStringPtrFromResource(attributes.KubernetesAuthMechanism, d, false)
@@ -88,7 +88,7 @@ func resourceKubernetesClusterCreate(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceKubernetesClusterRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	cluster, err := c.GetKubernetesCluster(ctx, d.Id())
 	if err != nil {
@@ -112,7 +112,7 @@ func resourceKubernetesClusterRead(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceKubernetesClusterUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	id := d.Id()
 
 	changed := false
@@ -139,7 +139,7 @@ func resourceKubernetesClusterUpdate(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceKubernetesClusterDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	if err := c.DeleteKubernetesCluster(ctx, d.Id()); err != nil {
 		return diag.FromErr(err)

@@ -90,7 +90,7 @@ func testAccResourceGroupCheckExists(rn string, expectedResourceGroup *client.Re
 		}
 
 		resourceGroupID := rs.Primary.Attributes[attributes.ID]
-		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
+		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
 		resourceGroup, err := pamClient.GetResourceGroup(context.Background(), resourceGroupID)
 		if err != nil {
 			return fmt.Errorf("error getting resource group: %w", err)
@@ -124,7 +124,7 @@ func insertComputedValuesForResourceGroup(expectedResourceGroup, actualResourceG
 
 func testAccResourceGroupCheckDestroy(resourceGroupNames ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(client.OktaPAMClient)
+		client := getLocalClientFromMetadata(testAccProvider.Meta())
 		resourceGroups, err := client.ListResourceGroups(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting resource groups: %w", err)

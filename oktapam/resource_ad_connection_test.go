@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
@@ -59,7 +58,7 @@ func TestAccADConnection(t *testing.T) {
 }
 
 func adConnectionExists(id string) (bool, error) {
-	client := testAccProvider.Meta().(client.OktaPAMClient)
+	client := getLocalClientFromMetadata(testAccProvider.Meta())
 	logging.Debugf("Checking if resource deleted %s", id)
 	adConnection, err := client.GetADConnection(context.Background(), id, false)
 

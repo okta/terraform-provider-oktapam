@@ -92,7 +92,7 @@ func testAccResourceGroupProjectCheckExists(rn string, expectedResourceGroupProj
 
 		resourceGroupID := rs.Primary.Attributes[attributes.ResourceGroup]
 		projectID := rs.Primary.Attributes[attributes.ID]
-		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
+		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
 		resourceGroupProject, err := pamClient.GetResourceGroupProject(context.Background(), resourceGroupID, projectID, false)
 		if err != nil {
 			return fmt.Errorf("error getting resource group project: %w", err)

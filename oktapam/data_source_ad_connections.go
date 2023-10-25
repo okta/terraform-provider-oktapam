@@ -88,7 +88,7 @@ func dataSourceADConnections() *schema.Resource {
 }
 
 func dataSourceADConnectionsRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	parameters := client.ListADConnectionsParameters{}
 
 	//Extract parameters

@@ -122,7 +122,7 @@ func parsePasswordSettingsID(resourceID string) (string, string, error) {
 }
 
 func resourcePasswordSettingsCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	resourceGroupID := d.Get(attributes.ResourceGroup).(string)
 	projectID := d.Get(attributes.Project).(string)
 
@@ -143,7 +143,7 @@ func resourcePasswordSettingsCreate(ctx context.Context, d *schema.ResourceData,
 
 func resourcePasswordSettingsRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	resourceGroupID := d.Get(attributes.ResourceGroup).(string)
 	projectID := d.Get(attributes.Project).(string)
 
@@ -164,7 +164,7 @@ func resourcePasswordSettingsRead(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourcePasswordSettingsUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	resourceGroupID := d.Get(attributes.ResourceGroup).(string)
 	projectID := d.Get(attributes.Project).(string)
 
@@ -184,7 +184,7 @@ func resourcePasswordSettingsUpdate(ctx context.Context, d *schema.ResourceData,
 
 func resourcePasswordSettingsDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	// there isn't a true delete with password settings, the best we can do is to set the managed accounts list to be empty
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	resourceGroupID := d.Get(attributes.ResourceGroup).(string)
 	projectID := d.Get(attributes.Project).(string)
 

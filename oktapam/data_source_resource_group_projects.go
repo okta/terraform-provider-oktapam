@@ -9,7 +9,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 )
 
 func dataSourceResourceGroupProjects() *schema.Resource {
@@ -41,7 +40,7 @@ func dataSourceResourceGroupProjects() *schema.Resource {
 func dataSourceResourceGroupProjectsList(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	resourceGroupIDI, ok := d.GetOk(attributes.ResourceGroup)
 	if !ok {

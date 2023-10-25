@@ -139,7 +139,7 @@ func resourceProject() *schema.Resource {
 }
 
 func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	project := client.Project{
 		Name:                   GetStringPtrFromResource(attributes.Name, d, true),
@@ -164,7 +164,7 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m any) d
 }
 
 func resourceProjectReadWithIgnorable(ctx context.Context, d *schema.ResourceData, m any, ignoreValues bool) (*schema.ResourceData, error) {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	//Get project api require project name not ASA Project UUID to read resource back
 	projectName := d.Get(attributes.Name).(string)
@@ -223,7 +223,7 @@ func resourceProjectRead(ctx context.Context, d *schema.ResourceData, m any) dia
 }
 
 func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	projectName := d.Get(attributes.Name).(string)
 
 	changed := false
@@ -261,7 +261,7 @@ func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, m any) d
 
 func resourceProjectDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	projectName := d.Get(attributes.Name).(string)
 
 	err := c.DeleteProject(ctx, projectName)

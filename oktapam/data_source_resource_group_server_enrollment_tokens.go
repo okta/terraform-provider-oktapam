@@ -8,7 +8,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 )
 
 func dataSourceResourceGroupServerEnrollmentTokens() *schema.Resource {
@@ -38,7 +37,7 @@ func dataSourceResourceGroupServerEnrollmentTokens() *schema.Resource {
 }
 
 func dataSourceResourceGroupServerEnrollmentTokenList(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	resourceGroupID := d.Get(attributes.ResourceGroup).(string)
 	if resourceGroupID == "" {
 		return diag.Errorf("%s cannot be blank", attributes.ResourceGroup)

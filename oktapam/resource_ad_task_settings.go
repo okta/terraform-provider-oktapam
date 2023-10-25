@@ -174,7 +174,7 @@ var adRuleAssignmentsResource = &schema.Resource{
 }
 
 func resourceADServerSyncTaskSettingsCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	adConnID := d.Get(attributes.ADConnectionID).(string)
 
@@ -196,7 +196,7 @@ func resourceADServerSyncTaskSettingsCreate(ctx context.Context, d *schema.Resou
 
 func resourceADServerSyncTaskSettingsRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	adConnID := d.Get(attributes.ADConnectionID).(string)
 	adServerSyncTaskSettingsID := d.Id()
@@ -220,7 +220,7 @@ func resourceADServerSyncTaskSettingsRead(ctx context.Context, d *schema.Resourc
 }
 
 func resourceADServerSyncTaskSettingsUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	adConnID := d.Get(attributes.ADConnectionID).(string)
 	adServerSyncTaskSettingsID := d.Id()
@@ -250,7 +250,7 @@ func resourceADServerSyncTaskSettingsUpdate(ctx context.Context, d *schema.Resou
 
 func resourceADServerSyncTaskSettingsDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	adConnID := d.Get(attributes.ADConnectionID).(string)
 	adServerSyncTaskSettingsID := d.Id()
