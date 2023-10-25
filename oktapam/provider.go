@@ -165,6 +165,7 @@ func getSDKClientFromMetadata(meta interface{}) *pam.APIClient {
 	return meta.(*client.APIClients).SDKClient
 }
 
+// Deprecated: Use getSDKClientFromMetadata instead of using local client
 func getLocalClientFromMetadata(meta interface{}) *client.OktaPAMClient {
 	return meta.(*client.APIClients).LocalClient
 }

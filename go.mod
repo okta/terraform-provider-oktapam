@@ -1,6 +1,6 @@
 module github.com/okta/terraform-provider-oktapam
 
-go 1.20
+go 1.21
 
 require (
 	github.com/atko-pam/pam-sdk-go v1.0.31
