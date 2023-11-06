@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
@@ -277,7 +276,7 @@ func dataSourceSecurityPolicy() *schema.Resource {
 
 func dataSourceSecurityPolicyFetch(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	idI, ok := d.GetOk(attributes.ID)
 	if !ok {

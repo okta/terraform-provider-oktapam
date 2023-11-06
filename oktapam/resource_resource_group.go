@@ -56,7 +56,7 @@ func resourceResourceGroup() *schema.Resource {
 
 func resourceResourceGroupRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	id := d.Id()
 	resourceGroup, err := c.GetResourceGroup(ctx, id)
@@ -77,7 +77,7 @@ func resourceResourceGroupRead(ctx context.Context, d *schema.ResourceData, m an
 }
 
 func resourceResourceGroupCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	resourceGroup, diags := readResourceGroupFromResource(d)
 	if diags != nil {
@@ -94,7 +94,7 @@ func resourceResourceGroupCreate(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceResourceGroupUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	id := d.Id()
 	if id == "" {
 		return diag.Errorf("could not obtain resource group id from resource")
@@ -113,7 +113,7 @@ func resourceResourceGroupUpdate(ctx context.Context, d *schema.ResourceData, m 
 
 func resourceResourceGroupDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	id := d.Id()
 	if err := c.DeleteResourceGroup(ctx, id); err != nil {
 		diags = append(diags, diag.FromErr(err)...)

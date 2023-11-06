@@ -5,7 +5,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
@@ -47,7 +46,7 @@ func resourceKubernetesClusterConnection() *schema.Resource {
 }
 
 func resourceKubernetesClusterConnectionCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	clusterID := d.Get(attributes.ClusterID).(string)
 	apiURL := GetStringPtrFromResource(attributes.KubernetesAPIURL, d, true)
@@ -68,7 +67,7 @@ func resourceKubernetesClusterConnectionCreate(ctx context.Context, d *schema.Re
 }
 
 func resourceKubernetesClusterConnectionRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	cluster, err := c.GetKubernetesClusterConnection(ctx, d.Id())
 	if err != nil {
@@ -97,7 +96,7 @@ func resourceKubernetesClusterConnectionRead(ctx context.Context, d *schema.Reso
 }
 
 func resourceKubernetesClusterConnectionUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	id := d.Id()
 
 	changed := false
@@ -125,7 +124,7 @@ func resourceKubernetesClusterConnectionUpdate(ctx context.Context, d *schema.Re
 }
 
 func resourceKubernetesClusterConnectionDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	if err := c.DeleteKubernetesClusterConnection(ctx, d.Id()); err != nil {
 		return diag.FromErr(err)

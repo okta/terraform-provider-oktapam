@@ -81,7 +81,7 @@ func dataSourceGateways() *schema.Resource {
 }
 
 func dataSourceGatewaysRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	parameters := client.ListGatewayParameters{}
 
 	//Extract parameters

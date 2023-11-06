@@ -111,7 +111,7 @@ func parseResourceGroupProjectID(resourceId string) (string, string, error) {
 }
 
 func resourceResourceGroupProjectCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	project := client.ResourceGroupProject{
 		Name:               GetStringPtrFromResource(attributes.Name, d, true),
@@ -132,7 +132,7 @@ func resourceResourceGroupProjectCreate(ctx context.Context, d *schema.ResourceD
 
 func resourceResourceGroupProjectReadWithIgnorable(ctx context.Context, d *schema.ResourceData, m any, ignoreValues bool) (*schema.ResourceData, diag.Diagnostics) {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	projectID := d.Id()
 	resourceGroupID := d.Get(attributes.ResourceGroup).(string)
@@ -196,7 +196,7 @@ func resourceResourceGroupProjectRead(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceResourceGroupProjectUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	projectID := d.Id()
 	resourceGroupID := d.Get(attributes.ResourceGroup).(string)
 
@@ -234,7 +234,7 @@ func resourceResourceGroupProjectUpdate(ctx context.Context, d *schema.ResourceD
 }
 
 func resourceResourceGroupProjectDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	projectID := d.Id()
 	resourceGroupID := d.Get(attributes.ResourceGroup).(string)
 

@@ -14,19 +14,19 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 )
 
-func TestAccADTaskSettings(t *testing.T) {
+func TestAccADServerSyncTaskSettings(t *testing.T) {
 	checkTeamApplicable(t, false)
-	adTaskResourceName := "oktapam_ad_task_settings.test_acc_ad_task_settings"
+	adTaskResourceName := "oktapam_ad_task_settings.test_acc_ad_server_sync_task_settings"
 
 	nameIdentifier := randSeq()
-	adTaskName := fmt.Sprintf("test_acc_ad_task_settings_%s", nameIdentifier)
+	adTaskName := fmt.Sprintf("test_acc_ad_server_sync_task_settings_%s", nameIdentifier)
 	adConnectionName := fmt.Sprintf("test_acc_ad_connection_%s", nameIdentifier)
 	projectName := fmt.Sprintf("test_acc_project_%s", nameIdentifier)
 	//Only one connection can exist per domain per team
 	domainName := fmt.Sprintf("%s.example.com", nameIdentifier)
 
 	//Build required pre-req config. AD Tasks Settings require AD Connection and Project
-	preConfig := createTestAccADTaskSettingsPreConfig(adConnectionName, projectName, domainName)
+	preConfig := createTestAccADServerSyncTaskSettingsPreConfig(adConnectionName, projectName, domainName)
 
 	//Update schedule
 	updatedFreq := 24
@@ -45,7 +45,7 @@ func TestAccADTaskSettings(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				//Step 1: Create AD Task Settings
-				Config: createTestAccADTaskSettingsCreateConfig(preConfig, adTaskName),
+				Config: createTestAccADServerSyncTaskSettingsCreateConfig(preConfig, adTaskName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccADTaskCheckExists(adTaskResourceName),
 					resource.TestCheckResourceAttr(adTaskResourceName, attributes.Name, adTaskName),
@@ -58,7 +58,7 @@ func TestAccADTaskSettings(t *testing.T) {
 			},
 			{
 				//Step 2: Update AD Task Settings Schedule to 24 hours with additional start hour attribute
-				Config: createTestAccADTaskSettingsUpdateScheduleConfig(preConfig, adTaskName, updatedFreq, updatedStartHourUTC),
+				Config: createTestAccADServerSyncTaskSettingsUpdateScheduleConfig(preConfig, adTaskName, updatedFreq, updatedStartHourUTC),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(adTaskResourceName, attributes.IsActive, "true"),
 					resource.TestCheckResourceAttr(adTaskResourceName, attributes.Frequency, strconv.Itoa(updatedFreq)),
@@ -70,7 +70,7 @@ func TestAccADTaskSettings(t *testing.T) {
 			},
 			{
 				//Step 3: Update additional attribute labels mappings. Additional attribute mapping is immutable attribute
-				Config: createTestAccADTaskSettingsUpdateLabelsConfig(preConfig, adTaskName, &additionalAttrLabelMapping),
+				Config: createTestAccADServerSyncTaskSettingsUpdateLabelsConfig(preConfig, adTaskName, &additionalAttrLabelMapping),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					//Check if there are additional attribute mapping labels
 					//.#: Number of elements in list or set
@@ -81,7 +81,7 @@ func TestAccADTaskSettings(t *testing.T) {
 			},
 			{
 				//Step 4: Add additional rule. AD Task Rule Assignments is immutable attribute and force creating new AD Task Settings resource
-				Config: createTestAccADTaskSettingsUpdateRulesConfig(preConfig, adTaskName),
+				Config: createTestAccADServerSyncTaskSettingsUpdateRulesConfig(preConfig, adTaskName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(adTaskResourceName, attributes.IsActive, "true"),
 					//Check if there are exactly two ad rule assignments
@@ -91,7 +91,7 @@ func TestAccADTaskSettings(t *testing.T) {
 			},
 			{
 				//Step 5: Deactivate AD Task Settings
-				Config: createTestAccADTaskSettingsUpdateStatusConfig(preConfig, adTaskName),
+				Config: createTestAccADServerSyncTaskSettingsUpdateStatusConfig(preConfig, adTaskName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(adTaskResourceName, attributes.IsActive, "false"),
 				),
@@ -100,52 +100,52 @@ func TestAccADTaskSettings(t *testing.T) {
 				ResourceName:            adTaskResourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateIdFunc:       testAccADTaskSettingsImportStateId(adTaskResourceName),
+				ImportStateIdFunc:       testAccADServerSyncTaskSettingsImportStateId(adTaskResourceName),
 				ImportStateVerifyIgnore: []string{attributes.RunTest},
 			},
 		},
 	})
 }
 
-func testAccADTaskCheckExists(adTaskSettingsResourceName string) resource.TestCheckFunc {
+func testAccADTaskCheckExists(adServerSyncTaskSettingsResourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		adTaskRS, ok := s.RootModule().Resources[adTaskSettingsResourceName]
+		adTaskRS, ok := s.RootModule().Resources[adServerSyncTaskSettingsResourceName]
 		if !ok {
-			return fmt.Errorf("resource not found: %s", adTaskSettingsResourceName)
+			return fmt.Errorf("resource not found: %s", adServerSyncTaskSettingsResourceName)
 		}
 		adConnID := adTaskRS.Primary.Attributes[attributes.ADConnectionID]
-		adTaskSettingsID := adTaskRS.Primary.ID
+		adServerSyncTaskSettingsID := adTaskRS.Primary.ID
 
-		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
-		adTaskSettings, err := pamClient.GetADTaskSettings(context.Background(), adConnID, adTaskSettingsID)
+		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		adServerSyncTaskSettings, err := pamClient.GetADServerSyncTaskSettings(context.Background(), adConnID, adServerSyncTaskSettingsID)
 		if err != nil {
 			return fmt.Errorf("error getting ad task settings: %w", err)
-		} else if !adTaskSettings.Exists() {
-			return fmt.Errorf("ad task settings: %s does not exist", adTaskSettingsID)
+		} else if !adServerSyncTaskSettings.Exists() {
+			return fmt.Errorf("ad task settings: %s does not exist", adServerSyncTaskSettingsID)
 		}
 
 		return nil
 	}
 }
 
-func testAccADTaskCheckDestroy(adTaskSettingsResourceName string) resource.TestCheckFunc {
+func testAccADTaskCheckDestroy(adServerSyncTaskSettingsResourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		//Get ad connection id and ad task id
-		adTaskRS, ok := s.RootModule().Resources[adTaskSettingsResourceName]
+		adTaskRS, ok := s.RootModule().Resources[adServerSyncTaskSettingsResourceName]
 		if !ok {
-			return fmt.Errorf("resource not found: %s", adTaskSettingsResourceName)
+			return fmt.Errorf("resource not found: %s", adServerSyncTaskSettingsResourceName)
 		}
 
 		adConnID := adTaskRS.Primary.Attributes[attributes.ADConnectionID]
-		adTaskSettingsID := adTaskRS.Primary.ID
+		adServerSyncTaskSettingsID := adTaskRS.Primary.ID
 
-		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
-		adTask, err := pamClient.GetADTaskSettings(context.Background(), adConnID, adTaskSettingsID)
+		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		adTask, err := pamClient.GetADServerSyncTaskSettings(context.Background(), adConnID, adServerSyncTaskSettingsID)
 		if err != nil {
 			return fmt.Errorf("error getting ad task settings: %w", err)
 		}
 		if adTask != nil && adTask.Exists() {
-			return fmt.Errorf("ad task settings: %s still exists", adTaskSettingsID)
+			return fmt.Errorf("ad task settings: %s still exists", adServerSyncTaskSettingsID)
 		}
 
 		return nil
@@ -184,12 +184,12 @@ resource "oktapam_project" "test_acc_project" {
 }
 `
 
-func createTestAccADTaskSettingsPreConfig(adConnectionName string, projectName string, domainName string) string {
+func createTestAccADServerSyncTaskSettingsPreConfig(adConnectionName string, projectName string, domainName string) string {
 	return fmt.Sprintf(testAccADTaskPreConfigFormat, adConnectionName, domainName, projectName)
 }
 
 const testAccADTaskCreateConfigFormat = `
-resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
+resource "oktapam_ad_task_settings" "test_acc_ad_server_sync_task_settings" {
  connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
  name                     = "%[1]s"
  is_active                = true
@@ -207,13 +207,13 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
 }
 `
 
-func createTestAccADTaskSettingsCreateConfig(preConfig string, adTaskName string) string {
+func createTestAccADServerSyncTaskSettingsCreateConfig(preConfig string, adTaskName string) string {
 	logging.Debugf("creating config")
 	return preConfig + fmt.Sprintf(testAccADTaskCreateConfigFormat, adTaskName)
 }
 
 const testAccADTaskUpdateScheduleConfigFormat = `
-resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
+resource "oktapam_ad_task_settings" "test_acc_ad_server_sync_task_settings" {
  connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
  name                     = "%[1]s"
  is_active                = true
@@ -231,14 +231,14 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
 }
 `
 
-func createTestAccADTaskSettingsUpdateScheduleConfig(preConfig string, adTaskName string, updatedFreq int, updatedStartHourUTC int) string {
+func createTestAccADServerSyncTaskSettingsUpdateScheduleConfig(preConfig string, adTaskName string, updatedFreq int, updatedStartHourUTC int) string {
 	logging.Debugf("creating config")
 	return preConfig +
 		fmt.Sprintf(testAccADTaskUpdateScheduleConfigFormat, adTaskName, updatedFreq, updatedStartHourUTC)
 }
 
 const testAccADTaskUpdateStatusConfigFormat = `
-resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
+resource "oktapam_ad_task_settings" "test_acc_ad_server_sync_task_settings" {
  connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
  name                     = "%[1]s"
  is_active                = false
@@ -256,14 +256,14 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
 }
 `
 
-func createTestAccADTaskSettingsUpdateStatusConfig(preConfig string, adTaskName string) string {
+func createTestAccADServerSyncTaskSettingsUpdateStatusConfig(preConfig string, adTaskName string) string {
 	logging.Debugf("creating config")
 	return preConfig +
 		fmt.Sprintf(testAccADTaskUpdateStatusConfigFormat, adTaskName)
 }
 
 const testAccADTaskUpdateLabelsFormat = `
-resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
+resource "oktapam_ad_task_settings" "test_acc_ad_server_sync_task_settings" {
  connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
  name                     = "%[1]s"
  is_active                = false
@@ -286,14 +286,14 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
 }
 `
 
-func createTestAccADTaskSettingsUpdateLabelsConfig(preConfig string, adTaskName string, additionalAttrs *client.ADAdditionalAttribute) string {
+func createTestAccADServerSyncTaskSettingsUpdateLabelsConfig(preConfig string, adTaskName string, additionalAttrs *client.ADAdditionalAttribute) string {
 	logging.Debugf("creating config")
 	return preConfig +
 		fmt.Sprintf(testAccADTaskUpdateLabelsFormat, adTaskName, additionalAttrs.Label, additionalAttrs.Value)
 }
 
 const testAccADTaskUpdateRulesConfigFormat = `
-resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
+resource "oktapam_ad_task_settings" "test_acc_ad_server_sync_task_settings" {
  connection_id            = oktapam_ad_connection.test_acc_ad_connection.id
  name                     = "%[1]s"
  is_active                = true
@@ -318,13 +318,13 @@ resource "oktapam_ad_task_settings" "test_acc_ad_task_settings" {
 }
 `
 
-func createTestAccADTaskSettingsUpdateRulesConfig(preConfig string, adTaskName string) string {
+func createTestAccADServerSyncTaskSettingsUpdateRulesConfig(preConfig string, adTaskName string) string {
 	logging.Debugf("creating config")
 	return preConfig +
 		fmt.Sprintf(testAccADTaskUpdateRulesConfigFormat, adTaskName)
 }
 
-func testAccADTaskSettingsImportStateId(resourceName string) resource.ImportStateIdFunc {
+func testAccADServerSyncTaskSettingsImportStateId(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {

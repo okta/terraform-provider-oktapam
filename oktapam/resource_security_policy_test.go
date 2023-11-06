@@ -264,7 +264,7 @@ func testAccSecurityPolicyCheckExists(rn string, expectedSecurityPolicy *client.
 		}
 
 		id := rs.Primary.ID
-		pamClient := testAccProvider.Meta().(client.OktaPAMClient)
+		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
 		securityPolicy, err := pamClient.GetSecurityPolicy(context.Background(), id)
 		if err != nil {
 			return fmt.Errorf("error getting security policy: %w", err)
@@ -306,7 +306,7 @@ func insertComputedValuesForSecurityPolicy(expectedSecurityPolicy, actualSecurit
 
 func testAccSecurityPolicyCheckDestroy(securityPolicyName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(client.OktaPAMClient)
+		client := getLocalClientFromMetadata(testAccProvider.Meta())
 		securityPolicies, err := client.ListSecurityPolicies(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting security policies: %w", err)

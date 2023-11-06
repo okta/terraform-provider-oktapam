@@ -50,7 +50,7 @@ func TestAccDatasourceGroupList(t *testing.T) {
 
 func testAccGroupsCheckDestroy(identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := testAccProvider.Meta().(client.OktaPAMClient)
+		c := getLocalClientFromMetadata(testAccProvider.Meta())
 
 		params := client.ListGroupsParameters{
 			Contains: identifier,

@@ -139,7 +139,7 @@ func resourceADCertificateRequest() *schema.Resource {
 }
 
 func resourceADCertificateRequestCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	var certRequestDetails *client.ADCertificateDetails
 	if v, ok := d.GetOk(attributes.Details); ok {
@@ -183,7 +183,7 @@ func resourceADCertificateRequestCreate(ctx context.Context, d *schema.ResourceD
 
 func resourceADCertificateRequestRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	certificateID := d.Id()
 	adCertificate, err := c.GetADSmartcardCertificate(ctx, certificateID)
@@ -223,7 +223,7 @@ func resourceADCertificateRequestRead(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceADCertificateRequestUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	id := d.Id()
 
 	changed := false
@@ -250,7 +250,7 @@ func resourceADCertificateRequestUpdate(ctx context.Context, d *schema.ResourceD
 }
 
 func resourceADCertificateRequestDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	certificateId := d.Id()
 
 	err := c.DeleteADSmartcardCertificate(ctx, certificateId)

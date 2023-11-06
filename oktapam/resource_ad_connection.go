@@ -84,7 +84,7 @@ func resourceADConnection() *schema.Resource {
 }
 
 func resourceADConnectionCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	//Build ADConnection API Request Object
 	var domainControllers []string
@@ -118,7 +118,7 @@ func resourceADConnectionCreate(ctx context.Context, d *schema.ResourceData, m a
 
 func resourceADConnectionRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	adConnectionId := d.Id()
 	adConnection, err := c.GetADConnection(ctx, adConnectionId, false)
@@ -140,7 +140,7 @@ func resourceADConnectionRead(ctx context.Context, d *schema.ResourceData, m any
 }
 
 func resourceADConnectionUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	adConnId := d.Id()
 
 	if d.HasChanges(attributes.Name, attributes.GatewayID, attributes.Domain, attributes.DomainControllers,
@@ -174,7 +174,7 @@ func resourceADConnectionUpdate(ctx context.Context, d *schema.ResourceData, m a
 
 func resourceADConnectionDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	adConnId := d.Id()
 
 	err := c.DeleteADConnection(ctx, adConnId)

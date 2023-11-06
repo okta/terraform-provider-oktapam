@@ -55,7 +55,7 @@ func resourceGroup() *schema.Resource {
 }
 
 func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	var roles []string
 	if r, ok := d.GetOk(attributes.Roles); ok {
 		rolesAttr := r.(*schema.Set)
@@ -83,7 +83,7 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m any) dia
 }
 
 func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	//Get group api require group name not ASA Group UUID to read resource back
 	groupName := d.Get(attributes.Name).(string)
@@ -114,7 +114,7 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m any) diag.
 }
 
 func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	groupName := d.Get(attributes.Name).(string)
 
 	changed := false
@@ -148,7 +148,7 @@ func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, m any) dia
 
 func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	groupName := d.Get(attributes.Name).(string)
 
 	err := c.DeleteGroup(ctx, groupName)

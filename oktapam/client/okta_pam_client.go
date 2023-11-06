@@ -11,6 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/atko-pam/pam-sdk-go/client/pam"
+
 	"github.com/go-resty/resty/v2"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 	"github.com/okta/terraform-provider-oktapam/oktapam/version"
@@ -32,15 +34,15 @@ type OktaPAMClient struct {
 	client *resty.Client
 }
 
-func CreateOktaPAMClient(apiKey, apiKeySecret, team, apiHost string) (*OktaPAMClient, error) {
+func CreateLocalPAMClient(providerConfig *OktaPAMProviderConfig) (*OktaPAMClient, error) {
 	logging.Infof("Creating PAM Client")
-	if serviceToken, err := createServiceToken(apiKey, apiKeySecret, apiHost, team); err != nil {
+	if serviceToken, err := createServiceToken(providerConfig.APIKey, providerConfig.APIKeySecret, providerConfig.APIHost, providerConfig.Team); err != nil {
 		return nil, err
 	} else {
-		client := setBaseHTTPSettings(resty.New(), apiHost, *serviceToken)
+		client := setBaseHTTPSettings(resty.New(), providerConfig.APIHost, *serviceToken)
 		client = setRateLimitRetryLogic(client)
 
-		return &OktaPAMClient{Team: team, client: client}, nil
+		return &OktaPAMClient{Team: providerConfig.Team, client: client}, nil
 	}
 }
 
@@ -195,4 +197,36 @@ func stringSliceToInterfaceSlice(arr []string) []any {
 	}
 
 	return arrI
+}
+
+type OktaPAMProviderConfig struct {
+	APIKey       string
+	APIKeySecret string
+	Team         string
+	APIHost      string
+}
+
+type APIClients struct {
+	SDKClient   *pam.APIClient
+	LocalClient *OktaPAMClient
+}
+
+func CreateSDKClient(providerConfig *OktaPAMProviderConfig) (*pam.APIClient, error) {
+	apiClientConfigOpts := []pam.ConfigOption{
+		pam.WithHost(providerConfig.APIHost),
+		pam.WithTeam(providerConfig.Team),
+		pam.WithAPIKey(providerConfig.APIKey),
+		pam.WithAPISecret(providerConfig.APIKeySecret),
+		pam.WithUserAgent(terraformUserAgent),
+	}
+
+	override, present := os.LookupEnv(TRUSTED_DOMAIN_OVERRIDE_ENV_VAR)
+	if present {
+		apiClientConfigOpts = append(apiClientConfigOpts, pam.WithTrustedDomainOverride(override))
+	}
+	pamClient, err := pam.NewAPIClient(apiClientConfigOpts...)
+	if err != nil {
+		return nil, fmt.Errorf("error while creating sdk client: %w", err)
+	}
+	return pamClient, nil
 }

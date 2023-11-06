@@ -47,7 +47,7 @@ func dataSourceADUserSyncTaskSettingsIDList() *schema.Resource {
 }
 
 func dataSourceADUserSyncTaskSettingsIDListRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	parameters := client.ListADUserSyncTaskSettingsParameters{}
 
 	connectionID := d.Get(attributes.ADConnectionID).(string)

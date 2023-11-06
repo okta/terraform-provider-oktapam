@@ -305,7 +305,7 @@ func resourceSecurityPolicy() *schema.Resource {
 
 func resourceSecurityPolicyRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	id := d.Id()
 	policy, err := c.GetSecurityPolicy(ctx, id)
 
@@ -332,7 +332,7 @@ func resourceSecurityPolicyRead(ctx context.Context, d *schema.ResourceData, m a
 }
 
 func resourceSecurityPolicyCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	policy, diags := readPolicyFromResourceData(d)
 	if diags != nil {
 		return diags
@@ -349,7 +349,7 @@ func resourceSecurityPolicyCreate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceSecurityPolicyUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	id := d.Id()
 	if id == "" {
 		return diag.Errorf("could not obtain security policy id from resource")
@@ -368,7 +368,7 @@ func resourceSecurityPolicyUpdate(ctx context.Context, d *schema.ResourceData, m
 
 func resourceSecurityPolicyDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 	id := d.Id()
 	if err := c.DeleteSecurityPolicy(ctx, id); err != nil {
 		diags = append(diags, diag.FromErr(err)...)

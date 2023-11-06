@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"context"
+	"github.com/atko-pam/pam-sdk-go/client/pam"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -87,7 +88,7 @@ func Provider() *schema.Provider {
 			providerADCertificateObjectKey:                resourceADCertificateObject(),
 			providerADCertificateRequestKey:               resourceADCertificateRequest(),
 			providerADConnectionKey:                       resourceADConnection(),
-			providerADTaskSettingsKey:                     resourceADTaskSettings(),
+			providerADTaskSettingsKey:                     resourceADServerSyncTaskSettings(),
 			providerADUserSyncTaskSettingsKey:             resourceADUserSyncTaskSettings(),
 			providerGatewaySetupTokenKey:                  resourceGatewaySetupToken(),
 			providerGroupKey:                              resourceGroup(),
@@ -137,15 +138,34 @@ func Provider() *schema.Provider {
 }
 
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (any, diag.Diagnostics) {
-	apiKey := d.Get(apiKeyKey).(string)
-	apiKeySecret := d.Get(apiKeySecretKey).(string)
-	team := d.Get(teamKey).(string)
-	apiHost := d.Get(apiHostKey).(string)
-
-	pamClient, err := client.CreateOktaPAMClient(apiKey, apiKeySecret, team, apiHost)
-	if err != nil {
-		return nil, diag.FromErr(err)
+	config := &client.OktaPAMProviderConfig{
+		APIKey:       d.Get(apiKeyKey).(string),
+		APIKeySecret: d.Get(apiKeySecretKey).(string),
+		Team:         d.Get(teamKey).(string),
+		APIHost:      d.Get(apiHostKey).(string),
 	}
 
-	return *pamClient, nil
+	sdkClient, err := client.CreateSDKClient(config)
+	if err != nil {
+		return nil, diag.Errorf("failed to load sdk api client: %v", err)
+	}
+
+	localClient, err := client.CreateLocalPAMClient(config)
+	if err != nil {
+		return nil, diag.Errorf("failed to load local api client: %v", err)
+	}
+
+	return &client.APIClients{
+		SDKClient:   sdkClient,
+		LocalClient: localClient,
+	}, nil
+}
+
+func getSDKClientFromMetadata(meta interface{}) *pam.APIClient {
+	return meta.(*client.APIClients).SDKClient
+}
+
+// Deprecated: Use getSDKClientFromMetadata instead of using local client
+func getLocalClientFromMetadata(meta interface{}) *client.OktaPAMClient {
+	return meta.(*client.APIClients).LocalClient
 }

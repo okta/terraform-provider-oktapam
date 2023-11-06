@@ -11,7 +11,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 )
 
 func dataSourceServerEnrollmentToken() *schema.Resource {
@@ -54,7 +53,7 @@ func dataSourceServerEnrollmentToken() *schema.Resource {
 }
 
 func dataSourceServerEnrollmentTokenFetch(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := m.(client.OktaPAMClient)
+	c := getLocalClientFromMetadata(m)
 
 	id, projectName, err := getRequiredServerEnrollmentTokenAttributes(d)
 	if err != nil {
