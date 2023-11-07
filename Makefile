@@ -2,8 +2,8 @@ HOSTNAME=okta.com
 NAMESPACE=pam
 NAME=oktapam
 BINARY=terraform-provider-${NAME}
-# On verion changes, update tag-checks.yml
-VERSION=0.4.1
+# On version changes, update tag-checks.yml
+VERSION=0.4.2
 OS_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
 PLUGIN_DIR=~/.terraform.d/plugins
 DOCGEN_RESOURCES_DIR=docgen-resources

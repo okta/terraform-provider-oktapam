@@ -455,26 +455,38 @@ type SecurityPolicyRulePrivilege interface {
 }
 
 type PrincipalAccountRDPPrivilege struct {
-	Enabled *bool `json:"principal_account_rdp"`
+	Enabled               *bool `json:"principal_account_rdp"`
+	AdminLevelPermissions *bool `json:"admin_level_permissions"`
 }
 
 func (*PrincipalAccountRDPPrivilege) isPrivilege() {}
 
 func (p *PrincipalAccountRDPPrivilege) ToResourceMap() map[string]any {
-	m := make(map[string]any, 1)
+	m := make(map[string]any, 2)
 	m[attributes.Enabled] = *p.Enabled
+	if p.AdminLevelPermissions != nil {
+		m[attributes.AdminLevelPermissions] = *p.AdminLevelPermissions
+	} else {
+		m[attributes.AdminLevelPermissions] = false
+	}
 	return m
 }
 
 type PrincipalAccountSSHPrivilege struct {
-	Enabled *bool `json:"principal_account_ssh"`
+	Enabled               *bool `json:"principal_account_ssh"`
+	AdminLevelPermissions *bool `json:"admin_level_permissions"`
 }
 
 func (*PrincipalAccountSSHPrivilege) isPrivilege() {}
 
 func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
-	m := make(map[string]any, 1)
+	m := make(map[string]any, 2)
 	m[attributes.Enabled] = *p.Enabled
+	if p.AdminLevelPermissions != nil {
+		m[attributes.AdminLevelPermissions] = *p.AdminLevelPermissions
+	} else {
+		m[attributes.AdminLevelPermissions] = false
+	}
 	return m
 }
 

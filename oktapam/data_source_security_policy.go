@@ -185,6 +185,11 @@ func dataSourceSecurityPolicy() *schema.Resource {
 													Computed:    true,
 													Description: descriptions.PrivilegeEnabled,
 												},
+												attributes.AdminLevelPermissions: {
+													Type:        schema.TypeBool,
+													Computed:    true,
+													Description: descriptions.AdminLevelPermissions,
+												},
 											},
 										},
 									},
@@ -198,6 +203,11 @@ func dataSourceSecurityPolicy() *schema.Resource {
 													Type:        schema.TypeBool,
 													Computed:    true,
 													Description: descriptions.PrivilegeEnabled,
+												},
+												attributes.AdminLevelPermissions: {
+													Type:        schema.TypeBool,
+													Computed:    true,
+													Description: descriptions.AdminLevelPermissions,
 												},
 											},
 										},

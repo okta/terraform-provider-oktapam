@@ -56,8 +56,10 @@ func TestAccDatasourceSecurityPolicyFetch(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PasswordCheckoutSSH, attributes.Enabled), "true"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.#", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountRDP), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountRDP, attributes.Enabled), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountRDP, attributes.AdminLevelPermissions), "true"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.#", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH, attributes.Enabled), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH, attributes.AdminLevelPermissions), "false"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.#", attributes.Rule, attributes.Resources), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.#", attributes.Rule, attributes.Resources, attributes.Servers), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.#", attributes.Rule, attributes.Resources, attributes.Servers, attributes.LabelSelectors), "1"),
@@ -109,9 +111,11 @@ resource "oktapam_security_policy" "test_ds_security_policies" {
 			}
 			principal_account_rdp {
 				enabled = true
+				admin_level_permissions = true
 			}
 			principal_account_ssh {
 				enabled = true
+				admin_level_permissions = false
 			}
 		}
 		conditions {

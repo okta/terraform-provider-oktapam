@@ -84,6 +84,10 @@ Required:
 
 - `enabled` (Boolean) If `true`, grants the privilege to Principals on matching resources.
 
+Optional:
+
+- `admin_level_permissions` (Boolean) Provides coarse grain (full admin) access to the user.
+
 
 <a id="nestedblock--rule--privileges--principal_account_ssh"></a>
 ### Nested Schema for `rule.privileges.principal_account_ssh`
@@ -91,6 +95,10 @@ Required:
 Required:
 
 - `enabled` (Boolean) If `true`, grants the privilege to Principals on matching resources.
+
+Optional:
+
+- `admin_level_permissions` (Boolean) Provides coarse grain (full admin) access to the user.
 
 
 

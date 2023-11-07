@@ -77,6 +77,7 @@ var (
 	GroupName                                 = "The human-readable name of an existing Group. Values are case-sensitive."
 	HostnameAttribute                         = "The AD attribute that defines the hostname for a server. This is used to identify discovered servers."
 	IncludeUserSID                            = "Options for including the User Security Identifier (SID) in the certificate used for Passwordless authentication to a Windows server via RDP. Possible values: `Never`, `If_Available`, and `Always`."
+	AdminLevelPermissions                     = "Provides coarse grain (full admin) access to the user."
 	IssuedAt                                  = "The UTC time when the token was issued. Format is '2022-01-01 00:00:00 +0000 UTC'."
 	KubernetesAuthMechanism                   = "The mechanism used to provide auth details to your Kubernetes cluster (eg. OIDC_RSA2048, NONE)"
 	KubernetesAPIURL                          = "The URL used to access the control plane of the Kubernetes cluster."

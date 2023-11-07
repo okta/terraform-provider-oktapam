@@ -101,6 +101,7 @@ Read-Only:
 
 Read-Only:
 
+- `admin_level_permissions` (Boolean)
 - `enabled` (Boolean)
 
 
@@ -109,6 +110,7 @@ Read-Only:
 
 Read-Only:
 
+- `admin_level_permissions` (Boolean)
 - `enabled` (Boolean)
 
 

@@ -16,6 +16,7 @@ import (
 func resourceSecurityPolicy() *schema.Resource {
 	return &schema.Resource{
 		Description:   descriptions.ResourceSecurityPolicy,
+		CustomizeDiff: resourceSecurityPolicyCustomizeDiff,
 		CreateContext: resourceSecurityPolicyCreate,
 		ReadContext:   resourceSecurityPolicyRead,
 		DeleteContext: resourceSecurityPolicyDelete,
@@ -205,6 +206,12 @@ func resourceSecurityPolicy() *schema.Resource {
 													Required:    true,
 													Description: descriptions.PrivilegeEnabled,
 												},
+												attributes.AdminLevelPermissions: {
+													Type:        schema.TypeBool,
+													Optional:    true,
+													Default:     false,
+													Description: descriptions.AdminLevelPermissions,
+												},
 											},
 										},
 									},
@@ -219,6 +226,12 @@ func resourceSecurityPolicy() *schema.Resource {
 													Type:        schema.TypeBool,
 													Required:    true,
 													Description: descriptions.PrivilegeEnabled,
+												},
+												attributes.AdminLevelPermissions: {
+													Type:        schema.TypeBool,
+													Optional:    true,
+													Computed:    true,
+													Description: descriptions.AdminLevelPermissions,
 												},
 											},
 										},
@@ -764,10 +777,12 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 
 	if principalAccountRDPI, ok := privilegesM[attributes.PrincipalAccountRDP]; ok {
 		if enabled, hasValue := readPrivilegeEnabled(principalAccountRDPI); hasValue {
+			adminLevelPermissions := readAdminLevelPermissionEnabled(principalAccountRDPI)
 			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
 				PrivilegeType: client.PrincipalAccountRDPPrivilegeType,
 				PrivilegeValue: &client.PrincipalAccountRDPPrivilege{
-					Enabled: &enabled,
+					Enabled:               &enabled,
+					AdminLevelPermissions: &adminLevelPermissions,
 				},
 			})
 		}
@@ -775,10 +790,12 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 
 	if principalAccountSSHI, ok := privilegesM[attributes.PrincipalAccountSSH]; ok {
 		if enabled, hasValue := readPrivilegeEnabled(principalAccountSSHI); hasValue {
+			adminLevelPermissions := readAdminLevelPermissionEnabled(principalAccountSSHI)
 			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
 				PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
 				PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
-					Enabled: &enabled,
+					Enabled:               &enabled,
+					AdminLevelPermissions: &adminLevelPermissions,
 				},
 			})
 		}
@@ -801,6 +818,22 @@ func readPrivilegeEnabled(privilege any) (bool, bool) {
 	}
 
 	return false, true
+}
+
+func readAdminLevelPermissionEnabled(privilege any) bool {
+	privilegeArr := privilege.([]any)
+
+	if len(privilegeArr) == 0 {
+		return false
+	}
+
+	privilegeM := privilegeArr[0].(map[string]any)
+
+	if adminLevelPermissions, ok := privilegeM[attributes.AdminLevelPermissions]; ok {
+		return adminLevelPermissions.(bool)
+	}
+
+	return false
 }
 
 func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPolicyPrincipals, diag.Diagnostics) {
@@ -844,4 +877,34 @@ func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPol
 	}
 
 	return principals, diags
+}
+
+func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.ResourceDiff, v interface{}) error {
+	return validatePrincipalAccounts(diff)
+}
+
+func validatePrincipalAccounts(diff *schema.ResourceDiff) error {
+	rulesAttr := diff.Get("rule").([]any)
+
+	for idx, _ := range rulesAttr {
+		keyPrincipalAccountSSH := fmt.Sprintf("rule.%d.privileges.0.principal_account_ssh", idx)
+		if diff.HasChange(keyPrincipalAccountSSH) {
+			if principalAccountSSH, ok :=
+				diff.GetOk(keyPrincipalAccountSSH + ".0.enabled"); !ok || !principalAccountSSH.(bool) {
+				if adminLevelPermissionsEnabled, ok := diff.GetOk(keyPrincipalAccountSSH + ".0.admin_level_permissions"); ok && adminLevelPermissionsEnabled.(bool) {
+					return fmt.Errorf("admin_level_permissions can not be enabled when principal account ssh privilege is not enabled")
+				}
+			}
+		}
+		keyPrincipalAccountRDP := fmt.Sprintf("rule.%d.privileges.0.principal_account_rdp", idx)
+		if diff.HasChange(keyPrincipalAccountRDP) {
+			if principalAccountRDP, ok :=
+				diff.GetOk(keyPrincipalAccountRDP + ".0.enabled"); !ok || !principalAccountRDP.(bool) {
+				if adminLevelPermissionsEnabled, ok := diff.GetOk(keyPrincipalAccountRDP + ".0.admin_level_permissions"); ok && adminLevelPermissionsEnabled.(bool) {
+					return fmt.Errorf("admin_level_permissions can not be enabled when principal account rdp privilege is not enabled")
+				}
+			}
+		}
+	}
+	return nil
 }
