@@ -884,19 +884,25 @@ func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.Resou
 }
 
 func validatePrincipalAccounts(diff *schema.ResourceDiff) error {
-	if diff.HasChange("rule.0.privileges.0.principal_account_ssh") {
-		if principalAccountSSH, ok :=
-			diff.GetOk("rule.0.privileges.0.principal_account_ssh.0.enabled"); !ok || !principalAccountSSH.(bool) {
-			if adminLevelPermissionsEnabled, ok := diff.GetOk("rule.0.privileges.0.principal_account_ssh.0.admin_level_permissions"); ok && adminLevelPermissionsEnabled.(bool) {
-				return fmt.Errorf("admin_level_permissions can not be enabled when principal account ssh privilege is not enabled")
+	rulesAttr := diff.Get("rule").([]any)
+
+	for idx, _ := range rulesAttr {
+		keyPrincipalAccountSSH := "rule." + string(idx) + ".privileges.0.principal_account_ssh"
+		if diff.HasChange(keyPrincipalAccountSSH) {
+			if principalAccountSSH, ok :=
+				diff.GetOk(keyPrincipalAccountSSH + ".0.enabled"); !ok || !principalAccountSSH.(bool) {
+				if adminLevelPermissionsEnabled, ok := diff.GetOk(keyPrincipalAccountSSH + ".0.admin_level_permissions"); ok && adminLevelPermissionsEnabled.(bool) {
+					return fmt.Errorf("admin_level_permissions can not be enabled when principal account ssh privilege is not enabled")
+				}
 			}
 		}
-	}
-	if diff.HasChange("rule.0.privileges.0.principal_account_rdp") {
-		if principalAccountRDP, ok :=
-			diff.GetOk("rule.0.privileges.0.principal_account_rdp.0.enabled"); !ok || !principalAccountRDP.(bool) {
-			if adminLevelPermissionsEnabled, ok := diff.GetOk("rule.0.privileges.0.principal_account_rdp.0.admin_level_permissions"); ok && adminLevelPermissionsEnabled.(bool) {
-				return fmt.Errorf("admin_level_permissions can not be enabled when principal account rdp privilege is not enabled")
+		keyPrincipalAccountRDP := "rule." + string(idx) + ".privileges.0.principal_account_rdp"
+		if diff.HasChange(keyPrincipalAccountRDP) {
+			if principalAccountRDP, ok :=
+				diff.GetOk(keyPrincipalAccountRDP + ".0.enabled"); !ok || !principalAccountRDP.(bool) {
+				if adminLevelPermissionsEnabled, ok := diff.GetOk(keyPrincipalAccountRDP + ".0.admin_level_permissions"); ok && adminLevelPermissionsEnabled.(bool) {
+					return fmt.Errorf("admin_level_permissions can not be enabled when principal account rdp privilege is not enabled")
+				}
 			}
 		}
 	}
