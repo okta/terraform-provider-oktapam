@@ -887,7 +887,7 @@ func validatePrincipalAccounts(diff *schema.ResourceDiff) error {
 	rulesAttr := diff.Get("rule").([]any)
 
 	for idx, _ := range rulesAttr {
-		keyPrincipalAccountSSH := "rule." + fmt.Sprint(idx) + ".privileges.0.principal_account_ssh"
+		keyPrincipalAccountSSH := fmt.Sprintf("rule.%d.privileges.0.principal_account_ssh", idx)
 		if diff.HasChange(keyPrincipalAccountSSH) {
 			if principalAccountSSH, ok :=
 				diff.GetOk(keyPrincipalAccountSSH + ".0.enabled"); !ok || !principalAccountSSH.(bool) {
@@ -896,7 +896,7 @@ func validatePrincipalAccounts(diff *schema.ResourceDiff) error {
 				}
 			}
 		}
-		keyPrincipalAccountRDP := "rule." + fmt.Sprint(idx) + ".privileges.0.principal_account_rdp"
+		keyPrincipalAccountRDP := fmt.Sprintf("rule.%d.privileges.0.principal_account_rdp", idx)
 		if diff.HasChange(keyPrincipalAccountRDP) {
 			if principalAccountRDP, ok :=
 				diff.GetOk(keyPrincipalAccountRDP + ".0.enabled"); !ok || !principalAccountRDP.(bool) {
