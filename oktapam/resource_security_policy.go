@@ -67,7 +67,7 @@ func resourceSecurityPolicy() *schema.Resource {
 				},
 			},
 			attributes.Rule: {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Required:    true,
 				MinItems:    1,
 				MaxItems:    20,
@@ -536,10 +536,11 @@ func readPolicyFromResourceData(d *schema.ResourceData) (client.SecurityPolicy, 
 func readRulesFromResourceData(d *schema.ResourceData, securityPolicyId *string) ([]*client.SecurityPolicyRule, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	rulesAttr := d.Get("rule").([]any)
+	rulesSet := d.Get("rule").(*schema.Set)
+	rulesAttr := rulesSet.List()
 
-	rules := make([]*client.SecurityPolicyRule, len(rulesAttr))
-	for idx, ruleI := range rulesAttr {
+	rules := make([]*client.SecurityPolicyRule, 0, len(rulesAttr))
+	for _, ruleI := range rulesAttr {
 		ruleM := ruleI.(map[string]any)
 		var id *string
 
@@ -551,6 +552,17 @@ func readRulesFromResourceData(d *schema.ResourceData, securityPolicyId *string)
 		}
 
 		name := ruleM[attributes.Name].(string)
+
+		if len(name) == 0 &&
+			len(ruleM[attributes.Privileges].([]any)) == 0 &&
+			len(ruleM[attributes.Resources].([]any)) == 0 &&
+			len(ruleM[attributes.Conditions].([]any)) == 0 {
+			// due to the bug of https://github.com/hashicorp/terraform-plugin-sdk/pull/1042
+			// when using a TypeSet, we get an empty map of values during the Update phase.
+			// we should ignore this value
+			continue
+		}
+
 		if len(name) < 1 || len(name) > 256 {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Error,
@@ -592,7 +604,7 @@ func readRulesFromResourceData(d *schema.ResourceData, securityPolicyId *string)
 			diags = append(diags, conditionsDiag...)
 		}
 
-		rules[idx] = rule
+		rules = append(rules, rule)
 
 		if validation := validateRule(rule); validation != nil {
 			diags = append(diags, validation...)

@@ -330,7 +330,7 @@ func testAccSecurityPolicyCheckExists(rn string, expectedSecurityPolicy *client.
 
 		comparison := pretty.Compare(expectedSecurityPolicy, securityPolicy)
 		if comparison != "" {
-			return fmt.Errorf("expected password settings does not match returned password settings.\n%s", comparison)
+			return fmt.Errorf("expected security policy does not match returned security policy.\n%s", comparison)
 		}
 		return nil
 	}
