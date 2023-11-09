@@ -20,7 +20,7 @@ Limited Early Access Feature: A policy which defines how users can gain access t
 - `active` (Boolean) If true, indicates that the Security Policy is active.
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
 - `principals` (Block List, Min: 1, Max: 1) Defines the users bound to the Security Policy. (see [below for nested schema](#nestedblock--principals))
-- `rule` (Block List, Min: 1, Max: 20) Defines the privileges available to resources matched to the Security Policy. (see [below for nested schema](#nestedblock--rule))
+- `rule` (Block Set, Min: 1, Max: 20) Defines the privileges available to resources matched to the Security Policy. (see [below for nested schema](#nestedblock--rule))
 
 ### Optional
 
