@@ -629,6 +629,18 @@ func validateRule(rule *client.SecurityPolicyRule) diag.Diagnostics {
 		}
 	}
 
+	for _, cond := range rule.Conditions {
+		if !cond.ConditionValue.ValidForResourceType(rule.ResourceType) {
+			resourceTypeAttribute := resourceTypeToAttribute(rule.ResourceType)
+			conditionTypeAttribute := conditionTypeToAttribute(cond.ConditionType)
+
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("cannot use condition of type %s with resource of type %s", conditionTypeAttribute, resourceTypeAttribute),
+			})
+		}
+	}
+
 	return diags
 }
 
@@ -657,6 +669,19 @@ func privilegeTypeToAttribute(privilegeType client.PrivilegeType) string {
 		return attributes.Secret
 	default:
 		return string(privilegeType)
+	}
+}
+
+func conditionTypeToAttribute(conditionType client.ConditionType) string {
+	switch conditionType {
+	case client.AccessRequestConditionType:
+		return attributes.AccessRequest
+	case client.GatewayConditionType:
+		return attributes.Gateway
+	case client.MFAConditionType:
+		return attributes.MFA
+	default:
+		return string(conditionType)
 	}
 }
 

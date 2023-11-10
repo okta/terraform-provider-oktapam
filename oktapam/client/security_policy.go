@@ -191,6 +191,7 @@ func (c *SecurityPolicyRuleConditionContainer) UnmarshalJSON(data []byte) error 
 
 type SecurityPolicyRuleCondition interface {
 	ConditionType() ConditionType
+	ValidForResourceType(resourceSelectorType ResourceSelectorType) bool
 	ToResourceMap() map[string]any
 }
 
@@ -210,6 +211,10 @@ func (c *MFACondition) ToResourceMap() map[string]any {
 
 func (*MFACondition) ConditionType() ConditionType {
 	return MFAConditionType
+}
+
+func (*MFACondition) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
+	return true
 }
 
 type AccessRequestCondition struct {
@@ -234,6 +239,10 @@ func (*AccessRequestCondition) ConditionType() ConditionType {
 	return AccessRequestConditionType
 }
 
+func (*AccessRequestCondition) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
+	return true
+}
+
 type GatewayCondition struct {
 	TrafficForwarding *bool `json:"traffic_forwarding"`
 	SessionRecording  *bool `json:"session_recording"`
@@ -250,6 +259,10 @@ func (c *GatewayCondition) ToResourceMap() map[string]any {
 
 func (*GatewayCondition) ConditionType() ConditionType {
 	return GatewayConditionType
+}
+
+func (*GatewayCondition) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
+	return resourceSelectorType == ServerBasedResourceSelectorType
 }
 
 type SecurityPolicyRuleResourceSelector interface {
