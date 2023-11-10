@@ -132,8 +132,8 @@ Optional:
 
 Optional:
 
-- `secret` (Block List) Defines a specific Secret targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--secrets--secret))
-- `secret_folder` (Block List) Defines a specific Secret Folder targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--secrets--secret_folder))
+- `secret` (Block List, Max: 1) Defines a specific Secret targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--secrets--secret))
+- `secret_folder` (Block List, Max: 1) Defines a specific Secret Folder targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--secrets--secret_folder))
 
 <a id="nestedblock--rule--resources--secrets--secret"></a>
 ### Nested Schema for `rule.resources.secrets.secret_folder`

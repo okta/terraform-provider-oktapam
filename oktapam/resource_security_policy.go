@@ -98,6 +98,8 @@ func resourceSecurityPolicy() *schema.Resource {
 												attributes.Secret: {
 													Type:        schema.TypeList,
 													Optional:    true,
+													MinItems:    0,
+													MaxItems:    1,
 													Description: descriptions.SecurityPolicySecret,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
@@ -112,6 +114,8 @@ func resourceSecurityPolicy() *schema.Resource {
 												attributes.SecretFolder: {
 													Type:        schema.TypeList,
 													Optional:    true,
+													MinItems:    0,
+													MaxItems:    1,
 													Description: descriptions.SecurityPolicySecretFolder,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
@@ -837,7 +841,7 @@ func readResourceSelector(resourcesAttr []any) (client.SecurityPolicyRuleResourc
 func readSecretsSelector(secretsAttr any) ([]client.SecretBasedResourceSubSelectorContainer, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	subSelectors := make([]client.SecretBasedResourceSubSelectorContainer, 0, 5)
+	subSelectors := make([]client.SecretBasedResourceSubSelectorContainer, 0, 1)
 
 	secretsArr := secretsAttr.([]any)
 	if len(secretsArr) == 0 || secretsArr[0] == nil {
@@ -865,10 +869,17 @@ func readSecretsSelector(secretsAttr any) ([]client.SecretBasedResourceSubSelect
 		secretFolderArr := secretFolderAttr.([]any)
 		if selectors, secretFolderDiag := readSecretFolderSubSelectors(secretFolderArr); secretFolderDiag == nil {
 			for _, selector := range selectors {
-				subSelectors = append(subSelectors, client.SecretBasedResourceSubSelectorContainer{
-					SelectorType: selector.SecretBasedResourceSubSelectorType(),
-					Selector:     selector,
-				})
+				if len(subSelectors) == 0 {
+					subSelectors = append(subSelectors, client.SecretBasedResourceSubSelectorContainer{
+						SelectorType: selector.SecretBasedResourceSubSelectorType(),
+						Selector:     selector,
+					})
+				} else {
+					diags = append(diags, diag.Diagnostic{
+						Severity: diag.Error,
+						Summary:  fmt.Sprintf("only a single %s or %s resource is allowed as a target within a rule", attributes.Secret, attributes.SecretFolder),
+					})
+				}
 			}
 		} else {
 			diags = append(diags, secretFolderDiag...)
