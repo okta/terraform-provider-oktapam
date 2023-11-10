@@ -25,7 +25,7 @@ Limited Early Access Feature: A policy which defines how users can gain access t
 ### Optional
 
 - `description` (String) The human-readable description of the resource.
-- `resource_group` (String) The ID of the Resource Group to which the Security Policy is constrained.  If this is not set, the Security Policy will apply to all resources for the team.  This value must be set if the user under which the terraform is being applied is a Delegated Security Admin.
+- `resource_group` (String) The UUID of a specific Resource Group associated with the Security Policy. If undefined, the Security Policy applies to all resources for your Team. This value must be defined if the current user has the Delegated Security Admin role.
 
 ### Read-Only
 
@@ -132,15 +132,15 @@ Optional:
 
 Optional:
 
-- `secret` (Block List) Defines a specific secret targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--secrets--secret))
-- `secret_folder` (Block List) Defines a specific secret folder targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--secrets--secret_folder))
+- `secret` (Block List) Defines a specific Secret targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--secrets--secret))
+- `secret_folder` (Block List) Defines a specific Secret Folder targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--secrets--secret_folder))
 
 <a id="nestedblock--rule--resources--secrets--secret"></a>
 ### Nested Schema for `rule.resources.secrets.secret_folder`
 
 Required:
 
-- `secret_id` (String) The UUID of the secret.
+- `secret_id` (String) The UUID of the Secret.
 
 
 <a id="nestedblock--rule--resources--secrets--secret_folder"></a>
@@ -148,7 +148,7 @@ Required:
 
 Required:
 
-- `secret_folder_id` (String) The UUID of the secret folder.
+- `secret_folder_id` (String) The UUID of the Secret Folder.
 
 
 
@@ -199,7 +199,7 @@ Optional:
 
 - `access_request` (Block List) Identifies an existing Request Type in Access Requests. (see [below for nested schema](#nestedblock--rule--conditions--access_request))
 - `gateway` (Block List, Max: 1) Configures traffic settings for an existing Gateway. (see [below for nested schema](#nestedblock--rule--conditions--gateway))
-- `mfa` (Block List) Configures Multi-Factor Auth settings required to access the resource. (see [below for nested schema](#nestedblock--rule--conditions--mfa))
+- `mfa` (Block List) Configures multifactor auth settings required to access the resource. (see [below for nested schema](#nestedblock--rule--conditions--mfa))
 
 <a id="nestedblock--rule--conditions--access_request"></a>
 ### Nested Schema for `rule.conditions.access_request`
@@ -228,7 +228,7 @@ Required:
 
 Required:
 
-- `acr_values` (String) The authentication context class reference value used to defines a specific set of assurance level requirements that the protected resource requires.
-- `reauth_frequency_in_seconds` (Number) The number of seconds a successful MFA is valid for before requiring another MFA to access the resource again.
+- `acr_values` (String) The authentication context class reference (ACR) for this policy. This defines a specific set of assurance level requirements required by a protected resource.
+- `reauth_frequency_in_seconds` (Number) The number of seconds an MFA verification remains valid. After this time users need to reauthenticate before they can open new connections to resources. Defining a value of `0` requires users to authenticate for every connection.
 
 
