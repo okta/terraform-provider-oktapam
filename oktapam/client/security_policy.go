@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"sort"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
@@ -85,6 +86,10 @@ func (p SecurityPolicy) ToResourceMap() map[string]any {
 		for idx, rule := range p.Rules {
 			rules[idx] = rule.ToResourceMap()
 		}
+
+		sort.Slice(rules, func(i, j int) bool {
+			return *p.Rules[i].Name < *p.Rules[j].Name
+		})
 
 		m[attributes.Rule] = rules
 	}
