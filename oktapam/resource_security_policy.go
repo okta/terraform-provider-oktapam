@@ -16,7 +16,6 @@ import (
 func resourceSecurityPolicy() *schema.Resource {
 	return &schema.Resource{
 		Description:   descriptions.ResourceSecurityPolicy,
-		CustomizeDiff: resourceSecurityPolicyCustomizeDiff,
 		CreateContext: resourceSecurityPolicyCreate,
 		ReadContext:   resourceSecurityPolicyRead,
 		DeleteContext: resourceSecurityPolicyDelete,
@@ -43,6 +42,11 @@ func resourceSecurityPolicy() *schema.Resource {
 				Required:    true,
 				Description: descriptions.SecurityPolicyActive,
 			},
+			attributes.ResourceGroup: {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: descriptions.SecurityPolicyResouceGroup,
+			},
 			attributes.Principals: {
 				Type:        schema.TypeList,
 				Required:    true,
@@ -63,7 +67,7 @@ func resourceSecurityPolicy() *schema.Resource {
 				},
 			},
 			attributes.Rule: {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Required:    true,
 				MinItems:    1,
 				MaxItems:    20,
@@ -83,9 +87,52 @@ func resourceSecurityPolicy() *schema.Resource {
 							Description: descriptions.SecurityPolicyResources,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									attributes.Secrets: {
+										Type:        schema.TypeList,
+										Optional:    true,
+										MinItems:    1,
+										MaxItems:    1,
+										Description: descriptions.SecurityPolicySecrets,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												attributes.Secret: {
+													Type:        schema.TypeList,
+													Optional:    true,
+													MinItems:    0,
+													MaxItems:    1,
+													Description: descriptions.SecurityPolicySecret,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															attributes.SecretID: {
+																Type:        schema.TypeString,
+																Required:    true,
+																Description: descriptions.SecretID,
+															},
+														},
+													},
+												},
+												attributes.SecretFolder: {
+													Type:        schema.TypeList,
+													Optional:    true,
+													MinItems:    0,
+													MaxItems:    1,
+													Description: descriptions.SecurityPolicySecretFolder,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															attributes.SecretFolderID: {
+																Type:        schema.TypeString,
+																Required:    true,
+																Description: descriptions.SecretFolderID,
+															},
+														},
+													},
+												},
+											},
+										},
+									},
 									attributes.Servers: {
 										Type:        schema.TypeList,
-										Required:    true,
+										Optional:    true,
 										MinItems:    1,
 										MaxItems:    1,
 										Description: descriptions.SecurityPolicyServers,
@@ -164,6 +211,56 @@ func resourceSecurityPolicy() *schema.Resource {
 							Description: descriptions.Privileges,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									attributes.Secret: {
+										Type:        schema.TypeList,
+										Optional:    true,
+										MaxItems:    1,
+										Description: descriptions.PrivilegeSecret,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												attributes.List: {
+													Type:        schema.TypeBool,
+													Required:    true,
+													Description: descriptions.PrivilegeSecretList,
+												},
+												attributes.FolderCreate: {
+													Type:        schema.TypeBool,
+													Required:    true,
+													Description: descriptions.PrivilegeSecretFolderCreate,
+												},
+												attributes.FolderDelete: {
+													Type:        schema.TypeBool,
+													Required:    true,
+													Description: descriptions.PrivilegeSecretFolderDelete,
+												},
+												attributes.FolderUpdate: {
+													Type:        schema.TypeBool,
+													Required:    true,
+													Description: descriptions.PrivilegeSecretFolderUpdate,
+												},
+												attributes.SecretCreate: {
+													Type:        schema.TypeBool,
+													Required:    true,
+													Description: descriptions.PrivilegeSecretCreate,
+												},
+												attributes.SecretDelete: {
+													Type:        schema.TypeBool,
+													Required:    true,
+													Description: descriptions.PrivilegeSecretDelete,
+												},
+												attributes.SecretReveal: {
+													Type:        schema.TypeBool,
+													Required:    true,
+													Description: descriptions.PrivilegeSecretReveal,
+												},
+												attributes.SecretUpdate: {
+													Type:        schema.TypeBool,
+													Required:    true,
+													Description: descriptions.PrivilegeSecretUpdate,
+												},
+											},
+										},
+									},
 									attributes.PasswordCheckoutRDP: {
 										Type:        schema.TypeList,
 										Optional:    true,
@@ -246,6 +343,25 @@ func resourceSecurityPolicy() *schema.Resource {
 							Description: descriptions.Conditions,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									attributes.MFA: {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: descriptions.ConditionMFA,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												attributes.ReAuthFrequencyInSeconds: {
+													Type:        schema.TypeInt,
+													Required:    true,
+													Description: descriptions.MFAReAuthFrequencyInSeconds,
+												},
+												attributes.ACRValues: {
+													Type:        schema.TypeString,
+													Required:    true,
+													Description: descriptions.MFAACRValues,
+												},
+											},
+										},
+									},
 									attributes.AccessRequest: {
 										Type:        schema.TypeList,
 										Optional:    true,
@@ -386,11 +502,24 @@ func readPolicyFromResourceData(d *schema.ResourceData) (client.SecurityPolicy, 
 	if idS != "" {
 		id = &idS
 	}
+
 	policy := client.SecurityPolicy{
 		ID:          id,
 		Name:        GetStringPtrFromResource(attributes.Name, d, false),
 		Active:      GetBoolPtrFromResource(attributes.Active, d, false),
 		Description: GetStringPtrFromResource(attributes.Description, d, false),
+	}
+
+	if resourceGroupID := GetStringPtrFromResource(attributes.ResourceGroup, d, false); resourceGroupID != nil {
+		if MatchesUUID(*resourceGroupID) {
+			rg := ConvertToNamedObject(*resourceGroupID, client.ResourceGroupNamedObjectType)
+			policy.ResourceGroup = &rg
+		} else {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("%s value must be a UUID: %s", attributes.ResourceGroup, *resourceGroupID),
+			})
+		}
 	}
 
 	if principals, principalsDiags := readPrincipalsFromResourceData(d); principalsDiags != nil {
@@ -411,10 +540,11 @@ func readPolicyFromResourceData(d *schema.ResourceData) (client.SecurityPolicy, 
 func readRulesFromResourceData(d *schema.ResourceData, securityPolicyId *string) ([]*client.SecurityPolicyRule, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	rulesAttr := d.Get("rule").([]any)
+	rulesSet := d.Get("rule").(*schema.Set)
+	rulesAttr := rulesSet.List()
 
-	rules := make([]*client.SecurityPolicyRule, len(rulesAttr))
-	for idx, ruleI := range rulesAttr {
+	rules := make([]*client.SecurityPolicyRule, 0, len(rulesAttr))
+	for _, ruleI := range rulesAttr {
 		ruleM := ruleI.(map[string]any)
 		var id *string
 
@@ -426,6 +556,17 @@ func readRulesFromResourceData(d *schema.ResourceData, securityPolicyId *string)
 		}
 
 		name := ruleM[attributes.Name].(string)
+
+		if len(name) == 0 &&
+			len(ruleM[attributes.Privileges].([]any)) == 0 &&
+			len(ruleM[attributes.Resources].([]any)) == 0 &&
+			len(ruleM[attributes.Conditions].([]any)) == 0 {
+			// due to the bug of https://github.com/hashicorp/terraform-plugin-sdk/pull/1042
+			// when using a TypeSet, we get an empty map of values during the Update phase.
+			// we should ignore this value
+			continue
+		}
+
 		if len(name) < 1 || len(name) > 256 {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Error,
@@ -467,10 +608,85 @@ func readRulesFromResourceData(d *schema.ResourceData, securityPolicyId *string)
 			diags = append(diags, conditionsDiag...)
 		}
 
-		rules[idx] = rule
+		rules = append(rules, rule)
+
+		if validation := validateRule(rule); validation != nil {
+			diags = append(diags, validation...)
+		}
 	}
 
 	return rules, diags
+}
+
+func validateRule(rule *client.SecurityPolicyRule) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	for _, priv := range rule.Privileges {
+		if !priv.PrivilegeValue.ValidForResourceType(rule.ResourceType) {
+			resourceTypeAttribute := resourceTypeToAttribute(rule.ResourceType)
+			privilegeTypeAttribute := privilegeTypeToAttribute(priv.PrivilegeType)
+
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("cannot use privilege of type %s with resource of type %s", privilegeTypeAttribute, resourceTypeAttribute),
+			})
+		}
+	}
+
+	for _, cond := range rule.Conditions {
+		if !cond.ConditionValue.ValidForResourceType(rule.ResourceType) {
+			resourceTypeAttribute := resourceTypeToAttribute(rule.ResourceType)
+			conditionTypeAttribute := conditionTypeToAttribute(cond.ConditionType)
+
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("cannot use condition of type %s with resource of type %s", conditionTypeAttribute, resourceTypeAttribute),
+			})
+		}
+	}
+
+	return diags
+}
+
+func resourceTypeToAttribute(resourceSelectorType client.ResourceSelectorType) string {
+	switch resourceSelectorType {
+	case client.SecretBasedResourceSelectorType:
+		return attributes.Secrets
+	case client.ServerBasedResourceSelectorType:
+		return attributes.Servers
+	default:
+		return string(resourceSelectorType)
+	}
+}
+
+func privilegeTypeToAttribute(privilegeType client.PrivilegeType) string {
+	switch privilegeType {
+	case client.PasswordCheckoutRDPPrivilegeType:
+		return attributes.PasswordCheckoutRDP
+	case client.PrincipalAccountRDPPrivilegeType:
+		return attributes.PrincipalAccountRDP
+	case client.PasswordCheckoutSSHPrivilegeType:
+		return attributes.PasswordCheckoutSSH
+	case client.PrincipalAccountSSHPrivilegeType:
+		return attributes.PrincipalAccountSSH
+	case client.SecretPrivilegeType:
+		return attributes.Secret
+	default:
+		return string(privilegeType)
+	}
+}
+
+func conditionTypeToAttribute(conditionType client.ConditionType) string {
+	switch conditionType {
+	case client.AccessRequestConditionType:
+		return attributes.AccessRequest
+	case client.GatewayConditionType:
+		return attributes.Gateway
+	case client.MFAConditionType:
+		return attributes.MFA
+	default:
+		return string(conditionType)
+	}
 }
 
 func readConditions(conditionsAttr []any) ([]*client.SecurityPolicyRuleConditionContainer, diag.Diagnostics) {
@@ -547,6 +763,27 @@ func readConditions(conditionsAttr []any) ([]*client.SecurityPolicyRuleCondition
 		}
 	}
 
+	if mfaAttr, ok := conditionsM[attributes.MFA]; ok {
+		mfaArr := mfaAttr.([]any)
+
+		for _, mfaI := range mfaArr {
+			mfaM := mfaI.(map[string]any)
+
+			reauthFrequency := mfaM[attributes.ReAuthFrequencyInSeconds].(int)
+			acrValues := mfaM[attributes.ACRValues].(string)
+
+			mfa := &client.MFACondition{
+				ReAuthFrequencyInSeconds: &reauthFrequency,
+				ACRValues:                &acrValues,
+			}
+
+			conditions = append(conditions, &client.SecurityPolicyRuleConditionContainer{
+				ConditionType:  mfa.ConditionType(),
+				ConditionValue: mfa,
+			})
+		}
+	}
+
 	return conditions, diags
 }
 
@@ -562,18 +799,142 @@ func readResourceSelector(resourcesAttr []any) (client.SecurityPolicyRuleResourc
 	}
 
 	resourcesI := resourcesAttr[0].(map[string]any)
+	var selector client.SecurityPolicyRuleResourceSelector
 
 	if serversI, ok := resourcesI[attributes.Servers]; ok {
-		subSelectors, diags := readServersSelector(serversI)
-
-		selector := &client.ServerBasedResourceSelector{
-			Selectors: subSelectors,
+		if subSelectors, d := readServersSelector(serversI); d != nil {
+			diags = append(diags, d...)
+		} else if subSelectors != nil {
+			selector = &client.ServerBasedResourceSelector{
+				Selectors: subSelectors,
+			}
 		}
-
-		return selector, diags
 	}
 
-	return nil, diags
+	if secretsI, ok := resourcesI[attributes.Secrets]; ok {
+		if subSelectors, d := readSecretsSelector(secretsI); d != nil {
+			diags = append(diags, d...)
+		} else if subSelectors != nil {
+			if selector != nil {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Error,
+					Summary:  fmt.Sprintf("cannot supply both %s and %s resources", attributes.Servers, attributes.Secrets),
+				})
+			} else {
+				selector = &client.SecretBasedResourceSelector{
+					Selectors: subSelectors,
+				}
+			}
+		}
+	}
+
+	if selector == nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  fmt.Sprintf("must supply either %s or %s values under %s", attributes.Servers, attributes.Secrets, attributes.Resources),
+		})
+	}
+
+	return selector, diags
+}
+
+func readSecretsSelector(secretsAttr any) ([]client.SecretBasedResourceSubSelectorContainer, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	subSelectors := make([]client.SecretBasedResourceSubSelectorContainer, 0, 1)
+
+	secretsArr := secretsAttr.([]any)
+	if len(secretsArr) == 0 || secretsArr[0] == nil {
+		// we don't have any secrets defined
+		return nil, nil
+	}
+
+	secretsM := secretsArr[0].(map[string]any)
+
+	if secretAttr, ok := secretsM[attributes.Secret]; ok {
+		secretArr := secretAttr.([]any)
+		if selectors, secretDiag := readSecretSubSelectors(secretArr); secretDiag == nil {
+			for _, selector := range selectors {
+				subSelectors = append(subSelectors, client.SecretBasedResourceSubSelectorContainer{
+					SelectorType: selector.SecretBasedResourceSubSelectorType(),
+					Selector:     selector,
+				})
+			}
+		} else {
+			diags = append(diags, secretDiag...)
+		}
+	}
+
+	if secretFolderAttr, ok := secretsM[attributes.SecretFolder]; ok {
+		secretFolderArr := secretFolderAttr.([]any)
+		if selectors, secretFolderDiag := readSecretFolderSubSelectors(secretFolderArr); secretFolderDiag == nil {
+			for _, selector := range selectors {
+				if len(subSelectors) == 0 {
+					subSelectors = append(subSelectors, client.SecretBasedResourceSubSelectorContainer{
+						SelectorType: selector.SecretBasedResourceSubSelectorType(),
+						Selector:     selector,
+					})
+				} else {
+					diags = append(diags, diag.Diagnostic{
+						Severity: diag.Error,
+						Summary:  fmt.Sprintf("only a single %s or %s resource is allowed as a target within a rule", attributes.Secret, attributes.SecretFolder),
+					})
+				}
+			}
+		} else {
+			diags = append(diags, secretFolderDiag...)
+		}
+	}
+
+	return subSelectors, diags
+}
+
+func readSecretSubSelectors(secretArr []any) ([]*client.SecretSubSelector, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	subSelectors := make([]*client.SecretSubSelector, len(secretArr))
+
+	for idx, secretI := range secretArr {
+		secretM := secretI.(map[string]any)
+		secretIdI := secretM[attributes.SecretID]
+		secretId := secretIdI.(string)
+		if MatchesUUID(secretId) {
+			subSelectors[idx] = &client.SecretSubSelector{
+				SecretID: ConvertToNamedObject(secretId, client.SecretNamedObjectType),
+			}
+		} else {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("%s value must be a UUID: %s", attributes.SecretID, secretId),
+			})
+		}
+	}
+
+	return subSelectors, diags
+}
+
+func readSecretFolderSubSelectors(secretFolderArr []any) ([]*client.SecretFolderSubSelector, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	subSelectors := make([]*client.SecretFolderSubSelector, len(secretFolderArr))
+
+	for idx, secretFolderI := range secretFolderArr {
+		secretFolderM := secretFolderI.(map[string]any)
+		secretFolderIdI := secretFolderM[attributes.SecretFolderID]
+		secretFolderId := secretFolderIdI.(string)
+		if MatchesUUID(secretFolderId) {
+			subSelectors[idx] = &client.SecretFolderSubSelector{
+				SecretFolderID: ConvertToNamedObject(secretFolderId, client.SecretFolderNamedObjectType),
+			}
+		} else {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("%s value must be a UUID: %s", attributes.SecretFolderID, secretFolderId),
+			})
+		}
+	}
+
+	return subSelectors, diags
 }
 
 func readServersSelector(serversAttr any) ([]client.ServerBasedResourceSubSelectorContainer, diag.Diagnostics) {
@@ -583,11 +944,8 @@ func readServersSelector(serversAttr any) ([]client.ServerBasedResourceSubSelect
 
 	serversArr := serversAttr.([]any)
 	if len(serversArr) == 0 || serversArr[0] == nil {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  fmt.Sprintf("selector within %s block must be supplied", attributes.Servers),
-		})
-		return nil, diags
+		// we don't have any servers defined
+		return nil, nil
 	}
 	serversM := serversArr[0].(map[string]any)
 
@@ -708,7 +1066,7 @@ func readIndividualServerAccountSubSelectors(serverAccountsArr []any) ([]*client
 		} else {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Error,
-				Summary:  fmt.Sprintf("server_id value must be a UUID: %s", serverId),
+				Summary:  fmt.Sprintf("%s value must be a UUID: %s", attributes.ServerID, serverId),
 			})
 		}
 	}
@@ -753,6 +1111,9 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 	}
 	privilegesM := privilegesAttr[0].(map[string]any)
 
+	hasRDPPriv := false
+	hasSSHPriv := false
+
 	if passwordCheckoutRDPI, ok := privilegesM[attributes.PasswordCheckoutRDP]; ok {
 		if enabled, hasValue := readPrivilegeEnabled(passwordCheckoutRDPI); hasValue {
 			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
@@ -761,6 +1122,7 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 					Enabled: &enabled,
 				},
 			})
+			hasRDPPriv = hasRDPPriv || enabled
 		}
 	}
 
@@ -772,6 +1134,7 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 					Enabled: &enabled,
 				},
 			})
+			hasSSHPriv = hasSSHPriv || enabled
 		}
 	}
 
@@ -785,6 +1148,13 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 					AdminLevelPermissions: &adminLevelPermissions,
 				},
 			})
+			if adminLevelPermissions && !enabled {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Error,
+					Summary:  "admin_level_permissions can not be enabled when principal account rdp privilege is not enabled",
+				})
+			}
+			hasRDPPriv = hasRDPPriv || enabled
 		}
 	}
 
@@ -798,10 +1168,123 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 					AdminLevelPermissions: &adminLevelPermissions,
 				},
 			})
+
+			if adminLevelPermissions && !enabled {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Error,
+					Summary:  "admin_level_permissions can not be enabled when principal account ssh privilege is not enabled",
+				})
+			}
+			hasSSHPriv = hasSSHPriv || enabled
+		}
+	}
+
+	if hasRDPPriv && hasSSHPriv {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "cannot mix SSH and RDP privileges within a Security Policy Rule",
+		})
+	}
+
+	if secretI, ok := privilegesM[attributes.Secret]; ok {
+		if secretPrivilege, secretDiags := readSecretPrivilege(secretI); secretPrivilege != nil && secretDiags == nil {
+			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
+				PrivilegeType:  client.SecretPrivilegeType,
+				PrivilegeValue: secretPrivilege,
+			})
+		} else if secretDiags != nil {
+			diags = append(diags, secretDiags...)
 		}
 	}
 
 	return privileges, diags
+}
+
+func readSecretPrivilege(privilege any) (*client.SecretPrivilege, diag.Diagnostics) {
+	var diags diag.Diagnostics
+	privilegeArr := privilege.([]any)
+
+	if len(privilegeArr) == 0 {
+		return nil, nil
+	}
+
+	priv := &client.SecretPrivilege{}
+	privilegeM := privilegeArr[0].(map[string]any)
+
+	if listI, ok := privilegeM[attributes.List]; ok {
+		v := listI.(bool)
+		priv.List = &v
+	} else {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  fmt.Sprintf("%s is missing value for %s attribute", attributes.Secret, attributes.List),
+		})
+	}
+	if secretFolderCreateI, ok := privilegeM[attributes.FolderCreate]; ok {
+		v := secretFolderCreateI.(bool)
+		priv.FolderCreate = &v
+	} else {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  fmt.Sprintf("%s is missing value for %s attribute", attributes.Secret, attributes.FolderCreate),
+		})
+	}
+	if secretFolderDeleteI, ok := privilegeM[attributes.FolderDelete]; ok {
+		v := secretFolderDeleteI.(bool)
+		priv.FolderDelete = &v
+	} else {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  fmt.Sprintf("%s is missing value for %s attribute", attributes.Secret, attributes.FolderDelete),
+		})
+	}
+	if secretFolderUpdateI, ok := privilegeM[attributes.FolderUpdate]; ok {
+		v := secretFolderUpdateI.(bool)
+		priv.FolderUpdate = &v
+	} else {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  fmt.Sprintf("%s is missing value for %s attribute", attributes.Secret, attributes.FolderUpdate),
+		})
+	}
+	if secretCreateI, ok := privilegeM[attributes.SecretCreate]; ok {
+		v := secretCreateI.(bool)
+		priv.SecretCreate = &v
+	} else {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  fmt.Sprintf("%s is missing value for %s attribute", attributes.Secret, attributes.SecretCreate),
+		})
+	}
+	if secretDeleteI, ok := privilegeM[attributes.SecretDelete]; ok {
+		v := secretDeleteI.(bool)
+		priv.SecretDelete = &v
+	} else {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  fmt.Sprintf("%s is missing value for %s attribute", attributes.Secret, attributes.SecretDelete),
+		})
+	}
+	if secretRevealI, ok := privilegeM[attributes.SecretReveal]; ok {
+		v := secretRevealI.(bool)
+		priv.SecretReveal = &v
+	} else {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  fmt.Sprintf("%s is missing value for %s attribute", attributes.Secret, attributes.SecretReveal),
+		})
+	}
+	if secretUpdateI, ok := privilegeM[attributes.SecretUpdate]; ok {
+		v := secretUpdateI.(bool)
+		priv.SecretUpdate = &v
+	} else {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  fmt.Sprintf("%s is missing value for %s attribute", attributes.Secret, attributes.SecretUpdate),
+		})
+	}
+
+	return priv, diags
 }
 
 func readPrivilegeEnabled(privilege any) (bool, bool) {
@@ -877,34 +1360,4 @@ func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPol
 	}
 
 	return principals, diags
-}
-
-func resourceSecurityPolicyCustomizeDiff(ctx context.Context, diff *schema.ResourceDiff, v interface{}) error {
-	return validatePrincipalAccounts(diff)
-}
-
-func validatePrincipalAccounts(diff *schema.ResourceDiff) error {
-	rulesAttr := diff.Get("rule").([]any)
-
-	for idx, _ := range rulesAttr {
-		keyPrincipalAccountSSH := fmt.Sprintf("rule.%d.privileges.0.principal_account_ssh", idx)
-		if diff.HasChange(keyPrincipalAccountSSH) {
-			if principalAccountSSH, ok :=
-				diff.GetOk(keyPrincipalAccountSSH + ".0.enabled"); !ok || !principalAccountSSH.(bool) {
-				if adminLevelPermissionsEnabled, ok := diff.GetOk(keyPrincipalAccountSSH + ".0.admin_level_permissions"); ok && adminLevelPermissionsEnabled.(bool) {
-					return fmt.Errorf("admin_level_permissions can not be enabled when principal account ssh privilege is not enabled")
-				}
-			}
-		}
-		keyPrincipalAccountRDP := fmt.Sprintf("rule.%d.privileges.0.principal_account_rdp", idx)
-		if diff.HasChange(keyPrincipalAccountRDP) {
-			if principalAccountRDP, ok :=
-				diff.GetOk(keyPrincipalAccountRDP + ".0.enabled"); !ok || !principalAccountRDP.(bool) {
-				if adminLevelPermissionsEnabled, ok := diff.GetOk(keyPrincipalAccountRDP + ".0.admin_level_permissions"); ok && adminLevelPermissionsEnabled.(bool) {
-					return fmt.Errorf("admin_level_permissions can not be enabled when principal account rdp privilege is not enabled")
-				}
-			}
-		}
-	}
-	return nil
 }

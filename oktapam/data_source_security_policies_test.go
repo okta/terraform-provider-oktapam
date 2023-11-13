@@ -97,15 +97,8 @@ resource "oktapam_security_policy" "test_ds_security_policies_1" {
 			}
 		}
 		privileges {
-			password_checkout_rdp {
-				enabled = true
-			}
 			password_checkout_ssh {
 				enabled = true
-			}
-			principal_account_rdp {
-				enabled = true
-				admin_level_permissions = true
 			}
 			principal_account_ssh {
 				enabled = true
@@ -153,15 +146,8 @@ resource "oktapam_security_policy" "test_ds_security_policies_2" {
 			password_checkout_rdp {
 				enabled = true
 			}
-			password_checkout_ssh {
-				enabled = true
-			}
 			principal_account_rdp {
 				enabled = false
-			}
-			principal_account_ssh {
-				enabled = false
-				admin_level_permissions = false
 			}
 		}
 		conditions {

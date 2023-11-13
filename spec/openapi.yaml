@@ -1,0 +1,220 @@
+openapi: 3.0.2
+info:
+  contact:
+    email: support@okta.com
+    name: Okta Support
+    url: https://support.okta.com
+  description: The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+  termsOfService: https://www.okta.com/agreements/
+  title: Okta Privileged Access
+  version: 1.0.0
+servers:
+  - url: https://{org_name}.pam.okta.com
+    description: Production server
+    variables:
+      org_name:
+        default: '{org_name}'
+        description: The name of your Okta org
+tags:
+  - name: resource-groups
+    x-displayName: Resource Groups
+    description: |-
+      An OPA Resource Group is a collection of Projects.
+      See [Resource groups](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-resource-groups).
+paths:
+  /v1/teams/{team_name}/resource_groups:
+    parameters:
+      - $ref: '#/components/parameters/team_name'
+    get:
+      summary: List all Resource Groups
+      description: |-
+        Lists all Resource Groups available to the requesting User
+        This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+      operationId: ListResourceGroups
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              example:
+                list:
+                  - id: 9c199afe-0ca5-427a-baac-c4341707d82b
+                    name: OPA_Resource_Group_1
+                    team_id: Your_Team
+                    description: A sensible description
+                  - id: 9c199afe-0ca5-427a-baac-c4341707d123
+                    name: OPA_Resource_Group_2
+                    team_id: Your_Team
+                    description: A sensible description
+              schema:
+                title: ListResourceGroupsResponse
+                properties:
+                  list:
+                    items:
+                      $ref: '#/components/schemas/ListResourceGroup'
+                    type: array
+                type: object
+      tags:
+        - resource-groups
+    post:
+      summary: Create a Resource Group
+      description: |-
+        Creates a Resource Group for your Team. To assign the `delegated_resource_admin` role, specify an existing Group in the `delegated_resource_admin_groups` param.
+        This endpoint requires the following role: `resource_admin`.
+      operationId: CreateResourceGroup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceGroup'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceGroup'
+      tags:
+        - resource-groups
+  /v1/teams/{team_name}/resource_groups/{resource_group_id}:
+    parameters:
+      - $ref: '#/components/parameters/team_name'
+      - $ref: '#/components/parameters/resource_group_id'
+    get:
+      summary: Retrieve a Resource Group
+      description: |-
+        Retrieves the specified Resource Group
+        This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+      operationId: GetResourceGroup
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceGroup'
+      tags:
+        - resource-groups
+    put:
+      summary: Update a Resource Group
+      description: |-
+        Updates the specified Resource Group. To assign the `delegated_resource_admin` role, specify an existing Group in the `delegated_resource_admin_groups` param.
+        This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+      operationId: UpdateResourceGroup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceGroup'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceGroup'
+      tags:
+        - resource-groups
+    delete:
+      summary: Delete a Resource Group
+      description: |-
+        Deletes the specified Resource Group
+        This endpoint requires the following role: `resource_admin`.
+      operationId: DeleteResourceGroup
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - resource-groups
+components:
+  parameters:
+    team_name:
+      description: The name of your Team
+      in: path
+      name: team_name
+      required: true
+      schema:
+        type: string
+    resource_group_id:
+      description: The UUID of a Resource Group
+      in: path
+      name: resource_group_id
+      required: true
+      schema:
+        type: string
+  schemas:
+    ListResourceGroup:
+      type: object
+      properties:
+        id:
+          description: The UUID of the Resource Group
+          type: string
+          readOnly: true
+        name:
+          description: The name of the Resource Group
+          type: string
+        team_id:
+          description: The UUID of the Team associated with the Resource Group
+          type: string
+          readOnly: true
+        description:
+          description: A description of the Resource Group
+          type: string
+    ResourceGroup:
+      type: object
+      properties:
+        id:
+          description: The UUID of the Resource Group
+          type: string
+          readOnly: true
+        name:
+          description: The name of the Resource Group
+          type: string
+        team_id:
+          description: The UUID of the Team associated with the Resource Group
+          type: string
+          readOnly: true
+        description:
+          description: A description of the Resource Group
+          type: string
+        delegated_resource_admin_groups:
+          description: An array of OPA groups that own this Resource Group. This param is only available to users with the `resource_admin` role.
+          type: array
+          items:
+            $ref: "#/components/schemas/NamedObject"
+    NamedObject:
+      title: NamedObject
+      type: object
+      properties:
+        id:
+          type: string
+          description: The UUID of the object
+        name:
+          type: string
+          description: The human-readable name of the object
+          readOnly: true
+        type:
+          $ref: "#/components/schemas/NamedObjectType"
+    NamedObjectType:
+      type: string
+      readOnly: true
+      enum:
+        - user
+        - user_group
+        - server
+        - project
+        - sudo_entitlement
+        - resource_group
+        - secret_folder
+        - secret
+    TerraformProviderSchema:
+      type: object
+      properties:
+        oktapam_api_host:
+          type: string
+        oktapam_api_key:
+          type: string
+        oktapam_secret:
+          type: string
+        oktapam_team:
+          type: string
