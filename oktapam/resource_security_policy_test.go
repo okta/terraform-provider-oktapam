@@ -17,7 +17,9 @@ import (
 func TestAccSecurityPolicy(t *testing.T) {
 	checkTeamApplicable(t, true)
 	resourceName := "oktapam_security_policy.test_acc_security_policy"
+	secretsResourceName := "oktapam_security_policy.test_acc_secrets_security_policy"
 	securityPolicyName := fmt.Sprintf("test_acc_security_policy_%s", randSeq())
+	secretsSecurityPolicyName := fmt.Sprintf("test_acc_secrets_security_policy_%s", randSeq())
 	group1Name := fmt.Sprintf("test_acc_security_policy_group1_%s", randSeq())
 	group2Name := fmt.Sprintf("test_acc_security_policy_group2_%s", randSeq())
 
@@ -67,22 +69,9 @@ func TestAccSecurityPolicy(t *testing.T) {
 				},
 				Privileges: []*client.SecurityPolicyRulePrivilegeContainer{
 					{
-						PrivilegeType: client.PasswordCheckoutRDPPrivilegeType,
-						PrivilegeValue: &client.PasswordCheckoutRDPPrivilege{
-							Enabled: utils.AsBoolPtr(true),
-						},
-					},
-					{
 						PrivilegeType: client.PasswordCheckoutSSHPrivilegeType,
 						PrivilegeValue: &client.PasswordCheckoutSSHPrivilege{
 							Enabled: utils.AsBoolPtr(true),
-						},
-					},
-					{
-						PrivilegeType: client.PrincipalAccountRDPPrivilegeType,
-						PrivilegeValue: &client.PrincipalAccountRDPPrivilege{
-							Enabled:               utils.AsBoolPtr(true),
-							AdminLevelPermissions: utils.AsBoolPtr(true),
 						},
 					},
 					{
@@ -165,21 +154,8 @@ func TestAccSecurityPolicy(t *testing.T) {
 						},
 					},
 					{
-						PrivilegeType: client.PasswordCheckoutSSHPrivilegeType,
-						PrivilegeValue: &client.PasswordCheckoutSSHPrivilege{
-							Enabled: utils.AsBoolPtr(true),
-						},
-					},
-					{
 						PrivilegeType: client.PrincipalAccountRDPPrivilegeType,
 						PrivilegeValue: &client.PrincipalAccountRDPPrivilege{
-							Enabled:               utils.AsBoolPtrZero(false, true),
-							AdminLevelPermissions: utils.AsBoolPtrZero(false, true),
-						},
-					},
-					{
-						PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
-						PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
 							Enabled:               utils.AsBoolPtrZero(false, true),
 							AdminLevelPermissions: utils.AsBoolPtrZero(false, true),
 						},
@@ -214,6 +190,73 @@ func TestAccSecurityPolicy(t *testing.T) {
 		},
 	}
 
+	secretsSecurityPolicy := &client.SecurityPolicy{
+		Name:        &secretsSecurityPolicyName,
+		Active:      utils.AsBoolPtr(true),
+		Description: utils.AsStringPtr("test description"),
+		Principals: &client.SecurityPolicyPrincipals{
+			UserGroups: []client.NamedObject{
+				{
+					Name: utils.AsStringPtr(group1Name),
+				},
+				{
+					Name: utils.AsStringPtr(group2Name),
+				},
+			},
+		},
+		Rules: []*client.SecurityPolicyRule{
+			{
+				Name:         utils.AsStringPtr("first rule"),
+				ResourceType: client.SecretBasedResourceSelectorType,
+				ResourceSelector: &client.SecretBasedResourceSelector{
+					Selectors: []client.SecretBasedResourceSubSelectorContainer{
+						{
+							SelectorType: client.SecretFolderSubSelectorType,
+							Selector: &client.SecretFolderSubSelector{
+								SecretFolderID: client.NamedObject{
+									Id: utils.AsStringPtr("d83d5474-3ea0-48ad-af2c-1e9f70dfc736"),
+								},
+							},
+						},
+					},
+				},
+				Privileges: []*client.SecurityPolicyRulePrivilegeContainer{
+					{
+						PrivilegeType: client.SecretPrivilegeType,
+						PrivilegeValue: &client.SecretPrivilege{
+							List:         utils.AsBoolPtr(true),
+							FolderCreate: utils.AsBoolPtr(true),
+							FolderUpdate: utils.AsBoolPtr(true),
+							FolderDelete: utils.AsBoolPtr(true),
+							SecretCreate: utils.AsBoolPtr(true),
+							SecretUpdate: utils.AsBoolPtr(true),
+							SecretReveal: utils.AsBoolPtr(true),
+							SecretDelete: utils.AsBoolPtr(true),
+						},
+					},
+				},
+				Conditions: []*client.SecurityPolicyRuleConditionContainer{
+					{
+						ConditionType: client.AccessRequestConditionType,
+						ConditionValue: &client.AccessRequestCondition{
+							RequestTypeID:       utils.AsStringPtr("abcd"),
+							RequestTypeName:     utils.AsStringPtr("foo"),
+							ExpiresAfterSeconds: utils.AsIntPtr(1200),
+						},
+					},
+					{
+						ConditionType: client.AccessRequestConditionType,
+						ConditionValue: &client.AccessRequestCondition{
+							RequestTypeID:       utils.AsStringPtr("wxyz"),
+							RequestTypeName:     utils.AsStringPtr("bar"),
+							ExpiresAfterSeconds: utils.AsIntPtr(1800),
+						},
+					},
+				},
+			},
+		},
+	}
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
@@ -221,8 +264,13 @@ func TestAccSecurityPolicy(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				// Ensure that we get an error when we try to create a policy with invalid config.
-				Config:      createTestAccSecurityPolicyInvalidConfig(group1Name, securityPolicyName),
-				ExpectError: regexp.MustCompile(fmt.Sprintf("admin_level_permissions can not be enabled when principal account ssh privilege is not enabled")),
+				Config:      createTestAccSecurityPolicyInvalidAdminPrivilegesConfig(group1Name, securityPolicyName),
+				ExpectError: regexp.MustCompile("admin_level_permissions can not be enabled when principal account rdp privilege is not enabled"),
+			},
+			{
+				// Ensure that we get an error when we try to create a policy with invalid config.
+				Config:      createTestAccSecurityPolicyInvalidRDPAndSSHConfig(group1Name, securityPolicyName),
+				ExpectError: regexp.MustCompile("cannot mix SSH and RDP privileges within a Security Policy Rule"),
 			},
 			{
 				Config: createTestAccSecurityPolicyCreateConfig(group1Name, group2Name, securityPolicyName),
@@ -243,14 +291,18 @@ func TestAccSecurityPolicy(t *testing.T) {
 				),
 			},
 			{
-				// Ensure that we get an error when we try to update an existing policy with invalid config.
-				Config:      createTestAccSecurityPolicyInvalidConfig(group1Name, securityPolicyName),
-				ExpectError: regexp.MustCompile(fmt.Sprintf("admin_level_permissions can not be enabled when principal account ssh privilege is not enabled")),
-			},
-			{
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+			},
+			{
+				Config: createTestAccSecurityPolicySecretsCreateConfig(group1Name, group2Name, secretsSecurityPolicyName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccSecurityPolicyCheckExists(secretsResourceName, secretsSecurityPolicy),
+					resource.TestCheckResourceAttr(
+						secretsResourceName, attributes.Name, secretsSecurityPolicyName,
+					),
+				),
 			},
 		},
 	})
@@ -278,7 +330,7 @@ func testAccSecurityPolicyCheckExists(rn string, expectedSecurityPolicy *client.
 
 		comparison := pretty.Compare(expectedSecurityPolicy, securityPolicy)
 		if comparison != "" {
-			return fmt.Errorf("expected password settings does not match returned password settings.\n%s", comparison)
+			return fmt.Errorf("expected security policy does not match returned security policy.\n%s", comparison)
 		}
 		return nil
 	}
@@ -352,15 +404,8 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 			}
 		}
 		privileges {
-			password_checkout_rdp {
-				enabled = true
-			}
 			password_checkout_ssh {
 				enabled = true
-			}
-			principal_account_rdp {
-				enabled = true
-				admin_level_permissions = true
 			}
 			principal_account_ssh {
 				enabled = true
@@ -388,6 +433,62 @@ func createTestAccSecurityPolicyCreateConfig(groupName1, groupName2, securityPol
 }
 
 const testAccSecurityPolicyUpdateConfigFormat = `
+resource "oktapam_group" "test_security_policy_group1" {
+	name = "%s"
+}
+resource "oktapam_security_policy" "test_acc_security_policy" {
+	name = "%s"
+	description = "updated description"
+	active = true
+	principals {
+		groups = [oktapam_group.test_security_policy_group1.id]
+	}
+	rule {
+		name = "first rule"
+		resources {
+			servers {
+				server_account {
+					server_id = "9103335f-1147-407b-84d7-dbfc57f75c99"
+					account   = "pamadmin"
+				}
+				label_selectors {
+					server_labels = {
+						"system.os_type" = "windows"
+					}
+					accounts = ["pamadmin"]
+				}
+			}
+		}
+		privileges {
+			password_checkout_rdp {
+				enabled = true
+			}
+			principal_account_rdp {
+				enabled = false
+				admin_level_permissions = false
+			}
+		}
+		conditions {
+			access_request {
+				request_type_id = "abcd"
+				request_type_name = "foo"
+				expires_after_seconds = 1200
+			}
+			access_request {
+				request_type_id = "wxyz"
+				request_type_name = "bar"
+				expires_after_seconds = 1800
+			}
+			gateway {
+				traffic_forwarding = true
+				session_recording  = true
+			}
+		}
+	}
+}
+`
+
+const testAccSecurityPolicyInvalidRDPAndSSHConfigFormat = `
 resource "oktapam_group" "test_security_policy_group1" {
 	name = "%s"
 }
@@ -452,7 +553,7 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 
 // When the principal accounts are not enabled, terraform should not allow the users to enable
 // admin level permissions for those accounts.
-const testAccSecurityPolicyInvalidConfigFormat = `
+const testAccSecurityPolicyInvalidAdminPrivilegesConfigFormat = `
 resource "oktapam_group" "test_security_policy_group1" {
 	name = "%s"
 }
@@ -483,10 +584,7 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 			password_checkout_rdp {
 				enabled = true
 			}
-			password_checkout_ssh {
-				enabled = true
-			}
-			principal_account_ssh {
+			principal_account_rdp {
 				enabled = false
 				admin_level_permissions = true
 			}
@@ -511,10 +609,69 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 }
 `
 
+func createTestAccSecurityPolicySecretsCreateConfig(groupName1, groupName2, securityPolicyName string) string {
+	return fmt.Sprintf(testAccSecurityPolicyCreateSecretsConfigFormat, groupName1, groupName2, securityPolicyName)
+}
+
+const testAccSecurityPolicyCreateSecretsConfigFormat = `
+resource "oktapam_group" "test_security_policy_group1" {
+	name = "%s"
+}
+resource "oktapam_group" "test_security_policy_group2" {
+	name = "%s"
+}
+resource "oktapam_security_policy" "test_acc_secrets_security_policy" {
+	name = "%s"
+	description = "test description"
+	active = true
+	principals {
+		groups = [oktapam_group.test_security_policy_group1.id, oktapam_group.test_security_policy_group2.id]
+	}
+	rule {
+		name = "first rule"
+		resources {
+			secrets {
+				secret_folder {
+					secret_folder_id = "d83d5474-3ea0-48ad-af2c-1e9f70dfc736"
+			  	}
+			}
+		}
+		privileges {
+			secret {
+				list = true
+			  	folder_create = true
+			  	folder_delete = true
+			  	folder_update = true
+			  	secret_create = true
+			  	secret_delete = true
+			  	secret_reveal = true
+			  	secret_update = true
+			}
+		}
+		conditions {
+			access_request {
+				request_type_id = "abcd"
+				request_type_name = "foo"
+				expires_after_seconds = 1200
+			}
+			access_request {
+				request_type_id = "wxyz"
+				request_type_name = "bar"
+				expires_after_seconds = 1800
+			}
+		}
+	}
+}
+`
+
 func createTestAccSecurityPolicyUpdateConfig(group1Name, securityPolicyName string) string {
 	return fmt.Sprintf(testAccSecurityPolicyUpdateConfigFormat, group1Name, securityPolicyName)
 }
 
-func createTestAccSecurityPolicyInvalidConfig(group1Name string, securityPolicyName string) string {
-	return fmt.Sprintf(testAccSecurityPolicyInvalidConfigFormat, group1Name, securityPolicyName)
+func createTestAccSecurityPolicyInvalidAdminPrivilegesConfig(group1Name string, securityPolicyName string) string {
+	return fmt.Sprintf(testAccSecurityPolicyInvalidAdminPrivilegesConfigFormat, group1Name, securityPolicyName)
+}
+
+func createTestAccSecurityPolicyInvalidRDPAndSSHConfig(group1Name string, securityPolicyName string) string {
+	return fmt.Sprintf(testAccSecurityPolicyInvalidRDPAndSSHConfigFormat, group1Name, securityPolicyName)
 }

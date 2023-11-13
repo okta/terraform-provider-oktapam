@@ -20,11 +20,12 @@ Limited Early Access Feature: A policy which defines how users can gain access t
 - `active` (Boolean) If true, indicates that the Security Policy is active.
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
 - `principals` (Block List, Min: 1, Max: 1) Defines the users bound to the Security Policy. (see [below for nested schema](#nestedblock--principals))
-- `rule` (Block List, Min: 1, Max: 20) Defines the privileges available to resources matched to the Security Policy. (see [below for nested schema](#nestedblock--rule))
+- `rule` (Block Set, Min: 1, Max: 20) Defines the privileges available to resources matched to the Security Policy. (see [below for nested schema](#nestedblock--rule))
 
 ### Optional
 
 - `description` (String) The human-readable description of the resource.
+- `resource_group` (String) The UUID of a specific Resource Group associated with the Security Policy. If undefined, the Security Policy applies to all resources for your Team. This value must be defined if the current user has the Delegated Security Admin role.
 
 ### Read-Only
 
@@ -60,6 +61,7 @@ Optional:
 - `password_checkout_ssh` (Block List, Max: 1) Defines the privilege to make SSH connections to a server with a vaulted password. (see [below for nested schema](#nestedblock--rule--privileges--password_checkout_ssh))
 - `principal_account_rdp` (Block List, Max: 1) Defines the privilege to make RDP connections to a server with the user's principal account. (see [below for nested schema](#nestedblock--rule--privileges--principal_account_rdp))
 - `principal_account_ssh` (Block List, Max: 1) Defines the privilege to make SSH connections to a server with the user's principal account. (see [below for nested schema](#nestedblock--rule--privileges--principal_account_ssh))
+- `secret` (Block List, Max: 1) Defines the privilege to operate on Secrets and Secret Folders. (see [below for nested schema](#nestedblock--rule--privileges--secret))
 
 <a id="nestedblock--rule--privileges--password_checkout_rdp"></a>
 ### Nested Schema for `rule.privileges.password_checkout_rdp`
@@ -101,13 +103,54 @@ Optional:
 - `admin_level_permissions` (Boolean) Provides coarse grain (full admin) access to the user.
 
 
+<a id="nestedblock--rule--privileges--secret"></a>
+### Nested Schema for `rule.privileges.secret`
+
+Required:
+
+- `folder_create` (Boolean) Defines the privilege to create a Secret Folder.
+- `folder_delete` (Boolean) Defines the privilege to delete a Secret Folder and its contents.
+- `folder_update` (Boolean) Defines the privilege to update the metadata of a Secret Folder.
+- `list` (Boolean) Defines the privilege to list the contents of a Secret Folder.
+- `secret_create` (Boolean) Defines the privilege to create a Secret.
+- `secret_delete` (Boolean) Defines the privilege to delete a Secret.
+- `secret_reveal` (Boolean) Defines the privilege to reveal the plaintext contents of a Secret.
+- `secret_update` (Boolean) Defines the privilege to update a Secret and its metadata.
+
+
 
 <a id="nestedblock--rule--resources"></a>
 ### Nested Schema for `rule.resources`
 
+Optional:
+
+- `secrets` (Block List, Max: 1) Defines the secret-based resources targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--secrets))
+- `servers` (Block List, Max: 1) Defines the server-based resources targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--servers))
+
+<a id="nestedblock--rule--resources--secrets"></a>
+### Nested Schema for `rule.resources.secrets`
+
+Optional:
+
+- `secret` (Block List, Max: 1) Defines a specific Secret targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--secrets--secret))
+- `secret_folder` (Block List, Max: 1) Defines a specific Secret Folder targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--secrets--secret_folder))
+
+<a id="nestedblock--rule--resources--secrets--secret"></a>
+### Nested Schema for `rule.resources.secrets.secret_folder`
+
 Required:
 
-- `servers` (Block List, Min: 1, Max: 1) Defines the server-based resources targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--servers))
+- `secret_id` (String) The UUID of the Secret.
+
+
+<a id="nestedblock--rule--resources--secrets--secret_folder"></a>
+### Nested Schema for `rule.resources.secrets.secret_folder`
+
+Required:
+
+- `secret_folder_id` (String) The UUID of the Secret Folder.
+
+
 
 <a id="nestedblock--rule--resources--servers"></a>
 ### Nested Schema for `rule.resources.servers`
@@ -156,6 +199,7 @@ Optional:
 
 - `access_request` (Block List) Identifies an existing Request Type in Access Requests. (see [below for nested schema](#nestedblock--rule--conditions--access_request))
 - `gateway` (Block List, Max: 1) Configures traffic settings for an existing Gateway. (see [below for nested schema](#nestedblock--rule--conditions--gateway))
+- `mfa` (Block List) Configures multifactor auth settings required to access the resource. (see [below for nested schema](#nestedblock--rule--conditions--mfa))
 
 <a id="nestedblock--rule--conditions--access_request"></a>
 ### Nested Schema for `rule.conditions.access_request`
@@ -177,5 +221,14 @@ Required:
 
 - `session_recording` (Boolean) Whether to record sessions made through a Gateway.
 - `traffic_forwarding` (Boolean) Whether to forward traffic through a Gateway.
+
+
+<a id="nestedblock--rule--conditions--mfa"></a>
+### Nested Schema for `rule.conditions.mfa`
+
+Required:
+
+- `acr_values` (String) The authentication context class reference (ACR) for this policy. This defines a specific set of assurance level requirements required by a protected resource.
+- `reauth_frequency_in_seconds` (Number) The number of seconds an MFA verification remains valid. After this time users need to reauthenticate before they can open new connections to resources. Defining a value of `0` requires users to authenticate for every connection.
 
 

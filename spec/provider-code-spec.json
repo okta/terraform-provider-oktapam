@@ -1,0 +1,114 @@
+{
+	"provider": {
+		"name": "oktapam_fwk",
+		"schema": {
+			"attributes": [
+				{
+					"name": "oktapam_api_host",
+					"string": {
+						"optional_required": "optional"
+					}
+				},
+				{
+					"name": "oktapam_api_key",
+					"string": {
+						"optional_required": "optional"
+					}
+				},
+				{
+					"name": "oktapam_secret",
+					"string": {
+						"optional_required": "optional"
+					}
+				},
+				{
+					"name": "oktapam_team",
+					"string": {
+						"optional_required": "optional"
+					}
+				}
+			]
+		}
+	},
+	"resources": [
+		{
+			"name": "resource_group",
+			"schema": {
+				"attributes": [
+					{
+						"name": "delegated_resource_admin_groups",
+						"list_nested": {
+							"computed_optional_required": "computed_optional",
+							"nested_object": {
+								"attributes": [
+									{
+										"name": "id",
+										"string": {
+											"computed_optional_required": "computed_optional",
+											"description": "The UUID of the object"
+										}
+									},
+									{
+										"name": "name",
+										"string": {
+											"computed_optional_required": "computed_optional",
+											"description": "The human-readable name of the object"
+										}
+									},
+									{
+										"name": "type",
+										"string": {
+											"computed_optional_required": "computed_optional",
+											"validators": [
+												{
+													"custom": {
+														"imports": [
+															{
+																"path": "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+															}
+														],
+														"schema_definition": "stringvalidator.OneOf(\n\"user\",\n\"user_group\",\n\"server\",\n\"project\",\n\"sudo_entitlement\",\n\"resource_group\",\n\"secret_folder\",\n\"secret\",\n)"
+													}
+												}
+											]
+										}
+									}
+								]
+							},
+							"description": "An array of OPA groups that own this Resource Group. This param is only available to users with the `resource_admin` role."
+						}
+					},
+					{
+						"name": "description",
+						"string": {
+							"computed_optional_required": "computed_optional",
+							"description": "A description of the Resource Group"
+						}
+					},
+					{
+						"name": "id",
+						"string": {
+							"computed_optional_required": "computed_optional",
+							"description": "The UUID of the Resource Group"
+						}
+					},
+					{
+						"name": "name",
+						"string": {
+							"computed_optional_required": "computed_optional",
+							"description": "The name of the Resource Group"
+						}
+					},
+					{
+						"name": "team_id",
+						"string": {
+							"computed_optional_required": "computed_optional",
+							"description": "The UUID of the Team associated with the Resource Group"
+						}
+					}
+				]
+			}
+		}
+	],
+	"version": "0.1"
+}

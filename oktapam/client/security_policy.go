@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"sort"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
@@ -14,6 +15,7 @@ import (
 
 type PrivilegeType string
 type ServerBasedResourceSubSelectorType string
+type SecretBasedResourceSubSelectorType string
 type ResourceSelectorType string
 type AccountSelectorType string
 type ConditionType string
@@ -23,27 +25,34 @@ const (
 	PrincipalAccountRDPPrivilegeType = PrivilegeType("principal_account_rdp")
 	PasswordCheckoutSSHPrivilegeType = PrivilegeType("password_checkout_ssh")
 	PasswordCheckoutRDPPrivilegeType = PrivilegeType("password_checkout_rdp")
+	SecretPrivilegeType              = PrivilegeType("secret")
 
 	ServerBasedResourceSelectorType = ResourceSelectorType("server_based_resource")
+	SecretBasedResourceSelectorType = ResourceSelectorType("secret_based_resource")
 
 	IndividualServerSubSelectorType        = ServerBasedResourceSubSelectorType("individual_server")
 	IndividualServerAccountSubSelectorType = ServerBasedResourceSubSelectorType("individual_server_account")
 	ServerLabelServerSubSelectorType       = ServerBasedResourceSubSelectorType("server_label")
+
+	SecretSubSelectorType       = SecretBasedResourceSubSelectorType("secret")
+	SecretFolderSubSelectorType = SecretBasedResourceSubSelectorType("secret_folder")
 
 	UsernameAccountSelectorType = AccountSelectorType("username")
 	NoneAccountSelectorType     = AccountSelectorType("none")
 
 	AccessRequestConditionType = ConditionType("access_request")
 	GatewayConditionType       = ConditionType("gateway")
+	MFAConditionType           = ConditionType("mfa")
 )
 
 type SecurityPolicy struct {
-	ID          *string                   `json:"id,omitempty"`
-	Name        *string                   `json:"name"`
-	Description *string                   `json:"description,omitempty"`
-	Active      *bool                     `json:"active"`
-	Principals  *SecurityPolicyPrincipals `json:"principals"`
-	Rules       []*SecurityPolicyRule     `json:"rules"`
+	ID            *string                   `json:"id,omitempty"`
+	Name          *string                   `json:"name"`
+	Description   *string                   `json:"description,omitempty"`
+	Active        *bool                     `json:"active"`
+	ResourceGroup *NamedObject              `json:"resource_group_id,omitempty"`
+	Principals    *SecurityPolicyPrincipals `json:"principals"`
+	Rules         []*SecurityPolicyRule     `json:"rules"`
 }
 
 func (p SecurityPolicy) ToResourceMap() map[string]any {
@@ -61,6 +70,9 @@ func (p SecurityPolicy) ToResourceMap() map[string]any {
 	if p.Active != nil {
 		m[attributes.Active] = *p.Active
 	}
+	if p.ResourceGroup != nil {
+		m[attributes.ResourceGroup] = *p.ResourceGroup.Id
+	}
 	if p.Principals != nil {
 		principals := make([]any, 1)
 
@@ -74,6 +86,10 @@ func (p SecurityPolicy) ToResourceMap() map[string]any {
 		for idx, rule := range p.Rules {
 			rules[idx] = rule.ToResourceMap()
 		}
+
+		sort.Slice(rules, func(i, j int) bool {
+			return *p.Rules[i].Name < *p.Rules[j].Name
+		})
 
 		m[attributes.Rule] = rules
 	}
@@ -160,6 +176,8 @@ func (c *SecurityPolicyRuleConditionContainer) UnmarshalJSON(data []byte) error 
 		c.ConditionValue = &AccessRequestCondition{}
 	case GatewayConditionType:
 		c.ConditionValue = &GatewayCondition{}
+	case MFAConditionType:
+		c.ConditionValue = &MFACondition{}
 	default:
 		return fmt.Errorf("received unknown condition type: %s", tmp.ConditionType)
 	}
@@ -173,7 +191,30 @@ func (c *SecurityPolicyRuleConditionContainer) UnmarshalJSON(data []byte) error 
 
 type SecurityPolicyRuleCondition interface {
 	ConditionType() ConditionType
+	ValidForResourceType(resourceSelectorType ResourceSelectorType) bool
 	ToResourceMap() map[string]any
+}
+
+type MFACondition struct {
+	ReAuthFrequencyInSeconds *int    `json:"re_auth_frequency_in_seconds"`
+	ACRValues                *string `json:"acr_values"`
+}
+
+func (c *MFACondition) ToResourceMap() map[string]any {
+	m := make(map[string]any)
+
+	m[attributes.ReAuthFrequencyInSeconds] = *c.ReAuthFrequencyInSeconds
+	m[attributes.ACRValues] = *c.ACRValues
+
+	return m
+}
+
+func (*MFACondition) ConditionType() ConditionType {
+	return MFAConditionType
+}
+
+func (*MFACondition) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
+	return true
 }
 
 type AccessRequestCondition struct {
@@ -198,6 +239,10 @@ func (*AccessRequestCondition) ConditionType() ConditionType {
 	return AccessRequestConditionType
 }
 
+func (*AccessRequestCondition) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
+	return true
+}
+
 type GatewayCondition struct {
 	TrafficForwarding *bool `json:"traffic_forwarding"`
 	SessionRecording  *bool `json:"session_recording"`
@@ -214,6 +259,10 @@ func (c *GatewayCondition) ToResourceMap() map[string]any {
 
 func (*GatewayCondition) ConditionType() ConditionType {
 	return GatewayConditionType
+}
+
+func (*GatewayCondition) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
+	return resourceSelectorType == ServerBasedResourceSelectorType
 }
 
 type SecurityPolicyRuleResourceSelector interface {
@@ -409,6 +458,108 @@ func (*ServerBasedResourceSelector) ResourceSelectorType() ResourceSelectorType 
 	return ServerBasedResourceSelectorType
 }
 
+type SecretBasedResourceSelector struct {
+	Selectors []SecretBasedResourceSubSelectorContainer `json:"selectors"`
+}
+
+func (s *SecretBasedResourceSelector) ToResourceMap() map[string]any {
+	m := make(map[string]any, 1)
+
+	secretsArr := make([]any, 1)
+	subSelectorsMap := make(map[string]any, 3)
+	secretsArr[0] = subSelectorsMap
+
+	secretArr := make([]any, 0, len(s.Selectors))
+	secretFolderArr := make([]any, 0, len(s.Selectors))
+
+	for _, subSelector := range s.Selectors {
+		switch subSelector.SelectorType {
+		case SecretSubSelectorType:
+			secretArr = append(secretArr, subSelector.Selector.ToResourceMap())
+		case SecretFolderSubSelectorType:
+			secretFolderArr = append(secretFolderArr, subSelector.Selector.ToResourceMap())
+		}
+	}
+
+	subSelectorsMap[attributes.Secret] = secretArr
+	subSelectorsMap[attributes.SecretFolder] = secretFolderArr
+
+	m[attributes.Secrets] = secretsArr
+	return m
+}
+
+func (*SecretBasedResourceSelector) ResourceSelectorType() ResourceSelectorType {
+	return SecretBasedResourceSelectorType
+}
+
+type SecretBasedResourceSubSelector interface {
+	SecretBasedResourceSubSelectorType() SecretBasedResourceSubSelectorType
+	ToResourceMap() map[string]any
+}
+
+type SecretSubSelector struct {
+	SecretID NamedObject `json:"secret"`
+}
+
+func (*SecretSubSelector) SecretBasedResourceSubSelectorType() SecretBasedResourceSubSelectorType {
+	return SecretSubSelectorType
+}
+
+func (s *SecretSubSelector) ToResourceMap() map[string]any {
+	m := make(map[string]any)
+
+	m[attributes.SecretID] = s.SecretID.Id
+
+	return m
+}
+
+type SecretFolderSubSelector struct {
+	SecretFolderID NamedObject `json:"secret_folder"`
+}
+
+func (*SecretFolderSubSelector) SecretBasedResourceSubSelectorType() SecretBasedResourceSubSelectorType {
+	return SecretFolderSubSelectorType
+}
+
+func (s *SecretFolderSubSelector) ToResourceMap() map[string]any {
+	m := make(map[string]any)
+
+	m[attributes.SecretFolderID] = s.SecretFolderID.Id
+
+	return m
+}
+
+type SecretBasedResourceSubSelectorContainer struct {
+	SelectorType SecretBasedResourceSubSelectorType `json:"selector_type"`
+	Selector     SecretBasedResourceSubSelector     `json:"selector"`
+}
+
+func (c *SecretBasedResourceSubSelectorContainer) UnmarshalJSON(data []byte) error {
+	tmp := struct {
+		SelectorType SecretBasedResourceSubSelectorType `json:"selector_type"`
+		Selector     json.RawMessage                    `json:"selector"`
+	}{}
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	c.SelectorType = tmp.SelectorType
+	switch tmp.SelectorType {
+	case SecretSubSelectorType:
+		c.Selector = &SecretSubSelector{}
+	case SecretFolderSubSelectorType:
+		c.Selector = &SecretFolderSubSelector{}
+	default:
+		return fmt.Errorf("received unknown sub-selector type: %s", tmp.SelectorType)
+	}
+	if err := json.Unmarshal(tmp.Selector, c.Selector); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type SecurityPolicyRulePrivilegeContainer struct {
 	PrivilegeType  PrivilegeType               `json:"privilege_type"`
 	PrivilegeValue SecurityPolicyRulePrivilege `json:"privilege_value"`
@@ -439,6 +590,8 @@ func (c *SecurityPolicyRulePrivilegeContainer) UnmarshalJSON(data []byte) error 
 		c.PrivilegeValue = &PasswordCheckoutSSHPrivilege{}
 	case PasswordCheckoutRDPPrivilegeType:
 		c.PrivilegeValue = &PasswordCheckoutRDPPrivilege{}
+	case SecretPrivilegeType:
+		c.PrivilegeValue = &SecretPrivilege{}
 	default:
 		return fmt.Errorf("received unknown privilege type: %s", tmp.PrivilegeValue)
 	}
@@ -450,7 +603,7 @@ func (c *SecurityPolicyRulePrivilegeContainer) UnmarshalJSON(data []byte) error 
 }
 
 type SecurityPolicyRulePrivilege interface {
-	isPrivilege()
+	ValidForResourceType(ResourceSelectorType) bool
 	ToResourceMap() map[string]any
 }
 
@@ -459,7 +612,9 @@ type PrincipalAccountRDPPrivilege struct {
 	AdminLevelPermissions *bool `json:"admin_level_permissions"`
 }
 
-func (*PrincipalAccountRDPPrivilege) isPrivilege() {}
+func (*PrincipalAccountRDPPrivilege) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
+	return resourceSelectorType == ServerBasedResourceSelectorType
+}
 
 func (p *PrincipalAccountRDPPrivilege) ToResourceMap() map[string]any {
 	m := make(map[string]any, 2)
@@ -477,7 +632,9 @@ type PrincipalAccountSSHPrivilege struct {
 	AdminLevelPermissions *bool `json:"admin_level_permissions"`
 }
 
-func (*PrincipalAccountSSHPrivilege) isPrivilege() {}
+func (*PrincipalAccountSSHPrivilege) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
+	return resourceSelectorType == ServerBasedResourceSelectorType
+}
 
 func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
 	m := make(map[string]any, 2)
@@ -500,17 +657,51 @@ func (p *PasswordCheckoutRDPPrivilege) ToResourceMap() map[string]any {
 	return m
 }
 
-func (*PasswordCheckoutRDPPrivilege) isPrivilege() {}
+func (*PasswordCheckoutRDPPrivilege) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
+	return resourceSelectorType == ServerBasedResourceSelectorType
+}
 
 type PasswordCheckoutSSHPrivilege struct {
 	Enabled *bool `json:"password_checkout_ssh"`
 }
 
-func (*PasswordCheckoutSSHPrivilege) isPrivilege() {}
+func (*PasswordCheckoutSSHPrivilege) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
+	return resourceSelectorType == ServerBasedResourceSelectorType
+}
 
 func (p *PasswordCheckoutSSHPrivilege) ToResourceMap() map[string]any {
 	m := make(map[string]any, 1)
 	m[attributes.Enabled] = *p.Enabled
+	return m
+}
+
+type SecretPrivilege struct {
+	List         *bool `json:"list"`
+	FolderCreate *bool `json:"folder_create"`
+	FolderUpdate *bool `json:"folder_update"`
+	FolderDelete *bool `json:"folder_delete"`
+	SecretCreate *bool `json:"secret_create"`
+	SecretUpdate *bool `json:"secret_update"`
+	SecretReveal *bool `json:"secret_reveal"`
+	SecretDelete *bool `json:"secret_delete"`
+}
+
+func (*SecretPrivilege) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
+	return resourceSelectorType == SecretBasedResourceSelectorType
+}
+
+func (p *SecretPrivilege) ToResourceMap() map[string]any {
+	m := make(map[string]any, 8)
+
+	m[attributes.List] = p.List != nil && *p.List
+	m[attributes.FolderCreate] = p.FolderCreate != nil && *p.FolderCreate
+	m[attributes.FolderUpdate] = p.FolderUpdate != nil && *p.FolderUpdate
+	m[attributes.FolderDelete] = p.FolderDelete != nil && *p.FolderDelete
+	m[attributes.SecretCreate] = p.SecretCreate != nil && *p.SecretCreate
+	m[attributes.SecretUpdate] = p.SecretUpdate != nil && *p.SecretUpdate
+	m[attributes.SecretReveal] = p.SecretReveal != nil && *p.SecretReveal
+	m[attributes.SecretDelete] = p.SecretDelete != nil && *p.SecretDelete
+
 	return m
 }
 
@@ -547,6 +738,7 @@ func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 		passwordCheckoutSSH := make([]any, 0, 1)
 		principalAccountRDP := make([]any, 0, 1)
 		principalAccountSSH := make([]any, 0, 1)
+		secret := make([]any, 0, 1)
 
 		for _, privilege := range r.Privileges {
 			resourceMap := privilege.PrivilegeValue.ToResourceMap()
@@ -559,6 +751,8 @@ func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 				principalAccountRDP = append(principalAccountRDP, resourceMap)
 			case PrincipalAccountSSHPrivilegeType:
 				principalAccountSSH = append(principalAccountSSH, resourceMap)
+			case SecretPrivilegeType:
+				secret = append(secret, resourceMap)
 			}
 		}
 
@@ -566,6 +760,7 @@ func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 		privilegesM[attributes.PasswordCheckoutSSH] = passwordCheckoutSSH
 		privilegesM[attributes.PrincipalAccountRDP] = principalAccountRDP
 		privilegesM[attributes.PrincipalAccountSSH] = principalAccountSSH
+		privilegesM[attributes.Secret] = secret
 
 		privileges := []any{privilegesM}
 		m[attributes.Privileges] = privileges
@@ -576,6 +771,7 @@ func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 		conditionsM := make(map[string]any, 1)
 		accessRequests := make([]any, 0, len(r.Conditions))
 		gateways := make([]any, 0, len(r.Conditions))
+		mfa := make([]any, 0, len(r.Conditions))
 
 		for _, condition := range r.Conditions {
 			switch condition.ConditionType {
@@ -583,11 +779,14 @@ func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 				accessRequests = append(accessRequests, condition.ConditionValue.ToResourceMap())
 			case GatewayConditionType:
 				gateways = append(gateways, condition.ConditionValue.ToResourceMap())
+			case MFAConditionType:
+				mfa = append(mfa, condition.ConditionValue.ToResourceMap())
 			}
 		}
 
 		conditionsM[attributes.AccessRequest] = accessRequests
 		conditionsM[attributes.Gateway] = gateways
+		conditionsM[attributes.MFA] = mfa
 		conditions = append(conditions, conditionsM)
 	}
 	m[attributes.Conditions] = conditions
@@ -620,6 +819,12 @@ func (r *SecurityPolicyRule) UnmarshalJSON(data []byte) error {
 	switch tmp.ResourceType {
 	case ServerBasedResourceSelectorType:
 		resourceSelector := &ServerBasedResourceSelector{}
+		if err := json.Unmarshal(tmp.ResourceSelector, resourceSelector); err != nil {
+			return err
+		}
+		r.ResourceSelector = resourceSelector
+	case SecretBasedResourceSelectorType:
+		resourceSelector := &SecretBasedResourceSelector{}
 		if err := json.Unmarshal(tmp.ResourceSelector, resourceSelector); err != nil {
 			return err
 		}
