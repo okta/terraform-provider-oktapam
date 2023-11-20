@@ -70,6 +70,43 @@ func dataSourceSecurityPolicy() *schema.Resource {
 							Description: descriptions.SecurityPolicyResources,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									attributes.Secrets: {
+										Type:        schema.TypeList,
+										Computed:    true,
+										Description: descriptions.SecurityPolicySecrets,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												attributes.Secret: {
+													Type:        schema.TypeList,
+													Computed:    true,
+													Description: descriptions.SecurityPolicySecret,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															attributes.SecretID: {
+																Type:        schema.TypeString,
+																Computed:    true,
+																Description: descriptions.SecretID,
+															},
+														},
+													},
+												},
+												attributes.SecretFolder: {
+													Type:        schema.TypeList,
+													Computed:    true,
+													Description: descriptions.SecurityPolicySecretFolder,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															attributes.SecretFolderID: {
+																Type:        schema.TypeString,
+																Computed:    true,
+																Description: descriptions.SecretFolderID,
+															},
+														},
+													},
+												},
+											},
+										},
+									},
 									attributes.Servers: {
 										Type:        schema.TypeList,
 										Computed:    true,
@@ -146,6 +183,55 @@ func dataSourceSecurityPolicy() *schema.Resource {
 							Description: descriptions.Privileges,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									attributes.Secret: {
+										Type:        schema.TypeList,
+										Computed:    true,
+										Description: descriptions.PrivilegeSecret,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												attributes.List: {
+													Type:        schema.TypeBool,
+													Computed:    true,
+													Description: descriptions.PrivilegeSecretList,
+												},
+												attributes.FolderCreate: {
+													Type:        schema.TypeBool,
+													Computed:    true,
+													Description: descriptions.PrivilegeSecretFolderCreate,
+												},
+												attributes.FolderDelete: {
+													Type:        schema.TypeBool,
+													Computed:    true,
+													Description: descriptions.PrivilegeSecretFolderDelete,
+												},
+												attributes.FolderUpdate: {
+													Type:        schema.TypeBool,
+													Computed:    true,
+													Description: descriptions.PrivilegeSecretFolderUpdate,
+												},
+												attributes.SecretCreate: {
+													Type:        schema.TypeBool,
+													Computed:    true,
+													Description: descriptions.PrivilegeSecretCreate,
+												},
+												attributes.SecretDelete: {
+													Type:        schema.TypeBool,
+													Computed:    true,
+													Description: descriptions.PrivilegeSecretDelete,
+												},
+												attributes.SecretReveal: {
+													Type:        schema.TypeBool,
+													Computed:    true,
+													Description: descriptions.PrivilegeSecretReveal,
+												},
+												attributes.SecretUpdate: {
+													Type:        schema.TypeBool,
+													Computed:    true,
+													Description: descriptions.PrivilegeSecretUpdate,
+												},
+											},
+										},
+									},
 									attributes.PasswordCheckoutRDP: {
 										Type:        schema.TypeList,
 										Computed:    true,
@@ -221,6 +307,25 @@ func dataSourceSecurityPolicy() *schema.Resource {
 							Description: descriptions.Conditions,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									attributes.MFA: {
+										Type:        schema.TypeList,
+										Computed:    true,
+										Description: descriptions.ConditionMFA,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												attributes.ReAuthFrequencyInSeconds: {
+													Type:        schema.TypeInt,
+													Computed:    true,
+													Description: descriptions.MFAReAuthFrequencyInSeconds,
+												},
+												attributes.ACRValues: {
+													Type:        schema.TypeString,
+													Computed:    true,
+													Description: descriptions.MFAACRValues,
+												},
+											},
+										},
+									},
 									attributes.AccessRequest: {
 										Type:        schema.TypeList,
 										Computed:    true,

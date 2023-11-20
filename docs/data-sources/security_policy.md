@@ -49,6 +49,7 @@ Read-Only:
 
 - `access_request` (List of Object) (see [below for nested schema](#nestedobjatt--rule--conditions--access_request))
 - `gateway` (List of Object) (see [below for nested schema](#nestedobjatt--rule--conditions--gateway))
+- `mfa` (List of Object) (see [below for nested schema](#nestedobjatt--rule--conditions--mfa))
 
 <a id="nestedobjatt--rule--conditions--access_request"></a>
 ### Nested Schema for `rule.conditions.access_request`
@@ -69,6 +70,15 @@ Read-Only:
 - `traffic_forwarding` (Boolean)
 
 
+<a id="nestedobjatt--rule--conditions--mfa"></a>
+### Nested Schema for `rule.conditions.mfa`
+
+Read-Only:
+
+- `acr_values` (String)
+- `reauth_frequency_in_seconds` (Number)
+
+
 
 <a id="nestedobjatt--rule--privileges"></a>
 ### Nested Schema for `rule.privileges`
@@ -79,6 +89,7 @@ Read-Only:
 - `password_checkout_ssh` (List of Object) (see [below for nested schema](#nestedobjatt--rule--privileges--password_checkout_ssh))
 - `principal_account_rdp` (List of Object) (see [below for nested schema](#nestedobjatt--rule--privileges--principal_account_rdp))
 - `principal_account_ssh` (List of Object) (see [below for nested schema](#nestedobjatt--rule--privileges--principal_account_ssh))
+- `secret` (List of Object) (see [below for nested schema](#nestedobjatt--rule--privileges--secret))
 
 <a id="nestedobjatt--rule--privileges--password_checkout_rdp"></a>
 ### Nested Schema for `rule.privileges.password_checkout_rdp`
@@ -114,13 +125,54 @@ Read-Only:
 - `enabled` (Boolean)
 
 
+<a id="nestedobjatt--rule--privileges--secret"></a>
+### Nested Schema for `rule.privileges.secret`
+
+Read-Only:
+
+- `folder_create` (Boolean)
+- `folder_delete` (Boolean)
+- `folder_update` (Boolean)
+- `list` (Boolean)
+- `secret_create` (Boolean)
+- `secret_delete` (Boolean)
+- `secret_reveal` (Boolean)
+- `secret_update` (Boolean)
+
+
 
 <a id="nestedobjatt--rule--resources"></a>
 ### Nested Schema for `rule.resources`
 
 Read-Only:
 
+- `secrets` (List of Object) (see [below for nested schema](#nestedobjatt--rule--resources--secrets))
 - `servers` (List of Object) (see [below for nested schema](#nestedobjatt--rule--resources--servers))
+
+<a id="nestedobjatt--rule--resources--secrets"></a>
+### Nested Schema for `rule.resources.secrets`
+
+Read-Only:
+
+- `secret` (List of Object) (see [below for nested schema](#nestedobjatt--rule--resources--secrets--secret))
+- `secret_folder` (List of Object) (see [below for nested schema](#nestedobjatt--rule--resources--secrets--secret_folder))
+
+<a id="nestedobjatt--rule--resources--secrets--secret"></a>
+### Nested Schema for `rule.resources.secrets.secret_folder`
+
+Read-Only:
+
+- `secret_id` (String)
+
+
+<a id="nestedobjatt--rule--resources--secrets--secret_folder"></a>
+### Nested Schema for `rule.resources.secrets.secret_folder`
+
+Read-Only:
+
+- `secret_folder_id` (String)
+
+
 
 <a id="nestedobjatt--rule--resources--servers"></a>
 ### Nested Schema for `rule.resources.servers`

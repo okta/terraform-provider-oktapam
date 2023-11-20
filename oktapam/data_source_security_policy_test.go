@@ -38,7 +38,9 @@ func TestAccDatasourceSecurityPolicyFetch(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, attributes.Active, "true"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Principals), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.#", attributes.Principals, attributes.Groups), "1"),
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Rule), "1"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Rule), "2"),
+
+					// server rule
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.#", attributes.Rule, attributes.Conditions), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.#", attributes.Rule, attributes.Conditions, attributes.AccessRequest), "2"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Conditions, attributes.AccessRequest, attributes.ExpiresAfterSeconds), "1200"),
@@ -50,13 +52,8 @@ func TestAccDatasourceSecurityPolicyFetch(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.#", attributes.Rule, attributes.Conditions, attributes.Gateway), "0"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s", attributes.Rule, attributes.Name), "first rule"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.#", attributes.Rule, attributes.Privileges), "1"),
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.#", attributes.Rule, attributes.Privileges, attributes.PasswordCheckoutRDP), "1"),
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PasswordCheckoutRDP, attributes.Enabled), "true"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.#", attributes.Rule, attributes.Privileges, attributes.PasswordCheckoutSSH), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PasswordCheckoutSSH, attributes.Enabled), "true"),
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.#", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountRDP), "1"),
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountRDP, attributes.Enabled), "true"),
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountRDP, attributes.AdminLevelPermissions), "true"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.#", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH, attributes.Enabled), "true"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH, attributes.AdminLevelPermissions), "false"),
@@ -70,6 +67,20 @@ func TestAccDatasourceSecurityPolicyFetch(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.#", attributes.Rule, attributes.Resources, attributes.Servers, attributes.Server), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Resources, attributes.Servers, attributes.Server, attributes.ServerID), "9103335f-1147-407b-84d7-dbfc57f75c99"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.#", attributes.Rule, attributes.Resources, attributes.Servers, attributes.ServerAccount), "0"),
+
+					// secret rule
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.#", attributes.Rule, attributes.Conditions), "0"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s", attributes.Rule, attributes.Name), "second rule"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.#", attributes.Rule, attributes.Privileges), "1"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.#", attributes.Rule, attributes.Privileges, attributes.Secret), "1"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.List), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.FolderCreate), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.FolderDelete), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.FolderUpdate), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.SecretCreate), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.SecretDelete), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.SecretReveal), "false"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.SecretUpdate), "true"),
 				),
 			},
 		},
@@ -103,15 +114,8 @@ resource "oktapam_security_policy" "test_ds_security_policies" {
 			}
 		}
 		privileges {
-			password_checkout_rdp {
-				enabled = true
-			}
 			password_checkout_ssh {
 				enabled = true
-			}
-			principal_account_rdp {
-				enabled = true
-				admin_level_permissions = true
 			}
 			principal_account_ssh {
 				enabled = true
@@ -128,6 +132,28 @@ resource "oktapam_security_policy" "test_ds_security_policies" {
 				request_type_id = "wxyz"
 				request_type_name = "bar"
 				expires_after_seconds = 1800
+			}
+		}
+	}
+	rule {
+		name = "second rule"
+		resources {
+			secrets {
+				secret_folder {
+					secret_folder_id = "d458230d-7066-4c03-baab-2d2bf407a2b7"
+				}
+			}
+		}
+		privileges {
+			secret {
+				list = true
+				folder_create = true
+				folder_delete = true
+				folder_update = true
+				secret_create = true
+				secret_delete = true
+				secret_reveal = false
+				secret_update = true	
 			}
 		}
 	}
