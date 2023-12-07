@@ -3,12 +3,12 @@
 page_title: "oktapam_current_user Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns the username of the user used to invoke the terraform
+  Returns the username of the user used to invoke the terraform.
 ---
 
 # oktapam_current_user (Data Source)
 
-Returns the username of the user used to invoke the terraform
+Returns the username of the user used to invoke the terraform.
 
 
 

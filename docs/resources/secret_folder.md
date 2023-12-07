@@ -24,7 +24,7 @@ A file-system like construct that contains secrets or nested secret folders. For
 ### Optional
 
 - `description` (String) The human-readable name of the resource. Values are case-sensitive.
-- `parent_folder` (String) The directory which contains this entity.
+- `parent_folder` (String) The directory which contains this Secret/Secret Folder element.
 
 ### Read-Only
 
