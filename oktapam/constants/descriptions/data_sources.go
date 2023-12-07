@@ -17,7 +17,7 @@ var (
 
 	// Fetch
 	SourceADConnections                      = "A list of AD Connections associated with your Team."
-	SourceCurrentUser                        = "Returns the username of the user used to invoke the terraform"
+	SourceCurrentUser                        = "Returns the username of the user used to invoke the terraform."
 	SourceGateways                           = fmt.Sprintf("Returns a list of all Gateways connected to the Team specified in the OKTAPAM_TEAM environment variable. %s", LinkGateway)
 	SourceGroup                              = fmt.Sprintf("Returns an existing Group. %s", LinkGroup)
 	SourcePasswordSettings                   = fmt.Sprintf("Returns an existing Password Policy for a PAM Project.  %s", LinkPasswordSettings)
