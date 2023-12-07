@@ -3,12 +3,12 @@
 page_title: "oktapam_resource_group_project Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns an existing PAM Project associated with a specific PAM Resource Group. For details, see Projects https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-projects.htm.
+  Returns an existing PAM Project associated with a specific PAM Resource Group. For details, see Projects https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects.
 ---
 
 # oktapam_resource_group_project (Data Source)
 
-Returns an existing PAM Project associated with a specific PAM Resource Group. For details, see [Projects](https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-projects.htm).
+Returns an existing PAM Project associated with a specific PAM Resource Group. For details, see [Projects](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects).
 
 
 

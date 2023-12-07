@@ -3,12 +3,12 @@
 page_title: "oktapam_secret_folder Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A file-system like construct that contains secrets or nested secret folders. For details, see Secret Folders https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-secrets-folder.htm
+  A file-system like construct that contains secrets or nested secret folders. For details, see Secret Folders https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-secrets-folder
 ---
 
 # oktapam_secret_folder (Resource)
 
-A file-system like construct that contains secrets or nested secret folders. For details, see [Secret Folders](https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-secrets-folder.htm)
+A file-system like construct that contains secrets or nested secret folders. For details, see [Secret Folders](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-secrets-folder)
 
 
 

@@ -3,12 +3,12 @@
 page_title: "oktapam_security_policy Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A policy which defines how users can gain access to resources. For details, see Manage security policy https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-policy.htm.
+  A policy which defines how users can gain access to resources. For details, see Security policy https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-policy.
 ---
 
 # oktapam_security_policy (Data Source)
 
-A policy which defines how users can gain access to resources. For details, see [Manage security policy](https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-policy.htm).
+A policy which defines how users can gain access to resources. For details, see [Security policy](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-policy).
 
 
 

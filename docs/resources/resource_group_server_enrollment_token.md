@@ -3,12 +3,12 @@
 page_title: "oktapam_resource_group_server_enrollment_token Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A token used to enroll servers in a PAM Project. For details, see Server Enrollment https://help.okta.com/oie/en-us/content/topics/privileged-access/server-agent/pam-enroll-a-server.htm.
+  A token used to enroll servers in a PAM Project. For details, see Server Enrollment https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-server-enrollment.
 ---
 
 # oktapam_resource_group_server_enrollment_token (Resource)
 
-A token used to enroll servers in a PAM Project. For details, see [Server Enrollment](https://help.okta.com/oie/en-us/content/topics/privileged-access/server-agent/pam-enroll-a-server.htm).
+A token used to enroll servers in a PAM Project. For details, see [Server Enrollment](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-server-enrollment).
 
 
 

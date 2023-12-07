@@ -3,12 +3,12 @@
 page_title: "oktapam_resource_group_project Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  A PAM construct that contains a collection of resources that share settings. For details, see Projects https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-projects.htm.
+  A PAM construct that contains a collection of resources that share settings. For details, see Projects https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects.
 ---
 
 # oktapam_resource_group_project (Resource)
 
-A PAM construct that contains a collection of resources that share settings. For details, see [Projects](https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-projects.htm).
+A PAM construct that contains a collection of resources that share settings. For details, see [Projects](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects).
 
 
 
