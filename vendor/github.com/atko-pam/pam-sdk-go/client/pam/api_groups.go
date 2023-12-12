@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The ScaleFT API is a control plane API for operations in Okta Privileged Access (formerly ScaleFT)
+The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -47,7 +47,7 @@ This endpoint requires the following role: `pam_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param groupName The name of the Group
+	    @param groupName The name of a Group
 	@return ApiAddUserToGroupRequest
 */
 func (a *GroupsAPIService) AddUserToGroup(ctx context.Context, teamName string, groupName string) ApiAddUserToGroupRequest {
@@ -99,6 +99,10 @@ func (a *GroupsAPIService) AddUserToGroupExecute(r ApiAddUserToGroupRequest) (*h
 	// body params
 	localVarPostBody = r.addUserToGroupRequest
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
 
 	return localVarHTTPResponse, err
 }
@@ -178,6 +182,10 @@ func (a *GroupsAPIService) CreateGroupExecute(r ApiCreateGroupRequest) (*Group, 
 	localVarPostBody = r.groupCreate
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -201,7 +209,7 @@ This endpoint requires one of the following roles: `pam_admin`, `resource_admin`
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param groupName The name of the Group
+	    @param groupName The name of a Group
 	@return ApiGetGroupRequest
 */
 func (a *GroupsAPIService) GetGroup(ctx context.Context, teamName string, groupName string) ApiGetGroupRequest {
@@ -252,28 +260,31 @@ func (a *GroupsAPIService) GetGroupExecute(r ApiGetGroupRequest) (*Group, *http.
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiListGroupsRequest struct {
-	ctx                    context.Context
-	ApiService             *GroupsAPIService
-	teamName               string
-	offset                 *string
-	count                  *int32
-	descending             *bool
-	prev                   *bool
-	contains               *string
-	includeDeleted         *bool
-	onlyIncludeDeleted     *bool
-	disconnectedModeOnOnly *bool
-	id                     *string
-	ignore                 *string
+	ctx                context.Context
+	ApiService         *GroupsAPIService
+	teamName           string
+	contains           *string
+	count              *int32
+	descending         *bool
+	id                 *string
+	ignore             *string
+	includeDeleted     *bool
+	offset             *string
+	onlyIncludeDeleted *bool
+	prev               *bool
 }
 
-// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
-func (r ApiListGroupsRequest) Offset(offset string) ApiListGroupsRequest {
-	r.offset = &offset
+// Only return results that include the specified value
+func (r ApiListGroupsRequest) Contains(contains string) ApiListGroupsRequest {
+	r.contains = &contains
 	return r
 }
 
@@ -289,45 +300,39 @@ func (r ApiListGroupsRequest) Descending(descending bool) ApiListGroupsRequest {
 	return r
 }
 
-// The direction of paging
-func (r ApiListGroupsRequest) Prev(prev bool) ApiListGroupsRequest {
-	r.prev = &prev
-	return r
-}
-
-// If a value is provided, the results are filtered to only contain Groups whose name contains that value.
-func (r ApiListGroupsRequest) Contains(contains string) ApiListGroupsRequest {
-	r.contains = &contains
-	return r
-}
-
-// If &#x60;true&#x60;, the results include deleted Groups.
-func (r ApiListGroupsRequest) IncludeDeleted(includeDeleted bool) ApiListGroupsRequest {
-	r.includeDeleted = &includeDeleted
-	return r
-}
-
-// If &#x60;true&#x60;, the results only include deleted Groups.
-func (r ApiListGroupsRequest) OnlyIncludeDeleted(onlyIncludeDeleted bool) ApiListGroupsRequest {
-	r.onlyIncludeDeleted = &onlyIncludeDeleted
-	return r
-}
-
-// If &#x60;true&#x60;, the results only include Groups with disconnected mode enabled.
-func (r ApiListGroupsRequest) DisconnectedModeOnOnly(disconnectedModeOnOnly bool) ApiListGroupsRequest {
-	r.disconnectedModeOnOnly = &disconnectedModeOnOnly
-	return r
-}
-
-// Include only groups with the given IDs
+// Only return results with the specified IDs
 func (r ApiListGroupsRequest) Id(id string) ApiListGroupsRequest {
 	r.id = &id
 	return r
 }
 
-// Ignore groups with the give names. This is case sensitive.
+// Ignore Groups with the specified names. This is case sensitive.
 func (r ApiListGroupsRequest) Ignore(ignore string) ApiListGroupsRequest {
 	r.ignore = &ignore
+	return r
+}
+
+// If &#x60;true&#x60;, include deleted Groups in the results
+func (r ApiListGroupsRequest) IncludeDeleted(includeDeleted bool) ApiListGroupsRequest {
+	r.includeDeleted = &includeDeleted
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListGroupsRequest) Offset(offset string) ApiListGroupsRequest {
+	r.offset = &offset
+	return r
+}
+
+// If &#x60;true&#x60;, only return deleted Groups in the results
+func (r ApiListGroupsRequest) OnlyIncludeDeleted(onlyIncludeDeleted bool) ApiListGroupsRequest {
+	r.onlyIncludeDeleted = &onlyIncludeDeleted
+	return r
+}
+
+// The direction of paging
+func (r ApiListGroupsRequest) Prev(prev bool) ApiListGroupsRequest {
+	r.prev = &prev
 	return r
 }
 
@@ -373,8 +378,8 @@ func (a *GroupsAPIService) ListGroupsExecute(r ApiListGroupsRequest) (*ListGroup
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.offset != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	if r.contains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
 	}
 	if r.count != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
@@ -382,26 +387,23 @@ func (a *GroupsAPIService) ListGroupsExecute(r ApiListGroupsRequest) (*ListGroup
 	if r.descending != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
 	}
-	if r.prev != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
-	}
-	if r.contains != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
-	}
-	if r.includeDeleted != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "")
-	}
-	if r.onlyIncludeDeleted != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "only_include_deleted", r.onlyIncludeDeleted, "")
-	}
-	if r.disconnectedModeOnOnly != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "disconnected_mode_on_only", r.disconnectedModeOnOnly, "")
-	}
 	if r.id != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "id", r.id, "")
 	}
 	if r.ignore != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "ignore", r.ignore, "")
+	}
+	if r.includeDeleted != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
+	if r.onlyIncludeDeleted != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "only_include_deleted", r.onlyIncludeDeleted, "")
+	}
+	if r.prev != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -422,6 +424,10 @@ func (a *GroupsAPIService) ListGroupsExecute(r ApiListGroupsRequest) (*ListGroup
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -430,19 +436,19 @@ type ApiListUsersInGroupRequest struct {
 	ApiService *GroupsAPIService
 	teamName   string
 	groupName  string
-	offset     *string
+	contains   *string
 	count      *int32
 	descending *bool
+	offset     *string
 	prev       *bool
 	startsWith *string
 	status     *string
-	contains   *string
 	userType   *string
 }
 
-// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
-func (r ApiListUsersInGroupRequest) Offset(offset string) ApiListUsersInGroupRequest {
-	r.offset = &offset
+// Only return results that include the specified value
+func (r ApiListUsersInGroupRequest) Contains(contains string) ApiListUsersInGroupRequest {
+	r.contains = &contains
 	return r
 }
 
@@ -458,31 +464,31 @@ func (r ApiListUsersInGroupRequest) Descending(descending bool) ApiListUsersInGr
 	return r
 }
 
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListUsersInGroupRequest) Offset(offset string) ApiListUsersInGroupRequest {
+	r.offset = &offset
+	return r
+}
+
 // The direction of paging
 func (r ApiListUsersInGroupRequest) Prev(prev bool) ApiListUsersInGroupRequest {
 	r.prev = &prev
 	return r
 }
 
-// Includes Users with a name that begins with the provided value
+// Only return Users with a name that begins with the specified value
 func (r ApiListUsersInGroupRequest) StartsWith(startsWith string) ApiListUsersInGroupRequest {
 	r.startsWith = &startsWith
 	return r
 }
 
-// Includes Users with the specified statuses. Valid statuses: &#x60;ACTIVE&#x60;, &#x60;DISABLED&#x60;, and &#x60;DELETED&#x60;.
+// Only return Users with the specified status. Valid statuses: &#x60;ACTIVE&#x60;, &#x60;DISABLED&#x60;, and &#x60;DELETED&#x60;.
 func (r ApiListUsersInGroupRequest) Status(status string) ApiListUsersInGroupRequest {
 	r.status = &status
 	return r
 }
 
-// Includes Users with name that contains the value
-func (r ApiListUsersInGroupRequest) Contains(contains string) ApiListUsersInGroupRequest {
-	r.contains = &contains
-	return r
-}
-
-// Includes Users of the specified type. Valid types: &#x60;human&#x60; and &#x60;service&#x60;.
+// Only return Users of the specified type. Valid types: &#x60;human&#x60; and &#x60;service&#x60;.
 func (r ApiListUsersInGroupRequest) UserType(userType string) ApiListUsersInGroupRequest {
 	r.userType = &userType
 	return r
@@ -501,7 +507,7 @@ This endpoint requires one of the following roles: `pam_admin`, `resource_admin`
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param groupName The name of the Group
+	    @param groupName The name of a Group
 	@return ApiListUsersInGroupRequest
 */
 func (a *GroupsAPIService) ListUsersInGroup(ctx context.Context, teamName string, groupName string) ApiListUsersInGroupRequest {
@@ -533,14 +539,17 @@ func (a *GroupsAPIService) ListUsersInGroupExecute(r ApiListUsersInGroupRequest)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.offset != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	if r.contains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
 	}
 	if r.count != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
 	}
 	if r.descending != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
 	}
 	if r.prev != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
@@ -550,9 +559,6 @@ func (a *GroupsAPIService) ListUsersInGroupExecute(r ApiListUsersInGroupRequest)
 	}
 	if r.status != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "status", r.status, "")
-	}
-	if r.contains != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
 	}
 	if r.userType != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "user_type", r.userType, "")
@@ -575,6 +581,10 @@ func (a *GroupsAPIService) ListUsersInGroupExecute(r ApiListUsersInGroupRequest)
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
 }
@@ -599,7 +609,7 @@ This endpoint requires the following role: `pam_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param groupName The name of the Group
+	    @param groupName The name of a Group
 	@return ApiRemoveGroupRequest
 */
 func (a *GroupsAPIService) RemoveGroup(ctx context.Context, teamName string, groupName string) ApiRemoveGroupRequest {
@@ -647,6 +657,10 @@ func (a *GroupsAPIService) RemoveGroupExecute(r ApiRemoveGroupRequest) (*http.Re
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
 	return localVarHTTPResponse, err
 }
 
@@ -671,8 +685,8 @@ This endpoint requires the following role: `pam_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param groupName The name of the Group
-	    @param userName The relevant username
+	    @param groupName The name of a Group
+	    @param userName The username for an existing User
 	@return ApiRemoveUserFromGroupRequest
 */
 func (a *GroupsAPIService) RemoveUserFromGroup(ctx context.Context, teamName string, groupName string, userName string) ApiRemoveUserFromGroupRequest {
@@ -722,6 +736,10 @@ func (a *GroupsAPIService) RemoveUserFromGroupExecute(r ApiRemoveUserFromGroupRe
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
 	return localVarHTTPResponse, err
 }
 
@@ -751,7 +769,7 @@ This endpoint requires the following role: `pam_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param groupName The name of the Group
+	    @param groupName The name of a Group
 	@return ApiUpdateGroupRequest
 */
 func (a *GroupsAPIService) UpdateGroup(ctx context.Context, teamName string, groupName string) ApiUpdateGroupRequest {
@@ -803,6 +821,10 @@ func (a *GroupsAPIService) UpdateGroupExecute(r ApiUpdateGroupRequest) (*http.Re
 	// body params
 	localVarPostBody = r.groupUpdate
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
 
 	return localVarHTTPResponse, err
 }

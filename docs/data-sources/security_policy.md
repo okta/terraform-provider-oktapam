@@ -3,12 +3,12 @@
 page_title: "oktapam_security_policy Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Limited Early Access Feature: A policy which defines how users can gain access to resources. For details, see Manage security policy https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-policy.htm.
+  A policy which defines how users can gain access to resources. For details, see Security policy https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-policy.
 ---
 
 # oktapam_security_policy (Data Source)
 
-Limited Early Access Feature: A policy which defines how users can gain access to resources. For details, see [Manage security policy](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-policy.htm).
+A policy which defines how users can gain access to resources. For details, see [Security policy](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-policy).
 
 
 

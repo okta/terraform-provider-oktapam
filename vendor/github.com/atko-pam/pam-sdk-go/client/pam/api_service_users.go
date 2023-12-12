@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The ScaleFT API is a control plane API for operations in Okta Privileged Access (formerly ScaleFT)
+The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -99,6 +99,10 @@ func (a *ServiceUsersAPIService) CreateServiceUserExecute(r ApiCreateServiceUser
 	localVarPostBody = r.createServiceUserBody
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -123,8 +127,8 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param userName The relevant username
-	    @param keyId The UUID of the Service User key
+	    @param userName The username for an existing User
+	    @param keyId The UUID of a Service User key
 	@return ApiDeleteServiceUserKeyRequest
 */
 func (a *ServiceUsersAPIService) DeleteServiceUserKey(ctx context.Context, teamName string, userName string, keyId string) ApiDeleteServiceUserKeyRequest {
@@ -174,6 +178,10 @@ func (a *ServiceUsersAPIService) DeleteServiceUserKeyExecute(r ApiDeleteServiceU
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
 	return localVarHTTPResponse, err
 }
 
@@ -197,7 +205,7 @@ This endpoint requires one of the following roles: `pam_admin`, `security_admin`
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param userName The relevant username
+	    @param userName The username for an existing User
 	@return ApiGetServiceUserRequest
 */
 func (a *ServiceUsersAPIService) GetServiceUser(ctx context.Context, teamName string, userName string) ApiGetServiceUserRequest {
@@ -247,6 +255,10 @@ func (a *ServiceUsersAPIService) GetServiceUserExecute(r ApiGetServiceUserReques
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
 }
@@ -332,6 +344,10 @@ func (a *ServiceUsersAPIService) IssueServiceTokenExecute(r ApiIssueServiceToken
 	localVarPostBody = r.issueServiceTokenRequestBody
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -355,7 +371,7 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param userName The relevant username
+	    @param userName The username for an existing User
 	@return ApiListServiceUserKeysRequest
 */
 func (a *ServiceUsersAPIService) ListServiceUserKeys(ctx context.Context, teamName string, userName string) ApiListServiceUserKeysRequest {
@@ -406,6 +422,10 @@ func (a *ServiceUsersAPIService) ListServiceUserKeysExecute(r ApiListServiceUser
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -413,20 +433,20 @@ type ApiListServiceUsersRequest struct {
 	ctx                 context.Context
 	ApiService          *ServiceUsersAPIService
 	teamName            string
-	offset              *string
+	contains            *string
 	count               *int32
 	descending          *bool
+	id                  *string
+	includeServiceUsers *string
+	offset              *string
 	prev                *bool
 	startsWith          *string
 	status              *string
-	contains            *string
-	includeServiceUsers *string
-	id                  *string
 }
 
-// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
-func (r ApiListServiceUsersRequest) Offset(offset string) ApiListServiceUsersRequest {
-	r.offset = &offset
+// Only return results that include the specified value
+func (r ApiListServiceUsersRequest) Contains(contains string) ApiListServiceUsersRequest {
+	r.contains = &contains
 	return r
 }
 
@@ -442,39 +462,39 @@ func (r ApiListServiceUsersRequest) Descending(descending bool) ApiListServiceUs
 	return r
 }
 
+// Only return results with the specified IDs
+func (r ApiListServiceUsersRequest) Id(id string) ApiListServiceUsersRequest {
+	r.id = &id
+	return r
+}
+
+// Only return Service Users in the results
+func (r ApiListServiceUsersRequest) IncludeServiceUsers(includeServiceUsers string) ApiListServiceUsersRequest {
+	r.includeServiceUsers = &includeServiceUsers
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListServiceUsersRequest) Offset(offset string) ApiListServiceUsersRequest {
+	r.offset = &offset
+	return r
+}
+
 // The direction of paging
 func (r ApiListServiceUsersRequest) Prev(prev bool) ApiListServiceUsersRequest {
 	r.prev = &prev
 	return r
 }
 
-// Includes Users with name that begins with the value
+// Only return Users with a name that begins with the specified value
 func (r ApiListServiceUsersRequest) StartsWith(startsWith string) ApiListServiceUsersRequest {
 	r.startsWith = &startsWith
 	return r
 }
 
-// Includes Users with specified statuses. Valid statuses: &#x60;ACTIVE&#x60;, &#x60;DISABLED&#x60;, and &#x60;DELETED&#x60;.
+// Only return Users with the specified status. Valid statuses: &#x60;ACTIVE&#x60;, &#x60;DISABLED&#x60;, and &#x60;DELETED&#x60;.
 func (r ApiListServiceUsersRequest) Status(status string) ApiListServiceUsersRequest {
 	r.status = &status
-	return r
-}
-
-// Includes Users with name that contains the value
-func (r ApiListServiceUsersRequest) Contains(contains string) ApiListServiceUsersRequest {
-	r.contains = &contains
-	return r
-}
-
-// Include Service Users in the results
-func (r ApiListServiceUsersRequest) IncludeServiceUsers(includeServiceUsers string) ApiListServiceUsersRequest {
-	r.includeServiceUsers = &includeServiceUsers
-	return r
-}
-
-// Include only users with the given IDs
-func (r ApiListServiceUsersRequest) Id(id string) ApiListServiceUsersRequest {
-	r.id = &id
 	return r
 }
 
@@ -520,14 +540,23 @@ func (a *ServiceUsersAPIService) ListServiceUsersExecute(r ApiListServiceUsersRe
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.offset != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	if r.contains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
 	}
 	if r.count != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
 	}
 	if r.descending != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.id != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "id", r.id, "")
+	}
+	if r.includeServiceUsers != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "include_service_users", r.includeServiceUsers, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
 	}
 	if r.prev != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
@@ -537,15 +566,6 @@ func (a *ServiceUsersAPIService) ListServiceUsersExecute(r ApiListServiceUsersRe
 	}
 	if r.status != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "status", r.status, "")
-	}
-	if r.contains != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
-	}
-	if r.includeServiceUsers != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_service_users", r.includeServiceUsers, "")
-	}
-	if r.id != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "id", r.id, "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -565,6 +585,10 @@ func (a *ServiceUsersAPIService) ListServiceUsersExecute(r ApiListServiceUsersRe
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
 }
@@ -589,7 +613,7 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param userName The relevant username
+	    @param userName The username for an existing User
 	@return ApiRotateServiceUserKeyRequest
 */
 func (a *ServiceUsersAPIService) RotateServiceUserKey(ctx context.Context, teamName string, userName string) ApiRotateServiceUserKeyRequest {
@@ -640,6 +664,10 @@ func (a *ServiceUsersAPIService) RotateServiceUserKeyExecute(r ApiRotateServiceU
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -669,7 +697,7 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param userName The relevant username
+	    @param userName The username for an existing User
 	@return ApiServiceUserUpdateRequest
 */
 func (a *ServiceUsersAPIService) ServiceUserUpdate(ctx context.Context, teamName string, userName string) ApiServiceUserUpdateRequest {
@@ -724,6 +752,10 @@ func (a *ServiceUsersAPIService) ServiceUserUpdateExecute(r ApiServiceUserUpdate
 	// body params
 	localVarPostBody = r.updateServiceUserBody
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
 }

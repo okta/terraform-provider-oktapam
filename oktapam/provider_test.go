@@ -106,6 +106,30 @@ func subNamedObjects(expectedNamedObjects, actualNamedObjects []client.NamedObje
 	return subs, nil
 }
 
+func fillNamedObjectValues(expectedNamedObject client.NamedObject, actualNamedObject client.NamedObject) client.NamedObject {
+	filled := client.NamedObject{}
+
+	if expectedNamedObject.Id != nil {
+		filled.Id = expectedNamedObject.Id
+	} else {
+		filled.Id = actualNamedObject.Id
+	}
+
+	if expectedNamedObject.Name != nil {
+		filled.Name = expectedNamedObject.Name
+	} else {
+		filled.Name = actualNamedObject.Name
+	}
+
+	if string(expectedNamedObject.Type) != "" {
+		filled.Type = expectedNamedObject.Type
+	} else {
+		filled.Type = actualNamedObject.Type
+	}
+
+	return filled
+}
+
 func getTeamName() string {
 	teamName := os.Getenv(teamSchemaEnvVar)
 	if teamName != "" {

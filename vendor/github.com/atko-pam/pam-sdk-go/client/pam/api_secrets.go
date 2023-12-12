@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The ScaleFT API is a control plane API for operations in Okta Privileged Access (formerly ScaleFT)
+The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -12,7 +12,10 @@ Contact: support@okta.com
 package pam
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -24,9 +27,9 @@ type SecretsAPIService service
 type ApiCreateSecretRequest struct {
 	ctx                         context.Context
 	ApiService                  *SecretsAPIService
+	teamName                    string
 	resourceGroupId             string
 	projectId                   string
-	teamName                    string
 	secretCreateOrUpdateRequest *SecretCreateOrUpdateRequest
 }
 
@@ -45,21 +48,22 @@ func (r ApiCreateSecretRequest) Execute() (*Secret, *http.Response, error) {
 	    Creates a Secret.
 
 A user may only perform this action if authorized via a security policy.
+
 This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	@return ApiCreateSecretRequest
 */
-func (a *SecretsAPIService) CreateSecret(ctx context.Context, resourceGroupId string, projectId string, teamName string) ApiCreateSecretRequest {
+func (a *SecretsAPIService) CreateSecret(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiCreateSecretRequest {
 	return ApiCreateSecretRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 	}
 }
 
@@ -76,9 +80,9 @@ func (a *SecretsAPIService) CreateSecretExecute(r ApiCreateSecretRequest) (*Secr
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secrets"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -105,15 +109,38 @@ func (a *SecretsAPIService) CreateSecretExecute(r ApiCreateSecretRequest) (*Secr
 	localVarPostBody = r.secretCreateOrUpdateRequest
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	if localVarHTTPResponse.StatusCode == 403 {
+
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v ListTopLevelSecretFoldersForProject403Response
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return nil, localVarHTTPResponse, nonDefaultResponse
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiCreateSecretFolderRequest struct {
 	ctx                       context.Context
 	ApiService                *SecretsAPIService
+	teamName                  string
 	resourceGroupId           string
 	projectId                 string
-	teamName                  string
 	secretFolderCreateRequest *SecretFolderCreateRequest
 }
 
@@ -134,18 +161,18 @@ func (r ApiCreateSecretFolderRequest) Execute() (*SecretFolderResponse, *http.Re
 This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	@return ApiCreateSecretFolderRequest
 */
-func (a *SecretsAPIService) CreateSecretFolder(ctx context.Context, resourceGroupId string, projectId string, teamName string) ApiCreateSecretFolderRequest {
+func (a *SecretsAPIService) CreateSecretFolder(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiCreateSecretFolderRequest {
 	return ApiCreateSecretFolderRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 	}
 }
 
@@ -162,9 +189,9 @@ func (a *SecretsAPIService) CreateSecretFolderExecute(r ApiCreateSecretFolderReq
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secret_folders"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -191,15 +218,38 @@ func (a *SecretsAPIService) CreateSecretFolderExecute(r ApiCreateSecretFolderReq
 	localVarPostBody = r.secretFolderCreateRequest
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	if localVarHTTPResponse.StatusCode == 403 {
+
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v ListTopLevelSecretFoldersForProject403Response
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return nil, localVarHTTPResponse, nonDefaultResponse
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiDeleteSecretRequest struct {
 	ctx             context.Context
 	ApiService      *SecretsAPIService
+	teamName        string
 	resourceGroupId string
 	projectId       string
-	teamName        string
 	secretId        string
 }
 
@@ -216,19 +266,19 @@ A user may only perform this action if authorized via a security policy.
 This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	    @param secretId The UUID of a Secret
 	@return ApiDeleteSecretRequest
 */
-func (a *SecretsAPIService) DeleteSecret(ctx context.Context, resourceGroupId string, projectId string, teamName string, secretId string) ApiDeleteSecretRequest {
+func (a *SecretsAPIService) DeleteSecret(ctx context.Context, teamName string, resourceGroupId string, projectId string, secretId string) ApiDeleteSecretRequest {
 	return ApiDeleteSecretRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 		secretId:        secretId,
 	}
 }
@@ -243,9 +293,9 @@ func (a *SecretsAPIService) DeleteSecretExecute(r ApiDeleteSecretRequest) (*http
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secrets/{secret_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"secret_id"+"}", url.PathEscape(parameterValueToString(r.secretId, "secretId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -271,15 +321,38 @@ func (a *SecretsAPIService) DeleteSecretExecute(r ApiDeleteSecretRequest) (*http
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
+	if localVarHTTPResponse.StatusCode == 403 {
+
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v ListTopLevelSecretFoldersForProject403Response
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return localVarHTTPResponse, nonDefaultResponse
+	}
+
 	return localVarHTTPResponse, err
 }
 
 type ApiDeleteSecretFolderRequest struct {
 	ctx             context.Context
 	ApiService      *SecretsAPIService
+	teamName        string
 	resourceGroupId string
 	projectId       string
-	teamName        string
 	secretFolderId  string
 }
 
@@ -295,19 +368,19 @@ func (r ApiDeleteSecretFolderRequest) Execute() (*http.Response, error) {
 This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	    @param secretFolderId The UUID of a Secret Folder
 	@return ApiDeleteSecretFolderRequest
 */
-func (a *SecretsAPIService) DeleteSecretFolder(ctx context.Context, resourceGroupId string, projectId string, teamName string, secretFolderId string) ApiDeleteSecretFolderRequest {
+func (a *SecretsAPIService) DeleteSecretFolder(ctx context.Context, teamName string, resourceGroupId string, projectId string, secretFolderId string) ApiDeleteSecretFolderRequest {
 	return ApiDeleteSecretFolderRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 		secretFolderId:  secretFolderId,
 	}
 }
@@ -322,9 +395,9 @@ func (a *SecretsAPIService) DeleteSecretFolderExecute(r ApiDeleteSecretFolderReq
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secret_folders/{secret_folder_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"secret_folder_id"+"}", url.PathEscape(parameterValueToString(r.secretFolderId, "secretFolderId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -350,15 +423,38 @@ func (a *SecretsAPIService) DeleteSecretFolderExecute(r ApiDeleteSecretFolderReq
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
+	if localVarHTTPResponse.StatusCode == 403 {
+
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v ListTopLevelSecretFoldersForProject403Response
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return localVarHTTPResponse, nonDefaultResponse
+	}
+
 	return localVarHTTPResponse, err
 }
 
 type ApiGetSecretRequest struct {
 	ctx             context.Context
 	ApiService      *SecretsAPIService
+	teamName        string
 	resourceGroupId string
 	projectId       string
-	teamName        string
 	secretId        string
 }
 
@@ -375,19 +471,19 @@ A user may only perform this action if authorized via a security policy.
 This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	    @param secretId The UUID of a Secret
 	@return ApiGetSecretRequest
 */
-func (a *SecretsAPIService) GetSecret(ctx context.Context, resourceGroupId string, projectId string, teamName string, secretId string) ApiGetSecretRequest {
+func (a *SecretsAPIService) GetSecret(ctx context.Context, teamName string, resourceGroupId string, projectId string, secretId string) ApiGetSecretRequest {
 	return ApiGetSecretRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 		secretId:        secretId,
 	}
 }
@@ -405,9 +501,9 @@ func (a *SecretsAPIService) GetSecretExecute(r ApiGetSecretRequest) (*Secret, *h
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secrets/{secret_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"secret_id"+"}", url.PathEscape(parameterValueToString(r.secretId, "secretId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -433,15 +529,38 @@ func (a *SecretsAPIService) GetSecretExecute(r ApiGetSecretRequest) (*Secret, *h
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	if localVarHTTPResponse.StatusCode == 403 {
+
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v ListTopLevelSecretFoldersForProject403Response
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return nil, localVarHTTPResponse, nonDefaultResponse
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiGetSecretFolderRequest struct {
 	ctx             context.Context
 	ApiService      *SecretsAPIService
+	teamName        string
 	resourceGroupId string
 	projectId       string
-	teamName        string
 	secretFolderId  string
 }
 
@@ -457,19 +576,19 @@ func (r ApiGetSecretFolderRequest) Execute() (*SecretFolderResponse, *http.Respo
 This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	    @param secretFolderId The UUID of a Secret Folder
 	@return ApiGetSecretFolderRequest
 */
-func (a *SecretsAPIService) GetSecretFolder(ctx context.Context, resourceGroupId string, projectId string, teamName string, secretFolderId string) ApiGetSecretFolderRequest {
+func (a *SecretsAPIService) GetSecretFolder(ctx context.Context, teamName string, resourceGroupId string, projectId string, secretFolderId string) ApiGetSecretFolderRequest {
 	return ApiGetSecretFolderRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 		secretFolderId:  secretFolderId,
 	}
 }
@@ -487,9 +606,9 @@ func (a *SecretsAPIService) GetSecretFolderExecute(r ApiGetSecretFolderRequest) 
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secret_folders/{secret_folder_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"secret_folder_id"+"}", url.PathEscape(parameterValueToString(r.secretFolderId, "secretFolderId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -515,18 +634,186 @@ func (a *SecretsAPIService) GetSecretFolderExecute(r ApiGetSecretFolderRequest) 
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	if localVarHTTPResponse.StatusCode == 403 {
+
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v ListTopLevelSecretFoldersForProject403Response
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return nil, localVarHTTPResponse, nonDefaultResponse
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiListSecretFolderItemsRequest struct {
+	ctx             context.Context
+	ApiService      *SecretsAPIService
+	teamName        string
+	resourceGroupId string
+	projectId       string
+	secretFolderId  string
+	count           *int32
+	descending      *bool
+	offset          *string
+	prev            *bool
+}
+
+// The number of objects per page
+func (r ApiListSecretFolderItemsRequest) Count(count int32) ApiListSecretFolderItemsRequest {
+	r.count = &count
+	return r
+}
+
+// The object order
+func (r ApiListSecretFolderItemsRequest) Descending(descending bool) ApiListSecretFolderItemsRequest {
+	r.descending = &descending
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListSecretFolderItemsRequest) Offset(offset string) ApiListSecretFolderItemsRequest {
+	r.offset = &offset
+	return r
+}
+
+// The direction of paging
+func (r ApiListSecretFolderItemsRequest) Prev(prev bool) ApiListSecretFolderItemsRequest {
+	r.prev = &prev
+	return r
+}
+
+func (r ApiListSecretFolderItemsRequest) Execute() (*ListTopLevelSecretFoldersForTeam200Response, *http.Response, error) {
+	return r.ApiService.ListSecretFolderItemsExecute(r)
+}
+
+/*
+	ListSecretFolderItems List all items in a Secret Folder
+
+	    Lists all items in a Secret Folder. Users must be authorized to perform this action by an existing Security Policy.
+
+This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	    @param projectId The UUID of a Project
+	    @param secretFolderId The UUID of a Secret Folder
+	@return ApiListSecretFolderItemsRequest
+*/
+func (a *SecretsAPIService) ListSecretFolderItems(ctx context.Context, teamName string, resourceGroupId string, projectId string, secretFolderId string) ApiListSecretFolderItemsRequest {
+	return ApiListSecretFolderItemsRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+		secretFolderId:  secretFolderId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListTopLevelSecretFoldersForTeam200Response
+func (a *SecretsAPIService) ListSecretFolderItemsExecute(r ApiListSecretFolderItemsRequest) (*ListTopLevelSecretFoldersForTeam200Response, *http.Response, error) {
+	var (
+		traceKey            = "secretsapi.listSecretFolderItems"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListTopLevelSecretFoldersForTeam200Response
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secret_folders/{secret_folder_id}/items"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"secret_folder_id"+"}", url.PathEscape(parameterValueToString(r.secretFolderId, "secretFolderId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.count != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
+	}
+	if r.descending != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
+	if r.prev != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	if localVarHTTPResponse.StatusCode == 403 {
+
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v ListTopLevelSecretFoldersForProject403Response
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return nil, localVarHTTPResponse, nonDefaultResponse
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiListTopLevelSecretFoldersForProjectRequest struct {
 	ctx             context.Context
 	ApiService      *SecretsAPIService
+	teamName        string
 	resourceGroupId string
 	projectId       string
-	teamName        string
 }
 
-func (r ApiListTopLevelSecretFoldersForProjectRequest) Execute() ([]SecretOrFolderListResponse, *http.Response, error) {
+func (r ApiListTopLevelSecretFoldersForProjectRequest) Execute() (*ListTopLevelSecretFoldersForTeam200Response, *http.Response, error) {
 	return r.ApiService.ListTopLevelSecretFoldersForProjectExecute(r)
 }
 
@@ -538,37 +825,37 @@ func (r ApiListTopLevelSecretFoldersForProjectRequest) Execute() ([]SecretOrFold
 This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	@return ApiListTopLevelSecretFoldersForProjectRequest
 */
-func (a *SecretsAPIService) ListTopLevelSecretFoldersForProject(ctx context.Context, resourceGroupId string, projectId string, teamName string) ApiListTopLevelSecretFoldersForProjectRequest {
+func (a *SecretsAPIService) ListTopLevelSecretFoldersForProject(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiListTopLevelSecretFoldersForProjectRequest {
 	return ApiListTopLevelSecretFoldersForProjectRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 	}
 }
 
 // Execute executes the request
 //
-//	@return []SecretOrFolderListResponse
-func (a *SecretsAPIService) ListTopLevelSecretFoldersForProjectExecute(r ApiListTopLevelSecretFoldersForProjectRequest) ([]SecretOrFolderListResponse, *http.Response, error) {
+//	@return ListTopLevelSecretFoldersForTeam200Response
+func (a *SecretsAPIService) ListTopLevelSecretFoldersForProjectExecute(r ApiListTopLevelSecretFoldersForProjectRequest) (*ListTopLevelSecretFoldersForTeam200Response, *http.Response, error) {
 	var (
 		traceKey            = "secretsapi.listTopLevelSecretFoldersForProject"
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue []SecretOrFolderListResponse
+		localVarReturnValue *ListTopLevelSecretFoldersForTeam200Response
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secret_folders"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -593,6 +880,29 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForProjectExecute(r ApiList
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	if localVarHTTPResponse.StatusCode == 403 {
+
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v ListTopLevelSecretFoldersForProject403Response
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return nil, localVarHTTPResponse, nonDefaultResponse
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -602,7 +912,7 @@ type ApiListTopLevelSecretFoldersForTeamRequest struct {
 	teamName   string
 }
 
-func (r ApiListTopLevelSecretFoldersForTeamRequest) Execute() ([]SecretOrFolderListResponse, *http.Response, error) {
+func (r ApiListTopLevelSecretFoldersForTeamRequest) Execute() (*ListTopLevelSecretFoldersForTeam200Response, *http.Response, error) {
 	return r.ApiService.ListTopLevelSecretFoldersForTeamExecute(r)
 }
 
@@ -627,14 +937,14 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForTeam(ctx context.Context
 
 // Execute executes the request
 //
-//	@return []SecretOrFolderListResponse
-func (a *SecretsAPIService) ListTopLevelSecretFoldersForTeamExecute(r ApiListTopLevelSecretFoldersForTeamRequest) ([]SecretOrFolderListResponse, *http.Response, error) {
+//	@return ListTopLevelSecretFoldersForTeam200Response
+func (a *SecretsAPIService) ListTopLevelSecretFoldersForTeamExecute(r ApiListTopLevelSecretFoldersForTeamRequest) (*ListTopLevelSecretFoldersForTeam200Response, *http.Response, error) {
 	var (
 		traceKey            = "secretsapi.listTopLevelSecretFoldersForTeam"
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue []SecretOrFolderListResponse
+		localVarReturnValue *ListTopLevelSecretFoldersForTeam200Response
 	)
 
 	localVarPath := "/v1/teams/{team_name}/secret_folders"
@@ -663,6 +973,10 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForTeamExecute(r ApiListTop
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -670,9 +984,37 @@ type ApiListTopLevelSecretFoldersForUserRequest struct {
 	ctx        context.Context
 	ApiService *SecretsAPIService
 	teamName   string
+	count      *int32
+	descending *bool
+	offset     *string
+	prev       *bool
 }
 
-func (r ApiListTopLevelSecretFoldersForUserRequest) Execute() ([]SecretOrFolderListResponse, *http.Response, error) {
+// The number of objects per page
+func (r ApiListTopLevelSecretFoldersForUserRequest) Count(count int32) ApiListTopLevelSecretFoldersForUserRequest {
+	r.count = &count
+	return r
+}
+
+// The object order
+func (r ApiListTopLevelSecretFoldersForUserRequest) Descending(descending bool) ApiListTopLevelSecretFoldersForUserRequest {
+	r.descending = &descending
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListTopLevelSecretFoldersForUserRequest) Offset(offset string) ApiListTopLevelSecretFoldersForUserRequest {
+	r.offset = &offset
+	return r
+}
+
+// The direction of paging
+func (r ApiListTopLevelSecretFoldersForUserRequest) Prev(prev bool) ApiListTopLevelSecretFoldersForUserRequest {
+	r.prev = &prev
+	return r
+}
+
+func (r ApiListTopLevelSecretFoldersForUserRequest) Execute() (*ListTopLevelSecretFoldersForTeam200Response, *http.Response, error) {
 	return r.ApiService.ListTopLevelSecretFoldersForUserExecute(r)
 }
 
@@ -697,14 +1039,14 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForUser(ctx context.Context
 
 // Execute executes the request
 //
-//	@return []SecretOrFolderListResponse
-func (a *SecretsAPIService) ListTopLevelSecretFoldersForUserExecute(r ApiListTopLevelSecretFoldersForUserRequest) ([]SecretOrFolderListResponse, *http.Response, error) {
+//	@return ListTopLevelSecretFoldersForTeam200Response
+func (a *SecretsAPIService) ListTopLevelSecretFoldersForUserExecute(r ApiListTopLevelSecretFoldersForUserRequest) (*ListTopLevelSecretFoldersForTeam200Response, *http.Response, error) {
 	var (
 		traceKey            = "secretsapi.listTopLevelSecretFoldersForUser"
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue []SecretOrFolderListResponse
+		localVarReturnValue *ListTopLevelSecretFoldersForTeam200Response
 	)
 
 	localVarPath := "/v1/teams/{team_name}/secrets"
@@ -714,6 +1056,18 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForUserExecute(r ApiListTop
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.count != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
+	}
+	if r.descending != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
+	if r.prev != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -732,6 +1086,10 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForUserExecute(r ApiListTop
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
 }
@@ -812,15 +1170,19 @@ func (a *SecretsAPIService) ResolveSecretOrFolderExecute(r ApiResolveSecretOrFol
 	localVarPostBody = r.resolveSecretOrFolderRequest
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiRevealSecretRequest struct {
 	ctx                 context.Context
 	ApiService          *SecretsAPIService
+	teamName            string
 	resourceGroupId     string
 	projectId           string
-	teamName            string
 	secretId            string
 	secretRevealRequest *SecretRevealRequest
 }
@@ -843,19 +1205,19 @@ A user may only perform this action if authorized via a security policy.
 This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	    @param secretId The UUID of a Secret
 	@return ApiRevealSecretRequest
 */
-func (a *SecretsAPIService) RevealSecret(ctx context.Context, resourceGroupId string, projectId string, teamName string, secretId string) ApiRevealSecretRequest {
+func (a *SecretsAPIService) RevealSecret(ctx context.Context, teamName string, resourceGroupId string, projectId string, secretId string) ApiRevealSecretRequest {
 	return ApiRevealSecretRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 		secretId:        secretId,
 	}
 }
@@ -873,9 +1235,9 @@ func (a *SecretsAPIService) RevealSecretExecute(r ApiRevealSecretRequest) (*Secr
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secrets/{secret_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"secret_id"+"}", url.PathEscape(parameterValueToString(r.secretId, "secretId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -903,15 +1265,38 @@ func (a *SecretsAPIService) RevealSecretExecute(r ApiRevealSecretRequest) (*Secr
 	localVarPostBody = r.secretRevealRequest
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	if localVarHTTPResponse.StatusCode == 403 {
+
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v ListTopLevelSecretFoldersForProject403Response
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return nil, localVarHTTPResponse, nonDefaultResponse
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiUpdateSecretRequest struct {
 	ctx                         context.Context
 	ApiService                  *SecretsAPIService
+	teamName                    string
 	resourceGroupId             string
 	projectId                   string
-	teamName                    string
 	secretId                    string
 	secretCreateOrUpdateRequest *SecretCreateOrUpdateRequest
 }
@@ -934,19 +1319,19 @@ A user may only perform this action if authorized via a security policy.
 This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	    @param secretId The UUID of a Secret
 	@return ApiUpdateSecretRequest
 */
-func (a *SecretsAPIService) UpdateSecret(ctx context.Context, resourceGroupId string, projectId string, teamName string, secretId string) ApiUpdateSecretRequest {
+func (a *SecretsAPIService) UpdateSecret(ctx context.Context, teamName string, resourceGroupId string, projectId string, secretId string) ApiUpdateSecretRequest {
 	return ApiUpdateSecretRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 		secretId:        secretId,
 	}
 }
@@ -964,9 +1349,9 @@ func (a *SecretsAPIService) UpdateSecretExecute(r ApiUpdateSecretRequest) (*Secr
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secrets/{secret_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"secret_id"+"}", url.PathEscape(parameterValueToString(r.secretId, "secretId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -994,15 +1379,38 @@ func (a *SecretsAPIService) UpdateSecretExecute(r ApiUpdateSecretRequest) (*Secr
 	localVarPostBody = r.secretCreateOrUpdateRequest
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	if localVarHTTPResponse.StatusCode == 403 {
+
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v ListTopLevelSecretFoldersForProject403Response
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return nil, localVarHTTPResponse, nonDefaultResponse
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiUpdateSecretFolderRequest struct {
 	ctx                       context.Context
 	ApiService                *SecretsAPIService
+	teamName                  string
 	resourceGroupId           string
 	projectId                 string
-	teamName                  string
 	secretFolderId            string
 	secretFolderUpdateRequest *SecretFolderUpdateRequest
 }
@@ -1024,19 +1432,19 @@ func (r ApiUpdateSecretFolderRequest) Execute() (*SecretFolderResponse, *http.Re
 This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
 	    @param secretFolderId The UUID of a Secret Folder
 	@return ApiUpdateSecretFolderRequest
 */
-func (a *SecretsAPIService) UpdateSecretFolder(ctx context.Context, resourceGroupId string, projectId string, teamName string, secretFolderId string) ApiUpdateSecretFolderRequest {
+func (a *SecretsAPIService) UpdateSecretFolder(ctx context.Context, teamName string, resourceGroupId string, projectId string, secretFolderId string) ApiUpdateSecretFolderRequest {
 	return ApiUpdateSecretFolderRequest{
 		ApiService:      a,
 		ctx:             ctx,
+		teamName:        teamName,
 		resourceGroupId: resourceGroupId,
 		projectId:       projectId,
-		teamName:        teamName,
 		secretFolderId:  secretFolderId,
 	}
 }
@@ -1054,9 +1462,9 @@ func (a *SecretsAPIService) UpdateSecretFolderExecute(r ApiUpdateSecretFolderReq
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secret_folders/{secret_folder_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"secret_folder_id"+"}", url.PathEscape(parameterValueToString(r.secretFolderId, "secretFolderId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1084,87 +1492,28 @@ func (a *SecretsAPIService) UpdateSecretFolderExecute(r ApiUpdateSecretFolderReq
 	localVarPostBody = r.secretFolderUpdateRequest
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	return localVarReturnValue, localVarHTTPResponse, err
-}
-
-type ApiV1TeamsTeamNameResourceGroupsResourceGroupIdProjectsProjectIdSecretFoldersSecretFolderIdItemsGetRequest struct {
-	ctx             context.Context
-	ApiService      *SecretsAPIService
-	resourceGroupId string
-	projectId       string
-	teamName        string
-	secretFolderId  string
-}
-
-func (r ApiV1TeamsTeamNameResourceGroupsResourceGroupIdProjectsProjectIdSecretFoldersSecretFolderIdItemsGetRequest) Execute() ([]SecretOrFolderListResponse, *http.Response, error) {
-	return r.ApiService.V1TeamsTeamNameResourceGroupsResourceGroupIdProjectsProjectIdSecretFoldersSecretFolderIdItemsGetExecute(r)
-}
-
-/*
-	V1TeamsTeamNameResourceGroupsResourceGroupIdProjectsProjectIdSecretFoldersSecretFolderIdItemsGet List all items in a Secret Folder
-
-	    Lists all items in a Secret Folder. Users must be authorized to perform this action by an existing Security Policy.
-
-This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param teamName The name of your Team
-	    @param secretFolderId The UUID of a Secret Folder
-	@return ApiV1TeamsTeamNameResourceGroupsResourceGroupIdProjectsProjectIdSecretFoldersSecretFolderIdItemsGetRequest
-*/
-func (a *SecretsAPIService) V1TeamsTeamNameResourceGroupsResourceGroupIdProjectsProjectIdSecretFoldersSecretFolderIdItemsGet(ctx context.Context, resourceGroupId string, projectId string, teamName string, secretFolderId string) ApiV1TeamsTeamNameResourceGroupsResourceGroupIdProjectsProjectIdSecretFoldersSecretFolderIdItemsGetRequest {
-	return ApiV1TeamsTeamNameResourceGroupsResourceGroupIdProjectsProjectIdSecretFoldersSecretFolderIdItemsGetRequest{
-		ApiService:      a,
-		ctx:             ctx,
-		resourceGroupId: resourceGroupId,
-		projectId:       projectId,
-		teamName:        teamName,
-		secretFolderId:  secretFolderId,
-	}
-}
-
-// Execute executes the request
-//
-//	@return []SecretOrFolderListResponse
-func (a *SecretsAPIService) V1TeamsTeamNameResourceGroupsResourceGroupIdProjectsProjectIdSecretFoldersSecretFolderIdItemsGetExecute(r ApiV1TeamsTeamNameResourceGroupsResourceGroupIdProjectsProjectIdSecretFoldersSecretFolderIdItemsGetRequest) ([]SecretOrFolderListResponse, *http.Response, error) {
-	var (
-		traceKey            = "secretsapi.v1TeamsTeamNameResourceGroupsResourceGroupIdProjectsProjectIdSecretFoldersSecretFolderIdItemsGet"
-		localVarHTTPMethod  = http.MethodGet
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue []SecretOrFolderListResponse
-	)
-
-	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secret_folders/{secret_folder_id}/items"
-	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"secret_folder_id"+"}", url.PathEscape(parameterValueToString(r.secretFolderId, "secretFolderId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
 	}
 
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
+	if localVarHTTPResponse.StatusCode == 403 {
 
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v ListTopLevelSecretFoldersForProject403Response
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return nil, localVarHTTPResponse, nonDefaultResponse
 	}
-	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
 	return localVarReturnValue, localVarHTTPResponse, err
 }
