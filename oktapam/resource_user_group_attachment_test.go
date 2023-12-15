@@ -14,7 +14,7 @@ import (
 func TestAccUserGroupAttachment(t *testing.T) {
 	resourceName := "oktapam_user_group_attachment.test_user_group_attachment"
 	groupName := fmt.Sprintf("test_acc_user_group_attachment_%s", randSeq())
-	username := fmt.Sprintf("test_acc_user_group_attachment_%s", randSeq())
+	username := fmt.Sprintf("attachment_user_%s", randSeq())
 
 	roleName := "access_user"
 	if isExecutingPAMTest() {
