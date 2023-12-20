@@ -122,6 +122,12 @@ We have two sets of acceptance tests, one for an Advanced Server Access team, an
 
 *Note:* Acceptance tests create real resources, and often cost money to run.  If you wish to test against a dev/test server, ensure that you have the `OKTAPAM_API_HOST` variable set.
 
+Some tests rely on a server already being enrolled for your team.  The ID of this server should be assigned to the `TF_ACC_VALID_SERVER_ID` environment variable.
+
+```
+ export TF_ACC_VALID_SERVER_ID=<server id>
+```
+
 To run the full test suite of Acceptance tests for ASA, run `make testacc`.:
 
 ```sh
