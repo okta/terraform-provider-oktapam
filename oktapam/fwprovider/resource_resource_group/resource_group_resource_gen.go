@@ -24,8 +24,7 @@ func ResourceGroupResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Optional:            true,
-							Computed:            true,
+							Required:            true,
 							Description:         "The UUID of the object",
 							MarkdownDescription: "The UUID of the object",
 						},
@@ -58,14 +57,12 @@ func ResourceGroupResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-				Optional:            true,
-				Computed:            true,
+				Required:            true,
 				Description:         "An array of OPA groups that own this Resource Group. This param is only available to users with the `resource_admin` role.",
 				MarkdownDescription: "An array of OPA groups that own this Resource Group. This param is only available to users with the `resource_admin` role.",
 			},
 			"description": schema.StringAttribute{
-				Optional:            true,
-				Computed:            true,
+				Required:            true,
 				Description:         "A description of the Resource Group",
 				MarkdownDescription: "A description of the Resource Group",
 			},
@@ -76,16 +73,9 @@ func ResourceGroupResourceSchema(ctx context.Context) schema.Schema {
 				MarkdownDescription: "The UUID of the Resource Group",
 			},
 			"name": schema.StringAttribute{
-				Optional:            true,
-				Computed:            true,
+				Required:            true,
 				Description:         "The name of the Resource Group",
 				MarkdownDescription: "The name of the Resource Group",
-			},
-			"team_id": schema.StringAttribute{
-				Optional:            true,
-				Computed:            true,
-				Description:         "The UUID of the Team associated with the Resource Group",
-				MarkdownDescription: "The UUID of the Team associated with the Resource Group",
 			},
 		},
 	}
@@ -96,7 +86,6 @@ type ResourceGroupModel struct {
 	Description                  types.String `tfsdk:"description"`
 	Id                           types.String `tfsdk:"id"`
 	Name                         types.String `tfsdk:"name"`
-	TeamId                       types.String `tfsdk:"team_id"`
 }
 
 var _ basetypes.ObjectTypable = DelegatedResourceAdminGroupsType{}

@@ -1,30 +1,30 @@
 {
 	"provider": {
-		"name": "oktapam_fwk",
+		"name": "oktapam_framework_provider",
 		"schema": {
 			"attributes": [
 				{
 					"name": "oktapam_api_host",
 					"string": {
-						"optional_required": "optional"
+						"optional_required": "required"
 					}
 				},
 				{
 					"name": "oktapam_api_key",
 					"string": {
-						"optional_required": "optional"
+						"optional_required": "required"
 					}
 				},
 				{
 					"name": "oktapam_secret",
 					"string": {
-						"optional_required": "optional"
+						"optional_required": "required"
 					}
 				},
 				{
 					"name": "oktapam_team",
 					"string": {
-						"optional_required": "optional"
+						"optional_required": "required"
 					}
 				}
 			]
@@ -38,13 +38,13 @@
 					{
 						"name": "delegated_resource_admin_groups",
 						"list_nested": {
-							"computed_optional_required": "computed_optional",
+							"computed_optional_required": "required",
 							"nested_object": {
 								"attributes": [
 									{
 										"name": "id",
 										"string": {
-											"computed_optional_required": "computed_optional",
+											"computed_optional_required": "required",
 											"description": "The UUID of the object"
 										}
 									},
@@ -81,7 +81,7 @@
 					{
 						"name": "description",
 						"string": {
-							"computed_optional_required": "computed_optional",
+							"computed_optional_required": "required",
 							"description": "A description of the Resource Group"
 						}
 					},
@@ -95,15 +95,8 @@
 					{
 						"name": "name",
 						"string": {
-							"computed_optional_required": "computed_optional",
+							"computed_optional_required": "required",
 							"description": "The name of the Resource Group"
-						}
-					},
-					{
-						"name": "team_id",
-						"string": {
-							"computed_optional_required": "computed_optional",
-							"description": "The UUID of the Team associated with the Resource Group"
 						}
 					}
 				]

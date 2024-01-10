@@ -1,10 +1,12 @@
-package provider
+package fwprovider
 
 import (
 	"context"
-	"github.com/okta/terraform-provider-oktapam/oktapam/fwkProvider/resource_resource_group"
+	"github.com/okta/terraform-provider-oktapam/oktapam/fwprovider/resource_resource_group"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.Resource = (*resourceGroupResource)(nil)
@@ -20,7 +22,13 @@ func (r *resourceGroupResource) Metadata(ctx context.Context, req resource.Metad
 }
 
 func (r *resourceGroupResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = resource_resource_group.ResourceGroupResourceSchema(ctx)
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed: true,
+			},
+		},
+	}
 }
 
 func (r *resourceGroupResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -35,12 +43,9 @@ func (r *resourceGroupResource) Create(ctx context.Context, req resource.CreateR
 
 	// Create API call logic
 	// resp.Diagnostics.Append(callOktaPAMAPI(ctx, &data)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 
 	// Example data value setting
-	//data.Id = types.StringValue("example-id")
+	data.Id = types.StringValue("example-id")
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

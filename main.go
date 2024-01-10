@@ -4,7 +4,7 @@ import (
 	"context"
 	"flag"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6/tf6server"
-	provider "github.com/okta/terraform-provider-oktapam/oktapam/fwkProvider"
+	provider "github.com/okta/terraform-provider-oktapam/oktapam/fwprovider"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
