@@ -2,6 +2,9 @@ package fwprovider
 
 import (
 	"context"
+
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/fwprovider/resource_resource_group"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -15,7 +18,16 @@ func NewResourceGroupResource() resource.Resource {
 	return &resourceGroupResource{}
 }
 
-type resourceGroupResource struct{}
+type resourceGroupResource struct {
+	clientWrapper *client.SDKClientWrapper
+	teamName      string
+}
+
+func (r *resourceGroupResource) Configure(_ context.Context, request datasource.ConfigureRequest, response *datasource.ConfigureResponse) {
+	providerData, _ := request.ProviderData.(*oktapamFrameworkProvider)
+	r.clientWrapper = providerData.SDKClientWrapper
+	r.teamName = providerData.SDKClientWrapper.Team
+}
 
 func (r *resourceGroupResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_resource_group"
@@ -42,7 +54,7 @@ func (r *resourceGroupResource) Create(ctx context.Context, req resource.CreateR
 	}
 
 	// Create API call logic
-	// resp.Diagnostics.Append(callOktaPAMAPI(ctx, &data)...)
+	//r.clientWrapper.SDKClient.ResourceGroupsAPI.CreateResourceGroup(ctx, r.teamName).ResourceGroup().Execute()
 
 	//provider := req.ProviderMeta.(*oktapamFrameworkProvider)
 	// Example data value setting
