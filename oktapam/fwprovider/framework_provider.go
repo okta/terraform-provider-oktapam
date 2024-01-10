@@ -2,6 +2,7 @@ package fwprovider
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
@@ -24,16 +25,20 @@ func OktapamFrameworkProviderSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"oktapam_api_host": schema.StringAttribute{
-				Required: true,
+				Optional:    true,
+				Description: "Okta PAM API Host",
 			},
-			"oktapam_api_key": schema.StringAttribute{
-				Required: true,
+			"oktapam_key": schema.StringAttribute{
+				Optional:    true,
+				Description: "Okta PAM API Key",
 			},
 			"oktapam_secret": schema.StringAttribute{
-				Required: true,
+				Optional:    true,
+				Description: "Okta PAM API Secret",
 			},
 			"oktapam_team": schema.StringAttribute{
-				Required: true,
+				Optional:    true,
+				Description: "Okta PAM Team",
 			},
 		},
 	}
