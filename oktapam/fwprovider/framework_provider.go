@@ -18,6 +18,7 @@ const (
 	apiKeySchemaEnvVar       = "OKTAPAM_KEY"
 	apiKeySecretSchemaEnvVar = "OKTAPAM_SECRET"
 	teamSchemaEnvVar         = "OKTAPAM_TEAM"
+	DefaultAPIBaseURL        = "https://app.scaleft.com"
 )
 
 var _ provider.Provider = (*oktapamFrameworkProvider)(nil)
@@ -120,8 +121,9 @@ func (p *oktapamFrameworkProvider) ConfigureConfigDefaults(config *OktapamFramew
 	if config.OktapamApiHost.IsNull() {
 		if apiHost := os.Getenv(apiHostSchemaEnvVar); apiHost != "" {
 			config.OktapamApiHost = types.StringValue(apiHost)
+		} else {
+			config.OktapamApiHost = types.StringValue(DefaultAPIBaseURL)
 		}
-		// If env var isn't there, set it to DefaultAPIBaseURL = "https://app.scaleft.com"
 	}
 
 	if config.OktapamSecret.IsNull() {
