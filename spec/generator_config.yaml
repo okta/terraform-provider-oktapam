@@ -1,0 +1,19 @@
+provider:
+  name: oktapam_fwk
+  # This schema needs to exist in the OpenAPI spec!
+  schema_ref: '#/components/schemas/TerraformProviderSchema'
+
+resources:
+  resource_group:
+    create:
+      path: /v1/teams/{team_name}/resource_groups
+      method: POST
+    read:
+      path: /v1/teams/{team_name}/resource_groups/{resource_group_id}
+      method: GET
+    update:
+      path: /v1/teams/{team_name}/resource_groups/{resource_group_id}
+      method: PUT
+    delete:
+      path: /v1/teams/{team_name}/resource_groups/{resource_group_id}
+      method: DELETE
