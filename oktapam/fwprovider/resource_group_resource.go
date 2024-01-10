@@ -44,6 +44,7 @@ func (r *resourceGroupResource) Create(ctx context.Context, req resource.CreateR
 	// Create API call logic
 	// resp.Diagnostics.Append(callOktaPAMAPI(ctx, &data)...)
 
+	//provider := req.ProviderMeta.(*oktapamFrameworkProvider)
 	// Example data value setting
 	data.Id = types.StringValue("example-id")
 
@@ -94,4 +95,5 @@ func (r *resourceGroupResource) Delete(ctx context.Context, req resource.DeleteR
 	}
 
 	// Delete API call logic
+
 }
