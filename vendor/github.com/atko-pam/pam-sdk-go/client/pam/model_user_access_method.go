@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The ScaleFT API is a control plane API for operations in Okta Privileged Access (formerly ScaleFT)
+The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -36,6 +36,9 @@ type UserAccessMethod struct {
 	SecurityPolicyRuleId *string `json:"security_policy_rule_id,omitempty"`
 	// A list of rule IDs that result in identical user access methods
 	RuleIds []string `json:"rule_ids,omitempty"`
+	// The type of access method
+	UserAccessType *string                  `json:"user_access_type,omitempty"`
+	Details        *UserAccessMethodDetails `json:"details,omitempty"`
 }
 
 // NewUserAccessMethod instantiates a new UserAccessMethod object
@@ -319,6 +322,72 @@ func (o *UserAccessMethod) SetRuleIds(v []string) *UserAccessMethod {
 	return o
 }
 
+// GetUserAccessType returns the UserAccessType field value if set, zero value otherwise.
+func (o *UserAccessMethod) GetUserAccessType() string {
+	if o == nil || IsNil(o.UserAccessType) {
+		var ret string
+		return ret
+	}
+	return *o.UserAccessType
+}
+
+// GetUserAccessTypeOk returns a tuple with the UserAccessType field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserAccessMethod) GetUserAccessTypeOk() (*string, bool) {
+	if o == nil || IsNil(o.UserAccessType) {
+		return nil, false
+	}
+	return o.UserAccessType, true
+}
+
+// HasUserAccessType returns a boolean if a field has been set.
+func (o *UserAccessMethod) HasUserAccessType() bool {
+	if o != nil && !IsNil(o.UserAccessType) {
+		return true
+	}
+
+	return false
+}
+
+// SetUserAccessType gets a reference to the given string and assigns it to the UserAccessType field.
+func (o *UserAccessMethod) SetUserAccessType(v string) *UserAccessMethod {
+	o.UserAccessType = &v
+	return o
+}
+
+// GetDetails returns the Details field value if set, zero value otherwise.
+func (o *UserAccessMethod) GetDetails() UserAccessMethodDetails {
+	if o == nil || IsNil(o.Details) {
+		var ret UserAccessMethodDetails
+		return ret
+	}
+	return *o.Details
+}
+
+// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserAccessMethod) GetDetailsOk() (*UserAccessMethodDetails, bool) {
+	if o == nil || IsNil(o.Details) {
+		return nil, false
+	}
+	return o.Details, true
+}
+
+// HasDetails returns a boolean if a field has been set.
+func (o *UserAccessMethod) HasDetails() bool {
+	if o != nil && !IsNil(o.Details) {
+		return true
+	}
+
+	return false
+}
+
+// SetDetails gets a reference to the given UserAccessMethodDetails and assigns it to the Details field.
+func (o *UserAccessMethod) SetDetails(v UserAccessMethodDetails) *UserAccessMethod {
+	o.Details = &v
+	return o
+}
+
 func (o UserAccessMethod) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -352,6 +421,12 @@ func (o UserAccessMethod) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.RuleIds) {
 		toSerialize["rule_ids"] = o.RuleIds
+	}
+	if !IsNil(o.UserAccessType) {
+		toSerialize["user_access_type"] = o.UserAccessType
+	}
+	if !IsNil(o.Details) {
+		toSerialize["details"] = o.Details
 	}
 	return toSerialize, nil
 }

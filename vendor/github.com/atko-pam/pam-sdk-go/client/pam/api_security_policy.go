@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The ScaleFT API is a control plane API for operations in Okta Privileged Access (formerly ScaleFT)
+The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -96,6 +96,10 @@ func (a *SecurityPolicyAPIService) CreateSecurityPolicyExecute(r ApiCreateSecuri
 	localVarPostBody = r.securityPolicy
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -119,7 +123,7 @@ This endpoint requires the following role: `security_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param securityPolicyId The UUID of the Security Policy
+	    @param securityPolicyId The UUID of a Security Policy
 	@return ApiDeleteSecurityPolicyRequest
 */
 func (a *SecurityPolicyAPIService) DeleteSecurityPolicy(ctx context.Context, teamName string, securityPolicyId string) ApiDeleteSecurityPolicyRequest {
@@ -167,6 +171,10 @@ func (a *SecurityPolicyAPIService) DeleteSecurityPolicyExecute(r ApiDeleteSecuri
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
 	return localVarHTTPResponse, err
 }
 
@@ -190,7 +198,7 @@ This endpoint requires the following role: `security_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param securityPolicyId The UUID of the Security Policy
+	    @param securityPolicyId The UUID of a Security Policy
 	@return ApiGetSecurityPolicyRequest
 */
 func (a *SecurityPolicyAPIService) GetSecurityPolicy(ctx context.Context, teamName string, securityPolicyId string) ApiGetSecurityPolicyRequest {
@@ -240,6 +248,10 @@ func (a *SecurityPolicyAPIService) GetSecurityPolicyExecute(r ApiGetSecurityPoli
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
 }
@@ -311,6 +323,10 @@ func (a *SecurityPolicyAPIService) ListSecurityPoliciesExecute(r ApiListSecurity
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -340,7 +356,7 @@ This endpoint requires the following role: `security_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param securityPolicyId The UUID of the Security Policy
+	    @param securityPolicyId The UUID of a Security Policy
 	@return ApiUpdateSecurityPolicyRequest
 */
 func (a *SecurityPolicyAPIService) UpdateSecurityPolicy(ctx context.Context, teamName string, securityPolicyId string) ApiUpdateSecurityPolicyRequest {
@@ -389,6 +405,10 @@ func (a *SecurityPolicyAPIService) UpdateSecurityPolicyExecute(r ApiUpdateSecuri
 	// body params
 	localVarPostBody = r.securityPolicy
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
 
 	return localVarHTTPResponse, err
 }

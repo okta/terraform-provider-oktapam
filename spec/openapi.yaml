@@ -182,6 +182,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/NamedObject"
+      required:
+        - name
+        - description
+        - delegated_resource_admin_groups
     NamedObject:
       title: NamedObject
       type: object
@@ -195,6 +199,8 @@ components:
           readOnly: true
         type:
           $ref: "#/components/schemas/NamedObjectType"
+      required:
+        - id
     NamedObjectType:
       type: string
       readOnly: true
@@ -218,3 +224,8 @@ components:
           type: string
         oktapam_team:
           type: string
+      required:
+        - oktapam_api_host
+        - oktapam_api_key
+        - oktapam_secret
+        - oktapam_team
