@@ -6,6 +6,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"math/rand"
 	"net/http"
@@ -21,6 +22,15 @@ import (
 	"github.com/go-resty/resty/v2"
 	"gopkg.in/square/go-jose.v2"
 )
+
+type ErrNonDefaultResponse struct {
+	StatusCode int
+	Result     any
+}
+
+func (endr ErrNonDefaultResponse) Error() string {
+	return fmt.Sprintf("got http status code %d, providing non-default result", endr.StatusCode)
+}
 
 // APIClient manages communication with the Okta Privileged Access API v1.0.0
 // In most cases there should be only one, shared, APIClient.
@@ -55,6 +65,12 @@ type APIClient struct {
 	UsersAPI *UsersAPIService
 
 	SecretsAPI *SecretsAPIService
+
+	DatabaseResourcesAPI *DatabaseResourcesAPIService
+
+	AccessReportsAPI *ReportsAPIService
+
+	CloudEntiltlementsAPI *CloudEntitlementsAPIService
 }
 
 type service struct {
@@ -94,7 +110,9 @@ func NewAPIClient(opts ...ConfigOption) (*APIClient, error) {
 	apiClient.TeamsAPI = (*TeamsAPIService)(&apiClient.common)
 	apiClient.UsersAPI = (*UsersAPIService)(&apiClient.common)
 	apiClient.SecretsAPI = (*SecretsAPIService)(&apiClient.common)
-
+	apiClient.DatabaseResourcesAPI = (*DatabaseResourcesAPIService)(&apiClient.common)
+	apiClient.AccessReportsAPI = (*ReportsAPIService)(&apiClient.common)
+	apiClient.CloudEntiltlementsAPI = (*CloudEntitlementsAPIService)(&apiClient.common)
 	return apiClient, nil
 }
 
@@ -326,11 +344,14 @@ func (apiClient *APIClient) callAPI(
 		defer sp.Finish()
 	}
 
+	// Using SetDoNotParseResponse tell resty not to parse or close the response in http.Client.Do(requset)
+	// This means you need to ensure that the body is read and closed properly to avoid resource leaks.
 	req := apiClient.restyClient.R().
 		SetContext(ctx).
 		SetHeaders(headerParams).
 		SetQueryParamsFromValues(queryParams).
-		SetFormDataFromValues(formParams)
+		SetFormDataFromValues(formParams).
+		SetDoNotParseResponse(true)
 	req.Method = method
 
 	for _, ff := range formFiles {
@@ -342,25 +363,49 @@ func (apiClient *APIClient) callAPI(
 		req.SetBody(postBody)
 	}
 
-	if result != nil {
-		req.SetResult(&result)
-	}
-
 	response, err := req.Execute(method, path)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error executing the API request: %w", err)
 	}
+
+	// If the response has no content, return the response and nil error directly
+	if response.RawResponse.StatusCode == http.StatusNoContent {
+		return response.RawResponse, nil
+	}
+
+	respBody, err := io.ReadAll(response.RawResponse.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading the raw HTTP response body: %w", err)
+	}
+
+	// unmarshal the response body into the result interface
+	if err := json.Unmarshal(respBody, &result); err != nil {
+		return nil, fmt.Errorf("error unmarshalling the raw HTTP response body: %w", err)
+	}
+
+	_ = response.RawResponse.Body.Close()
+
+	// duplicate the response body so we can return it for the caller to use
+	bodyBuffer := bytes.NewBuffer(respBody)
+	newRawResponse := &http.Response{
+		StatusCode: response.RawResponse.StatusCode,
+		Header:     response.RawResponse.Header.Clone(),
+		Body:       io.NopCloser(bytes.NewBuffer(bodyBuffer.Bytes())),
+	}
+
+	// reset the original response body
+	response.RawResponse.Body = io.NopCloser(bytes.NewBuffer(bodyBuffer.Bytes()))
 
 	if response.IsError() {
 		responseError := response.Error()
 		if responseError != nil {
 			if apiError, ok := responseError.(*APIError); ok {
-				return response.RawResponse, apiError
+				return newRawResponse, apiError
 			}
 		}
 
-		return response.RawResponse, &APIError{
+		return newRawResponse, &APIError{
 			Message: response.Status(),
 		}
 	}

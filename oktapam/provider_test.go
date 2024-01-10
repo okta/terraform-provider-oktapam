@@ -45,11 +45,17 @@ func testAccPreCheck(t *testing.T) {
 	}
 }
 
+const defaultRandSeqLength = 20
+
 var randChars = []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
 
 func randSeq() string {
+	return randSeqWithLength(defaultRandSeqLength)
+}
+
+func randSeqWithLength(length uint) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	b := make([]rune, 20) // Character length
+	b := make([]rune, length) // Character length
 	for i := range b {
 		b[i] = randChars[r.Intn(len(randChars))]
 	}
@@ -104,6 +110,30 @@ func subNamedObjects(expectedNamedObjects, actualNamedObjects []client.NamedObje
 	}
 
 	return subs, nil
+}
+
+func fillNamedObjectValues(expectedNamedObject client.NamedObject, actualNamedObject client.NamedObject) client.NamedObject {
+	filled := client.NamedObject{}
+
+	if expectedNamedObject.Id != nil {
+		filled.Id = expectedNamedObject.Id
+	} else {
+		filled.Id = actualNamedObject.Id
+	}
+
+	if expectedNamedObject.Name != nil {
+		filled.Name = expectedNamedObject.Name
+	} else {
+		filled.Name = actualNamedObject.Name
+	}
+
+	if string(expectedNamedObject.Type) != "" {
+		filled.Type = expectedNamedObject.Type
+	} else {
+		filled.Type = actualNamedObject.Type
+	}
+
+	return filled
 }
 
 func getTeamName() string {

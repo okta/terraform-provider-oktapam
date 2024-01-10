@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The ScaleFT API is a control plane API for operations in Okta Privileged Access (formerly ScaleFT)
+The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com

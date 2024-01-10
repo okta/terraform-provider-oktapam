@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The ScaleFT API is a control plane API for operations in Okta Privileged Access (formerly ScaleFT)
+The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -96,14 +96,18 @@ func (a *ResourceGroupsAPIService) CreateResourceGroupExecute(r ApiCreateResourc
 	localVarPostBody = r.resourceGroup
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiDeleteResourceGroupRequest struct {
 	ctx             context.Context
 	ApiService      *ResourceGroupsAPIService
-	resourceGroupId string
 	teamName        string
+	resourceGroupId string
 }
 
 func (r ApiDeleteResourceGroupRequest) Execute() (*http.Response, error) {
@@ -118,16 +122,16 @@ func (r ApiDeleteResourceGroupRequest) Execute() (*http.Response, error) {
 This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param resourceGroupId The UUID of a Resource Group
 	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
 	@return ApiDeleteResourceGroupRequest
 */
-func (a *ResourceGroupsAPIService) DeleteResourceGroup(ctx context.Context, resourceGroupId string, teamName string) ApiDeleteResourceGroupRequest {
+func (a *ResourceGroupsAPIService) DeleteResourceGroup(ctx context.Context, teamName string, resourceGroupId string) ApiDeleteResourceGroupRequest {
 	return ApiDeleteResourceGroupRequest{
 		ApiService:      a,
 		ctx:             ctx,
-		resourceGroupId: resourceGroupId,
 		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
 	}
 }
 
@@ -141,8 +145,8 @@ func (a *ResourceGroupsAPIService) DeleteResourceGroupExecute(r ApiDeleteResourc
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -167,14 +171,18 @@ func (a *ResourceGroupsAPIService) DeleteResourceGroupExecute(r ApiDeleteResourc
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
 	return localVarHTTPResponse, err
 }
 
 type ApiGetResourceGroupRequest struct {
 	ctx             context.Context
 	ApiService      *ResourceGroupsAPIService
-	resourceGroupId string
 	teamName        string
+	resourceGroupId string
 }
 
 func (r ApiGetResourceGroupRequest) Execute() (*ResourceGroup, *http.Response, error) {
@@ -189,16 +197,16 @@ func (r ApiGetResourceGroupRequest) Execute() (*ResourceGroup, *http.Response, e
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param resourceGroupId The UUID of a Resource Group
 	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
 	@return ApiGetResourceGroupRequest
 */
-func (a *ResourceGroupsAPIService) GetResourceGroup(ctx context.Context, resourceGroupId string, teamName string) ApiGetResourceGroupRequest {
+func (a *ResourceGroupsAPIService) GetResourceGroup(ctx context.Context, teamName string, resourceGroupId string) ApiGetResourceGroupRequest {
 	return ApiGetResourceGroupRequest{
 		ApiService:      a,
 		ctx:             ctx,
-		resourceGroupId: resourceGroupId,
 		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
 	}
 }
 
@@ -215,8 +223,8 @@ func (a *ResourceGroupsAPIService) GetResourceGroupExecute(r ApiGetResourceGroup
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -240,6 +248,10 @@ func (a *ResourceGroupsAPIService) GetResourceGroupExecute(r ApiGetResourceGroup
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
 }
@@ -311,14 +323,18 @@ func (a *ResourceGroupsAPIService) ListResourceGroupsExecute(r ApiListResourceGr
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
 type ApiUpdateResourceGroupRequest struct {
 	ctx             context.Context
 	ApiService      *ResourceGroupsAPIService
-	resourceGroupId string
 	teamName        string
+	resourceGroupId string
 	resourceGroup   *ResourceGroup
 }
 
@@ -339,16 +355,16 @@ func (r ApiUpdateResourceGroupRequest) Execute() (*ResourceGroup, *http.Response
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param resourceGroupId The UUID of a Resource Group
 	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
 	@return ApiUpdateResourceGroupRequest
 */
-func (a *ResourceGroupsAPIService) UpdateResourceGroup(ctx context.Context, resourceGroupId string, teamName string) ApiUpdateResourceGroupRequest {
+func (a *ResourceGroupsAPIService) UpdateResourceGroup(ctx context.Context, teamName string, resourceGroupId string) ApiUpdateResourceGroupRequest {
 	return ApiUpdateResourceGroupRequest{
 		ApiService:      a,
 		ctx:             ctx,
-		resourceGroupId: resourceGroupId,
 		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
 	}
 }
 
@@ -365,8 +381,8 @@ func (a *ResourceGroupsAPIService) UpdateResourceGroupExecute(r ApiUpdateResourc
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -392,6 +408,10 @@ func (a *ResourceGroupsAPIService) UpdateResourceGroupExecute(r ApiUpdateResourc
 	// body params
 	localVarPostBody = r.resourceGroup
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
 }
