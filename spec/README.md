@@ -1,9 +1,17 @@
+## Code Generation Steps
+
+### Scaffold OktaPAM Provider (Just need to do one time)
+```shell
+tfplugingen-framework scaffold provider \
+  --name oktapam_framework_provider \
+  --output-dir ./oktapam/fwprovider
+```
 
 ### Scaffolding Resource
 ```shell
 tfplugingen-framework scaffold resource \
 --name resource_group \
---output-dir ./fwkProvider
+--output-dir ./oktapam/fwprovider
 ```
 
 ### Generating Provider Code Spec
@@ -18,5 +26,5 @@ tfplugingen-openapi generate \
 ```shell
 tfplugingen-framework generate resources \
   --input ./spec/provider-code-spec.json \
-  --output ./oktapam/fwkProvider 
+  --output ./oktapam/fwprovider
 ```

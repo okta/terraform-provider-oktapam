@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The ScaleFT API is a control plane API for operations in Okta Privileged Access (formerly ScaleFT)
+The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -41,7 +41,7 @@ This endpoint requires one of the following roles: `end_user`, `security_admin`,
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param clientId The UUID of the Client
+	    @param clientId The UUID of a Client
 	@return ApiFetchClientRequest
 */
 func (a *ClientsAPIService) FetchClient(ctx context.Context, teamName string, clientId string) ApiFetchClientRequest {
@@ -92,6 +92,10 @@ func (a *ClientsAPIService) FetchClientExecute(r ApiFetchClientRequest) (*Client
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -99,18 +103,18 @@ type ApiListClientsRequest struct {
 	ctx        context.Context
 	ApiService *ClientsAPIService
 	teamName   string
-	offset     *string
+	all        *bool
 	count      *int32
 	descending *bool
+	offset     *string
 	prev       *bool
-	all        *bool
 	state      *string
 	username   *string
 }
 
-// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
-func (r ApiListClientsRequest) Offset(offset string) ApiListClientsRequest {
-	r.offset = &offset
+// When &#x60;true&#x60;, returns all Clients for the Team
+func (r ApiListClientsRequest) All(all bool) ApiListClientsRequest {
+	r.all = &all
 	return r
 }
 
@@ -126,25 +130,25 @@ func (r ApiListClientsRequest) Descending(descending bool) ApiListClientsRequest
 	return r
 }
 
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListClientsRequest) Offset(offset string) ApiListClientsRequest {
+	r.offset = &offset
+	return r
+}
+
 // The direction of paging
 func (r ApiListClientsRequest) Prev(prev bool) ApiListClientsRequest {
 	r.prev = &prev
 	return r
 }
 
-// When &#x60;true&#x60;, returns all Clients for the Team
-func (r ApiListClientsRequest) All(all bool) ApiListClientsRequest {
-	r.all = &all
-	return r
-}
-
-// The state of the Client: &#x60;ACTIVE&#x60;, &#x60;PENDING&#x60;, or &#x60;DELETED&#x60;
+// Only return Clients with the specified state. Valid statuses: &#x60;ACTIVE&#x60;, &#x60;PENDING&#x60;, or &#x60;DELETED&#x60;.
 func (r ApiListClientsRequest) State(state string) ApiListClientsRequest {
 	r.state = &state
 	return r
 }
 
-// List Clients assigned to a single User. An empty string returns unassigned Clients.
+// Only return Clients assigned to the specified User. An empty string returns unassigned Clients.
 func (r ApiListClientsRequest) Username(username string) ApiListClientsRequest {
 	r.username = &username
 	return r
@@ -192,8 +196,8 @@ func (a *ClientsAPIService) ListClientsExecute(r ApiListClientsRequest) (*ListCl
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.offset != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	if r.all != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "all", r.all, "")
 	}
 	if r.count != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
@@ -201,11 +205,11 @@ func (a *ClientsAPIService) ListClientsExecute(r ApiListClientsRequest) (*ListCl
 	if r.descending != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
 	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
 	if r.prev != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
-	}
-	if r.all != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "all", r.all, "")
 	}
 	if r.state != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "state", r.state, "")
@@ -232,6 +236,10 @@ func (a *ClientsAPIService) ListClientsExecute(r ApiListClientsRequest) (*ListCl
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -255,7 +263,7 @@ This endpoint requires one of the following roles: `end_user`, `security_admin`,
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param clientId The UUID of the Client
+	    @param clientId The UUID of a Client
 	@return ApiRemoveClientRequest
 */
 func (a *ClientsAPIService) RemoveClient(ctx context.Context, teamName string, clientId string) ApiRemoveClientRequest {
@@ -303,6 +311,10 @@ func (a *ClientsAPIService) RemoveClientExecute(r ApiRemoveClientRequest) (*http
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
 	return localVarHTTPResponse, err
 }
 
@@ -332,7 +344,7 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param clientId The UUID of the Client
+	    @param clientId The UUID of a Client
 	@return ApiUpdateClientRequest
 */
 func (a *ClientsAPIService) UpdateClient(ctx context.Context, teamName string, clientId string) ApiUpdateClientRequest {
@@ -384,6 +396,10 @@ func (a *ClientsAPIService) UpdateClientExecute(r ApiUpdateClientRequest) (*http
 	// body params
 	localVarPostBody = r.clientUpdateRequest
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
 
 	return localVarHTTPResponse, err
 }

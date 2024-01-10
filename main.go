@@ -4,14 +4,14 @@ import (
 	"context"
 	"flag"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6/tf6server"
-	provider "github.com/okta/terraform-provider-oktapam/oktapam/fwkProvider"
+	provider "github.com/okta/terraform-provider-oktapam/oktapam/fwprovider"
 	"log"
 
+	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-mux/tf5to6server"
 	"github.com/hashicorp/terraform-plugin-mux/tf6muxserver"
 	"github.com/okta/terraform-provider-oktapam/oktapam"
-	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
 
 // Run the docs generation tool, check its repository for more information on how it works and how docs
@@ -37,6 +37,10 @@ import (
 //	version string = "dev"
 //)
 
+// TF core (CLI) >= 1.0 doesn't support protocol version 5
+// By default, SDKV2 providers support Protocol Version 5 and framework provider support Protocol Version 6
+// Upgrading SDKV2 provider to support protocol version 6 and then serving it along with framework provider. We can downgrade
+// framework provider to support protocol version 5 too but then we cannot use some of the features like NestedAttribute.
 func main() {
 	var debug bool
 

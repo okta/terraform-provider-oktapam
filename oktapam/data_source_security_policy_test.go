@@ -13,9 +13,10 @@ func TestAccDatasourceSecurityPolicyFetch(t *testing.T) {
 
 	// Generate details
 	identifier := randSeq()
+	validServerID := getValidServerID()
 
 	// config to create the resources
-	initConfig := createTestAccDatasourceSecurityPolicyInitConfig(identifier)
+	initConfig := createTestAccDatasourceSecurityPolicyInitConfig(identifier, validServerID)
 
 	// config for the datasources
 	fetchConfig := testAccDatasourceSecurityPolicyConfig(identifier)
@@ -38,6 +39,9 @@ func TestAccDatasourceSecurityPolicyFetch(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, attributes.Active, "true"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Principals), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.#", attributes.Principals, attributes.Groups), "1"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Rule), "2"),
+
+					// server rule
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Rule), "2"),
 
 					// server rule
@@ -65,8 +69,22 @@ func TestAccDatasourceSecurityPolicyFetch(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.0.%s.1", attributes.Rule, attributes.Resources, attributes.Servers, attributes.LabelSelectors, attributes.Accounts), "pamadmin"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.0.%s.system.os_type", attributes.Rule, attributes.Resources, attributes.Servers, attributes.LabelSelectors, attributes.ServerLabels), "linux"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.#", attributes.Rule, attributes.Resources, attributes.Servers, attributes.Server), "1"),
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Resources, attributes.Servers, attributes.Server, attributes.ServerID), "9103335f-1147-407b-84d7-dbfc57f75c99"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Resources, attributes.Servers, attributes.Server, attributes.ServerID), validServerID),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.#", attributes.Rule, attributes.Resources, attributes.Servers, attributes.ServerAccount), "0"),
+
+					// secret rule
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.#", attributes.Rule, attributes.Conditions), "0"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s", attributes.Rule, attributes.Name), "second rule"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.#", attributes.Rule, attributes.Privileges), "1"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.#", attributes.Rule, attributes.Privileges, attributes.Secret), "1"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.List), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.FolderCreate), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.FolderDelete), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.FolderUpdate), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.SecretCreate), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.SecretDelete), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.SecretReveal), "false"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.SecretUpdate), "true"),
 
 					// secret rule
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.#", attributes.Rule, attributes.Conditions), "0"),
@@ -91,6 +109,24 @@ const testAccDatasourceSecurityPolicyCreateConfigFormat = `
 resource "oktapam_group" "test_group" {
 	name = "sp-test-group-%s"
 }
+resource "oktapam_group" "test_resource_group_dga_group" {
+	name = "sp-test-dra-group-%s"
+}
+resource "oktapam_resource_group" "test_acc_resource_group" {
+	name = "sp-test-rg-%s"
+	description = "test resource group"
+	delegated_resource_admin_groups = [oktapam_group.test_resource_group_dga_group.id]	
+}
+resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
+	name = "sp-test-rg-project-%s"
+	resource_group = oktapam_resource_group.test_acc_resource_group.id
+}
+resource "oktapam_secret_folder" "test_acc_secret_folder_top_level" {
+	name = "sp-test-secret-folder-%s"
+	description = "updated top-level folder for test"
+	resource_group = oktapam_resource_group.test_acc_resource_group.id
+	project = oktapam_resource_group_project.test_acc_resource_group_project.id
+}
 resource "oktapam_security_policy" "test_ds_security_policies" {
 	name = "%s"
 	description = "terraform test sp"
@@ -103,7 +139,7 @@ resource "oktapam_security_policy" "test_ds_security_policies" {
 		resources {
 			servers {
 				server {
-					server_id = "9103335f-1147-407b-84d7-dbfc57f75c99"
+					server_id = "%s"
 				}
 				label_selectors {
 					server_labels = {
@@ -140,7 +176,7 @@ resource "oktapam_security_policy" "test_ds_security_policies" {
 		resources {
 			secrets {
 				secret_folder {
-					secret_folder_id = "d458230d-7066-4c03-baab-2d2bf407a2b7"
+					secret_folder_id = oktapam_secret_folder.test_acc_secret_folder_top_level.id
 				}
 			}
 		}
@@ -160,8 +196,8 @@ resource "oktapam_security_policy" "test_ds_security_policies" {
 }
 `
 
-func createTestAccDatasourceSecurityPolicyInitConfig(identifier string) string {
-	return fmt.Sprintf(testAccDatasourceSecurityPolicyCreateConfigFormat, identifier, identifier)
+func createTestAccDatasourceSecurityPolicyInitConfig(identifier string, serverID string) string {
+	return fmt.Sprintf(testAccDatasourceSecurityPolicyCreateConfigFormat, identifier, identifier, identifier, identifier, identifier, identifier, serverID)
 }
 
 const testAccDatasourceSecurityPolicyFormat = `

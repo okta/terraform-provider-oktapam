@@ -104,8 +104,6 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - name: Check out repository code
-        uses: actions/checkout@v3
       - name: Get Terraform CLI Version
         id: vars
         run: echo ::set-output name=tf-version::$(cat .terraform-version)
@@ -114,7 +112,7 @@ jobs:
         with:
           terraform_version: ${{ steps.vars.outputs.tf-version }}
           terraform_wrapper: false
-      - name: Run unit tests
+      - name: Run doc generation check
         run: |
           ./scripts/ci-check-generated.sh
       - run: echo "🍏 This job's status is ${{ job.status }}."

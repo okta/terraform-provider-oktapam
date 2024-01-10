@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The ScaleFT API is a control plane API for operations in Okta Privileged Access (formerly ScaleFT)
+The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -22,11 +22,13 @@ var _ MappedNullable = &ResolveSecretOrFolderRequest{}
 type ResolveSecretOrFolderRequest struct {
 	ResourceGroup SecretResolveParent `json:"resource_group"`
 	Project       SecretResolveParent `json:"project"`
-	// The path to the parent directory
+	// The path to the parent directory. Don't use this parameter if the request also includes an `id`.
 	ParentFolderPath NullableString `json:"parent_folder_path,omitempty"`
-	// The name of the Secret Folder
+	// The ID of the Secret or Secret Folder. Don't use this parameter if the request also includes a `parent_folder_path`, `secret_folder_name`, and `secret_name`.
+	Id NullableString `json:"id,omitempty"`
+	// The name of the Secret Folder. Don't use this parameter if the request also includes an `id` or `secret_name`.
 	SecretFolderName *string `json:"secret_folder_name,omitempty"`
-	// The name of the Secret
+	// The name of the Secret. Don't use this parameter if the request also includes an `id` or `secret_folder_name`.
 	SecretName *string `json:"secret_name,omitempty"`
 }
 
@@ -145,6 +147,52 @@ func (o *ResolveSecretOrFolderRequest) UnsetParentFolderPath() *ResolveSecretOrF
 	return o
 }
 
+// GetId returns the Id field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *ResolveSecretOrFolderRequest) GetId() string {
+	if o == nil || IsNil(o.Id.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Id.Get()
+}
+
+// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *ResolveSecretOrFolderRequest) GetIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Id.Get(), o.Id.IsSet()
+}
+
+// HasId returns a boolean if a field has been set.
+func (o *ResolveSecretOrFolderRequest) HasId() bool {
+	if o != nil && o.Id.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetId gets a reference to the given NullableString and assigns it to the Id field.
+func (o *ResolveSecretOrFolderRequest) SetId(v string) *ResolveSecretOrFolderRequest {
+	o.Id.Set(&v)
+	return o
+}
+
+// SetIdNil sets the value for Id to be an explicit nil
+func (o *ResolveSecretOrFolderRequest) SetIdNil() *ResolveSecretOrFolderRequest {
+	o.Id.Set(nil)
+	return o
+}
+
+// UnsetId ensures that no value is present for Id, not even an explicit nil
+func (o *ResolveSecretOrFolderRequest) UnsetId() *ResolveSecretOrFolderRequest {
+	o.Id.Unset()
+	return o
+}
+
 // GetSecretFolderName returns the SecretFolderName field value if set, zero value otherwise.
 func (o *ResolveSecretOrFolderRequest) GetSecretFolderName() string {
 	if o == nil || IsNil(o.SecretFolderName) {
@@ -225,6 +273,9 @@ func (o ResolveSecretOrFolderRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize["project"] = o.Project
 	if o.ParentFolderPath.IsSet() {
 		toSerialize["parent_folder_path"] = o.ParentFolderPath.Get()
+	}
+	if o.Id.IsSet() {
+		toSerialize["id"] = o.Id.Get()
 	}
 	if !IsNil(o.SecretFolderName) {
 		toSerialize["secret_folder_name"] = o.SecretFolderName
