@@ -29,15 +29,15 @@ func OktapamFrameworkProviderSchema(ctx context.Context) schema.Schema {
 				Description: "Okta PAM API Host",
 			},
 			"oktapam_key": schema.StringAttribute{
-				Optional:    true,
+				Required:    true,
 				Description: "Okta PAM API Key",
 			},
 			"oktapam_secret": schema.StringAttribute{
-				Optional:    true,
+				Required:    true,
 				Description: "Okta PAM API Secret",
 			},
 			"oktapam_team": schema.StringAttribute{
-				Optional:    true,
+				Required:    true,
 				Description: "Okta PAM Team",
 			},
 		},
