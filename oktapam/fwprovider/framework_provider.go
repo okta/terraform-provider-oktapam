@@ -6,7 +6,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
-	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -24,6 +23,8 @@ const (
 	apiKeyKey       = "oktapam_key"
 	apiKeySecretKey = "oktapam_secret"
 	teamKey         = "oktapam_team"
+
+	DefaultAPIBaseURL = "https://app.scaleft.com"
 )
 
 //var (
@@ -98,15 +99,11 @@ func (p *OktapamFrameworkProvider) Configure(ctx context.Context, req provider.C
 		resp.Diagnostics.Append(diag.NewErrorDiagnostic("error while creating sdk client", err.Error()))
 	}
 
-	if sdkClient == nil {
-		logging.Infof("Sachin sdk client is null")
-	}
 	p.SDKClientWrapper = &client.SDKClientWrapper{
 		SDKClient: sdkClient,
 		Team:      team,
 	}
-
-
+	
 	resp.DataSourceData = p
 	resp.ResourceData = p
 }
@@ -137,8 +134,9 @@ func (p *OktapamFrameworkProvider) ConfigureConfigDefaults(config *OktapamFramew
 	if config.OktapamApiHost.IsNull() {
 		if apiHost := os.Getenv(apiHostSchemaEnvVar); apiHost != "" {
 			config.OktapamApiHost = types.StringValue(apiHost)
+		} else {
+			config.OktapamApiHost = types.StringValue(DefaultAPIBaseURL)
 		}
-		// If env var isn't there, set it to DefaultAPIBaseURL = "https://app.scaleft.com"
 	}
 
 	if config.OktapamSecret.IsNull() {
