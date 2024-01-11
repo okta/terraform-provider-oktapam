@@ -4,7 +4,7 @@ import (
 	"context"
 	"flag"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6/tf6server"
-	provider "github.com/okta/terraform-provider-oktapam/oktapam/fwprovider"
+	"github.com/okta/terraform-provider-oktapam/oktapam/fwprovider"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
@@ -18,29 +18,6 @@ import (
 // can be customized.
 //go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
 
-//func main() {
-//	var debug bool
-//
-//	flag.BoolVar(&debug, "debug", false, "set to true to run the provider with support for debuggers like delve")
-//	flag.Parse()
-//
-//	plugin.Serve(&plugin.ServeOpts{
-//		Debug: debug,
-//		ProviderFunc: func() *schema.Provider {
-//			return oktapam.Provider()
-//		},
-//	})
-//}
-
-//var (
-//	// Version can be updated by goreleaser on release
-//	version string = "dev"
-//)
-
-// TF core (CLI) >= 1.0 doesn't support protocol version 5
-// By default, SDKV2 providers support Protocol Version 5 and framework provider support Protocol Version 6
-// Upgrading SDKV2 provider to support protocol version 6 and then serving it along with framework provider. We can downgrade
-// framework provider to support protocol version 5 too but then we cannot use some of the features like NestedAttribute.
 func main() {
 	var debug bool
 
@@ -48,18 +25,33 @@ func main() {
 	flag.Parse()
 
 	ctx := context.Background()
+
+	// SDKV2 used for tf plugin development is designed for maintaining tf plugins that are compatible with Plugin
+	// Protocol version 5. Plugins need to communicate with Terraform CLI, protocol version 5 is supported by CLI version
+	// 0.12 and later. Protocol version 6 support tf cli version 1.0 or later.
+
+	// To start using new TF Plugin Framework(https://developer.hashicorp.com/terraform/plugin/framework) we have two options -
+	// Option 1: Downgrade new plugin framework server to support protocol version 5
+	// Option 2: Upgrade old SDKV2 provider server to support protocol version 6
+	// If we go with Option 1, then will not be able to use some of the newer features like Nested Attributes:
+	// https://developer.hashicorp.com/terraform/plugin/framework/handling-data/attributes#nested-attribute-types
+
+	//Going with option 2, that will require upgrading tf cli version to 1.0+.
+
+	// tf5to6server enables translating a protocol version 5 provider server into a protocol version 6 provider server.
 	upgradedSdkProvider, err := tf5to6server.UpgradeServer(
 		ctx,
 		oktapam.Provider().GRPCProvider,
 	)
 
+	// Combine Providers
+	// Refer: https://developer.hashicorp.com/terraform/plugin/mux/combining-protocol-version-6-providers
 	providers := []func() tfprotov6.ProviderServer{
 		func() tfprotov6.ProviderServer {
 			return upgradedSdkProvider
 		},
 
-		// Example terraform-plugin-framework provider
-		providerserver.NewProtocol6(provider.New()()),
+		providerserver.NewProtocol6(fwprovider.New()()),
 	}
 
 	muxServer, err := tf6muxserver.NewMuxServer(ctx, providers...)
