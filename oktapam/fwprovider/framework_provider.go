@@ -2,12 +2,12 @@ package fwprovider
 
 import (
 	"context"
+	"os"
+
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
-	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
-	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -24,11 +24,9 @@ const (
 	apiKeyKey       = "oktapam_key"
 	apiKeySecretKey = "oktapam_secret"
 	teamKey         = "oktapam_team"
-)
 
-//var (
-//	_ provider.ProviderWithConfigValidators   = &OktapamFrameworkProvider{}
-//)
+	DefaultAPIBaseURL = "https://app.scaleft.com"
+)
 
 func New() func() provider.Provider {
 	return func() provider.Provider {
@@ -98,14 +96,10 @@ func (p *OktapamFrameworkProvider) Configure(ctx context.Context, req provider.C
 		resp.Diagnostics.Append(diag.NewErrorDiagnostic("error while creating sdk client", err.Error()))
 	}
 
-	if sdkClient == nil {
-		logging.Infof("Sachin sdk client is null")
-	}
 	p.SDKClientWrapper = &client.SDKClientWrapper{
 		SDKClient: sdkClient,
 		Team:      team,
 	}
-
 
 	resp.DataSourceData = p
 	resp.ResourceData = p
@@ -121,7 +115,7 @@ func (p *OktapamFrameworkProvider) DataSources(_ context.Context) []func() datas
 
 func (p *OktapamFrameworkProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		NewResourceGroupResource,
+		//Add New Resources here
 	}
 }
 
@@ -137,8 +131,9 @@ func (p *OktapamFrameworkProvider) ConfigureConfigDefaults(config *OktapamFramew
 	if config.OktapamApiHost.IsNull() {
 		if apiHost := os.Getenv(apiHostSchemaEnvVar); apiHost != "" {
 			config.OktapamApiHost = types.StringValue(apiHost)
+		} else {
+			config.OktapamApiHost = types.StringValue(DefaultAPIBaseURL)
 		}
-		// If env var isn't there, set it to DefaultAPIBaseURL = "https://app.scaleft.com"
 	}
 
 	if config.OktapamSecret.IsNull() {
@@ -155,7 +150,3 @@ func (p *OktapamFrameworkProvider) ConfigureConfigDefaults(config *OktapamFramew
 
 	return diags
 }
-
-//func defaultConfigureFunc(p *OktapamFrameworkProvider, request *provider.ConfigureRequest, config *OktapamFrameworkProviderModel) diag.Diagnostics {
-//	return nil
-//}

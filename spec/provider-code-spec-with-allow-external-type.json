@@ -40,6 +40,12 @@
 						"list_nested": {
 							"computed_optional_required": "required",
 							"nested_object": {
+								"associated_external_type": {
+									"import": {
+										"path": "github.com/atko-pam/pam-sdk-go/client/pam"
+									},
+									"type": "*pam.NamedObject"
+								},
 								"attributes": [
 									{
 										"name": "id",
