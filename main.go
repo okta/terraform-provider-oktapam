@@ -53,13 +53,6 @@ func main() {
 		oktapam.Provider().GRPCProvider,
 	)
 
-	//err = tf6server.Serve(
-	//	"registry.terraform.io/example/example",
-	//	func() tfprotov6.ProviderServer {
-	//		return upgradedSdkProvider
-	//	},
-	//)
-
 	providers := []func() tfprotov6.ProviderServer{
 		func() tfprotov6.ProviderServer {
 			return upgradedSdkProvider

@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"context"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -65,25 +66,21 @@ func Provider() *schema.Provider {
 			apiHostKey: {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc(apiHostSchemaEnvVar, DefaultAPIBaseURL),
 				Description: "Okta PAM API Host",
 			},
 			apiKeyKey: {
 				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc(apiKeySchemaEnvVar, nil),
+				Optional:    true,
 				Description: "Okta PAM API Key",
 			},
 			apiKeySecretKey: {
 				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc(apiKeySecretSchemaEnvVar, nil),
+				Optional:    true,
 				Description: "Okta PAM API Secret",
 			},
 			teamKey: {
 				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc(teamSchemaEnvVar, nil),
+				Optional:    true,
 				Description: "Okta PAM Team",
 			},
 		},
@@ -145,6 +142,30 @@ func Provider() *schema.Provider {
 }
 
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (any, diag.Diagnostics) {
+	if d.Get(apiKeyKey).(string) == "" {
+		if apiKey := os.Getenv(apiKeySchemaEnvVar); apiKey != "" {
+			d.Set(apiKeyKey, apiKey)
+		}
+	}
+
+	if d.Get(apiHostKey).(string) == "" {
+		if apiKey := os.Getenv(apiHostSchemaEnvVar); apiKey != "" {
+			d.Set(apiHostKey, apiKey)
+		}
+	}
+
+	if d.Get(apiKeySecretKey).(string) == "" {
+		if apiKey := os.Getenv(apiKeySecretSchemaEnvVar); apiKey != "" {
+			d.Set(apiKeySecretKey, apiKey)
+		}
+	}
+
+	if d.Get(teamKey).(string) == "" {
+		if apiKey := os.Getenv(teamSchemaEnvVar); apiKey != "" {
+			d.Set(teamKey, apiKey)
+		}
+	}
+
 	team := d.Get(teamKey).(string)
 	config := &client.OktaPAMProviderConfig{
 		APIKey:       d.Get(apiKeyKey).(string),

@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
+	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -18,97 +19,113 @@ const (
 	apiKeySchemaEnvVar       = "OKTAPAM_KEY"
 	apiKeySecretSchemaEnvVar = "OKTAPAM_SECRET"
 	teamSchemaEnvVar         = "OKTAPAM_TEAM"
+
+	apiHostKey      = "oktapam_api_host"
+	apiKeyKey       = "oktapam_key"
+	apiKeySecretKey = "oktapam_secret"
+	teamKey         = "oktapam_team"
 )
 
-var _ provider.Provider = (*oktapamFrameworkProvider)(nil)
+//var (
+//	_ provider.ProviderWithConfigValidators   = &OktapamFrameworkProvider{}
+//)
 
 func New() func() provider.Provider {
 	return func() provider.Provider {
-		return &oktapamFrameworkProvider{}
+		return &OktapamFrameworkProvider{}
 	}
 }
 
-type oktapamFrameworkProvider struct {
+type OktapamFrameworkProvider struct {
 	SDKClientWrapper *client.SDKClientWrapper
 }
 
-func OktapamFrameworkProviderSchema(_ context.Context) schema.Schema {
-	return schema.Schema{
+type OktapamFrameworkProviderModel struct {
+	OktapamApiHost types.String `tfsdk:"oktapam_api_host"`
+	OktapamApiKey  types.String `tfsdk:"oktapam_key"`
+	OktapamSecret  types.String `tfsdk:"oktapam_secret"`
+	OktapamTeam    types.String `tfsdk:"oktapam_team"`
+}
+
+func (p *OktapamFrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"oktapam_api_host": schema.StringAttribute{
+			apiHostKey: schema.StringAttribute{
 				Optional:    true,
 				Description: "Okta PAM API Host",
 			},
-			"oktapam_key": schema.StringAttribute{
-				Required:    true,
+			apiKeyKey: schema.StringAttribute{
+				Optional:    true,
 				Description: "Okta PAM API Key",
 			},
-			"oktapam_secret": schema.StringAttribute{
-				Required:    true,
+			apiKeySecretKey: schema.StringAttribute{
+				Optional:    true,
 				Description: "Okta PAM API Secret",
 			},
-			"oktapam_team": schema.StringAttribute{
-				Required:    true,
+			teamKey: schema.StringAttribute{
+				Optional:    true,
 				Description: "Okta PAM Team",
 			},
 		},
 	}
 }
 
-type OktapamFrameworkProviderModel struct {
-	OktapamApiHost types.String `tfsdk:"oktapam_api_host"`
-	OktapamApiKey  types.String `tfsdk:"oktapam_api_key"`
-	OktapamSecret  types.String `tfsdk:"oktapam_secret"`
-	OktapamTeam    types.String `tfsdk:"oktapam_team"`
-}
-
-func (p *oktapamFrameworkProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
-	resp.Schema = OktapamFrameworkProviderSchema(ctx)
-}
-
-func (p *oktapamFrameworkProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
-
+func (p *OktapamFrameworkProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 	var d OktapamFrameworkProviderModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &d)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	p.ConfigureConfigDefaults(&d)
-	team := d.OktapamTeam.String()
+	diags := p.ConfigureConfigDefaults(&d)
 
-	config := &client.OktaPAMProviderConfig{
-		APIKey:       d.OktapamApiKey.String(),
-		APIKeySecret: d.OktapamSecret.String(),
-		Team:         team,
-		APIHost:      d.OktapamApiHost.String(),
+	if diags.HasError() {
+		resp.Diagnostics.Append(diags...)
 	}
 
-	sdkClient, _ := client.CreateSDKClient(config)
+	team := d.OktapamTeam.ValueString()
 
+	config := &client.OktaPAMProviderConfig{
+		APIKey:       d.OktapamApiKey.ValueString(),
+		APIKeySecret: d.OktapamSecret.ValueString(),
+		Team:         team,
+		APIHost:      d.OktapamApiHost.ValueString(),
+	}
+
+	sdkClient, err := client.CreateSDKClient(config)
+
+	if err != nil {
+		resp.Diagnostics.Append(diag.NewErrorDiagnostic("error while creating sdk client", err.Error()))
+	}
+
+	if sdkClient == nil {
+		logging.Infof("Sachin sdk client is null")
+	}
 	p.SDKClientWrapper = &client.SDKClientWrapper{
 		SDKClient: sdkClient,
 		Team:      team,
 	}
 
+
 	resp.DataSourceData = p
 	resp.ResourceData = p
-
 }
 
-func (p *oktapamFrameworkProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "oktapam_framework_provider"
+func (p *OktapamFrameworkProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "oktapam"
 }
 
-func (p *oktapamFrameworkProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+func (p *OktapamFrameworkProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{}
 }
 
-func (p *oktapamFrameworkProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{}
+func (p *OktapamFrameworkProvider) Resources(_ context.Context) []func() resource.Resource {
+	return []func() resource.Resource{
+		NewResourceGroupResource,
+	}
 }
 
-func (p *oktapamFrameworkProvider) ConfigureConfigDefaults(config *OktapamFrameworkProviderModel) diag.Diagnostics {
+func (p *OktapamFrameworkProvider) ConfigureConfigDefaults(config *OktapamFrameworkProviderModel) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if config.OktapamApiKey.IsNull() {
@@ -138,3 +155,7 @@ func (p *oktapamFrameworkProvider) ConfigureConfigDefaults(config *OktapamFramew
 
 	return diags
 }
+
+//func defaultConfigureFunc(p *OktapamFrameworkProvider, request *provider.ConfigureRequest, config *OktapamFrameworkProviderModel) diag.Diagnostics {
+//	return nil
+//}
