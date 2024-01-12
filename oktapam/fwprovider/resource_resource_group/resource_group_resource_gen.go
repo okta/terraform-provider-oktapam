@@ -529,7 +529,8 @@ func (v DelegatedResourceAdminGroupsValue) ToPamNamedObject(ctx context.Context)
 		return nil, diags
 	}
 
-	namedObjectType, _ := pam.NewNamedObjectTypeFromValue(v.DelegatedResourceAdminGroupsType.String())
+	namedObjectType, _ := pam.NewNamedObjectTypeFromValue(v.DelegatedResourceAdminGroupsType.ValueString())
+
 	return &pam.NamedObject{
 		Id:   v.Id.ValueStringPointer(),
 		Name: v.Name.ValueStringPointer(),

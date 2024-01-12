@@ -27,10 +27,6 @@ const (
 	DefaultAPIBaseURL = "https://app.scaleft.com"
 )
 
-//var (
-//	_ provider.ProviderWithConfigValidators   = &OktapamFrameworkProvider{}
-//)
-
 func New() func() provider.Provider {
 	return func() provider.Provider {
 		return &OktapamFrameworkProvider{}
@@ -153,7 +149,3 @@ func (p *OktapamFrameworkProvider) ConfigureConfigDefaults(config *OktapamFramew
 
 	return diags
 }
-
-//func defaultConfigureFunc(p *OktapamFrameworkProvider, request *provider.ConfigureRequest, config *OktapamFrameworkProviderModel) diag.Diagnostics {
-//	return nil
-//}
