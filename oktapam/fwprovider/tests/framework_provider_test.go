@@ -11,6 +11,7 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/fwprovider"
 	"log"
 	"math/rand"
+	"os"
 	"testing"
 	"time"
 )
@@ -82,4 +83,15 @@ func randSeqWithLength(length uint) string {
 		b[i] = randChars[r.Intn(len(randChars))]
 	}
 	return string(b)
+}
+
+func checkTeamApplicable(t *testing.T, isPAMTest bool) {
+	if isExecutingPAMTest() != isPAMTest {
+		t.Skip("skipping due to team/test mismatch")
+	}
+}
+
+func isExecutingPAMTest() bool {
+	pamAccEnv := os.Getenv("TF_ACC_PAM")
+	return pamAccEnv != "" && pamAccEnv != "0"
 }

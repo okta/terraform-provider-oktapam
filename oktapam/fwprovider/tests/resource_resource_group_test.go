@@ -9,6 +9,7 @@ import (
 )
 
 func TestAccResourceGroupBasic(t *testing.T) {
+	checkTeamApplicable(t, true)
 	_, _, accProviders := testAccFrameworkMuxProviders(context.Background(), t)
 	resourceName := "oktapam_resource_group_fwk.test_acc_resource_group"
 	initialResourceGroupName := fmt.Sprintf("test_acc_resource_group_%s", randSeq())
@@ -46,18 +47,6 @@ resource "oktapam_resource_group_fwk" "test_acc_resource_group" {
  ]
 }
 `
-
-//const testAccResourceGroupCreateConfigFormat = `
-//resource "oktapam_resource_group_fwk" "test_acc_resource_group" {
-//	name = "%s"
-//	description = "initial description"
-//	delegated_resource_admin_groups = [{
-//       id = "3b460237-d83e-41a9-bebc-ee3c030b70f8"
-//       name = "sachin-test"
-//       type = "user_group"
-//    }]
-//}
-//`
 
 func createTestAccResourceGroupCreateConfig(dga1Name, resourceGroupName string) string {
 	return fmt.Sprintf(testAccResourceGroupCreateConfigFormat, dga1Name, resourceGroupName)
