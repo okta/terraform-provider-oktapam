@@ -342,6 +342,7 @@ func mgmtConnectionDetailsFromResource(_ context.Context, client client.SDKClien
 
 		switch mgmtType {
 		case MySqlBasicAuth:
+			var diags diag.Diagnostics
 			authDetails := detailsMap[attributes.AuthDetails]
 			authDetailsSet, ok := authDetails.([]any)
 			if !ok {
@@ -354,20 +355,30 @@ func mgmtConnectionDetailsFromResource(_ context.Context, client client.SDKClien
 
 			hostname, ok := detailsMap[attributes.Hostname].(string)
 			if !ok {
-				return nil, nil, diag.Errorf("invalid hostname")
-			}
-			username, ok := authDetailsMap[attributes.Username].(string)
-			if !ok {
-				return nil, nil, diag.Errorf("invalid username")
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Error,
+					Summary:  "invalid hostname",
+				})
 			}
 			port, ok := detailsMap[attributes.Port].(string)
 			if !ok {
-				return nil, nil, diag.Errorf("invalid port")
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Error,
+					Summary:  "invalid port",
+				})
 			}
 
 			var secretID *string
 			if secret, ok := authDetailsMap[attributes.Secret].(string); ok {
 				secretID = &secret
+			}
+
+			username, ok := authDetailsMap[attributes.Username].(string)
+			if !ok {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Error,
+					Summary:  "invalid username",
+				})
 			}
 
 			var passwordJwe *pam.EncryptedString
@@ -376,10 +387,17 @@ func mgmtConnectionDetailsFromResource(_ context.Context, client client.SDKClien
 				plainTextPassword = &password
 				passwordJwe, err = client.SDKClient.Encrypt(password)
 				if err != nil {
-					return nil, nil, diag.Errorf("invalid password: %v", err)
+					return nil, nil, diag.Errorf("error encrypting password: %v", err)
 				}
 			} else if !ok {
-				return nil, nil, diag.Errorf("invalid password")
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Error,
+					Summary:  "invalid auth details",
+				})
+			}
+
+			if diags.HasError() {
+				return nil, nil, diags
 			}
 
 			mgmtDetails.MySQLBasicAuthManagementConnectionDetails = &pam.MySQLBasicAuthManagementConnectionDetails{
