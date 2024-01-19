@@ -20,7 +20,7 @@ Returns a list of Secret Folders, constrained by the given parameters.
 - `list_elements_under_path` (Boolean) If `true`, returns a list of any Secret/Secret Folder elements under the path. If `false`, returns the element defined by the path.
 - `path` (String) The path of the Secret Folder
 - `project` (String) The UUID of a Project.
-- `resource_group` (String) The UUID of a PAM Resource Group.
+- `resource_group` (String) The UUID of a OPA Resource Group.
 
 ### Read-Only
 

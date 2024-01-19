@@ -18,7 +18,7 @@ Returns an existing PAM Server Enrollment Token associated with a specific PAM p
 ### Required
 
 - `project` (String) The UUID of a Project.
-- `resource_group` (String) The UUID of a PAM Resource Group.
+- `resource_group` (String) The UUID of a OPA Resource Group.
 
 ### Read-Only
 

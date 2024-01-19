@@ -17,7 +17,7 @@ Returns an existing PAM Project associated with a specific PAM Resource Group. F
 
 ### Required
 
-- `resource_group` (String) The UUID of a PAM Resource Group.
+- `resource_group` (String) The UUID of a OPA Resource Group.
 
 ### Read-Only
 
