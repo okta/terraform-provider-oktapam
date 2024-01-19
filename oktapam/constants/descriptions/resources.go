@@ -24,10 +24,11 @@ var (
 	ResourceUserGroupAttachment      = "Manages a single assignment of an ASA/PAM User to a Group."
 
 	// EA/Beta Features:
-	ResourceKubernetesCluster           = fmt.Sprintf("%s Represents a Kubernetes cluster that has been registered with your Team. This resource creates configuration items used to define how the cluster can authenticate user access with ASA. %s", PrefixBeta, WarningBetaK8s)
-	ResourceKubernetesClusterConnection = fmt.Sprintf("%s A set of details describing how to connect to an existing Kubernetes cluster. %s", PrefixBeta, WarningBetaK8s)
-	ResourceKubernetesClusterGroup      = fmt.Sprintf("%s A mapping of Kubernetes cluster to a Group. Members of the specified Group are granted access to clusters which match the specified cluster_selectors. %s", PrefixBeta, WarningBetaK8s)
-
+	ResourceKubernetesCluster                  = fmt.Sprintf("%s Represents a Kubernetes cluster that has been registered with your Team. This resource creates configuration items used to define how the cluster can authenticate user access with ASA. %s", PrefixBeta, WarningBetaK8s)
+	ResourceKubernetesClusterConnection        = fmt.Sprintf("%s A set of details describing how to connect to an existing Kubernetes cluster. %s", PrefixBeta, WarningBetaK8s)
+	ResourceKubernetesClusterGroup             = fmt.Sprintf("%s A mapping of Kubernetes cluster to a Group. Members of the specified Group are granted access to clusters which match the specified cluster_selectors. %s", PrefixBeta, WarningBetaK8s)
+	ResourceDatabase                           = fmt.Sprintf("Represents a datastore that has been registered with your Team. %s", LinkDatabase)
+	ResourceDatabasePassword                   = fmt.Sprintf("The settings for passwords set on databases within the project. %s", LinkDatabasePasswordSettings)
 	ResourcePasswordSettings                   = fmt.Sprintf("The settings for passwords set on resources within the project. %s", LinkPasswordSettings)
 	ResourceResourceGroup                      = fmt.Sprintf("A PAM construct that contains a group of projects. %s", LinkResourceGroup)
 	ResourceResourceGroupProject               = fmt.Sprintf("A PAM construct that contains a collection of resources that share settings. %s", LinkResourceGroupProject)

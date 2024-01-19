@@ -45,11 +45,9 @@ func (r ApiCreateSecretRequest) Execute() (*Secret, *http.Response, error) {
 /*
 	CreateSecret Create a Secret
 
-	    Creates a Secret.
+	    Creates a Secret. Users must be authorized to perform this action by an existing Security Policy.
 
-A user may only perform this action if authorized via a security policy.
-
-This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
+This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
@@ -123,7 +121,7 @@ func (a *SecretsAPIService) CreateSecretExecute(r ApiCreateSecretRequest) (*Secr
 		}
 
 		var nonDefaultResponse ErrNonDefaultResponse
-		var v ListTopLevelSecretFoldersForProject403Response
+		var v CreateSecretForbiddenResponse
 		if err := json.Unmarshal(localVarBody, &v); err != nil {
 			return nil, localVarHTTPResponse, err
 		}
@@ -158,7 +156,7 @@ func (r ApiCreateSecretFolderRequest) Execute() (*SecretFolderResponse, *http.Re
 
 	    Creates a Secret Folder. Users must be authorized to perform this action by an existing Security Policy.
 
-This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
+This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
@@ -232,7 +230,7 @@ func (a *SecretsAPIService) CreateSecretFolderExecute(r ApiCreateSecretFolderReq
 		}
 
 		var nonDefaultResponse ErrNonDefaultResponse
-		var v ListTopLevelSecretFoldersForProject403Response
+		var v CreateSecretFolderForbiddenResponse
 		if err := json.Unmarshal(localVarBody, &v); err != nil {
 			return nil, localVarHTTPResponse, err
 		}
@@ -260,10 +258,9 @@ func (r ApiDeleteSecretRequest) Execute() (*http.Response, error) {
 /*
 	DeleteSecret Delete a Secret
 
-	    Deletes the specified Secret.
+	    Deletes the specified Secret. Users must be authorized to perform this action by an existing Security Policy.
 
-A user may only perform this action if authorized via a security policy.
-This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
+This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
@@ -335,7 +332,7 @@ func (a *SecretsAPIService) DeleteSecretExecute(r ApiDeleteSecretRequest) (*http
 		}
 
 		var nonDefaultResponse ErrNonDefaultResponse
-		var v ListTopLevelSecretFoldersForProject403Response
+		var v DeleteSecretForbiddenResponse
 		if err := json.Unmarshal(localVarBody, &v); err != nil {
 			return localVarHTTPResponse, err
 		}
@@ -365,7 +362,7 @@ func (r ApiDeleteSecretFolderRequest) Execute() (*http.Response, error) {
 
 	    Deletes the specified Secret Folder. Users must be authorized to perform this action by an existing Security Policy.
 
-This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user
+This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
@@ -437,7 +434,7 @@ func (a *SecretsAPIService) DeleteSecretFolderExecute(r ApiDeleteSecretFolderReq
 		}
 
 		var nonDefaultResponse ErrNonDefaultResponse
-		var v ListTopLevelSecretFoldersForProject403Response
+		var v DeleteSecretFolderForbiddenResponse
 		if err := json.Unmarshal(localVarBody, &v); err != nil {
 			return localVarHTTPResponse, err
 		}
@@ -465,10 +462,9 @@ func (r ApiGetSecretRequest) Execute() (*Secret, *http.Response, error) {
 /*
 	GetSecret Retrieve a Secret
 
-	    Retrieves the specified Secret.
+	    Retrieves the specified Secret. Users must be authorized to perform this action by an existing Security Policy.
 
-A user may only perform this action if authorized via a security policy.
-This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
+This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
@@ -543,7 +539,7 @@ func (a *SecretsAPIService) GetSecretExecute(r ApiGetSecretRequest) (*Secret, *h
 		}
 
 		var nonDefaultResponse ErrNonDefaultResponse
-		var v ListTopLevelSecretFoldersForProject403Response
+		var v GetSecretForbiddenResponse
 		if err := json.Unmarshal(localVarBody, &v); err != nil {
 			return nil, localVarHTTPResponse, err
 		}
@@ -573,7 +569,7 @@ func (r ApiGetSecretFolderRequest) Execute() (*SecretFolderResponse, *http.Respo
 
 	    Retrieves the specified Secret Folder. Users must be authorized to perform this action by an existing Security Policy.
 
-This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
+This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
@@ -648,7 +644,7 @@ func (a *SecretsAPIService) GetSecretFolderExecute(r ApiGetSecretFolderRequest) 
 		}
 
 		var nonDefaultResponse ErrNonDefaultResponse
-		var v ListTopLevelSecretFoldersForProject403Response
+		var v GetSecretFolderForbiddenResponse
 		if err := json.Unmarshal(localVarBody, &v); err != nil {
 			return nil, localVarHTTPResponse, err
 		}
@@ -697,7 +693,7 @@ func (r ApiListSecretFolderItemsRequest) Prev(prev bool) ApiListSecretFolderItem
 	return r
 }
 
-func (r ApiListSecretFolderItemsRequest) Execute() (*ListTopLevelSecretFoldersForTeam200Response, *http.Response, error) {
+func (r ApiListSecretFolderItemsRequest) Execute() (*ListSecretFolderItemsResponse, *http.Response, error) {
 	return r.ApiService.ListSecretFolderItemsExecute(r)
 }
 
@@ -706,7 +702,7 @@ func (r ApiListSecretFolderItemsRequest) Execute() (*ListTopLevelSecretFoldersFo
 
 	    Lists all items in a Secret Folder. Users must be authorized to perform this action by an existing Security Policy.
 
-This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
+This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
@@ -728,14 +724,14 @@ func (a *SecretsAPIService) ListSecretFolderItems(ctx context.Context, teamName 
 
 // Execute executes the request
 //
-//	@return ListTopLevelSecretFoldersForTeam200Response
-func (a *SecretsAPIService) ListSecretFolderItemsExecute(r ApiListSecretFolderItemsRequest) (*ListTopLevelSecretFoldersForTeam200Response, *http.Response, error) {
+//	@return ListSecretFolderItemsResponse
+func (a *SecretsAPIService) ListSecretFolderItemsExecute(r ApiListSecretFolderItemsRequest) (*ListSecretFolderItemsResponse, *http.Response, error) {
 	var (
 		traceKey            = "secretsapi.listSecretFolderItems"
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *ListTopLevelSecretFoldersForTeam200Response
+		localVarReturnValue *ListSecretFolderItemsResponse
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secret_folders/{secret_folder_id}/items"
@@ -793,7 +789,7 @@ func (a *SecretsAPIService) ListSecretFolderItemsExecute(r ApiListSecretFolderIt
 		}
 
 		var nonDefaultResponse ErrNonDefaultResponse
-		var v ListTopLevelSecretFoldersForProject403Response
+		var v ListSecretFolderItemsForbiddenResponse
 		if err := json.Unmarshal(localVarBody, &v); err != nil {
 			return nil, localVarHTTPResponse, err
 		}
@@ -813,16 +809,16 @@ type ApiListTopLevelSecretFoldersForProjectRequest struct {
 	projectId       string
 }
 
-func (r ApiListTopLevelSecretFoldersForProjectRequest) Execute() (*ListTopLevelSecretFoldersForTeam200Response, *http.Response, error) {
+func (r ApiListTopLevelSecretFoldersForProjectRequest) Execute() (*ListTopLevelSecretFoldersForProjectResponse, *http.Response, error) {
 	return r.ApiService.ListTopLevelSecretFoldersForProjectExecute(r)
 }
 
 /*
-	ListTopLevelSecretFoldersForProject List Top Level Secret Folders for Project
+	ListTopLevelSecretFoldersForProject List top-level Secret Folders for a Project
 
-	    Lists all Top Level Secret Folders for a Project. Users must be authorized to perform this action by an existing Security Policy.
+	    Lists all top-level Secret Folders for a Project. Users must be authorized to perform this action by an existing Security Policy.
 
-This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
+This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
@@ -842,14 +838,14 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForProject(ctx context.Cont
 
 // Execute executes the request
 //
-//	@return ListTopLevelSecretFoldersForTeam200Response
-func (a *SecretsAPIService) ListTopLevelSecretFoldersForProjectExecute(r ApiListTopLevelSecretFoldersForProjectRequest) (*ListTopLevelSecretFoldersForTeam200Response, *http.Response, error) {
+//	@return ListTopLevelSecretFoldersForProjectResponse
+func (a *SecretsAPIService) ListTopLevelSecretFoldersForProjectExecute(r ApiListTopLevelSecretFoldersForProjectRequest) (*ListTopLevelSecretFoldersForProjectResponse, *http.Response, error) {
 	var (
 		traceKey            = "secretsapi.listTopLevelSecretFoldersForProject"
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *ListTopLevelSecretFoldersForTeam200Response
+		localVarReturnValue *ListTopLevelSecretFoldersForProjectResponse
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secret_folders"
@@ -894,7 +890,7 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForProjectExecute(r ApiList
 		}
 
 		var nonDefaultResponse ErrNonDefaultResponse
-		var v ListTopLevelSecretFoldersForProject403Response
+		var v ListTopLevelSecretFoldersForProjectForbiddenResponse
 		if err := json.Unmarshal(localVarBody, &v); err != nil {
 			return nil, localVarHTTPResponse, err
 		}
@@ -912,16 +908,16 @@ type ApiListTopLevelSecretFoldersForTeamRequest struct {
 	teamName   string
 }
 
-func (r ApiListTopLevelSecretFoldersForTeamRequest) Execute() (*ListTopLevelSecretFoldersForTeam200Response, *http.Response, error) {
+func (r ApiListTopLevelSecretFoldersForTeamRequest) Execute() (*ListTopLevelSecretFoldersForTeamResponse, *http.Response, error) {
 	return r.ApiService.ListTopLevelSecretFoldersForTeamExecute(r)
 }
 
 /*
-	ListTopLevelSecretFoldersForTeam List Top Level Secret Folders for Team
+	ListTopLevelSecretFoldersForTeam List top-level Secret Folders for Team
 
-	    Lists all Top Level Secret Folders for a Team.
+	    Lists all top-level Secret Folders for a Team
 
-This endpoint requires the following roles: `security_admin`
+This endpoint requires the following roles: `security_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
@@ -937,14 +933,14 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForTeam(ctx context.Context
 
 // Execute executes the request
 //
-//	@return ListTopLevelSecretFoldersForTeam200Response
-func (a *SecretsAPIService) ListTopLevelSecretFoldersForTeamExecute(r ApiListTopLevelSecretFoldersForTeamRequest) (*ListTopLevelSecretFoldersForTeam200Response, *http.Response, error) {
+//	@return ListTopLevelSecretFoldersForTeamResponse
+func (a *SecretsAPIService) ListTopLevelSecretFoldersForTeamExecute(r ApiListTopLevelSecretFoldersForTeamRequest) (*ListTopLevelSecretFoldersForTeamResponse, *http.Response, error) {
 	var (
 		traceKey            = "secretsapi.listTopLevelSecretFoldersForTeam"
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *ListTopLevelSecretFoldersForTeam200Response
+		localVarReturnValue *ListTopLevelSecretFoldersForTeamResponse
 	)
 
 	localVarPath := "/v1/teams/{team_name}/secret_folders"
@@ -1014,16 +1010,16 @@ func (r ApiListTopLevelSecretFoldersForUserRequest) Prev(prev bool) ApiListTopLe
 	return r
 }
 
-func (r ApiListTopLevelSecretFoldersForUserRequest) Execute() (*ListTopLevelSecretFoldersForTeam200Response, *http.Response, error) {
+func (r ApiListTopLevelSecretFoldersForUserRequest) Execute() (*ListTopLevelSecretFoldersForUserResponse, *http.Response, error) {
 	return r.ApiService.ListTopLevelSecretFoldersForUserExecute(r)
 }
 
 /*
-	ListTopLevelSecretFoldersForUser List Top Level Secret Folders for User
+	ListTopLevelSecretFoldersForUser List top-level Secret Folders for User
 
-	    Lists all Top Level Secret Folders for a User. Users must be authorized to perform this action by an existing Security Policy.
+	    Lists all top-level Secret Folders for a User. Users must be authorized to perform this action by an existing Security Policy.
 
-This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
+This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
@@ -1039,14 +1035,14 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForUser(ctx context.Context
 
 // Execute executes the request
 //
-//	@return ListTopLevelSecretFoldersForTeam200Response
-func (a *SecretsAPIService) ListTopLevelSecretFoldersForUserExecute(r ApiListTopLevelSecretFoldersForUserRequest) (*ListTopLevelSecretFoldersForTeam200Response, *http.Response, error) {
+//	@return ListTopLevelSecretFoldersForUserResponse
+func (a *SecretsAPIService) ListTopLevelSecretFoldersForUserExecute(r ApiListTopLevelSecretFoldersForUserRequest) (*ListTopLevelSecretFoldersForUserResponse, *http.Response, error) {
 	var (
 		traceKey            = "secretsapi.listTopLevelSecretFoldersForUser"
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *ListTopLevelSecretFoldersForTeam200Response
+		localVarReturnValue *ListTopLevelSecretFoldersForUserResponse
 	)
 
 	localVarPath := "/v1/teams/{team_name}/secrets"
@@ -1113,10 +1109,11 @@ func (r ApiResolveSecretOrFolderRequest) Execute() (*ResolveSecretOrFolderRespon
 /*
 	ResolveSecretOrFolder Resolve Secret or Folder
 
-	    Resolves the ID or path for a Secret or Secret Folder. To resolve the ID, the request must include the named path. To resolve the path, the request must include the ID.
+	    Resolves the ID or path for a Secret or Secret Folder. Users must be authorized to perform this action by an existing Security Policy.
 
-A user may only perform this action if authorized via a security policy.
-This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `security_admin`, `delegated_security_admin`
+To resolve the ID, the request must include the named path. To resolve the path, the request must include the ID.
+
+This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `security_admin`, `delegated_security_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
@@ -1199,10 +1196,9 @@ func (r ApiRevealSecretRequest) Execute() (*SecretRevealResponse, *http.Response
 /*
 	RevealSecret Reveal a Secret
 
-	    Reveals the specified Secret.
+	    Reveals the specified Secret. Users must be authorized to perform this action by an existing Security Policy.
 
-A user may only perform this action if authorized via a security policy.
-This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
+This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
@@ -1279,7 +1275,7 @@ func (a *SecretsAPIService) RevealSecretExecute(r ApiRevealSecretRequest) (*Secr
 		}
 
 		var nonDefaultResponse ErrNonDefaultResponse
-		var v ListTopLevelSecretFoldersForProject403Response
+		var v RevealSecretForbiddenResponse
 		if err := json.Unmarshal(localVarBody, &v); err != nil {
 			return nil, localVarHTTPResponse, err
 		}
@@ -1313,10 +1309,9 @@ func (r ApiUpdateSecretRequest) Execute() (*Secret, *http.Response, error) {
 /*
 	UpdateSecret Update a Secret
 
-	    Updates the specified Secret.
+	    Updates the specified Secret. Users must be authorized to perform this action by an existing Security Policy.
 
-A user may only perform this action if authorized via a security policy.
-This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
+This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
@@ -1393,7 +1388,7 @@ func (a *SecretsAPIService) UpdateSecretExecute(r ApiUpdateSecretRequest) (*Secr
 		}
 
 		var nonDefaultResponse ErrNonDefaultResponse
-		var v ListTopLevelSecretFoldersForProject403Response
+		var v UpdateSecretForbiddenResponse
 		if err := json.Unmarshal(localVarBody, &v); err != nil {
 			return nil, localVarHTTPResponse, err
 		}
@@ -1429,7 +1424,7 @@ func (r ApiUpdateSecretFolderRequest) Execute() (*SecretFolderResponse, *http.Re
 
 	    Updates the specified Secret Folder. Users must be authorized to perform this action by an existing Security Policy.
 
-This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`
+This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
@@ -1506,7 +1501,7 @@ func (a *SecretsAPIService) UpdateSecretFolderExecute(r ApiUpdateSecretFolderReq
 		}
 
 		var nonDefaultResponse ErrNonDefaultResponse
-		var v ListTopLevelSecretFoldersForProject403Response
+		var v UpdateSecretFolderForbiddenResponse
 		if err := json.Unmarshal(localVarBody, &v); err != nil {
 			return nil, localVarHTTPResponse, err
 		}

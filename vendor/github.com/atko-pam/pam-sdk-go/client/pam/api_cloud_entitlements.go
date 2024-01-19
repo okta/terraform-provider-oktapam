@@ -204,7 +204,7 @@ func (r ApiCreateCloudEntitlementAnalysisRequest) Execute() (*CloudEntitlementJo
 /*
 	CreateCloudEntitlementAnalysis Create a Cloud Entitlement Job
 
-	    Creates a Cloud Entitlement Job.
+	    Creates a Cloud Entitlement Job
 
 This endpoint requires the following role: `resource_admin`.
 
@@ -431,7 +431,7 @@ func (r ApiGetCloudConnectionRequest) Execute() (*CloudConnection, *http.Respons
 /*
 	GetCloudConnection Retrieve a Cloud Connection
 
-	    Retrieves an existing Cloud Connection.
+	    Retrieves an existing Cloud Connection
 
 This endpoint requires the following role: `resource_admin`.
 

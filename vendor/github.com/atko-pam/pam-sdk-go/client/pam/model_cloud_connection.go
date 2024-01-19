@@ -23,21 +23,21 @@ type CloudConnection struct {
 	// The UUID of the Cloud Connection
 	Id string `json:"id"`
 	// The name of the Cloud Connection
-	Name     string                  `json:"name"`
-	Provider CloudConnectionProvider `json:"provider"`
-	Details  CloudConnectionDetails  `json:"details"`
+	Name                   string                  `json:"name"`
+	Provider               CloudConnectionProvider `json:"provider"`
+	CloudConnectionDetails CloudConnectionDetails  `json:"cloud_connection_details"`
 }
 
 // NewCloudConnection instantiates a new CloudConnection object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCloudConnection(id string, name string, provider CloudConnectionProvider, details CloudConnectionDetails) *CloudConnection {
+func NewCloudConnection(id string, name string, provider CloudConnectionProvider, cloudConnectionDetails CloudConnectionDetails) *CloudConnection {
 	this := CloudConnection{}
 	this.Id = id
 	this.Name = name
 	this.Provider = provider
-	this.Details = details
+	this.CloudConnectionDetails = cloudConnectionDetails
 	return &this
 }
 
@@ -124,28 +124,28 @@ func (o *CloudConnection) SetProvider(v CloudConnectionProvider) *CloudConnectio
 	return o
 }
 
-// GetDetails returns the Details field value
-func (o *CloudConnection) GetDetails() CloudConnectionDetails {
+// GetCloudConnectionDetails returns the CloudConnectionDetails field value
+func (o *CloudConnection) GetCloudConnectionDetails() CloudConnectionDetails {
 	if o == nil {
 		var ret CloudConnectionDetails
 		return ret
 	}
 
-	return o.Details
+	return o.CloudConnectionDetails
 }
 
-// GetDetailsOk returns a tuple with the Details field value
+// GetCloudConnectionDetailsOk returns a tuple with the CloudConnectionDetails field value
 // and a boolean to check if the value has been set.
-func (o *CloudConnection) GetDetailsOk() (*CloudConnectionDetails, bool) {
+func (o *CloudConnection) GetCloudConnectionDetailsOk() (*CloudConnectionDetails, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.Details, true
+	return &o.CloudConnectionDetails, true
 }
 
-// SetDetails sets field value
-func (o *CloudConnection) SetDetails(v CloudConnectionDetails) *CloudConnection {
-	o.Details = v
+// SetCloudConnectionDetails sets field value
+func (o *CloudConnection) SetCloudConnectionDetails(v CloudConnectionDetails) *CloudConnection {
+	o.CloudConnectionDetails = v
 	return o
 }
 
@@ -162,7 +162,7 @@ func (o CloudConnection) ToMap() (map[string]interface{}, error) {
 	toSerialize["id"] = o.Id
 	toSerialize["name"] = o.Name
 	toSerialize["provider"] = o.Provider
-	toSerialize["details"] = o.Details
+	toSerialize["cloud_connection_details"] = o.CloudConnectionDetails
 	return toSerialize, nil
 }
 

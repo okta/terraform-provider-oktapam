@@ -77,3 +77,7 @@ require (
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 )
+
+replace (
+	github.com/atko-pam/pam-sdk-go => /Users/james.buchan/go/src/github.com/okta/pam-sdk-go
+)
