@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client/wrappers"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 	"strings"
@@ -199,7 +200,7 @@ func resourceDatabaseReadWithPassword(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(err)
 	}
 
-	wrap := client.DatabaseResourceResponseWrapper{*database}
+	wrap := wrappers.DatabaseResourceResponseWrapper{*database}
 
 	overrides := make(map[string]any, 1)
 	if newPassword != nil && *newPassword != "" {

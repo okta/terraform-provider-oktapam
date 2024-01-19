@@ -1,4 +1,4 @@
-package client
+package wrappers
 
 import (
 	"github.com/atko-pam/pam-sdk-go/client/pam"
