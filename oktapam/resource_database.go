@@ -199,36 +199,21 @@ func resourceDatabaseReadWithPassword(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(err)
 	}
 
-	d.SetId(database.Id)
-	d.Set(attributes.CanonicalName, database.CanonicalName)
-	d.Set(attributes.DatabaseType, database.DatabaseType)
-	d.Set(attributes.ManagementConnectionDetailsType, database.ManagementConnectionDetailsType)
-	if database.ManagementGatewaySelectorId != "" {
-		d.Set(attributes.ManagementGatewaySelectorID, database.ManagementGatewaySelectorId)
-	}
-	if database.ManagementGatewaySelector != nil {
-		d.Set(attributes.ManagementGatewaySelector, *database.ManagementGatewaySelector)
-	}
-	mgmtDetails := make(map[string]any, 3)
-	authDetails := make(map[string]any, 3)
-	authDetails[attributes.Username] = database.ManagementConnectionDetails.MySQLBasicAuthManagementConnectionDetails.AuthDetails.Username
+	wrap := client.DatabaseResourceResponseWrapper{*database}
+
+	overrides := make(map[string]any, 1)
 	if newPassword != nil && *newPassword != "" {
-		// if we just created or updated the resource we should already have the password
-		authDetails[attributes.Password] = *newPassword
+		overrides[attributes.Password] = *newPassword
 	} else if password, ok := d.Get(attributes.NestedManagementConnectionPassword).(string); ok {
 		// if a refresh happens the password may exist in state
-		authDetails[attributes.Password] = password
-	}
-	secretId := database.ManagementConnectionDetails.MySQLBasicAuthManagementConnectionDetails.AuthDetails.SecretId
-	if secretId != nil {
-		authDetails[attributes.Secret] = *secretId
+		overrides[attributes.Password] = password
 	}
 
-	mgmtDetails[attributes.Hostname] = database.ManagementConnectionDetails.MySQLBasicAuthManagementConnectionDetails.Hostname
-	mgmtDetails[attributes.Port] = database.ManagementConnectionDetails.MySQLBasicAuthManagementConnectionDetails.Port
-	mgmtDetails[attributes.AuthDetails] = []any{authDetails}
-
-	d.Set(attributes.ManagementConnectionDetails, []any{mgmtDetails})
+	for key, value := range wrap.ToResourceMap(overrides) {
+		if err := d.Set(key, value); err != nil {
+			return diag.FromErr(err)
+		}
+	}
 
 	return nil
 }
