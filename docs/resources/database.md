@@ -20,7 +20,7 @@ Represents a datastore that has been registered with your Team. For details, see
 - `management_connection_details` (Block List, Min: 1, Max: 1) A set of fields that define how to connect to the database. (see [below for nested schema](#nestedblock--management_connection_details))
 - `management_connection_details_type` (String) A string containing the database type and authentication method.
 - `project` (String) The UUID of a Project.
-- `resource_group` (String) The UUID of a OPA Resource Group.
+- `resource_group` (String) The UUID of a OktaPA Resource Group.
 
 ### Optional
 

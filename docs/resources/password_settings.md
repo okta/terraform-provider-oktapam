@@ -23,7 +23,7 @@ The settings for passwords set on resources within the project. For details, see
 - `max_length` (Number) The maximum length allowed for the password.
 - `min_length` (Number) The minimum length allowed for the password.
 - `project` (String) The UUID of a Project.
-- `resource_group` (String) The UUID of a OPA Resource Group.
+- `resource_group` (String) The UUID of a OktaPA Resource Group.
 
 ### Optional
 

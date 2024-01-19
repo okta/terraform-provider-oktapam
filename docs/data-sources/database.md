@@ -17,7 +17,7 @@ Returns an existing Database. For details, see [Databases](https://help.okta.com
 
 ### Required
 
-- `resource_group` (String) The UUID of a OPA Resource Group.
+- `resource_group` (String) The UUID of a OktaPA Resource Group.
 
 ### Optional
 

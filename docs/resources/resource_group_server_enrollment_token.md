@@ -19,7 +19,7 @@ A token used to enroll servers in a PAM Project. For details, see [Server Enroll
 
 - `description` (String) The human-readable description of the resource.
 - `project` (String) The UUID of a Project.
-- `resource_group` (String) The UUID of a OPA Resource Group.
+- `resource_group` (String) The UUID of a OktaPA Resource Group.
 
 ### Read-Only
 

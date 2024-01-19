@@ -138,7 +138,7 @@ var (
 	RefuseConnections                         = "If `true`, the Gateway refuses connections."
 	RemovedAt                                 = "The UTC time when the resource was removed from parent resource. Format is '2022-01-01 00:00:00 +0000 UTC'."
 	RequirePreauthForCreds                    = "If `true`, requires preauthorization before a User can retrieve credentials to sign in."
-	ResourceGroupID                           = "The UUID of a OPA Resource Group."
+	ResourceGroupID                           = "The UUID of a OktaPA Resource Group."
 	Roles                                     = "A list of roles for the ASA Group. Options are 'access_user', 'access_admin', and 'reporting_user'."
 	SSHCertificateType                        = fmt.Sprintf("The SSH certificate type used by access requests. Options include: [%s]. '%s' is a deprecated key algorithm type. "+
 		"This option should only be used to connect to legacy systems that cannot use newer SSH versions. If you do need to use '%s', it is recommended to connect via a gateway with traffic forwarding. "+
