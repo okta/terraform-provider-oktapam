@@ -36,7 +36,7 @@ github.com/apparentlymart/go-textseg/v15/textseg
 # github.com/armon/go-radix v0.0.0-20180808171621-7fddfc383310
 ## explicit
 github.com/armon/go-radix
-# github.com/atko-pam/pam-sdk-go v1.0.53 => /Users/james.buchan/go/src/github.com/okta/pam-sdk-go
+# github.com/atko-pam/pam-sdk-go v1.0.54-0.20240122191100-fa65b5f2cf4d
 ## explicit; go 1.20
 github.com/atko-pam/pam-sdk-go/client/pam
 # github.com/bgentry/speakeasy v0.1.0
@@ -451,4 +451,3 @@ google.golang.org/protobuf/types/known/timestamppb
 gopkg.in/square/go-jose.v2
 gopkg.in/square/go-jose.v2/cipher
 gopkg.in/square/go-jose.v2/json
-# github.com/atko-pam/pam-sdk-go => /Users/james.buchan/go/src/github.com/okta/pam-sdk-go

@@ -1113,15 +1113,15 @@ func (a *CloudEntitlementsAPIService) RunCloudEntitlementAnalysisExecute(r ApiRu
 }
 
 type ApiUpdateCloudConnectionRequest struct {
-	ctx             context.Context
-	ApiService      *CloudEntitlementsAPIService
-	teamName        string
-	connectionId    string
-	cloudConnection *CloudConnection
+	ctx                   context.Context
+	ApiService            *CloudEntitlementsAPIService
+	teamName              string
+	connectionId          string
+	updateCloudConnection *UpdateCloudConnection
 }
 
-func (r ApiUpdateCloudConnectionRequest) CloudConnection(cloudConnection CloudConnection) ApiUpdateCloudConnectionRequest {
-	r.cloudConnection = &cloudConnection
+func (r ApiUpdateCloudConnectionRequest) UpdateCloudConnection(updateCloudConnection UpdateCloudConnection) ApiUpdateCloudConnectionRequest {
+	r.updateCloudConnection = &updateCloudConnection
 	return r
 }
 
@@ -1188,7 +1188,7 @@ func (a *CloudEntitlementsAPIService) UpdateCloudConnectionExecute(r ApiUpdateCl
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.cloudConnection
+	localVarPostBody = r.updateCloudConnection
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
 	if localVarHTTPResponse == nil && err != nil {

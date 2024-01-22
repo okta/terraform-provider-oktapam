@@ -19,8 +19,8 @@ github.com/apparentlymart/go-textseg/v15 v15.0.0 h1:uYvfpb3DyLSCGWnctWKGj857c6ew
 github.com/apparentlymart/go-textseg/v15 v15.0.0/go.mod h1:K8XmNZdhEBkdlyDdvbmmsvpAG721bKi0joRfFdHIWJ4=
 github.com/armon/go-radix v0.0.0-20180808171621-7fddfc383310 h1:BUAU3CGlLvorLI26FmByPp2eC2qla6E1Tw+scpcg/to=
 github.com/armon/go-radix v0.0.0-20180808171621-7fddfc383310/go.mod h1:ufUuZ+zHj4x4TnLV4JWEpy2hxWSpsRywHrMgIH9cCH8=
-github.com/atko-pam/pam-sdk-go v1.0.53 h1:zgA4imdfzh5tSsHqtW7EjTddgKr2qHQjJaqxRSJLEmQ=
-github.com/atko-pam/pam-sdk-go v1.0.53/go.mod h1:MMEshvol2ctyIhLrvF92fapY+eg4roDCymqXEggxgac=
+github.com/atko-pam/pam-sdk-go v1.0.54-0.20240122191100-fa65b5f2cf4d h1:Ylnl7yOwQRiGyLUNvSX3vOo0Ry5TqfV/S+iPNoJC9ds=
+github.com/atko-pam/pam-sdk-go v1.0.54-0.20240122191100-fa65b5f2cf4d/go.mod h1:MMEshvol2ctyIhLrvF92fapY+eg4roDCymqXEggxgac=
 github.com/bgentry/speakeasy v0.1.0 h1:ByYyxL9InA1OWqxJqqp2A5pYHUrCiAL6K3J+LKSsQkY=
 github.com/bgentry/speakeasy v0.1.0/go.mod h1:+zsyZBPWlz7T6j88CTgSN5bM796AkVf0kBD4zp0CCIs=
 github.com/bufbuild/protocompile v0.4.0 h1:LbFKd2XowZvQ/kajzguUp2DC9UEIQhIq77fZZlaQsNA=

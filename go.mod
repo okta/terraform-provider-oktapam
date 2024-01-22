@@ -3,7 +3,7 @@ module github.com/okta/terraform-provider-oktapam
 go 1.21
 
 require (
-	github.com/atko-pam/pam-sdk-go v1.0.53
+	github.com/atko-pam/pam-sdk-go v1.0.54-0.20240122191100-fa65b5f2cf4d
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/terraform-plugin-docs v0.8.1
@@ -76,8 +76,4 @@ require (
 	google.golang.org/grpc v1.57.1 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
-)
-
-replace (
-	github.com/atko-pam/pam-sdk-go => /Users/james.buchan/go/src/github.com/okta/pam-sdk-go
 )

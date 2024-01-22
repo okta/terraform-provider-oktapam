@@ -334,6 +334,8 @@ Class | Method | HTTP request | Description
  - [TeamUserAttributeConflict](docs/TeamUserAttributeConflict.md)
  - [TeamUserAttributeName](docs/TeamUserAttributeName.md)
  - [UpdateAttribute](docs/UpdateAttribute.md)
+ - [UpdateCloudConnection](docs/UpdateCloudConnection.md)
+ - [UpdateCloudConnectionDetails](docs/UpdateCloudConnectionDetails.md)
  - [UpdateGroupAttribute](docs/UpdateGroupAttribute.md)
  - [UpdateSecretFolderForbiddenResponse](docs/UpdateSecretFolderForbiddenResponse.md)
  - [UpdateSecretForbiddenResponse](docs/UpdateSecretForbiddenResponse.md)
