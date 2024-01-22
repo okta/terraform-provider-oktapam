@@ -172,7 +172,7 @@ func resourceDatabaseCreate(ctx context.Context, d *schema.ResourceData, m any) 
 	}
 
 	if createdDb, err := client.CreateDatabase(ctx, c, resourceGroupID, projectID, canonicalName, dbType, mgmtType, *mgmtDetails, selectorLabels); err != nil {
-		diag.FromErr(err)
+		return diag.FromErr(err)
 	} else if createdDb == nil {
 		d.SetId("")
 	} else {
@@ -278,7 +278,7 @@ func resourceDatabaseUpdate(ctx context.Context, d *schema.ResourceData, m any) 
 	}
 
 	if err := client.UpdateDatabase(ctx, c, dbID, resourceGroupID, projectID, canonicalName, dbType, mgmtType, *mgmtDetails, selectorLabels); err != nil {
-		diag.FromErr(err)
+		return diag.FromErr(err)
 	}
 
 	return resourceDatabaseReadWithPassword(ctx, d, m, plainTextPassword)
