@@ -5,6 +5,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client/wrappers"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 )
@@ -88,7 +89,6 @@ func dataSourceDatabase() *schema.Resource {
 // dataSourceDatabaseFetch is the same as resourceDatabaseRead but cannot retrieve the password field.
 func dataSourceDatabaseFetch(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := getSDKClientFromMetadata(m)
-
 	resourceGroupID := d.Get(attributes.ResourceGroup).(string)
 	projectID := d.Get(attributes.Project).(string)
 	databaseID := d.Get(attributes.ID).(string)
@@ -101,30 +101,14 @@ func dataSourceDatabaseFetch(ctx context.Context, d *schema.ResourceData, m any)
 		return diag.FromErr(err)
 	}
 
+	wrap := wrappers.DatabaseResourceResponseWrapper{*database}
+
 	d.SetId(database.Id)
-	d.Set(attributes.CanonicalName, database.CanonicalName)
-	d.Set(attributes.DatabaseType, database.DatabaseType)
-	d.Set(attributes.ManagementConnectionDetailsType, database.ManagementConnectionDetailsType)
-	if database.ManagementGatewaySelectorId != "" {
-		d.Set(attributes.ManagementGatewaySelectorID, database.ManagementGatewaySelectorId)
+	for key, value := range wrap.ToResourceMap(nil) {
+		if err := d.Set(key, value); err != nil {
+			return diag.FromErr(err)
+		}
 	}
-	if database.ManagementGatewaySelector != nil {
-		d.Set(attributes.ManagementGatewaySelector, *database.ManagementGatewaySelector)
-	}
-	mgmtDetails := make(map[string]any, 3)
-	authDetails := make(map[string]any, 3)
-	authDetails[attributes.Username] = database.ManagementConnectionDetails.MySQLBasicAuthManagementConnectionDetails.AuthDetails.Username
-
-	secretId := database.ManagementConnectionDetails.MySQLBasicAuthManagementConnectionDetails.AuthDetails.SecretId
-	if secretId != nil {
-		authDetails[attributes.Secret] = *secretId
-	}
-
-	mgmtDetails[attributes.Hostname] = database.ManagementConnectionDetails.MySQLBasicAuthManagementConnectionDetails.Hostname
-	mgmtDetails[attributes.Port] = database.ManagementConnectionDetails.MySQLBasicAuthManagementConnectionDetails.Port
-	mgmtDetails[attributes.AuthDetails] = []any{authDetails}
-
-	d.Set(attributes.ManagementConnectionDetails, []any{mgmtDetails})
 
 	return nil
 }

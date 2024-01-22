@@ -210,6 +210,7 @@ func resourceDatabaseReadWithPassword(ctx context.Context, d *schema.ResourceDat
 		overrides[attributes.Password] = password
 	}
 
+	d.SetId(database.Id)
 	for key, value := range wrap.ToResourceMap(overrides) {
 		if err := d.Set(key, value); err != nil {
 			return diag.FromErr(err)

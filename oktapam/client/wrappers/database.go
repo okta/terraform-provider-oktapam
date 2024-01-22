@@ -34,7 +34,6 @@ type MySQLBasicAuthDetailsWrapper struct {
 func (w DatabaseResourceResponseWrapper) ToResourceMap(o AttributeOverrides) map[string]any {
 	m := make(map[string]any, 10)
 
-	m[attributes.ID] = w.Id
 	m[attributes.CanonicalName] = w.CanonicalName
 	m[attributes.DatabaseType] = w.DatabaseType
 	m[attributes.ManagementConnectionDetailsType] = w.ManagementConnectionDetailsType
