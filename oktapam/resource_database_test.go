@@ -77,11 +77,12 @@ func TestAccDatabaseResource(t *testing.T) {
 					testDatabaseCheckExists(resourceName, initialDatabase),
 					resource.TestCheckResourceAttr(resourceName, attributes.ManagementConnectionDetailsType, MySqlBasicAuth),
 					resource.TestCheckNoResourceAttr(resourceName, attributes.ManagementGatewaySelectorID),
+					resource.TestCheckNoResourceAttr(resourceName, attributes.ManagementGatewaySelector),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.ManagementConnectionDetails), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.#", attributes.ManagementConnectionDetails, attributes.AuthDetails), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.AuthDetails, attributes.Username), "user"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.AuthDetails, attributes.Password), ""),
-					// Both TestCheckNoResourceAttr and TestCheckResourceAttrSet fail for 'secret' when the value is "", so just check it is empty - they do not support nested attributes
+					// Cannot use TestCheckNoResourceAttr here so just check it is empty
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.AuthDetails, attributes.Secret), ""),
 				),
 			},
@@ -91,12 +92,20 @@ func TestAccDatabaseResource(t *testing.T) {
 					testDatabaseCheckExists(resourceName, updatedDatabase),
 					resource.TestCheckResourceAttr(resourceName, attributes.ManagementConnectionDetailsType, MySqlBasicAuth),
 					resource.TestCheckResourceAttrSet(resourceName, attributes.ManagementGatewaySelectorID),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.%%", attributes.ManagementGatewaySelector), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.ManagementConnectionDetails), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.#", attributes.ManagementConnectionDetails, attributes.AuthDetails), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.AuthDetails, attributes.Username), "user"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.AuthDetails, attributes.Password), "my-pass"),
 					// This will fail if the value is an empty string.
 					resource.TestCheckResourceAttrSet(resourceName, fmt.Sprintf("%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.AuthDetails, attributes.Secret)),
+				),
+			},
+			{
+				Config: createTestDatabaseRemoveSelectorConfig(groupName, resourceGroupName, projectName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, attributes.ManagementGatewaySelectorID),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.%%", attributes.ManagementGatewaySelector), "0"),
 				),
 			},
 			{
@@ -117,46 +126,15 @@ func createTestDatabaseUpdateConfig(groupName, resourceGroupName, projectName st
 	return fmt.Sprintf(testDatabaseResourceUpdateConfigFormat, groupName, resourceGroupName, projectName)
 }
 
+func createTestDatabaseRemoveSelectorConfig(groupName, resourceGroupName, projectName string) string {
+	return fmt.Sprintf(testDatabaseResourceRemoveSelectorConfigFormat, groupName, resourceGroupName, projectName)
+}
+
 func createTestDatabaseInvalidCreateConfig(groupName, resourceGroupName, projectName string) string {
 	return fmt.Sprintf(testDatabaseResourceInvalidCreateConfigFormat, groupName, resourceGroupName, projectName)
 }
 
-const testDatabaseResourceUpdateConfigFormat = `
-resource "oktapam_group" "test_acc_resource_group_dga_group" {
-	name = "%s"
-}
-resource "oktapam_resource_group" "test_acc_resource_group" {
-	name = "%s"
-	description = "test resource group"
-	delegated_resource_admin_groups = [oktapam_group.test_acc_resource_group_dga_group.id]
-}
-resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
-	name                 = "%s"
-	resource_group       = oktapam_resource_group.test_acc_resource_group.id
-	gateway_selector     = "env=test"
-	ssh_certificate_type = "CERT_TYPE_RSA_01"
-	account_discovery 	 = true
-}
-resource "oktapam_database" "test_acc_database_resource" {
-	resource_group = oktapam_resource_group.test_acc_resource_group.id
-	project = oktapam_resource_group_project.test_acc_resource_group_project.id
-	canonical_name = "MyCanonicalName"
-	database_type = "mysql.level1"
-	management_connection_details_type = "mysql.basic_auth"
-	management_connection_details {
-		hostname = "mysql.example.org"
-		port = "3306"
-		auth_details {
-			username = "user"
-			password = "my-pass"
-		}
-	}
-	management_gateway_selector = {
-		"type": "db_management"
-	}
-}
-`
-
+// multiple auth_details blocks should be invalid.
 const testDatabaseResourceInvalidCreateConfigFormat = `
 resource "oktapam_group" "test_acc_resource_group_dga_group" {
 	name = "%s"
@@ -197,6 +175,7 @@ resource "oktapam_database" "test_acc_database_resource" {
 }
 `
 
+// A valid config with no selector or password.
 const testDatabaseResourceCreateConfigFormat = `
 resource "oktapam_group" "test_acc_resource_group_dga_group" {
 	name = "%s"
@@ -224,6 +203,77 @@ resource "oktapam_database" "test_acc_database_resource" {
 		port = "3306"
 		auth_details {
 			username = "user"
+		}
+	}
+}
+`
+
+// Adds a selector and password.
+const testDatabaseResourceUpdateConfigFormat = `
+resource "oktapam_group" "test_acc_resource_group_dga_group" {
+	name = "%s"
+}
+resource "oktapam_resource_group" "test_acc_resource_group" {
+	name = "%s"
+	description = "test resource group"
+	delegated_resource_admin_groups = [oktapam_group.test_acc_resource_group_dga_group.id]
+}
+resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
+	name                 = "%s"
+	resource_group       = oktapam_resource_group.test_acc_resource_group.id
+	gateway_selector     = "env=test"
+	ssh_certificate_type = "CERT_TYPE_RSA_01"
+	account_discovery 	 = true
+}
+resource "oktapam_database" "test_acc_database_resource" {
+	resource_group = oktapam_resource_group.test_acc_resource_group.id
+	project = oktapam_resource_group_project.test_acc_resource_group_project.id
+	canonical_name = "MyCanonicalName"
+	database_type = "mysql.level1"
+	management_connection_details_type = "mysql.basic_auth"
+	management_connection_details {
+		hostname = "mysql.example.org"
+		port = "3306"
+		auth_details {
+			username = "user"
+			password = "my-pass"
+		}
+	}
+	management_gateway_selector = {
+		"type": "db_management"
+	}
+}
+`
+
+// Removes the selector set in the initial update.
+const testDatabaseResourceRemoveSelectorConfigFormat = `
+resource "oktapam_group" "test_acc_resource_group_dga_group" {
+	name = "%s"
+}
+resource "oktapam_resource_group" "test_acc_resource_group" {
+	name = "%s"
+	description = "test resource group"
+	delegated_resource_admin_groups = [oktapam_group.test_acc_resource_group_dga_group.id]
+}
+resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
+	name                 = "%s"
+	resource_group       = oktapam_resource_group.test_acc_resource_group.id
+	gateway_selector     = "env=test"
+	ssh_certificate_type = "CERT_TYPE_RSA_01"
+	account_discovery 	 = true
+}
+resource "oktapam_database" "test_acc_database_resource" {
+	resource_group = oktapam_resource_group.test_acc_resource_group.id
+	project = oktapam_resource_group_project.test_acc_resource_group_project.id
+	canonical_name = "MyCanonicalName"
+	database_type = "mysql.level1"
+	management_connection_details_type = "mysql.basic_auth"
+	management_connection_details {
+		hostname = "mysql.example.org"
+		port = "3306"
+		auth_details {
+			username = "user"
+			password = "my-pass"
 		}
 	}
 }

@@ -21,9 +21,6 @@ type Wrappers interface {
 type ManagementConnectionDetailsWrapper struct {
 	pam.ManagementConnectionDetails
 }
-type CharacterOptionsWrapper struct {
-	pam.PasswordPolicyCharacterOptions
-}
 type DatabaseResourceResponseWrapper struct {
 	pam.DatabaseResourceResponse
 }
@@ -44,8 +41,10 @@ func (w DatabaseResourceResponseWrapper) ToResourceMap(o AttributeOverrides) map
 	if w.ManagementGatewaySelectorId != "" {
 		m[attributes.ManagementGatewaySelectorID] = w.ManagementGatewaySelectorId
 	}
-	if w.ManagementGatewaySelector != nil { // TODO: what if you want to remove a selector?
+	if w.ManagementGatewaySelector != nil {
 		m[attributes.ManagementGatewaySelector] = *w.ManagementGatewaySelector
+	} else {
+		m[attributes.ManagementGatewaySelector] = make(map[string]string)
 	}
 
 	mgmtDetails := make([]any, 1)
