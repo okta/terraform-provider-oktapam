@@ -47,6 +47,7 @@ var (
 	CharacterOptionsDigits                    = "If `true`, passwords can include one or more numeric characters."
 	CharacterOptionsLowerCase                 = "If `true`, passwords can include one or more lowercase characters."
 	CharacterOptionsPunctuation               = "If `true`, passwords can include one or more punctuation/symbol characters."
+	CharacterOptionsRequireFromEachSet        = "If `true`, passwords must include at least one character from the selected sets."
 	CharacterOptionsUpperCase                 = "If `true`, passwords can include one or more uppercase characters."
 	ClientSessionDuration                     = "The maximum time before a Client session expires. The duration can be from 3600 – 90000 seconds."
 	CloudProvider                             = "The name of the cloud provider where the Gateway is hosted."

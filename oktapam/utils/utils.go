@@ -30,6 +30,14 @@ func AsIntPtrZero(v int, returnZero bool) *int {
 	return &v
 }
 
+func AsInt32PtrZero(v int, returnZero bool) *int32 {
+	if !returnZero && v == 0 {
+		return nil
+	}
+	v32 := int32(v)
+	return &v32
+}
+
 func AsBoolPtr(v bool) *bool {
 	return AsBoolPtrZero(v, false)
 }
