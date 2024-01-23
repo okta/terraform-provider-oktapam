@@ -22,7 +22,7 @@ func TestAccResourceGroupDatabasePasswordSettings(t *testing.T) {
 	delegatedAdminGroupName := fmt.Sprintf("test_acc_resource_group_dga_%s", randSeq())
 
 	initialPasswordSettings := &pam.PasswordPolicy{
-		ManagedPrivilegedAccountsConfig:   nil, // unused for databases?
+		ManagedPrivilegedAccountsConfig:   nil, // unused for databases
 		EnablePeriodicRotation:            true,
 		PeriodicRotationDurationInSeconds: utils.AsInt32PtrZero(3600, true),
 		MinLengthInBytes:                  12,
