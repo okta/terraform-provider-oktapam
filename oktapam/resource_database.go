@@ -35,7 +35,6 @@ var managementConnectionDetails = &schema.Resource{
 			MinItems:    1,
 			MaxItems:    1,
 			Description: descriptions.DatabaseAuthDetails,
-			ForceNew:    false,
 			Elem:        mySQLBasicAuthDetails,
 		},
 	},
@@ -93,6 +92,7 @@ func resourceDatabase() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: descriptions.DatabaseType,
+				ForceNew:    true,
 			},
 			attributes.RecipeBook: {
 				Type:        schema.TypeString,
@@ -112,6 +112,7 @@ func resourceDatabase() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: descriptions.ManagementConnectionDetailsType,
+				ForceNew:    true,
 			},
 			attributes.ManagementGatewaySelector: {
 				Type:        schema.TypeMap,
@@ -191,9 +192,6 @@ func resourceDatabaseReadWithPassword(ctx context.Context, d *schema.ResourceDat
 	resourceGroupID := d.Get(attributes.ResourceGroup).(string)
 	projectID := d.Get(attributes.Project).(string)
 	databaseID := d.Get(attributes.ID).(string)
-	if databaseID == "" {
-		return diag.Errorf("%s cannot be blank", attributes.ID)
-	}
 
 	database, err := client.GetDatabase(ctx, c, resourceGroupID, projectID, databaseID)
 	if err != nil {
@@ -289,9 +287,6 @@ func resourceDatabaseDelete(ctx context.Context, d *schema.ResourceData, m any) 
 	resourceGroupID := d.Get(attributes.ResourceGroup).(string)
 	projectID := d.Get(attributes.Project).(string)
 	databaseID := d.Get(attributes.ID).(string)
-	if databaseID == "" {
-		return diag.Errorf("%s cannot be blank", attributes.ID)
-	}
 
 	err := client.DeleteDatabase(ctx, c, resourceGroupID, projectID, databaseID)
 	if err != nil {
