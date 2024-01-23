@@ -7,7 +7,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/kylelemons/godebug/pretty"
-	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"regexp"
 	"testing"
@@ -289,8 +288,8 @@ func testDatabaseCheckExists(rn string, expectedDatabase *pam.DatabaseResourceRe
 		resourceGroupID := rs.Primary.Attributes[attributes.ResourceGroup]
 		projectID := rs.Primary.Attributes[attributes.Project]
 		databaseID := rs.Primary.Attributes[attributes.ID]
-		pamClient := testAccProvider.Meta().(*client.APIClients).SDKClient.SDKClient
-		database, _, err := pamClient.DatabaseResourcesAPI.GetDatabaseResource(context.Background(), "asa-pam", resourceGroupID, projectID, databaseID).Execute()
+		pamClient := getSDKClientFromMetadata(testAccProvider.Meta())
+		database, _, err := pamClient.SDKClient.DatabaseResourcesAPI.GetDatabaseResource(context.Background(), pamClient.Team, resourceGroupID, projectID, databaseID).Execute()
 		if err != nil {
 			return fmt.Errorf("error getting database: %w", err)
 		} else if database == nil {
