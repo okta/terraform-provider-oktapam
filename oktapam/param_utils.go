@@ -183,9 +183,6 @@ func GetBoolPtrFromResource(attr string, d *schema.ResourceData, returnZero bool
 }
 
 func GetBoolPtrFromElement(attr string, data map[string]any, returnZero bool) *bool {
-	if data[attr] == nil {
-		return utils.AsBoolPtrZero(false, returnZero)
-	}
 	v := data[attr].(bool)
 	return utils.AsBoolPtrZero(v, returnZero)
 }
