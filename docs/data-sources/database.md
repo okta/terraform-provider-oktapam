@@ -17,16 +17,15 @@ Returns an existing Database. For details, see [Databases](https://help.okta.com
 
 ### Required
 
+- `project` (String) The UUID of a Project.
 - `resource_group` (String) The UUID of a OktaPA Resource Group.
 
 ### Optional
 
 - `canonical_name` (String) The nickname or alias of the resource.
 - `database_type` (String) Defines the type of database used and the feature set supported. A two-part string separated by a dot: '<db_engine>.level<level>'
-- `management_connection_details` (Block List, Max: 1) A set of fields that define how to connect to the database. (see [below for nested schema](#nestedblock--management_connection_details))
-- `management_connection_details_type` (String) A string containing the database type and authentication method.
+- `management_connection_details` (Block List, Max: 1) A set of fields defining the database to connect to. (see [below for nested schema](#nestedblock--management_connection_details))
 - `management_gateway_selector` (Map of String) A label selector to define which gateway(s) will be used to connect to the database.
-- `project` (String) The UUID of a Project.
 - `recipe_book` (String) The ID of a recipe book which will override the db queries used.
 
 ### Read-Only
@@ -41,12 +40,19 @@ Returns an existing Database. For details, see [Databases](https://help.okta.com
 
 Required:
 
-- `auth_details` (Block List, Min: 1, Max: 1) A set of fields required to authenticate to the database. (see [below for nested schema](#nestedblock--management_connection_details--auth_details))
+- `mysql` (Block List, Min: 1, Max: 1) A set of fields defining how to connect to a mysql database. (see [below for nested schema](#nestedblock--management_connection_details--mysql))
+
+<a id="nestedblock--management_connection_details--mysql"></a>
+### Nested Schema for `management_connection_details.mysql`
+
+Required:
+
+- `basic_auth` (Block List, Min: 1, Max: 1) A set of fields required to authenticate to the database. (see [below for nested schema](#nestedblock--management_connection_details--mysql--basic_auth))
 - `hostname` (String) The hostname used to connect to the database
 - `port` (String) The port used to connect to the database
 
-<a id="nestedblock--management_connection_details--auth_details"></a>
-### Nested Schema for `management_connection_details.auth_details`
+<a id="nestedblock--management_connection_details--mysql--basic_auth"></a>
+### Nested Schema for `management_connection_details.mysql.basic_auth`
 
 Required:
 
