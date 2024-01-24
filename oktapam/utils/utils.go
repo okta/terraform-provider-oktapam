@@ -2,6 +2,8 @@ package utils
 
 import (
 	"fmt"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client/wrappers"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -112,4 +114,33 @@ func CreateCheckResourceDestroy(typeName string, checkResourceExists checkResour
 		}
 		return nil
 	}
+}
+
+// GenerateAttributeOverrides will evaluate which attributes on the resource may have overrides set,
+// it will get the existing values of those attributes, and return a map of any data found.
+// The key in the map will be the single attribute value (rather than the full path).
+// This is because d.Set cannot be called on nested attributes. i.e. a full list must be provided, and not a single
+// element of that list.
+func GenerateAttributeOverrides(d *schema.ResourceData, resource wrappers.ResourceWrapper) map[string]any {
+	paths := resource.AttributeOverridePaths()
+	existingValues := getAttributeValuesByPath(d, paths)
+
+	// convert the full key path to only the final attribute field
+	overrides := make(map[string]any, len(existingValues))
+	for k, existingVal := range existingValues {
+		parts := strings.Split(k, ".")
+		lastAttr := parts[len(parts)-1]
+		overrides[lastAttr] = existingVal
+	}
+	return overrides
+}
+
+func getAttributeValuesByPath(d *schema.ResourceData, keyPaths []string) map[string]any {
+	keyValuePair := make(map[string]any, len(keyPaths))
+	for _, key := range keyPaths {
+		if val, exists := d.GetOk(key); exists {
+			keyValuePair[key] = val
+		}
+	}
+	return keyValuePair
 }

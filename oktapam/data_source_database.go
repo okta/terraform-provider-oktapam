@@ -27,7 +27,7 @@ func dataSourceDatabase() *schema.Resource {
 			},
 			attributes.Project: {
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				Description: descriptions.ProjectID,
 			},
 			attributes.CanonicalName: {
@@ -51,13 +51,7 @@ func dataSourceDatabase() *schema.Resource {
 				MinItems:    1,
 				MaxItems:    1,
 				Description: descriptions.ManagementConnectionDetails,
-				Elem:        managementConnectionDetails,
-				ForceNew:    false,
-			},
-			attributes.ManagementConnectionDetailsType: {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: descriptions.ManagementConnectionDetailsType,
+				Elem:        dbConnectionTypes,
 			},
 			attributes.ManagementGatewaySelector: {
 				Type:        schema.TypeMap,

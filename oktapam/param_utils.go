@@ -175,6 +175,11 @@ func GetIntPtrFromElement(attr string, data map[string]any, returnZero bool) *in
 	return utils.AsIntPtrZero(v, returnZero)
 }
 
+func GetStringPtrFromElement(attr string, data map[string]any, returnZero bool) *string {
+	v := data[attr].(string)
+	return utils.AsStringPtrZero(v, returnZero)
+}
+
 func GetStringPtrFromResource(attr string, d *schema.ResourceData, returnZero bool) *string {
 	v := d.Get(attr).(string)
 	return utils.AsStringPtrZero(v, returnZero)

@@ -67,51 +67,65 @@ func TestAccDatabaseResource(t *testing.T) {
 			// negative cases must go first
 			{
 				Config:      createTestDatabaseInvalidCreateConfig(groupName, resourceGroupName, projectName),
-				ExpectError: regexp.MustCompile("No more than 1 \"auth_details\" blocks are allowed"),
+				ExpectError: regexp.MustCompile("No more than 1 \"basic_auth\" blocks are allowed"),
 			},
 			// positive cases next
 			{
 				Config: createTestDatabaseCreateConfig(groupName, resourceGroupName, projectName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testDatabaseCheckExists(resourceName, initialDatabase),
-					resource.TestCheckResourceAttr(resourceName, attributes.ManagementConnectionDetailsType, MySqlBasicAuth),
 					resource.TestCheckNoResourceAttr(resourceName, attributes.ManagementGatewaySelectorID),
 					resource.TestCheckNoResourceAttr(resourceName, attributes.ManagementGatewaySelector),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.ManagementConnectionDetails), "1"),
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.#", attributes.ManagementConnectionDetails, attributes.AuthDetails), "1"),
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.AuthDetails, attributes.Username), "user"),
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.AuthDetails, attributes.Password), ""),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%%", attributes.ManagementConnectionDetails), "1"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.#", attributes.ManagementConnectionDetails, attributes.MySQL), "1"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%%", attributes.ManagementConnectionDetails, attributes.MySQL, attributes.BasicAuth), "3"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.MySQL, attributes.BasicAuth, attributes.Username), "user"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.MySQL, attributes.BasicAuth, attributes.Password), ""),
 					// Cannot use TestCheckNoResourceAttr here so just check it is empty
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.AuthDetails, attributes.Secret), ""),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.MySQL, attributes.BasicAuth, attributes.Secret), ""),
 				),
 			},
 			{
+				// adds a selector and password
 				Config: createTestDatabaseUpdateConfig(groupName, resourceGroupName, projectName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testDatabaseCheckExists(resourceName, updatedDatabase),
-					resource.TestCheckResourceAttr(resourceName, attributes.ManagementConnectionDetailsType, MySqlBasicAuth),
 					resource.TestCheckResourceAttrSet(resourceName, attributes.ManagementGatewaySelectorID),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.%%", attributes.ManagementGatewaySelector), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.ManagementConnectionDetails), "1"),
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.#", attributes.ManagementConnectionDetails, attributes.AuthDetails), "1"),
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.AuthDetails, attributes.Username), "user"),
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.AuthDetails, attributes.Password), "my-pass"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%%", attributes.ManagementConnectionDetails), "1"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.#", attributes.ManagementConnectionDetails, attributes.MySQL), "1"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%%", attributes.ManagementConnectionDetails, attributes.MySQL, attributes.BasicAuth), "3"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.MySQL, attributes.BasicAuth, attributes.Username), "user"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.MySQL, attributes.BasicAuth, attributes.Password), "my-pass"),
 					// This will fail if the value is an empty string.
-					resource.TestCheckResourceAttrSet(resourceName, fmt.Sprintf("%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.AuthDetails, attributes.Secret)),
+					resource.TestCheckResourceAttrSet(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.MySQL, attributes.BasicAuth, attributes.Secret)),
 				),
 			},
 			{
+				// verify an existing selector can be removed
 				Config: createTestDatabaseRemoveSelectorConfig(groupName, resourceGroupName, projectName),
 				Check: resource.ComposeAggregateTestCheckFunc(
+					// selector is set but empty
 					resource.TestCheckResourceAttrSet(resourceName, attributes.ManagementGatewaySelectorID),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.%%", attributes.ManagementGatewaySelector), "0"),
+				),
+			},
+			{
+				// verify the password can be modified
+				Config: createTestDatabaseUpdatePasswordConfig(groupName, resourceGroupName, projectName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%%", attributes.ManagementConnectionDetails, attributes.MySQL, attributes.BasicAuth), "3"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.MySQL, attributes.BasicAuth, attributes.Username), "user"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.ManagementConnectionDetails, attributes.MySQL, attributes.BasicAuth, attributes.Password), "new-pass"),
 				),
 			},
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{attributes.NestedManagementConnectionPassword},
+				ImportStateVerifyIgnore: []string{"management_connection_details.0.mysql.0.basic_auth.0.password"},
 				ImportStateIdFunc:       testAccDatabaseImportStateId(resourceName),
 			},
 		},
@@ -123,6 +137,10 @@ func createTestDatabaseCreateConfig(groupName, resourceGroupName, projectName st
 }
 func createTestDatabaseUpdateConfig(groupName, resourceGroupName, projectName string) string {
 	return fmt.Sprintf(testDatabaseResourceUpdateConfigFormat, groupName, resourceGroupName, projectName)
+}
+
+func createTestDatabaseUpdatePasswordConfig(groupName, resourceGroupName, projectName string) string {
+	return fmt.Sprintf(testDatabaseResourceUpdatePasswordConfigFormat, groupName, resourceGroupName, projectName)
 }
 
 func createTestDatabaseRemoveSelectorConfig(groupName, resourceGroupName, projectName string) string {
@@ -155,17 +173,18 @@ resource "oktapam_database" "test_acc_database_resource" {
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 	canonical_name = "MyCanonicalName"
 	database_type = "mysql.level1"
-	management_connection_details_type = "mysql.basic_auth"
 	management_connection_details {
-		hostname = "mysql.example.org"
-		port = "3306"
-		auth_details {
-			username = "user"
-			password = "my-pass"
-		}
-		auth_details {
-			username = "user2"
-			password = "my-pass2"
+		mysql {
+			hostname = "mysql.example.org"
+			port = "3306"
+			basic_auth {
+				username = "user"
+				password = "my-pass"
+			}
+			basic_auth {
+				username = "user2"
+				password = "my-pass2"
+			}
 		}
 	}
 	management_gateway_selector = {
@@ -196,12 +215,13 @@ resource "oktapam_database" "test_acc_database_resource" {
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 	canonical_name = "MyCanonicalName"
 	database_type = "mysql.level1"
-	management_connection_details_type = "mysql.basic_auth"
 	management_connection_details {
-		hostname = "mysql.example.org"
-		port = "3306"
-		auth_details {
-			username = "user"
+		mysql {
+			hostname = "mysql.example.org"
+			port = "3306"
+			basic_auth {
+				username = "user"
+			}
 		}
 	}
 }
@@ -229,13 +249,52 @@ resource "oktapam_database" "test_acc_database_resource" {
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 	canonical_name = "MyCanonicalName"
 	database_type = "mysql.level1"
-	management_connection_details_type = "mysql.basic_auth"
 	management_connection_details {
-		hostname = "mysql.example.org"
-		port = "3306"
-		auth_details {
-			username = "user"
-			password = "my-pass"
+		mysql {
+			hostname = "mysql.example.org"
+			port = "3306"
+			basic_auth {
+				username = "user"
+				password = "my-pass"
+			}
+		}
+	}
+	management_gateway_selector = {
+		"type": "db_management"
+	}
+}
+`
+
+// updates the mysql password
+const testDatabaseResourceUpdatePasswordConfigFormat = `
+resource "oktapam_group" "test_acc_resource_group_dga_group" {
+	name = "%s"
+}
+resource "oktapam_resource_group" "test_acc_resource_group" {
+	name = "%s"
+	description = "test resource group"
+	delegated_resource_admin_groups = [oktapam_group.test_acc_resource_group_dga_group.id]
+}
+resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
+	name                 = "%s"
+	resource_group       = oktapam_resource_group.test_acc_resource_group.id
+	gateway_selector     = "env=test"
+	ssh_certificate_type = "CERT_TYPE_RSA_01"
+	account_discovery 	 = true
+}
+resource "oktapam_database" "test_acc_database_resource" {
+	resource_group = oktapam_resource_group.test_acc_resource_group.id
+	project = oktapam_resource_group_project.test_acc_resource_group_project.id
+	canonical_name = "MyCanonicalName"
+	database_type = "mysql.level1"
+	management_connection_details {
+		mysql {
+			hostname = "mysql.example.org"
+			port = "3306"
+			basic_auth {
+				username = "user"
+				password = "new-pass"
+			}
 		}
 	}
 	management_gateway_selector = {
@@ -266,13 +325,14 @@ resource "oktapam_database" "test_acc_database_resource" {
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 	canonical_name = "MyCanonicalName"
 	database_type = "mysql.level1"
-	management_connection_details_type = "mysql.basic_auth"
 	management_connection_details {
-		hostname = "mysql.example.org"
-		port = "3306"
-		auth_details {
-			username = "user"
-			password = "my-pass"
+		mysql {
+			hostname = "mysql.example.org"
+			port = "3306"
+			basic_auth {
+				username = "user"
+				password = "my-pass"
+			}
 		}
 	}
 }

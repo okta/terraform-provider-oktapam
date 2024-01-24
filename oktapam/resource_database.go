@@ -10,6 +10,7 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/client/wrappers"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
+	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 	"strings"
 )
 
@@ -17,7 +18,20 @@ const (
 	MySqlBasicAuth = "mysql.basic_auth"
 )
 
-var managementConnectionDetails = &schema.Resource{
+var dbConnectionTypes = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		attributes.MySQL: {
+			Type:        schema.TypeList,
+			Required:    true,
+			MinItems:    1,
+			MaxItems:    1,
+			Description: descriptions.MySqlManagementConnectionDetails,
+			Elem:        mysqlConnectionDetails,
+		},
+	},
+}
+
+var mysqlConnectionDetails = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		attributes.Hostname: {
 			Type:        schema.TypeString,
@@ -29,8 +43,10 @@ var managementConnectionDetails = &schema.Resource{
 			Required:    true,
 			Description: descriptions.DatabasePort,
 		},
-		attributes.AuthDetails: {
-			Type:        schema.TypeList,
+		attributes.BasicAuth: {
+			Type: schema.TypeList,
+			// If any new auth methods are created, we should utilize ConflictsWith to ensure only one is set at a time.
+			//ConflictsWith: []string{parent_block_name.0.child_attribute_name},
 			Required:    true,
 			MinItems:    1,
 			MaxItems:    1,
@@ -105,13 +121,7 @@ func resourceDatabase() *schema.Resource {
 				MinItems:    1,
 				MaxItems:    1,
 				Description: descriptions.ManagementConnectionDetails,
-				Elem:        managementConnectionDetails,
-				ForceNew:    false,
-			},
-			attributes.ManagementConnectionDetailsType: {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: descriptions.ManagementConnectionDetailsType,
+				Elem:        dbConnectionTypes,
 				ForceNew:    true,
 			},
 			attributes.ManagementGatewaySelector: {
@@ -166,8 +176,7 @@ func resourceDatabaseCreate(ctx context.Context, d *schema.ResourceData, m any) 
 		}
 	}
 
-	mgmtType := d.Get(attributes.ManagementConnectionDetailsType).(string)
-	mgmtDetails, plainTextPassword, err := mgmtConnectionDetailsFromResource(ctx, c, mgmtType, d)
+	mgmtType, mgmtDetails, err := mgmtConnectionDetailsFromResource(ctx, c, d)
 	if err != nil {
 		return err
 	}
@@ -180,14 +189,10 @@ func resourceDatabaseCreate(ctx context.Context, d *schema.ResourceData, m any) 
 		d.SetId(createdDb.Id)
 	}
 
-	return resourceDatabaseReadWithPassword(ctx, d, m, plainTextPassword)
+	return resourceDatabaseRead(ctx, d, m)
 }
 
 func resourceDatabaseRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	return resourceDatabaseReadWithPassword(ctx, d, m, nil)
-}
-
-func resourceDatabaseReadWithPassword(ctx context.Context, d *schema.ResourceData, m any, newPassword *string) diag.Diagnostics {
 	c := getSDKClientFromMetadata(m)
 	resourceGroupID := d.Get(attributes.ResourceGroup).(string)
 	projectID := d.Get(attributes.Project).(string)
@@ -198,18 +203,11 @@ func resourceDatabaseReadWithPassword(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(err)
 	}
 
-	wrap := wrappers.DatabaseResourceResponseWrapper{*database}
-
-	overrides := make(map[string]any, 1)
-	if newPassword != nil && *newPassword != "" {
-		overrides[attributes.Password] = *newPassword
-	} else if password, ok := d.Get(attributes.NestedManagementConnectionPassword).(string); ok {
-		// if a refresh happens the password may exist in state
-		overrides[attributes.Password] = password
-	}
-
 	d.SetId(database.Id)
-	for key, value := range wrap.ToResourceMap(overrides) {
+
+	wrap := wrappers.DatabaseResourceResponseWrapper{*database}
+	attributeOverrides := utils.GenerateAttributeOverrides(d, wrap)
+	for key, value := range wrap.ToResourceMap(attributeOverrides) {
 		if err := d.Set(key, value); err != nil {
 			return diag.FromErr(err)
 		}
@@ -246,8 +244,7 @@ func resourceDatabaseUpdate(ctx context.Context, d *schema.ResourceData, m any) 
 		}
 	}
 
-	mgmtType := d.Get(attributes.ManagementConnectionDetailsType).(string)
-	mgmtDetails, plainTextPassword, err := mgmtConnectionDetailsFromResource(ctx, c, mgmtType, d)
+	mgmtType, mgmtDetails, err := mgmtConnectionDetailsFromResource(ctx, c, d)
 	if err != nil {
 		return err
 	}
@@ -279,7 +276,7 @@ func resourceDatabaseUpdate(ctx context.Context, d *schema.ResourceData, m any) 
 		return diag.FromErr(err)
 	}
 
-	return resourceDatabaseReadWithPassword(ctx, d, m, plainTextPassword)
+	return resourceDatabaseRead(ctx, d, m)
 }
 
 func resourceDatabaseDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
@@ -319,95 +316,105 @@ func parseDatabaseID(resourceId string) (string, string, string, error) {
 	return split[0], split[1], split[2], nil
 }
 
-func mgmtConnectionDetailsFromResource(_ context.Context, client client.SDKClientWrapper, mgmtType string, d *schema.ResourceData) (*pam.ManagementConnectionDetails, *string, diag.Diagnostics) {
+func mgmtConnectionDetailsFromResource(_ context.Context, pamClient client.SDKClientWrapper, d *schema.ResourceData) (string, *pam.ManagementConnectionDetails, diag.Diagnostics) {
+	v, ok := d.GetOk(attributes.ManagementConnectionDetails)
+	if !ok {
+		return "", nil, diag.Errorf("%s must have one set of details", attributes.ManagementConnectionDetails)
+	}
+
+	details, ok := v.([]any)
+	if !ok {
+		return "", nil, diag.Errorf("%s must have one set of details", attributes.ManagementConnectionDetails)
+	}
+
+	// schema guarantees only one is set
+	detailsMap, ok := details[0].(map[string]any)
+	if !ok {
+		return "", nil, diag.Errorf("invalid %s", attributes.ManagementConnectionDetails)
+	}
+
+	// schema guarantees there is only one set of details stored.
+	var mgmtDetailsMap map[string]any
+	var databaseType string
+	for key, val := range detailsMap {
+		databaseType = key
+		mgmtDetailsList := val.([]any)
+		mgmtDetailsMap = mgmtDetailsList[0].(map[string]any)
+	}
+
+	var mgmtDetails *pam.ManagementConnectionDetails
+	var diags diag.Diagnostics
+
+	switch databaseType {
+	case attributes.MySQL:
+		mgmtDetails, diags = getMysqlDetailsFromResource(pamClient, mgmtDetailsMap)
+		if diags.HasError() {
+			return "", nil, diags
+		}
+	default:
+		return "", nil, diag.Errorf("invalid management connection details, provided %s", databaseType)
+	}
+
+	mgmtType := getDatabaseManagementType(mgmtDetails)
+
+	return mgmtType, mgmtDetails, nil
+}
+
+func getDatabaseManagementType(details *pam.ManagementConnectionDetails) string {
+	if details.MySQLBasicAuthManagementConnectionDetails != nil {
+		return MySqlBasicAuth
+	}
+	return ""
+}
+
+func getMysqlDetailsFromResource(pamClient client.SDKClientWrapper, detailsMap map[string]any) (*pam.ManagementConnectionDetails, diag.Diagnostics) {
+	var diags diag.Diagnostics
 	var plainTextPassword *string
-	mgmtDetails := &pam.ManagementConnectionDetails{}
 
-	if v, ok := d.GetOk(attributes.ManagementConnectionDetails); !ok {
-		return nil, nil, diag.Errorf("%s must have one set of details", attributes.ManagementConnectionDetails)
-	} else {
-		details, ok := v.([]any)
-		if !ok {
-			return nil, nil, diag.Errorf("%s must have one set of details", attributes.ManagementConnectionDetails)
+	connectionDetails := &pam.ManagementConnectionDetails{}
+
+	// required fields
+	hostname := detailsMap[attributes.Hostname].(string)
+	port := detailsMap[attributes.Port].(string)
+
+	// look for possible auth details
+	if auth, authSet := detailsMap[attributes.BasicAuth]; authSet {
+		var username string
+		//var secretID *string
+		var passwordJwe *pam.EncryptedString
+
+		authList := auth.([]any)
+		authMap := authList[0].(map[string]any)
+
+		// required params
+		username = authMap[attributes.Username].(string)
+
+		// optional params
+		secretID := GetStringPtrFromElement(attributes.Secret, authMap, false)
+
+		plainTextPassword = GetStringPtrFromElement(attributes.Password, authMap, false)
+		if plainTextPassword != nil && *plainTextPassword != "" {
+			var err error
+			passwordJwe, err = pamClient.SDKClient.Encrypt(*plainTextPassword)
+			if err != nil {
+				return nil, diag.Errorf("error encrypting password: %v", err)
+			}
 		}
 
-		detailsMap, ok := details[0].(map[string]any)
-		if !ok {
-			return nil, nil, diag.Errorf("invalid %s", attributes.ManagementConnectionDetails)
+		if diags.HasError() {
+			return nil, diags
 		}
 
-		switch mgmtType {
-		case MySqlBasicAuth:
-			var diags diag.Diagnostics
-			authDetails := detailsMap[attributes.AuthDetails]
-			authDetailsSet, ok := authDetails.([]any)
-			if !ok {
-				return nil, nil, diag.Errorf("invalid %s", attributes.AuthDetails)
-			}
-			authDetailsMap, ok := authDetailsSet[0].(map[string]any)
-			if !ok {
-				return nil, nil, diag.Errorf("invalid %s", attributes.AuthDetails)
-			}
-
-			hostname, ok := detailsMap[attributes.Hostname].(string)
-			if !ok {
-				diags = append(diags, diag.Diagnostic{
-					Severity: diag.Error,
-					Summary:  "invalid hostname",
-				})
-			}
-			port, ok := detailsMap[attributes.Port].(string)
-			if !ok {
-				diags = append(diags, diag.Diagnostic{
-					Severity: diag.Error,
-					Summary:  "invalid port",
-				})
-			}
-
-			var secretID *string
-			if secret, ok := authDetailsMap[attributes.Secret].(string); ok {
-				secretID = &secret
-			}
-
-			username, ok := authDetailsMap[attributes.Username].(string)
-			if !ok {
-				diags = append(diags, diag.Diagnostic{
-					Severity: diag.Error,
-					Summary:  "invalid username",
-				})
-			}
-
-			var passwordJwe *pam.EncryptedString
-			if password, ok := authDetailsMap[attributes.Password].(string); ok && password != "" {
-				var err error
-				plainTextPassword = &password
-				passwordJwe, err = client.SDKClient.Encrypt(password)
-				if err != nil {
-					return nil, nil, diag.Errorf("error encrypting password: %v", err)
-				}
-			} else if !ok {
-				diags = append(diags, diag.Diagnostic{
-					Severity: diag.Error,
-					Summary:  "invalid auth details",
-				})
-			}
-
-			if diags.HasError() {
-				return nil, nil, diags
-			}
-
-			mgmtDetails.MySQLBasicAuthManagementConnectionDetails = &pam.MySQLBasicAuthManagementConnectionDetails{
-				Hostname: hostname,
-				Port:     port,
-				AuthDetails: pam.MySQLBasicAuthDetails{
-					Username:    username,
-					PasswordJwe: passwordJwe,
-					SecretId:    secretID,
-				},
-			}
-		default:
-			return nil, nil, diag.Errorf("invalid %s: %s", attributes.ManagementConnectionDetailsType, mgmtType)
+		connectionDetails.MySQLBasicAuthManagementConnectionDetails = &pam.MySQLBasicAuthManagementConnectionDetails{
+			Hostname: hostname,
+			Port:     port,
+			AuthDetails: pam.MySQLBasicAuthDetails{
+				Username:    username,
+				PasswordJwe: passwordJwe,
+				SecretId:    secretID,
+			},
 		}
 	}
-	return mgmtDetails, plainTextPassword, nil
+
+	return connectionDetails, nil
 }

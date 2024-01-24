@@ -35,7 +35,14 @@ func TestAccDatasourceDatabaseResourceFetch(t *testing.T) {
 			},
 			{
 				Config: fmt.Sprintf("%s\n%s", initConfig, dataConfig),
-				Check:  resource.TestCheckResourceAttr(dataSourceName, attributes.ManagementConnectionDetailsType, "mysql.basic_auth"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(dataSourceName, fmt.Sprintf("%s.#", attributes.ManagementConnectionDetails), "1"),
+					resource.TestCheckResourceAttr(dataSourceName, fmt.Sprintf("%s.0.%%", attributes.ManagementConnectionDetails), "1"),
+					resource.TestCheckResourceAttr(dataSourceName,
+						fmt.Sprintf("%s.0.%s.0.%s.0.%s",
+							attributes.ManagementConnectionDetails, attributes.MySQL, attributes.BasicAuth, attributes.Username),
+						"user"),
+				),
 			},
 		},
 	})
