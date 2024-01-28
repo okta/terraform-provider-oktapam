@@ -105,7 +105,6 @@ const (
 	MFA                               = "mfa"
 	ManagedPrivilegedAccounts         = "managed_privileged_accounts"
 	ManagementConnectionDetails       = "management_connection_details"
-	ManagementConnectionDetailsType   = "management_connection_details_type"
 	ManagementGatewaySelector         = "management_gateway_selector"
 	ManagementGatewaySelectorID       = "management_gateway_selector_id"
 	MaxLength                         = "max_length"

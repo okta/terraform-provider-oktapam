@@ -161,19 +161,9 @@ func resourceDatabaseCreate(ctx context.Context, d *schema.ResourceData, m any) 
 	canonicalName := d.Get(attributes.CanonicalName).(string)
 	dbType := d.Get(attributes.DatabaseType).(string)
 
-	var selectorLabels *map[string]string
-	if selector, ok := d.GetOk(attributes.ManagementGatewaySelector); ok {
-		if s, ok := selector.(map[string]any); ok {
-			tmpLabels := make(map[string]string, len(s))
-			for k, v := range s {
-				if value, ok := v.(string); ok {
-					tmpLabels[k] = value
-				}
-			}
-			selectorLabels = &tmpLabels
-		} else {
-			return diag.FromErr(fmt.Errorf("invalid label selector"))
-		}
+	selectorLabels, err := GetMapFromResource[string](attributes.ManagementGatewaySelector, d)
+	if err != nil {
+		return err
 	}
 
 	mgmtType, mgmtDetails, err := mgmtConnectionDetailsFromResource(ctx, c, d)
@@ -203,8 +193,6 @@ func resourceDatabaseRead(ctx context.Context, d *schema.ResourceData, m any) di
 		return diag.FromErr(err)
 	}
 
-	d.SetId(database.Id)
-
 	wrap := wrappers.DatabaseResourceResponseWrapper{*database}
 	attributeOverrides := utils.GenerateAttributeOverrides(d, wrap)
 	for key, value := range wrap.ToResourceMap(attributeOverrides) {
@@ -226,22 +214,9 @@ func resourceDatabaseUpdate(ctx context.Context, d *schema.ResourceData, m any) 
 	canonicalName := d.Get(attributes.CanonicalName).(string)
 	dbType := d.Get(attributes.DatabaseType).(string)
 
-	var selectorLabels *map[string]string
-	if selector, ok := d.GetOk(attributes.ManagementGatewaySelector); ok {
-		if s, ok := selector.(map[string]any); ok {
-			tmpLabels := make(map[string]string, len(s))
-			for k, v := range s {
-				if value, ok := v.(string); ok {
-					tmpLabels[k] = value
-				}
-			}
-			selectorLabels = &tmpLabels
-		} else {
-			diags = append(diags, diag.Diagnostic{
-				Severity: diag.Error,
-				Summary:  "invalid label selector",
-			})
-		}
+	selectorLabels, err := GetMapFromResource[string](attributes.ManagementGatewaySelector, d)
+	if err != nil {
+		return err
 	}
 
 	mgmtType, mgmtDetails, err := mgmtConnectionDetailsFromResource(ctx, c, d)
@@ -317,25 +292,10 @@ func parseDatabaseID(resourceId string) (string, string, string, error) {
 }
 
 func mgmtConnectionDetailsFromResource(_ context.Context, pamClient client.SDKClientWrapper, d *schema.ResourceData) (string, *pam.ManagementConnectionDetails, diag.Diagnostics) {
-	v, ok := d.GetOk(attributes.ManagementConnectionDetails)
-	if !ok {
-		return "", nil, diag.Errorf("%s must have one set of details", attributes.ManagementConnectionDetails)
-	}
-
-	details, ok := v.([]any)
-	if !ok {
-		return "", nil, diag.Errorf("%s must have one set of details", attributes.ManagementConnectionDetails)
-	}
-
-	// schema guarantees only one is set
-	detailsMap, ok := details[0].(map[string]any)
-	if !ok {
-		return "", nil, diag.Errorf("invalid %s", attributes.ManagementConnectionDetails)
-	}
-
-	// schema guarantees there is only one set of details stored.
+	detailsMap := GetTypeListMapFromResource(attributes.ManagementConnectionDetails, d)
 	var mgmtDetailsMap map[string]any
 	var databaseType string
+	// schema guarantees there is only one set of details stored.
 	for key, val := range detailsMap {
 		databaseType = key
 		mgmtDetailsList := val.([]any)
