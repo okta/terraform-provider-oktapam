@@ -134,7 +134,7 @@ func GetTypeListMapFromResourceElement(attr string, data map[string]any) map[str
 	return listArr[0].(map[string]any)
 }
 
-func GetMapFromResource[V any](attr string, d *schema.ResourceData) (*map[string]V, diag.Diagnostics) {
+func GetMapPtrFromResource[V any](attr string, d *schema.ResourceData) (*map[string]V, diag.Diagnostics) {
 	var returnedMap *map[string]V
 	if v, ok := d.GetOk(attr); ok {
 		if m, ok := v.(map[string]any); ok {

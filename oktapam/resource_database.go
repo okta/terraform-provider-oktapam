@@ -161,7 +161,7 @@ func resourceDatabaseCreate(ctx context.Context, d *schema.ResourceData, m any) 
 	canonicalName := d.Get(attributes.CanonicalName).(string)
 	dbType := d.Get(attributes.DatabaseType).(string)
 
-	selectorLabels, err := GetMapFromResource[string](attributes.ManagementGatewaySelector, d)
+	selectorLabels, err := GetMapPtrFromResource[string](attributes.ManagementGatewaySelector, d)
 	if err != nil {
 		return err
 	}
@@ -214,7 +214,7 @@ func resourceDatabaseUpdate(ctx context.Context, d *schema.ResourceData, m any) 
 	canonicalName := d.Get(attributes.CanonicalName).(string)
 	dbType := d.Get(attributes.DatabaseType).(string)
 
-	selectorLabels, err := GetMapFromResource[string](attributes.ManagementGatewaySelector, d)
+	selectorLabels, err := GetMapPtrFromResource[string](attributes.ManagementGatewaySelector, d)
 	if err != nil {
 		return err
 	}
