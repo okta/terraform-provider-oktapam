@@ -141,9 +141,6 @@ func resourceDatabasePasswordSettingsRead(ctx context.Context, d *schema.Resourc
 				diags = append(diags, diag.FromErr(err)...)
 			}
 		}
-		if diags == nil {
-			d.SetId(formatPasswordSettingsID(resourceGroupID, projectID))
-		}
 	} else {
 		d.SetId("")
 	}

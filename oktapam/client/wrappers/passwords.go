@@ -6,25 +6,16 @@ import (
 )
 
 var (
-	_ Wrappers = (*PasswordPolicyWrapper)(nil)
-	_ Wrappers = (*CharacterOptionsWrapper)(nil)
+	_ ResourceWrapper = (*PasswordPolicyWrapper)(nil)
+	_ ResourceWrapper = (*CharacterOptionsWrapper)(nil)
 )
-
-type AttributeOverrides map[string]any
-
-type Wrappers interface {
-	ToResourceMap(overrides AttributeOverrides) map[string]any
-}
 
 type PasswordPolicyWrapper struct {
 	pam.PasswordPolicy
 	UseManagedPrivilegedAccountsConfig bool
 }
-type CharacterOptionsWrapper struct {
-	pam.PasswordPolicyCharacterOptions
-}
 
-func (w PasswordPolicyWrapper) ToResourceMap(overrides AttributeOverrides) map[string]any {
+func (w PasswordPolicyWrapper) ToResourceMap(overrides attributeOverrides) map[string]any {
 	m := make(map[string]any, 7)
 
 	m[attributes.EnablePeriodicRotation] = w.EnablePeriodicRotation
@@ -48,7 +39,15 @@ func (w PasswordPolicyWrapper) ToResourceMap(overrides AttributeOverrides) map[s
 	return m
 }
 
-func (w CharacterOptionsWrapper) ToResourceMap(overrides AttributeOverrides) map[string]any {
+func (w PasswordPolicyWrapper) AttributeOverridePaths() []string {
+	return nil
+}
+
+type CharacterOptionsWrapper struct {
+	pam.PasswordPolicyCharacterOptions
+}
+
+func (w CharacterOptionsWrapper) ToResourceMap(overrides attributeOverrides) map[string]any {
 	m := make(map[string]any, 4)
 
 	if w.LowerCase != nil {
@@ -68,4 +67,8 @@ func (w CharacterOptionsWrapper) ToResourceMap(overrides AttributeOverrides) map
 	}
 
 	return m
+}
+
+func (w CharacterOptionsWrapper) AttributeOverridePaths() []string {
+	return nil
 }
