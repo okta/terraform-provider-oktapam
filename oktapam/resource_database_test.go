@@ -74,7 +74,8 @@ func TestAccDatabaseResource(t *testing.T) {
 				Config: createTestDatabaseCreateConfig(groupName, resourceGroupName, projectName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testDatabaseCheckExists(resourceName, initialDatabase),
-					resource.TestCheckNoResourceAttr(resourceName, attributes.ManagementGatewaySelectorID),
+					resource.TestCheckResourceAttr(resourceName, attributes.RecipeBook, ""),
+					resource.TestCheckResourceAttr(resourceName, attributes.ManagementGatewaySelectorID, ""),
 					resource.TestCheckNoResourceAttr(resourceName, attributes.ManagementGatewaySelector),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.ManagementConnectionDetails), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%%", attributes.ManagementConnectionDetails), "1"),
@@ -91,6 +92,7 @@ func TestAccDatabaseResource(t *testing.T) {
 				Config: createTestDatabaseUpdateConfig(groupName, resourceGroupName, projectName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testDatabaseCheckExists(resourceName, updatedDatabase),
+					resource.TestCheckResourceAttr(resourceName, attributes.RecipeBook, ""),
 					resource.TestCheckResourceAttrSet(resourceName, attributes.ManagementGatewaySelectorID),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.%%", attributes.ManagementGatewaySelector), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.ManagementConnectionDetails), "1"),
