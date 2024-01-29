@@ -3,12 +3,12 @@
 page_title: "oktapam_database_password_settings Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns an existing Server Password Policy for a PAM Project.  For details, see Projects https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects.
+  Returns an existing Database Password Policy for a PAM Project.
 ---
 
 # oktapam_database_password_settings (Data Source)
 
-Returns an existing Server Password Policy for a PAM Project.  For details, see [Projects](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects).
+Returns an existing Database Password Policy for a PAM Project.
 
 
 

@@ -3,12 +3,12 @@
 page_title: "oktapam_database Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns an existing Database. For details, see Databases https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-databases
+  Returns an existing Database.
 ---
 
 # oktapam_database (Data Source)
 
-Returns an existing Database. For details, see [Databases](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-databases)
+Returns an existing Database.
 
 
 
