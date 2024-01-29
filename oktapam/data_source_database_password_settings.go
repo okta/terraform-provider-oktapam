@@ -13,7 +13,7 @@ import (
 
 func dataSourceDatabasePasswordSettings() *schema.Resource {
 	return &schema.Resource{
-		Description: descriptions.SourcePasswordSettings,
+		Description: descriptions.SourceServerPasswordSettings,
 		ReadContext: dataSourceDatabasePasswordSettingsRead,
 		Schema: map[string]*schema.Schema{
 			attributes.ID: {

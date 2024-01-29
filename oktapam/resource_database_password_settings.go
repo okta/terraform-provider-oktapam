@@ -46,7 +46,7 @@ var characterOptions = &schema.Resource{
 
 func resourceDatabasePasswordSettings() *schema.Resource {
 	return &schema.Resource{
-		Description:   descriptions.ResourcePasswordSettings,
+		Description:   descriptions.ResourceDatabasePasswordSettings,
 		CreateContext: resourceDatabasePasswordSettingsCreate,
 		ReadContext:   resourceDatabasePasswordSettingsRead,
 		UpdateContext: resourceDatabasePasswordSettingsUpdate,

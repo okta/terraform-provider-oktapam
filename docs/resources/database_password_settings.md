@@ -3,12 +3,12 @@
 page_title: "oktapam_database_password_settings Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  The settings for passwords set on resources within the project. For details, see Projects https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects.
+  The settings for passwords set on databases within the project.
 ---
 
 # oktapam_database_password_settings (Resource)
 
-The settings for passwords set on resources within the project. For details, see [Projects](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects).
+The settings for passwords set on databases within the project.
 
 
 

@@ -19,16 +19,15 @@ var (
 	SourceADConnections                      = "A list of AD Connections associated with your Team."
 	SourceCurrentUser                        = "Returns the username of the user used to invoke the terraform."
 	SourceDatabase                           = fmt.Sprintf("Returns an existing Database. %s", LinkDatabase)
-	SourceDatabasePasswordSettings           = fmt.Sprintf("Returns an existing Password Policy for a Database. %s", LinkDatabasePasswordSettings)
 	SourceGateways                           = fmt.Sprintf("Returns a list of all Gateways connected to the Team specified in the OKTAPAM_TEAM environment variable. %s", LinkGateway)
 	SourceGroup                              = fmt.Sprintf("Returns an existing Group. %s", LinkGroup)
-	SourcePasswordSettings                   = fmt.Sprintf("Returns an existing Password Policy for a PAM Project.  %s", LinkPasswordSettings)
 	SourceProject                            = fmt.Sprintf("Returns an existing Project. %s", LinkProject)
 	SourceProjectGroup                       = fmt.Sprintf("Returns an existing Group assigned to a specified Project. %s", LinkProjectGroup)
 	SourceResourceGroup                      = fmt.Sprintf("Returns an existing PAM Resource Group. %s", LinkResourceGroup)
 	SourceResourceGroupProject               = fmt.Sprintf("Returns an existing PAM Project associated with a specific PAM Resource Group. %s", LinkResourceGroupProject)
 	SourceResourceGroupServerEnrollmentToken = fmt.Sprintf("Returns an existing PAM Server Enrollment Token associated with a specific PAM project. %s", LinkResourceGroupServerEnrollmentToken)
 	SourceSecurityPolicy                     = fmt.Sprintf("Returns an existing PAM Security Policy. %s", LinkSecurityPolicy)
+	SourceServerPasswordSettings             = fmt.Sprintf("Returns an existing Server Password Policy for a PAM Project.  %s", LinkPasswordSettings)
 	SourceTeamSettings                       = "Returns Team-level settings, such as authentication and enrollment details, for your Team."
 	SourceADUserSyncTaskSettings             = fmt.Sprintf("Returns an existing AD user sync job. %s", LinkADUserDiscovery)
 
