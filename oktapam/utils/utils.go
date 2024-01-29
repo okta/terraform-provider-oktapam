@@ -125,10 +125,19 @@ func CreateCheckResourceDestroy(typeName string, checkResourceExists checkResour
 }
 
 // GenerateAttributeOverrides will evaluate which attributes on the resource may have overrides set,
-// it will get the existing values of those attributes, and return a map of any data found.
+// It will get the existing values of those attributes, and return a map of any data found.
 // The key in the map will be the single attribute value (rather than the full path).
 // This is because d.Set cannot be called on nested attributes. i.e. a full list must be provided, and not a single
 // element of that list.
+//
+// For example, the `password` field in a MySQL connection in a database resource is not provided by the GET API, so
+// the initial value from creation must be copied over from the previous state on each new operation. This allows
+// Terraform to detect and act on a password change if the plan is modified.
+// This is not an issue for top-level fields as their initial value can automatically remain stored in state, but for
+// nested attributes like `password`, if any parent attribute is set, such as attributes.ManagementConnectionDetails or
+// attributes.MySQL, it will cause the nested attributes.Password to be overwritten and removed from state.
+// Explicitly reading the attribute before state is modified and ensuring it gets written into the new state solves
+// this problem.
 func GenerateAttributeOverrides(d *schema.ResourceData, resource wrappers.ResourceWrapper) map[string]any {
 	paths := resource.AttributeOverridePaths()
 	existingValues := getAttributeValuesByPath(d, paths)

@@ -195,7 +195,6 @@ const (
 	TrafficForwarding                 = "traffic_forwarding"
 	Type                              = "type"
 	UPNField                          = "upn_field"
-	UpdatedAt                         = "updated_at"
 	UpperCase                         = "upper_case"
 	UsePasswordless                   = "use_passwordless"
 	UserOnDemandPeriod                = "user_on_demand_period"
