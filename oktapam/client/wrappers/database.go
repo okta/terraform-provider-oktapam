@@ -60,8 +60,11 @@ func (w DatabaseResourceResponseWrapper) ToResourceMap(o attributeOverrides) map
 
 func (w DatabaseResourceResponseWrapper) AttributeOverridePaths() []string {
 	overrides := []string{}
+	// Get any attribute overrides from child elements
 	childOverrides := ManagementConnectionDetailsWrapper{w.ManagementConnectionDetails}.AttributeOverridePaths()
 	for _, attr := range childOverrides {
+		// For any found override, prefix it with the parent path details.
+		// Only 1 connection details can be provided and the schema guarantees this so we know the index must be 0.
 		overrides = append(overrides, fmt.Sprintf("%s.0.%s", attributes.ManagementConnectionDetails, attr))
 	}
 	return overrides
@@ -86,13 +89,15 @@ func (w ManagementConnectionDetailsWrapper) ToResourceMap(o attributeOverrides) 
 
 func (w ManagementConnectionDetailsWrapper) AttributeOverridePaths() []string {
 	overrides := []string{}
-	if w.MySQLBasicAuthManagementConnectionDetails == nil {
+	// Get any overrides from set child elements.
+	if w.MySQLBasicAuthManagementConnectionDetails != nil {
+		childOverrides := MySQLBasicAuthManagementConnectionDetailsWrapper{*w.MySQLBasicAuthManagementConnectionDetails}.AttributeOverridePaths()
+		for _, attr := range childOverrides {
+			// For any found override, prefix it with the parent path details.
+			// Only 1 auth details can be provided and the schema guarantees this so we know the index must be 0.
+			overrides = append(overrides, fmt.Sprintf("%s.0.%s", attributes.MySQL, attr))
+		}
 		return overrides
-	}
-
-	childOverrides := MySQLBasicAuthManagementConnectionDetailsWrapper{*w.MySQLBasicAuthManagementConnectionDetails}.AttributeOverridePaths()
-	for _, attr := range childOverrides {
-		overrides = append(overrides, fmt.Sprintf("%s.0.%s", attributes.MySQL, attr))
 	}
 	return overrides
 }
@@ -112,8 +117,11 @@ func (w MySQLBasicAuthManagementConnectionDetailsWrapper) ToResourceMap(o attrib
 
 func (w MySQLBasicAuthManagementConnectionDetailsWrapper) AttributeOverridePaths() []string {
 	overrides := []string{}
+	// Get any overrides from child elements.
 	childOverrides := MySQLBasicAuthDetailsWrapper{w.AuthDetails}.AttributeOverridePaths()
 	for _, attr := range childOverrides {
+		// For any found override, prefix it with the parent path details.
+		// Only 1 auth details can be provided and the schema guarantees this so we know the index must be 0.
 		overrides = append(overrides, fmt.Sprintf("%s.0.%s", attributes.BasicAuth, attr))
 	}
 	return overrides
@@ -132,5 +140,8 @@ func (w MySQLBasicAuthDetailsWrapper) ToResourceMap(o attributeOverrides) map[st
 }
 
 func (w MySQLBasicAuthDetailsWrapper) AttributeOverridePaths() []string {
+	// The password field must be overridden by the known details in the existing state.
+	// Return it so it can be prefixed by all the parent path elements. The final path is used to read the existing
+	// value from state.
 	return []string{attributes.Password}
 }

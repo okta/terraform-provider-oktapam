@@ -195,8 +195,6 @@ func resourceDatabaseRead(ctx context.Context, d *schema.ResourceData, m any) di
 }
 
 func resourceDatabaseUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	var diags diag.Diagnostics
-
 	c := getSDKClientFromMetadata(m)
 	dbID := d.Get(attributes.ID).(string)
 	resourceGroupID := d.Get(attributes.ResourceGroup).(string)
@@ -212,29 +210,6 @@ func resourceDatabaseUpdate(ctx context.Context, d *schema.ResourceData, m any) 
 	mgmtType, mgmtDetails, err := mgmtConnectionDetailsFromResource(ctx, c, d)
 	if err != nil {
 		return err
-	}
-
-	if dbID == "" {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "could not obtain database id from resource",
-		})
-	}
-	if resourceGroupID == "" {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "could not obtain resource group id from resource",
-		})
-	}
-	if projectID == "" {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "could not obtain project id from resource",
-		})
-	}
-
-	if diags != nil {
-		return diags
 	}
 
 	if err := client.UpdateDatabase(ctx, c, dbID, resourceGroupID, projectID, canonicalName, dbType, mgmtType, *mgmtDetails, selectorLabels); err != nil {
