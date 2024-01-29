@@ -42,16 +42,13 @@ type MySQLBasicAuthDetailsWrapper struct {
 func (w DatabaseResourceResponseWrapper) ToResourceMap(o attributeOverrides) map[string]any {
 	m := make(map[string]any, 10)
 
-	m[attributes.CanonicalName] = w.CanonicalName
-	m[attributes.DatabaseType] = w.DatabaseType
-	if w.ManagementGatewaySelectorId != "" {
-		m[attributes.ManagementGatewaySelectorID] = w.ManagementGatewaySelectorId
+	m[attributes.CanonicalName] = w.GetCanonicalName()
+	m[attributes.DatabaseType] = w.GetDatabaseType()
+	m[attributes.RecipeBook] = w.GetRecipeBookId()
+	if selectorID, ok := w.GetManagementGatewaySelectorIdOk(); ok {
+		m[attributes.ManagementGatewaySelectorID] = *selectorID
 	}
-	if w.ManagementGatewaySelector != nil {
-		m[attributes.ManagementGatewaySelector] = *w.ManagementGatewaySelector
-	} else {
-		m[attributes.ManagementGatewaySelector] = make(map[string]string)
-	}
+	m[attributes.ManagementGatewaySelector] = w.GetManagementGatewaySelector()
 
 	mgmtDetails := make([]any, 1)
 	mgmtDetails[0] = ManagementConnectionDetailsWrapper{w.ManagementConnectionDetails}.ToResourceMap(o)
@@ -103,8 +100,8 @@ func (w ManagementConnectionDetailsWrapper) AttributeOverridePaths() []string {
 func (w MySQLBasicAuthManagementConnectionDetailsWrapper) ToResourceMap(o attributeOverrides) map[string]any {
 	m := make(map[string]any, 3)
 
-	m[attributes.Hostname] = w.Hostname
-	m[attributes.Port] = w.Port
+	m[attributes.Hostname] = w.GetHostname()
+	m[attributes.Port] = w.GetPort()
 
 	authDetails := make([]any, 1)
 	authDetails[0] = MySQLBasicAuthDetailsWrapper{w.AuthDetails}.ToResourceMap(o)
@@ -124,8 +121,8 @@ func (w MySQLBasicAuthManagementConnectionDetailsWrapper) AttributeOverridePaths
 
 func (w MySQLBasicAuthDetailsWrapper) ToResourceMap(o attributeOverrides) map[string]any {
 	m := make(map[string]any, 3)
-	m[attributes.Username] = w.Username
-	m[attributes.Secret] = w.SecretId
+	m[attributes.Username] = w.GetUsername()
+	m[attributes.Secret] = w.GetSecretId()
 
 	if v, ok := o[attributes.Password]; ok {
 		m[attributes.Password] = v

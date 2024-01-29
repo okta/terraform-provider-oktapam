@@ -137,16 +137,6 @@ func resourceDatabase() *schema.Resource {
 				Computed:    true,
 				Description: descriptions.ManagementGatewaySelectorID,
 			},
-			attributes.CreatedAt: {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: descriptions.CreatedAt,
-			},
-			attributes.UpdatedAt: {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: descriptions.UpdatedAt,
-			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceDatabaseReadImport,

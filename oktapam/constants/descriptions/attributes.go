@@ -172,7 +172,6 @@ var (
 	TeamName                      = "The human-readable name of the ASA Team that owns the resource. Values are lower-case."
 	TeamSettingsID                = "Team name is populated as the ID for team settings."
 	Token                         = "The secret used for resource enrollment."
-	UpdatedAt                     = "The UTC time when the resource was last updated. Format is '2022-01-01 00:00:00 +0000 UTC'."
 	UsePasswordless               = "if `true`, Users will not need password to login."
 	UserName                      = "The human-readable name of the User."
 	UserOnDemandPeriod            = "If defined, set time period in seconds that an on-demand user account exists on the server following an access request."
