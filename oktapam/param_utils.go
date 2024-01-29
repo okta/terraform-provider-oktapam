@@ -134,6 +134,24 @@ func GetTypeListMapFromResourceElement(attr string, data map[string]any) map[str
 	return listArr[0].(map[string]any)
 }
 
+func GetMapPtrFromResource[V any](attr string, d *schema.ResourceData) (*map[string]V, diag.Diagnostics) {
+	var returnedMap *map[string]V
+	if v, ok := d.GetOk(attr); ok {
+		if m, ok := v.(map[string]any); ok {
+			tmpMap := make(map[string]V, len(m))
+			for k, v := range m {
+				if value, ok := v.(V); ok {
+					tmpMap[k] = value
+				}
+			}
+			returnedMap = &tmpMap
+		} else {
+			return nil, diag.FromErr(fmt.Errorf("invalid %s", attr))
+		}
+	}
+	return returnedMap, nil
+}
+
 func GetOkBoolFromResource(attr string, d *schema.ResourceData) (bool, error) {
 	if self, ok := d.GetOk(attr); ok {
 		switch v := self.(type) {
@@ -173,6 +191,11 @@ func GetIntPtrFromResource(attr string, d *schema.ResourceData, returnZero bool)
 func GetIntPtrFromElement(attr string, data map[string]any, returnZero bool) *int {
 	v := data[attr].(int)
 	return utils.AsIntPtrZero(v, returnZero)
+}
+
+func GetStringPtrFromElement(attr string, data map[string]any, returnZero bool) *string {
+	v := data[attr].(string)
+	return utils.AsStringPtrZero(v, returnZero)
 }
 
 func GetStringPtrFromResource(attr string, d *schema.ResourceData, returnZero bool) *string {

@@ -284,7 +284,7 @@ func (r ApiIssueServiceTokenRequest) Execute() (*AuthTokenResponse, *http.Respon
 
 	    Most calls to the OPA API require an HTTP `Authorization` header with a value of `Bearer ${AUTH_TOKEN}`.
 
-To retrieve an auth token, you need to [create a Service User and API key](/openapi/opa/tag/service-users/#tag/service-users/operation/CreateServiceUser), then pass the API key information to this endpoint.
+To retrieve an auth token, you need to create an API key for a Service User and pass the API key information to this endpoint.
 Auth tokens may expire at any time, so code that uses them should be prepared to handle a 401 response code by creating a new auth token.
 
 This endpoint requires the following role: `resource_admin`.

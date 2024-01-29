@@ -32,9 +32,9 @@ func (r ApiGetCurrentUserInfoRequest) Execute() (*CurrentUserInfo, *http.Respons
 }
 
 /*
-GetCurrentUserInfo Retrieve information about the current User
+GetCurrentUserInfo Retrieve User details
 
-	Retrieves information about the User that is invoking the API
+	Retrieves details about the current User
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
