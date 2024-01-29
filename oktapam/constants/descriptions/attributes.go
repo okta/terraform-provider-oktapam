@@ -102,7 +102,6 @@ var (
 	MFAReAuthFrequencyInSeconds               = "The number of seconds an MFA verification remains valid. After this time users need to reauthenticate before they can open new connections to resources. Defining a value of `0` requires users to authenticate for every connection."
 	ManagedPrivilegedAccounts                 = "An array of managed accounts for password rotation."
 	ManagementConnectionDetails               = "A set of fields defining the database to connect to."
-	ManagementConnectionDetailsType           = "A string containing the database type and authentication method."
 	ManagementGatewaySelector                 = "A label selector to define which gateway(s) will be used to connect to the database."
 	ManagementGatewaySelectorID               = "The ID of the selector."
 	MySqlManagementConnectionDetails          = "A set of fields defining how to connect to a mysql database."

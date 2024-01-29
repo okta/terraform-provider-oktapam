@@ -30,10 +30,8 @@ Returns an existing Database. For details, see [Databases](https://help.okta.com
 
 ### Read-Only
 
-- `created_at` (String) The UTC time when the resource was created. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `id` (String) The ID of this resource.
 - `management_gateway_selector_id` (String) The ID of the selector.
-- `updated_at` (String) The UTC time when the resource was last updated. Format is '2022-01-01 00:00:00 +0000 UTC'.
 
 <a id="nestedblock--management_connection_details"></a>
 ### Nested Schema for `management_connection_details`
