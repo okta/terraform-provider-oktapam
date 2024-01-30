@@ -1,12 +1,12 @@
 ---
 page_title: "oktapam_database Resource - terraform-provider-oktapam"
 description: |-
-  Represents a datastore that has been registered with your Team. For details, see [Databases](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-databases)
+  Represents a datastore that has been registered with your Team.
 ---
 
 # oktapam_database (Resource)
 
-Represents a datastore that has been registered with your Team. For details, see [Databases](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-databases)
+Represents a datastore that has been registered with your Team.
 
 ## Security Notice
 The password specified in this resource will be stored *unencrypted* in your Terraform state and plan files.  Please take precautions to store these in a secure location.

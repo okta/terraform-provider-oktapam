@@ -24,8 +24,12 @@ func MatchesSimpleName(s string) bool {
 
 func GetStringSliceFromResource(attrName string, d *schema.ResourceData, optional bool) ([]string, diag.Diagnostics) {
 	attrsI, ok := d.GetOk(attrName)
-	if !ok && !optional {
-		return nil, diag.FromErr(fmt.Errorf("value for %s was not present", attrName))
+	if !ok {
+		if !optional {
+			return nil, diag.FromErr(fmt.Errorf("value for %s was not present", attrName))
+		} else {
+			return nil, nil
+		}
 	}
 
 	return GetStringSlice(attrsI, attrName)
@@ -181,6 +185,20 @@ func GetBoolPtrFromResource(attr string, d *schema.ResourceData, returnZero bool
 func GetBoolPtrFromElement(attr string, data map[string]any, returnZero bool) *bool {
 	v := data[attr].(bool)
 	return utils.AsBoolPtrZero(v, returnZero)
+}
+
+func GetInt32FromResource(attr string, d *schema.ResourceData) int32 {
+	val := d.Get(attr).(int)
+	return int32(val)
+}
+
+func GetInt32PtrFromResource(attr string, d *schema.ResourceData, returnZero bool) *int32 {
+	val := GetIntPtrFromResource(attr, d, returnZero)
+	if val == nil {
+		return nil
+	}
+	int32Val := int32(*val)
+	return &int32Val
 }
 
 func GetIntPtrFromResource(attr string, d *schema.ResourceData, returnZero bool) *int {
