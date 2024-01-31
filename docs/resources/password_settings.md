@@ -3,12 +3,12 @@
 page_title: "oktapam_password_settings Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  The settings for passwords set on resources within the project. For details, see Projects https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects.
+  The settings for passwords set on servers within the project. For details, see Projects https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects.
 ---
 
 # oktapam_password_settings (Resource)
 
-The settings for passwords set on resources within the project. For details, see [Projects](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects).
+The settings for passwords set on servers within the project. For details, see [Projects](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects).
 
 
 
@@ -23,7 +23,7 @@ The settings for passwords set on resources within the project. For details, see
 - `max_length` (Number) The maximum length allowed for the password.
 - `min_length` (Number) The minimum length allowed for the password.
 - `project` (String) The UUID of a Project.
-- `resource_group` (String) The UUID of a PAM Resource Group.
+- `resource_group` (String) The UUID of a OktaPA Resource Group.
 
 ### Optional
 

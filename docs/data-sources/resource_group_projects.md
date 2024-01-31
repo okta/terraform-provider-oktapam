@@ -17,7 +17,7 @@ Returns a list of Projects associated with an existing Resource Group. For detai
 
 ### Required
 
-- `resource_group` (String) The UUID of a PAM Resource Group.
+- `resource_group` (String) The UUID of a OktaPA Resource Group.
 
 ### Optional
 

@@ -20,7 +20,7 @@ var _ MappedNullable = &CurrentUserInfo{}
 
 // CurrentUserInfo struct for CurrentUserInfo
 type CurrentUserInfo struct {
-	// The name of your Team
+	// The name of the Team
 	TeamName string `json:"team_name"`
 	// The name of the User
 	Name string `json:"name"`
