@@ -2,11 +2,11 @@ package utils
 
 import (
 	"fmt"
-	"github.com/okta/terraform-provider-oktapam/oktapam/client/wrappers"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client/wrappers"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )

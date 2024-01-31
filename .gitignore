@@ -7,3 +7,5 @@
 build
 terraform-provider-oktapam
 oktapam/test.log
+playground
+.tool-versions
