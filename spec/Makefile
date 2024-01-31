@@ -1,6 +1,6 @@
 PROVIDER_NAME=oktapam
 OUTPUT_DIR=../oktapam/fwprovider
-RESOURCE_NAME=resource_group_clone
+RESOURCE_NAME=resource_server_checkout_settings
 GENERATOR_CONFIG_FILE=./generator_config.yaml
 PROVIDER_CODE_SPEC_FILE=./provider-code-spec.json
 OPENAPI_SPEC_FILE=./openapi.yaml

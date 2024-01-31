@@ -163,7 +163,7 @@ func (r ApiListClientsRequest) Execute() (*ListClientsResponse, *http.Response, 
 
 	    Returns a list of Clients for your Team. By default, this only returns Clients associated with the requesting User. Use query parameters to adjust the list of returned Clients.
 
-This endpoint requires one of the following roles: `end_user`, `security_admin`, `resource_admin`
+This endpoint requires one of the following roles: `end_user`, `security_admin`, `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team

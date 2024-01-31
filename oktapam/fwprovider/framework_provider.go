@@ -116,6 +116,7 @@ func (p *OktapamFrameworkProvider) DataSources(_ context.Context) []func() datas
 func (p *OktapamFrameworkProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		//Add New Resources here
+		NewServerCheckoutSettingsResource,
 	}
 }
 

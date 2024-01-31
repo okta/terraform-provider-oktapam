@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // SecurityPolicyRuleConditionType The type of condition
@@ -40,25 +39,18 @@ func (v *SecurityPolicyRuleConditionType) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := SecurityPolicyRuleConditionType(value)
-	for _, existing := range AllowedSecurityPolicyRuleConditionTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid SecurityPolicyRuleConditionType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewSecurityPolicyRuleConditionTypeFromValue returns a pointer to a valid SecurityPolicyRuleConditionType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewSecurityPolicyRuleConditionTypeFromValue(v string) (*SecurityPolicyRuleConditionType, error) {
 	ev := SecurityPolicyRuleConditionType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for SecurityPolicyRuleConditionType: valid values are %v", v, AllowedSecurityPolicyRuleConditionTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

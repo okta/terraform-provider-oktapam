@@ -204,7 +204,7 @@ func (r ApiCreateCloudEntitlementAnalysisRequest) Execute() (*CloudEntitlementJo
 /*
 	CreateCloudEntitlementAnalysis Create a Cloud Entitlement Job
 
-	    Creates a Cloud Entitlement Job.
+	    Creates a Cloud Entitlement Job
 
 This endpoint requires the following role: `resource_admin`.
 
@@ -431,7 +431,7 @@ func (r ApiGetCloudConnectionRequest) Execute() (*CloudConnection, *http.Respons
 /*
 	GetCloudConnection Retrieve a Cloud Connection
 
-	    Retrieves an existing Cloud Connection.
+	    Retrieves an existing Cloud Connection
 
 This endpoint requires the following role: `resource_admin`.
 
@@ -959,6 +959,92 @@ func (a *CloudEntitlementsAPIService) ListCloudEntitlementAnalysesExecute(r ApiL
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiListCloudEntitlementAnalysisAssignedUsersRequest struct {
+	ctx                              context.Context
+	ApiService                       *CloudEntitlementsAPIService
+	teamName                         string
+	cloudEntitlementAnalysisId       string
+	cloudEntitlementJobAssignedUsers *CloudEntitlementJobAssignedUsers
+}
+
+func (r ApiListCloudEntitlementAnalysisAssignedUsersRequest) CloudEntitlementJobAssignedUsers(cloudEntitlementJobAssignedUsers CloudEntitlementJobAssignedUsers) ApiListCloudEntitlementAnalysisAssignedUsersRequest {
+	r.cloudEntitlementJobAssignedUsers = &cloudEntitlementJobAssignedUsers
+	return r
+}
+
+func (r ApiListCloudEntitlementAnalysisAssignedUsersRequest) Execute() (*ListCloudEntitlementAnalysisAssignedUsersResponse, *http.Response, error) {
+	return r.ApiService.ListCloudEntitlementAnalysisAssignedUsersExecute(r)
+}
+
+/*
+	ListCloudEntitlementAnalysisAssignedUsers List all Assigned Users for a Cloud Entitlement Job
+
+	    Lists all assigned users discovered by a Cloud Entitlement Job. You can filter by users assigned to a specific group or by users associated with a specific permission set within an account.
+
+This endpoint requires the following role: `resource_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param cloudEntitlementAnalysisId The UUID of a Cloud Entitlement Job
+	@return ApiListCloudEntitlementAnalysisAssignedUsersRequest
+*/
+func (a *CloudEntitlementsAPIService) ListCloudEntitlementAnalysisAssignedUsers(ctx context.Context, teamName string, cloudEntitlementAnalysisId string) ApiListCloudEntitlementAnalysisAssignedUsersRequest {
+	return ApiListCloudEntitlementAnalysisAssignedUsersRequest{
+		ApiService:                 a,
+		ctx:                        ctx,
+		teamName:                   teamName,
+		cloudEntitlementAnalysisId: cloudEntitlementAnalysisId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListCloudEntitlementAnalysisAssignedUsersResponse
+func (a *CloudEntitlementsAPIService) ListCloudEntitlementAnalysisAssignedUsersExecute(r ApiListCloudEntitlementAnalysisAssignedUsersRequest) (*ListCloudEntitlementAnalysisAssignedUsersResponse, *http.Response, error) {
+	var (
+		traceKey            = "cloudentitlementsapi.listCloudEntitlementAnalysisAssignedUsers"
+		localVarHTTPMethod  = http.MethodPost
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListCloudEntitlementAnalysisAssignedUsersResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/cloud_entitlement_analyses/{cloud_entitlement_analysis_id}/list_users"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"cloud_entitlement_analysis_id"+"}", url.PathEscape(parameterValueToString(r.cloudEntitlementAnalysisId, "cloudEntitlementAnalysisId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.cloudEntitlementJobAssignedUsers
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
 type ApiListCloudEntitlementAnalysisSummaryResourcesRequest struct {
 	ctx                        context.Context
 	ApiService                 *CloudEntitlementsAPIService
@@ -1113,15 +1199,15 @@ func (a *CloudEntitlementsAPIService) RunCloudEntitlementAnalysisExecute(r ApiRu
 }
 
 type ApiUpdateCloudConnectionRequest struct {
-	ctx             context.Context
-	ApiService      *CloudEntitlementsAPIService
-	teamName        string
-	connectionId    string
-	cloudConnection *CloudConnection
+	ctx                   context.Context
+	ApiService            *CloudEntitlementsAPIService
+	teamName              string
+	connectionId          string
+	updateCloudConnection *UpdateCloudConnection
 }
 
-func (r ApiUpdateCloudConnectionRequest) CloudConnection(cloudConnection CloudConnection) ApiUpdateCloudConnectionRequest {
-	r.cloudConnection = &cloudConnection
+func (r ApiUpdateCloudConnectionRequest) UpdateCloudConnection(updateCloudConnection UpdateCloudConnection) ApiUpdateCloudConnectionRequest {
+	r.updateCloudConnection = &updateCloudConnection
 	return r
 }
 
@@ -1188,7 +1274,7 @@ func (a *CloudEntitlementsAPIService) UpdateCloudConnectionExecute(r ApiUpdateCl
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.cloudConnection
+	localVarPostBody = r.updateCloudConnection
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
 	if localVarHTTPResponse == nil && err != nil {

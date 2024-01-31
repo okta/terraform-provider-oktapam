@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // SecurityPolicyRuleResourceType The type of resource that Principals are granted privileges to access. Currently only accepts `server_based_resource`.
@@ -36,25 +35,18 @@ func (v *SecurityPolicyRuleResourceType) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := SecurityPolicyRuleResourceType(value)
-	for _, existing := range AllowedSecurityPolicyRuleResourceTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid SecurityPolicyRuleResourceType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewSecurityPolicyRuleResourceTypeFromValue returns a pointer to a valid SecurityPolicyRuleResourceType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewSecurityPolicyRuleResourceTypeFromValue(v string) (*SecurityPolicyRuleResourceType, error) {
 	ev := SecurityPolicyRuleResourceType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for SecurityPolicyRuleResourceType: valid values are %v", v, AllowedSecurityPolicyRuleResourceTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

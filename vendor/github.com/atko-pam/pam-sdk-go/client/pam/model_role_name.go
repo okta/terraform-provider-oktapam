@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // RoleName The name of the available roles
@@ -44,25 +43,18 @@ func (v *RoleName) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := RoleName(value)
-	for _, existing := range AllowedRoleNameEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid RoleName", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewRoleNameFromValue returns a pointer to a valid RoleName
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewRoleNameFromValue(v string) (*RoleName, error) {
 	ev := RoleName(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for RoleName: valid values are %v", v, AllowedRoleNameEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

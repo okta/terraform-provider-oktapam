@@ -23,7 +23,7 @@ type MySQLBasicAuthManagementConnectionDetails struct {
 	// The hostname of the MySQL management connection
 	Hostname string `json:"hostname"`
 	// The port of the MySQL management connection
-	Port        int32                 `json:"port"`
+	Port        string                `json:"port"`
 	AuthDetails MySQLBasicAuthDetails `json:"auth_details"`
 }
 
@@ -31,7 +31,7 @@ type MySQLBasicAuthManagementConnectionDetails struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMySQLBasicAuthManagementConnectionDetails(hostname string, port int32, authDetails MySQLBasicAuthDetails) *MySQLBasicAuthManagementConnectionDetails {
+func NewMySQLBasicAuthManagementConnectionDetails(hostname string, port string, authDetails MySQLBasicAuthDetails) *MySQLBasicAuthManagementConnectionDetails {
 	this := MySQLBasicAuthManagementConnectionDetails{}
 	this.Hostname = hostname
 	this.Port = port
@@ -73,9 +73,9 @@ func (o *MySQLBasicAuthManagementConnectionDetails) SetHostname(v string) *MySQL
 }
 
 // GetPort returns the Port field value
-func (o *MySQLBasicAuthManagementConnectionDetails) GetPort() int32 {
+func (o *MySQLBasicAuthManagementConnectionDetails) GetPort() string {
 	if o == nil {
-		var ret int32
+		var ret string
 		return ret
 	}
 
@@ -84,7 +84,7 @@ func (o *MySQLBasicAuthManagementConnectionDetails) GetPort() int32 {
 
 // GetPortOk returns a tuple with the Port field value
 // and a boolean to check if the value has been set.
-func (o *MySQLBasicAuthManagementConnectionDetails) GetPortOk() (*int32, bool) {
+func (o *MySQLBasicAuthManagementConnectionDetails) GetPortOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -92,7 +92,7 @@ func (o *MySQLBasicAuthManagementConnectionDetails) GetPortOk() (*int32, bool) {
 }
 
 // SetPort sets field value
-func (o *MySQLBasicAuthManagementConnectionDetails) SetPort(v int32) *MySQLBasicAuthManagementConnectionDetails {
+func (o *MySQLBasicAuthManagementConnectionDetails) SetPort(v string) *MySQLBasicAuthManagementConnectionDetails {
 	o.Port = v
 	return o
 }

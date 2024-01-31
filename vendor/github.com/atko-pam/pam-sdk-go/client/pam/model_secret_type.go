@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // SecretType the model 'SecretType'
@@ -38,25 +37,18 @@ func (v *SecretType) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := SecretType(value)
-	for _, existing := range AllowedSecretTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid SecretType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewSecretTypeFromValue returns a pointer to a valid SecretType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewSecretTypeFromValue(v string) (*SecretType, error) {
 	ev := SecretType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for SecretType: valid values are %v", v, AllowedSecretTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise
