@@ -514,9 +514,9 @@ func (r ApiResolveResourceRequest) Execute() (*ResolveResourceNamesResponse, *ht
 }
 
 /*
-ResolveResource Resolves Resource Names
+ResolveResource Resolve Resource Names
 
-	Resolves resource names and returns associated information and user access methods (UAMs), a resource can be a type of server or database
+	Resolves enrolled resource names and returns any associated information and user access methods (UAMs)
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 @return ApiResolveResourceRequest

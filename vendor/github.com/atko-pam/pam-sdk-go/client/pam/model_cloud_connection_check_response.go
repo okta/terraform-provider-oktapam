@@ -21,15 +21,16 @@ var _ MappedNullable = &CloudConnectionCheckResponse{}
 // CloudConnectionCheckResponse struct for CloudConnectionCheckResponse
 type CloudConnectionCheckResponse struct {
 	// The status of the Cloud Connection test
-	Status  string                 `json:"status"`
-	Details CloudConnectionDetails `json:"details"`
+	Status string `json:"status"`
+	// Details of the Cloud Connection test
+	Details string `json:"details"`
 }
 
 // NewCloudConnectionCheckResponse instantiates a new CloudConnectionCheckResponse object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCloudConnectionCheckResponse(status string, details CloudConnectionDetails) *CloudConnectionCheckResponse {
+func NewCloudConnectionCheckResponse(status string, details string) *CloudConnectionCheckResponse {
 	this := CloudConnectionCheckResponse{}
 	this.Status = status
 	this.Details = details
@@ -70,9 +71,9 @@ func (o *CloudConnectionCheckResponse) SetStatus(v string) *CloudConnectionCheck
 }
 
 // GetDetails returns the Details field value
-func (o *CloudConnectionCheckResponse) GetDetails() CloudConnectionDetails {
+func (o *CloudConnectionCheckResponse) GetDetails() string {
 	if o == nil {
-		var ret CloudConnectionDetails
+		var ret string
 		return ret
 	}
 
@@ -81,7 +82,7 @@ func (o *CloudConnectionCheckResponse) GetDetails() CloudConnectionDetails {
 
 // GetDetailsOk returns a tuple with the Details field value
 // and a boolean to check if the value has been set.
-func (o *CloudConnectionCheckResponse) GetDetailsOk() (*CloudConnectionDetails, bool) {
+func (o *CloudConnectionCheckResponse) GetDetailsOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -89,7 +90,7 @@ func (o *CloudConnectionCheckResponse) GetDetailsOk() (*CloudConnectionDetails, 
 }
 
 // SetDetails sets field value
-func (o *CloudConnectionCheckResponse) SetDetails(v CloudConnectionDetails) *CloudConnectionCheckResponse {
+func (o *CloudConnectionCheckResponse) SetDetails(v string) *CloudConnectionCheckResponse {
 	o.Details = v
 	return o
 }

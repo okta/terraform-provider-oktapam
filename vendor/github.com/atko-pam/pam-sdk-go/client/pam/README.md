@@ -24,7 +24,7 @@ import pam "github.com/atko-pam/pam-sdk-go/client/pam"
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://{org_name}.pam.oktapreview.com*
+All URIs are relative to *https://{org_name}.pam.okta.com*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
@@ -114,9 +114,9 @@ Class | Method | HTTP request | Description
 *SecretsAPI* | [**GetSecret**](docs/SecretsAPI.md#getsecret) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secrets/{secret_id} | Retrieve a Secret
 *SecretsAPI* | [**GetSecretFolder**](docs/SecretsAPI.md#getsecretfolder) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secret_folders/{secret_folder_id} | Retrieve a Secret Folder
 *SecretsAPI* | [**ListSecretFolderItems**](docs/SecretsAPI.md#listsecretfolderitems) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secret_folders/{secret_folder_id}/items | List all items in a Secret Folder
-*SecretsAPI* | [**ListTopLevelSecretFoldersForProject**](docs/SecretsAPI.md#listtoplevelsecretfoldersforproject) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secret_folders | List Top Level Secret Folders for Project
-*SecretsAPI* | [**ListTopLevelSecretFoldersForTeam**](docs/SecretsAPI.md#listtoplevelsecretfoldersforteam) | **Get** /v1/teams/{team_name}/secret_folders | List Top Level Secret Folders for Team
-*SecretsAPI* | [**ListTopLevelSecretFoldersForUser**](docs/SecretsAPI.md#listtoplevelsecretfoldersforuser) | **Get** /v1/teams/{team_name}/secrets | List Top Level Secret Folders for User
+*SecretsAPI* | [**ListTopLevelSecretFoldersForProject**](docs/SecretsAPI.md#listtoplevelsecretfoldersforproject) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secret_folders | List top-level Secret Folders for a Project
+*SecretsAPI* | [**ListTopLevelSecretFoldersForTeam**](docs/SecretsAPI.md#listtoplevelsecretfoldersforteam) | **Get** /v1/teams/{team_name}/secret_folders | List top-level Secret Folders for Team
+*SecretsAPI* | [**ListTopLevelSecretFoldersForUser**](docs/SecretsAPI.md#listtoplevelsecretfoldersforuser) | **Get** /v1/teams/{team_name}/secrets | List top-level Secret Folders for User
 *SecretsAPI* | [**ResolveSecretOrFolder**](docs/SecretsAPI.md#resolvesecretorfolder) | **Post** /v1/teams/{team_name}/resolve_secret | Resolve Secret or Folder
 *SecretsAPI* | [**RevealSecret**](docs/SecretsAPI.md#revealsecret) | **Post** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secrets/{secret_id} | Reveal a Secret
 *SecretsAPI* | [**UpdateSecret**](docs/SecretsAPI.md#updatesecret) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secrets/{secret_id} | Update a Secret
@@ -132,7 +132,7 @@ Class | Method | HTTP request | Description
 *ServersAPI* | [**ListAllServerAccountResourcesForSecurityAdmin**](docs/ServersAPI.md#listallserveraccountresourcesforsecurityadmin) | **Get** /v1/teams/{team_name}/all_server_accounts | List all Server Account Resources
 *ServersAPI* | [**ListAllServersForAdmin**](docs/ServersAPI.md#listallserversforadmin) | **Get** /v1/teams/{team_name}/all_servers | List all Servers
 *ServersAPI* | [**ListResourceGroupProjectServers**](docs/ServersAPI.md#listresourcegroupprojectservers) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/servers | List all Servers in a Project
-*ServersAPI* | [**ResolveResource**](docs/ServersAPI.md#resolveresource) | **Post** /v1/resolve | Resolves Resource Names
+*ServersAPI* | [**ResolveResource**](docs/ServersAPI.md#resolveresource) | **Post** /v1/resolve | Resolve Resource Names
 *ServiceUsersAPI* | [**CreateServiceUser**](docs/ServiceUsersAPI.md#createserviceuser) | **Post** /v1/teams/{team_name}/service_users | Create a Service User
 *ServiceUsersAPI* | [**DeleteServiceUserKey**](docs/ServiceUsersAPI.md#deleteserviceuserkey) | **Delete** /v1/teams/{team_name}/service_users/{user_name}/keys/{key_id} | Delete an API key
 *ServiceUsersAPI* | [**GetServiceUser**](docs/ServiceUsersAPI.md#getserviceuser) | **Get** /v1/teams/{team_name}/service_users/{user_name} | Retrieve a Service User
@@ -147,7 +147,7 @@ Class | Method | HTTP request | Description
 *TeamsAPI* | [**ListRoles**](docs/TeamsAPI.md#listroles) | **Get** /v1/teams/{team_name}/roles | List all roles
 *TeamsAPI* | [**ListServers**](docs/TeamsAPI.md#listservers) | **Get** /v1/teams/{team_name}/servers | List all Servers for a Team
 *TeamsAPI* | [**UpdateTeamSettings**](docs/TeamsAPI.md#updateteamsettings) | **Put** /v1/teams/{team_name}/settings | Update settings for a Team
-*UsersAPI* | [**GetCurrentUserInfo**](docs/UsersAPI.md#getcurrentuserinfo) | **Get** /v1/teams/{team_name}/current_user | Retrieve information about the current User
+*UsersAPI* | [**GetCurrentUserInfo**](docs/UsersAPI.md#getcurrentuserinfo) | **Get** /v1/teams/{team_name}/current_user | Retrieve User details
 *UsersAPI* | [**GetUser**](docs/UsersAPI.md#getuser) | **Get** /v1/teams/{team_name}/users/{user_name} | Retrieve a User
 *UsersAPI* | [**ListUserGroups**](docs/UsersAPI.md#listusergroups) | **Get** /v1/teams/{team_name}/users/{user_name}/groups | List all Groups for a User
 *UsersAPI* | [**ListUsers**](docs/UsersAPI.md#listusers) | **Get** /v1/teams/{team_name}/users | List all Users for a Team
@@ -198,6 +198,8 @@ Class | Method | HTTP request | Description
  - [ConditionsGateway](docs/ConditionsGateway.md)
  - [ConditionsMFA](docs/ConditionsMFA.md)
  - [ConditionsMFAACRValues](docs/ConditionsMFAACRValues.md)
+ - [CreateSecretFolderForbiddenResponse](docs/CreateSecretFolderForbiddenResponse.md)
+ - [CreateSecretForbiddenResponse](docs/CreateSecretForbiddenResponse.md)
  - [CreateServiceUserBody](docs/CreateServiceUserBody.md)
  - [CurrentUserInfo](docs/CurrentUserInfo.md)
  - [Curve](docs/Curve.md)
@@ -208,12 +210,16 @@ Class | Method | HTTP request | Description
  - [DatabaseResourceStaticAccountCreateOrUpdateRequest](docs/DatabaseResourceStaticAccountCreateOrUpdateRequest.md)
  - [DatabaseResourceStaticAccountResponse](docs/DatabaseResourceStaticAccountResponse.md)
  - [DatabaseType](docs/DatabaseType.md)
+ - [DeleteSecretFolderForbiddenResponse](docs/DeleteSecretFolderForbiddenResponse.md)
+ - [DeleteSecretForbiddenResponse](docs/DeleteSecretForbiddenResponse.md)
  - [GatewayAgent](docs/GatewayAgent.md)
  - [GatewaySetupToken](docs/GatewaySetupToken.md)
  - [GatewaySetupTokenDetails](docs/GatewaySetupTokenDetails.md)
  - [GatewaySetupTokenRegistrationType](docs/GatewaySetupTokenRegistrationType.md)
  - [GatewayStatusReport](docs/GatewayStatusReport.md)
  - [Gce](docs/Gce.md)
+ - [GetSecretFolderForbiddenResponse](docs/GetSecretFolderForbiddenResponse.md)
+ - [GetSecretForbiddenResponse](docs/GetSecretForbiddenResponse.md)
  - [GetServerAccountDetailsResponse](docs/GetServerAccountDetailsResponse.md)
  - [GetVaultJWKSResponse](docs/GetVaultJWKSResponse.md)
  - [Group](docs/Group.md)
@@ -244,6 +250,8 @@ Class | Method | HTTP request | Description
  - [ListResourceGroupProjects](docs/ListResourceGroupProjects.md)
  - [ListResourceGroupsResponse](docs/ListResourceGroupsResponse.md)
  - [ListRolesResponse](docs/ListRolesResponse.md)
+ - [ListSecretFolderItemsForbiddenResponse](docs/ListSecretFolderItemsForbiddenResponse.md)
+ - [ListSecretFolderItemsResponse](docs/ListSecretFolderItemsResponse.md)
  - [ListSecurityPoliciesResponse](docs/ListSecurityPoliciesResponse.md)
  - [ListServerAccountsForProjectResponse](docs/ListServerAccountsForProjectResponse.md)
  - [ListServerAccountsForServerResponse](docs/ListServerAccountsForServerResponse.md)
@@ -251,8 +259,10 @@ Class | Method | HTTP request | Description
  - [ListServiceUserKeysResponse](docs/ListServiceUserKeysResponse.md)
  - [ListServiceUsersResponse](docs/ListServiceUsersResponse.md)
  - [ListTeamUserAttributeConflictsResponse](docs/ListTeamUserAttributeConflictsResponse.md)
- - [ListTopLevelSecretFoldersForProject403Response](docs/ListTopLevelSecretFoldersForProject403Response.md)
- - [ListTopLevelSecretFoldersForTeam200Response](docs/ListTopLevelSecretFoldersForTeam200Response.md)
+ - [ListTopLevelSecretFoldersForProjectForbiddenResponse](docs/ListTopLevelSecretFoldersForProjectForbiddenResponse.md)
+ - [ListTopLevelSecretFoldersForProjectResponse](docs/ListTopLevelSecretFoldersForProjectResponse.md)
+ - [ListTopLevelSecretFoldersForTeamResponse](docs/ListTopLevelSecretFoldersForTeamResponse.md)
+ - [ListTopLevelSecretFoldersForUserResponse](docs/ListTopLevelSecretFoldersForUserResponse.md)
  - [ListUserAttributesResponse](docs/ListUserAttributesResponse.md)
  - [ListUserGroupsResponse](docs/ListUserGroupsResponse.md)
  - [ListUsersInGroupResponse](docs/ListUsersInGroupResponse.md)
@@ -275,6 +285,7 @@ Class | Method | HTTP request | Description
  - [ResolveSecretOrFolderRequest](docs/ResolveSecretOrFolderRequest.md)
  - [ResolveSecretOrFolderResponse](docs/ResolveSecretOrFolderResponse.md)
  - [ResourceGroup](docs/ResourceGroup.md)
+ - [RevealSecretForbiddenResponse](docs/RevealSecretForbiddenResponse.md)
  - [RoleName](docs/RoleName.md)
  - [Roles](docs/Roles.md)
  - [Secret](docs/Secret.md)
@@ -323,7 +334,11 @@ Class | Method | HTTP request | Description
  - [TeamUserAttributeConflict](docs/TeamUserAttributeConflict.md)
  - [TeamUserAttributeName](docs/TeamUserAttributeName.md)
  - [UpdateAttribute](docs/UpdateAttribute.md)
+ - [UpdateCloudConnection](docs/UpdateCloudConnection.md)
+ - [UpdateCloudConnectionDetails](docs/UpdateCloudConnectionDetails.md)
  - [UpdateGroupAttribute](docs/UpdateGroupAttribute.md)
+ - [UpdateSecretFolderForbiddenResponse](docs/UpdateSecretFolderForbiddenResponse.md)
+ - [UpdateSecretForbiddenResponse](docs/UpdateSecretForbiddenResponse.md)
  - [UpdateServiceUserBody](docs/UpdateServiceUserBody.md)
  - [User](docs/User.md)
  - [UserAccessConditional](docs/UserAccessConditional.md)

@@ -11,7 +11,7 @@ import (
 
 func dataSourcePasswordSettings() *schema.Resource {
 	return &schema.Resource{
-		Description: descriptions.SourcePasswordSettings,
+		Description: descriptions.SourceServerPasswordSettings,
 		ReadContext: dataSourcePasswordSettingsFetch,
 		Schema: map[string]*schema.Schema{
 			attributes.ResourceGroup: {

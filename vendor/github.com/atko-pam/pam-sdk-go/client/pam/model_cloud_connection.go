@@ -21,23 +21,19 @@ var _ MappedNullable = &CloudConnection{}
 // CloudConnection struct for CloudConnection
 type CloudConnection struct {
 	// The UUID of the Cloud Connection
-	Id string `json:"id"`
+	Id *string `json:"id,omitempty"`
 	// The name of the Cloud Connection
-	Name     string                  `json:"name"`
-	Provider CloudConnectionProvider `json:"provider"`
-	Details  CloudConnectionDetails  `json:"details"`
+	Name                   *string                  `json:"name,omitempty"`
+	Provider               *CloudConnectionProvider `json:"provider,omitempty"`
+	CloudConnectionDetails *CloudConnectionDetails  `json:"cloud_connection_details,omitempty"`
 }
 
 // NewCloudConnection instantiates a new CloudConnection object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCloudConnection(id string, name string, provider CloudConnectionProvider, details CloudConnectionDetails) *CloudConnection {
+func NewCloudConnection() *CloudConnection {
 	this := CloudConnection{}
-	this.Id = id
-	this.Name = name
-	this.Provider = provider
-	this.Details = details
 	return &this
 }
 
@@ -49,103 +45,135 @@ func NewCloudConnectionWithDefaults() *CloudConnection {
 	return &this
 }
 
-// GetId returns the Id field value
+// GetId returns the Id field value if set, zero value otherwise.
 func (o *CloudConnection) GetId() string {
-	if o == nil {
+	if o == nil || IsNil(o.Id) {
 		var ret string
 		return ret
 	}
-
-	return o.Id
+	return *o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value
+// GetIdOk returns a tuple with the Id field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *CloudConnection) GetIdOk() (*string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.Id) {
 		return nil, false
 	}
-	return &o.Id, true
+	return o.Id, true
 }
 
-// SetId sets field value
+// HasId returns a boolean if a field has been set.
+func (o *CloudConnection) HasId() bool {
+	if o != nil && !IsNil(o.Id) {
+		return true
+	}
+
+	return false
+}
+
+// SetId gets a reference to the given string and assigns it to the Id field.
 func (o *CloudConnection) SetId(v string) *CloudConnection {
-	o.Id = v
+	o.Id = &v
 	return o
 }
 
-// GetName returns the Name field value
+// GetName returns the Name field value if set, zero value otherwise.
 func (o *CloudConnection) GetName() string {
-	if o == nil {
+	if o == nil || IsNil(o.Name) {
 		var ret string
 		return ret
 	}
-
-	return o.Name
+	return *o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value
+// GetNameOk returns a tuple with the Name field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *CloudConnection) GetNameOk() (*string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.Name) {
 		return nil, false
 	}
-	return &o.Name, true
+	return o.Name, true
 }
 
-// SetName sets field value
+// HasName returns a boolean if a field has been set.
+func (o *CloudConnection) HasName() bool {
+	if o != nil && !IsNil(o.Name) {
+		return true
+	}
+
+	return false
+}
+
+// SetName gets a reference to the given string and assigns it to the Name field.
 func (o *CloudConnection) SetName(v string) *CloudConnection {
-	o.Name = v
+	o.Name = &v
 	return o
 }
 
-// GetProvider returns the Provider field value
+// GetProvider returns the Provider field value if set, zero value otherwise.
 func (o *CloudConnection) GetProvider() CloudConnectionProvider {
-	if o == nil {
+	if o == nil || IsNil(o.Provider) {
 		var ret CloudConnectionProvider
 		return ret
 	}
-
-	return o.Provider
+	return *o.Provider
 }
 
-// GetProviderOk returns a tuple with the Provider field value
+// GetProviderOk returns a tuple with the Provider field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *CloudConnection) GetProviderOk() (*CloudConnectionProvider, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.Provider) {
 		return nil, false
 	}
-	return &o.Provider, true
+	return o.Provider, true
 }
 
-// SetProvider sets field value
+// HasProvider returns a boolean if a field has been set.
+func (o *CloudConnection) HasProvider() bool {
+	if o != nil && !IsNil(o.Provider) {
+		return true
+	}
+
+	return false
+}
+
+// SetProvider gets a reference to the given CloudConnectionProvider and assigns it to the Provider field.
 func (o *CloudConnection) SetProvider(v CloudConnectionProvider) *CloudConnection {
-	o.Provider = v
+	o.Provider = &v
 	return o
 }
 
-// GetDetails returns the Details field value
-func (o *CloudConnection) GetDetails() CloudConnectionDetails {
-	if o == nil {
+// GetCloudConnectionDetails returns the CloudConnectionDetails field value if set, zero value otherwise.
+func (o *CloudConnection) GetCloudConnectionDetails() CloudConnectionDetails {
+	if o == nil || IsNil(o.CloudConnectionDetails) {
 		var ret CloudConnectionDetails
 		return ret
 	}
-
-	return o.Details
+	return *o.CloudConnectionDetails
 }
 
-// GetDetailsOk returns a tuple with the Details field value
+// GetCloudConnectionDetailsOk returns a tuple with the CloudConnectionDetails field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CloudConnection) GetDetailsOk() (*CloudConnectionDetails, bool) {
-	if o == nil {
+func (o *CloudConnection) GetCloudConnectionDetailsOk() (*CloudConnectionDetails, bool) {
+	if o == nil || IsNil(o.CloudConnectionDetails) {
 		return nil, false
 	}
-	return &o.Details, true
+	return o.CloudConnectionDetails, true
 }
 
-// SetDetails sets field value
-func (o *CloudConnection) SetDetails(v CloudConnectionDetails) *CloudConnection {
-	o.Details = v
+// HasCloudConnectionDetails returns a boolean if a field has been set.
+func (o *CloudConnection) HasCloudConnectionDetails() bool {
+	if o != nil && !IsNil(o.CloudConnectionDetails) {
+		return true
+	}
+
+	return false
+}
+
+// SetCloudConnectionDetails gets a reference to the given CloudConnectionDetails and assigns it to the CloudConnectionDetails field.
+func (o *CloudConnection) SetCloudConnectionDetails(v CloudConnectionDetails) *CloudConnection {
+	o.CloudConnectionDetails = &v
 	return o
 }
 
@@ -159,10 +187,18 @@ func (o CloudConnection) MarshalJSON() ([]byte, error) {
 
 func (o CloudConnection) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["id"] = o.Id
-	toSerialize["name"] = o.Name
-	toSerialize["provider"] = o.Provider
-	toSerialize["details"] = o.Details
+	if !IsNil(o.Id) {
+		toSerialize["id"] = o.Id
+	}
+	if !IsNil(o.Name) {
+		toSerialize["name"] = o.Name
+	}
+	if !IsNil(o.Provider) {
+		toSerialize["provider"] = o.Provider
+	}
+	if !IsNil(o.CloudConnectionDetails) {
+		toSerialize["cloud_connection_details"] = o.CloudConnectionDetails
+	}
 	return toSerialize, nil
 }
 
