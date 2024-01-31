@@ -43,10 +43,11 @@ func TestAccProject(t *testing.T) {
 		SSHCertificateType:     utils.AsStringPtr("CERT_TYPE_RSA_01"),
 		UserOnDemandPeriod:     utils.AsIntPtr(10),
 	}
+	_, _, accProviders := testAccFrameworkMuxProviders(context.Background(), t)
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccProjectCheckDestroy(projectName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: accProviders,
+		CheckDestroy:             testAccProjectCheckDestroy(projectName),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccProjectCreateConfig(projectName),

@@ -99,7 +99,7 @@ func (p *OktapamFrameworkProvider) Configure(ctx context.Context, req provider.C
 		SDKClient: sdkClient,
 		Team:      team,
 	}
-	
+
 	resp.DataSourceData = p
 	resp.ResourceData = p
 }
@@ -114,7 +114,7 @@ func (p *OktapamFrameworkProvider) DataSources(_ context.Context) []func() datas
 
 func (p *OktapamFrameworkProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		NewResourceGroupResource,
+		//Add New Resources here
 	}
 }
 
