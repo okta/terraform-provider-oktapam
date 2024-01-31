@@ -17,11 +17,13 @@ import (
 	"sync"
 	"time"
 
-	opentracing "github.com/opentracing/opentracing-go"
-
 	"github.com/go-resty/resty/v2"
+	"github.com/opentracing/opentracing-go"
 	"gopkg.in/square/go-jose.v2"
 )
+
+// clientFeaturesHeader is used by clients to set their supported client features
+const clientFeaturesHeader = "X-Okta-OPA-Client-Features"
 
 type ErrNonDefaultResponse struct {
 	StatusCode int
@@ -71,6 +73,10 @@ type APIClient struct {
 	AccessReportsAPI *ReportsAPIService
 
 	CloudEntiltlementsAPI *CloudEntitlementsAPIService
+
+	SudoCommandsAPI *SudoCommandsAPIService
+
+	ActiveDirectoryConnectionAPI *ActiveDirectoryConnectionAPIService
 }
 
 type service struct {
@@ -113,6 +119,8 @@ func NewAPIClient(opts ...ConfigOption) (*APIClient, error) {
 	apiClient.DatabaseResourcesAPI = (*DatabaseResourcesAPIService)(&apiClient.common)
 	apiClient.AccessReportsAPI = (*ReportsAPIService)(&apiClient.common)
 	apiClient.CloudEntiltlementsAPI = (*CloudEntitlementsAPIService)(&apiClient.common)
+	apiClient.SudoCommandsAPI = (*SudoCommandsAPIService)(&apiClient.common)
+	apiClient.ActiveDirectoryConnectionAPI = (*ActiveDirectoryConnectionAPIService)(&apiClient.common)
 	return apiClient, nil
 }
 
@@ -144,6 +152,12 @@ func newRestyClient(apiClient *APIClient) *resty.Client {
 
 	if apiClient.cfg.RoundTripper != nil {
 		restyClient.SetTransport(apiClient.cfg.RoundTripper)
+	}
+
+	if apiClient.cfg.ClientFeatures != nil {
+		for clientFeature := range apiClient.cfg.ClientFeatures {
+			restyClient.Header.Add(clientFeaturesHeader, clientFeature)
+		}
 	}
 
 	//Set Rate Limit and retry condition
@@ -379,11 +393,6 @@ func (apiClient *APIClient) callAPI(
 		return nil, fmt.Errorf("error reading the raw HTTP response body: %w", err)
 	}
 
-	// unmarshal the response body into the result interface
-	if err := json.Unmarshal(respBody, &result); err != nil {
-		return nil, fmt.Errorf("error unmarshalling the raw HTTP response body: %w", err)
-	}
-
 	_ = response.RawResponse.Body.Close()
 
 	// duplicate the response body so we can return it for the caller to use
@@ -408,6 +417,11 @@ func (apiClient *APIClient) callAPI(
 		return newRawResponse, &APIError{
 			Message: response.Status(),
 		}
+	}
+
+	// unmarshal the response body into the result interface
+	if err := json.Unmarshal(respBody, &result); err != nil {
+		return nil, fmt.Errorf("error unmarshalling the raw HTTP response body: %w", err)
 	}
 
 	return response.RawResponse, nil

@@ -21,111 +21,49 @@ tags:
     description: |-
       An OPA Resource Group is a collection of Projects.
       See [Resource groups](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-resource-groups).
+  - name: projects
+    x-displayName: Projects
+    description: |-
+      An OPA Project is a collection of Resources that share settings.
 paths:
-  /v1/teams/{team_name}/resource_groups:
-    parameters:
-      - $ref: '#/components/parameters/team_name'
-    get:
-      summary: List all Resource Groups
-      description: |-
-        Lists all Resource Groups available to the requesting User
-        This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
-      operationId: ListResourceGroups
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              example:
-                list:
-                  - id: 9c199afe-0ca5-427a-baac-c4341707d82b
-                    name: OPA_Resource_Group_1
-                    team_id: Your_Team
-                    description: A sensible description
-                  - id: 9c199afe-0ca5-427a-baac-c4341707d123
-                    name: OPA_Resource_Group_2
-                    team_id: Your_Team
-                    description: A sensible description
-              schema:
-                title: ListResourceGroupsResponse
-                properties:
-                  list:
-                    items:
-                      $ref: '#/components/schemas/ListResourceGroup'
-                    type: array
-                type: object
-      tags:
-        - resource-groups
-    post:
-      summary: Create a Resource Group
-      description: |-
-        Creates a Resource Group for your Team. To assign the `delegated_resource_admin` role, specify an existing Group in the `delegated_resource_admin_groups` param.
-        This endpoint requires the following role: `resource_admin`.
-      operationId: CreateResourceGroup
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ResourceGroup'
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResourceGroup'
-      tags:
-        - resource-groups
-  /v1/teams/{team_name}/resource_groups/{resource_group_id}:
+  /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_checkout_settings:
     parameters:
       - $ref: '#/components/parameters/team_name'
       - $ref: '#/components/parameters/resource_group_id'
+      - $ref: '#/components/parameters/project_id'
     get:
-      summary: Retrieve a Resource Group
+      summary: Retrieves the checkout settings configured for a project, specific to the server resource type.
       description: |-
-        Retrieves the specified Resource Group
-        This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
-      operationId: GetResourceGroup
+        Retrieves the checkout settings configured for a project, specific to the server resource type.
+
+        This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`, `security_admin`, `delegated_security_admin`.
+      operationId: FetchResourceGroupServerBasedProjectCheckoutSettings
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourceGroup'
+                $ref: '#/components/schemas/ResourceCheckoutSettings'
       tags:
-        - resource-groups
+        - projects
     put:
-      summary: Update a Resource Group
+      summary: Update the checkout settings configured for a project, specific to the server resource type
       description: |-
-        Updates the specified Resource Group. To assign the `delegated_resource_admin` role, specify an existing Group in the `delegated_resource_admin_groups` param.
-        This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
-      operationId: UpdateResourceGroup
+        Update the checkout settings configured for a project, specific to the server resource type
+
+        This endpoint requires one of the following roles: `security_admin`, `delegated_security_admin`.
+      operationId: UpdateResourceGroupServerBasedProjectCheckoutSettings
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ResourceGroup'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResourceGroup'
-      tags:
-        - resource-groups
-    delete:
-      summary: Delete a Resource Group
-      description: |-
-        Deletes the specified Resource Group
-        This endpoint requires the following role: `resource_admin`.
-      operationId: DeleteResourceGroup
+              $ref: '#/components/schemas/ResourceCheckoutSettings'
       responses:
         '204':
           description: No Content
       tags:
-        - resource-groups
+        - projects
 components:
   parameters:
     team_name:
@@ -142,77 +80,38 @@ components:
       required: true
       schema:
         type: string
+    project_id:
+      description: The UUID of a Project
+      in: path
+      name: project_id
+      required: true
+      schema:
+        type: string
   schemas:
-    ListResourceGroup:
+    ResourceCheckoutSettings:
       type: object
       properties:
-        id:
-          description: The UUID of the Resource Group
-          type: string
-          readOnly: true
-        name:
-          description: The name of the Resource Group
-          type: string
-        team_id:
-          description: The UUID of the Team associated with the Resource Group
-          type: string
-          readOnly: true
-        description:
-          description: A description of the Resource Group
-          type: string
-    ResourceGroup:
-      type: object
-      properties:
-        id:
-          description: The UUID of the Resource Group
-          type: string
-          readOnly: true
-        name:
-          description: The name of the Resource Group
-          type: string
-        team_id:
-          description: The UUID of the Team associated with the Resource Group
-          type: string
-          readOnly: true
-        description:
-          description: A description of the Resource Group
-          type: string
-        delegated_resource_admin_groups:
-          description: An array of OPA groups that own this Resource Group. This param is only available to users with the `resource_admin` role.
+        checkout_required:
+          description: Indicates whether a checkout is mandatory for accessing resources within the project. If `true`, checkout is enforced for all applicable resources by default. If `false`, checkout is not required, and resources are accessible without it.
+          type: boolean
+        checkout_duration_in_seconds:
+          description: The duration in seconds for the checkout. If the checkout is enabled, the duration is the maximum time a user can access the resource before the checkout expires.
+          type: integer
+          maximum: 86400
+          minimum: 900
+          format: int32
+        include_list:
+          description: If provided, only the account identifiers listed are required to perform a checkout to access the resource. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.
           type: array
           items:
-            $ref: "#/components/schemas/NamedObject"
+            type: string
+        exclude_list:
+          description: If provided, only the account identifiers listed are excluded from the checkout requirement. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.
+          type: array
+          items:
+            type: string
       required:
-        - name
-        - description
-        - delegated_resource_admin_groups
-    NamedObject:
-      title: NamedObject
-      type: object
-      properties:
-        id:
-          type: string
-          description: The UUID of the object
-        name:
-          type: string
-          description: The human-readable name of the object
-          readOnly: true
-        type:
-          $ref: "#/components/schemas/NamedObjectType"
-      required:
-        - id
-    NamedObjectType:
-      type: string
-      readOnly: true
-      enum:
-        - user
-        - user_group
-        - server
-        - project
-        - sudo_entitlement
-        - resource_group
-        - secret_folder
-        - secret
+        - checkout_required
     TerraformProviderSchema:
       type: object
       properties:

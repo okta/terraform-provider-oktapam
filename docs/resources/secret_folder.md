@@ -19,7 +19,7 @@ A file-system like construct that contains secrets or nested secret folders. For
 
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
 - `project` (String) The UUID of a Project.
-- `resource_group` (String) The UUID of a PAM Resource Group.
+- `resource_group` (String) The UUID of a OktaPA Resource Group.
 
 ### Optional
 

@@ -24,8 +24,12 @@ func MatchesSimpleName(s string) bool {
 
 func GetStringSliceFromResource(attrName string, d *schema.ResourceData, optional bool) ([]string, diag.Diagnostics) {
 	attrsI, ok := d.GetOk(attrName)
-	if !ok && !optional {
-		return nil, diag.FromErr(fmt.Errorf("value for %s was not present", attrName))
+	if !ok {
+		if !optional {
+			return nil, diag.FromErr(fmt.Errorf("value for %s was not present", attrName))
+		} else {
+			return nil, nil
+		}
 	}
 
 	return GetStringSlice(attrsI, attrName)
@@ -134,6 +138,24 @@ func GetTypeListMapFromResourceElement(attr string, data map[string]any) map[str
 	return listArr[0].(map[string]any)
 }
 
+func GetMapPtrFromResource[V any](attr string, d *schema.ResourceData) (*map[string]V, diag.Diagnostics) {
+	var returnedMap *map[string]V
+	if v, ok := d.GetOk(attr); ok {
+		if m, ok := v.(map[string]any); ok {
+			tmpMap := make(map[string]V, len(m))
+			for k, v := range m {
+				if value, ok := v.(V); ok {
+					tmpMap[k] = value
+				}
+			}
+			returnedMap = &tmpMap
+		} else {
+			return nil, diag.FromErr(fmt.Errorf("invalid %s", attr))
+		}
+	}
+	return returnedMap, nil
+}
+
 func GetOkBoolFromResource(attr string, d *schema.ResourceData) (bool, error) {
 	if self, ok := d.GetOk(attr); ok {
 		switch v := self.(type) {
@@ -165,6 +187,20 @@ func GetBoolPtrFromElement(attr string, data map[string]any, returnZero bool) *b
 	return utils.AsBoolPtrZero(v, returnZero)
 }
 
+func GetInt32FromResource(attr string, d *schema.ResourceData) int32 {
+	val := d.Get(attr).(int)
+	return int32(val)
+}
+
+func GetInt32PtrFromResource(attr string, d *schema.ResourceData, returnZero bool) *int32 {
+	val := GetIntPtrFromResource(attr, d, returnZero)
+	if val == nil {
+		return nil
+	}
+	int32Val := int32(*val)
+	return &int32Val
+}
+
 func GetIntPtrFromResource(attr string, d *schema.ResourceData, returnZero bool) *int {
 	v := d.Get(attr).(int)
 	return utils.AsIntPtrZero(v, returnZero)
@@ -173,6 +209,11 @@ func GetIntPtrFromResource(attr string, d *schema.ResourceData, returnZero bool)
 func GetIntPtrFromElement(attr string, data map[string]any, returnZero bool) *int {
 	v := data[attr].(int)
 	return utils.AsIntPtrZero(v, returnZero)
+}
+
+func GetStringPtrFromElement(attr string, data map[string]any, returnZero bool) *string {
+	v := data[attr].(string)
+	return utils.AsStringPtrZero(v, returnZero)
 }
 
 func GetStringPtrFromResource(attr string, d *schema.ResourceData, returnZero bool) *string {

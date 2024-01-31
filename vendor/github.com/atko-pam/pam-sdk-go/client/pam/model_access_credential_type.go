@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // AccessCredentialType The type of credential used to access the resource
@@ -50,25 +49,18 @@ func (v *AccessCredentialType) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := AccessCredentialType(value)
-	for _, existing := range AllowedAccessCredentialTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid AccessCredentialType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewAccessCredentialTypeFromValue returns a pointer to a valid AccessCredentialType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewAccessCredentialTypeFromValue(v string) (*AccessCredentialType, error) {
 	ev := AccessCredentialType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for AccessCredentialType: valid values are %v", v, AllowedAccessCredentialTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

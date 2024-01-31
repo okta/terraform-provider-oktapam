@@ -21,6 +21,85 @@ import (
 // TeamsAPIService TeamsAPI service
 type TeamsAPIService service
 
+type ApiCheckInResourceRequest struct {
+	ctx                    context.Context
+	ApiService             *TeamsAPIService
+	teamName               string
+	checkInResourceRequest *CheckInResourceRequest
+}
+
+func (r ApiCheckInResourceRequest) CheckInResourceRequest(checkInResourceRequest CheckInResourceRequest) ApiCheckInResourceRequest {
+	r.checkInResourceRequest = &checkInResourceRequest
+	return r
+}
+
+func (r ApiCheckInResourceRequest) Execute() (*http.Response, error) {
+	return r.ApiService.CheckInResourceExecute(r)
+}
+
+/*
+	CheckInResource Check in a Resource
+
+	    Checks in a resource
+
+This endpoint requires one of the following roles: `resource_admin`, `security_admin`, `authenticated_client`, `authenticated_service_user`, `end_user`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	@return ApiCheckInResourceRequest
+*/
+func (a *TeamsAPIService) CheckInResource(ctx context.Context, teamName string) ApiCheckInResourceRequest {
+	return ApiCheckInResourceRequest{
+		ApiService: a,
+		ctx:        ctx,
+		teamName:   teamName,
+	}
+}
+
+// Execute executes the request
+func (a *TeamsAPIService) CheckInResourceExecute(r ApiCheckInResourceRequest) (*http.Response, error) {
+	var (
+		traceKey           = "teamsapi.checkInResource"
+		localVarHTTPMethod = http.MethodPost
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localVarPath := "/v1/teams/{team_name}/checkin_resource"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.checkInResourceRequest
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
+	return localVarHTTPResponse, err
+}
+
 type ApiFetchStatsForTeamRequest struct {
 	ctx        context.Context
 	ApiService *TeamsAPIService
@@ -243,6 +322,140 @@ func (a *TeamsAPIService) GetVaultJWKSExecute(r ApiGetVaultJWKSRequest) (*GetVau
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiListAllCheckedOutResourcesByUserRequest struct {
+	ctx                   context.Context
+	ApiService            *TeamsAPIService
+	teamName              string
+	resourceType          *string
+	includePendingCheckin *bool
+	count                 *int32
+	descending            *bool
+	offset                *string
+	prev                  *bool
+}
+
+// If specified, only returns resources with a matching type. Valid resource types: &#x60;server_account_password_login&#x60;.
+func (r ApiListAllCheckedOutResourcesByUserRequest) ResourceType(resourceType string) ApiListAllCheckedOutResourcesByUserRequest {
+	r.resourceType = &resourceType
+	return r
+}
+
+// If specified, also returns resources that have already started the checkin process. These are not included by default.
+func (r ApiListAllCheckedOutResourcesByUserRequest) IncludePendingCheckin(includePendingCheckin bool) ApiListAllCheckedOutResourcesByUserRequest {
+	r.includePendingCheckin = &includePendingCheckin
+	return r
+}
+
+// The number of objects per page
+func (r ApiListAllCheckedOutResourcesByUserRequest) Count(count int32) ApiListAllCheckedOutResourcesByUserRequest {
+	r.count = &count
+	return r
+}
+
+// The object order
+func (r ApiListAllCheckedOutResourcesByUserRequest) Descending(descending bool) ApiListAllCheckedOutResourcesByUserRequest {
+	r.descending = &descending
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListAllCheckedOutResourcesByUserRequest) Offset(offset string) ApiListAllCheckedOutResourcesByUserRequest {
+	r.offset = &offset
+	return r
+}
+
+// The direction of paging
+func (r ApiListAllCheckedOutResourcesByUserRequest) Prev(prev bool) ApiListAllCheckedOutResourcesByUserRequest {
+	r.prev = &prev
+	return r
+}
+
+func (r ApiListAllCheckedOutResourcesByUserRequest) Execute() (*ListAllCheckedOutResourcesByUserResponse, *http.Response, error) {
+	return r.ApiService.ListAllCheckedOutResourcesByUserExecute(r)
+}
+
+/*
+	ListAllCheckedOutResourcesByUser List all Resources Checked Out by a User
+
+	    Lists all resources checked out by the current user
+
+This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	@return ApiListAllCheckedOutResourcesByUserRequest
+*/
+func (a *TeamsAPIService) ListAllCheckedOutResourcesByUser(ctx context.Context, teamName string) ApiListAllCheckedOutResourcesByUserRequest {
+	return ApiListAllCheckedOutResourcesByUserRequest{
+		ApiService: a,
+		ctx:        ctx,
+		teamName:   teamName,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListAllCheckedOutResourcesByUserResponse
+func (a *TeamsAPIService) ListAllCheckedOutResourcesByUserExecute(r ApiListAllCheckedOutResourcesByUserRequest) (*ListAllCheckedOutResourcesByUserResponse, *http.Response, error) {
+	var (
+		traceKey            = "teamsapi.listAllCheckedOutResourcesByUser"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListAllCheckedOutResourcesByUserResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/checked_out_resources"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.resourceType != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "resource_type", r.resourceType, "")
+	}
+	if r.includePendingCheckin != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "include_pending_checkin", r.includePendingCheckin, "")
+	}
+	if r.count != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
+	}
+	if r.descending != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
+	if r.prev != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
 type ApiListRolesRequest struct {
 	ctx        context.Context
 	ApiService *TeamsAPIService
@@ -340,6 +553,7 @@ type ApiListServersRequest struct {
 	projectName               *string
 	state                     *string
 	selector                  *string
+	includeLabels             *bool
 }
 
 // If &#x60;true&#x60;, only return AD servers. If &#x60;false&#x60;, only return Non-AD servers
@@ -456,6 +670,12 @@ func (r ApiListServersRequest) Selector(selector string) ApiListServersRequest {
 	return r
 }
 
+// If &#x60;true&#x60;, includes server labels in the results.
+func (r ApiListServersRequest) IncludeLabels(includeLabels bool) ApiListServersRequest {
+	r.includeLabels = &includeLabels
+	return r
+}
+
 func (r ApiListServersRequest) Execute() (*ListServersResponse, *http.Response, error) {
 	return r.ApiService.ListServersExecute(r)
 }
@@ -554,6 +774,9 @@ func (a *TeamsAPIService) ListServersExecute(r ApiListServersRequest) (*ListServ
 	}
 	if r.selector != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "selector", r.selector, "")
+	}
+	if r.includeLabels != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "include_labels", r.includeLabels, "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}

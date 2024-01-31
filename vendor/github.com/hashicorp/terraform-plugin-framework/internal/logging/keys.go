@@ -18,12 +18,18 @@ const (
 	// The type of data source being operated on, such as "archive_file"
 	KeyDataSourceType = "tf_data_source_type"
 
+	// The Deferred reason for an RPC response
+	KeyDeferredReason = "tf_deferred_reason"
+
 	// Human readable string when calling a provider defined type that must
 	// implement the Description() method, such as validators.
 	KeyDescription = "description"
 
 	// Underlying Go error string when logging an error.
 	KeyError = "error"
+
+	// The name of function being operated on, such as "parse_xyz"
+	KeyFunctionName = "tf_function_name"
 
 	// The type of resource being operated on, such as "random_pet"
 	KeyResourceType = "tf_resource_type"

@@ -16,7 +16,7 @@ import (
 
 func resourcePasswordSettings() *schema.Resource {
 	return &schema.Resource{
-		Description:   descriptions.ResourcePasswordSettings,
+		Description:   descriptions.ResourceServerPasswordSettings,
 		CreateContext: resourcePasswordSettingsCreate,
 		ReadContext:   resourcePasswordSettingsRead,
 		UpdateContext: resourcePasswordSettingsUpdate,

@@ -52,9 +52,8 @@ type Project struct {
 	// The shared username to use for root accounts
 	SharedAdminUserName *string `json:"shared_admin_user_name,omitempty"`
 	// The shared username to use for non-root accounts
-	SharedStandardUserName *string `json:"shared_standard_user_name,omitempty"`
-	// The type of signature algorithm used for authentication keys. Possible values: `CERT_TYPE_ED25519_01`, `CERT_TYPE_RSA_01`, `CERT_TYPE_ECDSA_521_01`, `CERT_TYPE_ECDSA_384_01`, `CERT_TYPE_ECDSA_256_01`. Default is `CERT_TYPE_ED25519_01`.
-	SshCertificateType NullableString `json:"ssh_certificate_type,omitempty"`
+	SharedStandardUserName *string                    `json:"shared_standard_user_name,omitempty"`
+	SshCertificateType     NullableSSHCertificateType `json:"ssh_certificate_type,omitempty"`
 	// The Team associated with the Project
 	Team string `json:"team"`
 	// The time period in seconds before an on-demand user account expires and is removed from a Server. `0` if disabled. This is the default,
@@ -672,9 +671,9 @@ func (o *Project) SetSharedStandardUserName(v string) *Project {
 }
 
 // GetSshCertificateType returns the SshCertificateType field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *Project) GetSshCertificateType() string {
+func (o *Project) GetSshCertificateType() SSHCertificateType {
 	if o == nil || IsNil(o.SshCertificateType.Get()) {
-		var ret string
+		var ret SSHCertificateType
 		return ret
 	}
 	return *o.SshCertificateType.Get()
@@ -683,7 +682,7 @@ func (o *Project) GetSshCertificateType() string {
 // GetSshCertificateTypeOk returns a tuple with the SshCertificateType field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *Project) GetSshCertificateTypeOk() (*string, bool) {
+func (o *Project) GetSshCertificateTypeOk() (*SSHCertificateType, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -699,8 +698,8 @@ func (o *Project) HasSshCertificateType() bool {
 	return false
 }
 
-// SetSshCertificateType gets a reference to the given NullableString and assigns it to the SshCertificateType field.
-func (o *Project) SetSshCertificateType(v string) *Project {
+// SetSshCertificateType gets a reference to the given NullableSSHCertificateType and assigns it to the SshCertificateType field.
+func (o *Project) SetSshCertificateType(v SSHCertificateType) *Project {
 	o.SshCertificateType.Set(&v)
 	return o
 }
