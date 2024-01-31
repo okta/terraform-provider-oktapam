@@ -11,7 +11,7 @@ import (
 
 func dataSourceSecurityPolicies() *schema.Resource {
 	return &schema.Resource{
-		Description: descriptions.SourceSecurityPolicies, // TODO
+		Description: descriptions.SourceSecurityPolicies,
 		ReadContext: dataSourceSecurityPoliciesList,
 		Schema: map[string]*schema.Schema{
 			attributes.Name: {

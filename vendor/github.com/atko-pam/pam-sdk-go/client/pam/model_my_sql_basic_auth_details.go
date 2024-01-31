@@ -23,7 +23,7 @@ type MySQLBasicAuthDetails struct {
 	// The username of the MySQL management connection authentication
 	Username string `json:"username"`
 	// The JWE of the password of the MySQL management connection authentication
-	PasswordJwe *string `json:"password_jwe,omitempty"`
+	PasswordJwe *EncryptedString `json:"password_jwe,omitempty"`
 	// The secret ID of the MySQL management connection authentication
 	SecretId *string `json:"secret_id,omitempty"`
 }
@@ -72,9 +72,9 @@ func (o *MySQLBasicAuthDetails) SetUsername(v string) *MySQLBasicAuthDetails {
 }
 
 // GetPasswordJwe returns the PasswordJwe field value if set, zero value otherwise.
-func (o *MySQLBasicAuthDetails) GetPasswordJwe() string {
+func (o *MySQLBasicAuthDetails) GetPasswordJwe() EncryptedString {
 	if o == nil || IsNil(o.PasswordJwe) {
-		var ret string
+		var ret EncryptedString
 		return ret
 	}
 	return *o.PasswordJwe
@@ -82,7 +82,7 @@ func (o *MySQLBasicAuthDetails) GetPasswordJwe() string {
 
 // GetPasswordJweOk returns a tuple with the PasswordJwe field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *MySQLBasicAuthDetails) GetPasswordJweOk() (*string, bool) {
+func (o *MySQLBasicAuthDetails) GetPasswordJweOk() (*EncryptedString, bool) {
 	if o == nil || IsNil(o.PasswordJwe) {
 		return nil, false
 	}
@@ -98,8 +98,8 @@ func (o *MySQLBasicAuthDetails) HasPasswordJwe() bool {
 	return false
 }
 
-// SetPasswordJwe gets a reference to the given string and assigns it to the PasswordJwe field.
-func (o *MySQLBasicAuthDetails) SetPasswordJwe(v string) *MySQLBasicAuthDetails {
+// SetPasswordJwe gets a reference to the given EncryptedString and assigns it to the PasswordJwe field.
+func (o *MySQLBasicAuthDetails) SetPasswordJwe(v EncryptedString) *MySQLBasicAuthDetails {
 	o.PasswordJwe = &v
 	return o
 }

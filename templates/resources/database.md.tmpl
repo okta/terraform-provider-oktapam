@@ -1,0 +1,14 @@
+---
+page_title: "{{ .Name }} {{ .Type }} - {{ .ProviderName }}"
+description: |-
+  {{ .Description }}
+---
+
+# {{ .Name }} ({{ .Type }})
+
+{{ .Description }}
+
+## Security Notice
+The password specified in this resource will be stored *unencrypted* in your Terraform state and plan files.  Please take precautions to store these in a secure location.
+
+{{ .SchemaMarkdown | trimspace }}

@@ -3,12 +3,12 @@
 page_title: "oktapam_password_settings Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns an existing Password Policy for a PAM Project.  For details, see Projects https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects.
+  Returns an existing Server Password Policy for a PAM Project.  For details, see Projects https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects.
 ---
 
 # oktapam_password_settings (Data Source)
 
-Returns an existing Password Policy for a PAM Project.  For details, see [Projects](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects).
+Returns an existing Server Password Policy for a PAM Project.  For details, see [Projects](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects).
 
 
 
@@ -18,7 +18,7 @@ Returns an existing Password Policy for a PAM Project.  For details, see [Projec
 ### Required
 
 - `project` (String) The UUID of a Project.
-- `resource_group` (String) The UUID of a PAM Resource Group.
+- `resource_group` (String) The UUID of a OktaPA Resource Group.
 
 ### Read-Only
 

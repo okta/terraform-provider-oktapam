@@ -340,6 +340,7 @@ type ApiListServersRequest struct {
 	projectName               *string
 	state                     *string
 	selector                  *string
+	includeLabels             *bool
 }
 
 // If &#x60;true&#x60;, only return AD servers. If &#x60;false&#x60;, only return Non-AD servers
@@ -456,6 +457,12 @@ func (r ApiListServersRequest) Selector(selector string) ApiListServersRequest {
 	return r
 }
 
+// If &#x60;true&#x60;, includes server labels in the results.
+func (r ApiListServersRequest) IncludeLabels(includeLabels bool) ApiListServersRequest {
+	r.includeLabels = &includeLabels
+	return r
+}
+
 func (r ApiListServersRequest) Execute() (*ListServersResponse, *http.Response, error) {
 	return r.ApiService.ListServersExecute(r)
 }
@@ -554,6 +561,9 @@ func (a *TeamsAPIService) ListServersExecute(r ApiListServersRequest) (*ListServ
 	}
 	if r.selector != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "selector", r.selector, "")
+	}
+	if r.includeLabels != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "include_labels", r.includeLabels, "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
