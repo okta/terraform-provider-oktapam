@@ -35,4 +35,5 @@ var (
 	ResourceSecretFolder                       = fmt.Sprintf("A file-system like construct that contains secrets or nested secret folders. %s", LinkSecretFolder)
 	ResourceServerPasswordSettings             = fmt.Sprintf("The settings for passwords set on servers within the project. %s", LinkPasswordSettings)
 	ResourceSecurityPolicy                     = fmt.Sprintf("A policy which defines how users can gain access to resources. %s", LinkSecurityPolicy)
+	ResourceCloudConnection                    = fmt.Sprintf("A PAM construct that connects PAM with cloud providers. %s", LinkCloudConnection)
 )

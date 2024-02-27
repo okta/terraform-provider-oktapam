@@ -31,6 +31,7 @@ var (
 	SourceServerPasswordSettings             = fmt.Sprintf("Returns an existing Server Password Policy for a PAM Project.  %s", LinkPasswordSettings)
 	SourceTeamSettings                       = "Returns Team-level settings, such as authentication and enrollment details, for your Team."
 	SourceADUserSyncTaskSettings             = fmt.Sprintf("Returns an existing AD user sync job. %s", LinkADUserDiscovery)
+	SourceCloudConnection                    = fmt.Sprintf("Returns an existing PAM Cloud Connection. %s", LinkCloudConnection)
 
 	// List
 	SourceADUserSyncTaskSettingsIDList        = fmt.Sprintf("Returns a list of all AD user sync jobs a specified AD Connection. %s", LinkADUserDiscovery)

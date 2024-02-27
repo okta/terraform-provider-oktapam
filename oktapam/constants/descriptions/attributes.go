@@ -178,4 +178,6 @@ var (
 	UserProvisioningExactUserName = "If true, ASA has ASA Users configured through SCIM to maintain the exact username that is specified."
 	UserType                      = "The user type. Valid types are 'human' and 'service'."
 	WebSessionDuration            = "Defines the duration of the web session. Configure the web session to be between 30 minutes and 25 hours."
+	CloudConnectionProvider       = "The cloud provider for the connection, example AWS"
+	CloudConnectionDetails        = "More data about the cloud connection: AWS account id, external id and AWS role arn"
 )

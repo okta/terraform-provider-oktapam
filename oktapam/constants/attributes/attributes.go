@@ -205,4 +205,11 @@ const (
 	Users                             = "users"
 	Value                             = "value"
 	WebSessionDuration                = "web_session_duration"
+	CloudConnections                  = "cloud_connections"
+	CloudConnectionTeamID             = "team_id"
+	CloudConnectionProvider           = "provider"
+	CloudConnectionDetails            = "cloud_connection_details"
+	CloudConnectionAccountId          = "account_id"
+	CloudConnectionExternalId         = "external_id"
+	CloudConnectionRoleARN            = "role_arn"
 )
