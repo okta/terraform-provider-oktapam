@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
@@ -85,7 +86,7 @@ func dataSourceDatabaseFetch(ctx context.Context, d *schema.ResourceData, m any)
 		return diag.FromErr(err)
 	}
 
-	wrap := wrappers.DatabaseResourceResponseWrapper{*database}
+	wrap := wrappers.DatabaseResourceResponseWrapper{DatabaseResourceResponse: *database}
 
 	d.SetId(database.Id)
 	for key, value := range wrap.ToResourceMap(nil) {

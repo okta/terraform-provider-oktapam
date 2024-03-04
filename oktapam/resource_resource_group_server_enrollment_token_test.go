@@ -65,9 +65,7 @@ func testAccResourceGroupServerEnrollmentTokenCheckExists(rn string, expectedRes
 			return fmt.Errorf("error getting resource group server enrollment token: %w", err)
 		} else if resourceGroupServerEnrollmentToken == nil {
 			return fmt.Errorf("resource group server enrollment token does not exist")
-		}
-
-		if resourceGroupServerEnrollmentToken == nil || utils.IsBlank(resourceGroupServerEnrollmentToken.ID) {
+		} else if utils.IsBlank(resourceGroupServerEnrollmentToken.ID) {
 			return fmt.Errorf("server enrollment token for project %s with id %s does not exist", projectID, serverEnrollmentTokenID)
 		}
 		if *resourceGroupServerEnrollmentToken.Description != *expectedResourceGroupServerEnrollmentToken.Description {
@@ -77,7 +75,7 @@ func testAccResourceGroupServerEnrollmentTokenCheckExists(rn string, expectedRes
 	}
 }
 
-func testAccResourceGroupServerEnrollmentTokenCheckDestroy(resourceGroupName string, projectNames ...string) resource.TestCheckFunc {
+func testAccResourceGroupServerEnrollmentTokenCheckDestroy(resourceGroupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := getLocalClientFromMetadata(testAccProvider.Meta())
 		resourceGroups, err := client.ListResourceGroups(context.Background())
