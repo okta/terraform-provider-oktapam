@@ -30,7 +30,7 @@ func (c CloudConnection) Exists() bool {
 }
 
 func (c CloudConnection) ToResourceMap() map[string]any {
-	m := make(map[string]any, 2)
+	m := make(map[string]any, 10) // TODO: check that size again
 
 	if c.Name != nil {
 		m[attributes.Name] = *c.Name
@@ -46,8 +46,8 @@ func (c CloudConnection) ToResourceMap() map[string]any {
 	return m
 }
 
-func (c OktaPAMClient) GetCloudConnection(ctx context.Context, name string, allowDeleted bool) (*CloudConnection, error) {
-	requestURL := fmt.Sprintf("/v1/teams/%s/cloud_connections/%s", url.PathEscape(c.Team), url.PathEscape(name))
+func (c OktaPAMClient) GetCloudConnection(ctx context.Context, id string, allowDeleted bool) (*CloudConnection, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/cloud_connections/%s", url.PathEscape(c.Team), url.PathEscape(id))
 	logging.Tracef("making GET request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetResult(&CloudConnection{}).Get(requestURL)
 	if err != nil {
@@ -84,8 +84,8 @@ func (c OktaPAMClient) CreateCloudConnection(ctx context.Context, cloudConnectio
 	return resultingCloudConnection, nil
 }
 
-func (c OktaPAMClient) UpdateCloudConnection(ctx context.Context, resourceGroupID string, cloudConnection CloudConnection) error {
-	requestURL := fmt.Sprintf("/v1/teams/%s/cloud_connections/%s", url.PathEscape(c.Team), url.PathEscape(resourceGroupID))
+func (c OktaPAMClient) UpdateCloudConnection(ctx context.Context, cloudConnection CloudConnection) error {
+	requestURL := fmt.Sprintf("/v1/teams/%s/cloud_connections/%s", url.PathEscape(c.Team), url.PathEscape(*cloudConnection.ID))
 	logging.Tracef("making PUT request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetBody(cloudConnection).Put(requestURL)
 	if err != nil {

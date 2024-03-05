@@ -21,5 +21,5 @@ const (
 	LinkResourceGroupServerEnrollmentToken = "For details, see [Server Enrollment](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-server-enrollment)."
 	LinkSecretFolder                       = "For details, see [Secret Folders](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-secrets-folder)"
 	LinkSecurityPolicy                     = "For details, see [Security policy](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-policy)."
-	LinkCloudConnection                    = "For details, see [Resource Groups](https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-entitlement-aws-connect.htm)."
+	LinkCloudConnection                    = "For details, see [Cloud Connection](https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-entitlement-aws-connect.htm)."
 )

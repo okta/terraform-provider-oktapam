@@ -10,6 +10,7 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
+	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 )
 
 func resourceCloudConnection() *schema.Resource {
@@ -70,58 +71,69 @@ func resourceCloudConnection() *schema.Resource {
 
 func resourceCloudConnectionRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := getLocalClientFromMetadata(m)
-	name := d.Get(attributes.Name).(string)
-	if name == "" {
-		return diag.Errorf("%s cannot be blank", attributes.Name)
-	}
+	id := d.Id()
+	cloudConnection, err := c.GetCloudConnection(ctx, id, false)
 
-	cloudConnection, err := c.GetCloudConnection(ctx, name, false)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	if cloudConnection != nil {
-		d.SetId(*cloudConnection.ID)
-		for key, value := range cloudConnection.ToResourceMap() {
-			if err := d.Set(key, value); err != nil {
-				return diag.FromErr(err)
-			}
-		}
-	} else {
-		logging.Infof("cloud connection %s does not exist", name)
+	if cloudConnection == nil || utils.IsBlank(cloudConnection.ID) {
+		logging.Debugf("id was blank")
+		d.SetId("")
+		return nil
 	}
+
+	for key, value := range cloudConnection.ToResourceMap() {
+		logging.Debugf("setting %s to %v", key, value)
+		if err := d.Set(key, value); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
 	return nil
 }
 
 func resourceCloudConnectionCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := getLocalClientFromMetadata(m)
-
-	cloudConnection, diags := readCloudConnectionFromResource(d)
-	if diags != nil {
-		return diags
-	}
+	cloudConnection := readCloudConnectionFromResource(d)
 
 	result, err := c.CreateCloudConnection(ctx, cloudConnection)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(*result.ID)
 
+	d.SetId(*result.ID)
 	return resourceCloudConnectionRead(ctx, d, m)
 }
 
 func resourceCloudConnectionUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	var diags diag.Diagnostics
 	c := getLocalClientFromMetadata(m)
 	id := d.Id()
+	cloudConnection  := readCloudConnectionFromResource(d)
+
 	if id == "" {
-		return diag.Errorf("could not obtain resource group id from resource")
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "could not obtain cloud connection id from resource",
+		})
 	}
-	cloudConnection, diags := readCloudConnectionFromResource(d)
+
+	if utils.IsBlank(cloudConnection.Name) {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "could not obtain name from resource",
+		})
+	}
+
 	if diags != nil {
 		return diags
 	}
 
-	if err := c.UpdateCloudConnection(ctx, id, cloudConnection); err != nil {
+	cloudConnection.ID = &id
+
+	if err := c.UpdateCloudConnection(ctx, cloudConnection); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -129,19 +141,21 @@ func resourceCloudConnectionUpdate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceCloudConnectionDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	var diags diag.Diagnostics
 	c := getLocalClientFromMetadata(m)
 	id := d.Id()
-	if err := c.DeleteCloudConnection(ctx, id); err != nil {
-		diags = append(diags, diag.FromErr(err)...)
-	} else {
-		d.SetId("")
+
+	err := c.DeleteCloudConnection(ctx, id)
+
+	if err != nil {
+		return diag.FromErr(err)
 	}
 
-	return diags
+	d.SetId("")
+
+	return nil
 }
 
-func readCloudConnectionFromResource(d *schema.ResourceData) (client.CloudConnection, diag.Diagnostics) {
+func readCloudConnectionFromResource(d *schema.ResourceData) client.CloudConnection {
 	cloudConnection := client.CloudConnection{
 		Name:     GetStringPtrFromResource(attributes.Name, d, true),
 		Provider: GetStringPtrFromResource(attributes.CloudConnectionProvider, d, true),
@@ -152,5 +166,5 @@ func readCloudConnectionFromResource(d *schema.ResourceData) (client.CloudConnec
 		},
 	}
 
-	return cloudConnection, nil
+	return cloudConnection
 }

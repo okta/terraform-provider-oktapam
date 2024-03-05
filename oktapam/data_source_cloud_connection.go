@@ -62,12 +62,12 @@ func dataSourceCloudConnection() *schema.Resource {
 
 func dataSourceCloudConnectionFetch(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := getLocalClientFromMetadata(m)
-	name := d.Get(attributes.Name).(string)
-	if name == "" {
-		return diag.Errorf("%s cannot be blank", attributes.Name)
+	id := d.Get(attributes.ID).(string)
+	if id == "" {
+		return diag.Errorf("%s cannot be blank", attributes.ID)
 	}
 
-	cloudConnection, err := c.GetCloudConnection(ctx, name, false)
+	cloudConnection, err := c.GetCloudConnection(ctx, id, false)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -80,7 +80,7 @@ func dataSourceCloudConnectionFetch(ctx context.Context, d *schema.ResourceData,
 			}
 		}
 	} else {
-		logging.Infof("cloud connection %s does not exist", name)
+		logging.Infof("cloud connection %s does not exist", id)
 	}
 	return nil
 }
