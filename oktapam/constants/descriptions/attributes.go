@@ -50,6 +50,8 @@ var (
 	CharacterOptionsRequireFromEachSet        = "If `true`, passwords must include at least one character from the selected sets."
 	CharacterOptionsUpperCase                 = "If `true`, passwords can include one or more uppercase characters."
 	ClientSessionDuration                     = "The maximum time before a Client session expires. The duration can be from 3600 – 90000 seconds."
+	CloudConnectionProvider       = "The cloud provider for the connection, example AWS"
+	CloudConnectionDetails        = "More data about the cloud connection: AWS account id, external id and AWS role arn"
 	CloudProvider                             = "The name of the cloud provider where the Gateway is hosted."
 	ClusterGroupClaims                        = "A map of claims included with issued user credentials used to authenticate to Kubernetes clusters. Claims correspond to pre-configured role bindings on the cluster."
 	ClusterSelector                           = "A label selector to used to match Kubernetes clusters."
@@ -178,6 +180,4 @@ var (
 	UserProvisioningExactUserName = "If true, ASA has ASA Users configured through SCIM to maintain the exact username that is specified."
 	UserType                      = "The user type. Valid types are 'human' and 'service'."
 	WebSessionDuration            = "Defines the duration of the web session. Configure the web session to be between 30 minutes and 25 hours."
-	CloudConnectionProvider       = "The cloud provider for the connection, example AWS"
-	CloudConnectionDetails        = "More data about the cloud connection: AWS account id, external id and AWS role arn"
 )
