@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"regexp"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
@@ -46,6 +47,28 @@ func (c CloudConnection) ToResourceMap() map[string]any {
 	return m
 }
 
+func validateCloudConnectionData(cloudConnection CloudConnection) bool {
+	nameRegex, nameRegexErr := regexp.Compile(`^[A-Za-z0-9-_.]+$`)
+	if nameRegexErr != nil {
+		fmt.Println("invalid regex pattern for cloud connection name")
+		return false
+	}
+	nameValidation := nameRegex.MatchString(*cloudConnection.Name) && len(*cloudConnection.Name) > 1
+
+	accountIdRegex, accountIdRegexErr := regexp.Compile(`^\d{12}$`)
+	if accountIdRegexErr != nil {
+		fmt.Println("invalid regex pattern for cloud connection account id")
+		return false
+	}
+	accountIdValidation := accountIdRegex.MatchString(*cloudConnection.CloudConnectionDetails.AccountId)
+
+	providerValidation := *cloudConnection.Provider == "AWS"
+	externalIdValidation := len(*cloudConnection.CloudConnectionDetails.ExternalId) != 0
+	roleArnValidation := len(*cloudConnection.CloudConnectionDetails.RoleArn) != 0
+
+	return nameValidation && accountIdValidation && providerValidation && externalIdValidation && roleArnValidation
+}
+
 func (c OktaPAMClient) GetCloudConnection(ctx context.Context, id string, allowDeleted bool) (*CloudConnection, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/cloud_connections/%s", url.PathEscape(c.Team), url.PathEscape(id))
 	logging.Tracef("making GET request to %s", requestURL)
@@ -72,6 +95,11 @@ func (c OktaPAMClient) GetCloudConnection(ctx context.Context, id string, allowD
 func (c OktaPAMClient) CreateCloudConnection(ctx context.Context, cloudConnection CloudConnection) (*CloudConnection, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/cloud_connections", url.PathEscape(c.Team))
 	logging.Tracef("making POST request to %s", requestURL)
+
+	if !validateCloudConnectionData(cloudConnection) {
+		return nil, fmt.Errorf("cloud connection data are not valid")
+	}
+
 	resultingCloudConnection := &CloudConnection{}
 	resp, err := c.CreateBaseRequest(ctx).SetBody(cloudConnection).SetResult(resultingCloudConnection).Post(requestURL)
 	if err != nil {
@@ -87,6 +115,11 @@ func (c OktaPAMClient) CreateCloudConnection(ctx context.Context, cloudConnectio
 func (c OktaPAMClient) UpdateCloudConnection(ctx context.Context, cloudConnection CloudConnection) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/cloud_connections/%s", url.PathEscape(c.Team), url.PathEscape(*cloudConnection.ID))
 	logging.Tracef("making PUT request to %s", requestURL)
+	
+	if !validateCloudConnectionData(cloudConnection) {
+		return fmt.Errorf("cloud connection data are not valid")
+	}
+
 	resp, err := c.CreateBaseRequest(ctx).SetBody(cloudConnection).Put(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
