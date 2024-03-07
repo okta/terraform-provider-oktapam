@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 )
 
-func dataSourceCloudConnections() *schema.Resource {
+func dataSourceCloudConnection() *schema.Resource {
 	return &schema.Resource{
 		Description: descriptions.SourceCloudConnection,
 		ReadContext: dataSourceCloudConnectionFetch,
