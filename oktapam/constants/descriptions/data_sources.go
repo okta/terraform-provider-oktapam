@@ -44,4 +44,5 @@ var (
 	SourceResourceGroupServerEnrollmentTokens = fmt.Sprintf("Returns a list of Server Enrollment Tokens associated with a specific Project. %s", LinkResourceGroupServerEnrollmentToken)
 	SourceSecretFolders                       = "Returns a list of Secret Folders, constrained by the given parameters."
 	SourceSecurityPolicies                    = fmt.Sprintf("Returns a list of Security Policies associated with the Team specified by the OKTAPAM_TEAM environment variable. %s", LinkSecurityPolicy)
+	SourceCloudConnections                    = fmt.Sprintf("Returns a list of Cloud Connections. %s", LinkCloudConnection)
 )

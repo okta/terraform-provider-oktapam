@@ -10,6 +10,7 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
+	"github.com/tomnomnom/linkheader"
 )
 
 type CloudConnectionDetails struct {
@@ -24,6 +25,10 @@ type CloudConnection struct {
 	Name                   *string                 `json:"name"`
 	Provider               *string                 `json:"provider"`
 	CloudConnectionDetails *CloudConnectionDetails `json:"cloud_connection_details"`
+}
+
+type CloudConnectionsListResponse struct {
+	CloudConnections []CloudConnection `json:"list"`
 }
 
 func (c CloudConnection) Exists() bool {
@@ -67,6 +72,44 @@ func validateCloudConnectionData(cloudConnection CloudConnection) bool {
 	roleArnValidation := len(*cloudConnection.CloudConnectionDetails.RoleArn) != 0
 
 	return nameValidation && accountIdValidation && providerValidation && externalIdValidation && roleArnValidation
+}
+
+func (c OktaPAMClient) ListCloudConnections(ctx context.Context) ([]CloudConnection, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/cloud_connections", url.PathEscape(c.Team))
+	cloudConnections := make([]CloudConnection, 0)
+
+	for {
+		// List will paginate, so we make a request, add results to array to return, check if we get a next page, and if so loop again
+		logging.Tracef("making GET request to %s", requestURL)
+
+		resp, err := c.CreateBaseRequest(ctx).SetResult(&CloudConnectionsListResponse{}).Get(requestURL)
+		if err != nil {
+			logging.Errorf("received error while making request to %s", requestURL)
+			return nil, err
+		}
+		if _, err := checkStatusCode(resp, http.StatusOK); err != nil {
+			return nil, err
+		}
+
+		cloudConnectionsListResponse := resp.Result().(*CloudConnectionsListResponse)
+		cloudConnections = append(cloudConnections, cloudConnectionsListResponse.CloudConnections...)
+
+		linkHeader := resp.Header().Get("Link")
+		if linkHeader == "" {
+			break
+		}
+		links := linkheader.Parse(linkHeader)
+		requestURL = ""
+
+		for _, link := range links {
+			if link.Rel == "next" {
+				requestURL = link.URL
+				break
+			}
+		}
+	}
+
+	return cloudConnections, nil
 }
 
 func (c OktaPAMClient) GetCloudConnection(ctx context.Context, id string, allowDeleted bool) (*CloudConnection, error) {
