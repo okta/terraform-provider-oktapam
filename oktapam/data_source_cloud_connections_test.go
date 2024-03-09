@@ -43,34 +43,34 @@ func TestAccDataSourceCloudConnectionsList(t *testing.T) {
 
 func createTestAccDataSourceCloudConnectionsInitConfig(identifier string) string {
 	const format = `
-		resource "oktapam_cloud_connection" "test-cloud-connection-1" {
-			name = "%s-1"
-			provider = "aws
-			cloud_connection_details {
-				account_id = "123456789000"
-				role_arn = "arn:aws:iam::123456789012:role/MyRole"
-				external_id = "3c086859-3674-49d8-96b0-f1942047c0dc"
-			}
+	resource "oktapam_cloud_connection" "test-cloud-connection-1" {
+		name = "%s-1"
+		provider = "aws"
+		cloud_connection_details {
+			account_id = "123456789000"
+			role_arn = "arn:aws:iam::123456789012:role/MyRole"
+			external_id = "3c086859-3674-49d8-96b0-f1942047c0dc"
 		}
+	}
 
-		resource "oktapam_cloud_connection" "test-cloud-connection-2" {
-			name = "%s-2"
-			provider = "aws
-			cloud_connection_details {
-				account_id = "123456789000"
-				role_arn = "arn:aws:iam::123456789012:role/MyRole"
-				external_id = "3c086859-3674-49d8-96b0-f1942047c0dc"
-			}
+	resource "oktapam_cloud_connection" "test-cloud-connection-2" {
+		name = "%s-2"
+		provider = "aws"
+		cloud_connection_details {
+			account_id = "123456789000"
+			role_arn = "arn:aws:iam::123456789012:role/MyRole"
+			external_id = "3c086859-3674-49d8-96b0-f1942047c0dc"
 		}
+	}
 	`
-	return fmt.Sprintf(format, identifier, identifier, identifier, identifier)
+	return fmt.Sprintf(format, identifier, identifier)
 }
 
 func testAccDataSourceCloudConnectionsConfig(resourceName, name string) string {
 	const format = `
-		data "oktapam_cloud_connections" "%s" {
-			name = "%s"
-		}
+	data "oktapam_cloud_connections" "%s" {
+		name = "%s"
+	}
 	`
 	return fmt.Sprintf(format, resourceName, name)
 }

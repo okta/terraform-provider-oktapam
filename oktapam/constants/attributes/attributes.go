@@ -31,7 +31,7 @@ const (
 	Claims                            = "claims"
 	ClientSessionDuration             = "client_session_duration"
 	CloudConnection                   = "cloud_connection"
-	CloudConnectionProvider           = "cloud_connection_provider"
+	CloudConnectionProvider           = "cloud_connection_provider" // TODO
 	CloudConnectionDetails            = "cloud_connection_details"
 	CloudConnectionAccountId          = "account_id"
 	CloudConnectionExternalId         = "external_id"
