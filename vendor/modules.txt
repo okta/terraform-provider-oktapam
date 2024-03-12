@@ -36,7 +36,7 @@ github.com/apparentlymart/go-textseg/v15/textseg
 # github.com/armon/go-radix v0.0.0-20180808171621-7fddfc383310
 ## explicit
 github.com/armon/go-radix
-# github.com/atko-pam/pam-sdk-go v1.0.54
+# github.com/atko-pam/pam-sdk-go v1.0.58
 ## explicit; go 1.20
 github.com/atko-pam/pam-sdk-go/client/pam
 # github.com/bgentry/speakeasy v0.1.0

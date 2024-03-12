@@ -28,6 +28,8 @@ type SecurityPolicyRule struct {
 	Privileges []SecurityPolicyRulePrivilegeContainer `json:"privileges"`
 	// The conditions required before a privilege is made available to the Principals. All conditions must be met.
 	Conditions []SecurityPolicyRuleConditionContainer `json:"conditions,omitempty"`
+	// Overrides checkout duration provided in the resource settings
+	OverrideCheckoutDurationInSeconds NullableInt64 `json:"override_checkout_duration_in_seconds,omitempty"`
 	// The UUID of the associated Security Policy
 	SecurityPolicyId NullableString `json:"security_policy_id,omitempty"`
 }
@@ -186,6 +188,52 @@ func (o *SecurityPolicyRule) SetConditions(v []SecurityPolicyRuleConditionContai
 	return o
 }
 
+// GetOverrideCheckoutDurationInSeconds returns the OverrideCheckoutDurationInSeconds field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *SecurityPolicyRule) GetOverrideCheckoutDurationInSeconds() int64 {
+	if o == nil || IsNil(o.OverrideCheckoutDurationInSeconds.Get()) {
+		var ret int64
+		return ret
+	}
+	return *o.OverrideCheckoutDurationInSeconds.Get()
+}
+
+// GetOverrideCheckoutDurationInSecondsOk returns a tuple with the OverrideCheckoutDurationInSeconds field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *SecurityPolicyRule) GetOverrideCheckoutDurationInSecondsOk() (*int64, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.OverrideCheckoutDurationInSeconds.Get(), o.OverrideCheckoutDurationInSeconds.IsSet()
+}
+
+// HasOverrideCheckoutDurationInSeconds returns a boolean if a field has been set.
+func (o *SecurityPolicyRule) HasOverrideCheckoutDurationInSeconds() bool {
+	if o != nil && o.OverrideCheckoutDurationInSeconds.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetOverrideCheckoutDurationInSeconds gets a reference to the given NullableInt64 and assigns it to the OverrideCheckoutDurationInSeconds field.
+func (o *SecurityPolicyRule) SetOverrideCheckoutDurationInSeconds(v int64) *SecurityPolicyRule {
+	o.OverrideCheckoutDurationInSeconds.Set(&v)
+	return o
+}
+
+// SetOverrideCheckoutDurationInSecondsNil sets the value for OverrideCheckoutDurationInSeconds to be an explicit nil
+func (o *SecurityPolicyRule) SetOverrideCheckoutDurationInSecondsNil() *SecurityPolicyRule {
+	o.OverrideCheckoutDurationInSeconds.Set(nil)
+	return o
+}
+
+// UnsetOverrideCheckoutDurationInSeconds ensures that no value is present for OverrideCheckoutDurationInSeconds, not even an explicit nil
+func (o *SecurityPolicyRule) UnsetOverrideCheckoutDurationInSeconds() *SecurityPolicyRule {
+	o.OverrideCheckoutDurationInSeconds.Unset()
+	return o
+}
+
 // GetSecurityPolicyId returns the SecurityPolicyId field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *SecurityPolicyRule) GetSecurityPolicyId() string {
 	if o == nil || IsNil(o.SecurityPolicyId.Get()) {
@@ -248,6 +296,9 @@ func (o SecurityPolicyRule) ToMap() (map[string]interface{}, error) {
 	toSerialize["privileges"] = o.Privileges
 	if !IsNil(o.Conditions) {
 		toSerialize["conditions"] = o.Conditions
+	}
+	if o.OverrideCheckoutDurationInSeconds.IsSet() {
+		toSerialize["override_checkout_duration_in_seconds"] = o.OverrideCheckoutDurationInSeconds.Get()
 	}
 	if o.SecurityPolicyId.IsSet() {
 		toSerialize["security_policy_id"] = o.SecurityPolicyId.Get()

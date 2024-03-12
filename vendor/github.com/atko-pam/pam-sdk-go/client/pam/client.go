@@ -379,11 +379,6 @@ func (apiClient *APIClient) callAPI(
 		return nil, fmt.Errorf("error reading the raw HTTP response body: %w", err)
 	}
 
-	// unmarshal the response body into the result interface
-	if err := json.Unmarshal(respBody, &result); err != nil {
-		return nil, fmt.Errorf("error unmarshalling the raw HTTP response body: %w", err)
-	}
-
 	_ = response.RawResponse.Body.Close()
 
 	// duplicate the response body so we can return it for the caller to use
@@ -408,6 +403,11 @@ func (apiClient *APIClient) callAPI(
 		return newRawResponse, &APIError{
 			Message: response.Status(),
 		}
+	}
+
+	// unmarshal the response body into the result interface
+	if err := json.Unmarshal(respBody, &result); err != nil {
+		return nil, fmt.Errorf("error unmarshalling the raw HTTP response body: %w", err)
 	}
 
 	return response.RawResponse, nil

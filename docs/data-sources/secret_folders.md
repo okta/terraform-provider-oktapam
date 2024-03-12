@@ -3,12 +3,12 @@
 page_title: "oktapam_secret_folders Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of Secret Folders, constrained by the given parameters.
+  Returns a list of Secret Folders, constrained by the given parameters. For details, see Secret Folders https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-secrets-folder
 ---
 
 # oktapam_secret_folders (Data Source)
 
-Returns a list of Secret Folders, constrained by the given parameters.
+Returns a list of Secret Folders, constrained by the given parameters. For details, see [Secret Folders](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-secrets-folder)
 
 
 
