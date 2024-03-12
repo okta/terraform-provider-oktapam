@@ -1,12 +1,12 @@
 ---
 page_title: "oktapam_secret Resource - terraform-provider-oktapam"
 description: |-
-  Secrets are encrypted key-value pairs that can be used to store sensitive information, like usernames, passwords, API tokens, keys, or any string value. For details, see [Secret Folders](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-secrets)
+  Secrets are encrypted key-value pairs that can be used to store sensitive information, like usernames, passwords, API tokens, keys, or any string value. For details, see [Secrets](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-secrets)
 ---
 
 # oktapam_secret (Resource)
 
-Secrets are encrypted key-value pairs that can be used to store sensitive information, like usernames, passwords, API tokens, keys, or any string value. For details, see [Secret Folders](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-secrets)
+Secrets are encrypted key-value pairs that can be used to store sensitive information, like usernames, passwords, API tokens, keys, or any string value. For details, see [Secrets](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-secrets)
 
 ## Security Notice
 The secret specified in this resource will be stored *unencrypted* in your Terraform state and plan files.  Please take precautions to store these in a secure location.

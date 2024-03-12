@@ -3,12 +3,12 @@
 page_title: "oktapam_secret Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns an existing PAM Secret. For details, see Secret Folders https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-secrets
+  Returns an existing PAM Secret. For details, see Secrets https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-secrets
 ---
 
 # oktapam_secret (Data Source)
 
-Returns an existing PAM Secret. For details, see [Secret Folders](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-secrets)
+Returns an existing PAM Secret. For details, see [Secrets](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-secrets)
 
 
 

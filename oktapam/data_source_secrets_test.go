@@ -36,10 +36,12 @@ func TestAccDatasourceSecretList(t *testing.T) {
 				Config: initConfig,
 			},
 			{
+				// testing that when we specify a secret, it returns that single secret
 				Config: fmt.Sprintf("%s\n%s", initConfig, data1Config),
 				Check:  resource.TestCheckResourceAttr(dataSource1Name, fmt.Sprintf("%s.#", attributes.Secrets), "1"),
 			},
 			{
+				// testing that when we specify a secret folder, it returns the secrets under that folder
 				Config: fmt.Sprintf("%s\n%s", initConfig, data2Config),
 				Check:  resource.TestCheckResourceAttr(dataSource2Name, fmt.Sprintf("%s.#", attributes.Secrets), "2"),
 			},
