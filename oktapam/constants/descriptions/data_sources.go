@@ -27,6 +27,7 @@ var (
 	SourceResourceGroup                      = fmt.Sprintf("Returns an existing PAM Resource Group. %s", LinkResourceGroup)
 	SourceResourceGroupProject               = fmt.Sprintf("Returns an existing PAM Project associated with a specific PAM Resource Group. %s", LinkResourceGroupProject)
 	SourceResourceGroupServerEnrollmentToken = fmt.Sprintf("Returns an existing PAM Server Enrollment Token associated with a specific PAM project. %s", LinkResourceGroupServerEnrollmentToken)
+	SourceSecret                             = fmt.Sprintf("Returns an existing PAM Secret. %s", LinkSecret)
 	SourceSecurityPolicy                     = fmt.Sprintf("Returns an existing PAM Security Policy. %s", LinkSecurityPolicy)
 	SourceServerPasswordSettings             = fmt.Sprintf("Returns an existing Server Password Policy for a PAM Project.  %s", LinkPasswordSettings)
 	SourceTeamSettings                       = "Returns Team-level settings, such as authentication and enrollment details, for your Team."
@@ -42,7 +43,8 @@ var (
 	SourceResourceGroups                      = fmt.Sprintf("Returns a list of Resource Groups associated with the Team specified by the OKTAPAM_TEAM environment variable. %s", LinkResourceGroup)
 	SourceResourceGroupProjects               = fmt.Sprintf("Returns a list of Projects associated with an existing Resource Group. %s", LinkResourceGroupProject)
 	SourceResourceGroupServerEnrollmentTokens = fmt.Sprintf("Returns a list of Server Enrollment Tokens associated with a specific Project. %s", LinkResourceGroupServerEnrollmentToken)
-	SourceSecretFolders                       = "Returns a list of Secret Folders, constrained by the given parameters."
+	SourceSecretFolders                       = fmt.Sprintf("Returns a list of Secret Folders, constrained by the given parameters. %s", LinkSecretFolder)
+	SourceSecrets                             = fmt.Sprintf("Returns a list of Secrets, constrained by the given parameters. %s", LinkSecret)
 	SourceSecurityPolicies                    = fmt.Sprintf("Returns a list of Security Policies associated with the Team specified by the OKTAPAM_TEAM environment variable. %s", LinkSecurityPolicy)
 	SourceCloudConnections                    = fmt.Sprintf("Returns a list of Cloud Connections. %s", LinkCloudConnection)
 )

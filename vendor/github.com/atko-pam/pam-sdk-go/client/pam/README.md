@@ -51,6 +51,7 @@ Class | Method | HTTP request | Description
 *CloudEntitlementsAPI* | [**ListAccountsForCloudConnection**](docs/CloudEntitlementsAPI.md#listaccountsforcloudconnection) | **Get** /v1/teams/{team_name}/cloud_connections/{connection_id}/accounts | List all accounts for a Cloud Connection
 *CloudEntitlementsAPI* | [**ListCloudConnections**](docs/CloudEntitlementsAPI.md#listcloudconnections) | **Get** /v1/teams/{team_name}/cloud_connections | List all Cloud Connections
 *CloudEntitlementsAPI* | [**ListCloudEntitlementAnalyses**](docs/CloudEntitlementsAPI.md#listcloudentitlementanalyses) | **Get** /v1/teams/{team_name}/cloud_entitlement_analyses | List all Cloud Entitlement Jobs
+*CloudEntitlementsAPI* | [**ListCloudEntitlementAnalysisAssignedUsers**](docs/CloudEntitlementsAPI.md#listcloudentitlementanalysisassignedusers) | **Post** /v1/teams/{team_name}/cloud_entitlement_analyses/{cloud_entitlement_analysis_id}/list_users | List all Assigned Users for a Cloud Entitlement Job
 *CloudEntitlementsAPI* | [**ListCloudEntitlementAnalysisSummaryResources**](docs/CloudEntitlementsAPI.md#listcloudentitlementanalysissummaryresources) | **Post** /v1/teams/{team_name}/cloud_entitlement_analyses/{cloud_entitlement_analysis_id}/resources | List all Resources for a Cloud Entitlement Job
 *CloudEntitlementsAPI* | [**RunCloudEntitlementAnalysis**](docs/CloudEntitlementsAPI.md#runcloudentitlementanalysis) | **Post** /v1/teams/{team_name}/cloud_entitlement_analyses/{cloud_entitlement_analysis_id}/run | Run a Cloud Entitlement Job
 *CloudEntitlementsAPI* | [**UpdateCloudConnection**](docs/CloudEntitlementsAPI.md#updatecloudconnection) | **Put** /v1/teams/{team_name}/cloud_connections/{connection_id} | Update a Cloud Connection
@@ -181,6 +182,8 @@ Class | Method | HTTP request | Description
  - [CloudEntitlementJob](docs/CloudEntitlementJob.md)
  - [CloudEntitlementJobAnalysis](docs/CloudEntitlementJobAnalysis.md)
  - [CloudEntitlementJobAnalysisRules](docs/CloudEntitlementJobAnalysisRules.md)
+ - [CloudEntitlementJobAssignedUsers](docs/CloudEntitlementJobAssignedUsers.md)
+ - [CloudEntitlementJobAssignedUsersUserDetails](docs/CloudEntitlementJobAssignedUsersUserDetails.md)
  - [CloudEntitlementJobDiscovery](docs/CloudEntitlementJobDiscovery.md)
  - [CloudEntitlementJobDiscoveryResourceDetails](docs/CloudEntitlementJobDiscoveryResourceDetails.md)
  - [CloudEntitlementJobDiscoveryRules](docs/CloudEntitlementJobDiscoveryRules.md)
@@ -238,6 +241,7 @@ Class | Method | HTTP request | Description
  - [ListClientsResponse](docs/ListClientsResponse.md)
  - [ListCloudConnectionsResponse](docs/ListCloudConnectionsResponse.md)
  - [ListCloudEntitlementAnalysesResponse](docs/ListCloudEntitlementAnalysesResponse.md)
+ - [ListCloudEntitlementAnalysisAssignedUsersResponse](docs/ListCloudEntitlementAnalysisAssignedUsersResponse.md)
  - [ListCloudEntitlementAnalysisSummaryResourcesResponse](docs/ListCloudEntitlementAnalysisSummaryResourcesResponse.md)
  - [ListDatabaseStaticAccountsResponse](docs/ListDatabaseStaticAccountsResponse.md)
  - [ListGatewaySetupTokensResponse](docs/ListGatewaySetupTokensResponse.md)
@@ -288,6 +292,7 @@ Class | Method | HTTP request | Description
  - [RevealSecretForbiddenResponse](docs/RevealSecretForbiddenResponse.md)
  - [RoleName](docs/RoleName.md)
  - [Roles](docs/Roles.md)
+ - [SSHCertificateType](docs/SSHCertificateType.md)
  - [Secret](docs/Secret.md)
  - [SecretCreateOrUpdateRequest](docs/SecretCreateOrUpdateRequest.md)
  - [SecretFolderCreateRequest](docs/SecretFolderCreateRequest.md)

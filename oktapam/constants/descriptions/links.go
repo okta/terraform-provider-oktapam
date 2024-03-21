@@ -20,6 +20,7 @@ const (
 	LinkResourceGroupProject               = "For details, see [Projects](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects)."
 	LinkResourceGroupServerEnrollmentToken = "For details, see [Server Enrollment](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-server-enrollment)."
 	LinkSecretFolder                       = "For details, see [Secret Folders](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-secrets-folder)"
+	LinkSecret                             = "For details, see [Secrets](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-secrets)"
 	LinkSecurityPolicy                     = "For details, see [Security policy](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-policy)."
 	LinkCloudConnection                    = "For details, see [Cloud Connection](https://help.okta.com/oie/en-us/content/topics/privileged-access/pam-entitlement-aws-connect.htm)."
 )
