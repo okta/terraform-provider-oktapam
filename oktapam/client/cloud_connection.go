@@ -48,6 +48,7 @@ func (c CloudConnection) ToResourceMap() map[string]any {
 		m[attributes.DeletedAt] = *c.DeletedAt
 	}
 	m[attributes.CloudConnectionDetails] = c.CloudConnectionDetails
+	m[attributes.CloudConnectionProvider] = c.Provider
 
 	return m
 }
@@ -158,7 +159,7 @@ func (c OktaPAMClient) CreateCloudConnection(ctx context.Context, cloudConnectio
 func (c OktaPAMClient) UpdateCloudConnection(ctx context.Context, cloudConnection CloudConnection) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/cloud_connections/%s", url.PathEscape(c.Team), url.PathEscape(*cloudConnection.ID))
 	logging.Tracef("making PUT request to %s", requestURL)
-	
+
 	if !validateCloudConnectionData(cloudConnection) {
 		return fmt.Errorf("cloud connection data are not valid")
 	}

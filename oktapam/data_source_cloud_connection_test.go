@@ -12,7 +12,7 @@ func createTestAccDataSourceCloudConnectionInitConfig(identifier string) string 
 	const configFormat = `
 	resource "oktapam_cloud_connection" "test-cloud-connection-1" {
 		name = "%s-1"
-		provider = "aws"
+		cloud_connection_provider = "aws"
 		cloud_connection_details {
 			account_id = "123456789000"
 			role_arn = "arn:aws:iam::123456789012:role/MyRole"
@@ -55,7 +55,7 @@ func TestAccDataSourceCloudConnection(t *testing.T) {
 				Config: fmt.Sprintf("%s\n%s", initConfig, fetchConfig),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.oktapam_cloud_connection.data2", attributes.Name, fmt.Sprintf("%s-1", identifier)),
-					// resource.TestCheckResourceAttr("data.oktapam_cloud_connection.data2", attributes.CloudConnectionProvider, "aws"),
+					resource.TestCheckResourceAttr("data.oktapam_cloud_connection.data2", attributes.CloudConnectionProvider, "aws"),
 				),
 			},
 		},
