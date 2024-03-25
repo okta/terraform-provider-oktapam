@@ -46,20 +46,20 @@ func createTestAccDataSourceCloudConnectionsInitConfig(identifier string) string
 	resource "oktapam_cloud_connection" "test-cloud-connection-1" {
 		name = "%s-1"
 		provider = "aws"
-		cloud_connection_details {
-			account_id = "123456789000"
-			role_arn = "arn:aws:iam::123456789012:role/MyRole"
-			external_id = "3c086859-3674-49d8-96b0-f1942047c0dc"
+		cloud_connection_details = {
+			"account_id": "123456789000"
+			"role_arn": "arn:aws:iam::123456789012:role/MyRole"
+			"external_id": "3c086859-3674-49d8-96b0-f1942047c0dc"
 		}
 	}
 
 	resource "oktapam_cloud_connection" "test-cloud-connection-2" {
 		name = "%s-2"
 		provider = "aws"
-		cloud_connection_details {
-			account_id = "123456789000"
-			role_arn = "arn:aws:iam::123456789012:role/MyRole"
-			external_id = "3c086859-3674-49d8-96b0-f1942047c0dc"
+		cloud_connection_details = {
+			"account_id": "123456789000"
+			"role_arn"; "arn:aws:iam::123456789012:role/MyRole"
+			"external_id": "3c086859-3674-49d8-96b0-f1942047c0dc"
 		}
 	}
 	`
