@@ -58,7 +58,7 @@ func createTestAccDataSourceCloudConnectionsInitConfig(identifier string) string
 		provider = "aws"
 		cloud_connection_details = {
 			"account_id": "123456789000"
-			"role_arn"; "arn:aws:iam::123456789012:role/MyRole"
+			"role_arn": "arn:aws:iam::123456789012:role/MyRole"
 			"external_id": "3c086859-3674-49d8-96b0-f1942047c0dc"
 		}
 	}
