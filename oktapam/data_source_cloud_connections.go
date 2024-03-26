@@ -9,9 +9,9 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 )
 
-func dataSourceResourceGroups() *schema.Resource {
+func dataSourceCloudConnections() *schema.Resource {
 	return &schema.Resource{
-		Description: descriptions.SourceResourceGroups,
+		Description: descriptions.SourceCloudConnections,
 		ReadContext: dataSourceCloudConnectionsList,
 		Schema: map[string]*schema.Schema{
 			attributes.Name: {
@@ -19,7 +19,6 @@ func dataSourceResourceGroups() *schema.Resource {
 				Optional:    true,
 				Description: descriptions.FilterName,
 			},
-
 			attributes.IDs: {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -29,7 +28,7 @@ func dataSourceResourceGroups() *schema.Resource {
 	}
 }
 
-func dataSourceResourceGroupList(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+func dataSourceCloudConnectionsList(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := getLocalClientFromMetadata(m)
 
@@ -38,19 +37,19 @@ func dataSourceResourceGroupList(ctx context.Context, d *schema.ResourceData, m 
 		nameFilter = f.(string)
 	}
 
-	resourceGroupsList, err := c.ListResourceGroups(ctx)
+	cloudConnectionsList, err := c.ListCloudConnections(ctx)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	resourceGroups := make([]string, 0, len(resourceGroupsList))
-	for _, rg := range resourceGroupsList {
-		if nameFilter == "" || *rg.Name == nameFilter {
-			resourceGroups = append(resourceGroups, *rg.ID)
+	cloudConnections := make([]string, 0, len(cloudConnectionsList))
+	for _, cloudConnection := range cloudConnectionsList {
+		if nameFilter == "" || *cloudConnection.Name == nameFilter {
+			cloudConnections = append(cloudConnections, *cloudConnection.ID)
 		}
 	}
 
-	if err = d.Set(attributes.IDs, resourceGroups); err != nil {
+	if err = d.Set(attributes.IDs, cloudConnections); err != nil {
 		diags = append(diags, diag.FromErr(err)...)
 	}
 
