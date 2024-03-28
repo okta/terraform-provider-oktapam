@@ -13,18 +13,17 @@ import (
 	"github.com/tomnomnom/linkheader"
 )
 
-type CloudConnectionDetails struct {
-	AccountId  *string `json:"account_id"`
-	ExternalId *string `json:"external_id"`
-	RoleArn    *string `json:"role_arn"`
-}
-
 type CloudConnection struct {
-	DeletedAt              *string                 `json:"deleted_at,omitempty"`
 	ID                     *string                 `json:"id,omitempty"`
 	Name                   *string                 `json:"name"`
 	Provider               *string                 `json:"provider"`
 	CloudConnectionDetails *CloudConnectionDetails `json:"cloud_connection_details"`
+}
+
+type CloudConnectionDetails struct {
+	AccountId  *string `json:"account_id"`
+	ExternalId *string `json:"external_id"`
+	RoleArn    *string `json:"role_arn"`
 }
 
 type CloudConnectionsListResponse struct {
@@ -32,23 +31,36 @@ type CloudConnectionsListResponse struct {
 }
 
 func (c CloudConnection) Exists() bool {
-	return utils.IsNonEmpty(c.ID) && utils.IsBlank(c.DeletedAt)
+	return utils.IsNonEmpty(c.ID)
 }
 
 func (c CloudConnection) ToResourceMap() map[string]any {
-	m := make(map[string]any, 10) // TODO: check that size again
+	m := make(map[string]any)
 
-	if c.Name != nil {
-		m[attributes.Name] = *c.Name
-	}
 	if c.ID != nil {
 		m[attributes.ID] = *c.ID
 	}
-	if c.DeletedAt != nil {
-		m[attributes.DeletedAt] = *c.DeletedAt
+	if c.Name != nil {
+		m[attributes.Name] = *c.Name
 	}
-	m[attributes.CloudConnectionDetails] = c.CloudConnectionDetails
-	m[attributes.CloudConnectionProvider] = c.Provider
+	if c.Provider != nil {
+		m[attributes.CloudConnectionProvider] = c.Provider
+	}
+	if c.CloudConnectionDetails != nil {
+		flattenedDetails := make([]any, 1)
+		flattenedDetail := make(map[string]any)
+		if c.CloudConnectionDetails.AccountId != nil {
+			flattenedDetail[attributes.CloudConnectionAccountId] = *c.CloudConnectionDetails.AccountId
+		}
+		if c.CloudConnectionDetails.ExternalId != nil {
+			flattenedDetail[attributes.CloudConnectionExternalId] = *c.CloudConnectionDetails.ExternalId
+		}
+		if c.CloudConnectionDetails.RoleArn != nil {
+			flattenedDetail[attributes.CloudConnectionRoleARN] = *c.CloudConnectionDetails.RoleArn
+		}
+		flattenedDetails[0] = flattenedDetail
+		m[attributes.CloudConnectionDetails] = flattenedDetails
+	}
 
 	return m
 }
@@ -68,7 +80,7 @@ func validateCloudConnectionData(cloudConnection CloudConnection) bool {
 	}
 	accountIdValidation := accountIdRegex.MatchString(*cloudConnection.CloudConnectionDetails.AccountId)
 
-	providerValidation := *cloudConnection.Provider == "AWS"
+	providerValidation := *cloudConnection.Provider == "aws"
 	externalIdValidation := len(*cloudConnection.CloudConnectionDetails.ExternalId) != 0
 	roleArnValidation := len(*cloudConnection.CloudConnectionDetails.RoleArn) != 0
 
@@ -113,7 +125,7 @@ func (c OktaPAMClient) ListCloudConnections(ctx context.Context) ([]CloudConnect
 	return cloudConnections, nil
 }
 
-func (c OktaPAMClient) GetCloudConnection(ctx context.Context, id string, allowDeleted bool) (*CloudConnection, error) {
+func (c OktaPAMClient) GetCloudConnection(ctx context.Context, id string) (*CloudConnection, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/cloud_connections/%s", url.PathEscape(c.Team), url.PathEscape(id))
 	logging.Tracef("making GET request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetResult(&CloudConnection{}).Get(requestURL)
@@ -125,7 +137,7 @@ func (c OktaPAMClient) GetCloudConnection(ctx context.Context, id string, allowD
 
 	if statusCode == http.StatusOK {
 		cloudConnection := resp.Result().(*CloudConnection)
-		if cloudConnection.Exists() || allowDeleted {
+		if cloudConnection.Exists() {
 			return cloudConnection, nil
 		}
 		return nil, nil
@@ -144,8 +156,7 @@ func (c OktaPAMClient) CreateCloudConnection(ctx context.Context, cloudConnectio
 		return nil, fmt.Errorf("cloud connection data are not valid")
 	}
 
-	resultingCloudConnection := &CloudConnection{}
-	resp, err := c.CreateBaseRequest(ctx).SetBody(cloudConnection).SetResult(resultingCloudConnection).Post(requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetBody(cloudConnection).SetResult(&CloudConnection{}).Post(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return nil, err
@@ -153,7 +164,7 @@ func (c OktaPAMClient) CreateCloudConnection(ctx context.Context, cloudConnectio
 	if _, err = checkStatusCode(resp, http.StatusCreated); err != nil {
 		return nil, err
 	}
-	return resultingCloudConnection, nil
+	return resp.Result().(*CloudConnection), nil
 }
 
 func (c OktaPAMClient) UpdateCloudConnection(ctx context.Context, cloudConnection CloudConnection) error {
