@@ -145,7 +145,7 @@ func resourceADCertificateRequestCreate(ctx context.Context, d *schema.ResourceD
 	if v, ok := d.GetOk(attributes.Details); ok {
 		list := v.([]any)
 		detailsMap := list[0].(map[string]any)
-		certRequestDetails = &client.ADCertificateDetails{
+		certRequestDetails = &client.ADCertificateDetails{			
 			Organization:       utils.AsStringPtr(detailsMap[attributes.Organization].(string)),
 			OrganizationalUnit: utils.AsStringPtr(detailsMap[attributes.OrganizationalUnit].(string)),
 			Locality:           utils.AsStringPtr(detailsMap[attributes.Locality].(string)),

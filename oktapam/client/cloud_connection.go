@@ -167,15 +167,11 @@ func (c OktaPAMClient) CreateCloudConnection(ctx context.Context, cloudConnectio
 	return resp.Result().(*CloudConnection), nil
 }
 
-func (c OktaPAMClient) UpdateCloudConnection(ctx context.Context, cloudConnection CloudConnection) error {
-	requestURL := fmt.Sprintf("/v1/teams/%s/cloud_connections/%s", url.PathEscape(c.Team), url.PathEscape(*cloudConnection.ID))
+func (c OktaPAMClient) UpdateCloudConnection(ctx context.Context, cloudConnectionID string, updates map[string]any) error {
+	requestURL := fmt.Sprintf("/v1/teams/%s/cloud_connections/%s", url.PathEscape(c.Team), url.PathEscape(cloudConnectionID))
 	logging.Tracef("making PUT request to %s", requestURL)
 
-	if !validateCloudConnectionData(cloudConnection) {
-		return fmt.Errorf("cloud connection data are not valid")
-	}
-
-	resp, err := c.CreateBaseRequest(ctx).SetBody(cloudConnection).Put(requestURL)
+	resp, err := c.CreateBaseRequest(ctx).SetBody(updates).Put(requestURL)
 	if err != nil {
 		logging.Errorf("received error while making request to %s", requestURL)
 		return err

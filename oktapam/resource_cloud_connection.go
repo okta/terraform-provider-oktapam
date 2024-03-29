@@ -37,8 +37,8 @@ func resourceCloudConnection() *schema.Resource {
 			},
 			attributes.CloudConnectionDetails: {
 				Type:        schema.TypeList,
-				MinItems: 1,
-				MaxItems: 1,
+				MinItems:    1,
+				MaxItems:    1,
 				Required:    true,
 				ForceNew:    true,
 				Description: descriptions.CloudConnectionDetails,
@@ -94,7 +94,7 @@ func resourceCloudConnectionRead(ctx context.Context, d *schema.ResourceData, m 
 		flattenedDetail[attributes.CloudConnectionRoleARN] = details[0][attributes.CloudConnectionRoleARN]
 
 		flattenedDetails[0] = flattenedDetail
-		if err := d.Set(attributes.Details, flattenedDetails); err != nil {
+		if err := d.Set(attributes.CloudConnectionDetails, flattenedDetails); err != nil {
 			return diag.FromErr(err)
 		}
 	}
@@ -104,45 +104,69 @@ func resourceCloudConnectionRead(ctx context.Context, d *schema.ResourceData, m 
 
 func resourceCloudConnectionCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := getLocalClientFromMetadata(m)
-	cloudConnection := readCloudConnectionFromResource(d)
+	// cloudConnection := readCloudConnectionFromResource(d)
 
-	result, err := c.CreateCloudConnection(ctx, cloudConnection)
-	if err != nil {
-		return diag.FromErr(err)
+	// result, err := c.CreateCloudConnection(ctx, cloudConnection)
+	// if err != nil {
+	// 	return diag.FromErr(err)
+	// }
+
+	// d.SetId(*result.ID)
+
+	var cloudConnectionDetails *client.CloudConnectionDetails
+	if v, ok := d.GetOk(attributes.CloudConnectionDetails); ok {
+		list := v.([]any)
+		detailsMap := list[0].(map[string]any)
+		cloudConnectionDetails = &client.CloudConnectionDetails{
+			AccountId:  utils.AsStringPtr(detailsMap[attributes.CloudConnectionAccountId].(string)),
+			ExternalId: utils.AsStringPtr(detailsMap[attributes.CloudConnectionExternalId].(string)),
+			RoleArn:    utils.AsStringPtr(detailsMap[attributes.CloudConnectionRoleARN].(string)),
+		}
+	} else {
+		return diag.Errorf("cloud connection details missing")
 	}
 
-	d.SetId(*result.ID)
+	ccReq := client.CloudConnection{
+		Name:                   GetStringPtrFromResource(attributes.Name, d, false),
+		Provider:               GetStringPtrFromResource(attributes.CloudConnectionProvider, d, false),
+		CloudConnectionDetails: cloudConnectionDetails,
+	}
+
+	if createdCloudConnection, err := c.CreateCloudConnection(ctx, ccReq); err != nil {
+		return diag.FromErr(err)
+	} else if createdCloudConnection == nil {
+		d.SetId("")
+	} else {
+		d.SetId(*createdCloudConnection.ID)
+	}
+
 	return resourceCloudConnectionRead(ctx, d, m)
 }
 
 func resourceCloudConnectionUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	var diags diag.Diagnostics
 	c := getLocalClientFromMetadata(m)
 	id := d.Id()
-	cloudConnection := readCloudConnectionFromResource(d)
 
-	if id == "" {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "could not obtain cloud connection id from resource",
-		})
+	changed := false
+	updates := make(map[string]any)
+
+	changeableAttributes := []string{
+		attributes.Name,
+		attributes.CloudConnectionProvider,
+		attributes.CloudConnectionRoleARN,
 	}
 
-	if utils.IsBlank(cloudConnection.Name) {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "could not obtain name from resource",
-		})
+	for _, attribute := range changeableAttributes {
+		if d.HasChange(attribute) {
+			updates[attribute] = d.Get(attribute)
+			changed = true
+		}
 	}
 
-	if diags != nil {
-		return diags
-	}
-
-	cloudConnection.ID = &id
-
-	if err := c.UpdateCloudConnection(ctx, cloudConnection); err != nil {
-		return diag.FromErr(err)
+	if changed {
+		if err := c.UpdateCloudConnection(ctx, id, updates); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	return resourceCloudConnectionRead(ctx, d, m)
@@ -161,26 +185,4 @@ func resourceCloudConnectionDelete(ctx context.Context, d *schema.ResourceData, 
 	d.SetId("")
 
 	return nil
-}
-
-func readCloudConnectionFromResource(d *schema.ResourceData) client.CloudConnection {
-	var cloudConnectionDetails *client.CloudConnectionDetails
-
-	if v, ok := d.GetOk(attributes.CloudConnectionDetails); ok {
-		list := v.([]any)
-		detailsMap := list[0].(map[string]any)
-		cloudConnectionDetails = &client.CloudConnectionDetails{
-			AccountId:  utils.AsStringPtr(detailsMap[attributes.CloudConnectionAccountId].(string)),
-			ExternalId: utils.AsStringPtr(detailsMap[attributes.CloudConnectionExternalId].(string)),
-			RoleArn:    utils.AsStringPtr(detailsMap[attributes.CloudConnectionRoleARN].(string)),
-		}
-	}
-
-	cloudConnection := client.CloudConnection{
-		Name:                   GetStringPtrFromResource(attributes.Name, d, true),
-		Provider:               GetStringPtrFromResource(attributes.CloudConnectionProvider, d, true),
-		CloudConnectionDetails: cloudConnectionDetails,
-	}
-
-	return cloudConnection
 }

@@ -17,11 +17,11 @@ func dataSourceCloudConnection() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			attributes.ID: {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
 			},
 			attributes.Name: {
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 				Description: descriptions.Name,
 			},
 			attributes.CloudConnectionProvider: {
