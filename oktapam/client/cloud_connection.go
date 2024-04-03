@@ -68,14 +68,14 @@ func (c CloudConnection) ToResourceMap() map[string]any {
 func validateCloudConnectionData(cloudConnection CloudConnection) bool {
 	nameRegex, nameRegexErr := regexp.Compile(`^[A-Za-z0-9-_.]+$`)
 	if nameRegexErr != nil {
-		fmt.Println("invalid regex pattern for cloud connection name")
+		fmt.Println("invalid cloud connection name")
 		return false
 	}
 	nameValidation := nameRegex.MatchString(*cloudConnection.Name) && len(*cloudConnection.Name) > 1
 
 	accountIdRegex, accountIdRegexErr := regexp.Compile(`^\d{12}$`)
 	if accountIdRegexErr != nil {
-		fmt.Println("invalid regex pattern for cloud connection account id")
+		fmt.Println("invalid cloud connection account id")
 		return false
 	}
 	accountIdValidation := accountIdRegex.MatchString(*cloudConnection.CloudConnectionDetails.AccountId)
