@@ -2,20 +2,18 @@ package client
 
 import (
 	"testing"
-)
 
-func String(s string) *string {
-	return &s
-}
+	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
+)
 
 func TestValidateCloudConnectionName(t *testing.T) {
 	data1 := CloudConnection{
-		Name:     String("test_test"),
-		Provider: String("aws"),
+		Name:     utils.AsStringPtr("test_test"),
+		Provider: utils.AsStringPtr("aws"),
 		CloudConnectionDetails: &CloudConnectionDetails{
-			AccountId:  String("123456789012"),
-			ExternalId: String("external_id_value"),
-			RoleArn:    String("arn:aws:iam::123456789012:role/role_name"),
+			AccountId:  utils.AsStringPtr("123456789012"),
+			ExternalId: utils.AsStringPtr("external_id_value"),
+			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
 	result1 := validateCloudConnectionData(data1)
@@ -24,12 +22,12 @@ func TestValidateCloudConnectionName(t *testing.T) {
 	}
 
 	data2 := CloudConnection{
-		Name:     String("test!@#$%"),
-		Provider: String("aws"),
+		Name:     utils.AsStringPtr("test!@#$%"),
+		Provider: utils.AsStringPtr("aws"),
 		CloudConnectionDetails: &CloudConnectionDetails{
-			AccountId:  String("123456789012"),
-			ExternalId: String("external_id_value"),
-			RoleArn:    String("arn:aws:iam::123456789012:role/role_name"),
+			AccountId:  utils.AsStringPtr("123456789012"),
+			ExternalId: utils.AsStringPtr("external_id_value"),
+			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
 	result2 := validateCloudConnectionData(data2)
@@ -38,12 +36,12 @@ func TestValidateCloudConnectionName(t *testing.T) {
 	}
 
 	data3 := CloudConnection{
-		Name:     String("test test"),
-		Provider: String("aws"),
+		Name:     utils.AsStringPtr("test test"),
+		Provider: utils.AsStringPtr("aws"),
 		CloudConnectionDetails: &CloudConnectionDetails{
-			AccountId:  String("123456789012"),
-			ExternalId: String("external_id_value"),
-			RoleArn:    String("arn:aws:iam::123456789012:role/role_name"),
+			AccountId:  utils.AsStringPtr("123456789012"),
+			ExternalId: utils.AsStringPtr("external_id_value"),
+			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
 	result3 := validateCloudConnectionData(data3)
@@ -54,12 +52,12 @@ func TestValidateCloudConnectionName(t *testing.T) {
 
 func TestValidateCloudConnectionAccountId(t *testing.T) {
 	data1 := CloudConnection{
-		Name:     String("test"),
-		Provider: String("aws"),
+		Name:     utils.AsStringPtr("test"),
+		Provider: utils.AsStringPtr("aws"),
 		CloudConnectionDetails: &CloudConnectionDetails{
-			AccountId:  String("123456789012"),
-			ExternalId: String("external_id_value"),
-			RoleArn:    String("arn:aws:iam::123456789012:role/role_name"),
+			AccountId:  utils.AsStringPtr("123456789012"),
+			ExternalId: utils.AsStringPtr("external_id_value"),
+			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
 	result1 := validateCloudConnectionData(data1)
@@ -68,12 +66,12 @@ func TestValidateCloudConnectionAccountId(t *testing.T) {
 	}
 
 	data2 := CloudConnection{
-		Name:     String("test"),
-		Provider: String("aws"),
+		Name:     utils.AsStringPtr("test"),
+		Provider: utils.AsStringPtr("aws"),
 		CloudConnectionDetails: &CloudConnectionDetails{
-			AccountId:  String("12345678901200"),
-			ExternalId: String("external_id_value"),
-			RoleArn:    String("arn:aws:iam::123456789012:role/role_name"),
+			AccountId:  utils.AsStringPtr("12345678901200"),
+			ExternalId: utils.AsStringPtr("external_id_value"),
+			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
 	result2 := validateCloudConnectionData(data2)
@@ -82,12 +80,12 @@ func TestValidateCloudConnectionAccountId(t *testing.T) {
 	}
 
 	data3 := CloudConnection{
-		Name:     String("test"),
-		Provider: String("aws"),
+		Name:     utils.AsStringPtr("test"),
+		Provider: utils.AsStringPtr("aws"),
 		CloudConnectionDetails: &CloudConnectionDetails{
-			AccountId:  String("a12345678901"),
-			ExternalId: String("external_id_value"),
-			RoleArn:    String("arn:aws:iam::123456789012:role/role_name"),
+			AccountId:  utils.AsStringPtr("a12345678901"),
+			ExternalId: utils.AsStringPtr("external_id_value"),
+			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
 	result3 := validateCloudConnectionData(data3)
@@ -98,12 +96,12 @@ func TestValidateCloudConnectionAccountId(t *testing.T) {
 
 func TestValidateCloudConnectionProvider(t *testing.T) {
 	data1 := CloudConnection{
-		Name:     String("test"),
-		Provider: String("aws"),
+		Name:     utils.AsStringPtr("test"),
+		Provider: utils.AsStringPtr("aws"),
 		CloudConnectionDetails: &CloudConnectionDetails{
-			AccountId:  String("123456789012"),
-			ExternalId: String("external_id_value"),
-			RoleArn:    String("arn:aws:iam::123456789012:role/role_name"),
+			AccountId:  utils.AsStringPtr("123456789012"),
+			ExternalId: utils.AsStringPtr("external_id_value"),
+			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
 	result1 := validateCloudConnectionData(data1)
@@ -112,12 +110,12 @@ func TestValidateCloudConnectionProvider(t *testing.T) {
 	}
 
 	data2 := CloudConnection{
-		Name:     String("test"),
-		Provider: String("tmp"),
+		Name:     utils.AsStringPtr("test"),
+		Provider: utils.AsStringPtr("tmp"),
 		CloudConnectionDetails: &CloudConnectionDetails{
-			AccountId:  String("12345678901200"),
-			ExternalId: String("external_id_value"),
-			RoleArn:    String("arn:aws:iam::123456789012:role/role_name"),
+			AccountId:  utils.AsStringPtr("12345678901200"),
+			ExternalId: utils.AsStringPtr("external_id_value"),
+			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
 	result2 := validateCloudConnectionData(data2)
@@ -128,12 +126,12 @@ func TestValidateCloudConnectionProvider(t *testing.T) {
 
 func TestValidateCloudConnectionExternalID(t *testing.T) {
 	data1 := CloudConnection{
-		Name:     String("test"),
-		Provider: String("aws"),
+		Name:     utils.AsStringPtr("test"),
+		Provider: utils.AsStringPtr("aws"),
 		CloudConnectionDetails: &CloudConnectionDetails{
-			AccountId:  String("123456789012"),
-			ExternalId: String("external_id_value"),
-			RoleArn:    String("arn:aws:iam::123456789012:role/role_name"),
+			AccountId:  utils.AsStringPtr("123456789012"),
+			ExternalId: utils.AsStringPtr("external_id_value"),
+			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
 	result1 := validateCloudConnectionData(data1)
@@ -142,12 +140,12 @@ func TestValidateCloudConnectionExternalID(t *testing.T) {
 	}
 
 	data2 := CloudConnection{
-		Name:     String("test"),
-		Provider: String("tmp"),
+		Name:     utils.AsStringPtr("test"),
+		Provider: utils.AsStringPtr("tmp"),
 		CloudConnectionDetails: &CloudConnectionDetails{
-			AccountId:  String("12345678901200"),
-			ExternalId: String(""),
-			RoleArn:    String("arn:aws:iam::123456789012:role/role_name"),
+			AccountId:  utils.AsStringPtr("12345678901200"),
+			ExternalId: utils.AsStringPtr(""),
+			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
 	result2 := validateCloudConnectionData(data2)
@@ -158,12 +156,12 @@ func TestValidateCloudConnectionExternalID(t *testing.T) {
 
 func TestValidateCloudConnectionRoleARN(t *testing.T) {
 	data1 := CloudConnection{
-		Name:     String("test"),
-		Provider: String("aws"),
+		Name:     utils.AsStringPtr("test"),
+		Provider: utils.AsStringPtr("aws"),
 		CloudConnectionDetails: &CloudConnectionDetails{
-			AccountId:  String("123456789012"),
-			ExternalId: String("external_id_value"),
-			RoleArn:    String("arn:aws:iam::123456789012:role/role_name"),
+			AccountId:  utils.AsStringPtr("123456789012"),
+			ExternalId: utils.AsStringPtr("external_id_value"),
+			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
 	result1 := validateCloudConnectionData(data1)
@@ -172,12 +170,12 @@ func TestValidateCloudConnectionRoleARN(t *testing.T) {
 	}
 
 	data2 := CloudConnection{
-		Name:     String("test"),
-		Provider: String("tmp"),
+		Name:     utils.AsStringPtr("test"),
+		Provider: utils.AsStringPtr("tmp"),
 		CloudConnectionDetails: &CloudConnectionDetails{
-			AccountId:  String("12345678901200"),
-			ExternalId: String("external_id_value"),
-			RoleArn:    String(""),
+			AccountId:  utils.AsStringPtr("12345678901200"),
+			ExternalId: utils.AsStringPtr("external_id_value"),
+			RoleArn:    utils.AsStringPtr(""),
 		},
 	}
 	result2 := validateCloudConnectionData(data2)
