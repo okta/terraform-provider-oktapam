@@ -64,7 +64,6 @@ data "oktapam_resource_group" "%s" {
 }
 `
 
-// "data1", identifier+"-1", "data2"
 func testAccDatasourceResourceGroupConfig(groupsResourceName, name, groupResourceName string) string {
 	return fmt.Sprintf(testAccDatasourceResourceGroupFormat, groupsResourceName, name, groupResourceName, groupsResourceName)
 }

@@ -12,7 +12,7 @@ import (
 func dataSourceResourceGroups() *schema.Resource {
 	return &schema.Resource{
 		Description: descriptions.SourceResourceGroups,
-		ReadContext: dataSourceCloudConnectionsList,
+		ReadContext: dataSourceResourceGroupList,
 		Schema: map[string]*schema.Schema{
 			attributes.Name: {
 				Type:        schema.TypeString,
