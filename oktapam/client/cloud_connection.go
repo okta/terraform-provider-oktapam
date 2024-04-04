@@ -70,18 +70,15 @@ func isCloudConnectionDataValid(cloudConnection CloudConnection) bool {
 		return false
 	}
 
-	const PROVIDER = "aws"
-
+	const AWS_PROVIDER_NAME = "aws"
 	namePattern := regexp.MustCompile(`^[A-Za-z0-9-_.]+$`)
-	nameValidation := len(*cloudConnection.Name) > 1 && namePattern.MatchString(*cloudConnection.Name)
-
 	accountIdPattern := regexp.MustCompile(`^\d{12}$`)
-	accountIdValidation := accountIdPattern.MatchString(*cloudConnection.CloudConnectionDetails.AccountId)
-
 	externalIdPattern := regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$`)
+	
+	nameValidation := len(*cloudConnection.Name) > 1 && namePattern.MatchString(*cloudConnection.Name)
+	accountIdValidation := accountIdPattern.MatchString(*cloudConnection.CloudConnectionDetails.AccountId)
 	externalIdValidation := len(*cloudConnection.CloudConnectionDetails.ExternalId) != 0 && externalIdPattern.MatchString(*cloudConnection.CloudConnectionDetails.ExternalId)
-
-	providerValidation := *cloudConnection.Provider == PROVIDER
+	providerValidation := *cloudConnection.Provider == AWS_PROVIDER_NAME
 	roleArnValidation := len(*cloudConnection.CloudConnectionDetails.RoleArn) != 0
 
 	return nameValidation && accountIdValidation && providerValidation && externalIdValidation && roleArnValidation
