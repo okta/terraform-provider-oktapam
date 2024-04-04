@@ -65,23 +65,23 @@ func (c CloudConnection) ToResourceMap() map[string]any {
 	return m
 }
 
-func validateCloudConnectionData(cloudConnection CloudConnection) bool {
-	nameRegex, nameRegexErr := regexp.Compile(`^[A-Za-z0-9-_.]+$`)
-	if nameRegexErr != nil {
-		fmt.Println("invalid cloud connection name")
+func isCloudConnectionDataValid(cloudConnection CloudConnection) bool {
+	if cloudConnection.Name == nil || cloudConnection.CloudConnectionDetails == nil || cloudConnection.CloudConnectionDetails.AccountId == nil || cloudConnection.CloudConnectionDetails.ExternalId == nil || cloudConnection.Provider == nil || cloudConnection.CloudConnectionDetails.RoleArn == nil {
 		return false
 	}
-	nameValidation := nameRegex.MatchString(*cloudConnection.Name) && len(*cloudConnection.Name) > 1
 
-	accountIdRegex, accountIdRegexErr := regexp.Compile(`^\d{12}$`)
-	if accountIdRegexErr != nil {
-		fmt.Println("invalid cloud connection account id")
-		return false
-	}
-	accountIdValidation := accountIdRegex.MatchString(*cloudConnection.CloudConnectionDetails.AccountId)
+	const PROVIDER = "aws"
 
-	providerValidation := *cloudConnection.Provider == "aws"
-	externalIdValidation := len(*cloudConnection.CloudConnectionDetails.ExternalId) != 0
+	namePattern := regexp.MustCompile(`^[A-Za-z0-9-_.]+$`)
+	nameValidation := len(*cloudConnection.Name) > 1 && namePattern.MatchString(*cloudConnection.Name)
+
+	accountIdPattern := regexp.MustCompile(`^\d{12}$`)
+	accountIdValidation := accountIdPattern.MatchString(*cloudConnection.CloudConnectionDetails.AccountId)
+
+	externalIdPattern := regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$`)
+	externalIdValidation := len(*cloudConnection.CloudConnectionDetails.ExternalId) != 0 && externalIdPattern.MatchString(*cloudConnection.CloudConnectionDetails.ExternalId)
+
+	providerValidation := *cloudConnection.Provider == PROVIDER
 	roleArnValidation := len(*cloudConnection.CloudConnectionDetails.RoleArn) != 0
 
 	return nameValidation && accountIdValidation && providerValidation && externalIdValidation && roleArnValidation
@@ -125,8 +125,8 @@ func (c OktaPAMClient) ListCloudConnections(ctx context.Context) ([]CloudConnect
 	return cloudConnections, nil
 }
 
-func (c OktaPAMClient) GetCloudConnection(ctx context.Context, id string) (*CloudConnection, error) {
-	requestURL := fmt.Sprintf("/v1/teams/%s/cloud_connections/%s", url.PathEscape(c.Team), url.PathEscape(id))
+func (c OktaPAMClient) GetCloudConnection(ctx context.Context, cloudConnectionId string) (*CloudConnection, error) {
+	requestURL := fmt.Sprintf("/v1/teams/%s/cloud_connections/%s", url.PathEscape(c.Team), url.PathEscape(cloudConnectionId))
 	logging.Tracef("making GET request to %s", requestURL)
 	resp, err := c.CreateBaseRequest(ctx).SetResult(&CloudConnection{}).Get(requestURL)
 	if err != nil {
@@ -152,7 +152,7 @@ func (c OktaPAMClient) CreateCloudConnection(ctx context.Context, cloudConnectio
 	requestURL := fmt.Sprintf("/v1/teams/%s/cloud_connections", url.PathEscape(c.Team))
 	logging.Tracef("making POST request to %s", requestURL)
 
-	if !validateCloudConnectionData(cloudConnection) {
+	if !isCloudConnectionDataValid(cloudConnection) {
 		return nil, fmt.Errorf("cloud connection data are not valid")
 	}
 

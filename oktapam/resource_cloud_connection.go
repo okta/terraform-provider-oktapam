@@ -104,14 +104,6 @@ func resourceCloudConnectionRead(ctx context.Context, d *schema.ResourceData, m 
 
 func resourceCloudConnectionCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := getLocalClientFromMetadata(m)
-	// cloudConnection := readCloudConnectionFromResource(d)
-
-	// result, err := c.CreateCloudConnection(ctx, cloudConnection)
-	// if err != nil {
-	// 	return diag.FromErr(err)
-	// }
-
-	// d.SetId(*result.ID)
 
 	var cloudConnectionDetails *client.CloudConnectionDetails
 	if v, ok := d.GetOk(attributes.CloudConnectionDetails); ok {
