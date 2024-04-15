@@ -17,8 +17,8 @@ func TestValidateCloudConnectionName(t *testing.T) {
 			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
-	result1 := isCloudConnectionDataValid(data1)
-	if result1 != true {
+	result1, _ := isCloudConnectionDataValid(data1)
+	if !result1 {
 		t.Error("Expected name validation to equal true")
 	}
 
@@ -32,8 +32,8 @@ func TestValidateCloudConnectionName(t *testing.T) {
 			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
-	result2 := isCloudConnectionDataValid(data2)
-	if result2 != false {
+	result2, _ := isCloudConnectionDataValid(data2)
+	if result2 {
 		t.Error("Expected cloud connection name validation to equal false")
 	}
 
@@ -47,8 +47,8 @@ func TestValidateCloudConnectionName(t *testing.T) {
 			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
-	result3 := isCloudConnectionDataValid(data3)
-	if result3 != false {
+	result3, _ := isCloudConnectionDataValid(data3)
+	if result3 {
 		t.Error("Expected cloud connection name validation to equal false")
 	}
 
@@ -62,8 +62,8 @@ func TestValidateCloudConnectionName(t *testing.T) {
 			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
-	result4 := isCloudConnectionDataValid(data4)
-	if result4 != false {
+	result4, _ := isCloudConnectionDataValid(data4)
+	if result4 {
 		t.Error("Expected cloud connection name validation to equal false")
 	}
 }
@@ -79,8 +79,8 @@ func TestValidateCloudConnectionAccountId(t *testing.T) {
 			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
-	result1 := isCloudConnectionDataValid(data1)
-	if result1 != true {
+	result1, _ := isCloudConnectionDataValid(data1)
+	if !result1 {
 		t.Error("Expected cloud connection account id validation to equal true")
 	}
 
@@ -94,8 +94,8 @@ func TestValidateCloudConnectionAccountId(t *testing.T) {
 			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
-	result2 := isCloudConnectionDataValid(data2)
-	if result2 != false {
+	result2, _ := isCloudConnectionDataValid(data2)
+	if result2 {
 		t.Error("Expected cloud connection account id validation to equal false")
 	}
 
@@ -109,8 +109,8 @@ func TestValidateCloudConnectionAccountId(t *testing.T) {
 			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
-	result3 := isCloudConnectionDataValid(data3)
-	if result3 != false {
+	result3, _ := isCloudConnectionDataValid(data3)
+	if result3 {
 		t.Error("Expected cloud connection account id validation to equal false")
 	}
 }
@@ -126,8 +126,8 @@ func TestValidateCloudConnectionProvider(t *testing.T) {
 			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
-	result1 := isCloudConnectionDataValid(data1)
-	if result1 != true {
+	result1, _ := isCloudConnectionDataValid(data1)
+	if !result1 {
 		t.Error("Expected cloud connection provider validation to equal true")
 	}
 
@@ -141,8 +141,8 @@ func TestValidateCloudConnectionProvider(t *testing.T) {
 			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
-	result2 := isCloudConnectionDataValid(data2)
-	if result2 != false {
+	result2, _ := isCloudConnectionDataValid(data2)
+	if result2 {
 		t.Error("Expected cloud connection provider validation to equal false")
 	}
 }
@@ -158,8 +158,8 @@ func TestValidateCloudConnectionExternalID(t *testing.T) {
 			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
-	result1 := isCloudConnectionDataValid(data1)
-	if result1 != false {
+	result1, _ := isCloudConnectionDataValid(data1)
+	if result1 {
 		t.Error("Expected cloud connection external id validation to equal false")
 	}
 
@@ -173,8 +173,8 @@ func TestValidateCloudConnectionExternalID(t *testing.T) {
 			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
-	result2 := isCloudConnectionDataValid(data2)
-	if result2 != false {
+	result2, _ := isCloudConnectionDataValid(data2)
+	if result2 {
 		t.Error("Expected cloud connection external id validation to equal false")
 	}
 
@@ -188,8 +188,8 @@ func TestValidateCloudConnectionExternalID(t *testing.T) {
 			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
-	result3 := isCloudConnectionDataValid(data3)
-	if result3 != true {
+	result3, _ := isCloudConnectionDataValid(data3)
+	if !result3 {
 		t.Error("Expected cloud connection external id validation to equal true")
 	}
 }
@@ -204,8 +204,8 @@ func TestValidateCloudConnectionRoleARN(t *testing.T) {
 			RoleArn:    utils.AsStringPtr("arn:aws:iam::123456789012:role/role_name"),
 		},
 	}
-	result1 := isCloudConnectionDataValid(data1)
-	if result1 != true {
+	result1, _ := isCloudConnectionDataValid(data1)
+	if !result1 {
 		t.Error("Expected cloud connection role arn validation to equal true")
 	}
 
@@ -219,8 +219,8 @@ func TestValidateCloudConnectionRoleARN(t *testing.T) {
 			RoleArn:    utils.AsStringPtr(""),
 		},
 	}
-	result2 := isCloudConnectionDataValid(data2)
-	if result2 != false {
+	result2, _ := isCloudConnectionDataValid(data2)
+	if result2 {
 		t.Error("Expected cloud connection external id validation to equal false")
 	}
 }

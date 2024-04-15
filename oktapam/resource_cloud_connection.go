@@ -34,6 +34,7 @@ func resourceCloudConnection() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: descriptions.CloudConnectionProvider,
+				ForceNew:    true,
 			},
 			attributes.CloudConnectionDetails: {
 				Type:        schema.TypeList,
@@ -76,7 +77,8 @@ func resourceCloudConnectionRead(ctx context.Context, d *schema.ResourceData, m 
 	}
 
 	if cloudConnection == nil || utils.IsBlank(cloudConnection.ID) {
-		logging.Debugf("cloud connection %s does not exist", cloudConnectionID)
+		d.SetId("")
+		return diag.Errorf("cloud connection does not exist")
 	}
 
 	for key, value := range cloudConnection.ToResourceMap() {

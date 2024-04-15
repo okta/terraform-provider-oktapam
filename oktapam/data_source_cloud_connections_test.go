@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
@@ -42,6 +43,7 @@ func TestAccDataSourceCloudConnectionsList(t *testing.T) {
 }
 
 func createTestAccDataSourceCloudConnectionsInitConfig(identifier string) string {
+	uuid := uuid.New().String()
 	const format = `
 	resource "oktapam_cloud_connection" "test-cloud-connection-1" {
 		name = "%s-1"
@@ -49,7 +51,7 @@ func createTestAccDataSourceCloudConnectionsInitConfig(identifier string) string
 		cloud_connection_details {
 			account_id = "123456789000"
 			role_arn = "arn:aws:iam::123456789012:role/MyRole"
-			external_id = "3c086859-3674-49d8-96b0-f1942047c0dc"
+			external_id = "%s"
 		}
 	}
 
@@ -59,11 +61,11 @@ func createTestAccDataSourceCloudConnectionsInitConfig(identifier string) string
 		cloud_connection_details {
 			account_id = "123456789000"
 			role_arn = "arn:aws:iam::123456789012:role/MyRole"
-			external_id = "3c086859-3674-49d8-96b0-f1942047c0dc"
+			external_id = "%s"
 		}
 	}
 	`
-	return fmt.Sprintf(format, identifier, identifier)
+	return fmt.Sprintf(format, identifier, uuid, identifier, uuid)
 }
 
 func testAccDataSourceCloudConnectionsConfig(resourceName, name string) string {

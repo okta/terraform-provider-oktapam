@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"regexp"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
@@ -65,23 +66,44 @@ func (c CloudConnection) ToResourceMap() map[string]any {
 	return m
 }
 
-func isCloudConnectionDataValid(cloudConnection CloudConnection) bool {
+func isCloudConnectionDataValid(cloudConnection CloudConnection) (bool, error) {
+	var errs *multierror.Error
+
 	if cloudConnection.Name == nil || cloudConnection.CloudConnectionDetails == nil || cloudConnection.CloudConnectionDetails.AccountId == nil || cloudConnection.CloudConnectionDetails.ExternalId == nil || cloudConnection.Provider == nil || cloudConnection.CloudConnectionDetails.RoleArn == nil {
-		return false
+		multierror.Append(errs, fmt.Errorf("cloud connection data are not valid"))
+		return false, errs
 	}
 
 	const AWS_PROVIDER_NAME = "aws"
 	namePattern := regexp.MustCompile(`^[A-Za-z0-9-_.]+$`)
 	accountIdPattern := regexp.MustCompile(`^\d{12}$`)
 	externalIdPattern := regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$`)
-	
-	nameValidation := len(*cloudConnection.Name) > 1 && namePattern.MatchString(*cloudConnection.Name)
-	accountIdValidation := accountIdPattern.MatchString(*cloudConnection.CloudConnectionDetails.AccountId)
-	externalIdValidation := len(*cloudConnection.CloudConnectionDetails.ExternalId) != 0 && externalIdPattern.MatchString(*cloudConnection.CloudConnectionDetails.ExternalId)
-	providerValidation := *cloudConnection.Provider == AWS_PROVIDER_NAME
-	roleArnValidation := len(*cloudConnection.CloudConnectionDetails.RoleArn) != 0
 
-	return nameValidation && accountIdValidation && providerValidation && externalIdValidation && roleArnValidation
+	nameValidation := len(*cloudConnection.Name) > 1 && namePattern.MatchString(*cloudConnection.Name)
+	if !nameValidation {
+		multierror.Append(errs, fmt.Errorf("name is not valid"))
+	}
+	accountIdValidation := accountIdPattern.MatchString(*cloudConnection.CloudConnectionDetails.AccountId)
+	if !accountIdValidation {
+		multierror.Append(errs, fmt.Errorf("account id is not valid"))
+	}
+
+	externalIdValidation := len(*cloudConnection.CloudConnectionDetails.ExternalId) != 0 && externalIdPattern.MatchString(*cloudConnection.CloudConnectionDetails.ExternalId)
+	if !externalIdValidation {
+		multierror.Append(errs, fmt.Errorf("external id is not valid"))
+	}
+
+	providerValidation := *cloudConnection.Provider == AWS_PROVIDER_NAME
+	if !providerValidation {
+		multierror.Append(errs, fmt.Errorf("provider is not valid"))
+	}
+
+	roleArnValidation := len(*cloudConnection.CloudConnectionDetails.RoleArn) != 0
+	if !roleArnValidation {
+		multierror.Append(errs, fmt.Errorf("role arn is not valid"))
+	}
+
+	return nameValidation && accountIdValidation && providerValidation && externalIdValidation && roleArnValidation, errs
 }
 
 func (c OktaPAMClient) ListCloudConnections(ctx context.Context) ([]CloudConnection, error) {
@@ -149,8 +171,9 @@ func (c OktaPAMClient) CreateCloudConnection(ctx context.Context, cloudConnectio
 	requestURL := fmt.Sprintf("/v1/teams/%s/cloud_connections", url.PathEscape(c.Team))
 	logging.Tracef("making POST request to %s", requestURL)
 
-	if !isCloudConnectionDataValid(cloudConnection) {
-		return nil, fmt.Errorf("cloud connection data are not valid")
+	if valid, errs := isCloudConnectionDataValid(cloudConnection); !valid {
+		fmt.Println("Error validating cloud connection data", errs)
+		return nil, errs
 	}
 
 	resp, err := c.CreateBaseRequest(ctx).SetBody(cloudConnection).SetResult(&CloudConnection{}).Post(requestURL)

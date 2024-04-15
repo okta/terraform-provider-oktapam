@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
@@ -17,7 +18,7 @@ func TestAccDataSourceCloudConnection(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccCloudConnectionsCheckDestroy(identifier+"-1", identifier+"-2"),
+		CheckDestroy:      testAccCloudConnectionsCheckDestroy(identifier+"-1"),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,
@@ -34,6 +35,7 @@ func TestAccDataSourceCloudConnection(t *testing.T) {
 }
 
 func createTestAccDataSourceCloudConnectionInitConfig(identifier string) string {
+	uuid := uuid.New().String()
 	const format = `
 	resource "oktapam_cloud_connection" "test-cloud-connection-1" {
 		name = "%s-1"
@@ -41,12 +43,11 @@ func createTestAccDataSourceCloudConnectionInitConfig(identifier string) string 
 		cloud_connection_details {
 			account_id = "123456789000"
 			role_arn = "arn:aws:iam::123456789012:role/MyRole"
-			external_id = "3c086859-3674-49d8-96b0-f1942047c0dc"
+			external_id = "%s"
 		}
 	}
 	`
-
-	return fmt.Sprintf(format, identifier)
+	return fmt.Sprintf(format, identifier, uuid)
 }
 
 func testAccDataSourceCloudConnectionConfig(connectionsResourceName, name, cloudConnectionName string) string {

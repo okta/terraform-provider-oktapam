@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
@@ -40,6 +41,7 @@ func cloudConnectionExists(id string) (bool, error) {
 }
 
 func createTestAccCloudConnectionCreateConfig(cloudConnectionName string) string {
+	uuid := uuid.New().String()
 	const format = `
 	resource "oktapam_cloud_connection" "test_acc_cloud_connection" {
 		name = "%s"
@@ -47,9 +49,9 @@ func createTestAccCloudConnectionCreateConfig(cloudConnectionName string) string
 		cloud_connection_details {
 			account_id = "123456789012"
 			role_arn = "arn:aws:iam::123456789012:role/MyRole"
-			external_id = "3c086859-3674-49d8-96b0-f1942047c0dc"
+			external_id = "%s"
 		}
 	}
 	`
-	return fmt.Sprintf(format, cloudConnectionName)
+	return fmt.Sprintf(format, cloudConnectionName, uuid)
 }
