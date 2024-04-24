@@ -24,28 +24,32 @@ func dataSourceCloudConnection() *schema.Resource {
 				Computed:    true,
 				Description: descriptions.Name,
 			},
-			attributes.CloudConnectionProvider: {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: descriptions.CloudConnectionProvider,
-			},
 			attributes.CloudConnectionDetails: {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Description: descriptions.CloudConnectionDetails,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						attributes.CloudConnectionAccountId: {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						attributes.CloudConnectionExternalId: {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						attributes.CloudConnectionRoleARN: {
-							Type:     schema.TypeString,
-							Computed: true,
+						attributes.AWS: {
+							Type:        schema.TypeList,
+							Computed:    true,
+							Description: descriptions.CloudConnectionDetailsAWS,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									attributes.CloudConnectionAccountId: {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									attributes.CloudConnectionExternalId: {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									attributes.CloudConnectionRoleARN: {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+								},
+							},
 						},
 					},
 				},

@@ -26,6 +26,7 @@ func TestAccResourceCloudConnection(t *testing.T) {
 				Config: createTestAccCloudConnectionCreateConfig(cloudConnectionName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, attributes.Name, cloudConnectionName),
+					// TODO: this test would need to change with the new structure
 					resource.TestCheckResourceAttr(resourceName, attributes.CloudConnectionProvider, "aws"),
 				),
 			},
@@ -45,11 +46,12 @@ func createTestAccCloudConnectionCreateConfig(cloudConnectionName string) string
 	const format = `
 	resource "oktapam_cloud_connection" "test_acc_cloud_connection" {
 		name = "%s"
-		cloud_connection_provider = "aws"
 		cloud_connection_details {
-			account_id = "123456789012"
-			role_arn = "arn:aws:iam::123456789012:role/MyRole"
-			external_id = "%s"
+			aws {
+				account_id = "123456789012"
+				role_arn = "arn:aws:iam::123456789012:role/MyRole"
+				external_id = "%s"
+			}
 		}
 	}
 	`

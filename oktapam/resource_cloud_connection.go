@@ -30,12 +30,6 @@ func resourceCloudConnection() *schema.Resource {
 				Required:    true,
 				Description: descriptions.Name,
 			},
-			attributes.CloudConnectionProvider: {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: descriptions.CloudConnectionProvider,
-				ForceNew:    true,
-			},
 			attributes.CloudConnectionDetails: {
 				Type:        schema.TypeList,
 				MinItems:    1,
@@ -45,17 +39,31 @@ func resourceCloudConnection() *schema.Resource {
 				Description: descriptions.CloudConnectionDetails,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						attributes.CloudConnectionAccountId: {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						attributes.CloudConnectionExternalId: {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						attributes.CloudConnectionRoleARN: {
-							Type:     schema.TypeString,
-							Required: true,
+						attributes.AWS: {
+							Type: schema.TypeList,
+							// Note this is required since we only have one
+							// cloud connection type.  When we support more providers
+							// this will need to change
+							Required:    true,
+							MinItems:    1,
+							MaxItems:    1,
+							Description: descriptions.CloudConnectionDetailsAWS,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									attributes.CloudConnectionAccountId: {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									attributes.CloudConnectionExternalId: {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									attributes.CloudConnectionRoleARN: {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+								},
+							},
 						},
 					},
 				},
@@ -87,6 +95,8 @@ func resourceCloudConnectionRead(ctx context.Context, d *schema.ResourceData, m 
 			return diag.FromErr(err)
 		}
 	}
+
+	// TODO: change this to parse the details out of the new structure
 
 	if details, ok := d.Get(attributes.CloudConnectionDetails).([]map[string]any); ok && len(details) == 1 {
 		flattenedDetails := make([]any, 1)

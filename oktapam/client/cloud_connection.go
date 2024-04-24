@@ -44,6 +44,7 @@ func (c CloudConnection) ToResourceMap() map[string]any {
 	if c.Name != nil {
 		m[attributes.Name] = *c.Name
 	}
+	// TODO: this will need to change
 	if c.Provider != nil {
 		m[attributes.CloudConnectionProvider] = c.Provider
 	}

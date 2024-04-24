@@ -22,6 +22,7 @@ const (
 	AdminLevelPermissions             = "admin_level_permissions"
 	AltNamesAttributes                = "alt_names_attributes"
 	ApproveDeviceWithoutInteraction   = "approve_device_without_interaction"
+	AWS                               = "aws"
 	BaseDN                            = "base_dn"
 	BasicAuth                         = "basic_auth"
 	BastionAttribute                  = "bastion_attribute"
