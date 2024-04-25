@@ -44,24 +44,29 @@ func (c CloudConnection) ToResourceMap() map[string]any {
 	if c.Name != nil {
 		m[attributes.Name] = *c.Name
 	}
-	// TODO: this will need to change
-	if c.Provider != nil {
-		m[attributes.CloudConnectionProvider] = c.Provider
-	}
-	if c.CloudConnectionDetails != nil {
-		flattenedDetails := make([]any, 1)
-		flattenedDetail := make(map[string]any)
+
+	cloudConnectionProvider := *c.Provider
+
+	if cloudConnectionProvider == attributes.AWS {
+		cloudConnectionDetailsA := make([]any, 1)
+		cloudConnectionDetails := make(map[string]any)
+		cloudConnectionDetailsA[0] = cloudConnectionDetails
+
+		awsDetailsA := make([]any, 1)
+		awsDetails := make(map[string]any, 3)
+		awsDetailsA[0] = awsDetails
 		if c.CloudConnectionDetails.AccountId != nil {
-			flattenedDetail[attributes.CloudConnectionAccountId] = *c.CloudConnectionDetails.AccountId
+			awsDetails[attributes.CloudConnectionAccountId] = *c.CloudConnectionDetails.AccountId
 		}
 		if c.CloudConnectionDetails.ExternalId != nil {
-			flattenedDetail[attributes.CloudConnectionExternalId] = *c.CloudConnectionDetails.ExternalId
+			awsDetails[attributes.CloudConnectionExternalId] = *c.CloudConnectionDetails.ExternalId
 		}
 		if c.CloudConnectionDetails.RoleArn != nil {
-			flattenedDetail[attributes.CloudConnectionRoleARN] = *c.CloudConnectionDetails.RoleArn
+			awsDetails[attributes.CloudConnectionRoleARN] = *c.CloudConnectionDetails.RoleArn
 		}
-		flattenedDetails[0] = flattenedDetail
-		m[attributes.CloudConnectionDetails] = flattenedDetails
+
+		cloudConnectionDetails[attributes.AWS] = awsDetailsA
+		m[attributes.CloudConnectionDetails] = cloudConnectionDetailsA
 	}
 
 	return m

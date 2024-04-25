@@ -16,6 +16,7 @@ func TestAccResourceCloudConnection(t *testing.T) {
 	checkTeamApplicable(t, true)
 	resourceName := "oktapam_cloud_connection.test_acc_cloud_connection"
 	cloudConnectionName := fmt.Sprintf("test-cloud-connection-%s", randSeq())
+	uuid := uuid.New().String()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -23,11 +24,12 @@ func TestAccResourceCloudConnection(t *testing.T) {
 		CheckDestroy:      utils.CreateCheckResourceDestroy(providerCloudConnectionKey, cloudConnectionExists),
 		Steps: []resource.TestStep{
 			{
-				Config: createTestAccCloudConnectionCreateConfig(cloudConnectionName),
+				Config: createTestAccCloudConnectionCreateConfig(cloudConnectionName, uuid),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, attributes.Name, cloudConnectionName),
-					// TODO: this test would need to change with the new structure
-					resource.TestCheckResourceAttr(resourceName, attributes.CloudConnectionProvider, "aws"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.aws.0.%s", attributes.CloudConnectionDetails, attributes.CloudConnectionAccountId), "123456789012"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.aws.0.%s", attributes.CloudConnectionDetails, attributes.CloudConnectionRoleARN), "arn:aws:iam::123456789012:role/MyRole"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.aws.0.%s", attributes.CloudConnectionDetails, attributes.CloudConnectionExternalId), uuid),
 				),
 			},
 		},
@@ -41,8 +43,7 @@ func cloudConnectionExists(id string) (bool, error) {
 	return cloudConnection != nil && cloudConnection.Exists() && err == nil, err
 }
 
-func createTestAccCloudConnectionCreateConfig(cloudConnectionName string) string {
-	uuid := uuid.New().String()
+func createTestAccCloudConnectionCreateConfig(cloudConnectionName string, uuid string) string {
 	const format = `
 	resource "oktapam_cloud_connection" "test_acc_cloud_connection" {
 		name = "%s"
