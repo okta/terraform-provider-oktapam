@@ -12,13 +12,15 @@ import (
 func TestAccDataSourceCloudConnection(t *testing.T) {
 	checkTeamApplicable(t, true)
 	identifier := randSeq()
-	initConfig := createTestAccDataSourceCloudConnectionInitConfig(identifier)
-	fetchConfig := testAccDataSourceCloudConnectionConfig("data1", identifier+"-1", "data2")
+	resourceName := "test_acc_cloud_connection"
+	externalId := uuid.New().String()
+	initConfig := createTestAccDataSourceCloudConnectionInitConfig(identifier, externalId)
+	fetchConfig := testAccDataSourceCloudConnectionConfig("cloud-connections", identifier+"-1", resourceName)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccCloudConnectionsCheckDestroy(identifier+"-1"),
+		CheckDestroy:      testAccCloudConnectionsCheckDestroy(identifier + "-1"),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,
@@ -26,28 +28,30 @@ func TestAccDataSourceCloudConnection(t *testing.T) {
 			{
 				Config: fmt.Sprintf("%s\n%s", initConfig, fetchConfig),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.oktapam_cloud_connection.data2", attributes.Name, fmt.Sprintf("%s-1", identifier)),
-					resource.TestCheckResourceAttr("data.oktapam_cloud_connection.data2", attributes.CloudConnectionProvider, "aws"),
+					resource.TestCheckResourceAttr("data.oktapam_cloud_connection."+resourceName, attributes.Name, fmt.Sprintf("%s-1", identifier)),
+					resource.TestCheckResourceAttr("data.oktapam_cloud_connection."+resourceName, fmt.Sprintf("%s.0.aws.0.%s", attributes.CloudConnectionDetails, attributes.CloudConnectionAccountId), "123456789012"),
+					resource.TestCheckResourceAttr("data.oktapam_cloud_connection."+resourceName, fmt.Sprintf("%s.0.aws.0.%s", attributes.CloudConnectionDetails, attributes.CloudConnectionRoleARN), "arn:aws:iam::123456789012:role/MyRole"),
+					resource.TestCheckResourceAttr("data.oktapam_cloud_connection."+resourceName, fmt.Sprintf("%s.0.aws.0.%s", attributes.CloudConnectionDetails, attributes.CloudConnectionExternalId), externalId),
 				),
 			},
 		},
 	})
 }
 
-func createTestAccDataSourceCloudConnectionInitConfig(identifier string) string {
-	uuid := uuid.New().String()
+func createTestAccDataSourceCloudConnectionInitConfig(identifier, externalId string) string {
 	const format = `
 	resource "oktapam_cloud_connection" "test-cloud-connection-1" {
 		name = "%s-1"
-		cloud_connection_provider = "aws"
 		cloud_connection_details {
-			account_id = "123456789000"
-			role_arn = "arn:aws:iam::123456789012:role/MyRole"
-			external_id = "%s"
+			aws {
+				account_id = "123456789012"
+				role_arn = "arn:aws:iam::123456789012:role/MyRole"
+				external_id = "%s"
+			}
 		}
 	}
 	`
-	return fmt.Sprintf(format, identifier, uuid)
+	return fmt.Sprintf(format, identifier, externalId)
 }
 
 func testAccDataSourceCloudConnectionConfig(connectionsResourceName, name, cloudConnectionName string) string {
