@@ -24,15 +24,18 @@ $ make build
 
 ## Using the provider
 
-You will need to create a team a service user.  Then set the following environment variables prior to running: Okta's PAM API key, secret and team name. 
+1. You will need to create a service user
+2. Keep a copy of the new service user key and secret, you will be prompted with those after creating the service user
+3. Make sure the new service user is added to the appropriate PAM Groups and have the needed capabilities
+4. Set the following environment variables prior to running:
 
 ```
-export OKTAPAM_SECRET=<secret here>
-export OKTAPAM_KEY=<key here>
+export OKTAPAM_KEY=<service user key>
+export OKTAPAM_SECRET=<service user secret>
 export OKTAPAM_TEAM=<team name>
 ```
 
-If you are able to test against a non-production server, you can set the URL via: 
+If you want to test against a non-production server, you need to set the URL via: 
 
 ```
 export OKTAPAM_API_HOST=<root url for host here>

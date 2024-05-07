@@ -29,6 +29,8 @@ const (
 	providerADUserSyncTaskSettingsKey              = "oktapam_ad_user_sync_task_settings"
 	providerADUserSyncTaskSettingsIDListKey        = "oktapam_ad_user_sync_task_settings_id_list"
 	providerCurrentUser                            = "oktapam_current_user"
+	providerCloudConnectionKey 										 = "oktapam_cloud_connection"
+	providerCloudConnectionsKey 									 = "oktapam_cloud_connections"
 	providerDatabaseKey                            = "oktapam_database"
 	providerDatabasePasswordSettings               = "oktapam_database_password_settings"
 	providerGatewaysKey                            = "oktapam_gateways"
@@ -97,6 +99,7 @@ func Provider() *schema.Provider {
 			providerADConnectionKey:                       resourceADConnection(),
 			providerADTaskSettingsKey:                     resourceADServerSyncTaskSettings(),
 			providerADUserSyncTaskSettingsKey:             resourceADUserSyncTaskSettings(),
+			providerCloudConnectionKey: 									 resourceCloudConnection(),
 			providerDatabaseKey:                           resourceDatabase(),
 			providerDatabasePasswordSettings:              resourceDatabasePasswordSettings(),
 			providerGatewaySetupTokenKey:                  resourceGatewaySetupToken(),
@@ -121,6 +124,8 @@ func Provider() *schema.Provider {
 
 		DataSourcesMap: map[string]*schema.Resource{
 			providerADConnectionsKey:                       dataSourceADConnections(),
+			providerCloudConnectionKey: 									  dataSourceCloudConnection(),
+			providerCloudConnectionsKey:										dataSourceCloudConnections(),
 			providerCurrentUser:                            dataSourceCurrentUser(),
 			providerDatabaseKey:                            dataSourceDatabase(),
 			providerDatabasePasswordSettings:               dataSourceDatabasePasswordSettings(),
