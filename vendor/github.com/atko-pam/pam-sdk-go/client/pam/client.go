@@ -17,11 +17,14 @@ import (
 	"sync"
 	"time"
 
-	opentracing "github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go"
 
 	"github.com/go-resty/resty/v2"
 	"gopkg.in/square/go-jose.v2"
 )
+
+// clientFeaturesHeader is used by clients to set their supported client features
+const clientFeaturesHeader = "X-Okta-OPA-Client-Features"
 
 type ErrNonDefaultResponse struct {
 	StatusCode int
@@ -144,6 +147,12 @@ func newRestyClient(apiClient *APIClient) *resty.Client {
 
 	if apiClient.cfg.RoundTripper != nil {
 		restyClient.SetTransport(apiClient.cfg.RoundTripper)
+	}
+
+	if apiClient.cfg.ClientFeatures != nil {
+		for clientFeature := range apiClient.cfg.ClientFeatures {
+			restyClient.Header.Add(clientFeaturesHeader, clientFeature)
+		}
 	}
 
 	//Set Rate Limit and retry condition

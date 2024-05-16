@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // DatabaseAccountType The type of the Database Static Account
@@ -36,25 +35,18 @@ func (v *DatabaseAccountType) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := DatabaseAccountType(value)
-	for _, existing := range AllowedDatabaseAccountTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid DatabaseAccountType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewDatabaseAccountTypeFromValue returns a pointer to a valid DatabaseAccountType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewDatabaseAccountTypeFromValue(v string) (*DatabaseAccountType, error) {
 	ev := DatabaseAccountType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for DatabaseAccountType: valid values are %v", v, AllowedDatabaseAccountTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

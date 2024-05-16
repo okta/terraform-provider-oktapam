@@ -86,6 +86,7 @@ Class | Method | HTTP request | Description
 *ProjectsAPI* | [**CreateResourceGroupProject**](docs/ProjectsAPI.md#createresourcegroupproject) | **Post** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects | Create a Project in a Resource Group
 *ProjectsAPI* | [**CreateResourceGroupProjectServerEnrollmentToken**](docs/ProjectsAPI.md#createresourcegroupprojectserverenrollmenttoken) | **Post** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_enrollment_tokens | Create a Server Enrollment Token
 *ProjectsAPI* | [**FetchResourceGroupProject**](docs/ProjectsAPI.md#fetchresourcegroupproject) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id} | Retrieve a Project from a Resource Group
+*ProjectsAPI* | [**FetchResourceGroupProjectCheckoutSettings**](docs/ProjectsAPI.md#fetchresourcegroupprojectcheckoutsettings) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/checkout_settings | Retrieves the checkout settings configured for a project, specific to each applicable resource type.
 *ProjectsAPI* | [**GetPasswordPolicyForProject**](docs/ProjectsAPI.md#getpasswordpolicyforproject) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_password_settings | Retrieve Project Password Policy for Server Accounts
 *ProjectsAPI* | [**GetProjectPasswordPolicyForDatabaseResources**](docs/ProjectsAPI.md#getprojectpasswordpolicyfordatabaseresources) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/database_resource_password_settings | Retrieve a Project Password Policy for Database Resources
 *ProjectsAPI* | [**GetResourceGroupProjectServerEnrollmentToken**](docs/ProjectsAPI.md#getresourcegroupprojectserverenrollmenttoken) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_enrollment_tokens/{server_enrollment_token_id} | Retrieve a Server Enrollment Token
@@ -99,6 +100,7 @@ Class | Method | HTTP request | Description
 *ProjectsAPI* | [**UpdatePasswordPolicyForProject**](docs/ProjectsAPI.md#updatepasswordpolicyforproject) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_password_settings | Update Project Password Policy for Server Accounts
 *ProjectsAPI* | [**UpdateProjectPasswordPolicyForDatabaseResources**](docs/ProjectsAPI.md#updateprojectpasswordpolicyfordatabaseresources) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/database_resource_password_settings | Update a Project Password Policy for Database Resources
 *ProjectsAPI* | [**UpdateResourceGroupProject**](docs/ProjectsAPI.md#updateresourcegroupproject) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id} | Update a Project in a Resource Group
+*ProjectsAPI* | [**UpdateResourceGroupProjectCheckoutSettings**](docs/ProjectsAPI.md#updateresourcegroupprojectcheckoutsettings) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/checkout_settings | Update the checkout settings configured for a project, specific to each applicable resource type
 *ReportsAPI* | [**CreateAccessReport**](docs/ReportsAPI.md#createaccessreport) | **Post** /v1/teams/{team_name}/access_reports | Create an Access Report
 *ReportsAPI* | [**DownloadAccessReport**](docs/ReportsAPI.md#downloadaccessreport) | **Get** /v1/teams/{team_name}/access_reports/{access_report_id}/report | Download an Access Report
 *ReportsAPI* | [**GetAccessReport**](docs/ReportsAPI.md#getaccessreport) | **Get** /v1/teams/{team_name}/access_reports/{access_report_id} | Retrieve an Access Report
@@ -142,9 +144,16 @@ Class | Method | HTTP request | Description
 *ServiceUsersAPI* | [**ListServiceUsers**](docs/ServiceUsersAPI.md#listserviceusers) | **Get** /v1/teams/{team_name}/service_users | List all Service Users for a Team
 *ServiceUsersAPI* | [**RotateServiceUserKey**](docs/ServiceUsersAPI.md#rotateserviceuserkey) | **Post** /v1/teams/{team_name}/service_users/{user_name}/keys | Rotate all API keys
 *ServiceUsersAPI* | [**ServiceUserUpdate**](docs/ServiceUsersAPI.md#serviceuserupdate) | **Put** /v1/teams/{team_name}/service_users/{user_name} | Update a Service User
+*SudoCommandsAPI* | [**CreateSudoCommandBundle**](docs/SudoCommandsAPI.md#createsudocommandbundle) | **Post** /v1/teams/{team_name}/sudo_command_bundles | Create a Sudo Command bundle
+*SudoCommandsAPI* | [**DeleteSudoCommandBundle**](docs/SudoCommandsAPI.md#deletesudocommandbundle) | **Delete** /v1/teams/{team_name}/sudo_command_bundles/{sudo_command_bundle_id} | Delete a Sudo Command bundle
+*SudoCommandsAPI* | [**GetSudoCommandBundle**](docs/SudoCommandsAPI.md#getsudocommandbundle) | **Get** /v1/teams/{team_name}/sudo_command_bundles/{sudo_command_bundle_id} | Retrieve a Sudo Command bundle
+*SudoCommandsAPI* | [**ListSudoCommandBundles**](docs/SudoCommandsAPI.md#listsudocommandbundles) | **Get** /v1/teams/{team_name}/sudo_command_bundles | List all Sudo Command bundles
+*SudoCommandsAPI* | [**UpdateSudoCommandBundle**](docs/SudoCommandsAPI.md#updatesudocommandbundle) | **Put** /v1/teams/{team_name}/sudo_command_bundles/{sudo_command_bundle_id} | Update a Sudo Command bundle
+*TeamsAPI* | [**CheckInResource**](docs/TeamsAPI.md#checkinresource) | **Post** /v1/teams/{team_name}/checkin_resource | Check in a Resource
 *TeamsAPI* | [**FetchStatsForTeam**](docs/TeamsAPI.md#fetchstatsforteam) | **Get** /v1/teams/{team_name}/team_stats | Retrieve statistics for a Team
 *TeamsAPI* | [**GetTeamSettings**](docs/TeamsAPI.md#getteamsettings) | **Get** /v1/teams/{team_name}/settings | Retrieve settings for a Team
 *TeamsAPI* | [**GetVaultJWKS**](docs/TeamsAPI.md#getvaultjwks) | **Get** /v1/teams/{team_name}/vault/jwks.json | Retrieve the Vault JWKS
+*TeamsAPI* | [**ListAllCheckedOutResourcesByUser**](docs/TeamsAPI.md#listallcheckedoutresourcesbyuser) | **Get** /v1/teams/{team_name}/checked_out_resources | List all Resources Checked Out by a User
 *TeamsAPI* | [**ListRoles**](docs/TeamsAPI.md#listroles) | **Get** /v1/teams/{team_name}/roles | List all roles
 *TeamsAPI* | [**ListServers**](docs/TeamsAPI.md#listservers) | **Get** /v1/teams/{team_name}/servers | List all Servers for a Team
 *TeamsAPI* | [**UpdateTeamSettings**](docs/TeamsAPI.md#updateteamsettings) | **Put** /v1/teams/{team_name}/settings | Update settings for a Team
@@ -171,6 +180,11 @@ Class | Method | HTTP request | Description
  - [Alg](docs/Alg.md)
  - [AuthTokenResponse](docs/AuthTokenResponse.md)
  - [Aws](docs/Aws.md)
+ - [CheckInResourceRequest](docs/CheckInResourceRequest.md)
+ - [CheckedOutResourceByUserDetails](docs/CheckedOutResourceByUserDetails.md)
+ - [CheckedOutResourceByUserDetailsResourceDetails](docs/CheckedOutResourceByUserDetailsResourceDetails.md)
+ - [CheckinType](docs/CheckinType.md)
+ - [CheckoutResourceType](docs/CheckoutResourceType.md)
  - [Client](docs/Client.md)
  - [ClientUpdateRequest](docs/ClientUpdateRequest.md)
  - [CloudConnection](docs/CloudConnection.md)
@@ -215,6 +229,7 @@ Class | Method | HTTP request | Description
  - [DatabaseType](docs/DatabaseType.md)
  - [DeleteSecretFolderForbiddenResponse](docs/DeleteSecretFolderForbiddenResponse.md)
  - [DeleteSecretForbiddenResponse](docs/DeleteSecretForbiddenResponse.md)
+ - [Executable](docs/Executable.md)
  - [GatewayAgent](docs/GatewayAgent.md)
  - [GatewaySetupToken](docs/GatewaySetupToken.md)
  - [GatewaySetupTokenDetails](docs/GatewaySetupTokenDetails.md)
@@ -235,6 +250,7 @@ Class | Method | HTTP request | Description
  - [IssueServiceTokenRequestBody](docs/IssueServiceTokenRequestBody.md)
  - [Kty](docs/Kty.md)
  - [ListAccessReportsResponse](docs/ListAccessReportsResponse.md)
+ - [ListAllCheckedOutResourcesByUserResponse](docs/ListAllCheckedOutResourcesByUserResponse.md)
  - [ListAllServerAccountResourcesForDelegatedSecurityAdminResponse](docs/ListAllServerAccountResourcesForDelegatedSecurityAdminResponse.md)
  - [ListAllServerAccountResourcesForSecurityAdminResponse](docs/ListAllServerAccountResourcesForSecurityAdminResponse.md)
  - [ListAllServersForAdminResponse](docs/ListAllServersForAdminResponse.md)
@@ -262,6 +278,7 @@ Class | Method | HTTP request | Description
  - [ListServersResponse](docs/ListServersResponse.md)
  - [ListServiceUserKeysResponse](docs/ListServiceUserKeysResponse.md)
  - [ListServiceUsersResponse](docs/ListServiceUsersResponse.md)
+ - [ListSudoCommandBundleResponse](docs/ListSudoCommandBundleResponse.md)
  - [ListTeamUserAttributeConflictsResponse](docs/ListTeamUserAttributeConflictsResponse.md)
  - [ListTopLevelSecretFoldersForProjectForbiddenResponse](docs/ListTopLevelSecretFoldersForProjectForbiddenResponse.md)
  - [ListTopLevelSecretFoldersForProjectResponse](docs/ListTopLevelSecretFoldersForProjectResponse.md)
@@ -282,12 +299,14 @@ Class | Method | HTTP request | Description
  - [PasswordPolicy](docs/PasswordPolicy.md)
  - [PasswordPolicyCharacterOptions](docs/PasswordPolicyCharacterOptions.md)
  - [Project](docs/Project.md)
+ - [ProjectCheckoutSettings](docs/ProjectCheckoutSettings.md)
  - [RawJSONWebKey](docs/RawJSONWebKey.md)
  - [ResolveResourceNamesRequest](docs/ResolveResourceNamesRequest.md)
  - [ResolveResourceNamesResponse](docs/ResolveResourceNamesResponse.md)
  - [ResolveResourceType](docs/ResolveResourceType.md)
  - [ResolveSecretOrFolderRequest](docs/ResolveSecretOrFolderRequest.md)
  - [ResolveSecretOrFolderResponse](docs/ResolveSecretOrFolderResponse.md)
+ - [ResourceCheckoutSettings](docs/ResourceCheckoutSettings.md)
  - [ResourceGroup](docs/ResourceGroup.md)
  - [RevealSecretForbiddenResponse](docs/RevealSecretForbiddenResponse.md)
  - [RoleName](docs/RoleName.md)
@@ -325,11 +344,16 @@ Class | Method | HTTP request | Description
  - [SelectorServerLabelAccountSelectorType](docs/SelectorServerLabelAccountSelectorType.md)
  - [SelectorServerLabelServerSelector](docs/SelectorServerLabelServerSelector.md)
  - [Server](docs/Server.md)
+ - [ServerAccountCheckedOutResourceDetails](docs/ServerAccountCheckedOutResourceDetails.md)
  - [ServerAccounts](docs/ServerAccounts.md)
  - [ServerEnrollmentToken](docs/ServerEnrollmentToken.md)
  - [ServerInstanceDetails](docs/ServerInstanceDetails.md)
  - [ServiceUserKey](docs/ServiceUserKey.md)
  - [ServiceUserKeyWithSecret](docs/ServiceUserKeyWithSecret.md)
+ - [SudoCommandBundle](docs/SudoCommandBundle.md)
+ - [SudoCommandBundleStructuredCommandsInner](docs/SudoCommandBundleStructuredCommandsInner.md)
+ - [SudoCommandBundleStructuredCommandsInnerArgs](docs/SudoCommandBundleStructuredCommandsInnerArgs.md)
+ - [SudoCommandBundleStructuredCommandsInnerCommand](docs/SudoCommandBundleStructuredCommandsInnerCommand.md)
  - [TeamGroupAttribute](docs/TeamGroupAttribute.md)
  - [TeamGroupAttributeAttributeValue](docs/TeamGroupAttributeAttributeValue.md)
  - [TeamSettings](docs/TeamSettings.md)

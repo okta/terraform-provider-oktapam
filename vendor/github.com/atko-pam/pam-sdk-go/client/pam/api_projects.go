@@ -279,6 +279,88 @@ func (a *ProjectsAPIService) FetchResourceGroupProjectExecute(r ApiFetchResource
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiFetchResourceGroupProjectCheckoutSettingsRequest struct {
+	ctx             context.Context
+	ApiService      *ProjectsAPIService
+	teamName        string
+	resourceGroupId string
+	projectId       string
+}
+
+func (r ApiFetchResourceGroupProjectCheckoutSettingsRequest) Execute() (*ProjectCheckoutSettings, *http.Response, error) {
+	return r.ApiService.FetchResourceGroupProjectCheckoutSettingsExecute(r)
+}
+
+/*
+	FetchResourceGroupProjectCheckoutSettings Retrieves the checkout settings configured for a project, specific to each applicable resource type.
+
+	    Retrieves the checkout settings configured for a project, specific to each applicable resource type.
+
+This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`, `security_admin`, `delegated_security_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	    @param projectId The UUID of a Project
+	@return ApiFetchResourceGroupProjectCheckoutSettingsRequest
+*/
+func (a *ProjectsAPIService) FetchResourceGroupProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiFetchResourceGroupProjectCheckoutSettingsRequest {
+	return ApiFetchResourceGroupProjectCheckoutSettingsRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ProjectCheckoutSettings
+func (a *ProjectsAPIService) FetchResourceGroupProjectCheckoutSettingsExecute(r ApiFetchResourceGroupProjectCheckoutSettingsRequest) (*ProjectCheckoutSettings, *http.Response, error) {
+	var (
+		traceKey            = "projectsapi.fetchResourceGroupProjectCheckoutSettings"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ProjectCheckoutSettings
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/checkout_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
 type ApiGetPasswordPolicyForProjectRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
@@ -1373,4 +1455,91 @@ func (a *ProjectsAPIService) UpdateResourceGroupProjectExecute(r ApiUpdateResour
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiUpdateResourceGroupProjectCheckoutSettingsRequest struct {
+	ctx                     context.Context
+	ApiService              *ProjectsAPIService
+	teamName                string
+	resourceGroupId         string
+	projectId               string
+	projectCheckoutSettings *ProjectCheckoutSettings
+}
+
+func (r ApiUpdateResourceGroupProjectCheckoutSettingsRequest) ProjectCheckoutSettings(projectCheckoutSettings ProjectCheckoutSettings) ApiUpdateResourceGroupProjectCheckoutSettingsRequest {
+	r.projectCheckoutSettings = &projectCheckoutSettings
+	return r
+}
+
+func (r ApiUpdateResourceGroupProjectCheckoutSettingsRequest) Execute() (*http.Response, error) {
+	return r.ApiService.UpdateResourceGroupProjectCheckoutSettingsExecute(r)
+}
+
+/*
+	UpdateResourceGroupProjectCheckoutSettings Update the checkout settings configured for a project, specific to each applicable resource type
+
+	    Update the checkout settings configured for a project, specific to each applicable resource type
+
+This endpoint requires one of the following roles: `security_admin`, `delegated_security_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	    @param projectId The UUID of a Project
+	@return ApiUpdateResourceGroupProjectCheckoutSettingsRequest
+*/
+func (a *ProjectsAPIService) UpdateResourceGroupProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateResourceGroupProjectCheckoutSettingsRequest {
+	return ApiUpdateResourceGroupProjectCheckoutSettingsRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+func (a *ProjectsAPIService) UpdateResourceGroupProjectCheckoutSettingsExecute(r ApiUpdateResourceGroupProjectCheckoutSettingsRequest) (*http.Response, error) {
+	var (
+		traceKey           = "projectsapi.updateResourceGroupProjectCheckoutSettings"
+		localVarHTTPMethod = http.MethodPut
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/checkout_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.projectCheckoutSettings
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
+	return localVarHTTPResponse, err
 }

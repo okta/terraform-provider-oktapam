@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // SelectorServerLabelAccountSelectorType Defines the type of account. Currently only accepts `username`.
@@ -38,25 +37,18 @@ func (v *SelectorServerLabelAccountSelectorType) UnmarshalJSON(src []byte) error
 		return err
 	}
 	enumTypeValue := SelectorServerLabelAccountSelectorType(value)
-	for _, existing := range AllowedSelectorServerLabelAccountSelectorTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid SelectorServerLabelAccountSelectorType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewSelectorServerLabelAccountSelectorTypeFromValue returns a pointer to a valid SelectorServerLabelAccountSelectorType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewSelectorServerLabelAccountSelectorTypeFromValue(v string) (*SelectorServerLabelAccountSelectorType, error) {
 	ev := SelectorServerLabelAccountSelectorType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for SelectorServerLabelAccountSelectorType: valid values are %v", v, AllowedSelectorServerLabelAccountSelectorTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

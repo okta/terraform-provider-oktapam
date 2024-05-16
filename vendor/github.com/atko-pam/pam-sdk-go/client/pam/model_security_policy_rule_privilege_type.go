@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // SecurityPolicyRulePrivilegeType The type of privilege granted to a Principal. You can't specify both SSH and RDP options within the same rule.
@@ -42,25 +41,18 @@ func (v *SecurityPolicyRulePrivilegeType) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := SecurityPolicyRulePrivilegeType(value)
-	for _, existing := range AllowedSecurityPolicyRulePrivilegeTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid SecurityPolicyRulePrivilegeType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewSecurityPolicyRulePrivilegeTypeFromValue returns a pointer to a valid SecurityPolicyRulePrivilegeType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewSecurityPolicyRulePrivilegeTypeFromValue(v string) (*SecurityPolicyRulePrivilegeType, error) {
 	ev := SecurityPolicyRulePrivilegeType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for SecurityPolicyRulePrivilegeType: valid values are %v", v, AllowedSecurityPolicyRulePrivilegeTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise
