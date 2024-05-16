@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // ManagementConnectionDetailsType The type of management connection details
@@ -36,25 +35,18 @@ func (v *ManagementConnectionDetailsType) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := ManagementConnectionDetailsType(value)
-	for _, existing := range AllowedManagementConnectionDetailsTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid ManagementConnectionDetailsType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewManagementConnectionDetailsTypeFromValue returns a pointer to a valid ManagementConnectionDetailsType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewManagementConnectionDetailsTypeFromValue(v string) (*ManagementConnectionDetailsType, error) {
 	ev := ManagementConnectionDetailsType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for ManagementConnectionDetailsType: valid values are %v", v, AllowedManagementConnectionDetailsTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

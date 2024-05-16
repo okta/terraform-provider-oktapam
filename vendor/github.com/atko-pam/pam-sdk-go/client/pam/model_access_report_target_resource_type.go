@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // AccessReportTargetResourceType The type of resource associated with the Access Report
@@ -36,25 +35,18 @@ func (v *AccessReportTargetResourceType) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := AccessReportTargetResourceType(value)
-	for _, existing := range AllowedAccessReportTargetResourceTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid AccessReportTargetResourceType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewAccessReportTargetResourceTypeFromValue returns a pointer to a valid AccessReportTargetResourceType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewAccessReportTargetResourceTypeFromValue(v string) (*AccessReportTargetResourceType, error) {
 	ev := AccessReportTargetResourceType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for AccessReportTargetResourceType: valid values are %v", v, AllowedAccessReportTargetResourceTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

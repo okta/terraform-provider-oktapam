@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // CloudEntitlementJobStatus The status of the job
@@ -44,25 +43,18 @@ func (v *CloudEntitlementJobStatus) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := CloudEntitlementJobStatus(value)
-	for _, existing := range AllowedCloudEntitlementJobStatusEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid CloudEntitlementJobStatus", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewCloudEntitlementJobStatusFromValue returns a pointer to a valid CloudEntitlementJobStatus
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewCloudEntitlementJobStatusFromValue(v string) (*CloudEntitlementJobStatus, error) {
 	ev := CloudEntitlementJobStatus(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for CloudEntitlementJobStatus: valid values are %v", v, AllowedCloudEntitlementJobStatusEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise
