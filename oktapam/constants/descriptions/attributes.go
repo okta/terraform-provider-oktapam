@@ -51,6 +51,7 @@ var (
 	CharacterOptionsUpperCase                 = "If `true`, passwords can include one or more uppercase characters."
 	ClientSessionDuration                     = "The maximum time before a Client session expires. The duration can be from 3600 – 90000 seconds."
 	CloudConnectionDetails                    = "More data about the cloud connection to be able to connect to the cloud provider"
+	StructuredCommands                        = "A list of structured commands"
 	CloudConnectionDetailsAWS                 = "More data about the AWS cloud connection to be able to connect to the cloud provider"
 	CloudProvider                             = "The name of the cloud provider where the Gateway is hosted."
 	ClusterGroupClaims                        = "A map of claims included with issued user credentials used to authenticate to Kubernetes clusters. Claims correspond to pre-configured role bindings on the cluster."
