@@ -109,14 +109,16 @@ func isSudoCommandsBundleValid(sudoCommandsBundle SudoCommandsBundle) (bool, err
 	sudoCommandTypeRawValidator := regexp.MustCompile(`^[[:print:]]+$`)
 	sudoCommandTypeExecutableValidator := regexp.MustCompile(`^/([^/]+/)*[^/]+$`)
 	sudoCommandTypeDirectoryValidator := regexp.MustCompile(`^(/|/([^/]+/)+)$`)
-	//sudoCommandBundleExecutableArgsValidator := regexp.MustCompile(`^[[:print:]]*$`)
+	noMatchValidator := regexp.MustCompile(`^\b$`)
+	sudoCommandBundleExecutableArgsValidator := regexp.MustCompile(`^[[:print:]]*$`)
+	sudoCommandBundleExecutableArgsTypeValidator := regexp.MustCompile(`^(any|none|custom)$`)
 
 	nameValidation := len(*sudoCommandsBundle.Name) > 1 && len(*sudoCommandsBundle.Name) <= 255 && namePattern.MatchString(*sudoCommandsBundle.Name)
 	if !nameValidation {
 		multierror.Append(errs, fmt.Errorf("name is not valid"))
 	}
 
-	runAsValidation := len(*sudoCommandsBundle.RunAs) == 0 || runAsPattern.MatchString(*sudoCommandsBundle.RunAs)
+	runAsValidation := sudoCommandsBundle.RunAs != nil && (len(*sudoCommandsBundle.RunAs) == 0 || runAsPattern.MatchString(*sudoCommandsBundle.RunAs))
 	if !runAsValidation {
 		multierror.Append(errs, fmt.Errorf("run_as is not valid"))
 	}
@@ -130,26 +132,64 @@ func isSudoCommandsBundleValid(sudoCommandsBundle SudoCommandsBundle) (bool, err
 		"executable": sudoCommandTypeExecutableValidator,
 	}
 
+	argsValidators := map[string]*regexp.Regexp{
+		"raw":        noMatchValidator,
+		"directory":  noMatchValidator,
+		"executable": sudoCommandBundleExecutableArgsValidator,
+	}
+
+	argsTypeValidators := map[string]*regexp.Regexp{
+		"raw":        noMatchValidator,
+		"directory":  noMatchValidator,
+		"executable": sudoCommandBundleExecutableArgsTypeValidator,
+	}
+
+	var structuredCommandsValidation = true
 	for _, structuredCommand := range sudoCommandsBundle.StructuredCommands {
 		if structuredCommand.CommandType == nil {
+			structuredCommandsValidation = false
 			multierror.Append(errs, fmt.Errorf("command_type is not valid"))
 			continue
 		}
 
 		commandValidator, ok := commandTypeValidators[*structuredCommand.CommandType]
 		if !ok {
+			structuredCommandsValidation = false
 			multierror.Append(errs, fmt.Errorf("command_type is not valid"))
+		} else {
+			commandValidation := structuredCommand.Command != nil && len(*structuredCommand.Command) > 0 && commandValidator.MatchString(*structuredCommand.Command)
+			if !commandValidation {
+				structuredCommandsValidation = false
+				multierror.Append(errs, fmt.Errorf("command is not valid"))
+			}
 		}
 
-		commandValidation := structuredCommand.Command != nil && len(*structuredCommand.Command) > 0 && commandValidator.MatchString(*structuredCommand.Command)
-		if !commandValidation {
-			multierror.Append(errs, fmt.Errorf("command is not valid"))
+		argsValidator, ok := argsValidators[*structuredCommand.CommandType]
+		if !ok {
+			structuredCommandsValidation = false
+			multierror.Append(errs, fmt.Errorf("command_type is not valid"))
+		} else {
+			argsValidation := structuredCommand.Args != nil && len(*structuredCommand.Args) > 0 && argsValidator.MatchString(*structuredCommand.Args)
+			if !argsValidation {
+				structuredCommandsValidation = false
+				multierror.Append(errs, fmt.Errorf("args is not valid"))
+			}
 		}
 
-		//TODO: Add for args and args_type.
+		argsTypeValidator, ok := argsTypeValidators[*structuredCommand.CommandType]
+		if !ok {
+			structuredCommandsValidation = false
+			multierror.Append(errs, fmt.Errorf("args_type is not valid"))
+		} else {
+			argsTypeValidation := structuredCommand.ArgsType != nil && len(*structuredCommand.ArgsType) > 0 && argsTypeValidator.MatchString(*structuredCommand.ArgsType)
+			if !argsTypeValidation {
+				structuredCommandsValidation = false
+				multierror.Append(errs, fmt.Errorf("args_type is not valid"))
+			}
+		}
 	}
 
-	return nameValidation && runAsValidation && addEnvValidation && subEnvValidation, errs
+	return nameValidation && runAsValidation && addEnvValidation && subEnvValidation && structuredCommandsValidation, errs
 }
 
 func (c OktaPAMClient) ListSudoCommandsBundles(ctx context.Context) ([]SudoCommandsBundle, error) {

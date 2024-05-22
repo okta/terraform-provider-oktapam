@@ -24,7 +24,7 @@ func resourceSudoCommandsBundle() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			attributes.ID: {
 				Type:     schema.TypeString,
-				Required: true,
+				Computed: true,
 			},
 			attributes.Name: {
 				Type:        schema.TypeString,
@@ -40,11 +40,11 @@ func resourceSudoCommandsBundle() *schema.Resource {
 				Optional: true,
 			},
 			attributes.NoExec: {
-				Type:     schema.TypeString,
+				Type:     schema.TypeBool,
 				Optional: true,
 			},
 			attributes.SetEnv: {
-				Type:     schema.TypeString,
+				Type:     schema.TypeBool,
 				Optional: true,
 			},
 			attributes.AddEnv: {
