@@ -3,7 +3,7 @@ on:
   push:
   schedule:
     # Run every hour. Uses POSIX cron syntax
-    - cron: "0 */1 * * *"
+    - cron: "0 1 * * *"
 
 jobs:
   check1:
