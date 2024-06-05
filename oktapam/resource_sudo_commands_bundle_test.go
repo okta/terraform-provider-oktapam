@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
@@ -34,10 +35,10 @@ func TestAccResourceSudoCommandsBundle(t *testing.T) {
 }
 
 func sudoCommandsBundleExists(id string) (bool, error) {
-	client := getLocalClientFromMetadata(testAccProvider.Meta())
+	c := getSDKClientFromMetadata(testAccProvider.Meta())
 	logging.Debugf("Checking if resource deleted %s", id)
-	scb, err := client.GetSudoCommandsBundle(context.Background(), id)
-	return scb != nil && scb.Exists() && err == nil, err
+	scb, err := client.GetSudoCommandsBundle(context.Background(), c, id)
+	return scb != nil && scb.Id != "" && err == nil, err
 }
 
 func createTestAccSudoCommandsBundleCreateConfig(name string) string {
@@ -45,11 +46,9 @@ func createTestAccSudoCommandsBundleCreateConfig(name string) string {
 	resource "oktapam_sudo_commands_bundle" "test_acc_sudo_commands_bundle" {
 		name = "%s"
 		structured_commands {
-			structured_command {
-				command = "/bin/run.sh"
-				command_type = "executable"
-			}
-		}
+			command       = "/bin/run.sh"
+			command_type  = "executable"
+  		}
 	}
 	`
 	return fmt.Sprintf(format, name)

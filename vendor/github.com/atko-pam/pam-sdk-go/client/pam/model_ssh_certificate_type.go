@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // SSHCertificateType (Optional) The type of signature algorithm used for authentication keys. Default is `CERT_TYPE_ED25519_01`.
@@ -48,25 +47,18 @@ func (v *SSHCertificateType) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := SSHCertificateType(value)
-	for _, existing := range AllowedSSHCertificateTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid SSHCertificateType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewSSHCertificateTypeFromValue returns a pointer to a valid SSHCertificateType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewSSHCertificateTypeFromValue(v string) (*SSHCertificateType, error) {
 	ev := SSHCertificateType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for SSHCertificateType: valid values are %v", v, AllowedSSHCertificateTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

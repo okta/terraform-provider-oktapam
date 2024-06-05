@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // GroupAttributeName The type of attribute
@@ -40,25 +39,18 @@ func (v *GroupAttributeName) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := GroupAttributeName(value)
-	for _, existing := range AllowedGroupAttributeNameEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid GroupAttributeName", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewGroupAttributeNameFromValue returns a pointer to a valid GroupAttributeName
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewGroupAttributeNameFromValue(v string) (*GroupAttributeName, error) {
 	ev := GroupAttributeName(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for GroupAttributeName: valid values are %v", v, AllowedGroupAttributeNameEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

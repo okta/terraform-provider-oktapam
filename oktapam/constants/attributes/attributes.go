@@ -195,6 +195,7 @@ const (
 	StartsWith                        = "starts_with"
 	Status                            = "status"
 	StructuredCommands                = "structured_commands"
+	SudoCommmandsBundle               = "sudo_commands_bundle"
 	StructuredCommandType             = "command_type"
 	StructuredCommand                 = "command"
 	StructuredCommandArgsType         = "args_type"

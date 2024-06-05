@@ -4,14 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client/wrappers"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
-	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
-	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 )
 
 func resourceSudoCommandsBundle() *schema.Resource {
@@ -97,40 +96,49 @@ func resourceSudoCommandsBundle() *schema.Resource {
 }
 
 func resourceSudoCommandsBundleRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := getLocalClientFromMetadata(m)
+	var diags diag.Diagnostics
+	c := getSDKClientFromMetadata(m)
 	sudoCommandsBundleID := d.Id()
-	sudoCommandsBundle, err := c.GetSudoCommandsBundle(ctx, sudoCommandsBundleID)
 
+	sudoCommandsBundle, err := client.GetSudoCommandsBundle(ctx, c, sudoCommandsBundleID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-
-	if sudoCommandsBundle == nil || utils.IsBlank(sudoCommandsBundle.Id) {
-		d.SetId("")
-		return diag.Errorf("sudo commands bundle does not exist")
-	}
-
-	for key, value := range sudoCommandsBundle.ToResourceMap() {
-		logging.Debugf("setting %s to %v", key, value)
-		if err := d.Set(key, value); err != nil {
-			return diag.FromErr(err)
+	if sudoCommandsBundle != nil {
+		wrap := wrappers.SudoCommandsBundleWrapper{SudoCommandBundle: sudoCommandsBundle}
+		for k, v := range wrap.ToResourceMap() {
+			if err := d.Set(k, v); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
 		}
+	} else {
+		d.SetId("")
 	}
-
-	return nil
+	return diags
 }
 
-func readSudoCommandsBundleFromResource(d *schema.ResourceData) (client.SudoCommandsBundle, diag.Diagnostics) {
+func readSudoCommandsBundleFromResource(d *schema.ResourceData) (*pam.SudoCommandBundle, diag.Diagnostics) {
 	var diags diag.Diagnostics
-	var structuredCommands []client.StructuredCommand
+	var structuredCommands []pam.SudoCommandBundleStructuredCommandsInner
 	if sc, ok := d.GetOk(attributes.StructuredCommands); ok {
-		structuredCommand, ok := sc.(client.StructuredCommand)
+		structuredCommandResource, ok := sc.(*schema.ResourceData)
 		if !ok {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Error,
 				Summary:  fmt.Sprintf("%s is invalid", attributes.StructuredCommands),
 			})
 		}
+		structuredCommand := pam.SudoCommandBundleStructuredCommandsInner{
+			Args: *pam.NewNullableSudoCommandBundleStructuredCommandsInnerArgs(&pam.SudoCommandBundleStructuredCommandsInnerArgs{
+				Executable: nil,
+				String:     nil,
+			}),
+			ArgsType:        *pam.NewNullableSudoCommandBundleStructuredCommandsInnerArgs(&pam.SudoCommandBundleStructuredCommandsInner),
+			Command:         pam.SudoCommandBundleStructuredCommandsInnerCommand{},
+			CommandType:     "",
+			RenderedCommand: nil,
+		}
+
 		structuredCommands = append(structuredCommands, structuredCommand)
 	}
 
@@ -144,82 +152,62 @@ func readSudoCommandsBundleFromResource(d *schema.ResourceData) (client.SudoComm
 		diags = append(diags, subEnvDiag...)
 	}
 
-	resourceGroup := client.SudoCommandsBundle{
-		Name:               GetStringPtrFromResource(attributes.Name, d, true),
-		RunAs:              GetStringPtrFromResource(attributes.RunAs, d, false),
-		NoPasswd:           GetBoolPtrFromResource(attributes.NoPasswd, d, false),
-		NoExec:             GetBoolPtrFromResource(attributes.NoExec, d, false),
-		SetEnv:             GetBoolPtrFromResource(attributes.SetEnv, d, false),
+	sudoCommandBundle := &pam.SudoCommandBundle{
+		Name:               *GetStringPtrFromResource(attributes.Name, d, true),
+		RunAs:              *pam.NewNullableString(GetStringPtrFromResource(attributes.RunAs, d, false)),
+		NoPasswd:           *pam.NewNullableBool(GetBoolPtrFromResource(attributes.NoPasswd, d, false)),
+		NoExec:             *pam.NewNullableBool(GetBoolPtrFromResource(attributes.NoExec, d, false)),
+		SetEnv:             *pam.NewNullableBool(GetBoolPtrFromResource(attributes.SetEnv, d, false)),
 		AddEnv:             addEnv,
 		SubEnv:             subEnv,
 		StructuredCommands: structuredCommands,
 	}
 
 	if diags != nil {
-		return client.SudoCommandsBundle{}, diags
+		return nil, diags
 	}
 
-	return resourceGroup, nil
+	return sudoCommandBundle, nil
 }
 
 func resourceSudoCommandsBundleCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := getLocalClientFromMetadata(m)
+	c := getSDKClientFromMetadata(m)
+	sudoCommandBundle, diags := readSudoCommandsBundleFromResource(d)
+	if diags != nil {
+		return diags
+	}
+
+	if err := client.CreateSudoCommandsBundle(ctx, c, sudoCommandBundle); err != nil {
+		return diag.FromErr(err)
+	}
+
+	d.SetId(sudoCommandBundle.Id)
+
+	return resourceSudoCommandsBundleRead(ctx, d, m)
+}
+
+func resourceSudoCommandsBundleUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	c := getSDKClientFromMetadata(m)
 
 	sudoCommandBundle, diags := readSudoCommandsBundleFromResource(d)
 	if diags != nil {
 		return diags
 	}
 
-	result, err := c.CreateSudoCommandsBundle(ctx, sudoCommandBundle)
-	if err != nil {
+	if err := client.UpdateSudoCommandsBundle(ctx, c, sudoCommandBundle); err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(*result.Id)
 
-	return resourceSudoCommandsBundleRead(ctx, d, m)
-}
-
-func resourceSudoCommandsBundleUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := getLocalClientFromMetadata(m)
-	id := d.Id()
-
-	changed := false
-	updates := make(map[string]any)
-
-	changeableAttributes := []string{
-		attributes.Name,
-		attributes.RunAs,
-		attributes.NoExec,
-		attributes.NoPasswd,
-		attributes.StructuredCommands,
-		attributes.SetEnv,
-		attributes.AddEnv,
-		attributes.SubEnv,
-	}
-
-	for _, attribute := range changeableAttributes {
-		if d.HasChange(attribute) {
-			updates[attribute] = d.Get(attribute)
-			changed = true
-		}
-	}
-
-	if changed {
-		if err := c.UpdateSudoCommandsBundle(ctx, id, updates); err != nil {
-			return diag.FromErr(err)
-		}
-	}
-
+	d.SetId(sudoCommandBundle.Id)
 	return resourceSudoCommandsBundleRead(ctx, d, m)
 }
 
 func resourceSudoCommandsBundleDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := getLocalClientFromMetadata(m)
-	id := d.Id()
-
-	err := c.DeleteSudoCommandsBundle(ctx, id)
-
-	if err != nil {
+	// there isn't a true delete with password settings, and as databases don't specify ManagedPrivilegedAccounts,
+	// the best we can do is to set rotation to false and some default required values.
+	c := getSDKClientFromMetadata(m)
+	sudoCommandsBundleID := d.Id()
+	if err := client.DeleteSudoCommandsBundle(ctx, c, sudoCommandsBundleID); err != nil {
 		return diag.FromErr(err)
 	}
 

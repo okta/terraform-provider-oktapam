@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // UserAccessConditionalType The type of condition
@@ -42,25 +41,18 @@ func (v *UserAccessConditionalType) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := UserAccessConditionalType(value)
-	for _, existing := range AllowedUserAccessConditionalTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid UserAccessConditionalType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewUserAccessConditionalTypeFromValue returns a pointer to a valid UserAccessConditionalType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewUserAccessConditionalTypeFromValue(v string) (*UserAccessConditionalType, error) {
 	ev := UserAccessConditionalType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for UserAccessConditionalType: valid values are %v", v, AllowedUserAccessConditionalTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

@@ -26,7 +26,7 @@ var (
 	ErrOauth2TokenSourceMissing       = errors.New("oauth2 token source missing")
 )
 
-const OktaPAMTrustedDomains = "scaleft.com,scaleft.io,okta.com"
+const OktaPAMTrustedDomains = "scaleft.com,scaleft.io,okta.com,oktapreview.com,okta-emea.com"
 
 // RequestTimeoutDuration is a custom type that will be able to take a string and convert
 // it to a time.Duration
@@ -105,6 +105,9 @@ type configuration struct {
 	EnableTelemetry bool `envconfig:"ENABLE_OTEL"`
 
 	UserAgentHook func() string `ignored:"true"`
+
+	// ClientFeatures should be set using the WithClientFeatures fn
+	ClientFeatures map[string]bool `ignored:"true""`
 }
 
 type TestEnv struct {
@@ -248,6 +251,17 @@ func WithOAuth2TokenSource(tokenSource oauth2.TokenSource) ConfigOption {
 func WithUserAgentHook(userAgentFn func() string) ConfigOption {
 	return func(c *configuration) {
 		c.UserAgentHook = userAgentFn
+	}
+}
+
+func WithClientFeatures(clientFeatures ...string) ConfigOption {
+	return func(c *configuration) {
+		if c.ClientFeatures == nil {
+			c.ClientFeatures = map[string]bool{}
+		}
+		for _, clientFeature := range clientFeatures {
+			c.ClientFeatures[clientFeature] = true
+		}
 	}
 }
 
