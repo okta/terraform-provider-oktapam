@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
@@ -46,20 +47,16 @@ func createTestAccDataSourceSudoCommandsBundlesInitConfig(identifier string) str
 	resource "oktapam_sudo_commands_bundle" "test-sudo-commands-bundle-1" {
 		name = "%s-1"
 		structured_commands {
-			structured_command {
-				command = "/bin/run.sh"
-				command_type = "executable"
-			}
+			command = "/bin/run.sh"
+			command_type = "executable"
 		}
 	}
 
 	resource "oktapam_sudo_commands_bundle" "test-sudo-commands-bundle-2" {
 		name = "%s-2"
 		structured_commands {
-			structured_command {
-				command = "/bin/find"
-				command_type = "raw"
-			}
+			command = "/bin/find"
+			command_type = "raw"
 		}
 	}
 	`
@@ -77,9 +74,9 @@ func testAccDataSourceSudoCommandsBundlesConfig(resourceName, name string) strin
 
 func testAccSudoCommandsBundlesCheckDestroy(identifiers ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getLocalClientFromMetadata(testAccProvider.Meta())
+		c := getSDKClientFromMetadata(testAccProvider.Meta())
 
-		sudoCommandsBundles, err := c.ListSudoCommandsBundles(context.Background())
+		resp, err := client.ListSudoCommandsBundles(context.Background(), c)
 		if err != nil {
 			return fmt.Errorf("error getting sudo commands bundles: %w", err)
 		}
@@ -89,8 +86,8 @@ func testAccSudoCommandsBundlesCheckDestroy(identifiers ...string) resource.Test
 			m[id] = true
 		}
 
-		for _, rg := range sudoCommandsBundles {
-			if _, ok := m[*rg.Name]; ok {
+		for _, scb := range resp.GetList() {
+			if _, ok := m[scb.Name]; ok {
 				return fmt.Errorf("sudo commands bundles still exists")
 			}
 		}

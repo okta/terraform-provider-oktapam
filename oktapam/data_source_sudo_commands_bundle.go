@@ -5,9 +5,10 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client/wrappers"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
-	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 )
 
 func dataSourceSudoCommandsBundle() *schema.Resource {
@@ -67,14 +68,17 @@ func dataSourceSudoCommandsBundle() *schema.Resource {
 						attributes.StructuredCommandArgsType: {
 							Type:     schema.TypeString,
 							Computed: true,
+							Optional: true,
 						},
 						attributes.StructuredCommandArgs: {
 							Type:     schema.TypeString,
 							Computed: true,
+							Optional: true,
 						},
 						attributes.StructuredRenderedCommand: {
 							Type:     schema.TypeString,
 							Computed: true,
+							Optional: true,
 						},
 					},
 				},
@@ -84,26 +88,29 @@ func dataSourceSudoCommandsBundle() *schema.Resource {
 }
 
 func dataSourceSudoCommandsBundleFetch(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
-	c := getLocalClientFromMetadata(m)
+	var diags diag.Diagnostics
+	c := getSDKClientFromMetadata(m)
 	id := d.Get(attributes.ID).(string)
 	if id == "" {
 		return diag.Errorf("%s cannot be blank", attributes.ID)
 	}
 
-	sudoCommandsBundle, err := c.GetSudoCommandsBundle(ctx, id)
+	sudoCommandsBundle, err := client.GetSudoCommandsBundle(ctx, c, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-
 	if sudoCommandsBundle != nil {
-		d.SetId(*sudoCommandsBundle.Id)
-		for key, value := range sudoCommandsBundle.ToResourceMap() {
-			if err := d.Set(key, value); err != nil {
-				return diag.FromErr(err)
+		wrap := wrappers.SudoCommandsBundleWrapper{SudoCommandBundle: sudoCommandsBundle}
+		for k, v := range wrap.ToResourceMap() {
+			if err := d.Set(k, v); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
 			}
 		}
+		if diags == nil {
+			d.SetId(id)
+		}
 	} else {
-		logging.Infof("sudo commands bundle %s does not exist", id)
+		d.SetId("")
 	}
-	return nil
+	return diags
 }

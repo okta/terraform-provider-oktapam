@@ -13,7 +13,8 @@ func TestAccDataSourceSudoCommandsBundle(t *testing.T) {
 	identifier := randSeq()
 	resourceName := "test_acc_sudo_commands_bundle"
 	initConfig := createTestAccDataSourceSudoCommandsBundleInitConfig(identifier)
-	fetchConfig := testAccDataSourceSudoCommandsBundleConfig("cloud-connections", identifier+"-1", resourceName)
+	fmt.Printf("initconfig: %s", initConfig)
+	fetchConfig := testAccDataSourceSudoCommandsBundleConfig("sudo-commands-bundle", identifier+"-1", resourceName)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -40,10 +41,8 @@ func createTestAccDataSourceSudoCommandsBundleInitConfig(identifier string) stri
 	resource "oktapam_sudo_commands_bundle" "test-sudo-commands-bundle-1" {
 		name = "%s-1"
 		structured_commands {
-			structured_command {
-				command = "/bin/run.sh"
-				command_type = "executable"
-			}
+			command       = "/bin/run.sh"
+			command_type  = "executable"
 		}
 	}
 	`

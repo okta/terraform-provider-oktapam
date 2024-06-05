@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 )
@@ -30,23 +31,16 @@ func dataSourceSudoCommandsBundles() *schema.Resource {
 
 func dataSourceSudoCommandsBundlesList(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := getLocalClientFromMetadata(m)
+	c := getSDKClientFromMetadata(m)
 
-	var nameFilter string
-	if f, ok := d.GetOk(attributes.Name); ok {
-		nameFilter = f.(string)
-	}
-
-	sudoCommandsBundleList, err := c.ListSudoCommandsBundles(ctx)
+	resp, err := client.ListSudoCommandsBundles(ctx, c)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	sudoCommandsBundles := make([]string, 0, len(sudoCommandsBundleList))
-	for _, sudoCommandsBundle := range sudoCommandsBundleList {
-		if nameFilter == "" || *sudoCommandsBundle.Name == nameFilter {
-			sudoCommandsBundles = append(sudoCommandsBundles, *sudoCommandsBundle.Id)
-		}
+	sudoCommandsBundles := make([]string, 0, len(resp.GetList()))
+	for _, sudoCommandsBundle := range resp.GetList() {
+		sudoCommandsBundles = append(sudoCommandsBundles, sudoCommandsBundle.Id)
 	}
 
 	if err = d.Set(attributes.IDs, sudoCommandsBundles); err != nil {
