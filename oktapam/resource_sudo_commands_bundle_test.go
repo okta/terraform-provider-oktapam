@@ -38,7 +38,7 @@ func sudoCommandsBundleExists(id string) (bool, error) {
 	c := getSDKClientFromMetadata(testAccProvider.Meta())
 	logging.Debugf("Checking if resource deleted %s", id)
 	scb, err := client.GetSudoCommandsBundle(context.Background(), c, id)
-	return scb != nil && scb.Id != "" && err == nil, err
+	return scb != nil && *scb.Id != "" && err == nil, err
 }
 
 func createTestAccSudoCommandsBundleCreateConfig(name string) string {
@@ -48,6 +48,8 @@ func createTestAccSudoCommandsBundleCreateConfig(name string) string {
 		structured_commands {
 			command       = "/bin/run.sh"
 			command_type  = "executable"
+			args_type     = "custom"
+			args          = "ls"
   		}
 	}
 	`

@@ -53,7 +53,7 @@ func CreateSudoCommandsBundle(ctx context.Context, sdkClient SDKClientWrapper, s
 }
 
 func UpdateSudoCommandsBundle(ctx context.Context, sdkClient SDKClientWrapper, sudoCommandsBundle *pam.SudoCommandBundle) error {
-	request := sdkClient.SDKClient.SudoCommandsAPI.UpdateSudoCommandBundle(ctx, sdkClient.Team, sudoCommandsBundle.Id).SudoCommandBundle(*sudoCommandsBundle)
+	request := sdkClient.SDKClient.SudoCommandsAPI.UpdateSudoCommandBundle(ctx, sdkClient.Team, *sudoCommandsBundle.Id).SudoCommandBundle(*sudoCommandsBundle)
 	httpResp, callErr := request.Execute()
 	if httpResp != nil {
 		if _, err := checkStatusCodeFromSDK(httpResp, http.StatusOK, http.StatusNoContent); err != nil {

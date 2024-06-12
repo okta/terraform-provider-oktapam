@@ -7,6 +7,7 @@ import (
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/mitchellh/mapstructure"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client/wrappers"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
@@ -120,26 +121,38 @@ func resourceSudoCommandsBundleRead(ctx context.Context, d *schema.ResourceData,
 func readSudoCommandsBundleFromResource(d *schema.ResourceData) (*pam.SudoCommandBundle, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	var structuredCommands []pam.SudoCommandBundleStructuredCommandsInner
-	if sc, ok := d.GetOk(attributes.StructuredCommands); ok {
-		structuredCommandResource, ok := sc.(*schema.ResourceData)
+	if scs, ok := d.GetOk(attributes.StructuredCommands); ok {
+		structuredCommandResources, ok := scs.([]interface{})
 		if !ok {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Error,
 				Summary:  fmt.Sprintf("%s is invalid", attributes.StructuredCommands),
 			})
 		}
-		structuredCommand := pam.SudoCommandBundleStructuredCommandsInner{
-			Args: *pam.NewNullableSudoCommandBundleStructuredCommandsInnerArgs(&pam.SudoCommandBundleStructuredCommandsInnerArgs{
-				Executable: nil,
-				String:     nil,
-			}),
-			ArgsType:        *pam.NewNullableSudoCommandBundleStructuredCommandsInnerArgs(&pam.SudoCommandBundleStructuredCommandsInner),
-			Command:         pam.SudoCommandBundleStructuredCommandsInnerCommand{},
-			CommandType:     "",
-			RenderedCommand: nil,
+		for _, sc := range structuredCommandResources {
+			var structuredCommandResource pam.SudoCommandBundleStructuredCommandsInner
+			cfg := &mapstructure.DecoderConfig{
+				Metadata: nil,
+				Result:   &structuredCommandResource,
+				TagName:  "json",
+			}
+			decoder, dErr := mapstructure.NewDecoder(cfg)
+			if dErr != nil {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Error,
+					Summary:  fmt.Sprintf("error creating decoder for %s", attributes.StructuredCommands),
+				})
+				continue
+			}
+			if dErr := decoder.Decode(sc); dErr != nil {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Error,
+					Summary:  fmt.Sprintf("error decoding for %s", attributes.StructuredCommands),
+				})
+				continue
+			}
+			structuredCommands = append(structuredCommands, structuredCommandResource)
 		}
-
-		structuredCommands = append(structuredCommands, structuredCommand)
 	}
 
 	addEnv, addEnvDiag := GetStringSliceFromResource(attributes.AddEnv, d, true)
@@ -181,7 +194,7 @@ func resourceSudoCommandsBundleCreate(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(err)
 	}
 
-	d.SetId(sudoCommandBundle.Id)
+	d.SetId(*sudoCommandBundle.Id)
 
 	return resourceSudoCommandsBundleRead(ctx, d, m)
 }
@@ -198,7 +211,7 @@ func resourceSudoCommandsBundleUpdate(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(err)
 	}
 
-	d.SetId(sudoCommandBundle.Id)
+	d.SetId(*sudoCommandBundle.Id)
 	return resourceSudoCommandsBundleRead(ctx, d, m)
 }
 

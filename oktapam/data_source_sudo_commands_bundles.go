@@ -40,7 +40,7 @@ func dataSourceSudoCommandsBundlesList(ctx context.Context, d *schema.ResourceDa
 
 	sudoCommandsBundles := make([]string, 0, len(resp.GetList()))
 	for _, sudoCommandsBundle := range resp.GetList() {
-		sudoCommandsBundles = append(sudoCommandsBundles, sudoCommandsBundle.Id)
+		sudoCommandsBundles = append(sudoCommandsBundles, *sudoCommandsBundle.Id)
 	}
 
 	if err = d.Set(attributes.IDs, sudoCommandsBundles); err != nil {

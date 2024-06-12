@@ -117,6 +117,7 @@ func NewAPIClient(opts ...ConfigOption) (*APIClient, error) {
 	apiClient.DatabaseResourcesAPI = (*DatabaseResourcesAPIService)(&apiClient.common)
 	apiClient.AccessReportsAPI = (*ReportsAPIService)(&apiClient.common)
 	apiClient.CloudEntiltlementsAPI = (*CloudEntitlementsAPIService)(&apiClient.common)
+	apiClient.SudoCommandsAPI = (*SudoCommandsAPIService)(&apiClient.common)
 	return apiClient, nil
 }
 

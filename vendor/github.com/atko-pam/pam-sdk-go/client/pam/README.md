@@ -85,10 +85,14 @@ Class | Method | HTTP request | Description
 *GroupsAPI* | [**UpdateGroup**](docs/GroupsAPI.md#updategroup) | **Put** /v1/teams/{team_name}/groups/{group_name} | Update a Group
 *ProjectsAPI* | [**CreateResourceGroupProject**](docs/ProjectsAPI.md#createresourcegroupproject) | **Post** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects | Create a Project in a Resource Group
 *ProjectsAPI* | [**CreateResourceGroupProjectServerEnrollmentToken**](docs/ProjectsAPI.md#createresourcegroupprojectserverenrollmenttoken) | **Post** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_enrollment_tokens | Create a Server Enrollment Token
+*ProjectsAPI* | [**FetchResourceGroupOktaUDBasedProjectCheckoutSettings**](docs/ProjectsAPI.md#fetchresourcegroupoktaudbasedprojectcheckoutsettings) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_checkout_settings | Retrieves the checkout settings configured for a project, specific to the Okta Universal Directory resource type
 *ProjectsAPI* | [**FetchResourceGroupProject**](docs/ProjectsAPI.md#fetchresourcegroupproject) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id} | Retrieve a Project from a Resource Group
+*ProjectsAPI* | [**FetchResourceGroupSaasAppBasedProjectCheckoutSettings**](docs/ProjectsAPI.md#fetchresourcegroupsaasappbasedprojectcheckoutsettings) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_checkout_settings | Retrieves the checkout settings configured for a project, specific to the SaaS Application resource type
 *ProjectsAPI* | [**FetchResourceGroupServerBasedProjectCheckoutSettings**](docs/ProjectsAPI.md#fetchresourcegroupserverbasedprojectcheckoutsettings) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_checkout_settings | Retrieves the checkout settings configured for a project, specific to server resource type.
 *ProjectsAPI* | [**GetPasswordPolicyForProject**](docs/ProjectsAPI.md#getpasswordpolicyforproject) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_password_settings | Retrieve Project Password Policy for Server Accounts
 *ProjectsAPI* | [**GetProjectPasswordPolicyForDatabaseResources**](docs/ProjectsAPI.md#getprojectpasswordpolicyfordatabaseresources) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/database_resource_password_settings | Retrieve a Project Password Policy for Database Resources
+*ProjectsAPI* | [**GetProjectPasswordPolicyForOktaUDResources**](docs/ProjectsAPI.md#getprojectpasswordpolicyforoktaudresources) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_password_settings | Retrieve a Project Password Policy for Okta Universal Directory Resources
+*ProjectsAPI* | [**GetProjectPasswordPolicyForSaasAppResources**](docs/ProjectsAPI.md#getprojectpasswordpolicyforsaasappresources) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_password_settings | Retrieve a Project Password Policy for SaaS Application Resources
 *ProjectsAPI* | [**GetResourceGroupProjectServerEnrollmentToken**](docs/ProjectsAPI.md#getresourcegroupprojectserverenrollmenttoken) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_enrollment_tokens/{server_enrollment_token_id} | Retrieve a Server Enrollment Token
 *ProjectsAPI* | [**GetServerAccountDetails**](docs/ProjectsAPI.md#getserveraccountdetails) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_accounts/{server_account_id} | Retrieve a Server Account
 *ProjectsAPI* | [**ListResourceGroupProjectServerEnrollmentTokens**](docs/ProjectsAPI.md#listresourcegroupprojectserverenrollmenttokens) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_enrollment_tokens | List all Server Enrollment Tokens in a Project
@@ -99,7 +103,11 @@ Class | Method | HTTP request | Description
 *ProjectsAPI* | [**RemoveResourceGroupProjectServerEnrollmentToken**](docs/ProjectsAPI.md#removeresourcegroupprojectserverenrollmenttoken) | **Delete** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_enrollment_tokens/{server_enrollment_token_id} | Delete a Server Enrollment Token
 *ProjectsAPI* | [**UpdatePasswordPolicyForProject**](docs/ProjectsAPI.md#updatepasswordpolicyforproject) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_password_settings | Update Project Password Policy for Server Accounts
 *ProjectsAPI* | [**UpdateProjectPasswordPolicyForDatabaseResources**](docs/ProjectsAPI.md#updateprojectpasswordpolicyfordatabaseresources) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/database_resource_password_settings | Update a Project Password Policy for Database Resources
+*ProjectsAPI* | [**UpdateProjectPasswordPolicyForOktaUDResources**](docs/ProjectsAPI.md#updateprojectpasswordpolicyforoktaudresources) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_password_settings | Update a Project Password Policy for Okta Universal Directory Resources
+*ProjectsAPI* | [**UpdateProjectPasswordPolicyForSaasAppResources**](docs/ProjectsAPI.md#updateprojectpasswordpolicyforsaasappresources) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_password_settings | Update a Project Password Policy for SaaS Application Resources
+*ProjectsAPI* | [**UpdateResourceGroupOktaUDBasedProjectCheckoutSettings**](docs/ProjectsAPI.md#updateresourcegroupoktaudbasedprojectcheckoutsettings) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_checkout_settings | Update the checkout settings configured for a project, specific to to the Okta Universal Directory resource type
 *ProjectsAPI* | [**UpdateResourceGroupProject**](docs/ProjectsAPI.md#updateresourcegroupproject) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id} | Update a Project in a Resource Group
+*ProjectsAPI* | [**UpdateResourceGroupSaasAppBasedProjectCheckoutSettings**](docs/ProjectsAPI.md#updateresourcegroupsaasappbasedprojectcheckoutsettings) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_checkout_settings | Update the checkout settings configured for a project, specific to to the SaaS Application resource type
 *ProjectsAPI* | [**UpdateResourceGroupServerBasedProjectCheckoutSettings**](docs/ProjectsAPI.md#updateresourcegroupserverbasedprojectcheckoutsettings) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_checkout_settings | Update the checkout settings configured for a project, specific to server resource type
 *ReportsAPI* | [**CreateAccessReport**](docs/ReportsAPI.md#createaccessreport) | **Post** /v1/teams/{team_name}/access_reports | Create an Access Report
 *ReportsAPI* | [**DownloadAccessReport**](docs/ReportsAPI.md#downloadaccessreport) | **Get** /v1/teams/{team_name}/access_reports/{access_report_id}/report | Download an Access Report
@@ -178,6 +186,7 @@ Class | Method | HTTP request | Description
  - [AccessReportTargetUserUser](docs/AccessReportTargetUserUser.md)
  - [AddUserToGroupRequest](docs/AddUserToGroupRequest.md)
  - [Alg](docs/Alg.md)
+ - [ArgsType](docs/ArgsType.md)
  - [AuthTokenResponse](docs/AuthTokenResponse.md)
  - [Aws](docs/Aws.md)
  - [CheckInResourceRequest](docs/CheckInResourceRequest.md)
@@ -211,6 +220,7 @@ Class | Method | HTTP request | Description
  - [CloudEntitlementResourcesDetailsChildrenInner](docs/CloudEntitlementResourcesDetailsChildrenInner.md)
  - [CloudEntitlementResourcesDetailsOrgDetails](docs/CloudEntitlementResourcesDetailsOrgDetails.md)
  - [CloudProviderType](docs/CloudProviderType.md)
+ - [CommandType](docs/CommandType.md)
  - [ConditionsAccessRequests](docs/ConditionsAccessRequests.md)
  - [ConditionsGateway](docs/ConditionsGateway.md)
  - [ConditionsMFA](docs/ConditionsMFA.md)
@@ -229,7 +239,6 @@ Class | Method | HTTP request | Description
  - [DatabaseType](docs/DatabaseType.md)
  - [DeleteSecretFolderForbiddenResponse](docs/DeleteSecretFolderForbiddenResponse.md)
  - [DeleteSecretForbiddenResponse](docs/DeleteSecretForbiddenResponse.md)
- - [Executable](docs/Executable.md)
  - [GatewayAgent](docs/GatewayAgent.md)
  - [GatewaySetupToken](docs/GatewaySetupToken.md)
  - [GatewaySetupTokenDetails](docs/GatewaySetupTokenDetails.md)
@@ -298,6 +307,7 @@ Class | Method | HTTP request | Description
  - [NamedObjectType](docs/NamedObjectType.md)
  - [PasswordPolicy](docs/PasswordPolicy.md)
  - [PasswordPolicyCharacterOptions](docs/PasswordPolicyCharacterOptions.md)
+ - [PasswordPolicyWithExclude](docs/PasswordPolicyWithExclude.md)
  - [Project](docs/Project.md)
  - [RawJSONWebKey](docs/RawJSONWebKey.md)
  - [ResolveResourceNamesRequest](docs/ResolveResourceNamesRequest.md)
@@ -351,8 +361,6 @@ Class | Method | HTTP request | Description
  - [ServiceUserKeyWithSecret](docs/ServiceUserKeyWithSecret.md)
  - [SudoCommandBundle](docs/SudoCommandBundle.md)
  - [SudoCommandBundleStructuredCommandsInner](docs/SudoCommandBundleStructuredCommandsInner.md)
- - [SudoCommandBundleStructuredCommandsInnerArgs](docs/SudoCommandBundleStructuredCommandsInnerArgs.md)
- - [SudoCommandBundleStructuredCommandsInnerCommand](docs/SudoCommandBundleStructuredCommandsInnerCommand.md)
  - [TeamGroupAttribute](docs/TeamGroupAttribute.md)
  - [TeamGroupAttributeAttributeValue](docs/TeamGroupAttributeAttributeValue.md)
  - [TeamSettings](docs/TeamSettings.md)

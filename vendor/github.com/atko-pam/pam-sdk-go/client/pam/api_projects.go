@@ -197,6 +197,88 @@ func (a *ProjectsAPIService) CreateResourceGroupProjectServerEnrollmentTokenExec
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiFetchResourceGroupOktaUDBasedProjectCheckoutSettingsRequest struct {
+	ctx             context.Context
+	ApiService      *ProjectsAPIService
+	teamName        string
+	resourceGroupId string
+	projectId       string
+}
+
+func (r ApiFetchResourceGroupOktaUDBasedProjectCheckoutSettingsRequest) Execute() (*ResourceCheckoutSettings, *http.Response, error) {
+	return r.ApiService.FetchResourceGroupOktaUDBasedProjectCheckoutSettingsExecute(r)
+}
+
+/*
+	FetchResourceGroupOktaUDBasedProjectCheckoutSettings Retrieves the checkout settings configured for a project, specific to the Okta Universal Directory resource type
+
+	    Retrieves the checkout settings configured for a project, specific to the Okta Universal Directory resource type.
+
+This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`, `security_admin`, `delegated_security_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	    @param projectId The UUID of a Project
+	@return ApiFetchResourceGroupOktaUDBasedProjectCheckoutSettingsRequest
+*/
+func (a *ProjectsAPIService) FetchResourceGroupOktaUDBasedProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiFetchResourceGroupOktaUDBasedProjectCheckoutSettingsRequest {
+	return ApiFetchResourceGroupOktaUDBasedProjectCheckoutSettingsRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ResourceCheckoutSettings
+func (a *ProjectsAPIService) FetchResourceGroupOktaUDBasedProjectCheckoutSettingsExecute(r ApiFetchResourceGroupOktaUDBasedProjectCheckoutSettingsRequest) (*ResourceCheckoutSettings, *http.Response, error) {
+	var (
+		traceKey            = "projectsapi.fetchResourceGroupOktaUDBasedProjectCheckoutSettings"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ResourceCheckoutSettings
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_checkout_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
 type ApiFetchResourceGroupProjectRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
@@ -245,6 +327,88 @@ func (a *ProjectsAPIService) FetchResourceGroupProjectExecute(r ApiFetchResource
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiFetchResourceGroupSaasAppBasedProjectCheckoutSettingsRequest struct {
+	ctx             context.Context
+	ApiService      *ProjectsAPIService
+	teamName        string
+	resourceGroupId string
+	projectId       string
+}
+
+func (r ApiFetchResourceGroupSaasAppBasedProjectCheckoutSettingsRequest) Execute() (*ResourceCheckoutSettings, *http.Response, error) {
+	return r.ApiService.FetchResourceGroupSaasAppBasedProjectCheckoutSettingsExecute(r)
+}
+
+/*
+	FetchResourceGroupSaasAppBasedProjectCheckoutSettings Retrieves the checkout settings configured for a project, specific to the SaaS Application resource type
+
+	    Retrieves the checkout settings configured for a project, specific to the SaaS Application resource type.
+
+This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`, `security_admin`, `delegated_security_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	    @param projectId The UUID of a Project
+	@return ApiFetchResourceGroupSaasAppBasedProjectCheckoutSettingsRequest
+*/
+func (a *ProjectsAPIService) FetchResourceGroupSaasAppBasedProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiFetchResourceGroupSaasAppBasedProjectCheckoutSettingsRequest {
+	return ApiFetchResourceGroupSaasAppBasedProjectCheckoutSettingsRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ResourceCheckoutSettings
+func (a *ProjectsAPIService) FetchResourceGroupSaasAppBasedProjectCheckoutSettingsExecute(r ApiFetchResourceGroupSaasAppBasedProjectCheckoutSettingsRequest) (*ResourceCheckoutSettings, *http.Response, error) {
+	var (
+		traceKey            = "projectsapi.fetchResourceGroupSaasAppBasedProjectCheckoutSettings"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ResourceCheckoutSettings
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_checkout_settings"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
@@ -491,6 +655,170 @@ func (a *ProjectsAPIService) GetProjectPasswordPolicyForDatabaseResourcesExecute
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/database_resource_password_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiGetProjectPasswordPolicyForOktaUDResourcesRequest struct {
+	ctx             context.Context
+	ApiService      *ProjectsAPIService
+	teamName        string
+	resourceGroupId string
+	projectId       string
+}
+
+func (r ApiGetProjectPasswordPolicyForOktaUDResourcesRequest) Execute() (*PasswordPolicyWithExclude, *http.Response, error) {
+	return r.ApiService.GetProjectPasswordPolicyForOktaUDResourcesExecute(r)
+}
+
+/*
+	GetProjectPasswordPolicyForOktaUDResources Retrieve a Project Password Policy for Okta Universal Directory Resources
+
+	    Retrieves a Project Password Policy for Okta Universal Directory Resources in a Resource Group
+
+This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	    @param projectId The UUID of a Project
+	@return ApiGetProjectPasswordPolicyForOktaUDResourcesRequest
+*/
+func (a *ProjectsAPIService) GetProjectPasswordPolicyForOktaUDResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiGetProjectPasswordPolicyForOktaUDResourcesRequest {
+	return ApiGetProjectPasswordPolicyForOktaUDResourcesRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return PasswordPolicyWithExclude
+func (a *ProjectsAPIService) GetProjectPasswordPolicyForOktaUDResourcesExecute(r ApiGetProjectPasswordPolicyForOktaUDResourcesRequest) (*PasswordPolicyWithExclude, *http.Response, error) {
+	var (
+		traceKey            = "projectsapi.getProjectPasswordPolicyForOktaUDResources"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *PasswordPolicyWithExclude
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_password_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiGetProjectPasswordPolicyForSaasAppResourcesRequest struct {
+	ctx             context.Context
+	ApiService      *ProjectsAPIService
+	teamName        string
+	resourceGroupId string
+	projectId       string
+}
+
+func (r ApiGetProjectPasswordPolicyForSaasAppResourcesRequest) Execute() (*PasswordPolicyWithExclude, *http.Response, error) {
+	return r.ApiService.GetProjectPasswordPolicyForSaasAppResourcesExecute(r)
+}
+
+/*
+	GetProjectPasswordPolicyForSaasAppResources Retrieve a Project Password Policy for SaaS Application Resources
+
+	    Retrieves a Project Password Policy for SaaS Application Resources in a Resource Group
+
+This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	    @param projectId The UUID of a Project
+	@return ApiGetProjectPasswordPolicyForSaasAppResourcesRequest
+*/
+func (a *ProjectsAPIService) GetProjectPasswordPolicyForSaasAppResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiGetProjectPasswordPolicyForSaasAppResourcesRequest {
+	return ApiGetProjectPasswordPolicyForSaasAppResourcesRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return PasswordPolicyWithExclude
+func (a *ProjectsAPIService) GetProjectPasswordPolicyForSaasAppResourcesExecute(r ApiGetProjectPasswordPolicyForSaasAppResourcesRequest) (*PasswordPolicyWithExclude, *http.Response, error) {
+	var (
+		traceKey            = "projectsapi.getProjectPasswordPolicyForSaasAppResources"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *PasswordPolicyWithExclude
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_password_settings"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
@@ -1367,6 +1695,273 @@ func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForDatabaseResourcesExec
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest struct {
+	ctx                       context.Context
+	ApiService                *ProjectsAPIService
+	teamName                  string
+	resourceGroupId           string
+	projectId                 string
+	passwordPolicyWithExclude *PasswordPolicyWithExclude
+}
+
+func (r ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest) PasswordPolicyWithExclude(passwordPolicyWithExclude PasswordPolicyWithExclude) ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest {
+	r.passwordPolicyWithExclude = &passwordPolicyWithExclude
+	return r
+}
+
+func (r ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest) Execute() (*PasswordPolicyWithExclude, *http.Response, error) {
+	return r.ApiService.UpdateProjectPasswordPolicyForOktaUDResourcesExecute(r)
+}
+
+/*
+	UpdateProjectPasswordPolicyForOktaUDResources Update a Project Password Policy for Okta Universal Directory Resources
+
+	    Updates a Project Password Policy for Okta Universal Directory Resources in a Resource Group
+
+This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	    @param projectId The UUID of a Project
+	@return ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest
+*/
+func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForOktaUDResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest {
+	return ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return PasswordPolicyWithExclude
+func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForOktaUDResourcesExecute(r ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest) (*PasswordPolicyWithExclude, *http.Response, error) {
+	var (
+		traceKey            = "projectsapi.updateProjectPasswordPolicyForOktaUDResources"
+		localVarHTTPMethod  = http.MethodPut
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *PasswordPolicyWithExclude
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_password_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.passwordPolicyWithExclude
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiUpdateProjectPasswordPolicyForSaasAppResourcesRequest struct {
+	ctx                       context.Context
+	ApiService                *ProjectsAPIService
+	teamName                  string
+	resourceGroupId           string
+	projectId                 string
+	passwordPolicyWithExclude *PasswordPolicyWithExclude
+}
+
+func (r ApiUpdateProjectPasswordPolicyForSaasAppResourcesRequest) PasswordPolicyWithExclude(passwordPolicyWithExclude PasswordPolicyWithExclude) ApiUpdateProjectPasswordPolicyForSaasAppResourcesRequest {
+	r.passwordPolicyWithExclude = &passwordPolicyWithExclude
+	return r
+}
+
+func (r ApiUpdateProjectPasswordPolicyForSaasAppResourcesRequest) Execute() (*PasswordPolicyWithExclude, *http.Response, error) {
+	return r.ApiService.UpdateProjectPasswordPolicyForSaasAppResourcesExecute(r)
+}
+
+/*
+	UpdateProjectPasswordPolicyForSaasAppResources Update a Project Password Policy for SaaS Application Resources
+
+	    Updates a Project Password Policy for SaaS Application Resources in a Resource Group
+
+This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	    @param projectId The UUID of a Project
+	@return ApiUpdateProjectPasswordPolicyForSaasAppResourcesRequest
+*/
+func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForSaasAppResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateProjectPasswordPolicyForSaasAppResourcesRequest {
+	return ApiUpdateProjectPasswordPolicyForSaasAppResourcesRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return PasswordPolicyWithExclude
+func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForSaasAppResourcesExecute(r ApiUpdateProjectPasswordPolicyForSaasAppResourcesRequest) (*PasswordPolicyWithExclude, *http.Response, error) {
+	var (
+		traceKey            = "projectsapi.updateProjectPasswordPolicyForSaasAppResources"
+		localVarHTTPMethod  = http.MethodPut
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *PasswordPolicyWithExclude
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_password_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.passwordPolicyWithExclude
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiUpdateResourceGroupOktaUDBasedProjectCheckoutSettingsRequest struct {
+	ctx                      context.Context
+	ApiService               *ProjectsAPIService
+	teamName                 string
+	resourceGroupId          string
+	projectId                string
+	resourceCheckoutSettings *ResourceCheckoutSettings
+}
+
+func (r ApiUpdateResourceGroupOktaUDBasedProjectCheckoutSettingsRequest) ResourceCheckoutSettings(resourceCheckoutSettings ResourceCheckoutSettings) ApiUpdateResourceGroupOktaUDBasedProjectCheckoutSettingsRequest {
+	r.resourceCheckoutSettings = &resourceCheckoutSettings
+	return r
+}
+
+func (r ApiUpdateResourceGroupOktaUDBasedProjectCheckoutSettingsRequest) Execute() (*http.Response, error) {
+	return r.ApiService.UpdateResourceGroupOktaUDBasedProjectCheckoutSettingsExecute(r)
+}
+
+/*
+	UpdateResourceGroupOktaUDBasedProjectCheckoutSettings Update the checkout settings configured for a project, specific to to the Okta Universal Directory resource type
+
+	    Update the checkout settings configured for a project, specific to the Okta Universal Directory resource type.
+
+This endpoint requires one of the following roles: `security_admin`, `delegated_security_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	    @param projectId The UUID of a Project
+	@return ApiUpdateResourceGroupOktaUDBasedProjectCheckoutSettingsRequest
+*/
+func (a *ProjectsAPIService) UpdateResourceGroupOktaUDBasedProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateResourceGroupOktaUDBasedProjectCheckoutSettingsRequest {
+	return ApiUpdateResourceGroupOktaUDBasedProjectCheckoutSettingsRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+func (a *ProjectsAPIService) UpdateResourceGroupOktaUDBasedProjectCheckoutSettingsExecute(r ApiUpdateResourceGroupOktaUDBasedProjectCheckoutSettingsRequest) (*http.Response, error) {
+	var (
+		traceKey           = "projectsapi.updateResourceGroupOktaUDBasedProjectCheckoutSettings"
+		localVarHTTPMethod = http.MethodPut
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_checkout_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.resourceCheckoutSettings
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
+	return localVarHTTPResponse, err
+}
+
 type ApiUpdateResourceGroupProjectRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
@@ -1455,6 +2050,93 @@ func (a *ProjectsAPIService) UpdateResourceGroupProjectExecute(r ApiUpdateResour
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest struct {
+	ctx                      context.Context
+	ApiService               *ProjectsAPIService
+	teamName                 string
+	resourceGroupId          string
+	projectId                string
+	resourceCheckoutSettings *ResourceCheckoutSettings
+}
+
+func (r ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest) ResourceCheckoutSettings(resourceCheckoutSettings ResourceCheckoutSettings) ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest {
+	r.resourceCheckoutSettings = &resourceCheckoutSettings
+	return r
+}
+
+func (r ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest) Execute() (*http.Response, error) {
+	return r.ApiService.UpdateResourceGroupSaasAppBasedProjectCheckoutSettingsExecute(r)
+}
+
+/*
+	UpdateResourceGroupSaasAppBasedProjectCheckoutSettings Update the checkout settings configured for a project, specific to to the SaaS Application resource type
+
+	    Update the checkout settings configured for a project, specific to the SaaS Application resource type.
+
+This endpoint requires one of the following roles: `security_admin`, `delegated_security_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	    @param projectId The UUID of a Project
+	@return ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest
+*/
+func (a *ProjectsAPIService) UpdateResourceGroupSaasAppBasedProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest {
+	return ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+func (a *ProjectsAPIService) UpdateResourceGroupSaasAppBasedProjectCheckoutSettingsExecute(r ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest) (*http.Response, error) {
+	var (
+		traceKey           = "projectsapi.updateResourceGroupSaasAppBasedProjectCheckoutSettings"
+		localVarHTTPMethod = http.MethodPut
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_checkout_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.resourceCheckoutSettings
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
+	return localVarHTTPResponse, err
 }
 
 type ApiUpdateResourceGroupServerBasedProjectCheckoutSettingsRequest struct {
