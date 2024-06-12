@@ -28,8 +28,10 @@ func TestAccDataSourceSudoCommandsBundle(t *testing.T) {
 				Config: fmt.Sprintf("%s\n%s", initConfig, fetchConfig),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.oktapam_sudo_commands_bundle."+resourceName, attributes.Name, fmt.Sprintf("%s-1", identifier)),
-					resource.TestCheckResourceAttr("data.oktapam_sudo_commands_bundle."+resourceName, fmt.Sprintf("%s.0.aws.0.%s", attributes.StructuredCommands, attributes.StructuredCommandType), "executable"),
-					resource.TestCheckResourceAttr("data.oktapam_sudo_commands_bundle."+resourceName, fmt.Sprintf("%s.0.aws.0.%s", attributes.StructuredCommands, attributes.StructuredCommand), "/bin/run.sh"),
+					resource.TestCheckResourceAttr("data.oktapam_sudo_commands_bundle."+resourceName, fmt.Sprintf("%s.0.%s", attributes.StructuredCommands, attributes.StructuredCommandType), "executable"),
+					resource.TestCheckResourceAttr("data.oktapam_sudo_commands_bundle."+resourceName, fmt.Sprintf("%s.0.%s", attributes.StructuredCommands, attributes.StructuredCommand), "/bin/run.sh"),
+					resource.TestCheckResourceAttr("data.oktapam_sudo_commands_bundle."+resourceName, fmt.Sprintf("%s.0.%s", attributes.StructuredCommands, attributes.StructuredCommandArgsType), "custom"),
+					resource.TestCheckResourceAttr("data.oktapam_sudo_commands_bundle."+resourceName, fmt.Sprintf("%s.0.%s", attributes.StructuredCommands, attributes.StructuredCommandArgs), "ls"),
 				),
 			},
 		},
@@ -43,6 +45,8 @@ func createTestAccDataSourceSudoCommandsBundleInitConfig(identifier string) stri
 		structured_commands {
 			command       = "/bin/run.sh"
 			command_type  = "executable"
+            args_type = "custom"
+			args = "ls"
 		}
 	}
 	`

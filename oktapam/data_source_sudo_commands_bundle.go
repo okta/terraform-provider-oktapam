@@ -34,11 +34,11 @@ func dataSourceSudoCommandsBundle() *schema.Resource {
 				Computed: true,
 			},
 			attributes.NoExec: {
-				Type:     schema.TypeString,
+				Type:     schema.TypeBool,
 				Computed: true,
 			},
 			attributes.SetEnv: {
-				Type:     schema.TypeString,
+				Type:     schema.TypeBool,
 				Computed: true,
 			},
 			attributes.AddEnv: {
