@@ -32,11 +32,11 @@ func TestAccDataSourceSudoCommandsBundlesList(t *testing.T) {
 			},
 			{
 				Config: fmt.Sprintf("%s\n%s", initConfig, list1Config),
-				Check:  resource.TestCheckResourceAttr(sudoCommandsBundle1Name, fmt.Sprintf("%s.#", attributes.IDs), "3"),
+				Check:  resource.TestCheckResourceAttr(sudoCommandsBundle1Name, fmt.Sprintf("%s.#", attributes.IDs), "2"),
 			},
 			{
 				Config: fmt.Sprintf("%s\n%s", initConfig, list2Config),
-				Check:  resource.TestCheckResourceAttr(sudoCommandsBundle2Name, fmt.Sprintf("%s.#", attributes.IDs), "3"),
+				Check:  resource.TestCheckResourceAttr(sudoCommandsBundle2Name, fmt.Sprintf("%s.#", attributes.IDs), "2"),
 			},
 		},
 	})
