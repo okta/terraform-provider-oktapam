@@ -7,8 +7,8 @@ import (
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 )
 
-func GetSudoCommandsBundle(ctx context.Context, sdkClient SDKClientWrapper, sudoCommandsBundleId string) (*pam.SudoCommandBundle, error) {
-	request := sdkClient.SDKClient.SudoCommandsAPI.GetSudoCommandBundle(ctx, sdkClient.Team, sudoCommandsBundleId)
+func GetSudoCommandBundle(ctx context.Context, sdkClient SDKClientWrapper, sudoCommandBundleId string) (*pam.SudoCommandBundle, error) {
+	request := sdkClient.SDKClient.SudoCommandsAPI.GetSudoCommandBundle(ctx, sdkClient.Team, sudoCommandBundleId)
 	resp, httpResp, callErr := request.Execute()
 	if httpResp != nil {
 		if status, err := checkStatusCodeFromSDK(httpResp, http.StatusOK, http.StatusNotFound); err != nil {
@@ -23,7 +23,7 @@ func GetSudoCommandsBundle(ctx context.Context, sdkClient SDKClientWrapper, sudo
 	return resp, nil
 }
 
-func ListSudoCommandsBundles(ctx context.Context, sdkClient SDKClientWrapper) (*pam.ListSudoCommandBundleResponse, error) {
+func ListSudoCommandBundles(ctx context.Context, sdkClient SDKClientWrapper) (*pam.ListSudoCommandBundleResponse, error) {
 	request := sdkClient.SDKClient.SudoCommandsAPI.ListSudoCommandBundles(ctx, sdkClient.Team)
 	resp, httpResp, callErr := request.Execute()
 	if httpResp != nil {
@@ -37,8 +37,8 @@ func ListSudoCommandsBundles(ctx context.Context, sdkClient SDKClientWrapper) (*
 	return resp, nil
 }
 
-func CreateSudoCommandsBundle(ctx context.Context, sdkClient SDKClientWrapper, sudoCommandsBundle *pam.SudoCommandBundle) error {
-	request := sdkClient.SDKClient.SudoCommandsAPI.CreateSudoCommandBundle(ctx, sdkClient.Team).SudoCommandBundle(*sudoCommandsBundle)
+func CreateSudoCommandBundle(ctx context.Context, sdkClient SDKClientWrapper, sudoCommandBundle *pam.SudoCommandBundle) error {
+	request := sdkClient.SDKClient.SudoCommandsAPI.CreateSudoCommandBundle(ctx, sdkClient.Team).SudoCommandBundle(*sudoCommandBundle)
 	newSudoCommandBundle, httpResp, callErr := request.Execute()
 	if httpResp != nil {
 		if _, err := checkStatusCodeFromSDK(httpResp, http.StatusOK, http.StatusCreated); err != nil {
@@ -47,13 +47,13 @@ func CreateSudoCommandsBundle(ctx context.Context, sdkClient SDKClientWrapper, s
 	} else if callErr != nil {
 		return callErr
 	}
-	sudoCommandsBundle.Id = newSudoCommandBundle.Id
+	sudoCommandBundle.Id = newSudoCommandBundle.Id
 
 	return nil
 }
 
-func UpdateSudoCommandsBundle(ctx context.Context, sdkClient SDKClientWrapper, sudoCommandsBundle *pam.SudoCommandBundle) error {
-	request := sdkClient.SDKClient.SudoCommandsAPI.UpdateSudoCommandBundle(ctx, sdkClient.Team, *sudoCommandsBundle.Id).SudoCommandBundle(*sudoCommandsBundle)
+func UpdateSudoCommandBundle(ctx context.Context, sdkClient SDKClientWrapper, sudoCommandBundle *pam.SudoCommandBundle) error {
+	request := sdkClient.SDKClient.SudoCommandsAPI.UpdateSudoCommandBundle(ctx, sdkClient.Team, *sudoCommandBundle.Id).SudoCommandBundle(*sudoCommandBundle)
 	httpResp, callErr := request.Execute()
 	if httpResp != nil {
 		if _, err := checkStatusCodeFromSDK(httpResp, http.StatusOK, http.StatusNoContent); err != nil {
@@ -66,8 +66,8 @@ func UpdateSudoCommandsBundle(ctx context.Context, sdkClient SDKClientWrapper, s
 	return nil
 }
 
-func DeleteSudoCommandsBundle(ctx context.Context, sdkClient SDKClientWrapper, sudoCommandsBundleId string) error {
-	request := sdkClient.SDKClient.SudoCommandsAPI.DeleteSudoCommandBundle(ctx, sdkClient.Team, sudoCommandsBundleId)
+func DeleteSudoCommandBundle(ctx context.Context, sdkClient SDKClientWrapper, sudoCommandBundleId string) error {
+	request := sdkClient.SDKClient.SudoCommandsAPI.DeleteSudoCommandBundle(ctx, sdkClient.Team, sudoCommandBundleId)
 	httpResp, callErr := request.Execute()
 	if httpResp != nil {
 		if _, err := checkStatusCodeFromSDK(httpResp, http.StatusOK, http.StatusNoContent); err != nil {

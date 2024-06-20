@@ -8,18 +8,18 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
-func TestAccDataSourceSudoCommandsBundle(t *testing.T) {
+func TestAccDataSourceSudoCommandBundle(t *testing.T) {
 	checkTeamApplicable(t, true)
 	identifier := randSeq()
 	resourceName := "test_acc_sudo_commands_bundle"
-	initConfig := createTestAccDataSourceSudoCommandsBundleInitConfig(identifier)
+	initConfig := createTestAccDataSourceSudoCommandBundleInitConfig(identifier)
 	fmt.Printf("initconfig: %s", initConfig)
-	fetchConfig := testAccDataSourceSudoCommandsBundleConfig("sudo-commands-bundle", identifier+"-1", resourceName)
+	fetchConfig := testAccDataSourceSudoCommandBundleConfig("sudo-commands-bundle", identifier+"-1", resourceName)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccSudoCommandsBundlesCheckDestroy(identifier + "-1"),
+		CheckDestroy:      testAccSudoCommandBundlesCheckDestroy(identifier + "-1"),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,
@@ -38,7 +38,7 @@ func TestAccDataSourceSudoCommandsBundle(t *testing.T) {
 	})
 }
 
-func createTestAccDataSourceSudoCommandsBundleInitConfig(identifier string) string {
+func createTestAccDataSourceSudoCommandBundleInitConfig(identifier string) string {
 	const format = `
 	resource "oktapam_sudo_commands_bundle" "test-sudo-commands-bundle-1" {
 		name = "%s-1"
@@ -53,7 +53,7 @@ func createTestAccDataSourceSudoCommandsBundleInitConfig(identifier string) stri
 	return fmt.Sprintf(format, identifier)
 }
 
-func testAccDataSourceSudoCommandsBundleConfig(resourceName, name, SudoCommandsBundleName string) string {
+func testAccDataSourceSudoCommandBundleConfig(resourceName, name, SudoCommandsBundleName string) string {
 	const format = `
 	data "oktapam_sudo_commands_bundles" "%s" {
 		name = "%s"

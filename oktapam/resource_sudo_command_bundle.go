@@ -14,13 +14,13 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 )
 
-func resourceSudoCommandsBundle() *schema.Resource {
+func resourceSudoCommandBundle() *schema.Resource {
 	return &schema.Resource{
 		Description:   descriptions.ResourceSudoCommandsBundle,
-		ReadContext:   resourceSudoCommandsBundleRead,
-		CreateContext: resourceSudoCommandsBundleCreate,
-		DeleteContext: resourceSudoCommandsBundleDelete,
-		UpdateContext: resourceSudoCommandsBundleUpdate,
+		ReadContext:   resourceSudoCommandBundleRead,
+		CreateContext: resourceSudoCommandBundleCreate,
+		DeleteContext: resourceSudoCommandBundleDelete,
+		UpdateContext: resourceSudoCommandBundleUpdate,
 		Schema: map[string]*schema.Schema{
 			attributes.ID: {
 				Type:     schema.TypeString,
@@ -96,17 +96,17 @@ func resourceSudoCommandsBundle() *schema.Resource {
 	}
 }
 
-func resourceSudoCommandsBundleRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+func resourceSudoCommandBundleRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := getSDKClientFromMetadata(m)
 	sudoCommandsBundleID := d.Id()
 
-	sudoCommandsBundle, err := client.GetSudoCommandsBundle(ctx, c, sudoCommandsBundleID)
+	sudoCommandsBundle, err := client.GetSudoCommandBundle(ctx, c, sudoCommandsBundleID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	if sudoCommandsBundle != nil {
-		wrap := wrappers.SudoCommandsBundleWrapper{SudoCommandBundle: sudoCommandsBundle}
+		wrap := wrappers.SudoCommandBundleWrapper{SudoCommandBundle: sudoCommandsBundle}
 		for k, v := range wrap.ToResourceMap() {
 			if err := d.Set(k, v); err != nil {
 				diags = append(diags, diag.FromErr(err)...)
@@ -118,7 +118,7 @@ func resourceSudoCommandsBundleRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func readSudoCommandsBundleFromResource(d *schema.ResourceData) (*pam.SudoCommandBundle, diag.Diagnostics) {
+func readSudoCommandBundleFromResource(d *schema.ResourceData) (*pam.SudoCommandBundle, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	var structuredCommands []pam.SudoCommandBundleStructuredCommandsInner
 	if scs, ok := d.GetOk(attributes.StructuredCommands); ok {
@@ -183,44 +183,44 @@ func readSudoCommandsBundleFromResource(d *schema.ResourceData) (*pam.SudoComman
 	return sudoCommandBundle, nil
 }
 
-func resourceSudoCommandsBundleCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+func resourceSudoCommandBundleCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := getSDKClientFromMetadata(m)
-	sudoCommandBundle, diags := readSudoCommandsBundleFromResource(d)
+	sudoCommandBundle, diags := readSudoCommandBundleFromResource(d)
 	if diags != nil {
 		return diags
 	}
 
-	if err := client.CreateSudoCommandsBundle(ctx, c, sudoCommandBundle); err != nil {
+	if err := client.CreateSudoCommandBundle(ctx, c, sudoCommandBundle); err != nil {
 		return diag.FromErr(err)
 	}
 
 	d.SetId(*sudoCommandBundle.Id)
 
-	return resourceSudoCommandsBundleRead(ctx, d, m)
+	return resourceSudoCommandBundleRead(ctx, d, m)
 }
 
-func resourceSudoCommandsBundleUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+func resourceSudoCommandBundleUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := getSDKClientFromMetadata(m)
 
-	sudoCommandBundle, diags := readSudoCommandsBundleFromResource(d)
+	sudoCommandBundle, diags := readSudoCommandBundleFromResource(d)
 	if diags != nil {
 		return diags
 	}
 
-	if err := client.UpdateSudoCommandsBundle(ctx, c, sudoCommandBundle); err != nil {
+	if err := client.UpdateSudoCommandBundle(ctx, c, sudoCommandBundle); err != nil {
 		return diag.FromErr(err)
 	}
 
 	d.SetId(*sudoCommandBundle.Id)
-	return resourceSudoCommandsBundleRead(ctx, d, m)
+	return resourceSudoCommandBundleRead(ctx, d, m)
 }
 
-func resourceSudoCommandsBundleDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+func resourceSudoCommandBundleDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	// there isn't a true delete with password settings, and as databases don't specify ManagedPrivilegedAccounts,
 	// the best we can do is to set rotation to false and some default required values.
 	c := getSDKClientFromMetadata(m)
 	sudoCommandsBundleID := d.Id()
-	if err := client.DeleteSudoCommandsBundle(ctx, c, sudoCommandsBundleID); err != nil {
+	if err := client.DeleteSudoCommandBundle(ctx, c, sudoCommandsBundleID); err != nil {
 		return diag.FromErr(err)
 	}
 

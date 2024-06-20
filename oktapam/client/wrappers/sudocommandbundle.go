@@ -5,11 +5,11 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
-type SudoCommandsBundleWrapper struct {
+type SudoCommandBundleWrapper struct {
 	SudoCommandBundle *pam.SudoCommandBundle
 }
 
-func (w SudoCommandsBundleWrapper) ToResourceMap() map[string]any {
+func (w SudoCommandBundleWrapper) ToResourceMap() map[string]any {
 	m := make(map[string]any)
 	m[attributes.ID] = w.SudoCommandBundle.Id
 	m[attributes.Name] = w.SudoCommandBundle.Name

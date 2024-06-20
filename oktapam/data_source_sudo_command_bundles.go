@@ -10,10 +10,10 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 )
 
-func dataSourceSudoCommandsBundles() *schema.Resource {
+func dataSourceSudoCommandBundles() *schema.Resource {
 	return &schema.Resource{
 		Description: descriptions.SourceSudoCommandsBundles,
-		ReadContext: dataSourceSudoCommandsBundlesList,
+		ReadContext: dataSourceSudoCommandBundlesList,
 		Schema: map[string]*schema.Schema{
 			attributes.Name: {
 				Type:        schema.TypeString,
@@ -29,18 +29,26 @@ func dataSourceSudoCommandsBundles() *schema.Resource {
 	}
 }
 
-func dataSourceSudoCommandsBundlesList(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+func dataSourceSudoCommandBundlesList(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := getSDKClientFromMetadata(m)
 
-	resp, err := client.ListSudoCommandsBundles(ctx, c)
+	var nameFilter string
+	if f, ok := d.GetOk(attributes.Name); ok {
+		nameFilter = f.(string)
+	}
+
+	resp, err := client.ListSudoCommandBundles(ctx, c)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	sudoCommandsBundles := make([]string, 0, len(resp.GetList()))
 	for _, sudoCommandsBundle := range resp.GetList() {
-		sudoCommandsBundles = append(sudoCommandsBundles, *sudoCommandsBundle.Id)
+		if nameFilter == "" || sudoCommandsBundle.Name == nameFilter {
+			sudoCommandsBundles = append(sudoCommandsBundles, *sudoCommandsBundle.Id)
+		}
+
 	}
 
 	if err = d.Set(attributes.IDs, sudoCommandsBundles); err != nil {

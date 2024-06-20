@@ -11,38 +11,38 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
-func TestAccDataSourceSudoCommandsBundlesList(t *testing.T) {
+func TestAccDataSourceSudoCommandBundlesList(t *testing.T) {
 	checkTeamApplicable(t, true)
 	prefix := "data.oktapam_sudo_commands_bundles"
 	identifier := randSeq()
-	initConfig := createTestAccDataSourceSudoCommandsBundlesInitConfig(identifier)
+	initConfig := createTestAccDataSourceSudoCommandBundlesInitConfig(identifier)
 
 	sudoCommandsBundle1Name := fmt.Sprintf("%s.%s", prefix, "data1")
 	sudoCommandsBundle2Name := fmt.Sprintf("%s.%s", prefix, "data2")
-	list1Config := testAccDataSourceSudoCommandsBundlesConfig("data1", identifier+"-1")
-	list2Config := testAccDataSourceSudoCommandsBundlesConfig("data2", identifier+"-2")
+	list1Config := testAccDataSourceSudoCommandBundlesConfig("data1", identifier+"-1")
+	list2Config := testAccDataSourceSudoCommandBundlesConfig("data2", identifier+"-2")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccSudoCommandsBundlesCheckDestroy(identifier+"-1", identifier+"-2"),
+		CheckDestroy:      testAccSudoCommandBundlesCheckDestroy(identifier+"-1", identifier+"-2"),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,
 			},
 			{
 				Config: fmt.Sprintf("%s\n%s", initConfig, list1Config),
-				Check:  resource.TestCheckResourceAttr(sudoCommandsBundle1Name, fmt.Sprintf("%s.#", attributes.IDs), "2"),
+				Check:  resource.TestCheckResourceAttr(sudoCommandsBundle1Name, fmt.Sprintf("%s.#", attributes.IDs), "1"),
 			},
 			{
 				Config: fmt.Sprintf("%s\n%s", initConfig, list2Config),
-				Check:  resource.TestCheckResourceAttr(sudoCommandsBundle2Name, fmt.Sprintf("%s.#", attributes.IDs), "2"),
+				Check:  resource.TestCheckResourceAttr(sudoCommandsBundle2Name, fmt.Sprintf("%s.#", attributes.IDs), "1"),
 			},
 		},
 	})
 }
 
-func createTestAccDataSourceSudoCommandsBundlesInitConfig(identifier string) string {
+func createTestAccDataSourceSudoCommandBundlesInitConfig(identifier string) string {
 	const format = `
 	resource "oktapam_sudo_commands_bundle" "test-sudo-commands-bundle-1" {
 		name = "%s-1"
@@ -65,7 +65,7 @@ func createTestAccDataSourceSudoCommandsBundlesInitConfig(identifier string) str
 	return fmt.Sprintf(format, identifier, identifier)
 }
 
-func testAccDataSourceSudoCommandsBundlesConfig(resourceName, name string) string {
+func testAccDataSourceSudoCommandBundlesConfig(resourceName, name string) string {
 	const format = `
 	data "oktapam_sudo_commands_bundles" "%s" {
 		name = "%s"
@@ -74,11 +74,11 @@ func testAccDataSourceSudoCommandsBundlesConfig(resourceName, name string) strin
 	return fmt.Sprintf(format, resourceName, name)
 }
 
-func testAccSudoCommandsBundlesCheckDestroy(identifiers ...string) resource.TestCheckFunc {
+func testAccSudoCommandBundlesCheckDestroy(identifiers ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		c := getSDKClientFromMetadata(testAccProvider.Meta())
 
-		resp, err := client.ListSudoCommandsBundles(context.Background(), c)
+		resp, err := client.ListSudoCommandBundles(context.Background(), c)
 		if err != nil {
 			return fmt.Errorf("error getting sudo commands bundles: %w", err)
 		}

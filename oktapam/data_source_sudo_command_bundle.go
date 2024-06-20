@@ -11,10 +11,10 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 )
 
-func dataSourceSudoCommandsBundle() *schema.Resource {
+func dataSourceSudoCommandBundle() *schema.Resource {
 	return &schema.Resource{
 		Description: descriptions.SourceSudoCommandsBundle,
-		ReadContext: dataSourceSudoCommandsBundleFetch,
+		ReadContext: dataSourceSudoCommandBundleFetch,
 		Schema: map[string]*schema.Schema{
 			attributes.ID: {
 				Type:     schema.TypeString,
@@ -23,33 +23,39 @@ func dataSourceSudoCommandsBundle() *schema.Resource {
 			attributes.Name: {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: descriptions.Name,
+				Description: descriptions.SudoCommandBundleName,
 			},
 			attributes.RunAs: {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: descriptions.RunAs,
 			},
 			attributes.NoPasswd: {
-				Type:     schema.TypeBool,
-				Computed: true,
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: descriptions.NoPasswd,
 			},
 			attributes.NoExec: {
-				Type:     schema.TypeBool,
-				Computed: true,
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: descriptions.NoExec,
 			},
 			attributes.SetEnv: {
-				Type:     schema.TypeBool,
-				Computed: true,
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: descriptions.SetEnv,
 			},
 			attributes.AddEnv: {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: descriptions.AddEnv,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			attributes.SubEnv: {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: descriptions.SubEnv,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			attributes.StructuredCommands: {
 				Type:        schema.TypeList,
@@ -58,12 +64,14 @@ func dataSourceSudoCommandsBundle() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						attributes.StructuredCommand: {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: descriptions.StructuredCommands,
 						},
 						attributes.StructuredCommandType: {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: descriptions.StructuredCommands,
 						},
 						attributes.StructuredCommandArgsType: {
 							Type:     schema.TypeString,
@@ -87,7 +95,7 @@ func dataSourceSudoCommandsBundle() *schema.Resource {
 	}
 }
 
-func dataSourceSudoCommandsBundleFetch(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+func dataSourceSudoCommandBundleFetch(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := getSDKClientFromMetadata(m)
 	id := d.Get(attributes.ID).(string)
@@ -95,12 +103,12 @@ func dataSourceSudoCommandsBundleFetch(ctx context.Context, d *schema.ResourceDa
 		return diag.Errorf("%s cannot be blank", attributes.ID)
 	}
 
-	sudoCommandsBundle, err := client.GetSudoCommandsBundle(ctx, c, id)
+	sudoCommandsBundle, err := client.GetSudoCommandBundle(ctx, c, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	if sudoCommandsBundle != nil {
-		wrap := wrappers.SudoCommandsBundleWrapper{SudoCommandBundle: sudoCommandsBundle}
+		wrap := wrappers.SudoCommandBundleWrapper{SudoCommandBundle: sudoCommandsBundle}
 		for k, v := range wrap.ToResourceMap() {
 			if err := d.Set(k, v); err != nil {
 				diags = append(diags, diag.FromErr(err)...)

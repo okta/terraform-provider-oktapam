@@ -31,7 +31,7 @@ const (
 	providerCurrentUser                            = "oktapam_current_user"
 	providerCloudConnectionKey                     = "oktapam_cloud_connection"
 	providerCloudConnectionsKey                    = "oktapam_cloud_connections"
-	providerSudoCommandsBundleKey                  = "oktapam_sudo_commands_bundle"
+	providerSudoCommandBundleKey                   = "oktapam_sudo_commands_bundle"
 	providerSudoCommandsBundlesKey                 = "oktapam_sudo_commands_bundles"
 	providerDatabaseKey                            = "oktapam_database"
 	providerDatabasePasswordSettings               = "oktapam_database_password_settings"
@@ -102,7 +102,7 @@ func Provider() *schema.Provider {
 			providerADTaskSettingsKey:                     resourceADServerSyncTaskSettings(),
 			providerADUserSyncTaskSettingsKey:             resourceADUserSyncTaskSettings(),
 			providerCloudConnectionKey:                    resourceCloudConnection(),
-			providerSudoCommandsBundleKey:                 resourceSudoCommandsBundle(),
+			providerSudoCommandBundleKey:                  resourceSudoCommandBundle(),
 			providerDatabaseKey:                           resourceDatabase(),
 			providerDatabasePasswordSettings:              resourceDatabasePasswordSettings(),
 			providerGatewaySetupTokenKey:                  resourceGatewaySetupToken(),
@@ -127,8 +127,8 @@ func Provider() *schema.Provider {
 
 		DataSourcesMap: map[string]*schema.Resource{
 			providerADConnectionsKey:                       dataSourceADConnections(),
-			providerSudoCommandsBundleKey:                  dataSourceSudoCommandsBundle(),
-			providerSudoCommandsBundlesKey:                 dataSourceSudoCommandsBundles(),
+			providerSudoCommandBundleKey:                   dataSourceSudoCommandBundle(),
+			providerSudoCommandsBundlesKey:                 dataSourceSudoCommandBundles(),
 			providerCloudConnectionKey:                     dataSourceCloudConnection(),
 			providerCloudConnectionsKey:                    dataSourceCloudConnections(),
 			providerCurrentUser:                            dataSourceCurrentUser(),
