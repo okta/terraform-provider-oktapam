@@ -26,7 +26,7 @@ type SudoCommandBundle struct {
 	// A description of the Sudo Command bundle
 	Description *string `json:"description,omitempty"`
 	// The UUID of the Sudo Command bundle
-	Id string `json:"id"`
+	Id *string `json:"id,omitempty"`
 	// The name of the Sudo Command bundle. This controls the ordering of all bundles within your Team.
 	Name string `json:"name"`
 	// Whether to allow commands to execute child processes
@@ -42,29 +42,24 @@ type SudoCommandBundle struct {
 	// A list of environment variables to ignore when running the commands. See [the sudo documentation](https://www.sudo.ws/man/1.8.13/sudoers.man.html#Command_environment).
 	SubEnv []string `json:"sub_env,omitempty"`
 	// A timestamp indicating when the Sudo Command bundle was created
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// The username of the User who created the Sudo Command bundle
-	CreatedBy string `json:"created_by"`
+	CreatedBy *string `json:"created_by,omitempty"`
 	// A timestamp indicating when the Sudo Command bundle was last updated
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	// The username of the User who last updated the Sudo Command bundle
-	UpdatedBy string `json:"updated_by"`
+	UpdatedBy *string `json:"updated_by,omitempty"`
 }
 
 // NewSudoCommandBundle instantiates a new SudoCommandBundle object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSudoCommandBundle(id string, name string, createdAt time.Time, createdBy string, updatedAt time.Time, updatedBy string) *SudoCommandBundle {
+func NewSudoCommandBundle(name string) *SudoCommandBundle {
 	this := SudoCommandBundle{}
-	this.Id = id
 	this.Name = name
 	var noPasswd bool = true
 	this.NoPasswd = *NewNullableBool(&noPasswd)
-	this.CreatedAt = createdAt
-	this.CreatedBy = createdBy
-	this.UpdatedAt = updatedAt
-	this.UpdatedBy = updatedBy
 	return &this
 }
 
@@ -145,28 +140,36 @@ func (o *SudoCommandBundle) SetDescription(v string) *SudoCommandBundle {
 	return o
 }
 
-// GetId returns the Id field value
+// GetId returns the Id field value if set, zero value otherwise.
 func (o *SudoCommandBundle) GetId() string {
-	if o == nil {
+	if o == nil || IsNil(o.Id) {
 		var ret string
 		return ret
 	}
-
-	return o.Id
+	return *o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value
+// GetIdOk returns a tuple with the Id field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *SudoCommandBundle) GetIdOk() (*string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.Id) {
 		return nil, false
 	}
-	return &o.Id, true
+	return o.Id, true
 }
 
-// SetId sets field value
+// HasId returns a boolean if a field has been set.
+func (o *SudoCommandBundle) HasId() bool {
+	if o != nil && !IsNil(o.Id) {
+		return true
+	}
+
+	return false
+}
+
+// SetId gets a reference to the given string and assigns it to the Id field.
 func (o *SudoCommandBundle) SetId(v string) *SudoCommandBundle {
-	o.Id = v
+	o.Id = &v
 	return o
 }
 
@@ -447,103 +450,135 @@ func (o *SudoCommandBundle) SetSubEnv(v []string) *SudoCommandBundle {
 	return o
 }
 
-// GetCreatedAt returns the CreatedAt field value
+// GetCreatedAt returns the CreatedAt field value if set, zero value otherwise.
 func (o *SudoCommandBundle) GetCreatedAt() time.Time {
-	if o == nil {
+	if o == nil || IsNil(o.CreatedAt) {
 		var ret time.Time
 		return ret
 	}
-
-	return o.CreatedAt
+	return *o.CreatedAt
 }
 
-// GetCreatedAtOk returns a tuple with the CreatedAt field value
+// GetCreatedAtOk returns a tuple with the CreatedAt field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *SudoCommandBundle) GetCreatedAtOk() (*time.Time, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.CreatedAt) {
 		return nil, false
 	}
-	return &o.CreatedAt, true
+	return o.CreatedAt, true
 }
 
-// SetCreatedAt sets field value
+// HasCreatedAt returns a boolean if a field has been set.
+func (o *SudoCommandBundle) HasCreatedAt() bool {
+	if o != nil && !IsNil(o.CreatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetCreatedAt gets a reference to the given time.Time and assigns it to the CreatedAt field.
 func (o *SudoCommandBundle) SetCreatedAt(v time.Time) *SudoCommandBundle {
-	o.CreatedAt = v
+	o.CreatedAt = &v
 	return o
 }
 
-// GetCreatedBy returns the CreatedBy field value
+// GetCreatedBy returns the CreatedBy field value if set, zero value otherwise.
 func (o *SudoCommandBundle) GetCreatedBy() string {
-	if o == nil {
+	if o == nil || IsNil(o.CreatedBy) {
 		var ret string
 		return ret
 	}
-
-	return o.CreatedBy
+	return *o.CreatedBy
 }
 
-// GetCreatedByOk returns a tuple with the CreatedBy field value
+// GetCreatedByOk returns a tuple with the CreatedBy field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *SudoCommandBundle) GetCreatedByOk() (*string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.CreatedBy) {
 		return nil, false
 	}
-	return &o.CreatedBy, true
+	return o.CreatedBy, true
 }
 
-// SetCreatedBy sets field value
+// HasCreatedBy returns a boolean if a field has been set.
+func (o *SudoCommandBundle) HasCreatedBy() bool {
+	if o != nil && !IsNil(o.CreatedBy) {
+		return true
+	}
+
+	return false
+}
+
+// SetCreatedBy gets a reference to the given string and assigns it to the CreatedBy field.
 func (o *SudoCommandBundle) SetCreatedBy(v string) *SudoCommandBundle {
-	o.CreatedBy = v
+	o.CreatedBy = &v
 	return o
 }
 
-// GetUpdatedAt returns the UpdatedAt field value
+// GetUpdatedAt returns the UpdatedAt field value if set, zero value otherwise.
 func (o *SudoCommandBundle) GetUpdatedAt() time.Time {
-	if o == nil {
+	if o == nil || IsNil(o.UpdatedAt) {
 		var ret time.Time
 		return ret
 	}
-
-	return o.UpdatedAt
+	return *o.UpdatedAt
 }
 
-// GetUpdatedAtOk returns a tuple with the UpdatedAt field value
+// GetUpdatedAtOk returns a tuple with the UpdatedAt field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *SudoCommandBundle) GetUpdatedAtOk() (*time.Time, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.UpdatedAt) {
 		return nil, false
 	}
-	return &o.UpdatedAt, true
+	return o.UpdatedAt, true
 }
 
-// SetUpdatedAt sets field value
+// HasUpdatedAt returns a boolean if a field has been set.
+func (o *SudoCommandBundle) HasUpdatedAt() bool {
+	if o != nil && !IsNil(o.UpdatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetUpdatedAt gets a reference to the given time.Time and assigns it to the UpdatedAt field.
 func (o *SudoCommandBundle) SetUpdatedAt(v time.Time) *SudoCommandBundle {
-	o.UpdatedAt = v
+	o.UpdatedAt = &v
 	return o
 }
 
-// GetUpdatedBy returns the UpdatedBy field value
+// GetUpdatedBy returns the UpdatedBy field value if set, zero value otherwise.
 func (o *SudoCommandBundle) GetUpdatedBy() string {
-	if o == nil {
+	if o == nil || IsNil(o.UpdatedBy) {
 		var ret string
 		return ret
 	}
-
-	return o.UpdatedBy
+	return *o.UpdatedBy
 }
 
-// GetUpdatedByOk returns a tuple with the UpdatedBy field value
+// GetUpdatedByOk returns a tuple with the UpdatedBy field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *SudoCommandBundle) GetUpdatedByOk() (*string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.UpdatedBy) {
 		return nil, false
 	}
-	return &o.UpdatedBy, true
+	return o.UpdatedBy, true
 }
 
-// SetUpdatedBy sets field value
+// HasUpdatedBy returns a boolean if a field has been set.
+func (o *SudoCommandBundle) HasUpdatedBy() bool {
+	if o != nil && !IsNil(o.UpdatedBy) {
+		return true
+	}
+
+	return false
+}
+
+// SetUpdatedBy gets a reference to the given string and assigns it to the UpdatedBy field.
 func (o *SudoCommandBundle) SetUpdatedBy(v string) *SudoCommandBundle {
-	o.UpdatedBy = v
+	o.UpdatedBy = &v
 	return o
 }
 
@@ -563,7 +598,9 @@ func (o SudoCommandBundle) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Description) {
 		toSerialize["description"] = o.Description
 	}
-	toSerialize["id"] = o.Id
+	if !IsNil(o.Id) {
+		toSerialize["id"] = o.Id
+	}
 	toSerialize["name"] = o.Name
 	if o.NoExec.IsSet() {
 		toSerialize["no_exec"] = o.NoExec.Get()
@@ -583,10 +620,18 @@ func (o SudoCommandBundle) ToMap() (map[string]interface{}, error) {
 	if o.SubEnv != nil {
 		toSerialize["sub_env"] = o.SubEnv
 	}
-	toSerialize["created_at"] = o.CreatedAt
-	toSerialize["created_by"] = o.CreatedBy
-	toSerialize["updated_at"] = o.UpdatedAt
-	toSerialize["updated_by"] = o.UpdatedBy
+	if !IsNil(o.CreatedAt) {
+		toSerialize["created_at"] = o.CreatedAt
+	}
+	if !IsNil(o.CreatedBy) {
+		toSerialize["created_by"] = o.CreatedBy
+	}
+	if !IsNil(o.UpdatedAt) {
+		toSerialize["updated_at"] = o.UpdatedAt
+	}
+	if !IsNil(o.UpdatedBy) {
+		toSerialize["updated_by"] = o.UpdatedBy
+	}
 	return toSerialize, nil
 }
 
