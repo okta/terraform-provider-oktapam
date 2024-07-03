@@ -18,6 +18,10 @@ github.com/armon/go-radix v0.0.0-20180808171621-7fddfc383310 h1:BUAU3CGlLvorLI26
 github.com/armon/go-radix v0.0.0-20180808171621-7fddfc383310/go.mod h1:ufUuZ+zHj4x4TnLV4JWEpy2hxWSpsRywHrMgIH9cCH8=
 github.com/atko-pam/pam-sdk-go v1.0.70-0.20240605060748-0f7af3861a5e h1:KK22x5ZxBKqpM0b38aJ6w59/PPCBJFni5sPoJzr+aT0=
 github.com/atko-pam/pam-sdk-go v1.0.70-0.20240605060748-0f7af3861a5e/go.mod h1:+tIC3CcGaZtOc/75ohmaD8KgfwwnYHKD4+xAC0tltgQ=
+github.com/atko-pam/pam-sdk-go v1.0.70-0.20240702171723-2f50ed1fb2cb h1:ivrIMIQ7oJz/3b+A8zXiMIYEGRKB/pmSrPY1vwPgWDA=
+github.com/atko-pam/pam-sdk-go v1.0.70-0.20240702171723-2f50ed1fb2cb/go.mod h1:MMEshvol2ctyIhLrvF92fapY+eg4roDCymqXEggxgac=
+github.com/atko-pam/pam-sdk-go v1.0.72 h1:YPW6Y6XqGQshuAT6PH0FDwmlayGT4sjyOP3zMrGD88o=
+github.com/atko-pam/pam-sdk-go v1.0.72/go.mod h1:MMEshvol2ctyIhLrvF92fapY+eg4roDCymqXEggxgac=
 github.com/bgentry/speakeasy v0.1.0 h1:ByYyxL9InA1OWqxJqqp2A5pYHUrCiAL6K3J+LKSsQkY=
 github.com/bgentry/speakeasy v0.1.0/go.mod h1:+zsyZBPWlz7T6j88CTgSN5bM796AkVf0kBD4zp0CCIs=
 github.com/bufbuild/protocompile v0.4.0 h1:LbFKd2XowZvQ/kajzguUp2DC9UEIQhIq77fZZlaQsNA=
@@ -245,6 +249,7 @@ golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGm
 golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
 golang.org/x/tools v0.1.12/go.mod h1:hNGJHUnrk76NpqgfD5Aqm5Crs+Hm0VOH/i9J2+nxYbc=
 golang.org/x/tools v0.6.0/go.mod h1:Xwgl3UAJ/d3gWutnCtw505GrjyAbvKui8lOU390QaIU=
+golang.org/x/tools v0.13.0 h1:Iey4qkscZuv0VvIt8E0neZjtPVQFSc870HQ448QgEmQ=
 golang.org/x/tools v0.21.0 h1:qc0xYgIbsSDt9EyWz05J5wfa7LOVW0YTLOXrqdLAWIw=
 golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=

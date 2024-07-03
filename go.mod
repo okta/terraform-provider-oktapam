@@ -3,7 +3,7 @@ module github.com/okta/terraform-provider-oktapam
 go 1.20
 
 require (
-	github.com/atko-pam/pam-sdk-go v1.0.70-0.20240605060748-0f7af3861a5e
+	github.com/atko-pam/pam-sdk-go v1.0.72
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
