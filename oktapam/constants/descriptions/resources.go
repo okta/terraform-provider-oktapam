@@ -37,4 +37,5 @@ var (
 	ResourceServerPasswordSettings             = fmt.Sprintf("The settings for passwords set on servers within the project. %s", LinkPasswordSettings)
 	ResourceSecurityPolicy                     = fmt.Sprintf("A policy which defines how users can gain access to resources. %s", LinkSecurityPolicy)
 	ResourceCloudConnection                    = fmt.Sprintf("A PAM construct that connects PAM with cloud providers. %s", LinkCloudConnection)
+	ResourceSudoCommandsBundle                 = fmt.Sprintf("A PAM construct that allows fine grained access. %s", LinkSudoCommandsBundle)
 )

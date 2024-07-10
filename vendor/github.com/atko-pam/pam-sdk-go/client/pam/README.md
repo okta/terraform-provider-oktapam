@@ -83,12 +83,24 @@ Class | Method | HTTP request | Description
 *GroupsAPI* | [**RemoveGroup**](docs/GroupsAPI.md#removegroup) | **Delete** /v1/teams/{team_name}/groups/{group_name} | Delete a Group from a Team
 *GroupsAPI* | [**RemoveUserFromGroup**](docs/GroupsAPI.md#removeuserfromgroup) | **Delete** /v1/teams/{team_name}/groups/{group_name}/users/{user_name} | Remove a User from a Group
 *GroupsAPI* | [**UpdateGroup**](docs/GroupsAPI.md#updategroup) | **Put** /v1/teams/{team_name}/groups/{group_name} | Update a Group
+*OktaUdAccountsAPI* | [**GetResourceGroupProjectOktaUDAccount**](docs/OktaUdAccountsAPI.md#getresourcegroupprojectoktaudaccount) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_accounts/{okta_ud_account_id} | Retrieve an Okta Universal Directory Account from a Project
+*OktaUdAccountsAPI* | [**ListResourceGroupProjectOktaUDAccounts**](docs/OktaUdAccountsAPI.md#listresourcegroupprojectoktaudaccounts) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_accounts | List all Okta Universal Directory Accounts in a Project
+*OktaUdAccountsAPI* | [**RotateResourceGroupProjectOktaUDAccount**](docs/OktaUdAccountsAPI.md#rotateresourcegroupprojectoktaudaccount) | **Post** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_accounts/{okta_ud_account_id}/rotate | Rotate the password belonging to an Okta Universal Directory Account in a Project
+*PrivilegedAccountsAPI* | [**CreatePrivilegedAccount**](docs/PrivilegedAccountsAPI.md#createprivilegedaccount) | **Post** /v1/privileged-accounts | Create a privileged account
+*PrivilegedAccountsAPI* | [**DeletePrivilegedAccount**](docs/PrivilegedAccountsAPI.md#deleteprivilegedaccount) | **Delete** /v1/privileged-accounts/{id} | Delete a privileged account
+*PrivilegedAccountsAPI* | [**GetPrivilegedAccount**](docs/PrivilegedAccountsAPI.md#getprivilegedaccount) | **Get** /v1/privileged-accounts/{id} | Retrieve a privileged account
+*PrivilegedAccountsAPI* | [**ListPrivilegedAccounts**](docs/PrivilegedAccountsAPI.md#listprivilegedaccounts) | **Get** /v1/privileged-accounts | List all privileged accounts
+*PrivilegedAccountsAPI* | [**ReplacePrivilegedAccount**](docs/PrivilegedAccountsAPI.md#replaceprivilegedaccount) | **Put** /v1/privileged-accounts/{id} | Replace a privileged account
 *ProjectsAPI* | [**CreateResourceGroupProject**](docs/ProjectsAPI.md#createresourcegroupproject) | **Post** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects | Create a Project in a Resource Group
 *ProjectsAPI* | [**CreateResourceGroupProjectServerEnrollmentToken**](docs/ProjectsAPI.md#createresourcegroupprojectserverenrollmenttoken) | **Post** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_enrollment_tokens | Create a Server Enrollment Token
+*ProjectsAPI* | [**FetchResourceGroupOktaUDBasedProjectCheckoutSettings**](docs/ProjectsAPI.md#fetchresourcegroupoktaudbasedprojectcheckoutsettings) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_checkout_settings | Retrieves the checkout settings configured for a project, specific to the Okta Universal Directory resource type
 *ProjectsAPI* | [**FetchResourceGroupProject**](docs/ProjectsAPI.md#fetchresourcegroupproject) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id} | Retrieve a Project from a Resource Group
-*ProjectsAPI* | [**FetchResourceGroupProjectCheckoutSettings**](docs/ProjectsAPI.md#fetchresourcegroupprojectcheckoutsettings) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/checkout_settings | Retrieves the checkout settings configured for a project, specific to each applicable resource type.
+*ProjectsAPI* | [**FetchResourceGroupSaasAppBasedProjectCheckoutSettings**](docs/ProjectsAPI.md#fetchresourcegroupsaasappbasedprojectcheckoutsettings) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_checkout_settings | Retrieves the checkout settings configured for a project, specific to the SaaS Application resource type
+*ProjectsAPI* | [**FetchResourceGroupServerBasedProjectCheckoutSettings**](docs/ProjectsAPI.md#fetchresourcegroupserverbasedprojectcheckoutsettings) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_checkout_settings | Retrieves the checkout settings configured for a project, specific to server resource type.
 *ProjectsAPI* | [**GetPasswordPolicyForProject**](docs/ProjectsAPI.md#getpasswordpolicyforproject) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_password_settings | Retrieve Project Password Policy for Server Accounts
 *ProjectsAPI* | [**GetProjectPasswordPolicyForDatabaseResources**](docs/ProjectsAPI.md#getprojectpasswordpolicyfordatabaseresources) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/database_resource_password_settings | Retrieve a Project Password Policy for Database Resources
+*ProjectsAPI* | [**GetProjectPasswordPolicyForOktaUDResources**](docs/ProjectsAPI.md#getprojectpasswordpolicyforoktaudresources) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_password_settings | Retrieve a Project Password Policy for Okta Universal Directory Resources
+*ProjectsAPI* | [**GetProjectPasswordPolicyForSaasAppResources**](docs/ProjectsAPI.md#getprojectpasswordpolicyforsaasappresources) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_password_settings | Retrieve a Project Password Policy for SaaS Application Resources
 *ProjectsAPI* | [**GetResourceGroupProjectServerEnrollmentToken**](docs/ProjectsAPI.md#getresourcegroupprojectserverenrollmenttoken) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_enrollment_tokens/{server_enrollment_token_id} | Retrieve a Server Enrollment Token
 *ProjectsAPI* | [**GetServerAccountDetails**](docs/ProjectsAPI.md#getserveraccountdetails) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_accounts/{server_account_id} | Retrieve a Server Account
 *ProjectsAPI* | [**ListResourceGroupProjectServerEnrollmentTokens**](docs/ProjectsAPI.md#listresourcegroupprojectserverenrollmenttokens) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_enrollment_tokens | List all Server Enrollment Tokens in a Project
@@ -99,8 +111,12 @@ Class | Method | HTTP request | Description
 *ProjectsAPI* | [**RemoveResourceGroupProjectServerEnrollmentToken**](docs/ProjectsAPI.md#removeresourcegroupprojectserverenrollmenttoken) | **Delete** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_enrollment_tokens/{server_enrollment_token_id} | Delete a Server Enrollment Token
 *ProjectsAPI* | [**UpdatePasswordPolicyForProject**](docs/ProjectsAPI.md#updatepasswordpolicyforproject) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_password_settings | Update Project Password Policy for Server Accounts
 *ProjectsAPI* | [**UpdateProjectPasswordPolicyForDatabaseResources**](docs/ProjectsAPI.md#updateprojectpasswordpolicyfordatabaseresources) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/database_resource_password_settings | Update a Project Password Policy for Database Resources
+*ProjectsAPI* | [**UpdateProjectPasswordPolicyForOktaUDResources**](docs/ProjectsAPI.md#updateprojectpasswordpolicyforoktaudresources) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_password_settings | Update a Project Password Policy for Okta Universal Directory Resources
+*ProjectsAPI* | [**UpdateProjectPasswordPolicyForSaasAppResources**](docs/ProjectsAPI.md#updateprojectpasswordpolicyforsaasappresources) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_password_settings | Update a Project Password Policy for SaaS Application Resources
+*ProjectsAPI* | [**UpdateResourceGroupOktaUDBasedProjectCheckoutSettings**](docs/ProjectsAPI.md#updateresourcegroupoktaudbasedprojectcheckoutsettings) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_checkout_settings | Update the checkout settings configured for a project, specific to to the Okta Universal Directory resource type
 *ProjectsAPI* | [**UpdateResourceGroupProject**](docs/ProjectsAPI.md#updateresourcegroupproject) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id} | Update a Project in a Resource Group
-*ProjectsAPI* | [**UpdateResourceGroupProjectCheckoutSettings**](docs/ProjectsAPI.md#updateresourcegroupprojectcheckoutsettings) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/checkout_settings | Update the checkout settings configured for a project, specific to each applicable resource type
+*ProjectsAPI* | [**UpdateResourceGroupSaasAppBasedProjectCheckoutSettings**](docs/ProjectsAPI.md#updateresourcegroupsaasappbasedprojectcheckoutsettings) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_checkout_settings | Update the checkout settings configured for a project, specific to to the SaaS Application resource type
+*ProjectsAPI* | [**UpdateResourceGroupServerBasedProjectCheckoutSettings**](docs/ProjectsAPI.md#updateresourcegroupserverbasedprojectcheckoutsettings) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/server_checkout_settings | Update the checkout settings configured for a project, specific to server resource type
 *ReportsAPI* | [**CreateAccessReport**](docs/ReportsAPI.md#createaccessreport) | **Post** /v1/teams/{team_name}/access_reports | Create an Access Report
 *ReportsAPI* | [**DownloadAccessReport**](docs/ReportsAPI.md#downloadaccessreport) | **Get** /v1/teams/{team_name}/access_reports/{access_report_id}/report | Download an Access Report
 *ReportsAPI* | [**GetAccessReport**](docs/ReportsAPI.md#getaccessreport) | **Get** /v1/teams/{team_name}/access_reports/{access_report_id} | Retrieve an Access Report
@@ -110,6 +126,9 @@ Class | Method | HTTP request | Description
 *ResourceGroupsAPI* | [**GetResourceGroup**](docs/ResourceGroupsAPI.md#getresourcegroup) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id} | Retrieve a Resource Group
 *ResourceGroupsAPI* | [**ListResourceGroups**](docs/ResourceGroupsAPI.md#listresourcegroups) | **Get** /v1/teams/{team_name}/resource_groups | List all Resource Groups
 *ResourceGroupsAPI* | [**UpdateResourceGroup**](docs/ResourceGroupsAPI.md#updateresourcegroup) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id} | Update a Resource Group
+*SaasAppAccountsAPI* | [**GetResourceGroupProjectSaasAppAccount**](docs/SaasAppAccountsAPI.md#getresourcegroupprojectsaasappaccount) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_accounts/{saas_app_account_id} | Retrieve a SaaS Application Account from a Project
+*SaasAppAccountsAPI* | [**ListResourceGroupProjectSaasAppAccounts**](docs/SaasAppAccountsAPI.md#listresourcegroupprojectsaasappaccounts) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_accounts | List all SaaS Application Accounts in a Project
+*SaasAppAccountsAPI* | [**RotateResourceGroupProjectSaasAppAccount**](docs/SaasAppAccountsAPI.md#rotateresourcegroupprojectsaasappaccount) | **Post** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_accounts/{saas_app_account_id}/rotate | Rotate the password belonging to a SaaS Application Account in a Project
 *SecretsAPI* | [**CreateSecret**](docs/SecretsAPI.md#createsecret) | **Post** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secrets | Create a Secret
 *SecretsAPI* | [**CreateSecretFolder**](docs/SecretsAPI.md#createsecretfolder) | **Post** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secret_folders | Create a Secret Folder
 *SecretsAPI* | [**DeleteSecret**](docs/SecretsAPI.md#deletesecret) | **Delete** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/secrets/{secret_id} | Delete a Secret
@@ -144,6 +163,8 @@ Class | Method | HTTP request | Description
 *ServiceUsersAPI* | [**ListServiceUsers**](docs/ServiceUsersAPI.md#listserviceusers) | **Get** /v1/teams/{team_name}/service_users | List all Service Users for a Team
 *ServiceUsersAPI* | [**RotateServiceUserKey**](docs/ServiceUsersAPI.md#rotateserviceuserkey) | **Post** /v1/teams/{team_name}/service_users/{user_name}/keys | Rotate all API keys
 *ServiceUsersAPI* | [**ServiceUserUpdate**](docs/ServiceUsersAPI.md#serviceuserupdate) | **Put** /v1/teams/{team_name}/service_users/{user_name} | Update a Service User
+*StagedPrivilegedAccountsAPI* | [**AssignStagedPrivilegedAccount**](docs/StagedPrivilegedAccountsAPI.md#assignstagedprivilegedaccount) | **Post** /v1/teams/{team_name}/staged_privileged_accounts/{staged_privileged_account_id}/assign | Assign a SaaS or Okta Privileged Account to a Resource Group and Project
+*StagedPrivilegedAccountsAPI* | [**ListStagedPrivilegedAccounts**](docs/StagedPrivilegedAccountsAPI.md#liststagedprivilegedaccounts) | **Get** /v1/teams/{team_name}/staged_privileged_accounts | List all staged Privileged Accounts from Okta Universal Directory
 *SudoCommandsAPI* | [**CreateSudoCommandBundle**](docs/SudoCommandsAPI.md#createsudocommandbundle) | **Post** /v1/teams/{team_name}/sudo_command_bundles | Create a Sudo Command bundle
 *SudoCommandsAPI* | [**DeleteSudoCommandBundle**](docs/SudoCommandsAPI.md#deletesudocommandbundle) | **Delete** /v1/teams/{team_name}/sudo_command_bundles/{sudo_command_bundle_id} | Delete a Sudo Command bundle
 *SudoCommandsAPI* | [**GetSudoCommandBundle**](docs/SudoCommandsAPI.md#getsudocommandbundle) | **Get** /v1/teams/{team_name}/sudo_command_bundles/{sudo_command_bundle_id} | Retrieve a Sudo Command bundle
@@ -178,6 +199,8 @@ Class | Method | HTTP request | Description
  - [AccessReportTargetUserUser](docs/AccessReportTargetUserUser.md)
  - [AddUserToGroupRequest](docs/AddUserToGroupRequest.md)
  - [Alg](docs/Alg.md)
+ - [ArgsType](docs/ArgsType.md)
+ - [AssignPrivilegedAccountRequest](docs/AssignPrivilegedAccountRequest.md)
  - [AuthTokenResponse](docs/AuthTokenResponse.md)
  - [Aws](docs/Aws.md)
  - [CheckInResourceRequest](docs/CheckInResourceRequest.md)
@@ -211,6 +234,7 @@ Class | Method | HTTP request | Description
  - [CloudEntitlementResourcesDetailsChildrenInner](docs/CloudEntitlementResourcesDetailsChildrenInner.md)
  - [CloudEntitlementResourcesDetailsOrgDetails](docs/CloudEntitlementResourcesDetailsOrgDetails.md)
  - [CloudProviderType](docs/CloudProviderType.md)
+ - [CommandType](docs/CommandType.md)
  - [ConditionsAccessRequests](docs/ConditionsAccessRequests.md)
  - [ConditionsGateway](docs/ConditionsGateway.md)
  - [ConditionsMFA](docs/ConditionsMFA.md)
@@ -229,7 +253,6 @@ Class | Method | HTTP request | Description
  - [DatabaseType](docs/DatabaseType.md)
  - [DeleteSecretFolderForbiddenResponse](docs/DeleteSecretFolderForbiddenResponse.md)
  - [DeleteSecretForbiddenResponse](docs/DeleteSecretForbiddenResponse.md)
- - [Executable](docs/Executable.md)
  - [GatewayAgent](docs/GatewayAgent.md)
  - [GatewaySetupToken](docs/GatewaySetupToken.md)
  - [GatewaySetupTokenDetails](docs/GatewaySetupTokenDetails.md)
@@ -264,7 +287,10 @@ Class | Method | HTTP request | Description
  - [ListGatewaysResponse](docs/ListGatewaysResponse.md)
  - [ListGroupAttributesResponse](docs/ListGroupAttributesResponse.md)
  - [ListGroupsResponse](docs/ListGroupsResponse.md)
+ - [ListPrivilegedAccountsResponse](docs/ListPrivilegedAccountsResponse.md)
  - [ListResourceGroup](docs/ListResourceGroup.md)
+ - [ListResourceGroupProjectOktaUDAccountsResponse](docs/ListResourceGroupProjectOktaUDAccountsResponse.md)
+ - [ListResourceGroupProjectSaasAppAccountsResponse](docs/ListResourceGroupProjectSaasAppAccountsResponse.md)
  - [ListResourceGroupProjectServerEnrollmentTokensResponse](docs/ListResourceGroupProjectServerEnrollmentTokensResponse.md)
  - [ListResourceGroupProjectServersResponse](docs/ListResourceGroupProjectServersResponse.md)
  - [ListResourceGroupProjects](docs/ListResourceGroupProjects.md)
@@ -278,6 +304,7 @@ Class | Method | HTTP request | Description
  - [ListServersResponse](docs/ListServersResponse.md)
  - [ListServiceUserKeysResponse](docs/ListServiceUserKeysResponse.md)
  - [ListServiceUsersResponse](docs/ListServiceUsersResponse.md)
+ - [ListStagedPrivilegedAccountsResponse](docs/ListStagedPrivilegedAccountsResponse.md)
  - [ListSudoCommandBundleResponse](docs/ListSudoCommandBundleResponse.md)
  - [ListTeamUserAttributeConflictsResponse](docs/ListTeamUserAttributeConflictsResponse.md)
  - [ListTopLevelSecretFoldersForProjectForbiddenResponse](docs/ListTopLevelSecretFoldersForProjectForbiddenResponse.md)
@@ -296,10 +323,20 @@ Class | Method | HTTP request | Description
  - [NameResolutionResult](docs/NameResolutionResult.md)
  - [NamedObject](docs/NamedObject.md)
  - [NamedObjectType](docs/NamedObjectType.md)
+ - [OktaUDAccount](docs/OktaUDAccount.md)
  - [PasswordPolicy](docs/PasswordPolicy.md)
  - [PasswordPolicyCharacterOptions](docs/PasswordPolicyCharacterOptions.md)
+ - [PasswordPolicyWithExclude](docs/PasswordPolicyWithExclude.md)
+ - [PrivilegedAccount](docs/PrivilegedAccount.md)
+ - [PrivilegedAccountCredentials](docs/PrivilegedAccountCredentials.md)
+ - [PrivilegedAccountDetailsAppAccount](docs/PrivilegedAccountDetailsAppAccount.md)
+ - [PrivilegedAccountDetailsAppAccountAllOfDetails](docs/PrivilegedAccountDetailsAppAccountAllOfDetails.md)
+ - [PrivilegedAccountDetailsOktaUserAccount](docs/PrivilegedAccountDetailsOktaUserAccount.md)
+ - [PrivilegedAccountDetailsOktaUserAccountAllOfDetails](docs/PrivilegedAccountDetailsOktaUserAccountAllOfDetails.md)
+ - [PrivilegedAccountStatus](docs/PrivilegedAccountStatus.md)
+ - [PrivilegedAccountSyncStatus](docs/PrivilegedAccountSyncStatus.md)
+ - [PrivilegedAccountType](docs/PrivilegedAccountType.md)
  - [Project](docs/Project.md)
- - [ProjectCheckoutSettings](docs/ProjectCheckoutSettings.md)
  - [RawJSONWebKey](docs/RawJSONWebKey.md)
  - [ResolveResourceNamesRequest](docs/ResolveResourceNamesRequest.md)
  - [ResolveResourceNamesResponse](docs/ResolveResourceNamesResponse.md)
@@ -312,6 +349,7 @@ Class | Method | HTTP request | Description
  - [RoleName](docs/RoleName.md)
  - [Roles](docs/Roles.md)
  - [SSHCertificateType](docs/SSHCertificateType.md)
+ - [SaasAppAccount](docs/SaasAppAccount.md)
  - [Secret](docs/Secret.md)
  - [SecretCreateOrUpdateRequest](docs/SecretCreateOrUpdateRequest.md)
  - [SecretFolderCreateRequest](docs/SecretFolderCreateRequest.md)
@@ -350,10 +388,9 @@ Class | Method | HTTP request | Description
  - [ServerInstanceDetails](docs/ServerInstanceDetails.md)
  - [ServiceUserKey](docs/ServiceUserKey.md)
  - [ServiceUserKeyWithSecret](docs/ServiceUserKeyWithSecret.md)
+ - [StagedPrivilegedAccount](docs/StagedPrivilegedAccount.md)
  - [SudoCommandBundle](docs/SudoCommandBundle.md)
  - [SudoCommandBundleStructuredCommandsInner](docs/SudoCommandBundleStructuredCommandsInner.md)
- - [SudoCommandBundleStructuredCommandsInnerArgs](docs/SudoCommandBundleStructuredCommandsInnerArgs.md)
- - [SudoCommandBundleStructuredCommandsInnerCommand](docs/SudoCommandBundleStructuredCommandsInnerCommand.md)
  - [TeamGroupAttribute](docs/TeamGroupAttribute.md)
  - [TeamGroupAttributeAttributeValue](docs/TeamGroupAttributeAttributeValue.md)
  - [TeamSettings](docs/TeamSettings.md)

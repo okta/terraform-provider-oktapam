@@ -23,4 +23,5 @@ const (
 	LinkSecret                             = "For details, see [Secrets](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-secrets)"
 	LinkSecurityPolicy                     = "For details, see [Security policy](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-policy)."
 	LinkCloudConnection                    = "For details, see [Cloud Connection](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-entitlement-aws-connect)."
+	LinkSudoCommandsBundle                 = "For details, see [Sudo Commands Bundle](https://help.okta.com/okta_help.htm?type=oie&id=csh-pam-sudo-commands)."
 )

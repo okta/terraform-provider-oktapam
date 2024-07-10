@@ -23,7 +23,7 @@ type CheckInResourceRequest struct {
 	// The UUID or ORN of the resource
 	ResourceId   string               `json:"resource_id"`
 	ResourceType CheckoutResourceType `json:"resource_type"`
-	// Indicates the check-in process is being forced. If the User initiating the check-in process differs from the User who checked out the resource, then this value must be `true`.
+	// Indicates the checkin process is being forced. If the User initiating the checkin process differs from the User who checked out the resource, then this value must be `true`.
 	Force *bool `json:"force,omitempty"`
 }
 

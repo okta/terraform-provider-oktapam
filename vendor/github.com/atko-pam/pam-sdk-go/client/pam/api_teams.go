@@ -340,7 +340,7 @@ func (r ApiListAllCheckedOutResourcesByUserRequest) ResourceType(resourceType st
 	return r
 }
 
-// If specified, also returns resources that have already started the check-in process. These are not included by default.
+// If specified, also returns resources that have already started the checkin process. These are not included by default.
 func (r ApiListAllCheckedOutResourcesByUserRequest) IncludePendingCheckin(includePendingCheckin bool) ApiListAllCheckedOutResourcesByUserRequest {
 	r.includePendingCheckin = &includePendingCheckin
 	return r

@@ -17,9 +17,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/opentracing/opentracing-go"
-
 	"github.com/go-resty/resty/v2"
+	"github.com/opentracing/opentracing-go"
 	"gopkg.in/square/go-jose.v2"
 )
 
@@ -74,6 +73,8 @@ type APIClient struct {
 	AccessReportsAPI *ReportsAPIService
 
 	CloudEntiltlementsAPI *CloudEntitlementsAPIService
+
+	SudoCommandsAPI *SudoCommandsAPIService
 }
 
 type service struct {
@@ -116,6 +117,7 @@ func NewAPIClient(opts ...ConfigOption) (*APIClient, error) {
 	apiClient.DatabaseResourcesAPI = (*DatabaseResourcesAPIService)(&apiClient.common)
 	apiClient.AccessReportsAPI = (*ReportsAPIService)(&apiClient.common)
 	apiClient.CloudEntiltlementsAPI = (*CloudEntitlementsAPIService)(&apiClient.common)
+	apiClient.SudoCommandsAPI = (*SudoCommandsAPIService)(&apiClient.common)
 	return apiClient, nil
 }
 
