@@ -77,7 +77,7 @@ func testAccSudoCommandBundlesCheckDestroy(identifiers ...string) resource.TestC
 	return func(s *terraform.State) error {
 		c := getSDKClientFromMetadata(testAccProvider.Meta())
 
-		resp, err := client.ListSudoCommandBundles(context.Background(), c)
+		respList, err := client.ListSudoCommandBundles(context.Background(), c)
 		if err != nil {
 			return fmt.Errorf("error getting sudo commands bundles: %w", err)
 		}
@@ -87,7 +87,7 @@ func testAccSudoCommandBundlesCheckDestroy(identifiers ...string) resource.TestC
 			m[id] = true
 		}
 
-		for _, scb := range resp.GetList() {
+		for _, scb := range respList {
 			if _, ok := m[scb.Name]; ok {
 				return fmt.Errorf("sudo commands bundles still exists")
 			}

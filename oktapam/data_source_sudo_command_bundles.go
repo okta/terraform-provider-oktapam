@@ -38,13 +38,13 @@ func dataSourceSudoCommandBundlesList(ctx context.Context, d *schema.ResourceDat
 		nameFilter = f.(string)
 	}
 
-	resp, err := client.ListSudoCommandBundles(ctx, c)
+	respList, err := client.ListSudoCommandBundles(ctx, c)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	sudoCommandsBundles := make([]string, 0, len(resp.GetList()))
-	for _, sudoCommandsBundle := range resp.GetList() {
+	sudoCommandsBundles := make([]string, 0, len(respList))
+	for _, sudoCommandsBundle := range respList {
 		if nameFilter == "" || sudoCommandsBundle.Name == nameFilter {
 			sudoCommandsBundles = append(sudoCommandsBundles, *sudoCommandsBundle.Id)
 		}

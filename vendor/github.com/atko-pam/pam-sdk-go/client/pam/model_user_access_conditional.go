@@ -30,7 +30,8 @@ type UserAccessConditional struct {
 	// Used by `access_request` conditionals to define the name of a specific Request Type
 	AccessRequestTypeName *string `json:"access_request_type_name,omitempty"`
 	// Used by `access_request` conditionals to define the number of seconds the approval remains valid
-	ExpiresAfterSeconds *int64 `json:"expires_after_seconds,omitempty"`
+	ExpiresAfterSeconds *int64                  `json:"expires_after_seconds,omitempty"`
+	AcrValues           *ConditionsMFAACRValues `json:"acr_values,omitempty"`
 }
 
 // NewUserAccessConditional instantiates a new UserAccessConditional object
@@ -248,6 +249,39 @@ func (o *UserAccessConditional) SetExpiresAfterSeconds(v int64) *UserAccessCondi
 	return o
 }
 
+// GetAcrValues returns the AcrValues field value if set, zero value otherwise.
+func (o *UserAccessConditional) GetAcrValues() ConditionsMFAACRValues {
+	if o == nil || IsNil(o.AcrValues) {
+		var ret ConditionsMFAACRValues
+		return ret
+	}
+	return *o.AcrValues
+}
+
+// GetAcrValuesOk returns a tuple with the AcrValues field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserAccessConditional) GetAcrValuesOk() (*ConditionsMFAACRValues, bool) {
+	if o == nil || IsNil(o.AcrValues) {
+		return nil, false
+	}
+	return o.AcrValues, true
+}
+
+// HasAcrValues returns a boolean if a field has been set.
+func (o *UserAccessConditional) HasAcrValues() bool {
+	if o != nil && !IsNil(o.AcrValues) {
+		return true
+	}
+
+	return false
+}
+
+// SetAcrValues gets a reference to the given ConditionsMFAACRValues and assigns it to the AcrValues field.
+func (o *UserAccessConditional) SetAcrValues(v ConditionsMFAACRValues) *UserAccessConditional {
+	o.AcrValues = &v
+	return o
+}
+
 func (o UserAccessConditional) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -275,6 +309,9 @@ func (o UserAccessConditional) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.ExpiresAfterSeconds) {
 		toSerialize["expires_after_seconds"] = o.ExpiresAfterSeconds
+	}
+	if !IsNil(o.AcrValues) {
+		toSerialize["acr_values"] = o.AcrValues
 	}
 	return toSerialize, nil
 }

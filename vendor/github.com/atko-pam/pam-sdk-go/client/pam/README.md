@@ -28,6 +28,14 @@ All URIs are relative to *https://{org_name}.pam.okta.com*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*ActiveDirectoryConnectionAPI* | [**CreateActiveDirectoryConnection**](docs/ActiveDirectoryConnectionAPI.md#createactivedirectoryconnection) | **Post** /v1/teams/{team_name}/connections/active_directory | Create an Active Directory connection
+*ActiveDirectoryConnectionAPI* | [**CreateActiveDirectoryConnectionTest**](docs/ActiveDirectoryConnectionAPI.md#createactivedirectoryconnectiontest) | **Post** /v1/teams/{team_name}/connections/active_directory_check | Create an Active Directory connection test
+*ActiveDirectoryConnectionAPI* | [**DeleteActiveDirectoryConnection**](docs/ActiveDirectoryConnectionAPI.md#deleteactivedirectoryconnection) | **Delete** /v1/teams/{team_name}/connections/active_directory/{ad_connection_id} | Delete a Active Directory connection
+*ActiveDirectoryConnectionAPI* | [**GetActiveDirectoryConnection**](docs/ActiveDirectoryConnectionAPI.md#getactivedirectoryconnection) | **Get** /v1/teams/{team_name}/connections/active_directory/{ad_connection_id} | Retrieve an Active Directory connection
+*ActiveDirectoryConnectionAPI* | [**GetActiveDirectoryConnectionTest**](docs/ActiveDirectoryConnectionAPI.md#getactivedirectoryconnectiontest) | **Get** /v1/teams/{team_name}/connections/active_directory_check/{ad_connection_test_id} | Retrieve an Active Directory connection test
+*ActiveDirectoryConnectionAPI* | [**ListActiveDirectoryConnections**](docs/ActiveDirectoryConnectionAPI.md#listactivedirectoryconnections) | **Get** /v1/teams/{team_name}/connections/active_directory | List all Active Directory connections
+*ActiveDirectoryConnectionAPI* | [**RevealActiveDirectoryConnectionPassword**](docs/ActiveDirectoryConnectionAPI.md#revealactivedirectoryconnectionpassword) | **Post** /v1/teams/{team_name}/connections/active_directory/{ad_connection_id}/reveal_password | Reveal a the Active Directory service account password
+*ActiveDirectoryConnectionAPI* | [**UpdateActiveDirectoryConnection**](docs/ActiveDirectoryConnectionAPI.md#updateactivedirectoryconnection) | **Put** /v1/teams/{team_name}/connections/active_directory/{ad_connection_id} | Update an Active Directory connection
 *AttributesAPI* | [**FetchGroupAttribute**](docs/AttributesAPI.md#fetchgroupattribute) | **Get** /v1/teams/{team_name}/groups/{group_name}/attributes/{attribute_id} | Retrieve a Group Attribute
 *AttributesAPI* | [**FetchUserAttribute**](docs/AttributesAPI.md#fetchuserattribute) | **Get** /v1/teams/{team_name}/users/{user_name}/attributes/{attribute_id} | Retrieve a User Attribute
 *AttributesAPI* | [**ListGroupAttributes**](docs/AttributesAPI.md#listgroupattributes) | **Get** /v1/teams/{team_name}/groups/{group_name}/attributes | List all Attributes for a Group
@@ -83,6 +91,8 @@ Class | Method | HTTP request | Description
 *GroupsAPI* | [**RemoveGroup**](docs/GroupsAPI.md#removegroup) | **Delete** /v1/teams/{team_name}/groups/{group_name} | Delete a Group from a Team
 *GroupsAPI* | [**RemoveUserFromGroup**](docs/GroupsAPI.md#removeuserfromgroup) | **Delete** /v1/teams/{team_name}/groups/{group_name}/users/{user_name} | Remove a User from a Group
 *GroupsAPI* | [**UpdateGroup**](docs/GroupsAPI.md#updategroup) | **Put** /v1/teams/{team_name}/groups/{group_name} | Update a Group
+*MfaApprovalsAPI* | [**CreateMFAApproval**](docs/MfaApprovalsAPI.md#createmfaapproval) | **Post** /v1/teams/{team_name}/mfa_approvals | Create an MFA approval
+*MfaApprovalsAPI* | [**GetMFAApprovalState**](docs/MfaApprovalsAPI.md#getmfaapprovalstate) | **Get** /v1/teams/{team_name}/mfa_approvals/{mfa_approval_id}/state | Retrieve the state of an MFA approval
 *OktaUdAccountsAPI* | [**GetResourceGroupProjectOktaUDAccount**](docs/OktaUdAccountsAPI.md#getresourcegroupprojectoktaudaccount) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_accounts/{okta_ud_account_id} | Retrieve an Okta Universal Directory Account from a Project
 *OktaUdAccountsAPI* | [**ListResourceGroupProjectOktaUDAccounts**](docs/OktaUdAccountsAPI.md#listresourcegroupprojectoktaudaccounts) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_accounts | List all Okta Universal Directory Accounts in a Project
 *OktaUdAccountsAPI* | [**RotateResourceGroupProjectOktaUDAccount**](docs/OktaUdAccountsAPI.md#rotateresourcegroupprojectoktaudaccount) | **Post** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_accounts/{okta_ud_account_id}/rotate | Rotate the password belonging to an Okta Universal Directory Account in a Project
@@ -197,6 +207,11 @@ Class | Method | HTTP request | Description
  - [AccessReportTargetResourceType](docs/AccessReportTargetResourceType.md)
  - [AccessReportTargetUser](docs/AccessReportTargetUser.md)
  - [AccessReportTargetUserUser](docs/AccessReportTargetUserUser.md)
+ - [ActiveDirectoryConnectionCheckResponse](docs/ActiveDirectoryConnectionCheckResponse.md)
+ - [ActiveDirectoryConnectionRequest](docs/ActiveDirectoryConnectionRequest.md)
+ - [ActiveDirectoryConnectionResponse](docs/ActiveDirectoryConnectionResponse.md)
+ - [ActiveDirectoryConnectionRevealRequest](docs/ActiveDirectoryConnectionRevealRequest.md)
+ - [ActiveDirectoryConnectionRevealResponse](docs/ActiveDirectoryConnectionRevealResponse.md)
  - [AddUserToGroupRequest](docs/AddUserToGroupRequest.md)
  - [Alg](docs/Alg.md)
  - [ArgsType](docs/ArgsType.md)
@@ -273,6 +288,7 @@ Class | Method | HTTP request | Description
  - [IssueServiceTokenRequestBody](docs/IssueServiceTokenRequestBody.md)
  - [Kty](docs/Kty.md)
  - [ListAccessReportsResponse](docs/ListAccessReportsResponse.md)
+ - [ListActiveDirectoryConnectionsResponse](docs/ListActiveDirectoryConnectionsResponse.md)
  - [ListAllCheckedOutResourcesByUserResponse](docs/ListAllCheckedOutResourcesByUserResponse.md)
  - [ListAllServerAccountResourcesForDelegatedSecurityAdminResponse](docs/ListAllServerAccountResourcesForDelegatedSecurityAdminResponse.md)
  - [ListAllServerAccountResourcesForSecurityAdminResponse](docs/ListAllServerAccountResourcesForSecurityAdminResponse.md)
@@ -315,6 +331,9 @@ Class | Method | HTTP request | Description
  - [ListUserGroupsResponse](docs/ListUserGroupsResponse.md)
  - [ListUsersInGroupResponse](docs/ListUsersInGroupResponse.md)
  - [ListUsersResponse](docs/ListUsersResponse.md)
+ - [MFAApprovalCreateRequest](docs/MFAApprovalCreateRequest.md)
+ - [MFAApprovalCreateResponse](docs/MFAApprovalCreateResponse.md)
+ - [MFAApprovalState](docs/MFAApprovalState.md)
  - [ManagementConnectionDetails](docs/ManagementConnectionDetails.md)
  - [ManagementConnectionDetailsType](docs/ManagementConnectionDetailsType.md)
  - [MySQLBasicAuthDetails](docs/MySQLBasicAuthDetails.md)
@@ -323,6 +342,7 @@ Class | Method | HTTP request | Description
  - [NameResolutionResult](docs/NameResolutionResult.md)
  - [NamedObject](docs/NamedObject.md)
  - [NamedObjectType](docs/NamedObjectType.md)
+ - [NotFoundResponse](docs/NotFoundResponse.md)
  - [OktaUDAccount](docs/OktaUDAccount.md)
  - [PasswordPolicy](docs/PasswordPolicy.md)
  - [PasswordPolicyCharacterOptions](docs/PasswordPolicyCharacterOptions.md)
@@ -399,6 +419,8 @@ Class | Method | HTTP request | Description
  - [TeamUserAttributeAttributeValue](docs/TeamUserAttributeAttributeValue.md)
  - [TeamUserAttributeConflict](docs/TeamUserAttributeConflict.md)
  - [TeamUserAttributeName](docs/TeamUserAttributeName.md)
+ - [TrustedRootCA](docs/TrustedRootCA.md)
+ - [UnauthorizedAccessResponse](docs/UnauthorizedAccessResponse.md)
  - [UpdateAttribute](docs/UpdateAttribute.md)
  - [UpdateCloudConnection](docs/UpdateCloudConnection.md)
  - [UpdateCloudConnectionDetails](docs/UpdateCloudConnectionDetails.md)

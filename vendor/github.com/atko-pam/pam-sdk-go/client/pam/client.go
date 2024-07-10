@@ -75,6 +75,8 @@ type APIClient struct {
 	CloudEntiltlementsAPI *CloudEntitlementsAPIService
 
 	SudoCommandsAPI *SudoCommandsAPIService
+
+	ActiveDirectoryConnectionAPI *ActiveDirectoryConnectionAPIService
 }
 
 type service struct {
@@ -118,6 +120,7 @@ func NewAPIClient(opts ...ConfigOption) (*APIClient, error) {
 	apiClient.AccessReportsAPI = (*ReportsAPIService)(&apiClient.common)
 	apiClient.CloudEntiltlementsAPI = (*CloudEntitlementsAPIService)(&apiClient.common)
 	apiClient.SudoCommandsAPI = (*SudoCommandsAPIService)(&apiClient.common)
+	apiClient.ActiveDirectoryConnectionAPI = (*ActiveDirectoryConnectionAPIService)(&apiClient.common)
 	return apiClient, nil
 }
 
