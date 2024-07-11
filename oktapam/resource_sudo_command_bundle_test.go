@@ -14,7 +14,7 @@ import (
 
 func TestAccResourceSudoCommandBundle(t *testing.T) {
 	checkTeamApplicable(t, true)
-	resourceName := "oktapam_sudo_command_bundle.test_acc_sudo_command_bundle"
+	resourceName := "oktapam_sudo_commands_bundle.test_acc_sudo_command_bundle"
 	sudoCommandBundleName := fmt.Sprintf("test-sudo-command-bundle-%s", randSeq())
 
 	resource.Test(t, resource.TestCase{
@@ -43,7 +43,7 @@ func sudoCommandBundleExists(id string) (bool, error) {
 
 func createTestAccSudoCommandBundleCreateConfig(name string) string {
 	const format = `
-	resource "oktapam_sudo_commands_bundle" "test_acc_sudo_commands_bundle" {
+	resource "oktapam_sudo_commands_bundle" "test_acc_sudo_command_bundle" {
 		name = "%s"
 		structured_commands {
 			command       = "/bin/run.sh"
