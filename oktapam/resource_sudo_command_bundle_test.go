@@ -30,6 +30,14 @@ func TestAccResourceSudoCommandBundle(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s", attributes.StructuredCommands, attributes.StructuredCommand), "/bin/run.sh"),
 				),
 			},
+			{
+				Config: createTestAccSudoCommandBundleUpdateConfig(sudoCommandBundleName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, attributes.Name, sudoCommandBundleName),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s", attributes.StructuredCommands, attributes.StructuredCommandType), "directory"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s", attributes.StructuredCommands, attributes.StructuredCommand), "/bin/"),
+				),
+			},
 		},
 	})
 }
@@ -50,6 +58,19 @@ func createTestAccSudoCommandBundleCreateConfig(name string) string {
 			command_type  = "executable"
 			args_type     = "custom"
 			args          = "ls"
+  		}
+	}
+	`
+	return fmt.Sprintf(format, name)
+}
+
+func createTestAccSudoCommandBundleUpdateConfig(name string) string {
+	const format = `
+	resource "oktapam_sudo_commands_bundle" "test_acc_sudo_command_bundle" {
+		name = "%s"
+		structured_commands {
+			command       = "/bin/"
+			command_type  = "directory"
   		}
 	}
 	`

@@ -165,7 +165,9 @@ func readSudoCommandBundleFromResource(d *schema.ResourceData) (*pam.SudoCommand
 		diags = append(diags, subEnvDiag...)
 	}
 
+	sudoCommandBundleID := d.Id()
 	sudoCommandBundle := &pam.SudoCommandBundle{
+		Id:                 &sudoCommandBundleID,
 		Name:               *GetStringPtrFromResource(attributes.Name, d, true),
 		RunAs:              *pam.NewNullableString(GetStringPtrFromResource(attributes.RunAs, d, false)),
 		NoPasswd:           *pam.NewNullableBool(GetBoolPtrFromResource(attributes.NoPasswd, d, false)),
