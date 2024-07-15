@@ -332,7 +332,6 @@ func resourceSecurityPolicy() *schema.Resource {
 												},
 												attributes.SudoCommandBundles: {
 													Type:        schema.TypeList,
-													Computed:    true,
 													Description: descriptions.SourceSudoCommandsBundles,
 													Optional:    true,
 													Elem: &schema.Resource{
@@ -354,7 +353,6 @@ func resourceSecurityPolicy() *schema.Resource {
 												},
 												attributes.UAMDisplayName: {
 													Type:        schema.TypeString,
-													Computed:    true,
 													Description: descriptions.UAMDisplayName,
 													Optional:    true,
 												},
