@@ -31,10 +31,7 @@ func TestAccSecurityPolicy(t *testing.T) {
 	secretsSecurityPolicyName := fmt.Sprintf("test_acc_secrets_security_policy_%s", randSeq())
 	group1Name := fmt.Sprintf("test_acc_security_policy_group1_%s", randSeq())
 	group2Name := fmt.Sprintf("test_acc_security_policy_group2_%s", randSeq())
-	sudoCommandBundle1Name := fmt.Sprintf("test_acc_sudo_command_bundle_%s", randSeq())
-	sudoCommandBundle2Name := fmt.Sprintf("test_acc_sudo_command_bundle_%s", randSeq())
-	uamDisplay1Name := fmt.Sprintf("uam_display_%s", randSeq())
-	uamDisplay2Name := fmt.Sprintf("uam_display_%s", randSeq())
+	sudoCommandBundle1Name := fmt.Sprintf("test_acc_sudo_command_bundle1_%s", randSeq())
 	validServerID := getValidServerID()
 
 	initialSecurityPolicy := &client.SecurityPolicy{
@@ -95,12 +92,11 @@ func TestAccSecurityPolicy(t *testing.T) {
 							AdminLevelPermissions: utils.AsBoolPtr(true),
 							SudoCommandBundles: []client.PrincipalAccountSSHSudoPrivilege{
 								{
-									Id:   randIdentifier,
 									Name: sudoCommandBundle1Name,
 									Type: "sudo_command_bundle",
 								},
 							},
-							UAMDisplayName: utils.AsStringPtr(uamDisplay1Name),
+							UAMDisplayName: utils.AsStringPtr("foo-uam"),
 						},
 					},
 				},
@@ -187,14 +183,6 @@ func TestAccSecurityPolicy(t *testing.T) {
 						PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
 							Enabled:               utils.AsBoolPtr(true),
 							AdminLevelPermissions: utils.AsBoolPtr(true),
-							SudoCommandBundles: []client.PrincipalAccountSSHSudoPrivilege{
-								{
-									Id:   randIdentifier,
-									Name: sudoCommandBundle2Name,
-									Type: "sudo_command_bundle",
-								},
-							},
-							UAMDisplayName: utils.AsStringPtr(uamDisplay2Name),
 						},
 					},
 				},
@@ -310,7 +298,7 @@ func TestAccSecurityPolicy(t *testing.T) {
 				ExpectError: regexp.MustCompile("cannot mix SSH and RDP privileges within a Security Policy Rule"),
 			},
 			{
-				Config: createTestAccSecurityPolicyCreateConfig(group1Name, group2Name, securityPolicyName, validServerID),
+				Config: createTestAccSecurityPolicyCreateConfig(group1Name, group2Name, sudoCommandBundle1Name, securityPolicyName, validServerID),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccSecurityPolicyCheckExists(resourceName, initialSecurityPolicy),
 					resource.TestCheckResourceAttr(
@@ -503,6 +491,15 @@ resource "oktapam_group" "test_security_policy_group1" {
 resource "oktapam_group" "test_security_policy_group2" {
 	name = "%s"
 }
+resource "oktapam_sudo_commands_bundle" "test_acc_sudo_command_bundle" {
+	name = "scb-%s"
+	structured_commands {
+		command       = "/bin/run.sh"
+		command_type  = "executable"
+		args_type     = "custom"
+		args          = "ls"
+	}
+}
 resource "oktapam_security_policy" "test_acc_security_policy" {
 	name = "%s"
 	description = "test description"
@@ -532,6 +529,12 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 			principal_account_ssh {
 				enabled = true
 				admin_level_permissions = true
+				uam_display_name = "foo-uam"
+				sudo_command_bundles {
+					id = oktapam_sudo_commands_bundle.test_acc_sudo_command_bundle.id
+					name = oktapam_sudo_commands_bundle.test_acc_sudo_command_bundle.name
+					type = "sudo_command_bundle"
+				}
 			}
 		}
 		conditions {
@@ -550,8 +553,8 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 }
 `
 
-func createTestAccSecurityPolicyCreateConfig(groupName1, groupName2, securityPolicyName string, serverID string) string {
-	return fmt.Sprintf(testAccSecurityPolicyCreateConfigFormat, groupName1, groupName2, securityPolicyName, serverID)
+func createTestAccSecurityPolicyCreateConfig(groupName1, groupName2, sudoCommandBundleName, securityPolicyName string, serverID string) string {
+	return fmt.Sprintf(testAccSecurityPolicyCreateConfigFormat, groupName1, groupName2, sudoCommandBundleName, securityPolicyName, serverID)
 }
 
 const testAccSecurityPolicyUpdateConfigFormat = `
@@ -732,7 +735,7 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 `
 
 func createTestAccSecurityPolicySecretsCreateConfig(identifier, groupName1, groupName2, securityPolicyName string) string {
-	return fmt.Sprintf(testAccSecurityPolicyCreateSecretsConfigFormat, identifier, identifier, identifier, identifier, identifier, groupName1, groupName2, securityPolicyName)
+	return fmt.Sprintf(testAccSecurityPolicyCreateSecretsConfigFormat, identifier, identifier, identifier, identifier, groupName1, groupName2, securityPolicyName)
 }
 
 const testAccSecurityPolicyCreateSecretsConfigFormat = `
@@ -760,15 +763,6 @@ resource "oktapam_group" "test_security_policy_group1" {
 resource "oktapam_group" "test_security_policy_group2" {
 	name = "%s"
 }
-resource "oktapam_sudo_commands_bundle" "test_acc_sudo_command_bundle" {
-	name = "scb-%s"
-	structured_commands {
-		command       = "/bin/run.sh"
-		command_type  = "executable"
-		args_type     = "custom"
-		args          = "ls"
-	}
-}
 resource "oktapam_security_policy" "test_acc_secrets_security_policy" {
 	name = "%s"
 	description = "test description"
@@ -795,16 +789,6 @@ resource "oktapam_security_policy" "test_acc_secrets_security_policy" {
 			  	secret_delete = true
 			  	secret_reveal = true
 			  	secret_update = true
-			}
-			principal_account_ssh {
-				enabled = true
-				admin_level_permissions = false
-				uam_display_name = "foo-uam"
-				sudo_command_bundles {
-					id = oktapam_sudo_commands_bundle.test_acc_sudo_command_bundle.id
-					name = oktapam_sudo_commands_bundle.test_acc_sudo_command_bundle.name
-					type = "sudo_command_bundle"
-				}
 			}
 		}
 		conditions {
