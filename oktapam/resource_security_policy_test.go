@@ -705,7 +705,7 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 `
 
 func createTestAccSecurityPolicySecretsCreateConfig(identifier, groupName1, groupName2, securityPolicyName string) string {
-	return fmt.Sprintf(testAccSecurityPolicyCreateSecretsConfigFormat, identifier, identifier, identifier, identifier, groupName1, groupName2, securityPolicyName)
+	return fmt.Sprintf(testAccSecurityPolicyCreateSecretsConfigFormat, identifier, identifier, identifier, identifier, identifier, groupName1, groupName2, securityPolicyName)
 }
 
 const testAccSecurityPolicyCreateSecretsConfigFormat = `
@@ -733,6 +733,15 @@ resource "oktapam_group" "test_security_policy_group1" {
 resource "oktapam_group" "test_security_policy_group2" {
 	name = "%s"
 }
+resource "oktapam_sudo_commands_bundle" "test_acc_sudo_command_bundle" {
+	name = "scb-%s"
+	structured_commands {
+		command       = "/bin/run.sh"
+		command_type  = "executable"
+		args_type     = "custom"
+		args          = "ls"
+	}
+}
 resource "oktapam_security_policy" "test_acc_secrets_security_policy" {
 	name = "%s"
 	description = "test description"
@@ -759,6 +768,16 @@ resource "oktapam_security_policy" "test_acc_secrets_security_policy" {
 			  	secret_delete = true
 			  	secret_reveal = true
 			  	secret_update = true
+			}
+			principal_account_ssh {
+				enabled = true
+				admin_level_permissions = false
+				uam_display_name = "foo-uam"
+				sudo_command_bundles {
+					id = oktapam_sudo_commands_bundle.test_acc_sudo_command_bundle.id
+					name = oktapam_sudo_commands_bundle.test_acc_sudo_command_bundle.name
+					type = "sudo_command_bundle"
+				}
 			}
 		}
 		conditions {

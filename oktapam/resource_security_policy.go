@@ -330,6 +330,34 @@ func resourceSecurityPolicy() *schema.Resource {
 													Computed:    true,
 													Description: descriptions.AdminLevelPermissions,
 												},
+												attributes.SudoCommandBundles: {
+													Type:        schema.TypeList,
+													Computed:    true,
+													Description: descriptions.SourceSudoCommandsBundles,
+													Optional:    true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															attributes.ID: {
+																Type:     schema.TypeString,
+																Required: true,
+															},
+															attributes.Name: {
+																Type:     schema.TypeString,
+																Required: true,
+															},
+															attributes.Type: {
+																Type:     schema.TypeString,
+																Required: true,
+															},
+														},
+													},
+												},
+												attributes.UAMDisplayName: {
+													Type:        schema.TypeString,
+													Computed:    true,
+													Description: descriptions.UAMDisplayName,
+													Optional:    true,
+												},
 											},
 										},
 									},

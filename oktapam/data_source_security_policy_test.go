@@ -110,6 +110,15 @@ resource "oktapam_secret_folder" "test_acc_secret_folder_top_level" {
 	resource_group = oktapam_resource_group.test_acc_resource_group.id
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 }
+resource "oktapam_sudo_commands_bundle" "test_acc_sudo_command_bundle" {
+	name = "scb-%s"
+	structured_commands {
+		command       = "/bin/run.sh"
+		command_type  = "executable"
+		args_type     = "custom"
+		args          = "ls"
+	}
+}
 resource "oktapam_security_policy" "test_ds_security_policies" {
 	name = "%s"
 	description = "terraform test sp"
@@ -139,6 +148,12 @@ resource "oktapam_security_policy" "test_ds_security_policies" {
 			principal_account_ssh {
 				enabled = true
 				admin_level_permissions = false
+				uam_display_name = "foo-uam"
+				sudo_command_bundles {
+					id = oktapam_sudo_commands_bundle.test_acc_sudo_command_bundle.id
+					name = oktapam_sudo_commands_bundle.test_acc_sudo_command_bundle.name
+					type = "sudo_command_bundle"
+				}
 			}
 		}
 		conditions {
@@ -180,7 +195,7 @@ resource "oktapam_security_policy" "test_ds_security_policies" {
 `
 
 func createTestAccDatasourceSecurityPolicyInitConfig(identifier string, serverID string) string {
-	return fmt.Sprintf(testAccDatasourceSecurityPolicyCreateConfigFormat, identifier, identifier, identifier, identifier, identifier, identifier, serverID)
+	return fmt.Sprintf(testAccDatasourceSecurityPolicyCreateConfigFormat, identifier, identifier, identifier, identifier, identifier, identifier, identifier, serverID)
 }
 
 const testAccDatasourceSecurityPolicyFormat = `
