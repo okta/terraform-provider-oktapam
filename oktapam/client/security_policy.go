@@ -652,7 +652,7 @@ func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
 	} else {
 		m[attributes.AdminLevelPermissions] = false
 	}
-	if p.SudoCommandBundles != nil {
+	if len(p.SudoCommandBundles) > 0 {
 		scbs := make([]map[string]string, len(p.SudoCommandBundles))
 		for i, scb := range p.SudoCommandBundles {
 			scbs[i] = map[string]string{
@@ -664,6 +664,7 @@ func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
 		m[attributes.SudoCommandBundles] = scbs
 		m[attributes.UAMDisplayName] = p.UAMDisplayName
 	}
+	fmt.Printf("Ulfat: %+v", m)
 	return m
 }
 
