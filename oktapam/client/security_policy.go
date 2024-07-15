@@ -886,7 +886,8 @@ func (c OktaPAMClient) GetSecurityPolicy(ctx context.Context, securityPolicyID s
 
 	statusCode := resp.StatusCode()
 	if statusCode == http.StatusOK {
-		fmt.Printf("GetSecurityPolicy Ulfat: %+v", *policy)
+		fmt.Printf("GetSecurityPolicy Ulfat: %+v", *policy.Rules[0].Privileges[0])
+		fmt.Printf("GetSecurityPolicy Ulfat: %+v", *policy.Rules[0].Privileges[1])
 		return policy, nil
 	} else if statusCode == http.StatusNotFound {
 		return nil, nil
