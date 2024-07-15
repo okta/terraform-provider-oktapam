@@ -634,10 +634,10 @@ func (p *PrincipalAccountRDPPrivilege) ToResourceMap() map[string]any {
 }
 
 type PrincipalAccountSSHPrivilege struct {
-	Enabled               *bool                              `json:"principal_account_ssh"`
-	AdminLevelPermissions *bool                              `json:"admin_level_permissions"`
-	UAMDisplayName        *string                            `json:"uam_display_name"`
-	SudoCommandBundles    []PrincipalAccountSSHSudoPrivilege `json:"sudo_command_bundles"`
+	Enabled               *bool         `json:"principal_account_ssh"`
+	AdminLevelPermissions *bool         `json:"admin_level_permissions"`
+	UAMDisplayName        *string       `json:"uam_display_name"`
+	SudoCommandBundles    []NamedObject `json:"sudo_command_bundles"`
 }
 
 func (*PrincipalAccountSSHPrivilege) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
@@ -653,9 +653,9 @@ func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
 		m[attributes.AdminLevelPermissions] = false
 	}
 	if len(p.SudoCommandBundles) > 0 {
-		scbs := make([]map[string]string, len(p.SudoCommandBundles))
+		scbs := make([]map[string]any, len(p.SudoCommandBundles))
 		for i, scb := range p.SudoCommandBundles {
-			scbs[i] = map[string]string{
+			scbs[i] = map[string]any{
 				attributes.ID:   scb.Id,
 				attributes.Type: scb.Type,
 				attributes.Name: scb.Name,
@@ -886,8 +886,7 @@ func (c OktaPAMClient) GetSecurityPolicy(ctx context.Context, securityPolicyID s
 
 	statusCode := resp.StatusCode()
 	if statusCode == http.StatusOK {
-		fmt.Printf("GetSecurityPolicy Ulfat: %+v", *policy.Rules[0].Privileges[0])
-		fmt.Printf("GetSecurityPolicy Ulfat: %+v", *policy.Rules[0].Privileges[1])
+		fmt.Printf("GetSecurityPolicy Ulfat: %+v", *policy)
 		return policy, nil
 	} else if statusCode == http.StatusNotFound {
 		return nil, nil
