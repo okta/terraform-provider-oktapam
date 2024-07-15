@@ -607,6 +607,12 @@ type SecurityPolicyRulePrivilege interface {
 	ToResourceMap() map[string]any
 }
 
+type PrincipalAccountSSHSudoPrivilege struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
+	Type string `json:"type"`
+}
+
 type PrincipalAccountRDPPrivilege struct {
 	Enabled               *bool `json:"principal_account_rdp"`
 	AdminLevelPermissions *bool `json:"admin_level_permissions"`
@@ -628,8 +634,10 @@ func (p *PrincipalAccountRDPPrivilege) ToResourceMap() map[string]any {
 }
 
 type PrincipalAccountSSHPrivilege struct {
-	Enabled               *bool `json:"principal_account_ssh"`
-	AdminLevelPermissions *bool `json:"admin_level_permissions"`
+	Enabled               *bool                              `json:"principal_account_ssh"`
+	AdminLevelPermissions *bool                              `json:"admin_level_permissions"`
+	UAMDisplayName        *string                            `json:"uam_display_name"`
+	SudoCommandBundles    []PrincipalAccountSSHSudoPrivilege `json:"sudo_command_bundles"`
 }
 
 func (*PrincipalAccountSSHPrivilege) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
@@ -643,6 +651,18 @@ func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
 		m[attributes.AdminLevelPermissions] = *p.AdminLevelPermissions
 	} else {
 		m[attributes.AdminLevelPermissions] = false
+	}
+	if p.SudoCommandBundles != nil {
+		scbs := make([]map[string]string, len(p.SudoCommandBundles))
+		for i, scb := range p.SudoCommandBundles {
+			scbs[i] = map[string]string{
+				attributes.ID:   scb.Id,
+				attributes.Type: scb.Type,
+				attributes.Name: scb.Name,
+			}
+		}
+		m[attributes.SudoCommandBundles] = scbs
+		m[attributes.UAMDisplayName] = p.UAMDisplayName
 	}
 	return m
 }

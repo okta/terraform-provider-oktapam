@@ -31,6 +31,10 @@ func TestAccSecurityPolicy(t *testing.T) {
 	secretsSecurityPolicyName := fmt.Sprintf("test_acc_secrets_security_policy_%s", randSeq())
 	group1Name := fmt.Sprintf("test_acc_security_policy_group1_%s", randSeq())
 	group2Name := fmt.Sprintf("test_acc_security_policy_group2_%s", randSeq())
+	sudoCommandBundle1Name := fmt.Sprintf("test_acc_sudo_command_bundle_%s", randSeq())
+	sudoCommandBundle2Name := fmt.Sprintf("test_acc_sudo_command_bundle_%s", randSeq())
+	uamDisplay1Name := fmt.Sprintf("uam_display_%s", randSeq())
+	uamDisplay2Name := fmt.Sprintf("uam_display_%s", randSeq())
 	validServerID := getValidServerID()
 
 	initialSecurityPolicy := &client.SecurityPolicy{
@@ -89,6 +93,14 @@ func TestAccSecurityPolicy(t *testing.T) {
 						PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
 							Enabled:               utils.AsBoolPtr(true),
 							AdminLevelPermissions: utils.AsBoolPtr(true),
+							SudoCommandBundles: []client.PrincipalAccountSSHSudoPrivilege{
+								{
+									Id:   randIdentifier,
+									Name: sudoCommandBundle1Name,
+									Type: "sudo_command_bundle",
+								},
+							},
+							UAMDisplayName: utils.AsStringPtr(uamDisplay1Name),
 						},
 					},
 				},
@@ -168,6 +180,21 @@ func TestAccSecurityPolicy(t *testing.T) {
 						PrivilegeValue: &client.PrincipalAccountRDPPrivilege{
 							Enabled:               utils.AsBoolPtrZero(false, true),
 							AdminLevelPermissions: utils.AsBoolPtrZero(false, true),
+						},
+					},
+					{
+						PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
+						PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
+							Enabled:               utils.AsBoolPtr(true),
+							AdminLevelPermissions: utils.AsBoolPtr(true),
+							SudoCommandBundles: []client.PrincipalAccountSSHSudoPrivilege{
+								{
+									Id:   randIdentifier,
+									Name: sudoCommandBundle2Name,
+									Type: "sudo_command_bundle",
+								},
+							},
+							UAMDisplayName: utils.AsStringPtr(uamDisplay2Name),
 						},
 					},
 				},
