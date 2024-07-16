@@ -664,7 +664,6 @@ func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
 		m[attributes.SudoCommandBundles] = scbs
 		m[attributes.UAMDisplayName] = p.UAMDisplayName
 	}
-	fmt.Printf("Ulfat: %+v %+v", m, p.SudoCommandBundles)
 	return m
 }
 
@@ -886,7 +885,6 @@ func (c OktaPAMClient) GetSecurityPolicy(ctx context.Context, securityPolicyID s
 
 	statusCode := resp.StatusCode()
 	if statusCode == http.StatusOK {
-		fmt.Printf("GetSecurityPolicy Ulfat: %+v", *policy)
 		return policy, nil
 	} else if statusCode == http.StatusNotFound {
 		return nil, nil

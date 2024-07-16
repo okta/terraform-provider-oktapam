@@ -13,7 +13,6 @@ func TestAccDataSourceSudoCommandBundle(t *testing.T) {
 	identifier := randSeq()
 	resourceName := "test_acc_sudo_commands_bundle"
 	initConfig := createTestAccDataSourceSudoCommandBundleInitConfig(identifier)
-	fmt.Printf("initconfig: %s", initConfig)
 	fetchConfig := testAccDataSourceSudoCommandBundleConfig("sudo-commands-bundle", identifier+"-1", resourceName)
 
 	resource.Test(t, resource.TestCase{

@@ -304,15 +304,15 @@ func dataSourceSecurityPolicy() *schema.Resource {
 														Schema: map[string]*schema.Schema{
 															attributes.ID: {
 																Type:     schema.TypeString,
-																Computed: true,
+																Required: true,
 															},
 															attributes.Name: {
 																Type:     schema.TypeString,
-																Computed: true,
+																Optional: true,
 															},
 															attributes.Type: {
 																Type:     schema.TypeString,
-																Computed: true,
+																Optional: true,
 															},
 														},
 													},

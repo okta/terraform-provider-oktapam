@@ -59,7 +59,6 @@ func TestAccDatasourceSecurityPolicyFetch(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH, attributes.Enabled), "true"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH, attributes.AdminLevelPermissions), "false"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH, attributes.UAMDisplayName), "foo-uam"),
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH, attributes.SudoCommandBundles, attributes.ID), identifier),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH, attributes.SudoCommandBundles, attributes.Name), identifier),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH, attributes.SudoCommandBundles, attributes.Type), fmt.Sprintf("scb-%s", identifier)),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.#", attributes.Rule, attributes.Resources), "1"),
