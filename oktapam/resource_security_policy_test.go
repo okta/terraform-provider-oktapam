@@ -350,17 +350,17 @@ func testAccSecurityPolicyCheckExists(rn string, expectedSecurityPolicy *client.
 			return fmt.Errorf("security policy does not exist")
 		}
 		msc, _ := json.Marshal(securityPolicy)
-		fmt.Printf("Ulfat befor computed: %v", string(msc))
+		fmt.Printf("Ulfat befor computed: %v\n", string(msc))
 		exp, _ := json.Marshal(expectedSecurityPolicy)
-		fmt.Printf("Ulfat befor expected: %v", string(exp))
+		fmt.Printf("Ulfat befor expected: %v\n", string(exp))
 		err = insertComputedValuesForSecurityPolicy(expectedSecurityPolicy, securityPolicy)
 		if err != nil {
 			return err
 		}
 		msc, _ = json.Marshal(securityPolicy)
-		fmt.Printf("Ulfat after computed: %v", string(msc))
+		fmt.Printf("Ulfat after computed: %v\n", string(msc))
 		exp, _ = json.Marshal(expectedSecurityPolicy)
-		fmt.Printf("Ulfat after expected: %v", string(exp))
+		fmt.Printf("Ulfat after expected: %v\n", string(exp))
 		// Ignore Id as it is not possible to get ID generated at runtime in tests and it is not a computed property
 		// of the tf resource.
 		comparison := cmp.Diff(expectedSecurityPolicy, securityPolicy, cmpopts.IgnoreFields(client.NamedObject{}, "Id"))
