@@ -16,16 +16,16 @@ jobs:
         run: |
           ./scripts/ci-compile.sh
       - run: echo "🍏 This job's status is ${{ job.status }}."
-#  check2:
-#    name: Unit Tests
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Check out repository code
-#        uses: actions/checkout@v3
-#      - name: Run unit tests
-#        run: |
-#          ./scripts/ci-tests.sh
-#      - run: echo "🍏 This job's status is ${{ job.status }}."
+  check2:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Run unit tests
+        run: |
+          ./scripts/ci-tests.sh
+      - run: echo "🍏 This job's status is ${{ job.status }}."
 #  check3:
 #    name: ASA Acceptance Tests
 #    # Ensure acceptance tests are only run on okta/terraform-provider-oktapam or if a special label is applied (`run-acceptance-tests`)
