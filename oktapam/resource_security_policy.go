@@ -1186,6 +1186,7 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 
 	if principalAccountSSHI, ok := privilegesM[attributes.PrincipalAccountSSH]; ok {
 		if enabled, hasValue := readPrivilegeEnabled(principalAccountSSHI); hasValue {
+			fmt.Printf("Ulfat: principalAccountSSHI: %+v", principalAccountSSHI)
 			adminLevelPermissions := readAdminLevelPermissionEnabled(principalAccountSSHI)
 			sudoCommandBundles := readSudoCommandBundles(principalAccountSSHI)
 			uamDisplayName := readUAMDisplayName(principalAccountSSHI)
@@ -1211,6 +1212,8 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 				})
 			}
 			hasSSHPriv = hasSSHPriv || enabled
+
+			fmt.Printf("Ulfat privileges: %+v", privileges)
 		}
 	}
 

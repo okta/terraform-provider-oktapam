@@ -607,12 +607,6 @@ type SecurityPolicyRulePrivilege interface {
 	ToResourceMap() map[string]any
 }
 
-type PrincipalAccountSSHSudoPrivilege struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
-	Type string `json:"type"`
-}
-
 type PrincipalAccountRDPPrivilege struct {
 	Enabled               *bool `json:"principal_account_rdp"`
 	AdminLevelPermissions *bool `json:"admin_level_permissions"`
@@ -652,6 +646,7 @@ func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
 	} else {
 		m[attributes.AdminLevelPermissions] = false
 	}
+	fmt.Printf("Ulfat: m: %+v m[attributes.AdminLevelPermissions]: %v", m, m[attributes.AdminLevelPermissions])
 	if len(p.SudoCommandBundles) > 0 {
 		scbs := make([]map[string]any, len(p.SudoCommandBundles))
 		for i, scb := range p.SudoCommandBundles {
