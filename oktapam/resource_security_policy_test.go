@@ -90,7 +90,8 @@ func TestAccSecurityPolicy(t *testing.T) {
 					{
 						PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
 						PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
-							Enabled: utils.AsBoolPtr(true),
+							Enabled:               utils.AsBoolPtr(true),
+							AdminLevelPermissions: utils.AsBoolPtr(false),
 							SudoCommandBundles: []client.NamedObject{
 								{
 									Name: &sudoCommandBundle1Name,
