@@ -338,7 +338,7 @@ func resourceSecurityPolicy() *schema.Resource {
 														Schema: map[string]*schema.Schema{
 															attributes.ID: {
 																Type:     schema.TypeString,
-																Computed: true,
+																Optional: true,
 															},
 															attributes.Name: {
 																Type:     schema.TypeString,
