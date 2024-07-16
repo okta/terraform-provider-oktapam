@@ -1362,12 +1362,14 @@ func readSudoCommandBundles(privilege any) []client.NamedObject {
 
 	privilegeM := privilegeArr[0].(map[string]any)
 
+	var result []client.NamedObject
 	if scbs, ok := privilegeM[attributes.SudoCommandBundles]; ok {
-		fmt.Printf("Ulfat: scbs: %+v", scbs)
-		return scbs.([]client.NamedObject)
+		for _, scb := range scbs.([]any) {
+			result = append(result, scb.(client.NamedObject))
+		}
 	}
 
-	return nil
+	return result
 }
 
 func readUAMDisplayName(privilege any) string {
