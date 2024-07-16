@@ -1363,6 +1363,7 @@ func readSudoCommandBundles(privilege any) []client.NamedObject {
 	privilegeM := privilegeArr[0].(map[string]any)
 
 	if scbs, ok := privilegeM[attributes.SudoCommandBundles]; ok {
+		fmt.Printf("Ulfat: scbs: %+v", scbs)
 		return scbs.([]client.NamedObject)
 	}
 
