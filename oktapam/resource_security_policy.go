@@ -1365,7 +1365,14 @@ func readSudoCommandBundles(privilege any) []client.NamedObject {
 	var result []client.NamedObject
 	if scbs, ok := privilegeM[attributes.SudoCommandBundles]; ok {
 		for _, scb := range scbs.([]any) {
-			result = append(result, scb.(client.NamedObject))
+			bundle := scb.(map[string]any)
+			Id := bundle[attributes.ID].(string)
+			Name := bundle[attributes.Name].(string)
+			result = append(result, client.NamedObject{
+				Id:   &Id,
+				Name: &Name,
+				Type: client.SudoCommandBundleNamedObjectType,
+			})
 		}
 	}
 
