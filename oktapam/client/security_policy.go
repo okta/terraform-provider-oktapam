@@ -629,7 +629,7 @@ func (p *PrincipalAccountRDPPrivilege) ToResourceMap() map[string]any {
 
 type PrincipalAccountSSHPrivilege struct {
 	Enabled               *bool         `json:"principal_account_ssh"`
-	AdminLevelPermissions *bool         `json:"admin_level_permissions"`
+	AdminLevelPermissions *bool         `json:"admin_level_permissions,omitempty"`
 	UAMDisplayName        *string       `json:"uam_display_name"`
 	SudoCommandBundles    []NamedObject `json:"sudo_command_bundles"`
 }
