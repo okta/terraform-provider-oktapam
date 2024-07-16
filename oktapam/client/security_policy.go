@@ -639,14 +639,13 @@ func (*PrincipalAccountSSHPrivilege) ValidForResourceType(resourceSelectorType R
 }
 
 func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
-	m := make(map[string]any, 2)
+	m := make(map[string]any)
 	m[attributes.Enabled] = *p.Enabled
 	if p.AdminLevelPermissions != nil {
 		m[attributes.AdminLevelPermissions] = *p.AdminLevelPermissions
 	} else {
 		m[attributes.AdminLevelPermissions] = false
 	}
-	fmt.Printf("Ulfat: m: %+v m[attributes.AdminLevelPermissions]: %v", m, m[attributes.AdminLevelPermissions])
 	if len(p.SudoCommandBundles) > 0 {
 		scbs := make([]map[string]any, len(p.SudoCommandBundles))
 		for i, scb := range p.SudoCommandBundles {
