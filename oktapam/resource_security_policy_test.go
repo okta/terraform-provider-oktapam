@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"regexp"
@@ -348,10 +349,18 @@ func testAccSecurityPolicyCheckExists(rn string, expectedSecurityPolicy *client.
 		} else if securityPolicy == nil {
 			return fmt.Errorf("security policy does not exist")
 		}
+		msc, _ := json.Marshal(securityPolicy)
+		fmt.Printf("Ulfat befor computed: %v", string(msc))
+		exp, _ := json.Marshal(expectedSecurityPolicy)
+		fmt.Printf("Ulfat befor expected: %v", string(exp))
 		err = insertComputedValuesForSecurityPolicy(expectedSecurityPolicy, securityPolicy)
 		if err != nil {
 			return err
 		}
+		msc, _ = json.Marshal(securityPolicy)
+		fmt.Printf("Ulfat after computed: %v", string(msc))
+		exp, _ = json.Marshal(expectedSecurityPolicy)
+		fmt.Printf("Ulfat after expected: %v", string(exp))
 		// Ignore Id as it is not possible to get ID generated at runtime in tests and it is not a computed property
 		// of the tf resource.
 		comparison := cmp.Diff(expectedSecurityPolicy, securityPolicy, cmpopts.IgnoreFields(client.NamedObject{}, "Id"))
