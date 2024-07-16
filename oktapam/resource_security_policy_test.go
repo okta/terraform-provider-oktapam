@@ -31,7 +31,7 @@ func TestAccSecurityPolicy(t *testing.T) {
 	secretsSecurityPolicyName := fmt.Sprintf("test_acc_secrets_security_policy_%s", randSeq())
 	group1Name := fmt.Sprintf("test_acc_security_policy_group1_%s", randSeq())
 	group2Name := fmt.Sprintf("test_acc_security_policy_group2_%s", randSeq())
-	sudoCommandBundle1Name := fmt.Sprintf("test_acc_sudo_command_bundle1_%s", randSeq())
+	sudoCommandBundle1Name := fmt.Sprintf("scb-test_acc_sudo_command_bundle1_%s", randSeq())
 	validServerID := getValidServerID()
 
 	initialSecurityPolicy := &client.SecurityPolicy{

@@ -338,7 +338,7 @@ func resourceSecurityPolicy() *schema.Resource {
 														Schema: map[string]*schema.Schema{
 															attributes.ID: {
 																Type:     schema.TypeString,
-																Optional: true,
+																Computed: true,
 															},
 															attributes.Name: {
 																Type:     schema.TypeString,
@@ -1198,6 +1198,7 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 				p.SudoCommandBundles = sudoCommandBundles
 				p.UAMDisplayName = &uamDisplayName
 			}
+
 			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
 				PrivilegeType:  client.PrincipalAccountSSHPrivilegeType,
 				PrivilegeValue: p,
