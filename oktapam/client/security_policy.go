@@ -658,6 +658,7 @@ func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
 		m[attributes.SudoCommandBundles] = scbs
 		m[attributes.UAMDisplayName] = p.UAMDisplayName
 	}
+	fmt.Printf("Ulfat: m: %+v", m)
 	return m
 }
 
