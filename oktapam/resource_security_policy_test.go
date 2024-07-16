@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/kylelemons/godebug/pretty"
@@ -352,7 +354,9 @@ func testAccSecurityPolicyCheckExists(rn string, expectedSecurityPolicy *client.
 		if err != nil {
 			return err
 		}
-
+		// Ignore Id as it is not possible to get ID generated at runtime in tests and it is not a computed property
+		// of the tf resource.
+		cmp.Diff(expectedSecurityPolicy, securityPolicy, cmpopts.IgnoreFields(client.NamedObject{}, "Id"))
 		comparison := pretty.Compare(expectedSecurityPolicy, securityPolicy)
 		if comparison != "" {
 			return fmt.Errorf("expected security policy does not match returned security policy.\n%s", comparison)
@@ -492,7 +496,7 @@ resource "oktapam_group" "test_security_policy_group2" {
 	name = "%s"
 }
 resource "oktapam_sudo_commands_bundle" "test_acc_sudo_command_bundle" {
-	name = "scb-%s"
+	name = "%s"
 	structured_commands {
 		command       = "/bin/run.sh"
 		command_type  = "executable"
