@@ -11,7 +11,6 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/kylelemons/godebug/pretty"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
@@ -356,8 +355,7 @@ func testAccSecurityPolicyCheckExists(rn string, expectedSecurityPolicy *client.
 		}
 		// Ignore Id as it is not possible to get ID generated at runtime in tests and it is not a computed property
 		// of the tf resource.
-		cmp.Diff(expectedSecurityPolicy, securityPolicy, cmpopts.IgnoreFields(client.NamedObject{}, "Id"))
-		comparison := pretty.Compare(expectedSecurityPolicy, securityPolicy)
+		comparison := cmp.Diff(expectedSecurityPolicy, securityPolicy, cmpopts.IgnoreFields(client.NamedObject{}, "Id"))
 		if comparison != "" {
 			return fmt.Errorf("expected security policy does not match returned security policy.\n%s", comparison)
 		}
