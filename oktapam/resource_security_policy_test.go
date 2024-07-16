@@ -89,7 +89,7 @@ func TestAccSecurityPolicy(t *testing.T) {
 						PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
 						PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
 							Enabled:               utils.AsBoolPtr(true),
-							AdminLevelPermissions: utils.AsBoolPtr(true),
+							AdminLevelPermissions: utils.AsBoolPtr(false),
 							SudoCommandBundles: []client.NamedObject{
 								{
 									Name: &sudoCommandBundle1Name,
@@ -528,7 +528,7 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 			}
 			principal_account_ssh {
 				enabled = true
-				admin_level_permissions = true
+				admin_level_permissions = false
 				uam_display_name = "foo-uam"
 				sudo_command_bundles {
 					id = oktapam_sudo_commands_bundle.test_acc_sudo_command_bundle.id
