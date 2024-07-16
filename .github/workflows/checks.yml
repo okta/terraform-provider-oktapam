@@ -60,7 +60,7 @@ jobs:
 #          OKTAPAM_TEAM: ${{ secrets.OKTA_499446_OKTAPAM_TEAM }}
 #          OKTAPAM_API_HOST: ${{ secrets.OKTA_499446_OKTAPAM_API_HOST }}
 #      - run: echo "🍏 This job's status is ${{ job.status }}."
-  check4:
+  check3:
     name: OktaPA Acceptance Tests
     # Ensure acceptance tests are only run on okta/terraform-provider-oktapam or if a special label is applied (`run-acceptance-tests`)
     if: github.repository == 'okta/terraform-provider-oktapam' || github.event.label.name == 'run-acceptance-tests'
@@ -105,7 +105,7 @@ jobs:
           OKTAPAM_TRUSTED_DOMAIN_OVERRIDE: ${{ secrets.OKTA_623529_PAM_TEAM_OKTAPAM_TRUSTED_DOMAIN_OVERRIDE }}
           OKTAPAM_API_HOST: ${{ secrets.OKTA_623529_PAM_TEAM_OKTAPAM_API_HOST }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-  check5:
+  check4:
     name: Doc Generation
     runs-on: ubuntu-latest
     steps:
