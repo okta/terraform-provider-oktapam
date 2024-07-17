@@ -91,7 +91,7 @@ func TestAccSecurityPolicy(t *testing.T) {
 						PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
 						PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
 							Enabled:               utils.AsBoolPtr(true),
-							AdminLevelPermissions: utils.AsBoolPtr(false),
+							AdminLevelPermissions: utils.AsBoolPtrZero(false, true),
 							SudoCommandBundles: []client.NamedObject{
 								{
 									Name: &sudoCommandBundle1Name,
@@ -309,7 +309,7 @@ func TestAccSecurityPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: createTestAccSecurityPolicyUpdateConfig(group1Name, securityPolicyName, validServerID),
+				Config: createTestAccSecurityPolicyUpdateConfig(group1Name, sudoCommandBundle1Name, securityPolicyName, validServerID),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccSecurityPolicyCheckExists(resourceName, updatedSecurityPolicy),
 					resource.TestCheckResourceAttr(
@@ -572,6 +572,15 @@ const testAccSecurityPolicyUpdateConfigFormat = `
 resource "oktapam_group" "test_security_policy_group1" {
 	name = "%s"
 }
+resource "oktapam_sudo_commands_bundle" "test_acc_sudo_command_bundle" {
+	name = "%s"
+	structured_commands {
+		command       = "/bin/run.sh"
+		command_type  = "executable"
+		args_type     = "custom"
+		args          = "ls"
+	}
+}
 resource "oktapam_security_policy" "test_acc_security_policy" {
 	name = "%s"
 	description = "updated description"
@@ -818,8 +827,8 @@ resource "oktapam_security_policy" "test_acc_secrets_security_policy" {
 }
 `
 
-func createTestAccSecurityPolicyUpdateConfig(group1Name string, securityPolicyName string, serverID string) string {
-	return fmt.Sprintf(testAccSecurityPolicyUpdateConfigFormat, group1Name, securityPolicyName, serverID)
+func createTestAccSecurityPolicyUpdateConfig(group1Name, sudoCommandBundleName string, securityPolicyName string, serverID string) string {
+	return fmt.Sprintf(testAccSecurityPolicyUpdateConfigFormat, group1Name, sudoCommandBundleName, securityPolicyName, serverID)
 }
 
 func createTestAccSecurityPolicyInvalidAdminPrivilegesConfig(group1Name string, securityPolicyName string, serverID string) string {
