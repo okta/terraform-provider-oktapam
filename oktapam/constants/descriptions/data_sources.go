@@ -33,7 +33,7 @@ var (
 	SourceTeamSettings                       = "Returns Team-level settings, such as authentication and enrollment details, for your Team."
 	SourceADUserSyncTaskSettings             = fmt.Sprintf("Returns an existing AD user sync job. %s", LinkADUserDiscovery)
 	SourceCloudConnection                    = fmt.Sprintf("Returns an existing PAM Cloud Connection. %s", LinkCloudConnection)
-
+	SourceSudoCommandsBundle                 = fmt.Sprintf("Returns an existing PAM Sudo Commands Bundle. %s", LinkSudoCommandsBundle)
 	// List
 	SourceADUserSyncTaskSettingsIDList        = fmt.Sprintf("Returns a list of all AD user sync jobs a specified AD Connection. %s", LinkADUserDiscovery)
 	SourceDatabases                           = "Returns a list of Databases, constrained by the given parameters."
@@ -47,4 +47,5 @@ var (
 	SourceSecrets                             = fmt.Sprintf("Returns a list of Secrets, constrained by the given parameters. %s", LinkSecret)
 	SourceSecurityPolicies                    = fmt.Sprintf("Returns a list of Security Policies associated with the Team specified by the OKTAPAM_TEAM environment variable. %s", LinkSecurityPolicy)
 	SourceCloudConnections                    = fmt.Sprintf("Returns a list of Cloud Connections. %s", LinkCloudConnection)
+	SourceSudoCommandsBundles                 = fmt.Sprintf("Returns a list of Sudo Commands Bundles. %s", LinkSudoCommandsBundle)
 )

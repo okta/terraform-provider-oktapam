@@ -295,6 +295,34 @@ func dataSourceSecurityPolicy() *schema.Resource {
 													Computed:    true,
 													Description: descriptions.AdminLevelPermissions,
 												},
+												attributes.SudoCommandBundles: {
+													Type:        schema.TypeList,
+													Computed:    true,
+													Description: descriptions.SourceSudoCommandsBundles,
+													Optional:    true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															attributes.ID: {
+																Type:     schema.TypeString,
+																Required: true,
+															},
+															attributes.Name: {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															attributes.Type: {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+														},
+													},
+												},
+												attributes.UAMDisplayName: {
+													Type:        schema.TypeString,
+													Computed:    true,
+													Description: descriptions.UAMDisplayName,
+													Optional:    true,
+												},
 											},
 										},
 									},

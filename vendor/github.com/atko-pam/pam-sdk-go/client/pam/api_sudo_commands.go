@@ -260,6 +260,34 @@ type ApiListSudoCommandBundlesRequest struct {
 	ctx        context.Context
 	ApiService *SudoCommandsAPIService
 	teamName   string
+	count      *int32
+	descending *bool
+	offset     *string
+	prev       *bool
+}
+
+// The number of objects per page
+func (r ApiListSudoCommandBundlesRequest) Count(count int32) ApiListSudoCommandBundlesRequest {
+	r.count = &count
+	return r
+}
+
+// The object order
+func (r ApiListSudoCommandBundlesRequest) Descending(descending bool) ApiListSudoCommandBundlesRequest {
+	r.descending = &descending
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListSudoCommandBundlesRequest) Offset(offset string) ApiListSudoCommandBundlesRequest {
+	r.offset = &offset
+	return r
+}
+
+// The direction of paging
+func (r ApiListSudoCommandBundlesRequest) Prev(prev bool) ApiListSudoCommandBundlesRequest {
+	r.prev = &prev
+	return r
 }
 
 func (r ApiListSudoCommandBundlesRequest) Execute() (*ListSudoCommandBundleResponse, *http.Response, error) {
@@ -304,6 +332,18 @@ func (a *SudoCommandsAPIService) ListSudoCommandBundlesExecute(r ApiListSudoComm
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.count != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
+	}
+	if r.descending != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
+	if r.prev != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 

@@ -15,7 +15,7 @@ import (
 	"encoding/json"
 )
 
-// CheckinType Identifies the trigger for the check-in process
+// CheckinType Identifies the trigger for the checkin process
 type CheckinType string
 
 // List of CheckinType

@@ -330,6 +330,32 @@ func resourceSecurityPolicy() *schema.Resource {
 													Computed:    true,
 													Description: descriptions.AdminLevelPermissions,
 												},
+												attributes.SudoCommandBundles: {
+													Type:        schema.TypeList,
+													Description: descriptions.SourceSudoCommandsBundles,
+													Optional:    true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															attributes.ID: {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															attributes.Name: {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															attributes.Type: {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+														},
+													},
+												},
+												attributes.UAMDisplayName: {
+													Type:        schema.TypeString,
+													Description: descriptions.UAMDisplayName,
+													Optional:    true,
+												},
 											},
 										},
 									},
@@ -1161,12 +1187,21 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 	if principalAccountSSHI, ok := privilegesM[attributes.PrincipalAccountSSH]; ok {
 		if enabled, hasValue := readPrivilegeEnabled(principalAccountSSHI); hasValue {
 			adminLevelPermissions := readAdminLevelPermissionEnabled(principalAccountSSHI)
+			sudoCommandBundles := readSudoCommandBundles(principalAccountSSHI)
+			uamDisplayName := readUAMDisplayName(principalAccountSSHI)
+			p := &client.PrincipalAccountSSHPrivilege{
+				Enabled:               &enabled,
+				AdminLevelPermissions: &adminLevelPermissions,
+			}
+
+			if len(sudoCommandBundles) > 0 {
+				p.SudoCommandBundles = sudoCommandBundles
+				p.UAMDisplayName = &uamDisplayName
+			}
+
 			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
-				PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
-				PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
-					Enabled:               &enabled,
-					AdminLevelPermissions: &adminLevelPermissions,
-				},
+				PrivilegeType:  client.PrincipalAccountSSHPrivilegeType,
+				PrivilegeValue: p,
 			})
 
 			if adminLevelPermissions && !enabled {
@@ -1317,6 +1352,48 @@ func readAdminLevelPermissionEnabled(privilege any) bool {
 	}
 
 	return false
+}
+
+func readSudoCommandBundles(privilege any) []client.NamedObject {
+	privilegeArr := privilege.([]any)
+
+	if len(privilegeArr) == 0 {
+		return nil
+	}
+
+	privilegeM := privilegeArr[0].(map[string]any)
+
+	var result []client.NamedObject
+	if scbs, ok := privilegeM[attributes.SudoCommandBundles]; ok {
+		for _, scb := range scbs.([]any) {
+			bundle := scb.(map[string]any)
+			Id := bundle[attributes.ID].(string)
+			Name := bundle[attributes.Name].(string)
+			result = append(result, client.NamedObject{
+				Id:   &Id,
+				Name: &Name,
+				Type: client.SudoCommandBundleNamedObjectType,
+			})
+		}
+	}
+
+	return result
+}
+
+func readUAMDisplayName(privilege any) string {
+	privilegeArr := privilege.([]any)
+
+	if len(privilegeArr) == 0 {
+		return ""
+	}
+
+	privilegeM := privilegeArr[0].(map[string]any)
+
+	if uamDisplayName, ok := privilegeM[attributes.UAMDisplayName]; ok {
+		return uamDisplayName.(string)
+	}
+
+	return ""
 }
 
 func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPolicyPrincipals, diag.Diagnostics) {

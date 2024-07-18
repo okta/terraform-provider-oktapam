@@ -28,9 +28,9 @@ type CheckedOutResourceByUserDetails struct {
 	CheckoutAt time.Time `json:"checkout_at"`
 	// The timestamp when the resource lease expires
 	CheckoutExpiryAt time.Time `json:"checkout_expiry_at"`
-	// The UUID of the User or system responsible for the last check-in
+	// The UUID of the User or system responsible for the last checkin
 	CheckinBy *string `json:"checkin_by,omitempty"`
-	// The timestamp when the resource check-in process started
+	// The timestamp when the resource checkin process started
 	CheckinStartAt *time.Time   `json:"checkin_start_at,omitempty"`
 	CheckinType    *CheckinType `json:"checkin_type,omitempty"`
 	// The name of the resource. Only returned if a `resource_type` query was specified.

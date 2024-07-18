@@ -101,6 +101,21 @@ Required:
 Optional:
 
 - `admin_level_permissions` (Boolean) Provides coarse grain (full admin) access to the user.
+- `sudo_command_bundles` (Block List) Returns a list of Sudo Commands Bundles. For details, see [Sudo Commands Bundle](https://help.okta.com/okta_help.htm?type=oie&id=csh-pam-sudo-commands). (see [below for nested schema](#nestedblock--rule--privileges--principal_account_ssh--sudo_command_bundles))
+- `uam_display_name` (String) TBD
+
+<a id="nestedblock--rule--privileges--principal_account_ssh--sudo_command_bundles"></a>
+### Nested Schema for `rule.privileges.principal_account_ssh.uam_display_name`
+
+Optional:
+
+- `name` (String)
+- `type` (String)
+
+Read-Only:
+
+- `id` (String) The ID of this resource.
+
 
 
 <a id="nestedblock--rule--privileges--secret"></a>

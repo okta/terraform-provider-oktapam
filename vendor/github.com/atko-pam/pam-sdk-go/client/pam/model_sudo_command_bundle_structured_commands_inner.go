@@ -20,21 +20,22 @@ var _ MappedNullable = &SudoCommandBundleStructuredCommandsInner{}
 
 // SudoCommandBundleStructuredCommandsInner struct for SudoCommandBundleStructuredCommandsInner
 type SudoCommandBundleStructuredCommandsInner struct {
-	Args            NullableSudoCommandBundleStructuredCommandsInnerArgs `json:"args,omitempty"`
-	ArgsType        NullableSudoCommandBundleStructuredCommandsInnerArgs `json:"args_type,omitempty"`
-	Command         SudoCommandBundleStructuredCommandsInnerCommand      `json:"command"`
-	CommandType     string                                               `json:"command_type"`
-	RenderedCommand *string                                              `json:"rendered_command,omitempty"`
+	// The args are only allowed for 'executable' command type
+	Args            *string     `json:"args,omitempty"`
+	ArgsType        *ArgsType   `json:"args_type,omitempty"`
+	CommandType     CommandType `json:"command_type"`
+	Command         string      `json:"command"`
+	RenderedCommand *string     `json:"rendered_command,omitempty"`
 }
 
 // NewSudoCommandBundleStructuredCommandsInner instantiates a new SudoCommandBundleStructuredCommandsInner object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSudoCommandBundleStructuredCommandsInner(command SudoCommandBundleStructuredCommandsInnerCommand, commandType string) *SudoCommandBundleStructuredCommandsInner {
+func NewSudoCommandBundleStructuredCommandsInner(commandType CommandType, command string) *SudoCommandBundleStructuredCommandsInner {
 	this := SudoCommandBundleStructuredCommandsInner{}
-	this.Command = command
 	this.CommandType = commandType
+	this.Command = command
 	return &this
 }
 
@@ -46,127 +47,76 @@ func NewSudoCommandBundleStructuredCommandsInnerWithDefaults() *SudoCommandBundl
 	return &this
 }
 
-// GetArgs returns the Args field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *SudoCommandBundleStructuredCommandsInner) GetArgs() SudoCommandBundleStructuredCommandsInnerArgs {
-	if o == nil || IsNil(o.Args.Get()) {
-		var ret SudoCommandBundleStructuredCommandsInnerArgs
+// GetArgs returns the Args field value if set, zero value otherwise.
+func (o *SudoCommandBundleStructuredCommandsInner) GetArgs() string {
+	if o == nil || IsNil(o.Args) {
+		var ret string
 		return ret
 	}
-	return *o.Args.Get()
+	return *o.Args
 }
 
 // GetArgsOk returns a tuple with the Args field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *SudoCommandBundleStructuredCommandsInner) GetArgsOk() (*SudoCommandBundleStructuredCommandsInnerArgs, bool) {
-	if o == nil {
+func (o *SudoCommandBundleStructuredCommandsInner) GetArgsOk() (*string, bool) {
+	if o == nil || IsNil(o.Args) {
 		return nil, false
 	}
-	return o.Args.Get(), o.Args.IsSet()
+	return o.Args, true
 }
 
 // HasArgs returns a boolean if a field has been set.
 func (o *SudoCommandBundleStructuredCommandsInner) HasArgs() bool {
-	if o != nil && o.Args.IsSet() {
+	if o != nil && !IsNil(o.Args) {
 		return true
 	}
 
 	return false
 }
 
-// SetArgs gets a reference to the given NullableSudoCommandBundleStructuredCommandsInnerArgs and assigns it to the Args field.
-func (o *SudoCommandBundleStructuredCommandsInner) SetArgs(v SudoCommandBundleStructuredCommandsInnerArgs) *SudoCommandBundleStructuredCommandsInner {
-	o.Args.Set(&v)
+// SetArgs gets a reference to the given string and assigns it to the Args field.
+func (o *SudoCommandBundleStructuredCommandsInner) SetArgs(v string) *SudoCommandBundleStructuredCommandsInner {
+	o.Args = &v
 	return o
 }
 
-// SetArgsNil sets the value for Args to be an explicit nil
-func (o *SudoCommandBundleStructuredCommandsInner) SetArgsNil() *SudoCommandBundleStructuredCommandsInner {
-	o.Args.Set(nil)
-	return o
-}
-
-// UnsetArgs ensures that no value is present for Args, not even an explicit nil
-func (o *SudoCommandBundleStructuredCommandsInner) UnsetArgs() *SudoCommandBundleStructuredCommandsInner {
-	o.Args.Unset()
-	return o
-}
-
-// GetArgsType returns the ArgsType field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *SudoCommandBundleStructuredCommandsInner) GetArgsType() SudoCommandBundleStructuredCommandsInnerArgs {
-	if o == nil || IsNil(o.ArgsType.Get()) {
-		var ret SudoCommandBundleStructuredCommandsInnerArgs
+// GetArgsType returns the ArgsType field value if set, zero value otherwise.
+func (o *SudoCommandBundleStructuredCommandsInner) GetArgsType() ArgsType {
+	if o == nil || IsNil(o.ArgsType) {
+		var ret ArgsType
 		return ret
 	}
-	return *o.ArgsType.Get()
+	return *o.ArgsType
 }
 
 // GetArgsTypeOk returns a tuple with the ArgsType field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *SudoCommandBundleStructuredCommandsInner) GetArgsTypeOk() (*SudoCommandBundleStructuredCommandsInnerArgs, bool) {
-	if o == nil {
+func (o *SudoCommandBundleStructuredCommandsInner) GetArgsTypeOk() (*ArgsType, bool) {
+	if o == nil || IsNil(o.ArgsType) {
 		return nil, false
 	}
-	return o.ArgsType.Get(), o.ArgsType.IsSet()
+	return o.ArgsType, true
 }
 
 // HasArgsType returns a boolean if a field has been set.
 func (o *SudoCommandBundleStructuredCommandsInner) HasArgsType() bool {
-	if o != nil && o.ArgsType.IsSet() {
+	if o != nil && !IsNil(o.ArgsType) {
 		return true
 	}
 
 	return false
 }
 
-// SetArgsType gets a reference to the given NullableSudoCommandBundleStructuredCommandsInnerArgs and assigns it to the ArgsType field.
-func (o *SudoCommandBundleStructuredCommandsInner) SetArgsType(v SudoCommandBundleStructuredCommandsInnerArgs) *SudoCommandBundleStructuredCommandsInner {
-	o.ArgsType.Set(&v)
-	return o
-}
-
-// SetArgsTypeNil sets the value for ArgsType to be an explicit nil
-func (o *SudoCommandBundleStructuredCommandsInner) SetArgsTypeNil() *SudoCommandBundleStructuredCommandsInner {
-	o.ArgsType.Set(nil)
-	return o
-}
-
-// UnsetArgsType ensures that no value is present for ArgsType, not even an explicit nil
-func (o *SudoCommandBundleStructuredCommandsInner) UnsetArgsType() *SudoCommandBundleStructuredCommandsInner {
-	o.ArgsType.Unset()
-	return o
-}
-
-// GetCommand returns the Command field value
-func (o *SudoCommandBundleStructuredCommandsInner) GetCommand() SudoCommandBundleStructuredCommandsInnerCommand {
-	if o == nil {
-		var ret SudoCommandBundleStructuredCommandsInnerCommand
-		return ret
-	}
-
-	return o.Command
-}
-
-// GetCommandOk returns a tuple with the Command field value
-// and a boolean to check if the value has been set.
-func (o *SudoCommandBundleStructuredCommandsInner) GetCommandOk() (*SudoCommandBundleStructuredCommandsInnerCommand, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.Command, true
-}
-
-// SetCommand sets field value
-func (o *SudoCommandBundleStructuredCommandsInner) SetCommand(v SudoCommandBundleStructuredCommandsInnerCommand) *SudoCommandBundleStructuredCommandsInner {
-	o.Command = v
+// SetArgsType gets a reference to the given ArgsType and assigns it to the ArgsType field.
+func (o *SudoCommandBundleStructuredCommandsInner) SetArgsType(v ArgsType) *SudoCommandBundleStructuredCommandsInner {
+	o.ArgsType = &v
 	return o
 }
 
 // GetCommandType returns the CommandType field value
-func (o *SudoCommandBundleStructuredCommandsInner) GetCommandType() string {
+func (o *SudoCommandBundleStructuredCommandsInner) GetCommandType() CommandType {
 	if o == nil {
-		var ret string
+		var ret CommandType
 		return ret
 	}
 
@@ -175,7 +125,7 @@ func (o *SudoCommandBundleStructuredCommandsInner) GetCommandType() string {
 
 // GetCommandTypeOk returns a tuple with the CommandType field value
 // and a boolean to check if the value has been set.
-func (o *SudoCommandBundleStructuredCommandsInner) GetCommandTypeOk() (*string, bool) {
+func (o *SudoCommandBundleStructuredCommandsInner) GetCommandTypeOk() (*CommandType, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -183,8 +133,33 @@ func (o *SudoCommandBundleStructuredCommandsInner) GetCommandTypeOk() (*string, 
 }
 
 // SetCommandType sets field value
-func (o *SudoCommandBundleStructuredCommandsInner) SetCommandType(v string) *SudoCommandBundleStructuredCommandsInner {
+func (o *SudoCommandBundleStructuredCommandsInner) SetCommandType(v CommandType) *SudoCommandBundleStructuredCommandsInner {
 	o.CommandType = v
+	return o
+}
+
+// GetCommand returns the Command field value
+func (o *SudoCommandBundleStructuredCommandsInner) GetCommand() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.Command
+}
+
+// GetCommandOk returns a tuple with the Command field value
+// and a boolean to check if the value has been set.
+func (o *SudoCommandBundleStructuredCommandsInner) GetCommandOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Command, true
+}
+
+// SetCommand sets field value
+func (o *SudoCommandBundleStructuredCommandsInner) SetCommand(v string) *SudoCommandBundleStructuredCommandsInner {
+	o.Command = v
 	return o
 }
 
@@ -231,14 +206,14 @@ func (o SudoCommandBundleStructuredCommandsInner) MarshalJSON() ([]byte, error) 
 
 func (o SudoCommandBundleStructuredCommandsInner) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Args.IsSet() {
-		toSerialize["args"] = o.Args.Get()
+	if !IsNil(o.Args) {
+		toSerialize["args"] = o.Args
 	}
-	if o.ArgsType.IsSet() {
-		toSerialize["args_type"] = o.ArgsType.Get()
+	if !IsNil(o.ArgsType) {
+		toSerialize["args_type"] = o.ArgsType
 	}
-	toSerialize["command"] = o.Command
 	toSerialize["command_type"] = o.CommandType
+	toSerialize["command"] = o.Command
 	if !IsNil(o.RenderedCommand) {
 		toSerialize["rendered_command"] = o.RenderedCommand
 	}
