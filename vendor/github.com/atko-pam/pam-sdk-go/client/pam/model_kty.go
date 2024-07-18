@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // Kty The key type
@@ -42,25 +41,18 @@ func (v *Kty) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := Kty(value)
-	for _, existing := range AllowedKtyEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid Kty", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewKtyFromValue returns a pointer to a valid Kty
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewKtyFromValue(v string) (*Kty, error) {
 	ev := Kty(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for Kty: valid values are %v", v, AllowedKtyEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

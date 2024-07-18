@@ -29,6 +29,7 @@ type ResolveSecretOrFolderResponse struct {
 	Path          []SecretPath   `json:"path,omitempty"`
 	ResourceGroup NamedObject    `json:"resource_group"`
 	Project       NamedObject    `json:"project"`
+	Type          *SecretType    `json:"type,omitempty"`
 }
 
 // NewResolveSecretOrFolderResponse instantiates a new ResolveSecretOrFolderResponse object
@@ -231,6 +232,39 @@ func (o *ResolveSecretOrFolderResponse) SetProject(v NamedObject) *ResolveSecret
 	return o
 }
 
+// GetType returns the Type field value if set, zero value otherwise.
+func (o *ResolveSecretOrFolderResponse) GetType() SecretType {
+	if o == nil || IsNil(o.Type) {
+		var ret SecretType
+		return ret
+	}
+	return *o.Type
+}
+
+// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ResolveSecretOrFolderResponse) GetTypeOk() (*SecretType, bool) {
+	if o == nil || IsNil(o.Type) {
+		return nil, false
+	}
+	return o.Type, true
+}
+
+// HasType returns a boolean if a field has been set.
+func (o *ResolveSecretOrFolderResponse) HasType() bool {
+	if o != nil && !IsNil(o.Type) {
+		return true
+	}
+
+	return false
+}
+
+// SetType gets a reference to the given SecretType and assigns it to the Type field.
+func (o *ResolveSecretOrFolderResponse) SetType(v SecretType) *ResolveSecretOrFolderResponse {
+	o.Type = &v
+	return o
+}
+
 func (o ResolveSecretOrFolderResponse) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -251,6 +285,9 @@ func (o ResolveSecretOrFolderResponse) ToMap() (map[string]interface{}, error) {
 	}
 	toSerialize["resource_group"] = o.ResourceGroup
 	toSerialize["project"] = o.Project
+	if !IsNil(o.Type) {
+		toSerialize["type"] = o.Type
+	}
 	return toSerialize, nil
 }
 

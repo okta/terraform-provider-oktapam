@@ -34,5 +34,6 @@ var (
 	ResourceResourceGroupServerEnrollmentToken = fmt.Sprintf("A token used to enroll servers in a PAM Project. %s", LinkResourceGroupServerEnrollmentToken)
 	ResourceSecretFolder                       = fmt.Sprintf("A file-system like construct that contains secrets or nested secret folders. %s", LinkSecretFolder)
 	ResourceServerPasswordSettings             = fmt.Sprintf("The settings for passwords set on servers within the project. %s", LinkPasswordSettings)
+	ResourceServerCheckoutSettings             = fmt.Sprintf("The settings for checking out servers within the project. %s", LinkServerCheckoutSettings)
 	ResourceSecurityPolicy                     = fmt.Sprintf("A policy which defines how users can gain access to resources. %s", LinkSecurityPolicy)
 )

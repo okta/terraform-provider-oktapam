@@ -64,8 +64,8 @@ func CallFunctionResponse(in *tfprotov6.CallFunctionResponse) *tfprotov5.CallFun
 	}
 
 	return &tfprotov5.CallFunctionResponse{
-		Diagnostics: Diagnostics(in.Diagnostics),
-		Result:      DynamicValue(in.Result),
+		Error:  FunctionError(in.Error),
+		Result: DynamicValue(in.Result),
 	}
 }
 
@@ -75,9 +75,22 @@ func ConfigureProviderRequest(in *tfprotov6.ConfigureProviderRequest) *tfprotov5
 	}
 
 	return &tfprotov5.ConfigureProviderRequest{
-		Config:           DynamicValue(in.Config),
-		TerraformVersion: in.TerraformVersion,
+		ClientCapabilities: ConfigureProviderClientCapabilities(in.ClientCapabilities),
+		Config:             DynamicValue(in.Config),
+		TerraformVersion:   in.TerraformVersion,
 	}
+}
+
+func ConfigureProviderClientCapabilities(in *tfprotov6.ConfigureProviderClientCapabilities) *tfprotov5.ConfigureProviderClientCapabilities {
+	if in == nil {
+		return nil
+	}
+
+	resp := &tfprotov5.ConfigureProviderClientCapabilities{
+		DeferralAllowed: in.DeferralAllowed,
+	}
+
+	return resp
 }
 
 func ConfigureProviderResponse(in *tfprotov6.ConfigureProviderResponse) *tfprotov5.ConfigureProviderResponse {
@@ -94,6 +107,18 @@ func DataSourceMetadata(in tfprotov6.DataSourceMetadata) tfprotov5.DataSourceMet
 	return tfprotov5.DataSourceMetadata{
 		TypeName: in.TypeName,
 	}
+}
+
+func Deferred(in *tfprotov6.Deferred) *tfprotov5.Deferred {
+	if in == nil {
+		return nil
+	}
+
+	resp := &tfprotov5.Deferred{
+		Reason: tfprotov5.DeferredReason(in.Reason),
+	}
+
+	return resp
 }
 
 func Diagnostics(in []*tfprotov6.Diagnostic) []*tfprotov5.Diagnostic {
@@ -148,6 +173,19 @@ func Function(in *tfprotov6.Function) *tfprotov5.Function {
 
 	for _, parameter := range in.Parameters {
 		out.Parameters = append(out.Parameters, FunctionParameter(parameter))
+	}
+
+	return out
+}
+
+func FunctionError(in *tfprotov6.FunctionError) *tfprotov5.FunctionError {
+	if in == nil {
+		return nil
+	}
+
+	out := &tfprotov5.FunctionError{
+		Text:             in.Text,
+		FunctionArgument: in.FunctionArgument,
 	}
 
 	return out
@@ -316,9 +354,22 @@ func ImportResourceStateRequest(in *tfprotov6.ImportResourceStateRequest) *tfpro
 	}
 
 	return &tfprotov5.ImportResourceStateRequest{
-		ID:       in.ID,
-		TypeName: in.TypeName,
+		ClientCapabilities: ImportResourceStateClientCapabilities(in.ClientCapabilities),
+		ID:                 in.ID,
+		TypeName:           in.TypeName,
 	}
+}
+
+func ImportResourceStateClientCapabilities(in *tfprotov6.ImportResourceStateClientCapabilities) *tfprotov5.ImportResourceStateClientCapabilities {
+	if in == nil {
+		return nil
+	}
+
+	resp := &tfprotov5.ImportResourceStateClientCapabilities{
+		DeferralAllowed: in.DeferralAllowed,
+	}
+
+	return resp
 }
 
 func ImportResourceStateResponse(in *tfprotov6.ImportResourceStateResponse) *tfprotov5.ImportResourceStateResponse {
@@ -327,6 +378,7 @@ func ImportResourceStateResponse(in *tfprotov6.ImportResourceStateResponse) *tfp
 	}
 
 	return &tfprotov5.ImportResourceStateResponse{
+		Deferred:          Deferred(in.Deferred),
 		Diagnostics:       Diagnostics(in.Diagnostics),
 		ImportedResources: ImportedResources(in.ImportedResources),
 	}
@@ -355,18 +407,58 @@ func ImportedResources(in []*tfprotov6.ImportedResource) []*tfprotov5.ImportedRe
 	return res
 }
 
+func MoveResourceStateRequest(in *tfprotov6.MoveResourceStateRequest) *tfprotov5.MoveResourceStateRequest {
+	if in == nil {
+		return nil
+	}
+
+	return &tfprotov5.MoveResourceStateRequest{
+		SourcePrivate:         in.SourcePrivate,
+		SourceProviderAddress: in.SourceProviderAddress,
+		SourceSchemaVersion:   in.SourceSchemaVersion,
+		SourceState:           RawState(in.SourceState),
+		SourceTypeName:        in.SourceTypeName,
+		TargetTypeName:        in.TargetTypeName,
+	}
+}
+
+func MoveResourceStateResponse(in *tfprotov6.MoveResourceStateResponse) *tfprotov5.MoveResourceStateResponse {
+	if in == nil {
+		return nil
+	}
+
+	return &tfprotov5.MoveResourceStateResponse{
+		Diagnostics:   Diagnostics(in.Diagnostics),
+		TargetPrivate: in.TargetPrivate,
+		TargetState:   DynamicValue(in.TargetState),
+	}
+}
+
 func PlanResourceChangeRequest(in *tfprotov6.PlanResourceChangeRequest) *tfprotov5.PlanResourceChangeRequest {
 	if in == nil {
 		return nil
 	}
 	return &tfprotov5.PlanResourceChangeRequest{
-		Config:           DynamicValue(in.Config),
-		PriorPrivate:     in.PriorPrivate,
-		PriorState:       DynamicValue(in.PriorState),
-		ProposedNewState: DynamicValue(in.ProposedNewState),
-		ProviderMeta:     DynamicValue(in.ProviderMeta),
-		TypeName:         in.TypeName,
+		ClientCapabilities: PlanResourceChangeClientCapabilities(in.ClientCapabilities),
+		Config:             DynamicValue(in.Config),
+		PriorPrivate:       in.PriorPrivate,
+		PriorState:         DynamicValue(in.PriorState),
+		ProposedNewState:   DynamicValue(in.ProposedNewState),
+		ProviderMeta:       DynamicValue(in.ProviderMeta),
+		TypeName:           in.TypeName,
 	}
+}
+
+func PlanResourceChangeClientCapabilities(in *tfprotov6.PlanResourceChangeClientCapabilities) *tfprotov5.PlanResourceChangeClientCapabilities {
+	if in == nil {
+		return nil
+	}
+
+	resp := &tfprotov5.PlanResourceChangeClientCapabilities{
+		DeferralAllowed: in.DeferralAllowed,
+	}
+
+	return resp
 }
 
 func PlanResourceChangeResponse(in *tfprotov6.PlanResourceChangeResponse) *tfprotov5.PlanResourceChangeResponse {
@@ -375,6 +467,7 @@ func PlanResourceChangeResponse(in *tfprotov6.PlanResourceChangeResponse) *tfpro
 	}
 
 	return &tfprotov5.PlanResourceChangeResponse{
+		Deferred:                    Deferred(in.Deferred),
 		Diagnostics:                 Diagnostics(in.Diagnostics),
 		PlannedPrivate:              in.PlannedPrivate,
 		PlannedState:                DynamicValue(in.PlannedState),
@@ -420,10 +513,23 @@ func ReadDataSourceRequest(in *tfprotov6.ReadDataSourceRequest) *tfprotov5.ReadD
 		return nil
 	}
 	return &tfprotov5.ReadDataSourceRequest{
-		Config:       DynamicValue(in.Config),
-		ProviderMeta: DynamicValue(in.ProviderMeta),
-		TypeName:     in.TypeName,
+		ClientCapabilities: ReadDataSourceClientCapabilities(in.ClientCapabilities),
+		Config:             DynamicValue(in.Config),
+		ProviderMeta:       DynamicValue(in.ProviderMeta),
+		TypeName:           in.TypeName,
 	}
+}
+
+func ReadDataSourceClientCapabilities(in *tfprotov6.ReadDataSourceClientCapabilities) *tfprotov5.ReadDataSourceClientCapabilities {
+	if in == nil {
+		return nil
+	}
+
+	resp := &tfprotov5.ReadDataSourceClientCapabilities{
+		DeferralAllowed: in.DeferralAllowed,
+	}
+
+	return resp
 }
 
 func ReadDataSourceResponse(in *tfprotov6.ReadDataSourceResponse) *tfprotov5.ReadDataSourceResponse {
@@ -432,6 +538,7 @@ func ReadDataSourceResponse(in *tfprotov6.ReadDataSourceResponse) *tfprotov5.Rea
 	}
 
 	return &tfprotov5.ReadDataSourceResponse{
+		Deferred:    Deferred(in.Deferred),
 		Diagnostics: Diagnostics(in.Diagnostics),
 		State:       DynamicValue(in.State),
 	}
@@ -443,11 +550,24 @@ func ReadResourceRequest(in *tfprotov6.ReadResourceRequest) *tfprotov5.ReadResou
 	}
 
 	return &tfprotov5.ReadResourceRequest{
-		CurrentState: DynamicValue(in.CurrentState),
-		Private:      in.Private,
-		ProviderMeta: DynamicValue(in.ProviderMeta),
-		TypeName:     in.TypeName,
+		ClientCapabilities: ReadResourceClientCapabilities(in.ClientCapabilities),
+		CurrentState:       DynamicValue(in.CurrentState),
+		Private:            in.Private,
+		ProviderMeta:       DynamicValue(in.ProviderMeta),
+		TypeName:           in.TypeName,
 	}
+}
+
+func ReadResourceClientCapabilities(in *tfprotov6.ReadResourceClientCapabilities) *tfprotov5.ReadResourceClientCapabilities {
+	if in == nil {
+		return nil
+	}
+
+	resp := &tfprotov5.ReadResourceClientCapabilities{
+		DeferralAllowed: in.DeferralAllowed,
+	}
+
+	return resp
 }
 
 func ReadResourceResponse(in *tfprotov6.ReadResourceResponse) *tfprotov5.ReadResourceResponse {
@@ -456,6 +576,7 @@ func ReadResourceResponse(in *tfprotov6.ReadResourceResponse) *tfprotov5.ReadRes
 	}
 
 	return &tfprotov5.ReadResourceResponse{
+		Deferred:    Deferred(in.Deferred),
 		Diagnostics: Diagnostics(in.Diagnostics),
 		NewState:    DynamicValue(in.NewState),
 		Private:     in.Private,

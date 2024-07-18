@@ -2,11 +2,12 @@ package fwprovider
 
 import (
 	"context"
+	"os"
+
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
-	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -115,6 +116,7 @@ func (p *OktapamFrameworkProvider) DataSources(_ context.Context) []func() datas
 func (p *OktapamFrameworkProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		//Add New Resources here
+		NewServerCheckoutSettingsResource,
 	}
 }
 

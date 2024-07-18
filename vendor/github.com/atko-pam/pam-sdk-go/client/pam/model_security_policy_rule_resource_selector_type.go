@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // SecurityPolicyRuleResourceSelectorType The type of selector used to target resources
@@ -40,25 +39,18 @@ func (v *SecurityPolicyRuleResourceSelectorType) UnmarshalJSON(src []byte) error
 		return err
 	}
 	enumTypeValue := SecurityPolicyRuleResourceSelectorType(value)
-	for _, existing := range AllowedSecurityPolicyRuleResourceSelectorTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid SecurityPolicyRuleResourceSelectorType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewSecurityPolicyRuleResourceSelectorTypeFromValue returns a pointer to a valid SecurityPolicyRuleResourceSelectorType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewSecurityPolicyRuleResourceSelectorTypeFromValue(v string) (*SecurityPolicyRuleResourceSelectorType, error) {
 	ev := SecurityPolicyRuleResourceSelectorType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for SecurityPolicyRuleResourceSelectorType: valid values are %v", v, AllowedSecurityPolicyRuleResourceSelectorTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

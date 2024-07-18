@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // GroupUpdateRole the model 'GroupUpdateRole'
@@ -42,25 +41,18 @@ func (v *GroupUpdateRole) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := GroupUpdateRole(value)
-	for _, existing := range AllowedGroupUpdateRoleEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid GroupUpdateRole", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewGroupUpdateRoleFromValue returns a pointer to a valid GroupUpdateRole
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewGroupUpdateRoleFromValue(v string) (*GroupUpdateRole, error) {
 	ev := GroupUpdateRole(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for GroupUpdateRole: valid values are %v", v, AllowedGroupUpdateRoleEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise
