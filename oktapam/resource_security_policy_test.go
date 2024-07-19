@@ -97,7 +97,7 @@ func TestAccSecurityPolicy(t *testing.T) {
 									Type: "sudo_command_bundle",
 								},
 							},
-							UAMDisplayName: utils.AsStringPtr("foo-uam"),
+							SudoDisplayName: utils.AsStringPtr("foo-uam"),
 						},
 					},
 				},
@@ -486,7 +486,7 @@ resource "oktapam_group" "test_security_policy_group1" {
 resource "oktapam_group" "test_security_policy_group2" {
 	name = "%s"
 }
-resource "oktapam_sudo_commands_bundle" "test_acc_sudo_command_bundle" {
+resource "oktapam_sudo_command_bundle" "test_acc_sudo_command_bundle" {
 	name = "%s"
 	structured_commands {
 		command       = "/bin/run.sh"
@@ -524,10 +524,10 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 			principal_account_ssh {
 				enabled = true
 				admin_level_permissions = false
-				uam_display_name = "foo-uam"
+				sudo_display_name = "foo-uam"
 				sudo_command_bundles {
-					id = oktapam_sudo_commands_bundle.test_acc_sudo_command_bundle.id
-					name = oktapam_sudo_commands_bundle.test_acc_sudo_command_bundle.name
+					id = oktapam_sudo_command_bundle.test_acc_sudo_command_bundle.id
+					name = oktapam_sudo_command_bundle.test_acc_sudo_command_bundle.name
 					type = "sudo_command_bundle"
 				}
 			}
@@ -556,7 +556,7 @@ const testAccSecurityPolicyUpdateConfigFormat = `
 resource "oktapam_group" "test_security_policy_group1" {
 	name = "%s"
 }
-resource "oktapam_sudo_commands_bundle" "test_acc_sudo_command_bundle" {
+resource "oktapam_sudo_command_bundle" "test_acc_sudo_command_bundle" {
 	name = "%s"
 	structured_commands {
 		command       = "/bin/run.sh"

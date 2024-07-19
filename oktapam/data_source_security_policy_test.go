@@ -58,7 +58,7 @@ func TestAccDatasourceSecurityPolicyFetch(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.#", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH, attributes.Enabled), "true"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH, attributes.AdminLevelPermissions), "false"),
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH, attributes.UAMDisplayName), "foo-uam"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH, attributes.SudoDisplayName), "foo-uam"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH, attributes.SudoCommandBundles, attributes.Name), fmt.Sprintf("scb-%s", identifier)),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.PrincipalAccountSSH, attributes.SudoCommandBundles, attributes.Type), "sudo_command_bundle"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.#", attributes.Rule, attributes.Resources), "1"),
@@ -113,7 +113,7 @@ resource "oktapam_secret_folder" "test_acc_secret_folder_top_level" {
 	resource_group = oktapam_resource_group.test_acc_resource_group.id
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 }
-resource "oktapam_sudo_commands_bundle" "test_acc_sudo_command_bundle" {
+resource "oktapam_sudo_command_bundle" "test_acc_sudo_command_bundle" {
 	name = "scb-%s"
 	structured_commands {
 		command       = "/bin/run.sh"
@@ -151,10 +151,10 @@ resource "oktapam_security_policy" "test_ds_security_policies" {
 			principal_account_ssh {
 				enabled = true
 				admin_level_permissions = false
-				uam_display_name = "foo-uam"
+				sudo_display_name = "foo-uam"
 				sudo_command_bundles {
-					id = oktapam_sudo_commands_bundle.test_acc_sudo_command_bundle.id
-					name = oktapam_sudo_commands_bundle.test_acc_sudo_command_bundle.name
+					id = oktapam_sudo_command_bundle.test_acc_sudo_command_bundle.id
+					name = oktapam_sudo_command_bundle.test_acc_sudo_command_bundle.name
 					type = "sudo_command_bundle"
 				}
 			}

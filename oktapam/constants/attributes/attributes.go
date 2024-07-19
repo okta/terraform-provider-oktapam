@@ -213,7 +213,7 @@ const (
 	Token                             = "token"
 	TrafficForwarding                 = "traffic_forwarding"
 	Type                              = "type"
-	UAMDisplayName                    = "uam_display_name"
+	SudoDisplayName                   = "sudo_display_name"
 	UPNField                          = "upn_field"
 	UpperCase                         = "upper_case"
 	UsePasswordless                   = "use_passwordless"

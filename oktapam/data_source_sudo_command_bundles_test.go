@@ -13,7 +13,7 @@ import (
 
 func TestAccDataSourceSudoCommandBundlesList(t *testing.T) {
 	checkTeamApplicable(t, true)
-	prefix := "data.oktapam_sudo_commands_bundles"
+	prefix := "data.oktapam_sudo_command_bundles"
 	identifier := randSeq()
 	initConfig := createTestAccDataSourceSudoCommandBundlesInitConfig(identifier)
 
@@ -44,7 +44,7 @@ func TestAccDataSourceSudoCommandBundlesList(t *testing.T) {
 
 func createTestAccDataSourceSudoCommandBundlesInitConfig(identifier string) string {
 	const format = `
-	resource "oktapam_sudo_commands_bundle" "test-sudo-commands-bundle-1" {
+	resource "oktapam_sudo_command_bundle" "test-sudo-commands-bundle-1" {
 		name = "%s-1"
 		structured_commands {
 			command = "/bin/run.sh"
@@ -53,7 +53,7 @@ func createTestAccDataSourceSudoCommandBundlesInitConfig(identifier string) stri
 			args = "ls"
 		}
 	}
-	resource "oktapam_sudo_commands_bundle" "test-sudo-commands-bundle-2" {
+	resource "oktapam_sudo_command_bundle" "test-sudo-commands-bundle-2" {
 		name = "%s-2"
 		structured_commands {
 			command = "/bin/find"
@@ -66,7 +66,7 @@ func createTestAccDataSourceSudoCommandBundlesInitConfig(identifier string) stri
 
 func testAccDataSourceSudoCommandBundlesConfig(resourceName, name string) string {
 	const format = `
-	data "oktapam_sudo_commands_bundles" "%s" {
+	data "oktapam_sudo_command_bundles" "%s" {
 		name = "%s"
 	}
 	`

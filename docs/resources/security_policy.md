@@ -101,11 +101,11 @@ Required:
 Optional:
 
 - `admin_level_permissions` (Boolean) Provides coarse grain (full admin) access to the user.
-- `sudo_command_bundles` (Block List) Returns a list of Sudo Commands Bundles. For details, see [Sudo Commands Bundle](https://help.okta.com/okta_help.htm?type=oie&id=csh-pam-sudo-commands). (see [below for nested schema](#nestedblock--rule--privileges--principal_account_ssh--sudo_command_bundles))
-- `uam_display_name` (String) TBD
+- `sudo_command_bundles` (Block List) These commands have been created by the resource administrator (see [below for nested schema](#nestedblock--rule--privileges--principal_account_ssh--sudo_command_bundles))
+- `sudo_display_name` (String) The name for sudo commands that will be visible to end users
 
 <a id="nestedblock--rule--privileges--principal_account_ssh--sudo_command_bundles"></a>
-### Nested Schema for `rule.privileges.principal_account_ssh.uam_display_name`
+### Nested Schema for `rule.privileges.principal_account_ssh.sudo_display_name`
 
 Optional:
 

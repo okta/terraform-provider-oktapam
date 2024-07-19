@@ -21,6 +21,93 @@ import (
 // ProjectsAPIService ProjectsAPI service
 type ProjectsAPIService service
 
+type ApiAdminCheckinResourceRequest struct {
+	ctx                    context.Context
+	ApiService             *ProjectsAPIService
+	teamName               string
+	resourceGroupId        string
+	projectId              string
+	checkinResourceRequest *CheckinResourceRequest
+}
+
+func (r ApiAdminCheckinResourceRequest) CheckinResourceRequest(checkinResourceRequest CheckinResourceRequest) ApiAdminCheckinResourceRequest {
+	r.checkinResourceRequest = &checkinResourceRequest
+	return r
+}
+
+func (r ApiAdminCheckinResourceRequest) Execute() (*http.Response, error) {
+	return r.ApiService.AdminCheckinResourceExecute(r)
+}
+
+/*
+	AdminCheckinResource Check in a Resource by an Admin
+
+	    Enables admins to forcefully check in a resource. This is used when a resource is checked out but needs to be returned or made available regardless of the user who checked it out.
+
+This endpoint requires one of the following roles: `resource_admin`, `security_admin`, `delegated_security_admin`, `delegated_resource_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	    @param projectId The UUID of a Project
+	@return ApiAdminCheckinResourceRequest
+*/
+func (a *ProjectsAPIService) AdminCheckinResource(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiAdminCheckinResourceRequest {
+	return ApiAdminCheckinResourceRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+func (a *ProjectsAPIService) AdminCheckinResourceExecute(r ApiAdminCheckinResourceRequest) (*http.Response, error) {
+	var (
+		traceKey           = "projectsapi.adminCheckinResource"
+		localVarHTTPMethod = http.MethodPost
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/checkin_resource"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.checkinResourceRequest
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
+	return localVarHTTPResponse, err
+}
+
 type ApiCreateResourceGroupProjectRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
@@ -456,9 +543,9 @@ func (r ApiFetchResourceGroupServerBasedProjectCheckoutSettingsRequest) Execute(
 }
 
 /*
-	FetchResourceGroupServerBasedProjectCheckoutSettings Retrieves the checkout settings configured for a project, specific to server resource type.
+	FetchResourceGroupServerBasedProjectCheckoutSettings Retrieves the checkout settings configured for a project, specific to the server resource type.
 
-	    Retrieves the checkout settings configured for a project, specific to server resource type.
+	    Retrieves the checkout settings configured for a project, specific to the server resource type.
 
 This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`, `security_admin`, `delegated_security_admin`.
 
@@ -999,6 +1086,148 @@ func (a *ProjectsAPIService) GetServerAccountDetailsExecute(r ApiGetServerAccoun
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiListAllCheckedOutResourcesByAdminRequest struct {
+	ctx                   context.Context
+	ApiService            *ProjectsAPIService
+	teamName              string
+	resourceGroupId       string
+	projectId             string
+	resourceType          *string
+	includePendingCheckin *bool
+	count                 *int32
+	descending            *bool
+	offset                *string
+	prev                  *bool
+}
+
+// If specified, only returns resources with a matching type. Valid resource types: &#x60;server_account_password_login&#x60;.
+func (r ApiListAllCheckedOutResourcesByAdminRequest) ResourceType(resourceType string) ApiListAllCheckedOutResourcesByAdminRequest {
+	r.resourceType = &resourceType
+	return r
+}
+
+// If specified, also returns resources that have already started the checkin process. These are not included by default.
+func (r ApiListAllCheckedOutResourcesByAdminRequest) IncludePendingCheckin(includePendingCheckin bool) ApiListAllCheckedOutResourcesByAdminRequest {
+	r.includePendingCheckin = &includePendingCheckin
+	return r
+}
+
+// The number of objects per page
+func (r ApiListAllCheckedOutResourcesByAdminRequest) Count(count int32) ApiListAllCheckedOutResourcesByAdminRequest {
+	r.count = &count
+	return r
+}
+
+// The object order
+func (r ApiListAllCheckedOutResourcesByAdminRequest) Descending(descending bool) ApiListAllCheckedOutResourcesByAdminRequest {
+	r.descending = &descending
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListAllCheckedOutResourcesByAdminRequest) Offset(offset string) ApiListAllCheckedOutResourcesByAdminRequest {
+	r.offset = &offset
+	return r
+}
+
+// The direction of paging
+func (r ApiListAllCheckedOutResourcesByAdminRequest) Prev(prev bool) ApiListAllCheckedOutResourcesByAdminRequest {
+	r.prev = &prev
+	return r
+}
+
+func (r ApiListAllCheckedOutResourcesByAdminRequest) Execute() (*ListAllCheckedOutResourcesByAdminResponse, *http.Response, error) {
+	return r.ApiService.ListAllCheckedOutResourcesByAdminExecute(r)
+}
+
+/*
+	ListAllCheckedOutResourcesByAdmin List all Resources Checked Out in a Project By an Admin
+
+	    Lists all the resources that are currently checked out within a specified resource group project.
+
+This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	    @param projectId The UUID of a Project
+	@return ApiListAllCheckedOutResourcesByAdminRequest
+*/
+func (a *ProjectsAPIService) ListAllCheckedOutResourcesByAdmin(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiListAllCheckedOutResourcesByAdminRequest {
+	return ApiListAllCheckedOutResourcesByAdminRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListAllCheckedOutResourcesByAdminResponse
+func (a *ProjectsAPIService) ListAllCheckedOutResourcesByAdminExecute(r ApiListAllCheckedOutResourcesByAdminRequest) (*ListAllCheckedOutResourcesByAdminResponse, *http.Response, error) {
+	var (
+		traceKey            = "projectsapi.listAllCheckedOutResourcesByAdmin"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListAllCheckedOutResourcesByAdminResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/checked_out_resources"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.resourceType != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "resource_type", r.resourceType, "")
+	}
+	if r.includePendingCheckin != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "include_pending_checkin", r.includePendingCheckin, "")
+	}
+	if r.count != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
+	}
+	if r.descending != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
+	if r.prev != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -2158,9 +2387,9 @@ func (r ApiUpdateResourceGroupServerBasedProjectCheckoutSettingsRequest) Execute
 }
 
 /*
-	UpdateResourceGroupServerBasedProjectCheckoutSettings Update the checkout settings configured for a project, specific to server resource type
+	UpdateResourceGroupServerBasedProjectCheckoutSettings Update the checkout settings configured for a project, specific to the server resource type
 
-	    Update the checkout settings configured for a project, specific to server resource type
+	    Update the checkout settings configured for a project, specific to the server resource type
 
 This endpoint requires one of the following roles: `security_admin`, `delegated_security_admin`.
 
