@@ -56,8 +56,7 @@ func createTestAccSudoCommandBundleCreateConfig(name string) string {
 		structured_commands {
 			command       = "/bin/run.sh"
 			command_type  = "executable"
-			args_type     = "custom"
-			args          = "ls"
+			args_type     = "any"
   		}
 	}
 	`

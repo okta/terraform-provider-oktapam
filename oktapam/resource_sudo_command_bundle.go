@@ -7,12 +7,24 @@ import (
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/mitchellh/mapstructure"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client/wrappers"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
+	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 )
+
+var commandTypeMap = map[string]pam.CommandType{
+	"raw":        pam.CommandType_RAW,
+	"executable": pam.CommandType_EXECUTABLE,
+	"directory":  pam.CommandType_DIRECTORY,
+}
+
+var argsTypeMap = map[string]pam.ArgsType{
+	"custom": pam.ArgsType_CUSTOM,
+	"any":    pam.ArgsType_ANY,
+	"none":   pam.ArgsType_NONE,
+}
 
 func resourceSudoCommandBundle() *schema.Resource {
 	return &schema.Resource{
@@ -122,36 +134,60 @@ func readSudoCommandBundleFromResource(d *schema.ResourceData) (*pam.SudoCommand
 	var diags diag.Diagnostics
 	var structuredCommands []pam.SudoCommandBundleStructuredCommandsInner
 	if scs, ok := d.GetOk(attributes.StructuredCommands); ok {
-		structuredCommandResources, ok := scs.([]interface{})
+		structuredCommandResources, ok := scs.([]any)
 		if !ok {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Error,
 				Summary:  fmt.Sprintf("%s is invalid", attributes.StructuredCommands),
 			})
 		}
-		for _, sc := range structuredCommandResources {
-			var structuredCommandResource pam.SudoCommandBundleStructuredCommandsInner
-			cfg := &mapstructure.DecoderConfig{
-				Metadata: nil,
-				Result:   &structuredCommandResource,
-				TagName:  "json",
-			}
-			decoder, dErr := mapstructure.NewDecoder(cfg)
-			if dErr != nil {
+		for _, scI := range structuredCommandResources {
+			sc, ok := scI.(map[string]any)
+			if !ok {
 				diags = append(diags, diag.Diagnostic{
 					Severity: diag.Error,
-					Summary:  fmt.Sprintf("error creating decoder for %s", attributes.StructuredCommands),
+					Summary:  fmt.Sprintf("%s is invalid", attributes.StructuredCommands),
 				})
-				continue
 			}
-			if dErr := decoder.Decode(sc); dErr != nil {
+
+			command, ok := sc[attributes.StructuredCommand].(string)
+			if !ok {
 				diags = append(diags, diag.Diagnostic{
 					Severity: diag.Error,
-					Summary:  fmt.Sprintf("error decoding for %s", attributes.StructuredCommands),
+					Summary:  fmt.Sprintf("%s is invalid", attributes.StructuredCommand),
 				})
-				continue
 			}
-			structuredCommands = append(structuredCommands, structuredCommandResource)
+
+			structuredCommand := pam.SudoCommandBundleStructuredCommandsInner{
+				Command: command,
+			}
+
+			commandTypeStr, ok := sc[attributes.StructuredCommandType].(string)
+			if !ok {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Error,
+					Summary:  fmt.Sprintf("%s is invalid", attributes.StructuredCommandType),
+				})
+			}
+
+			structuredCommand.CommandType = commandTypeMap[commandTypeStr]
+
+			if args, ok := sc[attributes.StructuredCommandArgs].(string); ok {
+				structuredCommand.Args = utils.AsStringPtrZero(args, false)
+			}
+
+			argsTypeStr, ok := sc[attributes.StructuredCommandArgsType].(string)
+			if !ok {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Error,
+					Summary:  fmt.Sprintf("%s is invalid", attributes.StructuredCommandArgsType),
+				})
+			}
+
+			argsType := argsTypeMap[argsTypeStr]
+			structuredCommand.ArgsType = &argsType
+
+			structuredCommands = append(structuredCommands, structuredCommand)
 		}
 	}
 
