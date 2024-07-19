@@ -20,9 +20,9 @@ var _ MappedNullable = &ServerAccountCheckedOutResourceDetails{}
 
 // ServerAccountCheckedOutResourceDetails struct for ServerAccountCheckedOutResourceDetails
 type ServerAccountCheckedOutResourceDetails struct {
-	// The hostname of the Server associated with the resource
+	// The hostname of the server associated with the Resource
 	Hostname string `json:"hostname"`
-	// The UUID of the Server associated with the resource
+	// The UUID of the server associated with the Resource
 	ServerId string `json:"server_id"`
 }
 

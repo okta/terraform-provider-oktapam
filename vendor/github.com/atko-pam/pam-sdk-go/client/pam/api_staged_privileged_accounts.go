@@ -22,16 +22,11 @@ import (
 type StagedPrivilegedAccountsAPIService service
 
 type ApiAssignStagedPrivilegedAccountRequest struct {
-	ctx                            context.Context
-	ApiService                     *StagedPrivilegedAccountsAPIService
-	teamName                       string
-	stagedPrivilegedAccountId      string
-	assignPrivilegedAccountRequest *AssignPrivilegedAccountRequest
-}
-
-func (r ApiAssignStagedPrivilegedAccountRequest) AssignPrivilegedAccountRequest(assignPrivilegedAccountRequest AssignPrivilegedAccountRequest) ApiAssignStagedPrivilegedAccountRequest {
-	r.assignPrivilegedAccountRequest = &assignPrivilegedAccountRequest
-	return r
+	ctx                       context.Context
+	ApiService                *StagedPrivilegedAccountsAPIService
+	teamName                  string
+	stagedPrivilegedAccountId string
+	projectId                 string
 }
 
 func (r ApiAssignStagedPrivilegedAccountRequest) Execute() (*http.Response, error) {
@@ -49,14 +44,16 @@ This endpoint requires the `resource_admin` role.
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
 	    @param stagedPrivilegedAccountId The UUID of a `STAGED` Privileged Account
+	    @param projectId The UUID of a Project
 	@return ApiAssignStagedPrivilegedAccountRequest
 */
-func (a *StagedPrivilegedAccountsAPIService) AssignStagedPrivilegedAccount(ctx context.Context, teamName string, stagedPrivilegedAccountId string) ApiAssignStagedPrivilegedAccountRequest {
+func (a *StagedPrivilegedAccountsAPIService) AssignStagedPrivilegedAccount(ctx context.Context, teamName string, stagedPrivilegedAccountId string, projectId string) ApiAssignStagedPrivilegedAccountRequest {
 	return ApiAssignStagedPrivilegedAccountRequest{
 		ApiService:                a,
 		ctx:                       ctx,
 		teamName:                  teamName,
 		stagedPrivilegedAccountId: stagedPrivilegedAccountId,
+		projectId:                 projectId,
 	}
 }
 
@@ -64,21 +61,22 @@ func (a *StagedPrivilegedAccountsAPIService) AssignStagedPrivilegedAccount(ctx c
 func (a *StagedPrivilegedAccountsAPIService) AssignStagedPrivilegedAccountExecute(r ApiAssignStagedPrivilegedAccountRequest) (*http.Response, error) {
 	var (
 		traceKey           = "stagedprivilegedaccountsapi.assignStagedPrivilegedAccount"
-		localVarHTTPMethod = http.MethodPost
+		localVarHTTPMethod = http.MethodPut
 		localVarPostBody   interface{}
 		formFiles          []formFile
 	)
 
-	localVarPath := "/v1/teams/{team_name}/staged_privileged_accounts/{staged_privileged_account_id}/assign"
+	localVarPath := "/v1/teams/{team_name}/resource_assignment/privileged_accounts/{staged_privileged_account_id}/assign/{project_id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"staged_privileged_account_id"+"}", url.PathEscape(parameterValueToString(r.stagedPrivilegedAccountId, "stagedPrivilegedAccountId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
+	localVarHTTPContentTypes := []string{}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -94,8 +92,6 @@ func (a *StagedPrivilegedAccountsAPIService) AssignStagedPrivilegedAccountExecut
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	// body params
-	localVarPostBody = r.assignPrivilegedAccountRequest
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
 	if localVarHTTPResponse == nil && err != nil {
@@ -146,7 +142,7 @@ func (a *StagedPrivilegedAccountsAPIService) ListStagedPrivilegedAccountsExecute
 		localVarReturnValue *ListStagedPrivilegedAccountsResponse
 	)
 
-	localVarPath := "/v1/teams/{team_name}/staged_privileged_accounts"
+	localVarPath := "/v1/teams/{team_name}/resource_assignment/privileged_accounts"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 
 	localVarHeaderParams := make(map[string]string)

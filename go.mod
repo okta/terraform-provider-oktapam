@@ -3,8 +3,9 @@ module github.com/okta/terraform-provider-oktapam
 go 1.21
 
 require (
-	github.com/atko-pam/pam-sdk-go v1.0.73
+	github.com/atko-pam/pam-sdk-go v1.0.74
 	github.com/go-resty/resty/v2 v2.7.0
+	github.com/google/go-cmp v0.6.0
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/go-multierror v1.1.1
@@ -28,7 +29,6 @@ require (
 	github.com/cloudflare/circl v1.3.7 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-checkpoint v0.5.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect

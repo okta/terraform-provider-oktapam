@@ -332,7 +332,7 @@ func resourceSecurityPolicy() *schema.Resource {
 												},
 												attributes.SudoCommandBundles: {
 													Type:        schema.TypeList,
-													Description: descriptions.SourceSudoCommandsBundles,
+													Description: descriptions.SudoCommandBundles,
 													Optional:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
@@ -351,9 +351,9 @@ func resourceSecurityPolicy() *schema.Resource {
 														},
 													},
 												},
-												attributes.UAMDisplayName: {
+												attributes.SudoDisplayName: {
 													Type:        schema.TypeString,
-													Description: descriptions.UAMDisplayName,
+													Description: descriptions.SudoDisplayName,
 													Optional:    true,
 												},
 											},
@@ -1188,7 +1188,7 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 		if enabled, hasValue := readPrivilegeEnabled(principalAccountSSHI); hasValue {
 			adminLevelPermissions := readAdminLevelPermissionEnabled(principalAccountSSHI)
 			sudoCommandBundles := readSudoCommandBundles(principalAccountSSHI)
-			uamDisplayName := readUAMDisplayName(principalAccountSSHI)
+			SudoDisplayName := readSudoDisplayName(principalAccountSSHI)
 			p := &client.PrincipalAccountSSHPrivilege{
 				Enabled:               &enabled,
 				AdminLevelPermissions: &adminLevelPermissions,
@@ -1196,7 +1196,7 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 
 			if len(sudoCommandBundles) > 0 {
 				p.SudoCommandBundles = sudoCommandBundles
-				p.UAMDisplayName = &uamDisplayName
+				p.SudoDisplayName = &SudoDisplayName
 			}
 
 			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
@@ -1380,7 +1380,7 @@ func readSudoCommandBundles(privilege any) []client.NamedObject {
 	return result
 }
 
-func readUAMDisplayName(privilege any) string {
+func readSudoDisplayName(privilege any) string {
 	privilegeArr := privilege.([]any)
 
 	if len(privilegeArr) == 0 {
@@ -1389,8 +1389,8 @@ func readUAMDisplayName(privilege any) string {
 
 	privilegeM := privilegeArr[0].(map[string]any)
 
-	if uamDisplayName, ok := privilegeM[attributes.UAMDisplayName]; ok {
-		return uamDisplayName.(string)
+	if sudoDisplayName, ok := privilegeM[attributes.SudoDisplayName]; ok {
+		return sudoDisplayName.(string)
 	}
 
 	return ""

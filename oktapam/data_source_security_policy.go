@@ -317,10 +317,10 @@ func dataSourceSecurityPolicy() *schema.Resource {
 														},
 													},
 												},
-												attributes.UAMDisplayName: {
+												attributes.SudoDisplayName: {
 													Type:        schema.TypeString,
 													Computed:    true,
-													Description: descriptions.UAMDisplayName,
+													Description: descriptions.SudoDisplayName,
 													Optional:    true,
 												},
 											},
