@@ -31,11 +31,29 @@ func TestAccResourceSudoCommandBundle(t *testing.T) {
 				),
 			},
 			{
-				Config: createTestAccSudoCommandBundleUpdateConfig(sudoCommandBundleName),
+				Config: createTestAccSudoCommandBundleUpdateConfigWithoutArgs(sudoCommandBundleName, "/bin/", "directory"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, attributes.Name, sudoCommandBundleName),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s", attributes.StructuredCommands, attributes.StructuredCommandType), "directory"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s", attributes.StructuredCommands, attributes.StructuredCommand), "/bin/"),
+				),
+			},
+			{
+				Config: createTestAccSudoCommandBundleUpdateConfigWithoutArgs(sudoCommandBundleName, "/bin/ls", "raw"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, attributes.Name, sudoCommandBundleName),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s", attributes.StructuredCommands, attributes.StructuredCommandType), "raw"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s", attributes.StructuredCommands, attributes.StructuredCommand), "/bin/ls"),
+				),
+			},
+			{
+				Config: createTestAccSudoCommandBundleUpdateConfigWithArgs(sudoCommandBundleName, "/bin/touch", "executable", "custom", "test.txt"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, attributes.Name, sudoCommandBundleName),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s", attributes.StructuredCommands, attributes.StructuredCommandType), "executable"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s", attributes.StructuredCommands, attributes.StructuredCommand), "/bin/touch"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s", attributes.StructuredCommands, attributes.StructuredCommandArgsType), "custom"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s", attributes.StructuredCommands, attributes.StructuredCommandArgs), "test.txt"),
 				),
 			},
 		},
@@ -63,15 +81,30 @@ func createTestAccSudoCommandBundleCreateConfig(name string) string {
 	return fmt.Sprintf(format, name)
 }
 
-func createTestAccSudoCommandBundleUpdateConfig(name string) string {
+func createTestAccSudoCommandBundleUpdateConfigWithArgs(name, command, commandType, argsType, args string) string {
 	const format = `
 	resource "oktapam_sudo_command_bundle" "test_acc_sudo_command_bundle" {
 		name = "%s"
 		structured_commands {
-			command       = "/bin/"
-			command_type  = "directory"
+			command       = "%s"
+			command_type  = "%s"
+			args_type     = "%s"
+			args     = "%s"
   		}
 	}
 	`
-	return fmt.Sprintf(format, name)
+	return fmt.Sprintf(format, name, command, commandType, argsType, args)
+}
+
+func createTestAccSudoCommandBundleUpdateConfigWithoutArgs(name, command, commandType string) string {
+	const format = `
+	resource "oktapam_sudo_command_bundle" "test_acc_sudo_command_bundle" {
+		name = "%s"
+		structured_commands {
+			command       = "%s"
+			command_type  = "%s"
+  		}
+	}
+	`
+	return fmt.Sprintf(format, name, command, commandType)
 }
