@@ -3,15 +3,16 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+	"testing"
+	"time"
+
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-mux/tf5to6server"
 	"github.com/hashicorp/terraform-plugin-mux/tf6muxserver"
 	"github.com/okta/terraform-provider-oktapam/oktapam/fwprovider"
-	"log"
-	"os"
-	"testing"
-	"time"
 
 	"math/rand"
 
@@ -169,7 +170,6 @@ func testAccFrameworkMuxProviders(ctx context.Context, t *testing.T) (context.Co
 		sdkV2Provider: sdkV2Provider,
 		fwProvider:    frameworkProvider,
 	}
-
 	return ctx, providers, muxServer
 }
 
