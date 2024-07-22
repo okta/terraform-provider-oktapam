@@ -32,71 +32,67 @@
 	},
 	"resources": [
 		{
-			"name": "resource_group",
+			"name": "resource_server_checkout_settings",
 			"schema": {
 				"attributes": [
 					{
-						"name": "delegated_resource_admin_groups",
-						"list_nested": {
-							"computed_optional_required": "required",
-							"nested_object": {
-								"attributes": [
-									{
-										"name": "id",
-										"string": {
-											"computed_optional_required": "required",
-											"description": "The UUID of the object"
-										}
-									},
-									{
-										"name": "name",
-										"string": {
-											"computed_optional_required": "computed_optional",
-											"description": "The human-readable name of the object"
-										}
-									},
-									{
-										"name": "type",
-										"string": {
-											"computed_optional_required": "computed_optional",
-											"validators": [
-												{
-													"custom": {
-														"imports": [
-															{
-																"path": "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-															}
-														],
-														"schema_definition": "stringvalidator.OneOf(\n\"user\",\n\"user_group\",\n\"server\",\n\"project\",\n\"sudo_entitlement\",\n\"resource_group\",\n\"secret_folder\",\n\"secret\",\n)"
-													}
-												}
-											]
-										}
+						"name": "checkout_duration_in_seconds",
+						"int64": {
+							"computed_optional_required": "computed_optional",
+							"description": "The duration in seconds for the checkout. If the checkout is enabled, the duration is the maximum time a user can access the resource before the checkout expires.",
+							"validators": [
+								{
+									"custom": {
+										"imports": [
+											{
+												"path": "github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+											}
+										],
+										"schema_definition": "int64validator.Between(900, 86400)"
 									}
-								]
-							},
-							"description": "An array of OPA groups that own this Resource Group. This param is only available to users with the `resource_admin` role."
+								}
+							]
 						}
 					},
 					{
-						"name": "description",
-						"string": {
+						"name": "checkout_required",
+						"bool": {
 							"computed_optional_required": "required",
-							"description": "A description of the Resource Group"
+							"description": "Indicates whether a checkout is mandatory for accessing resources within the project. If `true`, checkout is enforced for all applicable resources by default. If `false`, checkout is not required, and resources are accessible without it."
 						}
 					},
 					{
-						"name": "id",
+						"name": "exclude_list",
+						"list": {
+							"computed_optional_required": "computed_optional",
+							"element_type": {
+								"string": {}
+							},
+							"description": "If provided, only the account identifiers listed are excluded from the checkout requirement. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive."
+						}
+					},
+					{
+						"name": "include_list",
+						"list": {
+							"computed_optional_required": "computed_optional",
+							"element_type": {
+								"string": {}
+							},
+							"description": "If provided, only the account identifiers listed are required to perform a checkout to access the resource. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive."
+						}
+					},
+					{
+						"name": "resource_group_id",
 						"string": {
 							"computed_optional_required": "computed_optional",
-							"description": "The UUID of the Resource Group"
+							"description": "The UUID of a Resource Group"
 						}
 					},
 					{
-						"name": "name",
+						"name": "project_id",
 						"string": {
-							"computed_optional_required": "required",
-							"description": "The name of the Resource Group"
+							"computed_optional_required": "computed_optional",
+							"description": "The UUID of a Project"
 						}
 					}
 				]

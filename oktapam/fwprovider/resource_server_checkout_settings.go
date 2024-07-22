@@ -7,10 +7,12 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -40,6 +42,56 @@ type serverCheckoutSettingsResourceModel struct {
 // Metadata implements resource.Resource.
 func (r *serverCheckoutSettingsResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_server_checkout_settings"
+}
+
+// Schema implements resource.Resource.
+func (r *serverCheckoutSettingsResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
+			"checkout_duration_in_seconds": schema.Int64Attribute{
+				Optional:            true,
+				Computed:            true,
+				Description:         "The duration in seconds for the checkout. If the checkout is enabled, the duration is the maximum time a user can access the resource before the checkout expires.",
+				MarkdownDescription: "The duration in seconds for the checkout. If the checkout is enabled, the duration is the maximum time a user can access the resource before the checkout expires.",
+				Validators: []validator.Int64{
+					int64validator.Between(900, 86400),
+				},
+			},
+			"checkout_required": schema.BoolAttribute{
+				Required:            true,
+				Description:         "Indicates whether a checkout is mandatory for accessing resources within the project. If `true`, checkout is enforced for all applicable resources by default. If `false`, checkout is not required, and resources are accessible without it.",
+				MarkdownDescription: "Indicates whether a checkout is mandatory for accessing resources within the project. If `true`, checkout is enforced for all applicable resources by default. If `false`, checkout is not required, and resources are accessible without it.",
+			},
+			"exclude_list": schema.ListAttribute{
+				ElementType:         types.StringType,
+				Optional:            true,
+				Description:         "If provided, only the account identifiers listed are excluded from the checkout requirement. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.",
+				MarkdownDescription: "If provided, only the account identifiers listed are excluded from the checkout requirement. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.",
+			},
+			"include_list": schema.ListAttribute{
+				ElementType:         types.StringType,
+				Optional:            true,
+				Description:         "If provided, only the account identifiers listed are required to perform a checkout to access the resource. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.",
+				MarkdownDescription: "If provided, only the account identifiers listed are required to perform a checkout to access the resource. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.",
+			},
+			"project": schema.StringAttribute{
+				Required:            true,
+				Description:         "The UUID of a Project",
+				MarkdownDescription: "The UUID of a Project",
+			},
+			"resource_group": schema.StringAttribute{
+				Required:            true,
+				Description:         "The UUID of a Resource Group",
+				MarkdownDescription: "The UUID of a Resource Group",
+			},
+		},
+	}
 }
 
 func (r *serverCheckoutSettingsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -105,40 +157,6 @@ func (r *serverCheckoutSettingsResource) Read(ctx context.Context, req resource.
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
-	}
-}
-
-// Schema implements resource.Resource.
-func (r *serverCheckoutSettingsResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Computed: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
-			},
-			"resource_group": schema.StringAttribute{
-				Required: true,
-			},
-			"project": schema.StringAttribute{
-				Required: true,
-			},
-			"checkout_required": schema.BoolAttribute{
-				Required: true,
-			},
-			"checkout_duration_in_seconds": schema.Int32Attribute{
-				Optional: true,
-			},
-			"include_list": schema.ListAttribute{
-				Optional:    true,
-				ElementType: types.StringType,
-			},
-			"exclude_list": schema.ListAttribute{
-				Optional:    true,
-				ElementType: types.StringType,
-			},
-		},
 	}
 }
 
@@ -223,6 +241,8 @@ func (r *serverCheckoutSettingsResource) Delete(ctx context.Context, req resourc
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	// should we delete the state here?
+	// resp.State.RemoveResource(ctx)
 }
 
 // Configure adds the provider configured client to the resource.
@@ -234,7 +254,6 @@ func (r *serverCheckoutSettingsResource) Configure(_ context.Context, req resour
 	}
 
 	provider, ok := req.ProviderData.(*OktapamFrameworkProvider)
-	// fmt.Println("client", provider)
 
 	if !ok {
 		resp.Diagnostics.AddError(
@@ -244,22 +263,13 @@ func (r *serverCheckoutSettingsResource) Configure(_ context.Context, req resour
 
 		return
 	}
-
-	client := provider.SDKClientWrapper
-	// 	resp.Diagnostics.AddError(
-	// 		"Unexpected Data Source Configure Type",
-	// 		fmt.Sprintf("Expected *client.SDKClientWrapper, got: %T. Please report this issue to the provider developers.", provider.SDKClientWrapper),
-	// 	)
-
-	// 	return
-	// }
-	// fmt.Println("client.SDKClientWrapper", client)
-
-	r.client = client
+	r.client = provider.SDKClientWrapper
 }
 
 func formatServerCheckoutSettingsID(resourceGroupID string, projectID string) string {
 	// server checkout settings don't have an identifier in itself and is really an attribute of a project.
-	// we manage it as a separate resource since it's lifecycle is somewhat separate from a project
+	// we manage it as a separate resource since it's lifecycle is somewhat separate from a project.
+	// since project password settings are managed as a separate resource with format resourceGroupID/projectID already,
+	// we can just append the server_checkout_settings to the end of the ID
 	return fmt.Sprintf("%s/%s/server_checkout_settings", resourceGroupID, projectID)
 }

@@ -40,6 +40,34 @@ func createTestAccServerCheckoutSettingsCreateConfig(dgaName, resourceGroupName,
 	return fmt.Sprintf(testAccServerCheckoutSettingsCreateConfigFormat, dgaName, resourceGroupName, projectName)
 }
 
+const testAccServerCheckoutSettingsUpdateConfigFormat = `
+provider "oktapam" {}
+resource "oktapam_group" "test_resource_group_dga_group" {
+	name = "%s"
+}
+resource "oktapam_resource_group" "test_acc_resource_group" {
+	name = "%s"
+	description = "test resource group"
+	delegated_resource_admin_groups = [oktapam_group.test_resource_group_dga_group.id]	
+}
+resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
+	name = "%s"
+	resource_group = oktapam_resource_group.test_acc_resource_group.id
+	ssh_certificate_type  = "CERT_TYPE_ED25519_01"
+	account_discovery     = true
+}
+resource "oktapam_server_checkout_settings" "test_acc_server_checkout_settings" {
+	resource_group = oktapam_resource_group.test_acc_resource_group.id
+	project = oktapam_resource_group_project.test_acc_resource_group_project.id
+	checkout_required = true
+	checkout_duration_in_seconds = 3600
+	include_list = ["vaulted_account_1", "vaulted_account_2"]
+}	
+`
+
+func createTestAccServerCheckoutSettingsUpdateConfig(dgaName, resourceGroupName, projectName string) string {
+	return fmt.Sprintf(testAccServerCheckoutSettingsUpdateConfigFormat, dgaName, resourceGroupName, projectName)
+}
 func TestAccServerCheckoutSettingsSource(t *testing.T) {
 	checkTeamApplicable(t, true)
 	resourceName := "oktapam_server_checkout_settings.test_acc_server_checkout_settings"
@@ -47,10 +75,17 @@ func TestAccServerCheckoutSettingsSource(t *testing.T) {
 	projectName := fmt.Sprintf("test_acc_resource_group_project_%s", randSeq())
 	delegatedAdminGroupName := fmt.Sprintf("test_acc_resource_group_dga_%s", randSeq())
 	defaultCheckoutDuration := int32(900)
+	updatedCheckoutDuration := int32(3600)
 
 	initialServerCheckoutSettings := &pam.ResourceCheckoutSettings{
 		CheckoutRequired:          true,
 		CheckoutDurationInSeconds: &defaultCheckoutDuration,
+	}
+
+	updatedServerCheckoutSettings := &pam.ResourceCheckoutSettings{
+		CheckoutRequired:          true,
+		CheckoutDurationInSeconds: &updatedCheckoutDuration,
+		IncludeList:               []string{"vaulted_account_1", "vaulted_account_2"},
 	}
 
 	_, providers, accProviders := testAccFrameworkMuxProviders(context.Background(), t)
@@ -64,7 +99,13 @@ func TestAccServerCheckoutSettingsSource(t *testing.T) {
 				Config: createTestAccServerCheckoutSettingsCreateConfig(delegatedAdminGroupName, resourceGroupName, projectName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccServerCheckoutSettingsCheckExists(providers, resourceName, initialServerCheckoutSettings),
-					// check other fields
+				),
+			},
+			// Update testing
+			{
+				Config: createTestAccServerCheckoutSettingsUpdateConfig(delegatedAdminGroupName, resourceGroupName, projectName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccServerCheckoutSettingsCheckExists(providers, resourceName, updatedServerCheckoutSettings),
 				),
 			},
 		},
