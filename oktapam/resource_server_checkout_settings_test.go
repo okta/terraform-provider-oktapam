@@ -68,6 +68,28 @@ resource "oktapam_server_checkout_settings" "test_acc_server_checkout_settings" 
 func createTestAccServerCheckoutSettingsUpdateConfig(dgaName, resourceGroupName, projectName string) string {
 	return fmt.Sprintf(testAccServerCheckoutSettingsUpdateConfigFormat, dgaName, resourceGroupName, projectName)
 }
+
+const testAccServerCheckoutSettingsDeleteConfigFormat = `
+provider "oktapam" {}
+resource "oktapam_group" "test_resource_group_dga_group" {
+	name = "%s"
+}
+resource "oktapam_resource_group" "test_acc_resource_group" {
+	name = "%s"
+	description = "test resource group"
+	delegated_resource_admin_groups = [oktapam_group.test_resource_group_dga_group.id]	
+}
+resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
+	name = "%s"
+	resource_group = oktapam_resource_group.test_acc_resource_group.id
+	ssh_certificate_type  = "CERT_TYPE_ED25519_01"
+	account_discovery     = true
+}
+`
+
+func createTestAccServerCheckoutSettingsDeleteConfig(dgaName, resourceGroupName, projectName string) string {
+	return fmt.Sprintf(testAccServerCheckoutSettingsDeleteConfigFormat, dgaName, resourceGroupName, projectName)
+}
 func TestAccServerCheckoutSettingsSource(t *testing.T) {
 	checkTeamApplicable(t, true)
 	resourceName := "oktapam_server_checkout_settings.test_acc_server_checkout_settings"
@@ -108,6 +130,13 @@ func TestAccServerCheckoutSettingsSource(t *testing.T) {
 					testAccServerCheckoutSettingsCheckExists(providers, resourceName, updatedServerCheckoutSettings),
 				),
 			},
+			// Delete testing
+			{
+				Config: createTestAccServerCheckoutSettingsDeleteConfig(delegatedAdminGroupName, resourceGroupName, projectName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccServerCheckoutSettingsCheckDeleted(providers, resourceName),
+				),
+			},
 		},
 	})
 }
@@ -141,6 +170,16 @@ func testAccServerCheckoutSettingsCheckExists(providers *compositeDualProviderSt
 		}
 		if !reflect.DeepEqual(serverCheckoutSettings.ExcludeList, expectedServerCheckoutSettings.ExcludeList) {
 			return fmt.Errorf("Server checkout settings exclude list does not match: %v != %v", serverCheckoutSettings.ExcludeList, expectedServerCheckoutSettings.ExcludeList)
+		}
+		return nil
+	}
+}
+
+func testAccServerCheckoutSettingsCheckDeleted(providers *compositeDualProviderStruct, resourceName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		_, ok := s.RootModule().Resources[resourceName]
+		if ok {
+			return fmt.Errorf("Server checkout settings still exists: %s", resourceName)
 		}
 		return nil
 	}
