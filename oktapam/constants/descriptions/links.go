@@ -16,7 +16,7 @@ const (
 	LinkTeamSettings          = "For more information check out the [documentation](https://developer.okta.com/docs/reference/api/asa/teams/#fetch-team-settings) on ASA Team Settings and it's usage."
 
 	LinkPasswordSettings                   = "For details, see [Projects](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects)."
-	LinkServerCheckoutSettings             = "For details, see [Server Checkout](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-server-checkout)."
+	LinkServerCheckoutSettings             = "For details, see [Server Checkout](https://help.okta.com/okta_help.htm?type=oie&id=csh-pam-checkout-configure)."
 	LinkResourceGroup                      = "For details, see [Resource Groups](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-resource-groups)."
 	LinkResourceGroupProject               = "For details, see [Projects](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-projects)."
 	LinkResourceGroupServerEnrollmentToken = "For details, see [Server Enrollment](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-server-enrollment)."

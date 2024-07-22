@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -47,6 +48,7 @@ func (r *serverCheckoutSettingsResource) Metadata(_ context.Context, req resourc
 // Schema implements resource.Resource.
 func (r *serverCheckoutSettingsResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: descriptions.ResourceServerCheckoutSettings,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed: true,
