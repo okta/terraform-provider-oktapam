@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // CloudProviderType If available, the name of cloud provider used by the Gateway
@@ -40,25 +39,18 @@ func (v *CloudProviderType) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := CloudProviderType(value)
-	for _, existing := range AllowedCloudProviderTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid CloudProviderType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewCloudProviderTypeFromValue returns a pointer to a valid CloudProviderType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewCloudProviderTypeFromValue(v string) (*CloudProviderType, error) {
 	ev := CloudProviderType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for CloudProviderType: valid values are %v", v, AllowedCloudProviderTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise
