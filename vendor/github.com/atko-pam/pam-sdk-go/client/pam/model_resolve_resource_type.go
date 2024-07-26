@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // ResolveResourceType The type of resource to resolve
@@ -38,25 +37,18 @@ func (v *ResolveResourceType) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := ResolveResourceType(value)
-	for _, existing := range AllowedResolveResourceTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid ResolveResourceType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewResolveResourceTypeFromValue returns a pointer to a valid ResolveResourceType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewResolveResourceTypeFromValue(v string) (*ResolveResourceType, error) {
 	ev := ResolveResourceType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for ResolveResourceType: valid values are %v", v, AllowedResolveResourceTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

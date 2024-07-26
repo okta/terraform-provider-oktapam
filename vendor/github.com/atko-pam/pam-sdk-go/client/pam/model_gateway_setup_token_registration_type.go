@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // GatewaySetupTokenRegistrationType The type of registration policy
@@ -36,25 +35,18 @@ func (v *GatewaySetupTokenRegistrationType) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := GatewaySetupTokenRegistrationType(value)
-	for _, existing := range AllowedGatewaySetupTokenRegistrationTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid GatewaySetupTokenRegistrationType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewGatewaySetupTokenRegistrationTypeFromValue returns a pointer to a valid GatewaySetupTokenRegistrationType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewGatewaySetupTokenRegistrationTypeFromValue(v string) (*GatewaySetupTokenRegistrationType, error) {
 	ev := GatewaySetupTokenRegistrationType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for GatewaySetupTokenRegistrationType: valid values are %v", v, AllowedGatewaySetupTokenRegistrationTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

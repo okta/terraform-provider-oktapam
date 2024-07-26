@@ -13,6 +13,7 @@ package pam
 
 import (
 	"encoding/json"
+	"time"
 )
 
 // checks if the SecretRevealResponse type satisfies the MappedNullable interface at compile time
@@ -27,6 +28,14 @@ type SecretRevealResponse struct {
 	// The description of the Secret
 	Description NullableString `json:"description,omitempty"`
 	Path        []SecretPath   `json:"path,omitempty"`
+	// A timestamp indicating when the Secret was created
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	// The username of the User who created the Secret
+	CreatedBy *string `json:"created_by,omitempty"`
+	// A timestamp indicating when the Secret was last updated
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	// The username of the User who last updated the Secret
+	UpdatedBy *string `json:"updated_by,omitempty"`
 	// The encrypted Secret as a fully serialized JWE
 	SecretJwe string `json:"secret_jwe"`
 }
@@ -180,6 +189,138 @@ func (o *SecretRevealResponse) SetPath(v []SecretPath) *SecretRevealResponse {
 	return o
 }
 
+// GetCreatedAt returns the CreatedAt field value if set, zero value otherwise.
+func (o *SecretRevealResponse) GetCreatedAt() time.Time {
+	if o == nil || IsNil(o.CreatedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.CreatedAt
+}
+
+// GetCreatedAtOk returns a tuple with the CreatedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecretRevealResponse) GetCreatedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.CreatedAt) {
+		return nil, false
+	}
+	return o.CreatedAt, true
+}
+
+// HasCreatedAt returns a boolean if a field has been set.
+func (o *SecretRevealResponse) HasCreatedAt() bool {
+	if o != nil && !IsNil(o.CreatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetCreatedAt gets a reference to the given time.Time and assigns it to the CreatedAt field.
+func (o *SecretRevealResponse) SetCreatedAt(v time.Time) *SecretRevealResponse {
+	o.CreatedAt = &v
+	return o
+}
+
+// GetCreatedBy returns the CreatedBy field value if set, zero value otherwise.
+func (o *SecretRevealResponse) GetCreatedBy() string {
+	if o == nil || IsNil(o.CreatedBy) {
+		var ret string
+		return ret
+	}
+	return *o.CreatedBy
+}
+
+// GetCreatedByOk returns a tuple with the CreatedBy field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecretRevealResponse) GetCreatedByOk() (*string, bool) {
+	if o == nil || IsNil(o.CreatedBy) {
+		return nil, false
+	}
+	return o.CreatedBy, true
+}
+
+// HasCreatedBy returns a boolean if a field has been set.
+func (o *SecretRevealResponse) HasCreatedBy() bool {
+	if o != nil && !IsNil(o.CreatedBy) {
+		return true
+	}
+
+	return false
+}
+
+// SetCreatedBy gets a reference to the given string and assigns it to the CreatedBy field.
+func (o *SecretRevealResponse) SetCreatedBy(v string) *SecretRevealResponse {
+	o.CreatedBy = &v
+	return o
+}
+
+// GetUpdatedAt returns the UpdatedAt field value if set, zero value otherwise.
+func (o *SecretRevealResponse) GetUpdatedAt() time.Time {
+	if o == nil || IsNil(o.UpdatedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.UpdatedAt
+}
+
+// GetUpdatedAtOk returns a tuple with the UpdatedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecretRevealResponse) GetUpdatedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.UpdatedAt) {
+		return nil, false
+	}
+	return o.UpdatedAt, true
+}
+
+// HasUpdatedAt returns a boolean if a field has been set.
+func (o *SecretRevealResponse) HasUpdatedAt() bool {
+	if o != nil && !IsNil(o.UpdatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetUpdatedAt gets a reference to the given time.Time and assigns it to the UpdatedAt field.
+func (o *SecretRevealResponse) SetUpdatedAt(v time.Time) *SecretRevealResponse {
+	o.UpdatedAt = &v
+	return o
+}
+
+// GetUpdatedBy returns the UpdatedBy field value if set, zero value otherwise.
+func (o *SecretRevealResponse) GetUpdatedBy() string {
+	if o == nil || IsNil(o.UpdatedBy) {
+		var ret string
+		return ret
+	}
+	return *o.UpdatedBy
+}
+
+// GetUpdatedByOk returns a tuple with the UpdatedBy field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecretRevealResponse) GetUpdatedByOk() (*string, bool) {
+	if o == nil || IsNil(o.UpdatedBy) {
+		return nil, false
+	}
+	return o.UpdatedBy, true
+}
+
+// HasUpdatedBy returns a boolean if a field has been set.
+func (o *SecretRevealResponse) HasUpdatedBy() bool {
+	if o != nil && !IsNil(o.UpdatedBy) {
+		return true
+	}
+
+	return false
+}
+
+// SetUpdatedBy gets a reference to the given string and assigns it to the UpdatedBy field.
+func (o *SecretRevealResponse) SetUpdatedBy(v string) *SecretRevealResponse {
+	o.UpdatedBy = &v
+	return o
+}
+
 // GetSecretJwe returns the SecretJwe field value
 func (o *SecretRevealResponse) GetSecretJwe() string {
 	if o == nil {
@@ -222,6 +363,18 @@ func (o SecretRevealResponse) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.Path) {
 		toSerialize["path"] = o.Path
+	}
+	if !IsNil(o.CreatedAt) {
+		toSerialize["created_at"] = o.CreatedAt
+	}
+	if !IsNil(o.CreatedBy) {
+		toSerialize["created_by"] = o.CreatedBy
+	}
+	if !IsNil(o.UpdatedAt) {
+		toSerialize["updated_at"] = o.UpdatedAt
+	}
+	if !IsNil(o.UpdatedBy) {
+		toSerialize["updated_by"] = o.UpdatedBy
 	}
 	toSerialize["secret_jwe"] = o.SecretJwe
 	return toSerialize, nil

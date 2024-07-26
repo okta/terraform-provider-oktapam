@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // NamedObjectType the model 'NamedObjectType'
@@ -50,25 +49,18 @@ func (v *NamedObjectType) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := NamedObjectType(value)
-	for _, existing := range AllowedNamedObjectTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid NamedObjectType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewNamedObjectTypeFromValue returns a pointer to a valid NamedObjectType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewNamedObjectTypeFromValue(v string) (*NamedObjectType, error) {
 	ev := NamedObjectType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for NamedObjectType: valid values are %v", v, AllowedNamedObjectTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise
