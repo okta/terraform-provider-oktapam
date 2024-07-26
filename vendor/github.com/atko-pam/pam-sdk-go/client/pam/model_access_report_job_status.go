@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // AccessReportJobStatus The status of the job
@@ -44,25 +43,18 @@ func (v *AccessReportJobStatus) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := AccessReportJobStatus(value)
-	for _, existing := range AllowedAccessReportJobStatusEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid AccessReportJobStatus", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewAccessReportJobStatusFromValue returns a pointer to a valid AccessReportJobStatus
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewAccessReportJobStatusFromValue(v string) (*AccessReportJobStatus, error) {
 	ev := AccessReportJobStatus(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for AccessReportJobStatus: valid values are %v", v, AllowedAccessReportJobStatusEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

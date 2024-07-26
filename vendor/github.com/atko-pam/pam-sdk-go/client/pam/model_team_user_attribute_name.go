@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // TeamUserAttributeName The type of attribute
@@ -50,25 +49,18 @@ func (v *TeamUserAttributeName) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := TeamUserAttributeName(value)
-	for _, existing := range AllowedTeamUserAttributeNameEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid TeamUserAttributeName", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewTeamUserAttributeNameFromValue returns a pointer to a valid TeamUserAttributeName
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewTeamUserAttributeNameFromValue(v string) (*TeamUserAttributeName, error) {
 	ev := TeamUserAttributeName(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for TeamUserAttributeName: valid values are %v", v, AllowedTeamUserAttributeNameEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

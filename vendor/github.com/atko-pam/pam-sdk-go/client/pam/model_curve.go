@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // Curve The curve used by the key
@@ -40,25 +39,18 @@ func (v *Curve) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := Curve(value)
-	for _, existing := range AllowedCurveEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid Curve", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewCurveFromValue returns a pointer to a valid Curve
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewCurveFromValue(v string) (*Curve, error) {
 	ev := Curve(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for Curve: valid values are %v", v, AllowedCurveEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

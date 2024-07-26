@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // CloudConnectionProvider The cloud provider associated with the Cloud Connection. Currently, only accepts `aws`.
@@ -36,25 +35,18 @@ func (v *CloudConnectionProvider) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := CloudConnectionProvider(value)
-	for _, existing := range AllowedCloudConnectionProviderEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid CloudConnectionProvider", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewCloudConnectionProviderFromValue returns a pointer to a valid CloudConnectionProvider
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewCloudConnectionProviderFromValue(v string) (*CloudConnectionProvider, error) {
 	ev := CloudConnectionProvider(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for CloudConnectionProvider: valid values are %v", v, AllowedCloudConnectionProviderEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

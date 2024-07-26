@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // ConditionsMFAACRValues Defines the authentication context class reference (ACR) for this policy. See [Step-up authentication using ACR values](https://developer.okta.com/docs/guides/step-up-authentication/main/).
@@ -38,25 +37,18 @@ func (v *ConditionsMFAACRValues) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := ConditionsMFAACRValues(value)
-	for _, existing := range AllowedConditionsMFAACRValuesEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid ConditionsMFAACRValues", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewConditionsMFAACRValuesFromValue returns a pointer to a valid ConditionsMFAACRValues
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewConditionsMFAACRValuesFromValue(v string) (*ConditionsMFAACRValues, error) {
 	ev := ConditionsMFAACRValues(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for ConditionsMFAACRValues: valid values are %v", v, AllowedConditionsMFAACRValuesEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

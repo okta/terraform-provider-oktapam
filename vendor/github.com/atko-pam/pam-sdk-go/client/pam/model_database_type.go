@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // DatabaseType The type of Database Resource
@@ -36,25 +35,18 @@ func (v *DatabaseType) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := DatabaseType(value)
-	for _, existing := range AllowedDatabaseTypeEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid DatabaseType", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewDatabaseTypeFromValue returns a pointer to a valid DatabaseType
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewDatabaseTypeFromValue(v string) (*DatabaseType, error) {
 	ev := DatabaseType(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for DatabaseType: valid values are %v", v, AllowedDatabaseTypeEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

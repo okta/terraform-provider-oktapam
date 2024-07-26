@@ -13,7 +13,6 @@ package pam
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // Alg The algorithm of the key
@@ -36,25 +35,18 @@ func (v *Alg) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := Alg(value)
-	for _, existing := range AllowedAlgEnumValues {
-		if existing == enumTypeValue {
-			*v = enumTypeValue
-			return nil
-		}
-	}
 
-	return fmt.Errorf("%+v is not a valid Alg", value)
+	*v = enumTypeValue
+
+	return nil
 }
 
 // NewAlgFromValue returns a pointer to a valid Alg
 // for the value passed as argument, or an error if the value passed is not allowed by the enum
 func NewAlgFromValue(v string) (*Alg, error) {
 	ev := Alg(v)
-	if ev.IsValid() {
-		return &ev, nil
-	} else {
-		return nil, fmt.Errorf("invalid value '%v' for Alg: valid values are %v", v, AllowedAlgEnumValues)
-	}
+
+	return &ev, nil
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise
