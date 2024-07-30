@@ -1,0 +1,150 @@
+package oktapam
+
+import (
+	"context"
+	"fmt"
+	"strings"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/terraform-provider-oktapam/oktapam/client"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
+	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
+)
+
+func resourceKubernetesClusterGroup() *schema.Resource {
+	return &schema.Resource{
+		Description:   descriptions.ResourceKubernetesClusterGroup,
+		CreateContext: resourceKubernetesClusterGroupCreate,
+		ReadContext:   resourceKubernetesClusterGroupRead,
+		UpdateContext: resourceKubernetesClusterGroupUpdate,
+		DeleteContext: resourceKubernetesClusterGroupDelete,
+		Schema: map[string]*schema.Schema{
+			attributes.ID: {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			attributes.GroupName: {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: descriptions.GroupName,
+			},
+			attributes.ClusterSelector: {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: descriptions.ClusterSelector,
+			},
+			attributes.Claims: {
+				Type:        schema.TypeMap,
+				Optional:    true,
+				Description: descriptions.ClusterGroupClaims,
+			},
+		},
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
+	}
+}
+
+func resourceKubernetesClusterGroupCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	c := getLocalClientFromMetadata(m)
+	groupName := GetStringPtrFromResource(attributes.GroupName, d, true)
+	clusterSelector := GetStringPtrFromResource(attributes.ClusterSelector, d, true)
+
+	clusterGroupSpec := client.KubernetesClusterGroup{
+		GroupName:       groupName,
+		ClusterSelector: clusterSelector,
+		Claims:          claimsCSVToMap(d.Get(attributes.Claims).(map[string]any)),
+	}
+
+	if createdClusterGroup, err := c.CreateKubernetesClusterGroup(ctx, clusterGroupSpec); err != nil {
+		return diag.FromErr(err)
+	} else if createdClusterGroup == nil {
+		d.SetId("")
+	} else {
+		d.SetId(*createdClusterGroup.ID)
+	}
+
+	return resourceKubernetesClusterGroupRead(ctx, d, m)
+}
+
+func resourceKubernetesClusterGroupRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	c := getLocalClientFromMetadata(m)
+
+	clusterGroup, err := c.GetKubernetesClusterGroup(ctx, d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	if clusterGroup == nil {
+		logging.Debugf("kubernetes cluster group %q was blank", d.Id())
+		d.SetId("")
+		return nil
+	}
+
+	for key, value := range clusterGroup.ToResourceMap() {
+		if err := d.Set(key, value); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	return nil
+}
+
+func resourceKubernetesClusterGroupUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	c := getLocalClientFromMetadata(m)
+	id := d.Id()
+
+	changed := false
+	updates := make(map[string]any)
+
+	changeableAttributes := []string{
+		attributes.Claims,
+		attributes.ClusterSelector,
+	}
+
+	for _, attribute := range changeableAttributes {
+		if d.HasChange(attribute) {
+			switch attribute {
+			case attributes.Claims:
+				updates[attribute] = claimsCSVToMap(d.Get(attributes.Claims).(map[string]any))
+			default:
+				updates[attribute] = d.Get(attribute)
+			}
+			changed = true
+		}
+	}
+
+	if changed {
+		if err := c.UpdateKubernetesClusterGroup(ctx, id, updates); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	return nil
+}
+
+func resourceKubernetesClusterGroupDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	c := getLocalClientFromMetadata(m)
+
+	if err := c.DeleteKubernetesClusterGroup(ctx, d.Id()); err != nil {
+		return diag.FromErr(err)
+	}
+
+	d.SetId("")
+	return nil
+}
+
+// claimsCSVToMap is purpose-built and expects Kubernetes-style values (ie, no commas, spaces, funny characters, etc).
+func claimsCSVToMap(claimsIn map[string]any) map[string][]string {
+	claimsMap := make(map[string][]string)
+
+	for k, csvValues := range claimsIn {
+		values := strings.Split(fmt.Sprint(csvValues), ",")
+		claimsMap[k] = values
+	}
+
+	return claimsMap
+}

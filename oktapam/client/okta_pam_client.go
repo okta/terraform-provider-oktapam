@@ -230,8 +230,3 @@ func CreateSDKClient(providerConfig *OktaPAMProviderConfig) (*pam.APIClient, err
 	}
 	return pamClient, nil
 }
-
-// Deprecated: Use getSDKClientFromMetadata instead of using local client
-func GetLocalClientFromMetadata(meta interface{}) *OktaPAMClient {
-	return meta.(*APIClients).LocalClient
-}

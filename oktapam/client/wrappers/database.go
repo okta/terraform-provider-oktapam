@@ -2,7 +2,6 @@ package wrappers
 
 import (
 	"fmt"
-
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
