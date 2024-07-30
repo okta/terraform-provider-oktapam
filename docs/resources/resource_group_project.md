@@ -31,5 +31,3 @@ A PAM construct that contains a collection of resources that share settings. For
 - `deleted_at` (String) The UTC time when the resource was deleted. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `id` (String) The ID of this resource.
 - `team` (String) The human-readable name of the ASA Team that owns the resource. Values are lower-case.
-
-

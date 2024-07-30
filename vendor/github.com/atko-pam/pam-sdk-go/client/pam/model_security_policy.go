@@ -23,7 +23,8 @@ type SecurityPolicy struct {
 	// The UUID of the Security Policy
 	Id *string `json:"id,omitempty"`
 	// The name of the Security Policy
-	Name string `json:"name"`
+	Name string              `json:"name"`
+	Type *SecurityPolicyType `json:"type,omitempty"`
 	// The description of the Security Policy
 	Description string `json:"description"`
 	// If `true`, indicates that the Security Policy is active
@@ -110,6 +111,39 @@ func (o *SecurityPolicy) GetNameOk() (*string, bool) {
 // SetName sets field value
 func (o *SecurityPolicy) SetName(v string) *SecurityPolicy {
 	o.Name = v
+	return o
+}
+
+// GetType returns the Type field value if set, zero value otherwise.
+func (o *SecurityPolicy) GetType() SecurityPolicyType {
+	if o == nil || IsNil(o.Type) {
+		var ret SecurityPolicyType
+		return ret
+	}
+	return *o.Type
+}
+
+// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecurityPolicy) GetTypeOk() (*SecurityPolicyType, bool) {
+	if o == nil || IsNil(o.Type) {
+		return nil, false
+	}
+	return o.Type, true
+}
+
+// HasType returns a boolean if a field has been set.
+func (o *SecurityPolicy) HasType() bool {
+	if o != nil && !IsNil(o.Type) {
+		return true
+	}
+
+	return false
+}
+
+// SetType gets a reference to the given SecurityPolicyType and assigns it to the Type field.
+func (o *SecurityPolicy) SetType(v SecurityPolicyType) *SecurityPolicy {
+	o.Type = &v
 	return o
 }
 
@@ -227,6 +261,9 @@ func (o SecurityPolicy) ToMap() (map[string]interface{}, error) {
 		toSerialize["id"] = o.Id
 	}
 	toSerialize["name"] = o.Name
+	if !IsNil(o.Type) {
+		toSerialize["type"] = o.Type
+	}
 	toSerialize["description"] = o.Description
 	toSerialize["active"] = o.Active
 	toSerialize["principals"] = o.Principals

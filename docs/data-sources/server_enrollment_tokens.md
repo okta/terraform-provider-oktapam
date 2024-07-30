@@ -23,5 +23,3 @@ A list of all ASA Server Enrollment Tokens associated with a specific ASA Projec
 
 - `id` (String) The ID of this resource.
 - `ids` (List of String)
-
-

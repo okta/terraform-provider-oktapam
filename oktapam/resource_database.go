@@ -3,6 +3,8 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -11,7 +13,6 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
-	"strings"
 )
 
 const (
@@ -183,7 +184,7 @@ func resourceDatabaseRead(ctx context.Context, d *schema.ResourceData, m any) di
 		return diag.FromErr(err)
 	}
 
-	wrap := wrappers.DatabaseResourceResponseWrapper{*database}
+	wrap := wrappers.DatabaseResourceResponseWrapper{DatabaseResourceResponse: *database}
 	attributeOverrides := utils.GenerateAttributeOverrides(d, wrap)
 	for key, value := range wrap.ToResourceMap(attributeOverrides) {
 		if err := d.Set(key, value); err != nil {

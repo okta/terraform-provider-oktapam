@@ -21,5 +21,3 @@ Returns an existing PAM Resource Group. For details, see [Resource Groups](https
 - `description` (String) The human-readable description of the resource.
 - `id` (String) The ID of this resource.
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
-
-

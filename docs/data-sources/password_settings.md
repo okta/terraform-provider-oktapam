@@ -39,5 +39,3 @@ Read-Only:
 - `lower_case` (Boolean)
 - `punctuation` (Boolean)
 - `upper_case` (Boolean)
-
-

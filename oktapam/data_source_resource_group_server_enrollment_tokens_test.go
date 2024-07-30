@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
@@ -23,9 +23,9 @@ func TestAccDatasourceResourceGroupServerEnrollmentTokensList(t *testing.T) {
 	listAllConfig := testAccDatasourceResourceGroupServerEnrollmentTokensConfig(identifier, identifier)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccResourceGroupServerEnrollmentTokensCheckDestroy(identifier),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccResourceGroupServerEnrollmentTokensCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,
@@ -40,7 +40,7 @@ func TestAccDatasourceResourceGroupServerEnrollmentTokensList(t *testing.T) {
 
 func testAccResourceGroupServerEnrollmentTokensCheckDestroy(identifiers ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getLocalClientFromMetadata(testAccProvider.Meta())
+		c := getTestAccAPIClients().LocalClient
 
 		resourceGroups, err := c.ListResourceGroups(context.Background())
 		if err != nil {

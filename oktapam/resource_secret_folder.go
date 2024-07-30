@@ -47,7 +47,7 @@ func resourceSecretFolder() *schema.Resource {
 			attributes.ParentFolder: {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: descriptions.ParentFolder,
+				Description: descriptions.ParentFolderID,
 				ForceNew:    true,
 			},
 			attributes.Description: {

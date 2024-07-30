@@ -2,9 +2,10 @@ package oktapam
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
 func TestAccDatasourceDatabaseResourceFetch(t *testing.T) {
@@ -26,9 +27,9 @@ func TestAccDatasourceDatabaseResourceFetch(t *testing.T) {
 	dataConfig := createTestAccDatasourceDatabaseResourceDataConfig(datasourceKey, databaseKey, resourceGroupKey, projectKey)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccResourceGroupCheckDestroy(resourceGroupName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,

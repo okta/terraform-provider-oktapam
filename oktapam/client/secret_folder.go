@@ -100,9 +100,23 @@ func ListTopLevelSecretFolders(ctx context.Context, sdkClient SDKClientWrapper) 
 	return list, nil
 }
 
-func ResolveSecretFolder(ctx context.Context, sdkClient SDKClientWrapper, resourceGroupID string, projectID string, path string) (*SecretFolder, error) {
-	parentFolder, name := getParentFolderPathAndNameFromPath(path)
+func executeResolveSecretOrFolderRequest(ctx context.Context, sdkClient SDKClientWrapper, resolveSecretOrFolderRequest *pam.ResolveSecretOrFolderRequest) (*pam.ResolveSecretOrFolderResponse, bool, error) {
+	resp, httpResp, callErr := sdkClient.SDKClient.SecretsAPI.ResolveSecretOrFolder(ctx, sdkClient.Team).ResolveSecretOrFolderRequest(*resolveSecretOrFolderRequest).Execute()
+	if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+		return nil, false, nil
+	} else if callErr != nil {
+		return nil, false, callErr
+	} else if httpResp != nil {
+		if _, err := checkStatusCodeFromSDK(httpResp, 200); err != nil {
+			return nil, false, err
+		}
+	}
 
+	return resp, true, nil
+}
+
+func resolveSecretFolder(ctx context.Context, sdkClient SDKClientWrapper, resourceGroupID string, projectID string, path string) (*pam.ResolveSecretOrFolderResponse, bool, error) {
+	parentFolder, name := getParentFolderPathAndNameFromPath(path)
 	resolveSecretOrFolderRequest := pam.NewResolveSecretOrFolderRequest(
 		pam.SecretResolveParent{Id: &resourceGroupID, Type: pam.NamedObjectType_RESOURCE_GROUP.Ptr()},
 		pam.SecretResolveParent{Id: &projectID, Type: pam.NamedObjectType_PROJECT.Ptr()},
@@ -111,18 +125,22 @@ func ResolveSecretFolder(ctx context.Context, sdkClient SDKClientWrapper, resour
 	resolveSecretOrFolderRequest.SetParentFolderPath(parentFolder)
 	resolveSecretOrFolderRequest.SetSecretFolderName(name)
 
-	resp, httpResp, callErr := sdkClient.SDKClient.SecretsAPI.ResolveSecretOrFolder(ctx, sdkClient.Team).ResolveSecretOrFolderRequest(*resolveSecretOrFolderRequest).Execute()
-	if httpResp != nil {
-		if _, err := checkStatusCodeFromSDK(httpResp, 200); err != nil {
-			return nil, err
-		}
-	} else if callErr != nil {
-		return nil, callErr
+	return executeResolveSecretOrFolderRequest(ctx, sdkClient, resolveSecretOrFolderRequest)
+}
+
+func ResolveSecretFolder(ctx context.Context, sdkClient SDKClientWrapper, resourceGroupID string, projectID string, path string) (*SecretFolder, error) {
+	resp, found, err := resolveSecretFolder(ctx, sdkClient, resourceGroupID, projectID, path)
+	if err != nil {
+		return nil, err
+	} else if !found {
+		return nil, fmt.Errorf("could not resolve secret folder with resource group: %s, project: %s, path %s", resourceGroupID, projectID, path)
 	}
 
-	secretFolder := ConvertResolveSecretOrFolderResponse(resp)
-
-	return &secretFolder, nil
+	if secretFolder, err := ConvertResolveSecretOrFolderResponseToSecretFolder(resp); err != nil {
+		return nil, err
+	} else {
+		return &secretFolder, nil
+	}
 }
 
 func ListTopLevelSecretFoldersForProject(ctx context.Context, sdkCLient SDKClientWrapper, resourceGroupID string, projectID string) ([]SecretFolder, error) {
@@ -215,7 +233,11 @@ func ConvertSecretOrFolderListResponseToSecretFolder(resp pam.SecretOrFolderList
 	}
 }
 
-func ConvertResolveSecretOrFolderResponse(resp *pam.ResolveSecretOrFolderResponse) SecretFolder {
+func ConvertResolveSecretOrFolderResponseToSecretFolder(resp *pam.ResolveSecretOrFolderResponse) (SecretFolder, error) {
+	if resp.Type != nil && *resp.Type != pam.SecretType_FOLDER {
+		return SecretFolder{}, fmt.Errorf("resolved entity was not a secret folder.  id: %s", resp.Id)
+	}
+
 	var parentSecretFolderID *string
 
 	if len(resp.Path) != 0 {
@@ -229,7 +251,7 @@ func ConvertResolveSecretOrFolderResponse(resp *pam.ResolveSecretOrFolderRespons
 		ResourceGroupID: resp.ResourceGroup.Id,
 		ProjectID:       resp.Project.Id,
 		ParentFolderID:  parentSecretFolderID,
-	}
+	}, nil
 }
 
 func (c OktaPAMClient) GetSecretFolder(ctx context.Context, resourceGroupID string, projectID string, id string) (*SecretFolder, error) {
