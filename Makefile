@@ -7,7 +7,7 @@ VERSION=0.4.1
 OS_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
 PLUGIN_DIR=~/.terraform.d/plugins
 DOCGEN_RESOURCES_DIR=docgen-resources
-
+GOPRIVATE="github.com/atko-pam,github.com/okta"
 SET_VERSION=-ldflags "-X github.com/okta/terraform-provider-oktapam/oktapam/version.Version=${VERSION}"
 
 ifneq ($(DEBUG), )
@@ -64,3 +64,11 @@ check-generate:
 	go generate ./...
 	git diff --compact-summary --exit-code || \
 	  (echo; echo "Unexpected difference in directories after code generation. Run 'go generate ./...' command and commit."; exit 1)
+updatedep:
+	ifndef dep
+		$(error you must specify dep=<your dependency>)
+	endif
+	GOPRIVATE=${GOPRIVATE} go mod tidy
+	GOPRIVATE=${GOPRIVATE} go get $(dep)@latest
+	GOPRIVATE=${GOPRIVATE} go mod tidy
+	GOPRIVATE=${GOPRIVATE} go mod vendor

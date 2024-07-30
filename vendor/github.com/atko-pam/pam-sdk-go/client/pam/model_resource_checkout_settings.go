@@ -24,9 +24,9 @@ type ResourceCheckoutSettings struct {
 	CheckoutRequired bool `json:"checkout_required"`
 	// The duration in seconds for the checkout. If the checkout is enabled, the duration is the maximum time a user can access the resource before the checkout expires.
 	CheckoutDurationInSeconds *int32 `json:"checkout_duration_in_seconds,omitempty"`
-	// If provided, only the account identifiers listed are required to perform a checkout to access the resource. This list is only considered if `checkout_required` is set to `true`. Note that only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.
+	// If provided, only the account identifiers listed are required to perform a checkout to access the resource. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.
 	IncludeList []string `json:"include_list,omitempty"`
-	// If provided, only the account identifiers listed are excluded from the checkout requirement. This list is only considered if `checkout_required` is set to `true`. Note that only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.
+	// If provided, only the account identifiers listed are excluded from the checkout requirement. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.
 	ExcludeList []string `json:"exclude_list,omitempty"`
 }
 

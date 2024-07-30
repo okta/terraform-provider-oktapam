@@ -30,6 +30,10 @@ const (
 	providerADUserSyncTaskSettingsKey              = "oktapam_ad_user_sync_task_settings"
 	providerADUserSyncTaskSettingsIDListKey        = "oktapam_ad_user_sync_task_settings_id_list"
 	providerCurrentUser                            = "oktapam_current_user"
+	providerCloudConnectionKey                     = "oktapam_cloud_connection"
+	providerCloudConnectionsKey                    = "oktapam_cloud_connections"
+	providerSudoCommandBundleKey                   = "oktapam_sudo_command_bundle"
+	providerSudoCommandsBundlesKey                 = "oktapam_sudo_command_bundles"
 	providerDatabaseKey                            = "oktapam_database"
 	providerDatabasePasswordSettings               = "oktapam_database_password_settings"
 	providerGatewaysKey                            = "oktapam_gateways"
@@ -51,6 +55,8 @@ const (
 	providerResourceGroupProjectsKey               = "oktapam_resource_group_projects"
 	providerResourceGroupServerEnrollmentTokenKey  = "oktapam_resource_group_server_enrollment_token"
 	providerResourceGroupServerEnrollmentTokensKey = "oktapam_resource_group_server_enrollment_tokens"
+	providerSecretKey                              = "oktapam_secret"
+	providerSecretsKey                             = "oktapam_secrets"
 	providerSecretFolderKey                        = "oktapam_secret_folder"
 	providerSecretFoldersKey                       = "oktapam_secret_folders"
 	providerSecurityPoliciesKey                    = "oktapam_security_policies"
@@ -92,6 +98,8 @@ func Provider() *schema.Provider {
 			providerADConnectionKey:                       resourceADConnection(),
 			providerADTaskSettingsKey:                     resourceADServerSyncTaskSettings(),
 			providerADUserSyncTaskSettingsKey:             resourceADUserSyncTaskSettings(),
+			providerCloudConnectionKey:                    resourceCloudConnection(),
+			providerSudoCommandBundleKey:                  resourceSudoCommandBundle(),
 			providerDatabaseKey:                           resourceDatabase(),
 			providerDatabasePasswordSettings:              resourceDatabasePasswordSettings(),
 			providerGatewaySetupTokenKey:                  resourceGatewaySetupToken(),
@@ -105,6 +113,7 @@ func Provider() *schema.Provider {
 			providerResourceGroupKey:                      resourceResourceGroup(),
 			providerResourceGroupProjectKey:               resourceResourceGroupProject(),
 			providerResourceGroupServerEnrollmentTokenKey: resourceResourceGroupServerEnrollmentToken(),
+			providerSecretKey:                             resourceSecret(),
 			providerSecretFolderKey:                       resourceSecretFolder(),
 			providerSecurityPolicyKey:                     resourceSecurityPolicy(),
 			providerServerEnrollmentTokenKey:              resourceServerEnrollmentToken(),
@@ -115,6 +124,10 @@ func Provider() *schema.Provider {
 
 		DataSourcesMap: map[string]*schema.Resource{
 			providerADConnectionsKey:                       dataSourceADConnections(),
+			providerCloudConnectionKey:                     dataSourceCloudConnection(),
+			providerCloudConnectionsKey:                    dataSourceCloudConnections(),
+			providerSudoCommandBundleKey:                   dataSourceSudoCommandBundle(),
+			providerSudoCommandsBundlesKey:                 dataSourceSudoCommandBundles(),
 			providerCurrentUser:                            dataSourceCurrentUser(),
 			providerDatabaseKey:                            dataSourceDatabase(),
 			providerDatabasePasswordSettings:               dataSourceDatabasePasswordSettings(),
@@ -135,6 +148,8 @@ func Provider() *schema.Provider {
 			providerResourceGroupServerEnrollmentTokenKey:  dataSourceResourceGroupServerEnrollmentToken(),
 			providerResourceGroupServerEnrollmentTokensKey: dataSourceResourceGroupServerEnrollmentTokens(),
 			providerSecretFoldersKey:                       dataSourceSecretFolders(),
+			providerSecretKey:                              dataSourceSecret(),
+			providerSecretsKey:                             dataSourceSecrets(),
 			providerSecurityPoliciesKey:                    dataSourceSecurityPolicies(),
 			providerSecurityPolicyKey:                      dataSourceSecurityPolicy(),
 			providerServerEnrollmentTokenKey:               dataSourceServerEnrollmentToken(),

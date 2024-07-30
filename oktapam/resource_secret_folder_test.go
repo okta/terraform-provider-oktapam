@@ -189,6 +189,7 @@ resource "oktapam_security_policy" "test_acc_secret_folder_security_policy" {
 			}
 		}
 	}
+	depends_on = [oktapam_user_group_attachment.test_resource_group_dga_group_attachment]
 }
 resource "oktapam_secret_folder" "test_acc_secret_folder_child" {
 	name = "%s"
@@ -257,6 +258,7 @@ resource "oktapam_security_policy" "test_acc_secret_folder_security_policy" {
 			}
 		}
 	}
+	depends_on = [oktapam_user_group_attachment.test_resource_group_dga_group_attachment]
 }
 resource "oktapam_secret_folder" "test_acc_secret_folder_child" {
 	name = "%s"

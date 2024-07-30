@@ -87,7 +87,7 @@ func dataSourceProjectGroupFetch(ctx context.Context, d *schema.ResourceData, m 
 			}
 		}
 	} else {
-		logging.Infof("project group belonging to project %s and group %s does not exist", *projectGroup.Project, *projectGroup.Group)
+		logging.Infof("project group belonging to project %s and group %s does not exist", projectName, groupName)
 	}
 
 	return nil

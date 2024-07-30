@@ -86,7 +86,7 @@ func dataSourceDatabaseFetch(ctx context.Context, d *schema.ResourceData, m any)
 		return diag.FromErr(err)
 	}
 
-	wrap := wrappers.DatabaseResourceResponseWrapper{*database}
+	wrap := wrappers.DatabaseResourceResponseWrapper{DatabaseResourceResponse: *database}
 
 	d.SetId(database.Id)
 	for key, value := range wrap.ToResourceMap(nil) {

@@ -39,6 +39,10 @@ type UserAccessMethod struct {
 	// The type of access method
 	UserAccessType *string                  `json:"user_access_type,omitempty"`
 	Details        *UserAccessMethodDetails `json:"details,omitempty"`
+	// Collection of all the sudo-related commands a user can access in a single string format
+	SudoCommandBundles *string `json:"sudo_command_bundles,omitempty"`
+	// This is a nickname set on the policy rule that contains one or more sudo command bundles. This helps Users choose the appropriate user access method based on the sudo permissions it grants.
+	SudoDisplayName *string `json:"sudo_display_name,omitempty"`
 }
 
 // NewUserAccessMethod instantiates a new UserAccessMethod object
@@ -388,6 +392,72 @@ func (o *UserAccessMethod) SetDetails(v UserAccessMethodDetails) *UserAccessMeth
 	return o
 }
 
+// GetSudoCommandBundles returns the SudoCommandBundles field value if set, zero value otherwise.
+func (o *UserAccessMethod) GetSudoCommandBundles() string {
+	if o == nil || IsNil(o.SudoCommandBundles) {
+		var ret string
+		return ret
+	}
+	return *o.SudoCommandBundles
+}
+
+// GetSudoCommandBundlesOk returns a tuple with the SudoCommandBundles field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserAccessMethod) GetSudoCommandBundlesOk() (*string, bool) {
+	if o == nil || IsNil(o.SudoCommandBundles) {
+		return nil, false
+	}
+	return o.SudoCommandBundles, true
+}
+
+// HasSudoCommandBundles returns a boolean if a field has been set.
+func (o *UserAccessMethod) HasSudoCommandBundles() bool {
+	if o != nil && !IsNil(o.SudoCommandBundles) {
+		return true
+	}
+
+	return false
+}
+
+// SetSudoCommandBundles gets a reference to the given string and assigns it to the SudoCommandBundles field.
+func (o *UserAccessMethod) SetSudoCommandBundles(v string) *UserAccessMethod {
+	o.SudoCommandBundles = &v
+	return o
+}
+
+// GetSudoDisplayName returns the SudoDisplayName field value if set, zero value otherwise.
+func (o *UserAccessMethod) GetSudoDisplayName() string {
+	if o == nil || IsNil(o.SudoDisplayName) {
+		var ret string
+		return ret
+	}
+	return *o.SudoDisplayName
+}
+
+// GetSudoDisplayNameOk returns a tuple with the SudoDisplayName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserAccessMethod) GetSudoDisplayNameOk() (*string, bool) {
+	if o == nil || IsNil(o.SudoDisplayName) {
+		return nil, false
+	}
+	return o.SudoDisplayName, true
+}
+
+// HasSudoDisplayName returns a boolean if a field has been set.
+func (o *UserAccessMethod) HasSudoDisplayName() bool {
+	if o != nil && !IsNil(o.SudoDisplayName) {
+		return true
+	}
+
+	return false
+}
+
+// SetSudoDisplayName gets a reference to the given string and assigns it to the SudoDisplayName field.
+func (o *UserAccessMethod) SetSudoDisplayName(v string) *UserAccessMethod {
+	o.SudoDisplayName = &v
+	return o
+}
+
 func (o UserAccessMethod) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -427,6 +497,12 @@ func (o UserAccessMethod) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.Details) {
 		toSerialize["details"] = o.Details
+	}
+	if !IsNil(o.SudoCommandBundles) {
+		toSerialize["sudo_command_bundles"] = o.SudoCommandBundles
+	}
+	if !IsNil(o.SudoDisplayName) {
+		toSerialize["sudo_display_name"] = o.SudoDisplayName
 	}
 	return toSerialize, nil
 }
