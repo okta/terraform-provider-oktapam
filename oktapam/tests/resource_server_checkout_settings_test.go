@@ -4,12 +4,14 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"regexp"
 	"testing"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
+	"github.com/okta/terraform-provider-oktapam/oktapam/fwprovider"
 )
 
 const testAccServerCheckoutSettingsPrefixConfigFormat = `
@@ -56,19 +58,137 @@ func createTestAccServerCheckoutSettingsUpdateConfig(dgaName, resourceGroupName,
 	return fmt.Sprintf(testAccServerCheckoutSettingsUpdateConfigFormat, dgaName, resourceGroupName, projectName)
 }
 
-const testAccServerCheckoutSettingsDeleteConfigFormat = `
+const testAccServerCheckoutSettingsUpdateFromIncludeListToExcludeListConfigFormat = testAccServerCheckoutSettingsPrefixConfigFormat + `
+resource "oktapam_server_checkout_settings" "test_acc_server_checkout_settings" {
+	resource_group = oktapam_resource_group.test_acc_resource_group.id
+	project = oktapam_resource_group_project.test_acc_resource_group_project.id
+	checkout_required = true
+	checkout_duration_in_seconds = 3600
+	exclude_list = ["vaulted_account_3"]
+}	
+`
+
+func createTestAccServerCheckoutSettingsUpdateFromIncludeListToExcludeListConfig(dgaName, resourceGroupName, projectName string) string {
+	return fmt.Sprintf(testAccServerCheckoutSettingsUpdateFromIncludeListToExcludeListConfigFormat, dgaName, resourceGroupName, projectName)
+}
+
+const testAccServerCheckoutSettingsUpdateCheckoutRequiredOnlyConfigFormat = testAccServerCheckoutSettingsPrefixConfigFormat + `
+resource "oktapam_server_checkout_settings" "test_acc_server_checkout_settings" {
+	resource_group = oktapam_resource_group.test_acc_resource_group.id
+	project = oktapam_resource_group_project.test_acc_resource_group_project.id
+	checkout_required = true
+	checkout_duration_in_seconds = 3600
+}	
+`
+
+func createTestAccServerCheckoutSettingsUpdateCheckoutRequiredOnlyConfig(dgaName, resourceGroupName, projectName string) string {
+	return fmt.Sprintf(testAccServerCheckoutSettingsUpdateCheckoutRequiredOnlyConfigFormat, dgaName, resourceGroupName, projectName)
+}
+
+const testAccServerCheckoutSettingsUpdateBadConfigFormat = testAccServerCheckoutSettingsPrefixConfigFormat + `
+resource "oktapam_server_checkout_settings" "test_acc_server_checkout_settings" {
+	resource_group = oktapam_resource_group.test_acc_resource_group.id
+	project = oktapam_resource_group_project.test_acc_resource_group_project.id
+	checkout_required = true
+	checkout_duration_in_seconds = 3600
+	include_list = ["vaulted_account_1", "vaulted_account_2"]
+	exclude_list = ["vaulted_account_3"]
+}	
+`
+
+func createTestAccServerCheckoutSettingsUpdateBadConfig(dgaName, resourceGroupName, projectName string) string {
+	return fmt.Sprintf(testAccServerCheckoutSettingsUpdateBadConfigFormat, dgaName, resourceGroupName, projectName)
+}
+
+const testAccServerCheckoutSettingsUpdateNewResourceGroupConfigFormat = `
 provider "oktapam" {}
 resource "oktapam_group" "test_resource_group_dga_group" {
 	name = "%s"
 }
+
 resource "oktapam_resource_group" "test_acc_resource_group" {
 	name = "%s"
 	description = "test resource group"
 	delegated_resource_admin_groups = [oktapam_group.test_resource_group_dga_group.id]	
 }
+
+resource "oktapam_resource_group" "test_acc_resource_group_new" {
+	name = "%s"
+	description = "test new resource group"
+	delegated_resource_admin_groups = [oktapam_group.test_resource_group_dga_group.id]	
+}
+
 resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
 	name = "%s"
-	resource_group = oktapam_resource_group.test_acc_resource_group.id
+	resource_group = oktapam_resource_group.test_acc_resource_group_new.id
+	ssh_certificate_type  = "CERT_TYPE_ED25519_01"
+	account_discovery     = true
+}
+resource "oktapam_server_checkout_settings" "test_acc_server_checkout_settings" {
+	resource_group = oktapam_resource_group.test_acc_resource_group_new.id
+	project = oktapam_resource_group_project.test_acc_resource_group_project.id
+	checkout_required = true
+	checkout_duration_in_seconds = 3600
+}	
+`
+
+func createTestAccServerCheckoutSettingsUpdateNewResourceGroupConfig(dgaName, resourceGroupName, newResourceGroupName, projectName string) string {
+	return fmt.Sprintf(testAccServerCheckoutSettingsUpdateNewResourceGroupConfigFormat, dgaName, resourceGroupName, newResourceGroupName, projectName)
+}
+
+const testAccServerCheckoutSettingsUpdateNewProjectConfigFormat = `
+provider "oktapam" {}
+resource "oktapam_group" "test_resource_group_dga_group" {
+	name = "%s"
+}
+
+resource "oktapam_resource_group" "test_acc_resource_group_new" {
+	name = "%s"
+	description = "test new resource group"
+	delegated_resource_admin_groups = [oktapam_group.test_resource_group_dga_group.id]	
+}
+
+resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
+	name = "%s"
+	resource_group = oktapam_resource_group.test_acc_resource_group_new.id
+	ssh_certificate_type  = "CERT_TYPE_ED25519_01"
+	account_discovery     = true
+}
+
+resource "oktapam_resource_group_project" "test_acc_resource_group_project_new" {
+	name = "%s"
+	resource_group = oktapam_resource_group.test_acc_resource_group_new.id
+	ssh_certificate_type  = "CERT_TYPE_ED25519_01"
+	account_discovery     = true
+}
+	
+resource "oktapam_server_checkout_settings" "test_acc_server_checkout_settings" {
+	resource_group = oktapam_resource_group.test_acc_resource_group_new.id
+	project = oktapam_resource_group_project.test_acc_resource_group_project_new.id
+	checkout_required = true
+	checkout_duration_in_seconds = 3600
+}
+`
+
+func createTestAccServerCheckoutSettingsUpdateNewProjectConfig(dgaName, resourceGroupName, projectName, newProjectName string) string {
+	return fmt.Sprintf(testAccServerCheckoutSettingsUpdateNewProjectConfigFormat, dgaName, resourceGroupName, projectName, newProjectName)
+}
+
+const testAccServerCheckoutSettingsDeleteConfigFormat = `
+provider "oktapam" {}
+resource "oktapam_group" "test_resource_group_dga_group" {
+	name = "%s"
+}
+
+resource "oktapam_resource_group" "test_acc_resource_group_new" {
+	name = "%s"
+	description = "test new resource group"
+	delegated_resource_admin_groups = [oktapam_group.test_resource_group_dga_group.id]	
+}
+
+resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
+	name = "%s"
+	resource_group = oktapam_resource_group.test_acc_resource_group_new.id
 	ssh_certificate_type  = "CERT_TYPE_ED25519_01"
 	account_discovery     = true
 }
@@ -81,7 +201,12 @@ func TestAccServerCheckoutSettingsSource(t *testing.T) {
 	checkTeamApplicable(t, true)
 	resourceName := "oktapam_server_checkout_settings.test_acc_server_checkout_settings"
 	resourceGroupName := fmt.Sprintf("test_acc_resource_group_%s", randSeq())
+	newResourceGroupName := fmt.Sprintf("test_acc_resource_group_%s", randSeq())
+	newResourceGroupResourceName := "oktapam_resource_group.test_acc_resource_group_new"
+	projectResourceName := "oktapam_resource_group_project.test_acc_resource_group_project"
 	projectName := fmt.Sprintf("test_acc_resource_group_project_%s", randSeq())
+	newProjectName := fmt.Sprintf("test_acc_resource_group_project_%s", randSeq())
+	newProjectResourceName := "oktapam_resource_group_project.test_acc_resource_group_project_new"
 	delegatedAdminGroupName := fmt.Sprintf("test_acc_resource_group_dga_%s", randSeq())
 	defaultCheckoutDuration := int32(900)
 	updatedCheckoutDuration := int32(3600)
@@ -95,6 +220,17 @@ func TestAccServerCheckoutSettingsSource(t *testing.T) {
 		CheckoutRequired:          true,
 		CheckoutDurationInSeconds: &updatedCheckoutDuration,
 		IncludeList:               []string{"vaulted_account_1", "vaulted_account_2"},
+	}
+
+	fromIncludeListToExcludeListCheckoutSettings := &pam.ResourceCheckoutSettings{
+		CheckoutRequired:          true,
+		CheckoutDurationInSeconds: &updatedCheckoutDuration,
+		ExcludeList:               []string{"vaulted_account_3"},
+	}
+
+	checkedRequiredOnlyCheckoutSettings := &pam.ResourceCheckoutSettings{
+		CheckoutRequired:          true,
+		CheckoutDurationInSeconds: &updatedCheckoutDuration,
 	}
 
 	_, providers, accProviders := testAccFrameworkMuxProviders(context.Background(), t)
@@ -117,9 +253,47 @@ func TestAccServerCheckoutSettingsSource(t *testing.T) {
 					testAccServerCheckoutSettingsCheckExists(providers, resourceName, updatedServerCheckoutSettings),
 				),
 			},
+			// Update from include list to exclude list testing
+			{
+				Config: createTestAccServerCheckoutSettingsUpdateFromIncludeListToExcludeListConfig(delegatedAdminGroupName, resourceGroupName, projectName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccServerCheckoutSettingsCheckExists(providers, resourceName, fromIncludeListToExcludeListCheckoutSettings),
+				),
+			},
+
+			// Remove exclude_list and only with checkout_required field
+			{
+				Config: createTestAccServerCheckoutSettingsUpdateCheckoutRequiredOnlyConfig(delegatedAdminGroupName, resourceGroupName, projectName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccServerCheckoutSettingsCheckExists(providers, resourceName, checkedRequiredOnlyCheckoutSettings),
+				),
+			},
+
+			// Update checkout settings with both include and exclude list
+			{
+				Config:      createTestAccServerCheckoutSettingsUpdateBadConfig(delegatedAdminGroupName, resourceGroupName, projectName),
+				ExpectError: regexp.MustCompile("Only one of 'IncludeList' or 'ExcludeList' can be specified"),
+			},
+
+			// Update checkout settings with new resource group
+			{
+				Config: createTestAccServerCheckoutSettingsUpdateNewResourceGroupConfig(delegatedAdminGroupName, resourceGroupName, newResourceGroupName, projectName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccServerCheckoutSettingsCheckForceNewResourceGroup(resourceName, newResourceGroupResourceName, projectResourceName),
+				),
+			},
+
+			// Update checkout settings with new project
+			{
+				Config: createTestAccServerCheckoutSettingsUpdateNewProjectConfig(delegatedAdminGroupName, resourceGroupName, projectName, newProjectName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccServerCheckoutSettingsCheckForceNewProject(resourceName, newResourceGroupResourceName, newProjectResourceName),
+				),
+			},
+
 			// Delete testing
 			{
-				Config: createTestAccServerCheckoutSettingsDeleteConfig(delegatedAdminGroupName, resourceGroupName, projectName),
+				Config: createTestAccServerCheckoutSettingsDeleteConfig(delegatedAdminGroupName, newResourceGroupName, projectName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccServerCheckoutSettingsCheckDeleted(resourceName),
 				),
@@ -167,6 +341,52 @@ func testAccServerCheckoutSettingsCheckDeleted(resourceName string) resource.Tes
 		_, ok := s.RootModule().Resources[resourceName]
 		if ok {
 			return fmt.Errorf("Server checkout settings still exists: %s", resourceName)
+		}
+		return nil
+	}
+}
+
+func testAccServerCheckoutSettingsCheckForceNewResourceGroup(resourceName, newResourceGroupResourceName, projectResourceName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("Server checkout settings not found: %s", resourceName)
+		}
+		newResourceGroupState, ok := s.RootModule().Resources[newResourceGroupResourceName]
+		if !ok {
+			return fmt.Errorf("New resource group not found: %s", newResourceGroupResourceName)
+		}
+
+		projectState, ok := s.RootModule().Resources[projectResourceName]
+		if !ok {
+			return fmt.Errorf("Project not found: %s", projectResourceName)
+		}
+
+		if rs.Primary.ID != fwprovider.FormatServerCheckoutSettingsID(newResourceGroupState.Primary.ID, projectState.Primary.ID) {
+			return fmt.Errorf("Server checkout settings ID not updated: %s", rs.Primary.ID)
+		}
+		return nil
+	}
+}
+
+func testAccServerCheckoutSettingsCheckForceNewProject(resourceName, resourceGroupResourceName, newProjectResourceName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("Server checkout settings not found: %s", resourceName)
+		}
+		resourceGroupState, ok := s.RootModule().Resources[resourceGroupResourceName]
+		if !ok {
+			return fmt.Errorf("New resource group not found: %s", resourceGroupResourceName)
+		}
+
+		newProjectState, ok := s.RootModule().Resources[newProjectResourceName]
+		if !ok {
+			return fmt.Errorf("Project not found: %s", newProjectResourceName)
+		}
+
+		if rs.Primary.ID != fwprovider.FormatServerCheckoutSettingsID(resourceGroupState.Primary.ID, newProjectState.Primary.ID) {
+			return fmt.Errorf("Server checkout settings ID not updated: %s", rs.Primary.ID)
 		}
 		return nil
 	}

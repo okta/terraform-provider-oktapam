@@ -30,7 +30,7 @@ func UpdateServerCheckoutSettings(ctx context.Context, sdkClient SDKClientWrappe
 
 	httpResp, callErr := request.Execute()
 	if httpResp != nil {
-		if _, err := checkStatusCodeFromSDK(httpResp, http.StatusOK); err != nil {
+		if _, err := checkStatusCodeFromSDK(httpResp, http.StatusNoContent); err != nil {
 			return err
 		}
 	} else if callErr != nil {
