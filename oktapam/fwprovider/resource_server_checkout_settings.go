@@ -135,7 +135,7 @@ func (r *serverCheckoutSettingsResource) Create(ctx context.Context, req resourc
 		return
 	}
 	// Set state to fully populated data
-	plan.Id = types.StringValue(FormatServerCheckoutSettingsID(plan.ResourceGroup, plan.Project))
+	plan.Id = types.StringValue(formatServerCheckoutSettingsID(plan.ResourceGroup, plan.Project))
 	plan.CheckoutRequired = createdServerCheckoutSettings.CheckoutRequired
 	plan.CheckoutDurationInSeconds = createdServerCheckoutSettings.CheckoutDurationInSeconds
 	plan.IncludeList = createdServerCheckoutSettings.IncludeList
@@ -274,7 +274,7 @@ func (r *serverCheckoutSettingsResource) Configure(_ context.Context, req resour
 	r.client = provider.SDKClientWrapper
 }
 
-func FormatServerCheckoutSettingsID(resourceGroupID string, projectID string) string {
+func formatServerCheckoutSettingsID(resourceGroupID string, projectID string) string {
 	// server checkout settings don't have an identifier in itself and is really an attribute of a project.
 	// we manage it as a separate resource since it's lifecycle is somewhat separate from a project.
 	return fmt.Sprintf("%s/%s", resourceGroupID, projectID)
