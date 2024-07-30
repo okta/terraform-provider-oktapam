@@ -59,38 +59,44 @@ func (r *serverCheckoutSettingsResource) Schema(_ context.Context, _ resource.Sc
 			"checkout_duration_in_seconds": schema.Int64Attribute{
 				Optional:            true,
 				Computed:            true,
-				Description:         "The duration in seconds for the checkout. If the checkout is enabled, the duration is the maximum time a user can access the resource before the checkout expires.",
-				MarkdownDescription: "The duration in seconds for the checkout. If the checkout is enabled, the duration is the maximum time a user can access the resource before the checkout expires.",
+				Description:         descriptions.ServerCheckoutDurationInSeconds,
+				MarkdownDescription: descriptions.ServerCheckoutDurationInSeconds,
 				Validators: []validator.Int64{
 					int64validator.Between(900, 86400),
 				},
 			},
 			"checkout_required": schema.BoolAttribute{
 				Required:            true,
-				Description:         "Indicates whether a checkout is mandatory for accessing resources within the project. If `true`, checkout is enforced for all applicable resources by default. If `false`, checkout is not required, and resources are accessible without it.",
-				MarkdownDescription: "Indicates whether a checkout is mandatory for accessing resources within the project. If `true`, checkout is enforced for all applicable resources by default. If `false`, checkout is not required, and resources are accessible without it.",
+				Description:         descriptions.ServerCheckoutRequired,
+				MarkdownDescription: descriptions.ServerCheckoutRequired,
 			},
 			"exclude_list": schema.ListAttribute{
 				ElementType:         types.StringType,
 				Optional:            true,
-				Description:         "If provided, only the account identifiers listed are excluded from the checkout requirement. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.",
-				MarkdownDescription: "If provided, only the account identifiers listed are excluded from the checkout requirement. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.",
+				Description:         descriptions.ServerCheckoutExcludeList,
+				MarkdownDescription: descriptions.ServerCheckoutExcludeList,
 			},
 			"include_list": schema.ListAttribute{
 				ElementType:         types.StringType,
 				Optional:            true,
-				Description:         "If provided, only the account identifiers listed are required to perform a checkout to access the resource. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.",
-				MarkdownDescription: "If provided, only the account identifiers listed are required to perform a checkout to access the resource. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.",
+				Description:         descriptions.ServerCheckoutIncludeList,
+				MarkdownDescription: descriptions.ServerCheckoutIncludeList,
 			},
 			"project": schema.StringAttribute{
-				Required:            true,
-				Description:         "The UUID of a Project",
-				MarkdownDescription: "The UUID of a Project",
+				Required: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
+				Description:         descriptions.ProjectID,
+				MarkdownDescription: descriptions.ProjectID,
 			},
 			"resource_group": schema.StringAttribute{
-				Required:            true,
-				Description:         "The UUID of a Resource Group",
-				MarkdownDescription: "The UUID of a Resource Group",
+				Required: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
+				Description:         descriptions.ResourceGroupID,
+				MarkdownDescription: descriptions.ResourceGroupID,
 			},
 		},
 	}
@@ -113,19 +119,29 @@ func (r *serverCheckoutSettingsResource) Create(ctx context.Context, req resourc
 		ExcludeList:               plan.ExcludeList,
 	}
 
-	_, err := r.client.SDKClient.ProjectsAPI.UpdateResourceGroupServerBasedProjectCheckoutSettings(ctx, r.client.Team, plan.ResourceGroup, plan.Project).ResourceCheckoutSettings(*serverCheckoutSettings).Execute()
+	err := client.UpdateServerCheckoutSettings(ctx, *r.client, plan.ResourceGroup, plan.Project, *serverCheckoutSettings)
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating server checkout settings", err.Error())
 		return
 	}
-	// Set state to fully populated data
-	plan.Id = types.StringValue(formatServerCheckoutSettingsID(plan.ResourceGroup, plan.Project))
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
+	// Fetch the created server checkout settings from the API host
+	createdServerCheckoutSettings, err := client.GetServerCheckoutSettings(ctx, *r.client, plan.ResourceGroup, plan.Project)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error reading server checkout settings",
+			"Could not read server checkout settings for team:"+r.client.Team+"resource_group:"+plan.ResourceGroup+"project_id:"+plan.Project+": "+err.Error(),
+		)
 		return
 	}
+	// Set state to fully populated data
+	plan.Id = types.StringValue(formatServerCheckoutSettingsID(plan.ResourceGroup, plan.Project))
+	plan.CheckoutRequired = createdServerCheckoutSettings.CheckoutRequired
+	plan.CheckoutDurationInSeconds = createdServerCheckoutSettings.CheckoutDurationInSeconds
+	plan.IncludeList = createdServerCheckoutSettings.IncludeList
+	plan.ExcludeList = createdServerCheckoutSettings.ExcludeList
+	diags = resp.State.Set(ctx, plan)
+	resp.Diagnostics.Append(diags...)
 }
 
 // Read implements resource.Resource.
@@ -139,7 +155,7 @@ func (r *serverCheckoutSettingsResource) Read(ctx context.Context, req resource.
 	}
 
 	// Get refreshed server checkout settings from API host
-	serverCheckoutSettings, _, err := r.client.SDKClient.ProjectsAPI.FetchResourceGroupServerBasedProjectCheckoutSettings(ctx, r.client.Team, state.ResourceGroup, state.Project).Execute()
+	serverCheckoutSettings, err := client.GetServerCheckoutSettings(ctx, *r.client, state.ResourceGroup, state.Project)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading server checkout settings",
@@ -180,7 +196,7 @@ func (r *serverCheckoutSettingsResource) Update(ctx context.Context, req resourc
 		ExcludeList:               plan.ExcludeList,
 	}
 
-	_, err := r.client.SDKClient.ProjectsAPI.UpdateResourceGroupServerBasedProjectCheckoutSettings(ctx, r.client.Team, plan.ResourceGroup, plan.Project).ResourceCheckoutSettings(*serverCheckoutSettings).Execute()
+	err := client.UpdateServerCheckoutSettings(ctx, *r.client, plan.ResourceGroup, plan.Project, *serverCheckoutSettings)
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error updating server checkout settings", err.Error())
@@ -188,7 +204,7 @@ func (r *serverCheckoutSettingsResource) Update(ctx context.Context, req resourc
 	}
 
 	// Fetch the updated server checkout settings from the API host
-	updatedServerCheckoutSettings, _, err := r.client.SDKClient.ProjectsAPI.FetchResourceGroupServerBasedProjectCheckoutSettings(ctx, r.client.Team, plan.ResourceGroup, plan.Project).Execute()
+	updatedServerCheckoutSettings, err := client.GetServerCheckoutSettings(ctx, *r.client, plan.ResourceGroup, plan.Project)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading server checkout settings",
@@ -206,9 +222,6 @@ func (r *serverCheckoutSettingsResource) Update(ctx context.Context, req resourc
 	// Set state to fully populated data
 	diags = resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 }
 
 // Delete implements resource.Resource.
@@ -229,22 +242,16 @@ func (r *serverCheckoutSettingsResource) Delete(ctx context.Context, req resourc
 		ExcludeList:               []string{},
 	}
 
-	_, err := r.client.SDKClient.ProjectsAPI.UpdateResourceGroupServerBasedProjectCheckoutSettings(ctx, r.client.Team, state.ResourceGroup, state.Project).ResourceCheckoutSettings(*serverCheckoutSettings).Execute()
+	err := client.UpdateServerCheckoutSettings(ctx, *r.client, state.ResourceGroup, state.Project, *serverCheckoutSettings)
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error updating server checkout settings", err.Error())
 		return
 	}
-
 	// Set state to empty data
 	state.Id = types.StringValue("")
 	diags = resp.State.Set(ctx, state)
 	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-	// should we delete the state here?
-	// resp.State.RemoveResource(ctx)
 }
 
 // Configure adds the provider configured client to the resource.
@@ -262,7 +269,6 @@ func (r *serverCheckoutSettingsResource) Configure(_ context.Context, req resour
 			"Unexpected Data Source Configure Type",
 			fmt.Sprintf("Expected *OktapamFrameworkProvider, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
-
 		return
 	}
 	r.client = provider.SDKClientWrapper
@@ -271,7 +277,5 @@ func (r *serverCheckoutSettingsResource) Configure(_ context.Context, req resour
 func formatServerCheckoutSettingsID(resourceGroupID string, projectID string) string {
 	// server checkout settings don't have an identifier in itself and is really an attribute of a project.
 	// we manage it as a separate resource since it's lifecycle is somewhat separate from a project.
-	// since project password settings are managed as a separate resource with format resourceGroupID/projectID already,
-	// we can just append the server_checkout_settings to the end of the ID
-	return fmt.Sprintf("%s/%s/server_checkout_settings", resourceGroupID, projectID)
+	return fmt.Sprintf("%s/%s", resourceGroupID, projectID)
 }

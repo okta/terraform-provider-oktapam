@@ -12,7 +12,7 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
-const testAccServerCheckoutSettingsCreateConfigFormat = `
+const testAccServerCheckoutSettingsPrefixConfigFormat = `
 provider "oktapam" {}
 resource "oktapam_group" "test_resource_group_dga_group" {
 	name = "%s"
@@ -28,6 +28,8 @@ resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
 	ssh_certificate_type  = "CERT_TYPE_ED25519_01"
 	account_discovery     = true
 }
+`
+const testAccServerCheckoutSettingsCreateConfigFormat = testAccServerCheckoutSettingsPrefixConfigFormat + `
 resource "oktapam_server_checkout_settings" "test_acc_server_checkout_settings" {
 	resource_group = oktapam_resource_group.test_acc_resource_group.id
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
@@ -40,22 +42,7 @@ func createTestAccServerCheckoutSettingsCreateConfig(dgaName, resourceGroupName,
 	return fmt.Sprintf(testAccServerCheckoutSettingsCreateConfigFormat, dgaName, resourceGroupName, projectName)
 }
 
-const testAccServerCheckoutSettingsUpdateConfigFormat = `
-provider "oktapam" {}
-resource "oktapam_group" "test_resource_group_dga_group" {
-	name = "%s"
-}
-resource "oktapam_resource_group" "test_acc_resource_group" {
-	name = "%s"
-	description = "test resource group"
-	delegated_resource_admin_groups = [oktapam_group.test_resource_group_dga_group.id]	
-}
-resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
-	name = "%s"
-	resource_group = oktapam_resource_group.test_acc_resource_group.id
-	ssh_certificate_type  = "CERT_TYPE_ED25519_01"
-	account_discovery     = true
-}
+const testAccServerCheckoutSettingsUpdateConfigFormat = testAccServerCheckoutSettingsPrefixConfigFormat + `
 resource "oktapam_server_checkout_settings" "test_acc_server_checkout_settings" {
 	resource_group = oktapam_resource_group.test_acc_resource_group.id
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
@@ -134,7 +121,7 @@ func TestAccServerCheckoutSettingsSource(t *testing.T) {
 			{
 				Config: createTestAccServerCheckoutSettingsDeleteConfig(delegatedAdminGroupName, resourceGroupName, projectName),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					testAccServerCheckoutSettingsCheckDeleted(providers, resourceName),
+					testAccServerCheckoutSettingsCheckDeleted(resourceName),
 				),
 			},
 		},
@@ -175,7 +162,7 @@ func testAccServerCheckoutSettingsCheckExists(providers *compositeDualProviderSt
 	}
 }
 
-func testAccServerCheckoutSettingsCheckDeleted(providers *compositeDualProviderStruct, resourceName string) resource.TestCheckFunc {
+func testAccServerCheckoutSettingsCheckDeleted(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		_, ok := s.RootModule().Resources[resourceName]
 		if ok {
