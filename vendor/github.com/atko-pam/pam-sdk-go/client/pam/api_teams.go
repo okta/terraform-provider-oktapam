@@ -21,85 +21,6 @@ import (
 // TeamsAPIService TeamsAPI service
 type TeamsAPIService service
 
-type ApiCheckInResourceRequest struct {
-	ctx                    context.Context
-	ApiService             *TeamsAPIService
-	teamName               string
-	checkInResourceRequest *CheckInResourceRequest
-}
-
-func (r ApiCheckInResourceRequest) CheckInResourceRequest(checkInResourceRequest CheckInResourceRequest) ApiCheckInResourceRequest {
-	r.checkInResourceRequest = &checkInResourceRequest
-	return r
-}
-
-func (r ApiCheckInResourceRequest) Execute() (*http.Response, error) {
-	return r.ApiService.CheckInResourceExecute(r)
-}
-
-/*
-	CheckInResource Check in a Resource
-
-	    Checks in a resource
-
-This endpoint requires one of the following roles: `resource_admin`, `security_admin`, `authenticated_client`, `authenticated_service_user`, `end_user`.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiCheckInResourceRequest
-*/
-func (a *TeamsAPIService) CheckInResource(ctx context.Context, teamName string) ApiCheckInResourceRequest {
-	return ApiCheckInResourceRequest{
-		ApiService: a,
-		ctx:        ctx,
-		teamName:   teamName,
-	}
-}
-
-// Execute executes the request
-func (a *TeamsAPIService) CheckInResourceExecute(r ApiCheckInResourceRequest) (*http.Response, error) {
-	var (
-		traceKey           = "teamsapi.checkInResource"
-		localVarHTTPMethod = http.MethodPost
-		localVarPostBody   interface{}
-		formFiles          []formFile
-	)
-
-	localVarPath := "/v1/teams/{team_name}/checkin_resource"
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	// body params
-	localVarPostBody = r.checkInResourceRequest
-	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
-
-	if localVarHTTPResponse == nil && err != nil {
-		return nil, err
-	}
-
-	return localVarHTTPResponse, err
-}
-
 type ApiFetchStatsForTeamRequest struct {
 	ctx        context.Context
 	ApiService *TeamsAPIService
@@ -802,6 +723,85 @@ func (a *TeamsAPIService) ListServersExecute(r ApiListServersRequest) (*ListServ
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiSelfCheckinResourceRequest struct {
+	ctx                    context.Context
+	ApiService             *TeamsAPIService
+	teamName               string
+	checkinResourceRequest *CheckinResourceRequest
+}
+
+func (r ApiSelfCheckinResourceRequest) CheckinResourceRequest(checkinResourceRequest CheckinResourceRequest) ApiSelfCheckinResourceRequest {
+	r.checkinResourceRequest = &checkinResourceRequest
+	return r
+}
+
+func (r ApiSelfCheckinResourceRequest) Execute() (*http.Response, error) {
+	return r.ApiService.SelfCheckinResourceExecute(r)
+}
+
+/*
+	SelfCheckinResource Checks in a Resource previously checked out by the user
+
+	    Checks in a Resource previously checked out by the user
+
+This endpoint requires one of the following roles: `resource_admin`, `security_admin`, `authenticated_client`, `authenticated_service_user`, `end_user`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	@return ApiSelfCheckinResourceRequest
+*/
+func (a *TeamsAPIService) SelfCheckinResource(ctx context.Context, teamName string) ApiSelfCheckinResourceRequest {
+	return ApiSelfCheckinResourceRequest{
+		ApiService: a,
+		ctx:        ctx,
+		teamName:   teamName,
+	}
+}
+
+// Execute executes the request
+func (a *TeamsAPIService) SelfCheckinResourceExecute(r ApiSelfCheckinResourceRequest) (*http.Response, error) {
+	var (
+		traceKey           = "teamsapi.selfCheckinResource"
+		localVarHTTPMethod = http.MethodPost
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localVarPath := "/v1/teams/{team_name}/checkin_resource"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.checkinResourceRequest
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
+	return localVarHTTPResponse, err
 }
 
 type ApiUpdateTeamSettingsRequest struct {

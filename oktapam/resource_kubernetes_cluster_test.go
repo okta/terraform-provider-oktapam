@@ -9,8 +9,8 @@ import (
 	"text/template"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/id"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
@@ -50,8 +50,8 @@ func TestAccKubernetesCluster(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccClusterCheckDestroy(cluster1),
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccClusterCheckDestroy(cluster1),
 		Steps: []resource.TestStep{
 			{
 				// create a normal cluster with some labels.
@@ -97,7 +97,7 @@ func createTestAccKubernetesClusterConfig(cluster client.KubernetesCluster) stri
 
 func testAccClusterCheckDestroy(expectedCluster client.KubernetesCluster) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		pamClient := getTestAccAPIClients().LocalClient
 		clusters, err := pamClient.ListKubernetesClusters(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting cluster groups: %w", err)

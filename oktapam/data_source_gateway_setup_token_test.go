@@ -7,9 +7,9 @@ import (
 
 	"github.com/kylelemons/godebug/pretty"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccDatasourceGatewaySetupTokenFetch(t *testing.T) {
@@ -23,9 +23,9 @@ func TestAccDatasourceGatewaySetupTokenFetch(t *testing.T) {
 	testConfig := createTestAccDatasourceGatewaySetupTokenInitConfig(identifier, description, labels)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccGatewaySetupTokenCheckDestroy(identifier),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccGatewaySetupTokenCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{
 				Config: testConfig,

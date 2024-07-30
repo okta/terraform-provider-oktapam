@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
@@ -18,8 +18,8 @@ func TestAccDatasourceADConnections(t *testing.T) {
 	datasourceTFResourceName := "data.oktapam_ad_connections.test_acc_datasource_ad_connections"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				//Check if datasource returns AD Connections based on the certificateId filter

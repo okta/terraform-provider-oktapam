@@ -1,18 +1,19 @@
 package oktapam
 
 import (
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
+
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccTeamSettings(t *testing.T) {
 	resourceName := "oktapam_team_settings.test_team_setting"
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy: testAccTeamSettingCheckDestroy(),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccTeamSettingCheckDestroy(),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccTeamSettingsCreateConfig,
@@ -67,8 +68,6 @@ resource "oktapam_team_settings" "test_team_setting" {
 	approve_device_without_interaction = true
 }
 `
-
-
 
 const testAccTeamSettingsUpdateConfig = `
 resource "oktapam_team_settings" "test_team_setting" {
