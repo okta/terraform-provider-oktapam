@@ -45,3 +45,7 @@ func createErrorForInvalidCodeFromSDK(resp *http.Response, allowed ...int) error
 
 	return fmt.Errorf("call resulted in status of %d, expected one of %v.\nResponse Body: %s", received, allowed, body)
 }
+
+func GetSDKClientFromMetadata(meta interface{}) SDKClientWrapper {
+	return meta.(*APIClients).SDKClient
+}
