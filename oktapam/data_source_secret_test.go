@@ -28,9 +28,9 @@ func TestAccDatasourceSecretFetch(t *testing.T) {
 	data2Config := createTestAccDatasourceSecretDataConfig("data2", "oktapam_secret.test_acc_secret_2.id")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccResourceGroupCheckDestroy(resourceGroupName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,

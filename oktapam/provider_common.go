@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"fmt"
+
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 )
 

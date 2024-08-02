@@ -22,9 +22,9 @@ func TestAccUserGroupAttachment(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccUserGroupAttachmentDestroy(groupName, username),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccUserGroupAttachmentDestroy(groupName, username),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccUserGroupAttachmentCreateConfig(groupName, roleName, username),
@@ -62,7 +62,7 @@ func testAccUserGroupAttachmentCheckExists(rn string, expectedGroupName string, 
 			return fmt.Errorf("resource id is not set")
 		}
 
-		c := getSDKClientFromMetadata(testAccProvider.Meta())
+		c := testAccAPIClients.SDKClient
 
 		if hasAttachment, err := client.GroupContainsUser(context.Background(), c, expectedGroupName, expectedUsername); err != nil {
 			return err
@@ -76,7 +76,7 @@ func testAccUserGroupAttachmentCheckExists(rn string, expectedGroupName string, 
 
 func testAccUserGroupAttachmentDestroy(groupName string, username string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getSDKClientFromMetadata(testAccProvider.Meta())
+		c := testAccAPIClients.SDKClient
 
 		if hasAttachment, err := client.GroupContainsUser(context.Background(), c, groupName, username); err != nil {
 			return err

@@ -2,8 +2,9 @@ package oktapam
 
 import (
 	"context"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/config"
 	"os"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/config"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -138,8 +139,8 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (any, diag.D
 	}
 
 	if apiClients, err := NewAPIClients(config); err == nil {
-		return nil, diag.Errorf("failed to get api clients: %v", err)
-	} else {
 		return apiClients, nil
+	} else {
+		return nil, diag.Errorf("failed to get api clients: %v", err)
 	}
 }

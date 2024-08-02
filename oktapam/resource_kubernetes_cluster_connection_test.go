@@ -33,7 +33,7 @@ func TestAccKubernetesClusterConnection(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: testAccProviders,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccKubernetesClusterConnectionConfig(id.PrefixedUniqueId("cluster-key-"), clusterConnection),

@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-mux/tf6muxserver"
 )
 
-func ServerFactoryV6(ctx context.Context) (func() tfprotov6.ProviderServer, error) {
+func V6ProviderServerFactory(ctx context.Context) (func() tfprotov6.ProviderServer, error) {
 	v5Provider := Provider()
 	v6Provider := New()()
 	// SDKV2 used for tf plugin development is designed for maintaining tf plugins that are compatible with Plugin

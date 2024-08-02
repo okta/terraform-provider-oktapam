@@ -277,9 +277,9 @@ func TestAccSecurityPolicy(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccSecurityPolicyCheckDestroy(securityPolicyName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccSecurityPolicyCheckDestroy(securityPolicyName),
 		Steps: []resource.TestStep{
 			{
 				// Ensure that we get an error when we try to create a policy with invalid config.
@@ -335,7 +335,7 @@ func testAccSecurityPolicyCheckExists(rn string, expectedSecurityPolicy *client.
 		}
 
 		id := rs.Primary.ID
-		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		pamClient := testAccAPIClients.LocalClient
 		securityPolicy, err := pamClient.GetSecurityPolicy(context.Background(), id)
 		if err != nil {
 			return fmt.Errorf("error getting security policy: %w", err)
@@ -463,7 +463,7 @@ func insertComputedValuesForSecurityPolicyRule(expectedRule *client.SecurityPoli
 
 func testAccSecurityPolicyCheckDestroy(securityPolicyName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := getLocalClientFromMetadata(testAccProvider.Meta())
+		client := testAccAPIClients.LocalClient
 		securityPolicies, err := client.ListSecurityPolicies(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting security policies: %w", err)

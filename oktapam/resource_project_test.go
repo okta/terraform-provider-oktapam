@@ -43,10 +43,10 @@ func TestAccProject(t *testing.T) {
 		SSHCertificateType:     utils.AsStringPtr("CERT_TYPE_RSA_01"),
 		UserOnDemandPeriod:     utils.AsIntPtr(10),
 	}
-	_, _, accProviders := testAccFrameworkMuxProviders(context.Background(), t)
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: accProviders,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
 		CheckDestroy:             testAccProjectCheckDestroy(projectName),
 		Steps: []resource.TestStep{
 			{
@@ -116,7 +116,7 @@ func testAccProjectCheckExists(rn string, expectedProject client.Project) resour
 			return fmt.Errorf("resource id not set")
 		}
 
-		client := getLocalClientFromMetadata(testAccProvider.Meta())
+		client := testAccAPIClients.LocalClient
 		proj, err := client.GetProject(context.Background(), *expectedProject.Name, false)
 		if err != nil {
 			return fmt.Errorf("error getting project :%w", err)
@@ -136,7 +136,7 @@ func testAccProjectCheckExists(rn string, expectedProject client.Project) resour
 
 func testAccProjectCheckDestroy(projectName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := getLocalClientFromMetadata(testAccProvider.Meta())
+		client := testAccAPIClients.LocalClient
 		proj, err := client.GetProject(context.Background(), projectName, false)
 		if err != nil {
 			return fmt.Errorf("error getting project: %w", err)

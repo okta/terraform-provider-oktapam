@@ -25,9 +25,9 @@ func TestAccServerEnrollmentToken(t *testing.T) {
 		Description: &description,
 	}
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccServerEnrollmentTokenCheckDestroy(projectName, identifier),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccServerEnrollmentTokenCheckDestroy(projectName, identifier),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccServerEnrollmentTokenCreateConfig(enrollmentToken),
@@ -64,7 +64,7 @@ func testAccServerEnrollmentTokenCheckExists(rn string, expectedServerEnrollment
 			return fmt.Errorf("resource id did not have the expected project. expected %s, got %s", *expectedServerEnrollmentToken.Project, projectName)
 		}
 
-		client := getLocalClientFromMetadata(testAccProvider.Meta())
+		client := testAccAPIClients.LocalClient
 		token, err := client.GetServerEnrollmentToken(context.Background(), projectName, serverEnrollmentTokenId)
 		if err != nil {
 			return fmt.Errorf("error getting server enrollment token: %w", err)
@@ -82,7 +82,7 @@ func testAccServerEnrollmentTokenCheckExists(rn string, expectedServerEnrollment
 
 func testAccServerEnrollmentTokenCheckDestroy(projectName string, identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := getLocalClientFromMetadata(testAccProvider.Meta())
+		client := testAccAPIClients.LocalClient
 		project, err := client.GetProject(context.Background(), projectName, false)
 		if err != nil {
 			return fmt.Errorf("error getting project associated with server enrollment token: %w", err)

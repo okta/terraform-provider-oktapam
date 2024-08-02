@@ -28,9 +28,9 @@ func TestAccDataSourceADUserSyncTaskSettings(t *testing.T) {
 	preConfig := createTestAccADUserSyncTaskSettingsPreConfig(adConnectionName, projectName, domainName)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccADUserSyncTaskCheckDestroy(adConnectionResourceName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccADUserSyncTaskCheckDestroy(adConnectionResourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccDataSourceADUserSyncTaskSettingsInitConfig(preConfig, adUserSyncTaskName),

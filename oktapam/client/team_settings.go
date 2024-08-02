@@ -3,10 +3,11 @@ package client
 import (
 	"context"
 	"fmt"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
-	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 	"net/http"
 	"net/url"
+
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
+	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 )
 
 type TeamSettings struct {

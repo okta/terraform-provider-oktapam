@@ -45,9 +45,9 @@ func TestAccSecretFolder(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccResourceGroupCheckDestroy(resourceGroupName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccSecretFolderCreateConfig(delegatedAdminGroupName, resourceGroupName, projectName, initialTopLevelFolderName, topLevelFolderSecurityPolicyName, childFolderName),
@@ -101,7 +101,7 @@ func testAccSecretFolderCheckExists(rn string, expectedSecretFolder *client.Secr
 		resourceGroupID := rs.Primary.Attributes[attributes.ResourceGroup]
 		projectID := rs.Primary.Attributes[attributes.Project]
 		secretFolderID := rs.Primary.Attributes[attributes.ID]
-		pamClient := testAccProvider.Meta().(*client.APIClients).LocalClient
+		pamClient := testAccAPIClients.LocalClient
 		secretFolder, err := pamClient.GetSecretFolder(context.Background(), resourceGroupID, projectID, secretFolderID)
 		if err != nil {
 			return fmt.Errorf("error getting secret folder: %w", err)

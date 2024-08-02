@@ -16,9 +16,9 @@ func TestAccDataSourceSudoCommandBundle(t *testing.T) {
 	fetchConfig := testAccDataSourceSudoCommandBundleConfig("sudo-commands-bundle", identifier+"-1", resourceName)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccSudoCommandBundlesCheckDestroy(identifier + "-1"),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccSudoCommandBundlesCheckDestroy(identifier + "-1"),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,

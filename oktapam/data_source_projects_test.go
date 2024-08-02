@@ -28,9 +28,9 @@ func TestAccDatasourceProjectList(t *testing.T) {
 	listConfig := testAccProjectsContainsConfig(dataName, identifier+"-1")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccProjectsCheckDestroy(identifier),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccProjectsCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,
@@ -45,7 +45,7 @@ func TestAccDatasourceProjectList(t *testing.T) {
 
 func testAccProjectsCheckDestroy(identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getLocalClientFromMetadata(testAccProvider.Meta())
+		c := testAccAPIClients.LocalClient
 
 		params := client.ListProjectsParameters{
 			Contains: identifier,

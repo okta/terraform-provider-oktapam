@@ -28,9 +28,9 @@ func TestAccDatasourceProjectGroupList(t *testing.T) {
 	listConfig := testAccProjectGroupsConfig(dataName, identifier+"-1")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccProjectGroupsCheckDestroy(identifier + "-1"),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccProjectGroupsCheckDestroy(identifier + "-1"),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,
@@ -45,7 +45,7 @@ func TestAccDatasourceProjectGroupList(t *testing.T) {
 
 func testAccProjectGroupsCheckDestroy(projectName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getLocalClientFromMetadata(testAccProvider.Meta())
+		c := testAccAPIClients.LocalClient
 
 		params := client.ListProjectGroupsParameters{}
 

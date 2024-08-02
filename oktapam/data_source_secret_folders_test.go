@@ -28,9 +28,9 @@ func TestAccDatasourceSecretFoldersList(t *testing.T) {
 	data2Config := createTestAccDatasourceSecretFolderDataConfig("data2", "/"+initialTopLevelFolderName, true)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccResourceGroupCheckDestroy(resourceGroupName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,

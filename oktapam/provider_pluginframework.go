@@ -2,8 +2,9 @@ package oktapam
 
 import (
 	"context"
-	constantsConfig "github.com/okta/terraform-provider-oktapam/oktapam/constants/config"
 	"os"
+
+	constantsConfig "github.com/okta/terraform-provider-oktapam/oktapam/constants/config"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"

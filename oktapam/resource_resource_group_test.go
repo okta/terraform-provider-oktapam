@@ -45,9 +45,9 @@ func TestAccResourceGroup(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccResourceGroupCheckDestroy(initialResourceGroupName, updatedResourceGroupName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccResourceGroupCheckDestroy(initialResourceGroupName, updatedResourceGroupName),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccResourceGroupCreateConfig(delegatedAdminGroup1Name, delegatedAdminGroup2Name, initialResourceGroupName),
@@ -90,7 +90,8 @@ func testAccResourceGroupCheckExists(rn string, expectedResourceGroup *client.Re
 		}
 
 		resourceGroupID := rs.Primary.Attributes[attributes.ID]
-		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		//pamClient := testAccAPIClients.LocalClient
+		pamClient := testAccAPIClients.LocalClient
 		resourceGroup, err := pamClient.GetResourceGroup(context.Background(), resourceGroupID)
 		if err != nil {
 			return fmt.Errorf("error getting resource group: %w", err)
@@ -124,7 +125,8 @@ func insertComputedValuesForResourceGroup(expectedResourceGroup, actualResourceG
 
 func testAccResourceGroupCheckDestroy(resourceGroupNames ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := getLocalClientFromMetadata(testAccProvider.Meta())
+		//client := testAccAPIClients.LocalClient
+		client := testAccAPIClients.LocalClient
 		resourceGroups, err := client.ListResourceGroups(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting resource groups: %w", err)

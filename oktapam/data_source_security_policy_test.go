@@ -24,9 +24,9 @@ func TestAccDatasourceSecurityPolicyFetch(t *testing.T) {
 	resourceName := "data.oktapam_security_policy.security_policy"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccSecurityPoliciesCheckDestroy(identifier),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccSecurityPoliciesCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,

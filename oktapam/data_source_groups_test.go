@@ -33,9 +33,9 @@ func TestAccDatasourceGroupList(t *testing.T) {
 	listConfig := testAccGroupsContainsConfig(dataName, identifier+"-1")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccGroupsCheckDestroy(identifier),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccGroupsCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,
@@ -50,7 +50,7 @@ func TestAccDatasourceGroupList(t *testing.T) {
 
 func testAccGroupsCheckDestroy(identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getLocalClientFromMetadata(testAccProvider.Meta())
+		c := testAccAPIClients.LocalClient
 
 		params := client.ListGroupsParameters{
 			Contains: identifier,

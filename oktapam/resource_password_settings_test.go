@@ -37,7 +37,7 @@ func TestAccResourceGroupPasswordSettings(t *testing.T) {
 	updatedPasswordSettings := &client.PasswordSettings{
 		ManagedPrivilegedAccountsConfig:   []string{"root"},
 		EnablePeriodicRotation:            utils.AsBoolPtrZero(false, true),
-		PeriodicRotationDurationInSeconds: utils.AsIntPtrZero(0, true),
+		PeriodicRotationDurationInSeconds: utils.AsIntPtrZero(0, false),
 		MinLengthInBytes:                  utils.AsIntPtrZero(8, true),
 		MaxLengthInBytes:                  utils.AsIntPtrZero(12, true),
 		CharacterOptions: &client.CharacterOptions{
@@ -49,8 +49,8 @@ func TestAccResourceGroupPasswordSettings(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
 		// use the resource group check destroy since we create a new one here and deletion of the resource group will cascade delete the project / password settings
 		CheckDestroy: testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
@@ -138,7 +138,7 @@ func testAccPasswordSettingsCheckExists(rn string, expectedPasswordSettings *cli
 		if id != expectedID {
 			return fmt.Errorf("unexpected id: %s, expected: %s", id, expectedID)
 		}
-		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		pamClient := testAccAPIClients.LocalClient
 		passwordSettings, err := pamClient.GetPasswordSettings(context.Background(), resourceGroupID, projectID)
 		if err != nil {
 			return fmt.Errorf("error getting password settings: %w", err)

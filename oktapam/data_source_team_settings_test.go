@@ -3,10 +3,12 @@ package oktapam
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/kylelemons/godebug/pretty"
 	"os"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/kylelemons/godebug/pretty"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/config"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -14,14 +16,14 @@ import (
 func TestAccDatasourceTeamSettingsFetch(t *testing.T) {
 	resourceName := "oktapam_team_settings.test_team_setting"
 	dataSourceName := "data.oktapam_team_settings.target"
-	team := os.Getenv(teamSchemaEnvVar)
+	team := os.Getenv(config.TeamSchemaEnvVar)
 
 	testConfig := createTestAccDatasourceTeamSettingsInitConfig(team)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccTeamSettingCheckDestroy(),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccTeamSettingCheckDestroy(),
 		Steps: []resource.TestStep{
 			{
 				Config: testConfig,
@@ -35,7 +37,7 @@ func TestAccDatasourceTeamSettingsFetch(t *testing.T) {
 
 func testAccTeamSettingCheckDestroy() resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := getLocalClientFromMetadata(testAccProvider.Meta())
+		client := testAccAPIClients.LocalClient
 		teamSettings, err := client.GetTeamSettings(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting team settings: %w", err)

@@ -3,13 +3,14 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"regexp"
+	"testing"
+
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
-	"regexp"
-	"testing"
 )
 
 func TestAccDatabaseResource(t *testing.T) {
@@ -60,9 +61,9 @@ func TestAccDatabaseResource(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccResourceGroupCheckDestroy(resourceGroupName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
 			// negative cases must go first
 			{
@@ -350,7 +351,7 @@ func testDatabaseCheckExists(rn string, expectedDatabase *pam.DatabaseResourceRe
 		resourceGroupID := rs.Primary.Attributes[attributes.ResourceGroup]
 		projectID := rs.Primary.Attributes[attributes.Project]
 		databaseID := rs.Primary.Attributes[attributes.ID]
-		pamClient := getSDKClientFromMetadata(testAccProvider.Meta())
+		pamClient := testAccAPIClients.SDKClient
 		database, _, err := pamClient.SDKClient.DatabaseResourcesAPI.GetDatabaseResource(context.Background(), pamClient.Team, resourceGroupID, projectID, databaseID).Execute()
 		if err != nil {
 			return fmt.Errorf("error getting database: %w", err)
