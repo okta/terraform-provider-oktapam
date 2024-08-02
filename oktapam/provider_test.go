@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sync"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
@@ -22,10 +23,13 @@ func TestProvider(t *testing.T) {
 var testAccSDKV2Providers map[string]func() (*schema.Provider, error)
 var testAccSDKV2Provider *schema.Provider
 
-// testAccV6ProviderFactories are used to instantiate a provider during acceptance testing.
-// The factory function is invoked for every TF CLI command executed to create a provider server to which the CLI can reattach.
-var testAccV6ProviderFactories map[string]func() (tfprotov6.ProviderServer, error)
-var testAccAPIClients *client.APIClients
+var (
+	// testAccV6ProviderFactories are used to instantiate a provider during acceptance testing.
+	// The factory function is invoked for every TF CLI command executed to create a provider server to which the CLI can reattach.
+	testAccV6ProviderFactories map[string]func() (tfprotov6.ProviderServer, error)
+	testAccAPIClients          *client.APIClients
+	clientOnce                 sync.Once
+)
 
 func init() {
 	testAccSDKV2Provider = Provider()
@@ -44,11 +48,6 @@ func init() {
 			return serverFactory(), nil
 		},
 	}
-
-	testAccAPIClients, err = newAcceptanceTestingClient()
-	if err != nil {
-		log.Fatal(err)
-	}
 }
 
 func TestProvider_impl(t *testing.T) {
@@ -65,7 +64,7 @@ func testAccPreCheck(t *testing.T) {
 	}
 }
 
-func newAcceptanceTestingClient() (*client.APIClients, error) {
+func newTestAccAPIClients() (*client.APIClients, error) {
 	apiKey := os.Getenv(config.ApiKeySchemaEnvVar)
 	apiHost := os.Getenv(config.ApiHostSchemaEnvVar)
 	apiSecret := os.Getenv(config.ApiKeySecretSchemaEnvVar)
@@ -97,4 +96,12 @@ func newAcceptanceTestingClient() (*client.APIClients, error) {
 		SDKClient:   sdkClientWrapper,
 		LocalClient: localClient,
 	}, nil
+}
+
+func getTestAccAPIClients() *client.APIClients {
+	clientOnce.Do(func() {
+		testAccAPIClients, _ = newTestAccAPIClients()
+	})
+
+	return testAccAPIClients
 }

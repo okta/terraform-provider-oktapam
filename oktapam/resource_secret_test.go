@@ -90,7 +90,7 @@ func testAccSecretCheckExists(rn string, expectedSecret *wrappers.SecretWrapper)
 		projectID := rs.Primary.Attributes[attributes.Project]
 		secretID := rs.Primary.Attributes[attributes.ID]
 
-		pamClient := testAccAPIClients.SDKClient
+		pamClient := getTestAccAPIClients().SDKClient
 		secret, err := client.RevealSecret(context.Background(), pamClient, resourceGroupID, projectID, secretID)
 		if err != nil {
 			return fmt.Errorf("error getting secret: %w", err)

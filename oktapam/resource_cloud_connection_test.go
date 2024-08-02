@@ -39,7 +39,7 @@ func TestAccResourceCloudConnection(t *testing.T) {
 }
 
 func cloudConnectionExists(id string) (bool, error) {
-	client := testAccAPIClients.LocalClient
+	client := getTestAccAPIClients().LocalClient
 	logging.Debugf("Checking if resource deleted %s", id)
 	cloudConnection, err := client.GetCloudConnection(context.Background(), id)
 	return cloudConnection != nil && cloudConnection.Exists() && err == nil, err

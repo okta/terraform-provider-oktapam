@@ -60,7 +60,7 @@ func TestAccADConnection(t *testing.T) {
 }
 
 func adConnectionExists(id string) (bool, error) {
-	client := testAccAPIClients.LocalClient
+	client := getTestAccAPIClients().LocalClient
 	logging.Debugf("Checking if resource deleted %s", id)
 	adConnection, err := client.GetADConnection(context.Background(), id, false)
 

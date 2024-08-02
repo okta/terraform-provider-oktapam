@@ -2,9 +2,10 @@ package oktapam
 
 import (
 	"context"
+	"fmt"
 	"os"
 
-	constantsConfig "github.com/okta/terraform-provider-oktapam/oktapam/constants/config"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/config"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
@@ -34,19 +35,19 @@ type FrameworkProviderModel struct {
 func (p *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			constantsConfig.ApiHostKey: schema.StringAttribute{
+			config.ApiHostKey: schema.StringAttribute{
 				Optional:    true,
 				Description: "Okta PAM API Host",
 			},
-			constantsConfig.ApiKeyKey: schema.StringAttribute{
+			config.ApiKeyKey: schema.StringAttribute{
 				Optional:    true,
 				Description: "Okta PAM API Key",
 			},
-			constantsConfig.ApiKeySecretKey: schema.StringAttribute{
+			config.ApiKeySecretKey: schema.StringAttribute{
 				Optional:    true,
 				Description: "Okta PAM API Secret",
 			},
-			constantsConfig.TeamKey: schema.StringAttribute{
+			config.TeamKey: schema.StringAttribute{
 				Optional:    true,
 				Description: "Okta PAM Team",
 			},
@@ -108,32 +109,41 @@ func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resou
 	}
 }
 
-func (p *FrameworkProvider) ConfigureConfigDefaults(config *FrameworkProviderModel) diag.Diagnostics {
+func (p *FrameworkProvider) ConfigureConfigDefaults(providerModel *FrameworkProviderModel) diag.Diagnostics {
 	var diags diag.Diagnostics
 
-	if config.OktapamApiKey.IsNull() {
-		if apiKey := os.Getenv(constantsConfig.ApiKeySchemaEnvVar); apiKey != "" {
-			config.OktapamApiKey = types.StringValue(apiKey)
-		}
-	}
-
-	if config.OktapamApiHost.IsNull() {
-		if apiHost := os.Getenv(constantsConfig.ApiHostSchemaEnvVar); apiHost != "" {
-			config.OktapamApiHost = types.StringValue(apiHost)
+	if providerModel.OktapamApiKey.IsNull() {
+		if apiKey := os.Getenv(config.ApiKeySchemaEnvVar); apiKey != "" {
+			providerModel.OktapamApiKey = types.StringValue(apiKey)
 		} else {
-			config.OktapamApiHost = types.StringValue(constantsConfig.DefaultAPIBaseURL)
+			diags.Append(diag.NewErrorDiagnostic("error while configuring provider",
+				fmt.Sprintf("%s is not set", config.ApiKeySchemaEnvVar)))
 		}
 	}
 
-	if config.OktapamSecret.IsNull() {
-		if apiSecret := os.Getenv(constantsConfig.ApiKeySecretSchemaEnvVar); apiSecret != "" {
-			config.OktapamSecret = types.StringValue(apiSecret)
+	if providerModel.OktapamApiHost.IsNull() {
+		if apiHost := os.Getenv(config.ApiHostSchemaEnvVar); apiHost != "" {
+			providerModel.OktapamApiHost = types.StringValue(apiHost)
+		} else {
+			providerModel.OktapamApiHost = types.StringValue(config.DefaultAPIBaseURL)
 		}
 	}
 
-	if config.OktapamTeam.IsNull() {
-		if apiTeam := os.Getenv(constantsConfig.TeamSchemaEnvVar); apiTeam != "" {
-			config.OktapamTeam = types.StringValue(apiTeam)
+	if providerModel.OktapamSecret.IsNull() {
+		if apiSecret := os.Getenv(config.ApiKeySecretSchemaEnvVar); apiSecret != "" {
+			providerModel.OktapamSecret = types.StringValue(apiSecret)
+		} else {
+			diags.Append(diag.NewErrorDiagnostic("error while configuring provider",
+				fmt.Sprintf("%s is not set", config.ApiKeySchemaEnvVar)))
+		}
+	}
+
+	if providerModel.OktapamTeam.IsNull() {
+		if apiTeam := os.Getenv(config.TeamSchemaEnvVar); apiTeam != "" {
+			providerModel.OktapamTeam = types.StringValue(apiTeam)
+		} else {
+			diags.Append(diag.NewErrorDiagnostic("error while configuring provider",
+				fmt.Sprintf("%s is not set", config.ApiKeySchemaEnvVar)))
 		}
 	}
 

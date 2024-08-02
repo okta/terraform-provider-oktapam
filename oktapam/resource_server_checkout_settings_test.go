@@ -128,7 +128,7 @@ func testAccServerCheckoutSettingsCheckExists(resourceName string, expectedServe
 		resourceGroupID := rs.Primary.Attributes[attributes.ResourceGroup]
 		projectID := rs.Primary.Attributes[attributes.Project]
 
-		client := testAccAPIClients.SDKClient
+		client := getTestAccAPIClients().SDKClient
 		serverCheckoutSettings, _, err := client.SDKClient.ProjectsAPI.FetchResourceGroupServerBasedProjectCheckoutSettings(context.Background(), client.Team, resourceGroupID, projectID).Execute()
 		if err != nil {
 			return fmt.Errorf("Error fetching server checkout settings: %s", err)

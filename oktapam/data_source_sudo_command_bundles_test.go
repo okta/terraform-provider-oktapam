@@ -75,7 +75,7 @@ func testAccDataSourceSudoCommandBundlesConfig(resourceName, name string) string
 
 func testAccSudoCommandBundlesCheckDestroy(identifiers ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := testAccAPIClients.SDKClient
+		c := getTestAccAPIClients().SDKClient
 
 		respList, err := client.ListSudoCommandBundles(context.Background(), c)
 		if err != nil {

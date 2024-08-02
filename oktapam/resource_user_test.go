@@ -116,7 +116,7 @@ func testAccServiceUserCheckExists(rn string, expectedUser client.User) resource
 			return fmt.Errorf("resource id not set")
 		}
 
-		c := testAccAPIClients.LocalClient
+		c := getTestAccAPIClients().LocalClient
 		user, err := c.GetServiceUser(context.Background(), *expectedUser.Name)
 		if err != nil {
 			return fmt.Errorf("error getting service user :%w", err)
@@ -137,7 +137,7 @@ func testAccServiceUserCheckExists(rn string, expectedUser client.User) resource
 // Users cannot be hard-deleted, therefore check if the status is deleted
 func testAccServiceUserCheckDestroy(userName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := testAccAPIClients.LocalClient
+		c := getTestAccAPIClients().LocalClient
 		user, err := c.GetServiceUser(context.Background(), userName)
 		if err != nil {
 			return fmt.Errorf("error getting service user: %w", err)

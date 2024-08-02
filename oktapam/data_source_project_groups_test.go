@@ -45,7 +45,7 @@ func TestAccDatasourceProjectGroupList(t *testing.T) {
 
 func testAccProjectGroupsCheckDestroy(projectName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := testAccAPIClients.LocalClient
+		c := getTestAccAPIClients().LocalClient
 
 		params := client.ListProjectGroupsParameters{}
 

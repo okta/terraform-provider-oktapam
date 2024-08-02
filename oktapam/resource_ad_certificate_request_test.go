@@ -69,7 +69,7 @@ func TestAccADCertificateRequest_SelfSigned(t *testing.T) {
 }
 
 func adCertificateExists(id string) (bool, error) {
-	client := testAccAPIClients.LocalClient
+	client := getTestAccAPIClients().LocalClient
 	logging.Debugf("Checking if resource deleted %s", id)
 	adCertificate, err := client.GetADSmartcardCertificate(context.Background(), id)
 

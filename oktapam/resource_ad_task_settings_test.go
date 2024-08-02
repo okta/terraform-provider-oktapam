@@ -116,7 +116,7 @@ func testAccADTaskCheckExists(adServerSyncTaskSettingsResourceName string) resou
 		adConnID := adTaskRS.Primary.Attributes[attributes.ADConnectionID]
 		adServerSyncTaskSettingsID := adTaskRS.Primary.ID
 
-		pamClient := testAccAPIClients.LocalClient
+		pamClient := getTestAccAPIClients().LocalClient
 		adServerSyncTaskSettings, err := pamClient.GetADServerSyncTaskSettings(context.Background(), adConnID, adServerSyncTaskSettingsID)
 		if err != nil {
 			return fmt.Errorf("error getting ad task settings: %w", err)
@@ -139,7 +139,7 @@ func testAccADTaskCheckDestroy(adServerSyncTaskSettingsResourceName string) reso
 		adConnID := adTaskRS.Primary.Attributes[attributes.ADConnectionID]
 		adServerSyncTaskSettingsID := adTaskRS.Primary.ID
 
-		pamClient := testAccAPIClients.LocalClient
+		pamClient := getTestAccAPIClients().LocalClient
 		adTask, err := pamClient.GetADServerSyncTaskSettings(context.Background(), adConnID, adServerSyncTaskSettingsID)
 		if err != nil {
 			return fmt.Errorf("error getting ad task settings: %w", err)

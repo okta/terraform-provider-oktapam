@@ -351,7 +351,7 @@ func testDatabaseCheckExists(rn string, expectedDatabase *pam.DatabaseResourceRe
 		resourceGroupID := rs.Primary.Attributes[attributes.ResourceGroup]
 		projectID := rs.Primary.Attributes[attributes.Project]
 		databaseID := rs.Primary.Attributes[attributes.ID]
-		pamClient := testAccAPIClients.SDKClient
+		pamClient := getTestAccAPIClients().SDKClient
 		database, _, err := pamClient.SDKClient.DatabaseResourcesAPI.GetDatabaseResource(context.Background(), pamClient.Team, resourceGroupID, projectID, databaseID).Execute()
 		if err != nil {
 			return fmt.Errorf("error getting database: %w", err)

@@ -81,7 +81,7 @@ func testAccDataSourceCloudConnectionsConfig(resourceName, name string) string {
 
 func testAccCloudConnectionsCheckDestroy(identifiers ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := testAccAPIClients.LocalClient
+		c := getTestAccAPIClients().LocalClient
 
 		cloudConnections, err := c.ListCloudConnections(context.Background())
 		if err != nil {

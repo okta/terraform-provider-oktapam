@@ -49,7 +49,7 @@ func TestAccDatasourceSecurityPoliciesList(t *testing.T) {
 
 func testAccSecurityPoliciesCheckDestroy(identifiers ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := testAccAPIClients.LocalClient
+		c := getTestAccAPIClients().LocalClient
 
 		securityPolicies, err := c.ListSecurityPolicies(context.Background())
 		if err != nil {

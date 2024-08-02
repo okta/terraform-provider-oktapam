@@ -63,7 +63,7 @@ func TestAccResourceSudoCommandBundle(t *testing.T) {
 }
 
 func sudoCommandBundleExists(id string) (bool, error) {
-	c := testAccAPIClients.SDKClient
+	c := getTestAccAPIClients().SDKClient
 	logging.Debugf("Checking if resource deleted %s", id)
 	scb, err := client.GetSudoCommandBundle(context.Background(), c, id)
 	return scb != nil && *scb.Id != "" && err == nil, err

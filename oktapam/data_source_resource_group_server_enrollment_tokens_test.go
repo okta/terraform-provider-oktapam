@@ -40,7 +40,7 @@ func TestAccDatasourceResourceGroupServerEnrollmentTokensList(t *testing.T) {
 
 func testAccResourceGroupServerEnrollmentTokensCheckDestroy(identifiers ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := testAccAPIClients.LocalClient
+		c := getTestAccAPIClients().LocalClient
 
 		resourceGroups, err := c.ListResourceGroups(context.Background())
 		if err != nil {

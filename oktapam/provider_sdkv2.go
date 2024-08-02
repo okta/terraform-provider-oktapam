@@ -105,40 +105,64 @@ func Provider() *schema.Provider {
 	}
 }
 
-func providerConfigure(ctx context.Context, d *schema.ResourceData) (any, diag.Diagnostics) {
+func providerConfigure(_ context.Context, d *schema.ResourceData) (any, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
 	if d.Get(config.ApiKeyKey).(string) == "" {
 		if apiKey := os.Getenv(config.ApiKeySchemaEnvVar); apiKey != "" {
-			d.Set(config.ApiKeyKey, apiKey)
-		}
-	}
-
-	if d.Get(config.ApiHostKey).(string) == "" {
-		if apiKey := os.Getenv(config.ApiHostSchemaEnvVar); apiKey != "" {
-			d.Set(config.ApiHostKey, apiKey)
+			if err := d.Set(config.ApiKeyKey, apiKey); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
+		} else {
+			diags = append(diags, diag.Errorf("%s is not set", config.ApiKeySchemaEnvVar)...)
 		}
 	}
 
 	if d.Get(config.ApiKeySecretKey).(string) == "" {
-		if apiKey := os.Getenv(config.ApiKeySecretSchemaEnvVar); apiKey != "" {
-			d.Set(config.ApiKeySecretKey, apiKey)
+		if apiSecret := os.Getenv(config.ApiKeySecretSchemaEnvVar); apiSecret != "" {
+			if err := d.Set(config.ApiKeySecretKey, apiSecret); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
+		} else {
+			diags = append(diags, diag.Errorf("%s is not set", config.ApiKeySecretSchemaEnvVar)...)
+		}
+	}
+
+	if d.Get(config.ApiHostKey).(string) == "" {
+		if apiHost := os.Getenv(config.ApiHostSchemaEnvVar); apiHost != "" {
+			if err := d.Set(config.ApiHostKey, apiHost); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
+		} else {
+			if err := d.Set(config.ApiHostKey, config.DefaultAPIBaseURL); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
 		}
 	}
 
 	if d.Get(config.TeamKey).(string) == "" {
-		if apiKey := os.Getenv(config.TeamSchemaEnvVar); apiKey != "" {
-			d.Set(config.TeamKey, apiKey)
+		if team := os.Getenv(config.TeamSchemaEnvVar); team != "" {
+			if err := d.Set(config.TeamKey, team); err != nil {
+				diags = append(diags, diag.FromErr(err)...)
+			}
+		} else {
+			diags = append(diags, diag.Errorf("%s is not set", config.TeamSchemaEnvVar)...)
 		}
 	}
 
+	if diags.HasError() {
+		return nil, diags
+	}
+
 	team := d.Get(config.TeamKey).(string)
-	config := &client.OktaPAMProviderConfig{
+	cfg := &client.OktaPAMProviderConfig{
 		APIKey:       d.Get(config.ApiKeyKey).(string),
 		APIKeySecret: d.Get(config.ApiKeySecretKey).(string),
 		Team:         team,
 		APIHost:      d.Get(config.ApiHostKey).(string),
 	}
 
-	if apiClients, err := NewAPIClients(config); err == nil {
+	if apiClients, err := NewAPIClients(cfg); err == nil {
 		return apiClients, nil
 	} else {
 		return nil, diag.Errorf("failed to get api clients: %v", err)
