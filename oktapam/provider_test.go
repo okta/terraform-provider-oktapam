@@ -27,11 +27,6 @@ var testAccSDKV2Provider *schema.Provider
 var testAccV6ProviderFactories map[string]func() (tfprotov6.ProviderServer, error)
 var testAccAPIClients *client.APIClients
 
-type compositeProvider struct {
-	sdkV2Provider *schema.Provider
-	fwProvider    *FrameworkProvider
-}
-
 func init() {
 	testAccSDKV2Provider = Provider()
 	testAccSDKV2Providers = map[string]func() (*schema.Provider, error){}
@@ -103,19 +98,3 @@ func newAcceptanceTestingClient() (*client.APIClients, error) {
 		LocalClient: localClient,
 	}, nil
 }
-
-//func testAccFrameworkMuxProviders(ctx context.Context, t *testing.T) (context.Context, *compositeDualProviderStruct, map[string]func() (tfprotov6.ProviderServer, error)) {
-//	// Init sdkV2 provider
-//	sdkV2Provider := Provider()
-//	// Init framework provider
-//	frameworkProvider := &fwprovider.OktapamFrameworkProvider{}
-//
-//	// Init mux servers
-//	muxServer := testAccFrameworkMuxProvidersServer(ctx, sdkV2Provider, frameworkProvider)
-//
-//	providers := &compositeDualProviderStruct{
-//		sdkV2Provider: sdkV2Provider,
-//		fwProvider:    frameworkProvider,
-//	}
-//	return ctx, providers, muxServer
-//}
