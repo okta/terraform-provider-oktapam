@@ -37,7 +37,7 @@ func TestAccResourceGroupPasswordSettings(t *testing.T) {
 	updatedPasswordSettings := &client.PasswordSettings{
 		ManagedPrivilegedAccountsConfig:   []string{"root"},
 		EnablePeriodicRotation:            utils.AsBoolPtrZero(false, true),
-		PeriodicRotationDurationInSeconds: utils.AsIntPtrZero(0, false),
+		PeriodicRotationDurationInSeconds: utils.AsIntPtrZero(0, true),
 		MinLengthInBytes:                  utils.AsIntPtrZero(8, true),
 		MaxLengthInBytes:                  utils.AsIntPtrZero(12, true),
 		CharacterOptions: &client.CharacterOptions{
