@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/config"
+
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -11,7 +13,7 @@ import (
 
 func TestAccDatasourceServerEnrollmentTokenList(t *testing.T) {
 	checkTeamApplicable(t, false)
-	dataSourceName := fmt.Sprintf("data.%s.tokens_list", providerServerEnrollmentTokensKey)
+	dataSourceName := fmt.Sprintf("data.%s.tokens_list", config.ProviderServerEnrollmentTokensKey)
 
 	// Generate details
 	identifier := randSeq()
@@ -26,9 +28,9 @@ func TestAccDatasourceServerEnrollmentTokenList(t *testing.T) {
 	listConfig := createTestAccDatasourceServerEnrollmentTokenConfig(projectName)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccServerEnrollmentTokenCheckDestroy(projectName, identifier),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccServerEnrollmentTokenCheckDestroy(projectName, identifier),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,

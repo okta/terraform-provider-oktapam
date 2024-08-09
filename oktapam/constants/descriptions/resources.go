@@ -35,6 +35,7 @@ var (
 	ResourceSecret                             = fmt.Sprintf("Secrets are encrypted key-value pairs that can be used to store sensitive information, like usernames, passwords, API tokens, keys, or any string value. %s", LinkSecret)
 	ResourceSecretFolder                       = fmt.Sprintf("A file-system like construct that contains secrets or nested secret folders. %s", LinkSecretFolder)
 	ResourceServerPasswordSettings             = fmt.Sprintf("The settings for passwords set on servers within the project. %s", LinkPasswordSettings)
+	ResourceServerCheckoutSettings             = fmt.Sprintf("The settings for limitting access to vaulted (shared) accounts for a single user and control the maximum amount of time they are allowed to access resources. %s", LinkServerCheckoutSettings)
 	ResourceSecurityPolicy                     = fmt.Sprintf("A policy which defines how users can gain access to resources. %s", LinkSecurityPolicy)
 	ResourceCloudConnection                    = fmt.Sprintf("A PAM construct that connects PAM with cloud providers. %s", LinkCloudConnection)
 	ResourceSudoCommandsBundle                 = fmt.Sprintf("A PAM construct that allows fine grained access. %s", LinkSudoCommandsBundle)

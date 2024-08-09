@@ -18,9 +18,9 @@ func TestAccDataSourceCloudConnection(t *testing.T) {
 	fetchConfig := testAccDataSourceCloudConnectionConfig("cloud-connections", identifier+"-1", resourceName)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccCloudConnectionsCheckDestroy(identifier + "-1"),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccCloudConnectionsCheckDestroy(identifier + "-1"),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,

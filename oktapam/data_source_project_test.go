@@ -17,9 +17,9 @@ func TestAccDatasourceProjectFetch(t *testing.T) {
 	testConfig := createTestAccDatasourceProjectInitConfig(identifier)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccProjectsCheckDestroy(identifier),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccProjectsCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{
 				Config: testConfig,

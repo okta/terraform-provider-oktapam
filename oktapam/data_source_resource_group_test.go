@@ -21,9 +21,9 @@ func TestAccDatasourceResourceGroupFetch(t *testing.T) {
 	fetchConfig := testAccDatasourceResourceGroupConfig("data1", identifier+"-1", "data2")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccResourceGroupsCheckDestroy(identifier+"-1", identifier+"-2"),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccResourceGroupsCheckDestroy(identifier+"-1", identifier+"-2"),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,

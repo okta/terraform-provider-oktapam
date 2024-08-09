@@ -21,9 +21,9 @@ func TestAccDatasourceResourceGroupServerEnrollmentTokensFetch(t *testing.T) {
 	fetchConfig := testAccDatasourceResourceGroupServerEnrollmentTokenConfig(identifier, identifier)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccResourceGroupServerEnrollmentTokenCheckDestroy(identifier),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccResourceGroupServerEnrollmentTokenCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,
