@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccDatasourceGroupList(t *testing.T) {

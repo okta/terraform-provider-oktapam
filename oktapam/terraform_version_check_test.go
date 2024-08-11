@@ -15,7 +15,7 @@ func Test_Terraform_Version_Check(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccV6ProviderFactories,
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.RequireAbove(tfversion.Version1_3_0),
+			tfversion.RequireAbove(tfversion.Version1_2_0),
 		},
 		Steps: []resource.TestStep{
 			{

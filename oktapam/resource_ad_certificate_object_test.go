@@ -8,7 +8,7 @@ import (
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
