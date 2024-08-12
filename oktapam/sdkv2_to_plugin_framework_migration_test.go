@@ -5,9 +5,10 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
-func TestResource_Resource_Group_UpgradeFromSdkv2(t *testing.T) {
+func TestAccResourceGroupUpgradeFromSdkv2(t *testing.T) {
 	groupName := fmt.Sprintf("test_acc_group_%s", randSeq())
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -17,8 +18,8 @@ func TestResource_Resource_Group_UpgradeFromSdkv2(t *testing.T) {
 
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"oktapam": {
-						VersionConstraint: "0.4.1",
-						Source:            "okta.com/pam/oktapam",
+						VersionConstraint: "0.4.0",
+						Source:            "okta/oktapam",
 					},
 				},
 
@@ -46,10 +47,15 @@ func TestResource_Resource_Group_UpgradeFromSdkv2(t *testing.T) {
 	})
 }
 
-func TestDataSource_Security_Policies_UpgradeFromSdkv2(t *testing.T) {
+func TestAccDataSourceResourceGroupProjectUpgradeFromSdkv2(t *testing.T) {
 	identifier := randSeq()
-	validServerID := getValidServerID()
+	// config to create the resources
+	initConfig := createTestAccDatasourceResourceGroupProjectInitConfig(identifier)
 
+	// config for the datasources
+	fetchConfig := testAccDatasourceResourceGroupProjectConfig(identifier)
+
+	resourceName := "data.oktapam_resource_group_project.rg_project"
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		CheckDestroy: testAccSecurityPoliciesCheckDestroy(identifier+"-1", identifier+"-2"),
@@ -57,16 +63,25 @@ func TestDataSource_Security_Policies_UpgradeFromSdkv2(t *testing.T) {
 			{
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"oktapam": {
-						VersionConstraint: "0.4.1",
-						Source:            "okta.com/pam/oktapam",
+						VersionConstraint: "0.4.0",
+						Source:            "okta/oktapam",
 					},
 				},
-				Config: createTestAccDatasourceSecurityPoliciesInitConfig(identifier, validServerID),
+				Config: initConfig,
 			},
 			{
 				ProtoV6ProviderFactories: testAccV6ProviderFactories,
-				Config:                   createTestAccDatasourceSecurityPoliciesInitConfig(identifier, validServerID),
+				Config:                   initConfig,
 				PlanOnly:                 true,
+			},
+			{
+				ProtoV6ProviderFactories: testAccV6ProviderFactories,
+				Config:                   fmt.Sprintf("%s\n%s", initConfig, fetchConfig),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(
+						resourceName, attributes.Name, identifier,
+					),
+				),
 			},
 		},
 	})
