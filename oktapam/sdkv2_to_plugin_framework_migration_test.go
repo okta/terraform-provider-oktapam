@@ -9,6 +9,7 @@ import (
 )
 
 func TestAccResourceGroupUpgradeFromSdkv2(t *testing.T) {
+	checkTeamApplicable(t, true)
 	groupName := fmt.Sprintf("test_acc_group_%s", randSeq())
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -48,6 +49,7 @@ func TestAccResourceGroupUpgradeFromSdkv2(t *testing.T) {
 }
 
 func TestAccDataSourceResourceGroupProjectUpgradeFromSdkv2(t *testing.T) {
+	checkTeamApplicable(t, true)
 	identifier := randSeq()
 	// config to create the resources
 	initConfig := createTestAccDatasourceResourceGroupProjectInitConfig(identifier)
