@@ -33,6 +33,7 @@ func TestAccSecurityPolicy(t *testing.T) {
 	group1Name := fmt.Sprintf("test_acc_security_policy_group1_%s", randSeq())
 	group2Name := fmt.Sprintf("test_acc_security_policy_group2_%s", randSeq())
 	sudoCommandBundle1Name := fmt.Sprintf("scb-test_acc_sudo_command_bundle1_%s", randSeq())
+	databaseResourceName := fmt.Sprintf("my-database-%s", randIdentifier)
 	validServerID := getValidServerID()
 
 	initialSecurityPolicy := &client.SecurityPolicy{
@@ -276,11 +277,105 @@ func TestAccSecurityPolicy(t *testing.T) {
 		},
 	}
 
+	databaseSecurityPolicy := &client.SecurityPolicy{
+		Name:        &securityPolicyName,
+		Active:      utils.AsBoolPtr(true),
+		Description: utils.AsStringPtr("test description"),
+		Principals: &client.SecurityPolicyPrincipals{
+			UserGroups: []client.NamedObject{
+				{
+					Name: utils.AsStringPtr(group1Name),
+				},
+			},
+		},
+		Rules: []*client.SecurityPolicyRule{
+			{
+				Name:         utils.AsStringPtr("first rule"),
+				ResourceType: client.ServerBasedResourceSelectorType,
+				ResourceSelector: &client.ServerBasedResourceSelector{
+					Selectors: []client.ServerBasedResourceSubSelectorContainer{
+						{
+							SelectorType: client.IndividualServerSubSelectorType,
+							Selector: &client.IndividualServerSubSelector{
+								Server: client.NamedObject{
+									Id: utils.AsStringPtr(validServerID),
+								},
+							},
+						},
+						{
+							SelectorType: client.ServerLabelServerSubSelectorType,
+							Selector: &client.ServerLabelBasedSubSelector{
+								ServerSelector: &client.ServerLabelServerSelector{
+									Labels: map[string]string{
+										"system.os_type": "linux",
+									},
+								},
+								AccountSelectorType: client.UsernameAccountSelectorType,
+								AccountSelector: &client.UsernameAccountSelector{
+									Usernames: []string{"root", "pamadmin"},
+								},
+							},
+						},
+					},
+				},
+				Privileges: []*client.SecurityPolicyRulePrivilegeContainer{
+					{
+						PrivilegeType: client.PasswordCheckoutSSHPrivilegeType,
+						PrivilegeValue: &client.PasswordCheckoutSSHPrivilege{
+							Enabled: utils.AsBoolPtr(true),
+						},
+					},
+					{
+						PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
+						PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
+							Enabled:               utils.AsBoolPtr(true),
+							AdminLevelPermissions: utils.AsBoolPtrZero(false, true),
+							SudoCommandBundles: []client.NamedObject{
+								{
+									Name: &sudoCommandBundle1Name,
+									Type: "sudo_command_bundle",
+								},
+							},
+							SudoDisplayName: utils.AsStringPtr("foo-uam"),
+						},
+					},
+				},
+				Conditions: []*client.SecurityPolicyRuleConditionContainer{
+					{
+						ConditionType: client.AccessRequestConditionType,
+						ConditionValue: &client.AccessRequestCondition{
+							RequestTypeID:       utils.AsStringPtr("abcd"),
+							RequestTypeName:     utils.AsStringPtr("foo"),
+							ExpiresAfterSeconds: utils.AsIntPtr(1200),
+						},
+					},
+					{
+						ConditionType: client.AccessRequestConditionType,
+						ConditionValue: &client.AccessRequestCondition{
+							RequestTypeID:       utils.AsStringPtr("wxyz"),
+							RequestTypeName:     utils.AsStringPtr("bar"),
+							ExpiresAfterSeconds: utils.AsIntPtr(1800),
+						},
+					},
+				},
+			},
+		},
+	}
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
 		CheckDestroy:      testAccSecurityPolicyCheckDestroy(securityPolicyName),
 		Steps: []resource.TestStep{
+			{
+				Config: createTestAccDatabaseSecurityPolicyCreateConfig(randIdentifier, securityPolicyName, databaseResourceName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccSecurityPolicyCheckExists(databaseResourceName, databaseSecurityPolicy),
+					resource.TestCheckResourceAttr(
+						resourceName, attributes.Name, securityPolicyName,
+					),
+				),
+			},
 			{
 				// Ensure that we get an error when we try to create a policy with invalid config.
 				Config:      createTestAccSecurityPolicyInvalidAdminPrivilegesConfig(group1Name, securityPolicyName, validServerID),
@@ -542,6 +637,42 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 				request_type_id = "wxyz"
 				request_type_name = "bar"
 				expires_after_seconds = 1800
+			}
+		}
+	}
+}
+`
+
+func createTestAccDatabaseSecurityPolicyCreateConfig(groupName1 string, securityPolicyName string, databaseCanonicalName string) string {
+	return fmt.Sprintf(testAccDatabaseSecurityPolicyCreateConfigFormat, groupName1, securityPolicyName, databaseCanonicalName)
+}
+
+const testAccDatabaseSecurityPolicyCreateConfigFormat = `
+resource "oktapam_group" "test_security_policy_group1" {
+	name = "%s"
+}
+
+resource "oktapam_security_policy" "test_acc_security_policy" {
+	name = "%s"
+	description = "allow access to database by its canonical name"
+	active = true
+	principals {
+		groups = [oktapam_group.test_security_policy_group1.id ]
+	}
+	rule {
+		name = "database rule"
+		resources {
+			databases {
+				label_selectors {
+					database_labels = {
+						"system.canonical_name" = "%s"
+					}
+				}
+			}
+		}
+		privileges {
+			password_checkout_database {
+				enabled = true
 			}
 		}
 	}

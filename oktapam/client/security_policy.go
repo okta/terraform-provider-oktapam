@@ -213,7 +213,7 @@ func (*MFACondition) ConditionType() ConditionType {
 	return MFAConditionType
 }
 
-func (*MFACondition) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
+func (*MFACondition) ValidForResourceType(_ ResourceSelectorType) bool {
 	return true
 }
 
@@ -239,7 +239,7 @@ func (*AccessRequestCondition) ConditionType() ConditionType {
 	return AccessRequestConditionType
 }
 
-func (*AccessRequestCondition) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
+func (*AccessRequestCondition) ValidForResourceType(_ ResourceSelectorType) bool {
 	return true
 }
 
@@ -309,6 +309,8 @@ type ServerBasedResourceSubSelector interface {
 	ToResourceMap() map[string]any
 }
 
+var _ ServerBasedResourceSubSelector = &ServerLabelBasedSubSelector{}
+
 type IndividualServerSubSelector struct {
 	Server NamedObject `json:"server"`
 }
@@ -322,6 +324,8 @@ func (s *IndividualServerSubSelector) ToResourceMap() map[string]any {
 	m[attributes.ServerID] = *s.Server.Id
 	return m
 }
+
+var _ ServerBasedResourceSubSelector = &ServerLabelBasedSubSelector{}
 
 type IndividualServerAccountSubSelector struct {
 	Server   NamedObject `json:"server"`
@@ -339,6 +343,8 @@ func (s *IndividualServerAccountSubSelector) ToResourceMap() map[string]any {
 	return m
 }
 
+var _ ServerBasedResourceSubSelector = &ServerLabelBasedSubSelector{}
+
 type ServerLabelBasedSubSelector struct {
 	ServerSelector *ServerLabelServerSelector `json:"server_selector"`
 
@@ -350,19 +356,19 @@ func (*ServerLabelBasedSubSelector) ServerBasedResourceSubSelectorType() ServerB
 	return ServerLabelServerSubSelectorType
 }
 
-func (s *ServerLabelBasedSubSelector) ToResourceMap() map[string]any {
+func (serverLabelSubSelector *ServerLabelBasedSubSelector) ToResourceMap() map[string]any {
 	m := make(map[string]any)
 
-	serverLabelsM := make(map[string]any, len(s.ServerSelector.Labels))
-	for k, v := range s.ServerSelector.Labels {
+	serverLabelsM := make(map[string]any, len(serverLabelSubSelector.ServerSelector.Labels))
+	for k, v := range serverLabelSubSelector.ServerSelector.Labels {
 		serverLabelsM[k] = v
 	}
 	m[attributes.ServerLabels] = serverLabelsM
 
 	usernamesArr := make([]any, 0)
 
-	if s.AccountSelectorType == UsernameAccountSelectorType {
-		usernamesArr = stringSliceToInterfaceSlice(s.AccountSelector.(*UsernameAccountSelector).Usernames)
+	if serverLabelSubSelector.AccountSelectorType == UsernameAccountSelectorType {
+		usernamesArr = stringSliceToInterfaceSlice(serverLabelSubSelector.AccountSelector.(*UsernameAccountSelector).Usernames)
 	}
 
 	m[attributes.Accounts] = usernamesArr
@@ -370,7 +376,7 @@ func (s *ServerLabelBasedSubSelector) ToResourceMap() map[string]any {
 	return m
 }
 
-func (ss *ServerLabelBasedSubSelector) UnmarshalJSON(data []byte) error {
+func (serverLabelSubSelector *ServerLabelBasedSubSelector) UnmarshalJSON(data []byte) error {
 	tmp := struct {
 		ServerSelector      *ServerLabelServerSelector `json:"server_selector"`
 		AccountSelectorType AccountSelectorType        `json:"account_selector_type"`
@@ -381,19 +387,19 @@ func (ss *ServerLabelBasedSubSelector) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	ss.ServerSelector = tmp.ServerSelector
-	ss.AccountSelectorType = tmp.AccountSelectorType
+	serverLabelSubSelector.ServerSelector = tmp.ServerSelector
+	serverLabelSubSelector.AccountSelectorType = tmp.AccountSelectorType
 
-	switch ss.AccountSelectorType {
+	switch serverLabelSubSelector.AccountSelectorType {
 	case UsernameAccountSelectorType:
-		ss.AccountSelector = &UsernameAccountSelector{}
-		if err := json.Unmarshal(tmp.AccountSelector, ss.AccountSelector); err != nil {
+		serverLabelSubSelector.AccountSelector = &UsernameAccountSelector{}
+		if err := json.Unmarshal(tmp.AccountSelector, serverLabelSubSelector.AccountSelector); err != nil {
 			return err
 		}
 	case NoneAccountSelectorType:
-		ss.AccountSelector = &NoneAccountSelector{}
+		serverLabelSubSelector.AccountSelector = &NoneAccountSelector{}
 	default:
-		return fmt.Errorf("unknown account selector type %s", ss.AccountSelectorType)
+		return fmt.Errorf("unknown account selector type %s", serverLabelSubSelector.AccountSelectorType)
 	}
 
 	return nil
@@ -420,6 +426,8 @@ type UsernameAccountSelector struct {
 func (*UsernameAccountSelector) AccountSelectorType() AccountSelectorType {
 	return UsernameAccountSelectorType
 }
+
+var _ json.Unmarshaler = &ServerBasedResourceSubSelectorContainer{}
 
 type ServerBasedResourceSubSelectorContainer struct {
 	SelectorType ServerBasedResourceSubSelectorType `json:"selector_type"`
