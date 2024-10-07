@@ -537,8 +537,8 @@ func insertComputedValuesForSecurityPolicyRule(expectedRule *client.SecurityPoli
 
 func testAccSecurityPolicyCheckDestroy(securityPolicyName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := getLocalClientFromMetadata(testAccProvider.Meta())
-		securityPolicies, err := client.ListSecurityPolicies(context.Background())
+		opaClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		securityPolicies, err := opaClient.ListSecurityPolicies(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting security policies: %w", err)
 		}

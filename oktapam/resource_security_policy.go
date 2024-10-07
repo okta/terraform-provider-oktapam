@@ -680,8 +680,8 @@ func readRulesFromResourceData(d *schema.ResourceData, securityPolicyId *string)
 
 		rules = append(rules, rule)
 
-		if validation := validateRule(rule); validation != nil {
-			diags = append(diags, validation...)
+		if diagnostics := validateRule(rule); diagnostics != nil {
+			diags = append(diags, diagnostics...)
 		}
 	}
 
