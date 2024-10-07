@@ -489,9 +489,9 @@ func resourceSecurityPolicy() *schema.Resource {
 	}
 }
 
-func resourceSecurityPolicyRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+func resourceSecurityPolicyRead(ctx context.Context, d *schema.ResourceData, metadata any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := getLocalClientFromMetadata(m)
+	c := getLocalClientFromMetadata(metadata)
 	id := d.Id()
 	policy, err := c.GetSecurityPolicy(ctx, id)
 
@@ -731,6 +731,8 @@ func resourceTypeToAttribute(resourceSelectorType client.ResourceSelectorType) s
 
 func privilegeTypeToAttribute(privilegeType client.PrivilegeType) string {
 	switch privilegeType {
+	case client.PasswordCheckoutDatabasePrivilegeType:
+		return attributes.PasswordCheckoutDatabase
 	case client.PasswordCheckoutRDPPrivilegeType:
 		return attributes.PasswordCheckoutRDP
 	case client.PrincipalAccountRDPPrivilegeType:
@@ -839,11 +841,11 @@ func readConditions(conditionsAttr []any) ([]*client.SecurityPolicyRuleCondition
 		for _, mfaI := range mfaArr {
 			mfaM := mfaI.(map[string]any)
 
-			reauthFrequency := mfaM[attributes.ReAuthFrequencyInSeconds].(int)
+			reAuthFrequency := mfaM[attributes.ReAuthFrequencyInSeconds].(int)
 			acrValues := mfaM[attributes.ACRValues].(string)
 
 			mfa := &client.MFACondition{
-				ReAuthFrequencyInSeconds: &reauthFrequency,
+				ReAuthFrequencyInSeconds: &reAuthFrequency,
 				ACRValues:                &acrValues,
 			}
 
@@ -1103,13 +1105,13 @@ func readServersSelector(serversAttr any) ([]client.ServerBasedResourceSubSelect
 	return subSelectors, diags
 }
 
-func readDatabaseLabelBasedSubSelectors(labelSelectorsArr []any) ([]*client.DatabaseLabelBasedSubSelector, diag.Diagnostics) {
+func readDatabaseLabelBasedSubSelectors(labelSelectorsArr []any) ([]*client.DatabaseLabelsBasedSubSelector, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	subSelectors := make([]*client.DatabaseLabelBasedSubSelector, len(labelSelectorsArr))
+	subSelectors := make([]*client.DatabaseLabelsBasedSubSelector, len(labelSelectorsArr))
 
 	for idx, labelSelectorsI := range labelSelectorsArr {
-		subSelector := &client.DatabaseLabelBasedSubSelector{}
+		subSelector := &client.DatabaseLabelsBasedSubSelector{}
 		labelSelectorsM := labelSelectorsI.(map[string]any)
 
 		databaseLabelsI := labelSelectorsM[attributes.DatabaseLabels]
@@ -1132,7 +1134,7 @@ func readDatabaseLabelBasedSubSelectors(labelSelectorsArr []any) ([]*client.Data
 			}
 			databaseLabels[k] = s
 		}
-		subSelector.DatabaseSelector = &client.DatabaseLabelDatabaseSelector{
+		subSelector.DatabaseSelector = &client.DatabaseLabelsDatabaseSelector{
 			Labels: databaseLabels,
 		}
 
@@ -1261,6 +1263,17 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 
 	hasRDPPriv := false
 	hasSSHPriv := false
+
+	if passwordCheckoutDatabaseI, ok := privilegesM[attributes.PasswordCheckoutDatabase]; ok {
+		if enabled, hasValue := readPrivilegeEnabled(passwordCheckoutDatabaseI); hasValue {
+			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
+				PrivilegeType: client.PasswordCheckoutDatabasePrivilegeType,
+				PrivilegeValue: &client.PasswordCheckoutDatabasePrivilege{
+					Enabled: &enabled,
+				},
+			})
+		}
+	}
 
 	if passwordCheckoutRDPI, ok := privilegesM[attributes.PasswordCheckoutRDP]; ok {
 		if enabled, hasValue := readPrivilegeEnabled(passwordCheckoutRDPI); hasValue {

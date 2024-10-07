@@ -598,6 +598,8 @@ func (c *SecurityPolicyRulePrivilegeContainer) UnmarshalJSON(data []byte) error 
 		c.PrivilegeValue = &PasswordCheckoutSSHPrivilege{}
 	case PasswordCheckoutRDPPrivilegeType:
 		c.PrivilegeValue = &PasswordCheckoutRDPPrivilege{}
+	case PasswordCheckoutDatabasePrivilegeType:
+		c.PrivilegeValue = &PasswordCheckoutDatabasePrivilege{}
 	case SecretPrivilegeType:
 		c.PrivilegeValue = &SecretPrivilege{}
 	default:
@@ -655,19 +657,21 @@ func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
 		m[attributes.AdminLevelPermissions] = false
 	}
 	if len(p.SudoCommandBundles) > 0 {
-		scbs := make([]map[string]any, len(p.SudoCommandBundles))
-		for i, scb := range p.SudoCommandBundles {
-			scbs[i] = map[string]any{
-				attributes.ID:   scb.Id,
-				attributes.Type: scb.Type,
-				attributes.Name: scb.Name,
+		sudoCommandBundles := make([]map[string]any, len(p.SudoCommandBundles))
+		for i, sudoCommandBundle := range p.SudoCommandBundles {
+			sudoCommandBundles[i] = map[string]any{
+				attributes.ID:   sudoCommandBundle.Id,
+				attributes.Type: sudoCommandBundle.Type,
+				attributes.Name: sudoCommandBundle.Name,
 			}
 		}
-		m[attributes.SudoCommandBundles] = scbs
+		m[attributes.SudoCommandBundles] = sudoCommandBundles
 		m[attributes.SudoDisplayName] = p.SudoDisplayName
 	}
 	return m
 }
+
+var _ SecurityPolicyRulePrivilege = &PasswordCheckoutRDPPrivilege{}
 
 type PasswordCheckoutRDPPrivilege struct {
 	Enabled *bool `json:"password_checkout_rdp"`
@@ -737,32 +741,33 @@ type SecurityPolicyRule struct {
 	Conditions       []*SecurityPolicyRuleConditionContainer `json:"conditions"`
 }
 
-func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
+func (rule *SecurityPolicyRule) ToResourceMap() map[string]any {
 	m := make(map[string]any, 7)
 
-	if r.ID != nil {
-		m[attributes.ID] = *r.ID
+	if rule.ID != nil {
+		m[attributes.ID] = *rule.ID
 	}
 
-	if r.Name != nil {
-		m[attributes.Name] = *r.Name
+	if rule.Name != nil {
+		m[attributes.Name] = *rule.Name
 	}
 
 	resources := make([]any, 0, 1)
-	if r.ResourceSelector != nil {
-		resources = append(resources, r.ResourceSelector.ToResourceMap())
+	if rule.ResourceSelector != nil {
+		resources = append(resources, rule.ResourceSelector.ToResourceMap())
 	}
 	m[attributes.Resources] = resources
 
-	if r.Privileges != nil {
+	if rule.Privileges != nil {
 		privilegesM := make(map[string]any, 4)
+		passwordCheckoutDatabase := make([]any, 0, 1)
 		passwordCheckoutRDP := make([]any, 0, 1)
 		passwordCheckoutSSH := make([]any, 0, 1)
 		principalAccountRDP := make([]any, 0, 1)
 		principalAccountSSH := make([]any, 0, 1)
 		secret := make([]any, 0, 1)
 
-		for _, privilege := range r.Privileges {
+		for _, privilege := range rule.Privileges {
 			resourceMap := privilege.PrivilegeValue.ToResourceMap()
 			switch privilege.PrivilegeType {
 			case PasswordCheckoutRDPPrivilegeType:
@@ -771,6 +776,8 @@ func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 				passwordCheckoutSSH = append(passwordCheckoutSSH, resourceMap)
 			case PrincipalAccountRDPPrivilegeType:
 				principalAccountRDP = append(principalAccountRDP, resourceMap)
+			case PasswordCheckoutDatabasePrivilegeType:
+				passwordCheckoutDatabase = append(passwordCheckoutDatabase, resourceMap)
 			case PrincipalAccountSSHPrivilegeType:
 				principalAccountSSH = append(principalAccountSSH, resourceMap)
 			case SecretPrivilegeType:
@@ -778,6 +785,7 @@ func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 			}
 		}
 
+		privilegesM[attributes.PasswordCheckoutDatabase] = passwordCheckoutDatabase
 		privilegesM[attributes.PasswordCheckoutRDP] = passwordCheckoutRDP
 		privilegesM[attributes.PasswordCheckoutSSH] = passwordCheckoutSSH
 		privilegesM[attributes.PrincipalAccountRDP] = principalAccountRDP
@@ -789,13 +797,13 @@ func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 	}
 
 	conditions := make([]any, 0, 1)
-	if len(r.Conditions) != 0 {
+	if len(rule.Conditions) != 0 {
 		conditionsM := make(map[string]any, 1)
-		accessRequests := make([]any, 0, len(r.Conditions))
-		gateways := make([]any, 0, len(r.Conditions))
-		mfa := make([]any, 0, len(r.Conditions))
+		accessRequests := make([]any, 0, len(rule.Conditions))
+		gateways := make([]any, 0, len(rule.Conditions))
+		mfa := make([]any, 0, len(rule.Conditions))
 
-		for _, condition := range r.Conditions {
+		for _, condition := range rule.Conditions {
 			switch condition.ConditionType {
 			case AccessRequestConditionType:
 				accessRequests = append(accessRequests, condition.ConditionValue.ToResourceMap())
@@ -816,7 +824,7 @@ func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 	return m
 }
 
-func (r *SecurityPolicyRule) UnmarshalJSON(data []byte) error {
+func (rule *SecurityPolicyRule) UnmarshalJSON(data []byte) error {
 	tmp := struct {
 		ID               *string                                 `json:"id"`
 		SecurityPolicyID *string                                 `json:"security_policy_id"`
@@ -831,26 +839,32 @@ func (r *SecurityPolicyRule) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	r.ID = tmp.ID
-	r.SecurityPolicyID = tmp.SecurityPolicyID
-	r.Name = tmp.Name
-	r.ResourceType = tmp.ResourceType
-	r.Privileges = tmp.Privileges
-	r.Conditions = tmp.Conditions
+	rule.ID = tmp.ID
+	rule.SecurityPolicyID = tmp.SecurityPolicyID
+	rule.Name = tmp.Name
+	rule.ResourceType = tmp.ResourceType
+	rule.Privileges = tmp.Privileges
+	rule.Conditions = tmp.Conditions
 
 	switch tmp.ResourceType {
+	case DatabaseBasedResourceSelectorType:
+		resourceSelector := &DatabaseBasedResourceSelector{}
+		if err := json.Unmarshal(tmp.ResourceSelector, resourceSelector); err != nil {
+			return err
+		}
+		rule.ResourceSelector = resourceSelector
 	case ServerBasedResourceSelectorType:
 		resourceSelector := &ServerBasedResourceSelector{}
 		if err := json.Unmarshal(tmp.ResourceSelector, resourceSelector); err != nil {
 			return err
 		}
-		r.ResourceSelector = resourceSelector
+		rule.ResourceSelector = resourceSelector
 	case SecretBasedResourceSelectorType:
 		resourceSelector := &SecretBasedResourceSelector{}
 		if err := json.Unmarshal(tmp.ResourceSelector, resourceSelector); err != nil {
 			return err
 		}
-		r.ResourceSelector = resourceSelector
+		rule.ResourceSelector = resourceSelector
 	default:
 		return fmt.Errorf("cannot unmarshal resource type: %s", tmp.ResourceType)
 	}

@@ -1,11 +1,13 @@
 package oktapam
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"os"
 	"regexp"
 	"testing"
+	"text/template"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
@@ -280,7 +282,7 @@ func TestAccSecurityPolicy(t *testing.T) {
 	databaseSecurityPolicy := &client.SecurityPolicy{
 		Name:        &securityPolicyName,
 		Active:      utils.AsBoolPtr(true),
-		Description: utils.AsStringPtr("test description"),
+		Description: utils.AsStringPtr("allow access to database by its canonical name"),
 		Principals: &client.SecurityPolicyPrincipals{
 			UserGroups: []client.NamedObject{
 				{
@@ -290,29 +292,18 @@ func TestAccSecurityPolicy(t *testing.T) {
 		},
 		Rules: []*client.SecurityPolicyRule{
 			{
-				Name:         utils.AsStringPtr("first rule"),
-				ResourceType: client.ServerBasedResourceSelectorType,
-				ResourceSelector: &client.ServerBasedResourceSelector{
-					Selectors: []client.ServerBasedResourceSubSelectorContainer{
+				Name:         utils.AsStringPtr("database rule"),
+				ResourceType: client.DatabaseBasedResourceSelectorType,
+				Conditions:   []*client.SecurityPolicyRuleConditionContainer{},
+				ResourceSelector: &client.DatabaseBasedResourceSelector{
+					Selectors: []client.DatabaseBasedResourceSubSelectorContainer{
 						{
-							SelectorType: client.IndividualServerSubSelectorType,
-							Selector: &client.IndividualServerSubSelector{
-								Server: client.NamedObject{
-									Id: utils.AsStringPtr(validServerID),
-								},
-							},
-						},
-						{
-							SelectorType: client.ServerLabelServerSubSelectorType,
-							Selector: &client.ServerLabelBasedSubSelector{
-								ServerSelector: &client.ServerLabelServerSelector{
+							SelectorType: client.DatabaseLabelsDatabaseSubSelectorType,
+							Selector: &client.DatabaseLabelsBasedSubSelector{
+								DatabaseSelector: &client.DatabaseLabelsDatabaseSelector{
 									Labels: map[string]string{
-										"system.os_type": "linux",
+										"system.canonical_name": databaseResourceName,
 									},
-								},
-								AccountSelectorType: client.UsernameAccountSelectorType,
-								AccountSelector: &client.UsernameAccountSelector{
-									Usernames: []string{"root", "pamadmin"},
 								},
 							},
 						},
@@ -320,41 +311,9 @@ func TestAccSecurityPolicy(t *testing.T) {
 				},
 				Privileges: []*client.SecurityPolicyRulePrivilegeContainer{
 					{
-						PrivilegeType: client.PasswordCheckoutSSHPrivilegeType,
-						PrivilegeValue: &client.PasswordCheckoutSSHPrivilege{
+						PrivilegeType: client.PasswordCheckoutDatabasePrivilegeType,
+						PrivilegeValue: &client.PasswordCheckoutDatabasePrivilege{
 							Enabled: utils.AsBoolPtr(true),
-						},
-					},
-					{
-						PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
-						PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
-							Enabled:               utils.AsBoolPtr(true),
-							AdminLevelPermissions: utils.AsBoolPtrZero(false, true),
-							SudoCommandBundles: []client.NamedObject{
-								{
-									Name: &sudoCommandBundle1Name,
-									Type: "sudo_command_bundle",
-								},
-							},
-							SudoDisplayName: utils.AsStringPtr("foo-uam"),
-						},
-					},
-				},
-				Conditions: []*client.SecurityPolicyRuleConditionContainer{
-					{
-						ConditionType: client.AccessRequestConditionType,
-						ConditionValue: &client.AccessRequestCondition{
-							RequestTypeID:       utils.AsStringPtr("abcd"),
-							RequestTypeName:     utils.AsStringPtr("foo"),
-							ExpiresAfterSeconds: utils.AsIntPtr(1200),
-						},
-					},
-					{
-						ConditionType: client.AccessRequestConditionType,
-						ConditionValue: &client.AccessRequestCondition{
-							RequestTypeID:       utils.AsStringPtr("wxyz"),
-							RequestTypeName:     utils.AsStringPtr("bar"),
-							ExpiresAfterSeconds: utils.AsIntPtr(1800),
 						},
 					},
 				},
@@ -368,12 +327,9 @@ func TestAccSecurityPolicy(t *testing.T) {
 		CheckDestroy:      testAccSecurityPolicyCheckDestroy(securityPolicyName),
 		Steps: []resource.TestStep{
 			{
-				Config: createTestAccDatabaseSecurityPolicyCreateConfig(randIdentifier, securityPolicyName, databaseResourceName),
+				Config: createTestAccDatabaseSecurityPolicyCreateConfig(group1Name, securityPolicyName, databaseResourceName),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					testAccSecurityPolicyCheckExists(databaseResourceName, databaseSecurityPolicy),
-					resource.TestCheckResourceAttr(
-						resourceName, attributes.Name, securityPolicyName,
-					),
+					testAccSecurityPolicyCheckExists(resourceName, databaseSecurityPolicy),
 				),
 			},
 			{
@@ -422,11 +378,11 @@ func TestAccSecurityPolicy(t *testing.T) {
 	})
 }
 
-func testAccSecurityPolicyCheckExists(rn string, expectedSecurityPolicy *client.SecurityPolicy) resource.TestCheckFunc {
+func testAccSecurityPolicyCheckExists(resourceName string, expectedSecurityPolicy *client.SecurityPolicy) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[rn]
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
-			return fmt.Errorf("resource not found: %s", rn)
+			return fmt.Errorf("resource not found: %s", resourceName)
 		}
 
 		id := rs.Primary.ID
@@ -437,10 +393,10 @@ func testAccSecurityPolicyCheckExists(rn string, expectedSecurityPolicy *client.
 		} else if securityPolicy == nil {
 			return fmt.Errorf("security policy does not exist")
 		}
-		err = insertComputedValuesForSecurityPolicy(expectedSecurityPolicy, securityPolicy)
-		if err != nil {
+		if err := insertComputedValuesForSecurityPolicy(expectedSecurityPolicy, securityPolicy); err != nil {
 			return err
 		}
+
 		// Ignore Id as it is not possible to get ID generated at runtime in tests and it is not a computed property
 		// of the tf resource.
 		comparison := cmp.Diff(expectedSecurityPolicy, securityPolicy, cmpopts.IgnoreFields(client.NamedObject{}, "Id"))
@@ -494,6 +450,29 @@ func insertComputedValuesForSecurityPolicyRule(expectedRule *client.SecurityPoli
 	}
 
 	switch expectedRule.ResourceType {
+	case client.DatabaseBasedResourceSelectorType:
+		expectedResourceSelector := expectedRule.ResourceSelector.(*client.DatabaseBasedResourceSelector)
+		actualResourceSelector := actualRule.ResourceSelector.(*client.DatabaseBasedResourceSelector)
+
+		if len(expectedResourceSelector.Selectors) != len(actualResourceSelector.Selectors) {
+			return fmt.Errorf("number of selectors did not match between expected and actual for rule %s", *expectedRule.Name)
+		}
+
+		for idx, expectedSel := range expectedResourceSelector.Selectors {
+			actualSel := actualResourceSelector.Selectors[idx]
+
+			if expectedSel.SelectorType != actualSel.SelectorType {
+				return fmt.Errorf("database based selector type did not match within rule %s", *expectedRule.Name)
+			}
+
+			//TODO(ja) we don't seem to do anything with label based selectors?
+			//if expectedSel.SelectorType == client.DatabaseLabelsDatabaseSubSelectorType {
+			//	expectedSubSel := expectedSel.Selector.(*client.DatabaseLabelsBasedSubSelector)
+			//	actualSubSel := actualSel.Selector.(*client.DatabaseLabelsBasedSubSelector)
+			//
+			//	expectedSubSel.Labels = fillNamedObjectValues(expectedSubSel.Labels, actualSubSel.Labels)
+			//}
+		}
 	case client.ServerBasedResourceSelectorType:
 		expectedResourceSelector := expectedRule.ResourceSelector.(*client.ServerBasedResourceSelector)
 		actualResourceSelector := actualRule.ResourceSelector.(*client.ServerBasedResourceSelector)
@@ -533,7 +512,7 @@ func insertComputedValuesForSecurityPolicyRule(expectedRule *client.SecurityPoli
 			actualSel := actualResourceSelector.Selectors[idx]
 
 			if expectedSel.SelectorType != actualSel.SelectorType {
-				return fmt.Errorf("server based selector type did not match within rule %s", *expectedRule.Name)
+				return fmt.Errorf("secret based selector type did not match within rule %s", *expectedRule.Name)
 			}
 
 			if expectedSel.SelectorType == client.SecretFolderSubSelectorType {
@@ -643,21 +622,35 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 }
 `
 
-func createTestAccDatabaseSecurityPolicyCreateConfig(groupName1 string, securityPolicyName string, databaseCanonicalName string) string {
-	return fmt.Sprintf(testAccDatabaseSecurityPolicyCreateConfigFormat, groupName1, securityPolicyName, databaseCanonicalName)
+func createTestAccDatabaseSecurityPolicyCreateConfig(groupName string, securityPolicyName string, databaseCanonicalName string) string {
+	tmpl, err := template.New("config").Parse(testAccDatabaseSecurityPolicyCreateConfigFormat)
+	if err != nil {
+		panic(err)
+	}
+	var buffer bytes.Buffer
+	type Values struct {
+		GroupName             string
+		SecurityPolicyName    string
+		DatabaseCanonicalName string
+	}
+	if err := tmpl.Execute(&buffer, Values{GroupName: groupName, DatabaseCanonicalName: databaseCanonicalName, SecurityPolicyName: securityPolicyName}); err != nil {
+		panic(err)
+	}
+
+	return buffer.String()
 }
 
 const testAccDatabaseSecurityPolicyCreateConfigFormat = `
 resource "oktapam_group" "test_security_policy_group1" {
-	name = "%s"
+	name = "{{ .GroupName }}"
 }
 
 resource "oktapam_security_policy" "test_acc_security_policy" {
-	name = "%s"
+	name = "{{ .SecurityPolicyName }}"
 	description = "allow access to database by its canonical name"
 	active = true
 	principals {
-		groups = [oktapam_group.test_security_policy_group1.id ]
+		groups = [oktapam_group.test_security_policy_group1.id]
 	}
 	rule {
 		name = "database rule"
@@ -665,7 +658,7 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 			databases {
 				label_selectors {
 					database_labels = {
-						"system.canonical_name" = "%s"
+						"system.canonical_name" = "{{ .DatabaseCanonicalName }}"
 					}
 				}
 			}
