@@ -18,9 +18,13 @@ func TestAccDatabaseResource(t *testing.T) {
 	groupName := fmt.Sprintf("test_acc_group_%s", randSeq())
 	resourceGroupName := fmt.Sprintf("test_acc_resource_group_%s", randSeq())
 	projectName := fmt.Sprintf("test_acc_project_%s", randSeq())
+	mySQLBasicAuth := MySqlBasicAuth
+
+	networkAddress := "localhost:3306"
 
 	initialDatabase := &pam.DatabaseResourceResponse{
 		CanonicalName:                   "MyCanonicalName",
+		NetworkAddress:                  &networkAddress,
 		DatabaseType:                    "mysql.level1",
 		RecipeBookId:                    nil,
 		ManagementConnectionDetailsType: MySqlBasicAuth,
@@ -28,6 +32,7 @@ func TestAccDatabaseResource(t *testing.T) {
 			MySQLBasicAuthManagementConnectionDetails: &pam.MySQLBasicAuthManagementConnectionDetails{
 				Hostname: "mysql.example.org",
 				Port:     "3306",
+				Type:     &mySQLBasicAuth,
 				AuthDetails: pam.MySQLBasicAuthDetails{
 					Username:    "user",
 					PasswordJwe: nil,
@@ -41,6 +46,7 @@ func TestAccDatabaseResource(t *testing.T) {
 
 	updatedDatabase := &pam.DatabaseResourceResponse{
 		CanonicalName:                   "MyCanonicalName",
+		NetworkAddress:                  &networkAddress,
 		DatabaseType:                    "mysql.level1",
 		RecipeBookId:                    nil,
 		ManagementConnectionDetailsType: MySqlBasicAuth,
@@ -48,6 +54,7 @@ func TestAccDatabaseResource(t *testing.T) {
 			MySQLBasicAuthManagementConnectionDetails: &pam.MySQLBasicAuthManagementConnectionDetails{
 				Hostname: "mysql.example.org",
 				Port:     "3306",
+				Type:     &mySQLBasicAuth,
 				AuthDetails: pam.MySQLBasicAuthDetails{
 					Username:    "user",
 					PasswordJwe: nil, // this is only used for POST/PUT, not GET
@@ -174,6 +181,7 @@ resource "oktapam_database" "test_acc_database_resource" {
   resource_group = oktapam_resource_group.test_acc_resource_group.id
   project        = oktapam_resource_group_project.test_acc_resource_group_project.id
   canonical_name = "MyCanonicalName"
+  network_address = "localhost:3306"
   database_type  = "mysql.level1"
 
   management_connection_details {
@@ -217,6 +225,7 @@ resource "oktapam_database" "test_acc_database_resource" {
 	resource_group = oktapam_resource_group.test_acc_resource_group.id
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 	canonical_name = "MyCanonicalName"
+    network_address = "localhost:3306"
 	database_type = "mysql.level1"
 	management_connection_details {
 		mysql {
@@ -251,6 +260,7 @@ resource "oktapam_database" "test_acc_database_resource" {
 	resource_group = oktapam_resource_group.test_acc_resource_group.id
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 	canonical_name = "MyCanonicalName"
+    network_address = "localhost:3306"
 	database_type = "mysql.level1"
 	management_connection_details {
 		mysql {
@@ -298,6 +308,7 @@ resource "oktapam_database" "test_acc_database_resource" {
 	resource_group = oktapam_resource_group.test_acc_resource_group.id
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 	canonical_name = "MyCanonicalName"
+    network_address = "localhost:3306"
 	database_type = "mysql.level1"
 	management_connection_details {
 		mysql {
@@ -336,6 +347,7 @@ resource "oktapam_database" "test_acc_database_resource" {
 	resource_group = oktapam_resource_group.test_acc_resource_group.id
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 	canonical_name = "MyCanonicalName"
+    network_address = "localhost:3306"
 	database_type = "mysql.level1"
 	management_connection_details {
 		mysql {

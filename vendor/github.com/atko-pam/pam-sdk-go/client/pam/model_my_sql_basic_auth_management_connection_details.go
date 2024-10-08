@@ -20,6 +20,8 @@ var _ MappedNullable = &MySQLBasicAuthManagementConnectionDetails{}
 
 // MySQLBasicAuthManagementConnectionDetails The connection details include Basic Authentication for MySQL database
 type MySQLBasicAuthManagementConnectionDetails struct {
+	// Type of this object
+	Type *string `json:"_type,omitempty"`
 	// The hostname of the MySQL management connection
 	Hostname string `json:"hostname"`
 	// The port of the MySQL management connection
@@ -45,6 +47,39 @@ func NewMySQLBasicAuthManagementConnectionDetails(hostname string, port string, 
 func NewMySQLBasicAuthManagementConnectionDetailsWithDefaults() *MySQLBasicAuthManagementConnectionDetails {
 	this := MySQLBasicAuthManagementConnectionDetails{}
 	return &this
+}
+
+// GetType returns the Type field value if set, zero value otherwise.
+func (o *MySQLBasicAuthManagementConnectionDetails) GetType() string {
+	if o == nil || IsNil(o.Type) {
+		var ret string
+		return ret
+	}
+	return *o.Type
+}
+
+// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *MySQLBasicAuthManagementConnectionDetails) GetTypeOk() (*string, bool) {
+	if o == nil || IsNil(o.Type) {
+		return nil, false
+	}
+	return o.Type, true
+}
+
+// HasType returns a boolean if a field has been set.
+func (o *MySQLBasicAuthManagementConnectionDetails) HasType() bool {
+	if o != nil && !IsNil(o.Type) {
+		return true
+	}
+
+	return false
+}
+
+// SetType gets a reference to the given string and assigns it to the Type field.
+func (o *MySQLBasicAuthManagementConnectionDetails) SetType(v string) *MySQLBasicAuthManagementConnectionDetails {
+	o.Type = &v
+	return o
 }
 
 // GetHostname returns the Hostname field value
@@ -132,6 +167,9 @@ func (o MySQLBasicAuthManagementConnectionDetails) MarshalJSON() ([]byte, error)
 
 func (o MySQLBasicAuthManagementConnectionDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.Type) {
+		toSerialize["_type"] = o.Type
+	}
 	toSerialize["hostname"] = o.Hostname
 	toSerialize["port"] = o.Port
 	toSerialize["auth_details"] = o.AuthDetails

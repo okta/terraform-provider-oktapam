@@ -20,7 +20,7 @@ var _ MappedNullable = &Gce{}
 
 // Gce struct for Gce
 type Gce struct {
-	// Type of this object
+	// Type of this Resource object
 	Type *string `json:"_type,omitempty"`
 	// IP Address
 	ExternalIp *string `json:"external_ip,omitempty"`

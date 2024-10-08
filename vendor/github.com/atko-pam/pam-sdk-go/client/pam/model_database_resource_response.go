@@ -24,8 +24,10 @@ type DatabaseResourceResponse struct {
 	// The ID of the Database Resource
 	Id string `json:"id"`
 	// The canonical name of the Database Resource
-	CanonicalName string       `json:"canonical_name"`
-	DatabaseType  DatabaseType `json:"database_type"`
+	CanonicalName string `json:"canonical_name"`
+	// The human readable network address users can use to access this database.
+	NetworkAddress *string      `json:"network_address,omitempty"`
+	DatabaseType   DatabaseType `json:"database_type"`
 	// The ID of the recipe book which contains the SQL queries used by the Gateway. The recipe book permits customers to override the default SQL used by the system, allowing for customized query execution.
 	RecipeBookId                    *string                         `json:"recipe_book_id,omitempty"`
 	ManagementConnectionDetailsType ManagementConnectionDetailsType `json:"management_connection_details_type"`
@@ -112,6 +114,39 @@ func (o *DatabaseResourceResponse) GetCanonicalNameOk() (*string, bool) {
 // SetCanonicalName sets field value
 func (o *DatabaseResourceResponse) SetCanonicalName(v string) *DatabaseResourceResponse {
 	o.CanonicalName = v
+	return o
+}
+
+// GetNetworkAddress returns the NetworkAddress field value if set, zero value otherwise.
+func (o *DatabaseResourceResponse) GetNetworkAddress() string {
+	if o == nil || IsNil(o.NetworkAddress) {
+		var ret string
+		return ret
+	}
+	return *o.NetworkAddress
+}
+
+// GetNetworkAddressOk returns a tuple with the NetworkAddress field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *DatabaseResourceResponse) GetNetworkAddressOk() (*string, bool) {
+	if o == nil || IsNil(o.NetworkAddress) {
+		return nil, false
+	}
+	return o.NetworkAddress, true
+}
+
+// HasNetworkAddress returns a boolean if a field has been set.
+func (o *DatabaseResourceResponse) HasNetworkAddress() bool {
+	if o != nil && !IsNil(o.NetworkAddress) {
+		return true
+	}
+
+	return false
+}
+
+// SetNetworkAddress gets a reference to the given string and assigns it to the NetworkAddress field.
+func (o *DatabaseResourceResponse) SetNetworkAddress(v string) *DatabaseResourceResponse {
+	o.NetworkAddress = &v
 	return o
 }
 
@@ -343,6 +378,9 @@ func (o DatabaseResourceResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["id"] = o.Id
 	toSerialize["canonical_name"] = o.CanonicalName
+	if !IsNil(o.NetworkAddress) {
+		toSerialize["network_address"] = o.NetworkAddress
+	}
 	toSerialize["database_type"] = o.DatabaseType
 	if !IsNil(o.RecipeBookId) {
 		toSerialize["recipe_book_id"] = o.RecipeBookId

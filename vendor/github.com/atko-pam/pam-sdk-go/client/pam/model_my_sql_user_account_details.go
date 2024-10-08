@@ -20,6 +20,8 @@ var _ MappedNullable = &MySQLUserAccountDetails{}
 
 // MySQLUserAccountDetails The details of the MySQL user account
 type MySQLUserAccountDetails struct {
+	// Type of this object
+	Type *string `json:"_type,omitempty"`
 	// The username of the MySQL user Static Account
 	Username string `json:"username"`
 	// The hostname of the MySQL user Static Account
@@ -43,6 +45,39 @@ func NewMySQLUserAccountDetails(username string, hostName string) *MySQLUserAcco
 func NewMySQLUserAccountDetailsWithDefaults() *MySQLUserAccountDetails {
 	this := MySQLUserAccountDetails{}
 	return &this
+}
+
+// GetType returns the Type field value if set, zero value otherwise.
+func (o *MySQLUserAccountDetails) GetType() string {
+	if o == nil || IsNil(o.Type) {
+		var ret string
+		return ret
+	}
+	return *o.Type
+}
+
+// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *MySQLUserAccountDetails) GetTypeOk() (*string, bool) {
+	if o == nil || IsNil(o.Type) {
+		return nil, false
+	}
+	return o.Type, true
+}
+
+// HasType returns a boolean if a field has been set.
+func (o *MySQLUserAccountDetails) HasType() bool {
+	if o != nil && !IsNil(o.Type) {
+		return true
+	}
+
+	return false
+}
+
+// SetType gets a reference to the given string and assigns it to the Type field.
+func (o *MySQLUserAccountDetails) SetType(v string) *MySQLUserAccountDetails {
+	o.Type = &v
+	return o
 }
 
 // GetUsername returns the Username field value
@@ -105,6 +140,9 @@ func (o MySQLUserAccountDetails) MarshalJSON() ([]byte, error) {
 
 func (o MySQLUserAccountDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.Type) {
+		toSerialize["_type"] = o.Type
+	}
 	toSerialize["username"] = o.Username
 	toSerialize["host_name"] = o.HostName
 	return toSerialize, nil
