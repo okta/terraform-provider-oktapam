@@ -21,31 +21,28 @@ var _ MappedNullable = &PrivilegedAccount{}
 // PrivilegedAccount struct for PrivilegedAccount
 type PrivilegedAccount struct {
 	// The UUID of the Privileged Account
-	Id *string `json:"id,omitempty"`
-	// The status of the Privileged Account
-	Status *string `json:"status,omitempty"`
+	Id           *string                        `json:"id,omitempty"`
+	Status       *PrivilegedAccountStatus       `json:"status,omitempty"`
+	StatusDetail *PrivilegedAccountStatusDetail `json:"statusDetail,omitempty"`
 	// The human-readable name for the Privileged Account
 	Name string `json:"name"`
 	// The description of the Privileged Account
-	Description string                `json:"description"`
-	AccountType PrivilegedAccountType `json:"account_type"`
+	Description *string               `json:"description,omitempty"`
+	AccountType PrivilegedAccountType `json:"accountType"`
 	// A list of IDs for the Okta users who own the Privileged Account
-	OwnerUserIds []string `json:"owner_user_ids"`
+	OwnerUserIds []string `json:"ownerUserIds,omitempty"`
 	// A list of IDs for the Okta groups who own the Privileged Account
-	OwnerGroupIds []string `json:"owner_group_ids"`
+	OwnerGroupIds []string `json:"ownerGroupIds,omitempty"`
 }
 
 // NewPrivilegedAccount instantiates a new PrivilegedAccount object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPrivilegedAccount(name string, description string, accountType PrivilegedAccountType, ownerUserIds []string, ownerGroupIds []string) *PrivilegedAccount {
+func NewPrivilegedAccount(name string, accountType PrivilegedAccountType) *PrivilegedAccount {
 	this := PrivilegedAccount{}
 	this.Name = name
-	this.Description = description
 	this.AccountType = accountType
-	this.OwnerUserIds = ownerUserIds
-	this.OwnerGroupIds = ownerGroupIds
 	return &this
 }
 
@@ -91,9 +88,9 @@ func (o *PrivilegedAccount) SetId(v string) *PrivilegedAccount {
 }
 
 // GetStatus returns the Status field value if set, zero value otherwise.
-func (o *PrivilegedAccount) GetStatus() string {
+func (o *PrivilegedAccount) GetStatus() PrivilegedAccountStatus {
 	if o == nil || IsNil(o.Status) {
-		var ret string
+		var ret PrivilegedAccountStatus
 		return ret
 	}
 	return *o.Status
@@ -101,7 +98,7 @@ func (o *PrivilegedAccount) GetStatus() string {
 
 // GetStatusOk returns a tuple with the Status field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *PrivilegedAccount) GetStatusOk() (*string, bool) {
+func (o *PrivilegedAccount) GetStatusOk() (*PrivilegedAccountStatus, bool) {
 	if o == nil || IsNil(o.Status) {
 		return nil, false
 	}
@@ -117,9 +114,42 @@ func (o *PrivilegedAccount) HasStatus() bool {
 	return false
 }
 
-// SetStatus gets a reference to the given string and assigns it to the Status field.
-func (o *PrivilegedAccount) SetStatus(v string) *PrivilegedAccount {
+// SetStatus gets a reference to the given PrivilegedAccountStatus and assigns it to the Status field.
+func (o *PrivilegedAccount) SetStatus(v PrivilegedAccountStatus) *PrivilegedAccount {
 	o.Status = &v
+	return o
+}
+
+// GetStatusDetail returns the StatusDetail field value if set, zero value otherwise.
+func (o *PrivilegedAccount) GetStatusDetail() PrivilegedAccountStatusDetail {
+	if o == nil || IsNil(o.StatusDetail) {
+		var ret PrivilegedAccountStatusDetail
+		return ret
+	}
+	return *o.StatusDetail
+}
+
+// GetStatusDetailOk returns a tuple with the StatusDetail field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PrivilegedAccount) GetStatusDetailOk() (*PrivilegedAccountStatusDetail, bool) {
+	if o == nil || IsNil(o.StatusDetail) {
+		return nil, false
+	}
+	return o.StatusDetail, true
+}
+
+// HasStatusDetail returns a boolean if a field has been set.
+func (o *PrivilegedAccount) HasStatusDetail() bool {
+	if o != nil && !IsNil(o.StatusDetail) {
+		return true
+	}
+
+	return false
+}
+
+// SetStatusDetail gets a reference to the given PrivilegedAccountStatusDetail and assigns it to the StatusDetail field.
+func (o *PrivilegedAccount) SetStatusDetail(v PrivilegedAccountStatusDetail) *PrivilegedAccount {
+	o.StatusDetail = &v
 	return o
 }
 
@@ -148,28 +178,36 @@ func (o *PrivilegedAccount) SetName(v string) *PrivilegedAccount {
 	return o
 }
 
-// GetDescription returns the Description field value
+// GetDescription returns the Description field value if set, zero value otherwise.
 func (o *PrivilegedAccount) GetDescription() string {
-	if o == nil {
+	if o == nil || IsNil(o.Description) {
 		var ret string
 		return ret
 	}
-
-	return o.Description
+	return *o.Description
 }
 
-// GetDescriptionOk returns a tuple with the Description field value
+// GetDescriptionOk returns a tuple with the Description field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *PrivilegedAccount) GetDescriptionOk() (*string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.Description) {
 		return nil, false
 	}
-	return &o.Description, true
+	return o.Description, true
 }
 
-// SetDescription sets field value
+// HasDescription returns a boolean if a field has been set.
+func (o *PrivilegedAccount) HasDescription() bool {
+	if o != nil && !IsNil(o.Description) {
+		return true
+	}
+
+	return false
+}
+
+// SetDescription gets a reference to the given string and assigns it to the Description field.
 func (o *PrivilegedAccount) SetDescription(v string) *PrivilegedAccount {
-	o.Description = v
+	o.Description = &v
 	return o
 }
 
@@ -198,51 +236,67 @@ func (o *PrivilegedAccount) SetAccountType(v PrivilegedAccountType) *PrivilegedA
 	return o
 }
 
-// GetOwnerUserIds returns the OwnerUserIds field value
+// GetOwnerUserIds returns the OwnerUserIds field value if set, zero value otherwise.
 func (o *PrivilegedAccount) GetOwnerUserIds() []string {
-	if o == nil {
+	if o == nil || IsNil(o.OwnerUserIds) {
 		var ret []string
 		return ret
 	}
-
 	return o.OwnerUserIds
 }
 
-// GetOwnerUserIdsOk returns a tuple with the OwnerUserIds field value
+// GetOwnerUserIdsOk returns a tuple with the OwnerUserIds field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *PrivilegedAccount) GetOwnerUserIdsOk() ([]string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.OwnerUserIds) {
 		return nil, false
 	}
 	return o.OwnerUserIds, true
 }
 
-// SetOwnerUserIds sets field value
+// HasOwnerUserIds returns a boolean if a field has been set.
+func (o *PrivilegedAccount) HasOwnerUserIds() bool {
+	if o != nil && !IsNil(o.OwnerUserIds) {
+		return true
+	}
+
+	return false
+}
+
+// SetOwnerUserIds gets a reference to the given []string and assigns it to the OwnerUserIds field.
 func (o *PrivilegedAccount) SetOwnerUserIds(v []string) *PrivilegedAccount {
 	o.OwnerUserIds = v
 	return o
 }
 
-// GetOwnerGroupIds returns the OwnerGroupIds field value
+// GetOwnerGroupIds returns the OwnerGroupIds field value if set, zero value otherwise.
 func (o *PrivilegedAccount) GetOwnerGroupIds() []string {
-	if o == nil {
+	if o == nil || IsNil(o.OwnerGroupIds) {
 		var ret []string
 		return ret
 	}
-
 	return o.OwnerGroupIds
 }
 
-// GetOwnerGroupIdsOk returns a tuple with the OwnerGroupIds field value
+// GetOwnerGroupIdsOk returns a tuple with the OwnerGroupIds field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *PrivilegedAccount) GetOwnerGroupIdsOk() ([]string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.OwnerGroupIds) {
 		return nil, false
 	}
 	return o.OwnerGroupIds, true
 }
 
-// SetOwnerGroupIds sets field value
+// HasOwnerGroupIds returns a boolean if a field has been set.
+func (o *PrivilegedAccount) HasOwnerGroupIds() bool {
+	if o != nil && !IsNil(o.OwnerGroupIds) {
+		return true
+	}
+
+	return false
+}
+
+// SetOwnerGroupIds gets a reference to the given []string and assigns it to the OwnerGroupIds field.
 func (o *PrivilegedAccount) SetOwnerGroupIds(v []string) *PrivilegedAccount {
 	o.OwnerGroupIds = v
 	return o
@@ -264,11 +318,20 @@ func (o PrivilegedAccount) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Status) {
 		toSerialize["status"] = o.Status
 	}
+	if !IsNil(o.StatusDetail) {
+		toSerialize["statusDetail"] = o.StatusDetail
+	}
 	toSerialize["name"] = o.Name
-	toSerialize["description"] = o.Description
-	toSerialize["account_type"] = o.AccountType
-	toSerialize["owner_user_ids"] = o.OwnerUserIds
-	toSerialize["owner_group_ids"] = o.OwnerGroupIds
+	if !IsNil(o.Description) {
+		toSerialize["description"] = o.Description
+	}
+	toSerialize["accountType"] = o.AccountType
+	if !IsNil(o.OwnerUserIds) {
+		toSerialize["ownerUserIds"] = o.OwnerUserIds
+	}
+	if !IsNil(o.OwnerGroupIds) {
+		toSerialize["ownerGroupIds"] = o.OwnerGroupIds
+	}
 	return toSerialize, nil
 }
 

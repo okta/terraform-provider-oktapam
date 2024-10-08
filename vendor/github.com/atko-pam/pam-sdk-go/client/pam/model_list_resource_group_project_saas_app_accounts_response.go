@@ -20,7 +20,7 @@ var _ MappedNullable = &ListResourceGroupProjectSaasAppAccountsResponse{}
 
 // ListResourceGroupProjectSaasAppAccountsResponse struct for ListResourceGroupProjectSaasAppAccountsResponse
 type ListResourceGroupProjectSaasAppAccountsResponse struct {
-	List []SaasAppAccount `json:"list,omitempty"`
+	List []SaasAppAccountWithSettings `json:"list,omitempty"`
 }
 
 // NewListResourceGroupProjectSaasAppAccountsResponse instantiates a new ListResourceGroupProjectSaasAppAccountsResponse object
@@ -41,9 +41,9 @@ func NewListResourceGroupProjectSaasAppAccountsResponseWithDefaults() *ListResou
 }
 
 // GetList returns the List field value if set, zero value otherwise.
-func (o *ListResourceGroupProjectSaasAppAccountsResponse) GetList() []SaasAppAccount {
+func (o *ListResourceGroupProjectSaasAppAccountsResponse) GetList() []SaasAppAccountWithSettings {
 	if o == nil || IsNil(o.List) {
-		var ret []SaasAppAccount
+		var ret []SaasAppAccountWithSettings
 		return ret
 	}
 	return o.List
@@ -51,7 +51,7 @@ func (o *ListResourceGroupProjectSaasAppAccountsResponse) GetList() []SaasAppAcc
 
 // GetListOk returns a tuple with the List field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ListResourceGroupProjectSaasAppAccountsResponse) GetListOk() ([]SaasAppAccount, bool) {
+func (o *ListResourceGroupProjectSaasAppAccountsResponse) GetListOk() ([]SaasAppAccountWithSettings, bool) {
 	if o == nil || IsNil(o.List) {
 		return nil, false
 	}
@@ -67,8 +67,8 @@ func (o *ListResourceGroupProjectSaasAppAccountsResponse) HasList() bool {
 	return false
 }
 
-// SetList gets a reference to the given []SaasAppAccount and assigns it to the List field.
-func (o *ListResourceGroupProjectSaasAppAccountsResponse) SetList(v []SaasAppAccount) *ListResourceGroupProjectSaasAppAccountsResponse {
+// SetList gets a reference to the given []SaasAppAccountWithSettings and assigns it to the List field.
+func (o *ListResourceGroupProjectSaasAppAccountsResponse) SetList(v []SaasAppAccountWithSettings) *ListResourceGroupProjectSaasAppAccountsResponse {
 	o.List = v
 	return o
 }

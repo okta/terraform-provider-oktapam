@@ -287,7 +287,7 @@ DeleteActiveDirectoryConnection Delete a Active Directory connection
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
 	@param teamName The name of your Team
-	@param adConnectionId The UUID of a Active DirectoryConnection
+	@param adConnectionId The UUID of a Active Directory Connection
 
 @return ApiDeleteActiveDirectoryConnectionRequest
 */
@@ -400,7 +400,7 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param adConnectionId The UUID of a Active DirectoryConnection
+	    @param adConnectionId The UUID of a Active Directory Connection
 	@return ApiGetActiveDirectoryConnectionRequest
 */
 func (a *ActiveDirectoryConnectionAPIService) GetActiveDirectoryConnection(ctx context.Context, teamName string, adConnectionId interface{}) ApiGetActiveDirectoryConnectionRequest {
@@ -722,19 +722,19 @@ func (a *ActiveDirectoryConnectionAPIService) ListActiveDirectoryConnectionsExec
 }
 
 type ApiRevealActiveDirectoryConnectionPasswordRequest struct {
-	ctx                                    context.Context
-	ApiService                             *ActiveDirectoryConnectionAPIService
-	teamName                               string
-	adConnectionId                         interface{}
-	activeDirectoryConnectionRevealRequest *ActiveDirectoryConnectionRevealRequest
+	ctx                 context.Context
+	ApiService          *ActiveDirectoryConnectionAPIService
+	teamName            string
+	adConnectionId      interface{}
+	secretRevealRequest *SecretRevealRequest
 }
 
-func (r ApiRevealActiveDirectoryConnectionPasswordRequest) ActiveDirectoryConnectionRevealRequest(activeDirectoryConnectionRevealRequest ActiveDirectoryConnectionRevealRequest) ApiRevealActiveDirectoryConnectionPasswordRequest {
-	r.activeDirectoryConnectionRevealRequest = &activeDirectoryConnectionRevealRequest
+func (r ApiRevealActiveDirectoryConnectionPasswordRequest) SecretRevealRequest(secretRevealRequest SecretRevealRequest) ApiRevealActiveDirectoryConnectionPasswordRequest {
+	r.secretRevealRequest = &secretRevealRequest
 	return r
 }
 
-func (r ApiRevealActiveDirectoryConnectionPasswordRequest) Execute() (*ActiveDirectoryConnectionRevealResponse, *http.Response, error) {
+func (r ApiRevealActiveDirectoryConnectionPasswordRequest) Execute() (*RevealResponse, *http.Response, error) {
 	return r.ApiService.RevealActiveDirectoryConnectionPasswordExecute(r)
 }
 
@@ -747,7 +747,7 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param adConnectionId The UUID of a Active DirectoryConnection
+	    @param adConnectionId The UUID of a Active Directory Connection
 	@return ApiRevealActiveDirectoryConnectionPasswordRequest
 */
 func (a *ActiveDirectoryConnectionAPIService) RevealActiveDirectoryConnectionPassword(ctx context.Context, teamName string, adConnectionId interface{}) ApiRevealActiveDirectoryConnectionPasswordRequest {
@@ -761,14 +761,14 @@ func (a *ActiveDirectoryConnectionAPIService) RevealActiveDirectoryConnectionPas
 
 // Execute executes the request
 //
-//	@return ActiveDirectoryConnectionRevealResponse
-func (a *ActiveDirectoryConnectionAPIService) RevealActiveDirectoryConnectionPasswordExecute(r ApiRevealActiveDirectoryConnectionPasswordRequest) (*ActiveDirectoryConnectionRevealResponse, *http.Response, error) {
+//	@return RevealResponse
+func (a *ActiveDirectoryConnectionAPIService) RevealActiveDirectoryConnectionPasswordExecute(r ApiRevealActiveDirectoryConnectionPasswordRequest) (*RevealResponse, *http.Response, error) {
 	var (
 		traceKey            = "activedirectoryconnectionapi.revealActiveDirectoryConnectionPassword"
 		localVarHTTPMethod  = http.MethodPost
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *ActiveDirectoryConnectionRevealResponse
+		localVarReturnValue *RevealResponse
 	)
 
 	localVarPath := "/v1/teams/{team_name}/connections/active_directory/{ad_connection_id}/reveal_password"
@@ -797,7 +797,7 @@ func (a *ActiveDirectoryConnectionAPIService) RevealActiveDirectoryConnectionPas
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.activeDirectoryConnectionRevealRequest
+	localVarPostBody = r.secretRevealRequest
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
 	if localVarHTTPResponse == nil && err != nil {
@@ -870,7 +870,7 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param adConnectionId The UUID of a Active DirectoryConnection
+	    @param adConnectionId The UUID of a Active Directory Connection
 	@return ApiUpdateActiveDirectoryConnectionRequest
 */
 func (a *ActiveDirectoryConnectionAPIService) UpdateActiveDirectoryConnection(ctx context.Context, teamName string, adConnectionId interface{}) ApiUpdateActiveDirectoryConnectionRequest {

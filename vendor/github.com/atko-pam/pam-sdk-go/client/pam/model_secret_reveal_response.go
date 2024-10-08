@@ -21,7 +21,7 @@ var _ MappedNullable = &SecretRevealResponse{}
 
 // SecretRevealResponse struct for SecretRevealResponse
 type SecretRevealResponse struct {
-	// The UUID of the Secret
+	// ID of the item being revealed
 	Id string `json:"id"`
 	// The name of the Secret
 	Name string `json:"name"`

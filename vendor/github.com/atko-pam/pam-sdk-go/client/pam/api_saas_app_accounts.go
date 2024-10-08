@@ -12,7 +12,10 @@ Contact: support@okta.com
 package pam
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -21,66 +24,554 @@ import (
 // SaasAppAccountsAPIService SaasAppAccountsAPI service
 type SaasAppAccountsAPIService service
 
-type ApiGetResourceGroupProjectSaasAppAccountRequest struct {
-	ctx              context.Context
-	ApiService       *SaasAppAccountsAPIService
-	teamName         string
-	resourceGroupId  string
-	projectId        string
-	saasAppAccountId string
+type ApiGetOktaUDPrivilegedAccountEndUserRequest struct {
+	ctx                             context.Context
+	ApiService                      *SaasAppAccountsAPIService
+	teamName                        string
+	oktaUniversalDirectoryAccountId string
+	includeCheckoutDetails          *bool
 }
 
-func (r ApiGetResourceGroupProjectSaasAppAccountRequest) Execute() (*SaasAppAccount, *http.Response, error) {
-	return r.ApiService.GetResourceGroupProjectSaasAppAccountExecute(r)
+// If &#x60;true&#x60;, include checkout details while fetching resource details
+func (r ApiGetOktaUDPrivilegedAccountEndUserRequest) IncludeCheckoutDetails(includeCheckoutDetails bool) ApiGetOktaUDPrivilegedAccountEndUserRequest {
+	r.includeCheckoutDetails = &includeCheckoutDetails
+	return r
+}
+
+func (r ApiGetOktaUDPrivilegedAccountEndUserRequest) Execute() (*PrivilegedAccountEndUser, *http.Response, error) {
+	return r.ApiService.GetOktaUDPrivilegedAccountEndUserExecute(r)
 }
 
 /*
-	GetResourceGroupProjectSaasAppAccount Retrieve a SaaS Application Account from a Project
+	GetOktaUDPrivilegedAccountEndUser Get a Okta Universal Directory privileged account user has access to
 
-	    Retrieves a SaaS Application Account from a Project in a Resource Group.
+	    Gets a Okta Universal Directory privileged account user has access to based on the security policies
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+This endpoint requires the following role: `end_user`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param saasAppAccountId The UUID of a SaaS Application Account
-	@return ApiGetResourceGroupProjectSaasAppAccountRequest
+	    @param oktaUniversalDirectoryAccountId The UUID of an Okta Universal Directory Account
+	@return ApiGetOktaUDPrivilegedAccountEndUserRequest
 */
-func (a *SaasAppAccountsAPIService) GetResourceGroupProjectSaasAppAccount(ctx context.Context, teamName string, resourceGroupId string, projectId string, saasAppAccountId string) ApiGetResourceGroupProjectSaasAppAccountRequest {
-	return ApiGetResourceGroupProjectSaasAppAccountRequest{
-		ApiService:       a,
-		ctx:              ctx,
-		teamName:         teamName,
-		resourceGroupId:  resourceGroupId,
-		projectId:        projectId,
-		saasAppAccountId: saasAppAccountId,
+func (a *SaasAppAccountsAPIService) GetOktaUDPrivilegedAccountEndUser(ctx context.Context, teamName string, oktaUniversalDirectoryAccountId string) ApiGetOktaUDPrivilegedAccountEndUserRequest {
+	return ApiGetOktaUDPrivilegedAccountEndUserRequest{
+		ApiService:                      a,
+		ctx:                             ctx,
+		teamName:                        teamName,
+		oktaUniversalDirectoryAccountId: oktaUniversalDirectoryAccountId,
 	}
 }
 
 // Execute executes the request
 //
-//	@return SaasAppAccount
-func (a *SaasAppAccountsAPIService) GetResourceGroupProjectSaasAppAccountExecute(r ApiGetResourceGroupProjectSaasAppAccountRequest) (*SaasAppAccount, *http.Response, error) {
+//	@return PrivilegedAccountEndUser
+func (a *SaasAppAccountsAPIService) GetOktaUDPrivilegedAccountEndUserExecute(r ApiGetOktaUDPrivilegedAccountEndUserRequest) (*PrivilegedAccountEndUser, *http.Response, error) {
 	var (
-		traceKey            = "saasappaccountsapi.getResourceGroupProjectSaasAppAccount"
+		traceKey            = "saasappaccountsapi.getOktaUDPrivilegedAccountEndUser"
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *SaasAppAccount
+		localVarReturnValue *PrivilegedAccountEndUser
 	)
 
-	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_accounts/{saas_app_account_id}"
+	localVarPath := "/v1/teams/{team_name}/okta_universal_directory_accounts/{okta_universal_directory_account_id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"okta_universal_directory_account_id"+"}", url.PathEscape(parameterValueToString(r.oktaUniversalDirectoryAccountId, "oktaUniversalDirectoryAccountId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.includeCheckoutDetails != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "include_checkout_details", r.includeCheckoutDetails, "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiGetSaaSApplicationPrivilegedAccountEndUserRequest struct {
+	ctx                    context.Context
+	ApiService             *SaasAppAccountsAPIService
+	teamName               string
+	saasAppInstanceId      string
+	saasAppAccountId       string
+	includeCheckoutDetails *bool
+}
+
+// If &#x60;true&#x60;, include checkout details while fetching resource details
+func (r ApiGetSaaSApplicationPrivilegedAccountEndUserRequest) IncludeCheckoutDetails(includeCheckoutDetails bool) ApiGetSaaSApplicationPrivilegedAccountEndUserRequest {
+	r.includeCheckoutDetails = &includeCheckoutDetails
+	return r
+}
+
+func (r ApiGetSaaSApplicationPrivilegedAccountEndUserRequest) Execute() (*PrivilegedAccountEndUser, *http.Response, error) {
+	return r.ApiService.GetSaaSApplicationPrivilegedAccountEndUserExecute(r)
+}
+
+/*
+	GetSaaSApplicationPrivilegedAccountEndUser Get a SaaS application privileged account that the user has access to
+
+	    Gets a SaaS application privileged account that the user has access to based on the security policies
+
+This endpoint requires the following role: `end_user`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+	    @param saasAppAccountId The UUID of a SaaS Application Account
+	@return ApiGetSaaSApplicationPrivilegedAccountEndUserRequest
+*/
+func (a *SaasAppAccountsAPIService) GetSaaSApplicationPrivilegedAccountEndUser(ctx context.Context, teamName string, saasAppInstanceId string, saasAppAccountId string) ApiGetSaaSApplicationPrivilegedAccountEndUserRequest {
+	return ApiGetSaaSApplicationPrivilegedAccountEndUserRequest{
+		ApiService:        a,
+		ctx:               ctx,
+		teamName:          teamName,
+		saasAppInstanceId: saasAppInstanceId,
+		saasAppAccountId:  saasAppAccountId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return PrivilegedAccountEndUser
+func (a *SaasAppAccountsAPIService) GetSaaSApplicationPrivilegedAccountEndUserExecute(r ApiGetSaaSApplicationPrivilegedAccountEndUserRequest) (*PrivilegedAccountEndUser, *http.Response, error) {
+	var (
+		traceKey            = "saasappaccountsapi.getSaaSApplicationPrivilegedAccountEndUser"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *PrivilegedAccountEndUser
+	)
+
+	localVarPath := "/v1/teams/{team_name}/saas_apps/{saas_app_instance_id}/accounts/{saas_app_account_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"saas_app_instance_id"+"}", url.PathEscape(parameterValueToString(r.saasAppInstanceId, "saasAppInstanceId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"saas_app_account_id"+"}", url.PathEscape(parameterValueToString(r.saasAppAccountId, "saasAppAccountId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.includeCheckoutDetails != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "include_checkout_details", r.includeCheckoutDetails, "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiGetSaasApplicationAccessibleByUserRequest struct {
+	ctx               context.Context
+	ApiService        *SaasAppAccountsAPIService
+	teamName          string
+	saasAppInstanceId string
+}
+
+func (r ApiGetSaasApplicationAccessibleByUserRequest) Execute() (*SaasApplicationInstance, *http.Response, error) {
+	return r.ApiService.GetSaasApplicationAccessibleByUserExecute(r)
+}
+
+/*
+	GetSaasApplicationAccessibleByUser Get a SaaS Application instance accessible to the end user
+
+	    Gets a SaaS Application instance that an end user has access to through at least one account based on the security policies
+
+This endpoint requires the following role: `end_user`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+	@return ApiGetSaasApplicationAccessibleByUserRequest
+*/
+func (a *SaasAppAccountsAPIService) GetSaasApplicationAccessibleByUser(ctx context.Context, teamName string, saasAppInstanceId string) ApiGetSaasApplicationAccessibleByUserRequest {
+	return ApiGetSaasApplicationAccessibleByUserRequest{
+		ApiService:        a,
+		ctx:               ctx,
+		teamName:          teamName,
+		saasAppInstanceId: saasAppInstanceId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return SaasApplicationInstance
+func (a *SaasAppAccountsAPIService) GetSaasApplicationAccessibleByUserExecute(r ApiGetSaasApplicationAccessibleByUserRequest) (*SaasApplicationInstance, *http.Response, error) {
+	var (
+		traceKey            = "saasappaccountsapi.getSaasApplicationAccessibleByUser"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *SaasApplicationInstance
+	)
+
+	localVarPath := "/v1/teams/{team_name}/saas_apps/{saas_app_instance_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"saas_app_instance_id"+"}", url.PathEscape(parameterValueToString(r.saasAppInstanceId, "saasAppInstanceId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest struct {
+	ctx             context.Context
+	ApiService      *SaasAppAccountsAPIService
+	teamName        string
+	resourceGroupId string
+	contains        *string
+	managed         *bool
+}
+
+// Only return results that include the specified value
+func (r ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest) Contains(contains string) ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest {
+	r.contains = &contains
+	return r
+}
+
+// If &#x60;true&#x60;, only return SaaS Application Accounts that support password rotation. If &#x60;false&#x60;, only return SaaS Application Accounts that do not support password rotation.
+func (r ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest) Managed(managed bool) ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest {
+	r.managed = &managed
+	return r
+}
+
+func (r ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest) Execute() (*ListAllSaasAppAccountsForDelegatedSecurityAdminResponse, *http.Response, error) {
+	return r.ApiService.ListAllSaasAppAccountsForDelegatedSecurityAdminExecute(r)
+}
+
+/*
+	ListAllSaasAppAccountsForDelegatedSecurityAdmin List all SaaS Application Accounts in a Resource Group
+
+	    Lists all SaaS Application Accounts for the current Security Admin or Delegated Security Admin for the Resource Group
+
+This endpoint requires one of the following roles: `security_admin`, `delegated_security_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	@return ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest
+*/
+func (a *SaasAppAccountsAPIService) ListAllSaasAppAccountsForDelegatedSecurityAdmin(ctx context.Context, teamName string, resourceGroupId string) ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest {
+	return ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListAllSaasAppAccountsForDelegatedSecurityAdminResponse
+func (a *SaasAppAccountsAPIService) ListAllSaasAppAccountsForDelegatedSecurityAdminExecute(r ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest) (*ListAllSaasAppAccountsForDelegatedSecurityAdminResponse, *http.Response, error) {
+	var (
+		traceKey            = "saasappaccountsapi.listAllSaasAppAccountsForDelegatedSecurityAdmin"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListAllSaasAppAccountsForDelegatedSecurityAdminResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/all_saas_app_accounts"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.contains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
+	}
+	if r.managed != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "managed", r.managed, "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiListAllSaasAppAccountsForSecurityAdminRequest struct {
+	ctx        context.Context
+	ApiService *SaasAppAccountsAPIService
+	teamName   string
+	contains   *string
+	managed    *bool
+}
+
+// Only return results that include the specified value
+func (r ApiListAllSaasAppAccountsForSecurityAdminRequest) Contains(contains string) ApiListAllSaasAppAccountsForSecurityAdminRequest {
+	r.contains = &contains
+	return r
+}
+
+// If &#x60;true&#x60;, only return SaaS Application Accounts that support password rotation. If &#x60;false&#x60;, only return SaaS Application Accounts that do not support password rotation.
+func (r ApiListAllSaasAppAccountsForSecurityAdminRequest) Managed(managed bool) ApiListAllSaasAppAccountsForSecurityAdminRequest {
+	r.managed = &managed
+	return r
+}
+
+func (r ApiListAllSaasAppAccountsForSecurityAdminRequest) Execute() (*ListAllSaasAppAccountsForSecurityAdminResponse, *http.Response, error) {
+	return r.ApiService.ListAllSaasAppAccountsForSecurityAdminExecute(r)
+}
+
+/*
+	ListAllSaasAppAccountsForSecurityAdmin List all SaaS Application Accounts
+
+	    Lists all SaaS Application Accounts for the current Security Admin
+
+This endpoint requires the following role: `security_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	@return ApiListAllSaasAppAccountsForSecurityAdminRequest
+*/
+func (a *SaasAppAccountsAPIService) ListAllSaasAppAccountsForSecurityAdmin(ctx context.Context, teamName string) ApiListAllSaasAppAccountsForSecurityAdminRequest {
+	return ApiListAllSaasAppAccountsForSecurityAdminRequest{
+		ApiService: a,
+		ctx:        ctx,
+		teamName:   teamName,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListAllSaasAppAccountsForSecurityAdminResponse
+func (a *SaasAppAccountsAPIService) ListAllSaasAppAccountsForSecurityAdminExecute(r ApiListAllSaasAppAccountsForSecurityAdminRequest) (*ListAllSaasAppAccountsForSecurityAdminResponse, *http.Response, error) {
+	var (
+		traceKey            = "saasappaccountsapi.listAllSaasAppAccountsForSecurityAdmin"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListAllSaasAppAccountsForSecurityAdminResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/all_saas_app_accounts"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.contains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
+	}
+	if r.managed != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "managed", r.managed, "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiListOktaUDPrivilegedAccountsEndUserRequest struct {
+	ctx                    context.Context
+	ApiService             *SaasAppAccountsAPIService
+	teamName               string
+	count                  *int32
+	prev                   *bool
+	offset                 *string
+	descending             *bool
+	includeCheckoutDetails *bool
+}
+
+// The number of objects per page
+func (r ApiListOktaUDPrivilegedAccountsEndUserRequest) Count(count int32) ApiListOktaUDPrivilegedAccountsEndUserRequest {
+	r.count = &count
+	return r
+}
+
+// The direction of paging
+func (r ApiListOktaUDPrivilegedAccountsEndUserRequest) Prev(prev bool) ApiListOktaUDPrivilegedAccountsEndUserRequest {
+	r.prev = &prev
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListOktaUDPrivilegedAccountsEndUserRequest) Offset(offset string) ApiListOktaUDPrivilegedAccountsEndUserRequest {
+	r.offset = &offset
+	return r
+}
+
+// The object order
+func (r ApiListOktaUDPrivilegedAccountsEndUserRequest) Descending(descending bool) ApiListOktaUDPrivilegedAccountsEndUserRequest {
+	r.descending = &descending
+	return r
+}
+
+// If &#x60;true&#x60;, include checkout details while fetching resource details
+func (r ApiListOktaUDPrivilegedAccountsEndUserRequest) IncludeCheckoutDetails(includeCheckoutDetails bool) ApiListOktaUDPrivilegedAccountsEndUserRequest {
+	r.includeCheckoutDetails = &includeCheckoutDetails
+	return r
+}
+
+func (r ApiListOktaUDPrivilegedAccountsEndUserRequest) Execute() (*ListPrivilegedAccountsEndUserResponse, *http.Response, error) {
+	return r.ApiService.ListOktaUDPrivilegedAccountsEndUserExecute(r)
+}
+
+/*
+	ListOktaUDPrivilegedAccountsEndUser List Okta Universal Directory privileged accounts user has access to
+
+	    List Okta Universal Directory privileged accounts user has access to based on the security policies
+
+This endpoint requires the following role: `end_user`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	@return ApiListOktaUDPrivilegedAccountsEndUserRequest
+*/
+func (a *SaasAppAccountsAPIService) ListOktaUDPrivilegedAccountsEndUser(ctx context.Context, teamName string) ApiListOktaUDPrivilegedAccountsEndUserRequest {
+	return ApiListOktaUDPrivilegedAccountsEndUserRequest{
+		ApiService: a,
+		ctx:        ctx,
+		teamName:   teamName,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListPrivilegedAccountsEndUserResponse
+func (a *SaasAppAccountsAPIService) ListOktaUDPrivilegedAccountsEndUserExecute(r ApiListOktaUDPrivilegedAccountsEndUserRequest) (*ListPrivilegedAccountsEndUserResponse, *http.Response, error) {
+	var (
+		traceKey            = "saasappaccountsapi.listOktaUDPrivilegedAccountsEndUser"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListPrivilegedAccountsEndUserResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/okta_universal_directory_accounts"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.count != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
+	}
+	if r.prev != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
+	if r.descending != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.includeCheckoutDetails != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "include_checkout_details", r.includeCheckoutDetails, "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -113,6 +604,20 @@ type ApiListResourceGroupProjectSaasAppAccountsRequest struct {
 	teamName        string
 	resourceGroupId string
 	projectId       string
+	contains        *string
+	managed         *bool
+}
+
+// Only return results that include the specified value
+func (r ApiListResourceGroupProjectSaasAppAccountsRequest) Contains(contains string) ApiListResourceGroupProjectSaasAppAccountsRequest {
+	r.contains = &contains
+	return r
+}
+
+// If &#x60;true&#x60;, only return SaaS Application Accounts that support password rotation. If &#x60;false&#x60;, only return SaaS Application Accounts that do not support password rotation.
+func (r ApiListResourceGroupProjectSaasAppAccountsRequest) Managed(managed bool) ApiListResourceGroupProjectSaasAppAccountsRequest {
+	r.managed = &managed
+	return r
 }
 
 func (r ApiListResourceGroupProjectSaasAppAccountsRequest) Execute() (*ListResourceGroupProjectSaasAppAccountsResponse, *http.Response, error) {
@@ -163,6 +668,12 @@ func (a *SaasAppAccountsAPIService) ListResourceGroupProjectSaasAppAccountsExecu
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.contains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
+	}
+	if r.managed != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "managed", r.managed, "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -189,59 +700,298 @@ func (a *SaasAppAccountsAPIService) ListResourceGroupProjectSaasAppAccountsExecu
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
-type ApiRotateResourceGroupProjectSaasAppAccountRequest struct {
-	ctx              context.Context
-	ApiService       *SaasAppAccountsAPIService
-	teamName         string
-	resourceGroupId  string
-	projectId        string
-	saasAppAccountId string
+type ApiListSaaSApplicationPrivilegedAccountsEndUserRequest struct {
+	ctx                    context.Context
+	ApiService             *SaasAppAccountsAPIService
+	teamName               string
+	saasAppInstanceId      string
+	count                  *int32
+	prev                   *bool
+	offset                 *string
+	descending             *bool
+	includeCheckoutDetails *bool
 }
 
-func (r ApiRotateResourceGroupProjectSaasAppAccountRequest) Execute() (*http.Response, error) {
-	return r.ApiService.RotateResourceGroupProjectSaasAppAccountExecute(r)
+// The number of objects per page
+func (r ApiListSaaSApplicationPrivilegedAccountsEndUserRequest) Count(count int32) ApiListSaaSApplicationPrivilegedAccountsEndUserRequest {
+	r.count = &count
+	return r
+}
+
+// The direction of paging
+func (r ApiListSaaSApplicationPrivilegedAccountsEndUserRequest) Prev(prev bool) ApiListSaaSApplicationPrivilegedAccountsEndUserRequest {
+	r.prev = &prev
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListSaaSApplicationPrivilegedAccountsEndUserRequest) Offset(offset string) ApiListSaaSApplicationPrivilegedAccountsEndUserRequest {
+	r.offset = &offset
+	return r
+}
+
+// The object order
+func (r ApiListSaaSApplicationPrivilegedAccountsEndUserRequest) Descending(descending bool) ApiListSaaSApplicationPrivilegedAccountsEndUserRequest {
+	r.descending = &descending
+	return r
+}
+
+// If &#x60;true&#x60;, include checkout details while fetching resource details
+func (r ApiListSaaSApplicationPrivilegedAccountsEndUserRequest) IncludeCheckoutDetails(includeCheckoutDetails bool) ApiListSaaSApplicationPrivilegedAccountsEndUserRequest {
+	r.includeCheckoutDetails = &includeCheckoutDetails
+	return r
+}
+
+func (r ApiListSaaSApplicationPrivilegedAccountsEndUserRequest) Execute() (*ListPrivilegedAccountsEndUserResponse, *http.Response, error) {
+	return r.ApiService.ListSaaSApplicationPrivilegedAccountsEndUserExecute(r)
 }
 
 /*
-	RotateResourceGroupProjectSaasAppAccount Rotate the password belonging to a SaaS Application Account in a Project
+	ListSaaSApplicationPrivilegedAccountsEndUser List SaaS application privileged accounts user has access to
 
-	    Rotates the password belonging to a SaaS Application Account in a Project in a Resource Group.
+	    List SaaS application privileged accounts user has access to based on the security policies
 
-If the SaaS Application does not support password rotation, returns a `405` Method Not Allowed response.
-
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+This endpoint requires the following role: `end_user`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param saasAppAccountId The UUID of a SaaS Application Account
-	@return ApiRotateResourceGroupProjectSaasAppAccountRequest
+	    @param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+	@return ApiListSaaSApplicationPrivilegedAccountsEndUserRequest
 */
-func (a *SaasAppAccountsAPIService) RotateResourceGroupProjectSaasAppAccount(ctx context.Context, teamName string, resourceGroupId string, projectId string, saasAppAccountId string) ApiRotateResourceGroupProjectSaasAppAccountRequest {
-	return ApiRotateResourceGroupProjectSaasAppAccountRequest{
-		ApiService:       a,
-		ctx:              ctx,
-		teamName:         teamName,
-		resourceGroupId:  resourceGroupId,
-		projectId:        projectId,
-		saasAppAccountId: saasAppAccountId,
+func (a *SaasAppAccountsAPIService) ListSaaSApplicationPrivilegedAccountsEndUser(ctx context.Context, teamName string, saasAppInstanceId string) ApiListSaaSApplicationPrivilegedAccountsEndUserRequest {
+	return ApiListSaaSApplicationPrivilegedAccountsEndUserRequest{
+		ApiService:        a,
+		ctx:               ctx,
+		teamName:          teamName,
+		saasAppInstanceId: saasAppInstanceId,
 	}
 }
 
 // Execute executes the request
-func (a *SaasAppAccountsAPIService) RotateResourceGroupProjectSaasAppAccountExecute(r ApiRotateResourceGroupProjectSaasAppAccountRequest) (*http.Response, error) {
+//
+//	@return ListPrivilegedAccountsEndUserResponse
+func (a *SaasAppAccountsAPIService) ListSaaSApplicationPrivilegedAccountsEndUserExecute(r ApiListSaaSApplicationPrivilegedAccountsEndUserRequest) (*ListPrivilegedAccountsEndUserResponse, *http.Response, error) {
 	var (
-		traceKey           = "saasappaccountsapi.rotateResourceGroupProjectSaasAppAccount"
-		localVarHTTPMethod = http.MethodPost
-		localVarPostBody   interface{}
-		formFiles          []formFile
+		traceKey            = "saasappaccountsapi.listSaaSApplicationPrivilegedAccountsEndUser"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListPrivilegedAccountsEndUserResponse
 	)
 
-	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_accounts/{saas_app_account_id}/rotate"
+	localVarPath := "/v1/teams/{team_name}/saas_apps/{saas_app_instance_id}/accounts"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"saas_app_instance_id"+"}", url.PathEscape(parameterValueToString(r.saasAppInstanceId, "saasAppInstanceId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.count != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
+	}
+	if r.prev != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
+	if r.descending != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.includeCheckoutDetails != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "include_checkout_details", r.includeCheckoutDetails, "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiListSaasApplicationsAccessibleByUserRequest struct {
+	ctx        context.Context
+	ApiService *SaasAppAccountsAPIService
+	teamName   string
+	count      *int32
+	prev       *bool
+	offset     *string
+	descending *bool
+}
+
+// The number of objects per page
+func (r ApiListSaasApplicationsAccessibleByUserRequest) Count(count int32) ApiListSaasApplicationsAccessibleByUserRequest {
+	r.count = &count
+	return r
+}
+
+// The direction of paging
+func (r ApiListSaasApplicationsAccessibleByUserRequest) Prev(prev bool) ApiListSaasApplicationsAccessibleByUserRequest {
+	r.prev = &prev
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListSaasApplicationsAccessibleByUserRequest) Offset(offset string) ApiListSaasApplicationsAccessibleByUserRequest {
+	r.offset = &offset
+	return r
+}
+
+// The object order
+func (r ApiListSaasApplicationsAccessibleByUserRequest) Descending(descending bool) ApiListSaasApplicationsAccessibleByUserRequest {
+	r.descending = &descending
+	return r
+}
+
+func (r ApiListSaasApplicationsAccessibleByUserRequest) Execute() (*ListSaasApplicationsAccessibleByUserResponse, *http.Response, error) {
+	return r.ApiService.ListSaasApplicationsAccessibleByUserExecute(r)
+}
+
+/*
+	ListSaasApplicationsAccessibleByUser List SaaS Application instances accessible to the end user
+
+	    List SaaS Application instances that an end user has access to through at least one account based on the security policies
+
+This endpoint requires the following role: `end_user`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	@return ApiListSaasApplicationsAccessibleByUserRequest
+*/
+func (a *SaasAppAccountsAPIService) ListSaasApplicationsAccessibleByUser(ctx context.Context, teamName string) ApiListSaasApplicationsAccessibleByUserRequest {
+	return ApiListSaasApplicationsAccessibleByUserRequest{
+		ApiService: a,
+		ctx:        ctx,
+		teamName:   teamName,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListSaasApplicationsAccessibleByUserResponse
+func (a *SaasAppAccountsAPIService) ListSaasApplicationsAccessibleByUserExecute(r ApiListSaasApplicationsAccessibleByUserRequest) (*ListSaasApplicationsAccessibleByUserResponse, *http.Response, error) {
+	var (
+		traceKey            = "saasappaccountsapi.listSaasApplicationsAccessibleByUser"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListSaasApplicationsAccessibleByUserResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/saas_apps"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.count != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
+	}
+	if r.prev != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
+	if r.descending != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiListUAMForSaaSApplicationAccountRequest struct {
+	ctx               context.Context
+	ApiService        *SaasAppAccountsAPIService
+	teamName          string
+	saasAppInstanceId string
+	saasAppAccountId  string
+}
+
+func (r ApiListUAMForSaaSApplicationAccountRequest) Execute() (*ListUAMForPrivilegedAccountResponse, *http.Response, error) {
+	return r.ApiService.ListUAMForSaaSApplicationAccountExecute(r)
+}
+
+/*
+	ListUAMForSaaSApplicationAccount List SaaS application account user access methods
+
+	    List SaaS application account user access methods based on the security policies
+
+This endpoint requires the following role: `end_user`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+	    @param saasAppAccountId The UUID of a SaaS Application Account
+	@return ApiListUAMForSaaSApplicationAccountRequest
+*/
+func (a *SaasAppAccountsAPIService) ListUAMForSaaSApplicationAccount(ctx context.Context, teamName string, saasAppInstanceId string, saasAppAccountId string) ApiListUAMForSaaSApplicationAccountRequest {
+	return ApiListUAMForSaaSApplicationAccountRequest{
+		ApiService:        a,
+		ctx:               ctx,
+		teamName:          teamName,
+		saasAppInstanceId: saasAppInstanceId,
+		saasAppAccountId:  saasAppAccountId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListUAMForPrivilegedAccountResponse
+func (a *SaasAppAccountsAPIService) ListUAMForSaaSApplicationAccountExecute(r ApiListUAMForSaaSApplicationAccountRequest) (*ListUAMForPrivilegedAccountResponse, *http.Response, error) {
+	var (
+		traceKey            = "saasappaccountsapi.listUAMForSaaSApplicationAccount"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListUAMForPrivilegedAccountResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/saas_apps/{saas_app_instance_id}/accounts/{saas_app_account_id}/user_access_methods"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"saas_app_instance_id"+"}", url.PathEscape(parameterValueToString(r.saasAppInstanceId, "saasAppInstanceId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"saas_app_account_id"+"}", url.PathEscape(parameterValueToString(r.saasAppAccountId, "saasAppAccountId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -258,17 +1008,274 @@ func (a *SaasAppAccountsAPIService) RotateResourceGroupProjectSaasAppAccountExec
 	}
 
 	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{}
+	localVarHTTPHeaderAccepts := []string{"application/json"}
 
 	// set Accept header
 	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiRevealSaasAppAccountPasswordRequest struct {
+	ctx               context.Context
+	ApiService        *SaasAppAccountsAPIService
+	teamName          string
+	saasAppInstanceId string
+	saasAppAccountId  string
+	body              *PrivilegedAccountsRevealCredentialsRequest
+}
+
+func (r ApiRevealSaasAppAccountPasswordRequest) Body(body PrivilegedAccountsRevealCredentialsRequest) ApiRevealSaasAppAccountPasswordRequest {
+	r.body = &body
+	return r
+}
+
+func (r ApiRevealSaasAppAccountPasswordRequest) Execute() (*PrivilegedAccountsRevealCredentialsResponse, *http.Response, error) {
+	return r.ApiService.RevealSaasAppAccountPasswordExecute(r)
+}
+
+/*
+	RevealSaasAppAccountPassword Reveal the password for SaaS App Account.
+
+	    Reveals the password belonging to a SaaS App Account (managed & unmanaged) that the end user has access to.
+
+This endpoint requires one of the following roles: `end_user`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+	    @param saasAppAccountId The UUID of a SaaS Application Account
+	@return ApiRevealSaasAppAccountPasswordRequest
+*/
+func (a *SaasAppAccountsAPIService) RevealSaasAppAccountPassword(ctx context.Context, teamName string, saasAppInstanceId string, saasAppAccountId string) ApiRevealSaasAppAccountPasswordRequest {
+	return ApiRevealSaasAppAccountPasswordRequest{
+		ApiService:        a,
+		ctx:               ctx,
+		teamName:          teamName,
+		saasAppInstanceId: saasAppInstanceId,
+		saasAppAccountId:  saasAppAccountId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return PrivilegedAccountsRevealCredentialsResponse
+func (a *SaasAppAccountsAPIService) RevealSaasAppAccountPasswordExecute(r ApiRevealSaasAppAccountPasswordRequest) (*PrivilegedAccountsRevealCredentialsResponse, *http.Response, error) {
+	var (
+		traceKey            = "saasappaccountsapi.revealSaasAppAccountPassword"
+		localVarHTTPMethod  = http.MethodPost
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *PrivilegedAccountsRevealCredentialsResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/saas_apps/{saas_app_instance_id}/accounts/{saas_app_account_id}/reveal_credentials"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"saas_app_instance_id"+"}", url.PathEscape(parameterValueToString(r.saasAppInstanceId, "saasAppInstanceId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"saas_app_account_id"+"}", url.PathEscape(parameterValueToString(r.saasAppAccountId, "saasAppAccountId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.body == nil {
+		return localVarReturnValue, nil, reportError("body is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.body
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	if localVarHTTPResponse.StatusCode == 401 {
+
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v UnauthorizedAccessResponse
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return nil, localVarHTTPResponse, nonDefaultResponse
+	}
+	if localVarHTTPResponse.StatusCode == 404 {
+
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v NotFoundResponse
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return nil, localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return nil, localVarHTTPResponse, nonDefaultResponse
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiUpdateSaasAppAccountPasswordRequest struct {
+	ctx               context.Context
+	ApiService        *SaasAppAccountsAPIService
+	teamName          string
+	saasAppInstanceId string
+	saasAppAccountId  string
+	body              *PrivilegedAccountsUpdateCredentialsRequest
+}
+
+func (r ApiUpdateSaasAppAccountPasswordRequest) Body(body PrivilegedAccountsUpdateCredentialsRequest) ApiUpdateSaasAppAccountPasswordRequest {
+	r.body = &body
+	return r
+}
+
+func (r ApiUpdateSaasAppAccountPasswordRequest) Execute() (*http.Response, error) {
+	return r.ApiService.UpdateSaasAppAccountPasswordExecute(r)
+}
+
+/*
+	UpdateSaasAppAccountPassword Update the password for SaaS App Account.
+
+	    Updates the password belonging to a SaaS App Account (managed & unmanaged) that the end user has access to.
+
+This endpoint requires one of the following roles: `end_user`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+	    @param saasAppAccountId The UUID of a SaaS Application Account
+	@return ApiUpdateSaasAppAccountPasswordRequest
+*/
+func (a *SaasAppAccountsAPIService) UpdateSaasAppAccountPassword(ctx context.Context, teamName string, saasAppInstanceId string, saasAppAccountId string) ApiUpdateSaasAppAccountPasswordRequest {
+	return ApiUpdateSaasAppAccountPasswordRequest{
+		ApiService:        a,
+		ctx:               ctx,
+		teamName:          teamName,
+		saasAppInstanceId: saasAppInstanceId,
+		saasAppAccountId:  saasAppAccountId,
+	}
+}
+
+// Execute executes the request
+func (a *SaasAppAccountsAPIService) UpdateSaasAppAccountPasswordExecute(r ApiUpdateSaasAppAccountPasswordRequest) (*http.Response, error) {
+	var (
+		traceKey           = "saasappaccountsapi.updateSaasAppAccountPassword"
+		localVarHTTPMethod = http.MethodPut
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localVarPath := "/v1/teams/{team_name}/saas_apps/{saas_app_instance_id}/accounts/{saas_app_account_id}/credentials"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"saas_app_instance_id"+"}", url.PathEscape(parameterValueToString(r.saasAppInstanceId, "saasAppInstanceId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"saas_app_account_id"+"}", url.PathEscape(parameterValueToString(r.saasAppAccountId, "saasAppAccountId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.body == nil {
+		return nil, reportError("body is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.body
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
 	if localVarHTTPResponse == nil && err != nil {
 		return nil, err
+	}
+
+	if localVarHTTPResponse.StatusCode == 401 {
+
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v UnauthorizedAccessResponse
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return localVarHTTPResponse, nonDefaultResponse
+	}
+	if localVarHTTPResponse.StatusCode == 404 {
+
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v NotFoundResponse
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return localVarHTTPResponse, nonDefaultResponse
 	}
 
 	return localVarHTTPResponse, err

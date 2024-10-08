@@ -21,13 +21,13 @@ var _ MappedNullable = &SudoCommandBundle{}
 
 // SudoCommandBundle struct for SudoCommandBundle
 type SudoCommandBundle struct {
-	// A list of environment variables to include when running sudo commands. See [the sudo documentation](https://www.sudo.ws/man/1.8.13/sudoers.man.html#Command_environment).
+	// A list of environment variables to include when running sudo commands. See the [sudo documentation](https://www.sudo.ws/man/1.8.13/sudoers.man.html#Command_environment).
 	AddEnv []string `json:"add_env,omitempty"`
 	// A description of the Sudo Command bundle
 	Description *string `json:"description,omitempty"`
 	// The UUID of the Sudo Command bundle
 	Id *string `json:"id,omitempty"`
-	// The name of the Sudo Command bundle. This controls the ordering of all bundles within your Team.
+	// The name of the Sudo Command bundle. This controls the ordering of all bundles within your Team. See [Sudo Command Bundle](https://help.okta.com/oie/en-us/okta_help.htm#cshid=csh-pam-sudo-commands).
 	Name string `json:"name"`
 	// Whether to allow commands to execute child processes
 	NoExec NullableBool `json:"no_exec,omitempty"`
@@ -39,7 +39,7 @@ type SudoCommandBundle struct {
 	SetEnv NullableBool `json:"set_env,omitempty"`
 	// A list of commands to allow
 	StructuredCommands []SudoCommandBundleStructuredCommandsInner `json:"structured_commands,omitempty"`
-	// A list of environment variables to ignore when running the commands. See [the sudo documentation](https://www.sudo.ws/man/1.8.13/sudoers.man.html#Command_environment).
+	// A list of environment variables to ignore when running the commands. See the [sudo documentation](https://www.sudo.ws/man/1.8.13/sudoers.man.html#Command_environment).
 	SubEnv []string `json:"sub_env,omitempty"`
 	// A timestamp indicating when the Sudo Command bundle was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`

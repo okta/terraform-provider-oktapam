@@ -101,9 +101,9 @@ func (a *PrivilegedAccountsAPIService) CreatePrivilegedAccountExecute(r ApiCreat
 }
 
 type ApiDeletePrivilegedAccountRequest struct {
-	ctx        context.Context
-	ApiService *PrivilegedAccountsAPIService
-	id         string
+	ctx                 context.Context
+	ApiService          *PrivilegedAccountsAPIService
+	privilegedAccountId string
 }
 
 func (r ApiDeletePrivilegedAccountRequest) Execute() (*http.Response, error) {
@@ -117,15 +117,15 @@ DeletePrivilegedAccount Delete a privileged account
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param id ID of an existing privileged account
+	@param privilegedAccountId The UUID of an existing Privileged Account
 
 @return ApiDeletePrivilegedAccountRequest
 */
-func (a *PrivilegedAccountsAPIService) DeletePrivilegedAccount(ctx context.Context, id string) ApiDeletePrivilegedAccountRequest {
+func (a *PrivilegedAccountsAPIService) DeletePrivilegedAccount(ctx context.Context, privilegedAccountId string) ApiDeletePrivilegedAccountRequest {
 	return ApiDeletePrivilegedAccountRequest{
-		ApiService: a,
-		ctx:        ctx,
-		id:         id,
+		ApiService:          a,
+		ctx:                 ctx,
+		privilegedAccountId: privilegedAccountId,
 	}
 }
 
@@ -138,8 +138,8 @@ func (a *PrivilegedAccountsAPIService) DeletePrivilegedAccountExecute(r ApiDelet
 		formFiles          []formFile
 	)
 
-	localVarPath := "/v1/privileged-accounts/{id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+	localVarPath := "/v1/privileged-accounts/{privileged_account_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"privileged_account_id"+"}", url.PathEscape(parameterValueToString(r.privilegedAccountId, "privilegedAccountId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -172,9 +172,9 @@ func (a *PrivilegedAccountsAPIService) DeletePrivilegedAccountExecute(r ApiDelet
 }
 
 type ApiGetPrivilegedAccountRequest struct {
-	ctx        context.Context
-	ApiService *PrivilegedAccountsAPIService
-	id         string
+	ctx                 context.Context
+	ApiService          *PrivilegedAccountsAPIService
+	privilegedAccountId string
 }
 
 func (r ApiGetPrivilegedAccountRequest) Execute() (*PrivilegedAccount, *http.Response, error) {
@@ -188,15 +188,15 @@ GetPrivilegedAccount Retrieve a privileged account
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param id ID of an existing privileged account
+	@param privilegedAccountId The UUID of an existing Privileged Account
 
 @return ApiGetPrivilegedAccountRequest
 */
-func (a *PrivilegedAccountsAPIService) GetPrivilegedAccount(ctx context.Context, id string) ApiGetPrivilegedAccountRequest {
+func (a *PrivilegedAccountsAPIService) GetPrivilegedAccount(ctx context.Context, privilegedAccountId string) ApiGetPrivilegedAccountRequest {
 	return ApiGetPrivilegedAccountRequest{
-		ApiService: a,
-		ctx:        ctx,
-		id:         id,
+		ApiService:          a,
+		ctx:                 ctx,
+		privilegedAccountId: privilegedAccountId,
 	}
 }
 
@@ -212,8 +212,8 @@ func (a *PrivilegedAccountsAPIService) GetPrivilegedAccountExecute(r ApiGetPrivi
 		localVarReturnValue *PrivilegedAccount
 	)
 
-	localVarPath := "/v1/privileged-accounts/{id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+	localVarPath := "/v1/privileged-accounts/{privileged_account_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"privileged_account_id"+"}", url.PathEscape(parameterValueToString(r.privilegedAccountId, "privilegedAccountId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -313,55 +313,55 @@ func (a *PrivilegedAccountsAPIService) ListPrivilegedAccountsExecute(r ApiListPr
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
-type ApiReplacePrivilegedAccountRequest struct {
-	ctx        context.Context
-	ApiService *PrivilegedAccountsAPIService
-	id         string
-	body       *PrivilegedAccount
+type ApiUpdatePrivilegedAccountRequest struct {
+	ctx                 context.Context
+	ApiService          *PrivilegedAccountsAPIService
+	privilegedAccountId string
+	body                *PrivilegedAccountForUpdate
 }
 
-func (r ApiReplacePrivilegedAccountRequest) Body(body PrivilegedAccount) ApiReplacePrivilegedAccountRequest {
+func (r ApiUpdatePrivilegedAccountRequest) Body(body PrivilegedAccountForUpdate) ApiUpdatePrivilegedAccountRequest {
 	r.body = &body
 	return r
 }
 
-func (r ApiReplacePrivilegedAccountRequest) Execute() (*PrivilegedAccount, *http.Response, error) {
-	return r.ApiService.ReplacePrivilegedAccountExecute(r)
+func (r ApiUpdatePrivilegedAccountRequest) Execute() (*PrivilegedAccount, *http.Response, error) {
+	return r.ApiService.UpdatePrivilegedAccountExecute(r)
 }
 
 /*
-ReplacePrivilegedAccount Replace a privileged account
+UpdatePrivilegedAccount Updates a privileged account
 
-	Replaces a privileged account specified by ID
+	Updates a privileged account specified by ID
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param id ID of an existing privileged account
+	@param privilegedAccountId The UUID of an existing Privileged Account
 
-@return ApiReplacePrivilegedAccountRequest
+@return ApiUpdatePrivilegedAccountRequest
 */
-func (a *PrivilegedAccountsAPIService) ReplacePrivilegedAccount(ctx context.Context, id string) ApiReplacePrivilegedAccountRequest {
-	return ApiReplacePrivilegedAccountRequest{
-		ApiService: a,
-		ctx:        ctx,
-		id:         id,
+func (a *PrivilegedAccountsAPIService) UpdatePrivilegedAccount(ctx context.Context, privilegedAccountId string) ApiUpdatePrivilegedAccountRequest {
+	return ApiUpdatePrivilegedAccountRequest{
+		ApiService:          a,
+		ctx:                 ctx,
+		privilegedAccountId: privilegedAccountId,
 	}
 }
 
 // Execute executes the request
 //
 //	@return PrivilegedAccount
-func (a *PrivilegedAccountsAPIService) ReplacePrivilegedAccountExecute(r ApiReplacePrivilegedAccountRequest) (*PrivilegedAccount, *http.Response, error) {
+func (a *PrivilegedAccountsAPIService) UpdatePrivilegedAccountExecute(r ApiUpdatePrivilegedAccountRequest) (*PrivilegedAccount, *http.Response, error) {
 	var (
-		traceKey            = "privilegedaccountsapi.replacePrivilegedAccount"
-		localVarHTTPMethod  = http.MethodPut
+		traceKey            = "privilegedaccountsapi.updatePrivilegedAccount"
+		localVarHTTPMethod  = http.MethodPatch
 		localVarPostBody    interface{}
 		formFiles           []formFile
 		localVarReturnValue *PrivilegedAccount
 	)
 
-	localVarPath := "/v1/privileged-accounts/{id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+	localVarPath := "/v1/privileged-accounts/{privileged_account_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"privileged_account_id"+"}", url.PathEscape(parameterValueToString(r.privilegedAccountId, "privilegedAccountId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}

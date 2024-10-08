@@ -26,9 +26,11 @@ type StagedPrivilegedAccount struct {
 	// A URL pointing to the logo of the app associated with the Privileged Account
 	LogoUrl *string `json:"logo_url,omitempty"`
 	// The name of the app associated with the Privileged Account
-	ApplicationName *string `json:"application_name,omitempty"`
+	ApplicationInstanceName *string `json:"application_instance_name,omitempty"`
 	// A human-readable name for the Privileged Account
 	Name *string `json:"name,omitempty"`
+	// The username of the Privileged Account
+	Username *string `json:"username,omitempty"`
 	// A brief description of the Privileged Account
 	Description *string `json:"description,omitempty"`
 	// Whether the password for the Privileged Account can be rotated using Okta Lifecycle Management
@@ -151,36 +153,36 @@ func (o *StagedPrivilegedAccount) SetLogoUrl(v string) *StagedPrivilegedAccount 
 	return o
 }
 
-// GetApplicationName returns the ApplicationName field value if set, zero value otherwise.
-func (o *StagedPrivilegedAccount) GetApplicationName() string {
-	if o == nil || IsNil(o.ApplicationName) {
+// GetApplicationInstanceName returns the ApplicationInstanceName field value if set, zero value otherwise.
+func (o *StagedPrivilegedAccount) GetApplicationInstanceName() string {
+	if o == nil || IsNil(o.ApplicationInstanceName) {
 		var ret string
 		return ret
 	}
-	return *o.ApplicationName
+	return *o.ApplicationInstanceName
 }
 
-// GetApplicationNameOk returns a tuple with the ApplicationName field value if set, nil otherwise
+// GetApplicationInstanceNameOk returns a tuple with the ApplicationInstanceName field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *StagedPrivilegedAccount) GetApplicationNameOk() (*string, bool) {
-	if o == nil || IsNil(o.ApplicationName) {
+func (o *StagedPrivilegedAccount) GetApplicationInstanceNameOk() (*string, bool) {
+	if o == nil || IsNil(o.ApplicationInstanceName) {
 		return nil, false
 	}
-	return o.ApplicationName, true
+	return o.ApplicationInstanceName, true
 }
 
-// HasApplicationName returns a boolean if a field has been set.
-func (o *StagedPrivilegedAccount) HasApplicationName() bool {
-	if o != nil && !IsNil(o.ApplicationName) {
+// HasApplicationInstanceName returns a boolean if a field has been set.
+func (o *StagedPrivilegedAccount) HasApplicationInstanceName() bool {
+	if o != nil && !IsNil(o.ApplicationInstanceName) {
 		return true
 	}
 
 	return false
 }
 
-// SetApplicationName gets a reference to the given string and assigns it to the ApplicationName field.
-func (o *StagedPrivilegedAccount) SetApplicationName(v string) *StagedPrivilegedAccount {
-	o.ApplicationName = &v
+// SetApplicationInstanceName gets a reference to the given string and assigns it to the ApplicationInstanceName field.
+func (o *StagedPrivilegedAccount) SetApplicationInstanceName(v string) *StagedPrivilegedAccount {
+	o.ApplicationInstanceName = &v
 	return o
 }
 
@@ -214,6 +216,39 @@ func (o *StagedPrivilegedAccount) HasName() bool {
 // SetName gets a reference to the given string and assigns it to the Name field.
 func (o *StagedPrivilegedAccount) SetName(v string) *StagedPrivilegedAccount {
 	o.Name = &v
+	return o
+}
+
+// GetUsername returns the Username field value if set, zero value otherwise.
+func (o *StagedPrivilegedAccount) GetUsername() string {
+	if o == nil || IsNil(o.Username) {
+		var ret string
+		return ret
+	}
+	return *o.Username
+}
+
+// GetUsernameOk returns a tuple with the Username field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *StagedPrivilegedAccount) GetUsernameOk() (*string, bool) {
+	if o == nil || IsNil(o.Username) {
+		return nil, false
+	}
+	return o.Username, true
+}
+
+// HasUsername returns a boolean if a field has been set.
+func (o *StagedPrivilegedAccount) HasUsername() bool {
+	if o != nil && !IsNil(o.Username) {
+		return true
+	}
+
+	return false
+}
+
+// SetUsername gets a reference to the given string and assigns it to the Username field.
+func (o *StagedPrivilegedAccount) SetUsername(v string) *StagedPrivilegedAccount {
+	o.Username = &v
 	return o
 }
 
@@ -302,11 +337,14 @@ func (o StagedPrivilegedAccount) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.LogoUrl) {
 		toSerialize["logo_url"] = o.LogoUrl
 	}
-	if !IsNil(o.ApplicationName) {
-		toSerialize["application_name"] = o.ApplicationName
+	if !IsNil(o.ApplicationInstanceName) {
+		toSerialize["application_instance_name"] = o.ApplicationInstanceName
 	}
 	if !IsNil(o.Name) {
 		toSerialize["name"] = o.Name
+	}
+	if !IsNil(o.Username) {
+		toSerialize["username"] = o.Username
 	}
 	if !IsNil(o.Description) {
 		toSerialize["description"] = o.Description

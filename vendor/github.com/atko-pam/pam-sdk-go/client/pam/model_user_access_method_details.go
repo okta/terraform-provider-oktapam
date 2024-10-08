@@ -18,8 +18,16 @@ import (
 
 // UserAccessMethodDetails - struct for UserAccessMethodDetails
 type UserAccessMethodDetails struct {
-	UserAccessMethodSecretDetails *UserAccessMethodSecretDetails
-	UserAccessMethodServerDetails *UserAccessMethodServerDetails
+	UserAccessMethodPrivilegedAccountDetails *UserAccessMethodPrivilegedAccountDetails
+	UserAccessMethodSecretDetails            *UserAccessMethodSecretDetails
+	UserAccessMethodServerDetails            *UserAccessMethodServerDetails
+}
+
+// UserAccessMethodPrivilegedAccountDetailsAsUserAccessMethodDetails is a convenience function that returns UserAccessMethodPrivilegedAccountDetails wrapped in UserAccessMethodDetails
+func UserAccessMethodPrivilegedAccountDetailsAsUserAccessMethodDetails(v *UserAccessMethodPrivilegedAccountDetails) UserAccessMethodDetails {
+	return UserAccessMethodDetails{
+		UserAccessMethodPrivilegedAccountDetails: v,
+	}
 }
 
 // UserAccessMethodSecretDetailsAsUserAccessMethodDetails is a convenience function that returns UserAccessMethodSecretDetails wrapped in UserAccessMethodDetails
@@ -44,6 +52,18 @@ func (dst *UserAccessMethodDetails) UnmarshalJSON(data []byte) error {
 	err = newStrictDecoder(data).Decode(&jsonDict)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal JSON into map for the discriminator lookup")
+	}
+
+	// check if the discriminator value is 'UserAccessMethodPrivilegedAccountDetails'
+	if jsonDict["_type"] == "UserAccessMethodPrivilegedAccountDetails" {
+		// try to unmarshal JSON data into UserAccessMethodPrivilegedAccountDetails
+		err = json.Unmarshal(data, &dst.UserAccessMethodPrivilegedAccountDetails)
+		if err == nil {
+			return nil // data stored in dst.UserAccessMethodPrivilegedAccountDetails, return on the first match
+		} else {
+			dst.UserAccessMethodPrivilegedAccountDetails = nil
+			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodPrivilegedAccountDetails: %s", err.Error())
+		}
 	}
 
 	// check if the discriminator value is 'UserAccessMethodSecretDetails'
@@ -154,6 +174,18 @@ func (dst *UserAccessMethodDetails) UnmarshalJSON(data []byte) error {
 		}
 	}
 
+	// check if the discriminator value is 'privileged_account'
+	if jsonDict["_type"] == "privileged_account" {
+		// try to unmarshal JSON data into UserAccessMethodPrivilegedAccountDetails
+		err = json.Unmarshal(data, &dst.UserAccessMethodPrivilegedAccountDetails)
+		if err == nil {
+			return nil // data stored in dst.UserAccessMethodPrivilegedAccountDetails, return on the first match
+		} else {
+			dst.UserAccessMethodPrivilegedAccountDetails = nil
+			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodPrivilegedAccountDetails: %s", err.Error())
+		}
+	}
+
 	// check if the discriminator value is 'secret'
 	if jsonDict["_type"] == "secret" {
 		// try to unmarshal JSON data into UserAccessMethodSecretDetails
@@ -195,6 +227,10 @@ func (dst *UserAccessMethodDetails) UnmarshalJSON(data []byte) error {
 
 // Marshal data from the first non-nil pointers in the struct to JSON
 func (src UserAccessMethodDetails) MarshalJSON() ([]byte, error) {
+	if src.UserAccessMethodPrivilegedAccountDetails != nil {
+		return json.Marshal(&src.UserAccessMethodPrivilegedAccountDetails)
+	}
+
 	if src.UserAccessMethodSecretDetails != nil {
 		return json.Marshal(&src.UserAccessMethodSecretDetails)
 	}
@@ -211,6 +247,10 @@ func (obj *UserAccessMethodDetails) GetActualInstance() interface{} {
 	if obj == nil {
 		return nil
 	}
+	if obj.UserAccessMethodPrivilegedAccountDetails != nil {
+		return obj.UserAccessMethodPrivilegedAccountDetails
+	}
+
 	if obj.UserAccessMethodSecretDetails != nil {
 		return obj.UserAccessMethodSecretDetails
 	}

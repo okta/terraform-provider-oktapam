@@ -28,13 +28,10 @@ type PrivilegedAccountDetailsOktaUserAccount struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPrivilegedAccountDetailsOktaUserAccount(details PrivilegedAccountDetailsOktaUserAccountAllOfDetails, name string, description string, accountType PrivilegedAccountType, ownerUserIds []string, ownerGroupIds []string) *PrivilegedAccountDetailsOktaUserAccount {
+func NewPrivilegedAccountDetailsOktaUserAccount(details PrivilegedAccountDetailsOktaUserAccountAllOfDetails, name string, accountType PrivilegedAccountType) *PrivilegedAccountDetailsOktaUserAccount {
 	this := PrivilegedAccountDetailsOktaUserAccount{}
 	this.Name = name
-	this.Description = description
 	this.AccountType = accountType
-	this.OwnerUserIds = ownerUserIds
-	this.OwnerGroupIds = ownerGroupIds
 	this.Details = details
 	return &this
 }

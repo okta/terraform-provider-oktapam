@@ -21,7 +21,7 @@ var _ MappedNullable = &PrivilegedAccountDetailsOktaUserAccountAllOfDetails{}
 // PrivilegedAccountDetailsOktaUserAccountAllOfDetails struct for PrivilegedAccountDetailsOktaUserAccountAllOfDetails
 type PrivilegedAccountDetailsOktaUserAccountAllOfDetails struct {
 	// An optional Okta user ID. If supplied, converts the matching Okta Universal Directory Account to a Privileged Account and updates the account with the provided details.
-	OktaUserId NullableString `json:"okta_user_id,omitempty"`
+	OktaUserId NullableString `json:"oktaUserId,omitempty"`
 	// The email address for the Okta Universal Directory Account
 	Email       string                       `json:"email"`
 	Credentials PrivilegedAccountCredentials `json:"credentials"`
@@ -153,7 +153,7 @@ func (o PrivilegedAccountDetailsOktaUserAccountAllOfDetails) MarshalJSON() ([]by
 func (o PrivilegedAccountDetailsOktaUserAccountAllOfDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if o.OktaUserId.IsSet() {
-		toSerialize["okta_user_id"] = o.OktaUserId.Get()
+		toSerialize["oktaUserId"] = o.OktaUserId.Get()
 	}
 	toSerialize["email"] = o.Email
 	toSerialize["credentials"] = o.Credentials

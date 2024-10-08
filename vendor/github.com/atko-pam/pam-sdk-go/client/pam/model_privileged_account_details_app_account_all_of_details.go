@@ -22,9 +22,11 @@ var _ MappedNullable = &PrivilegedAccountDetailsAppAccountAllOfDetails{}
 type PrivilegedAccountDetailsAppAccountAllOfDetails struct {
 	Credentials PrivilegedAccountCredentials `json:"credentials"`
 	// The Okta app instance ID of the SaaS Application
-	OktaApplicationId string `json:"okta_application_id"`
+	OktaApplicationId string `json:"oktaApplicationId"`
 	// The instance name of the SaaS Application
-	AppInstanceName *string `json:"app_instance_name,omitempty"`
+	AppInstanceName *string `json:"appInstanceName,omitempty"`
+	// The name of the SaaS Application in the Okta Integration Network catalog
+	AppGlobalName *string `json:"appGlobalName,omitempty"`
 }
 
 // NewPrivilegedAccountDetailsAppAccountAllOfDetails instantiates a new PrivilegedAccountDetailsAppAccountAllOfDetails object
@@ -129,6 +131,39 @@ func (o *PrivilegedAccountDetailsAppAccountAllOfDetails) SetAppInstanceName(v st
 	return o
 }
 
+// GetAppGlobalName returns the AppGlobalName field value if set, zero value otherwise.
+func (o *PrivilegedAccountDetailsAppAccountAllOfDetails) GetAppGlobalName() string {
+	if o == nil || IsNil(o.AppGlobalName) {
+		var ret string
+		return ret
+	}
+	return *o.AppGlobalName
+}
+
+// GetAppGlobalNameOk returns a tuple with the AppGlobalName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PrivilegedAccountDetailsAppAccountAllOfDetails) GetAppGlobalNameOk() (*string, bool) {
+	if o == nil || IsNil(o.AppGlobalName) {
+		return nil, false
+	}
+	return o.AppGlobalName, true
+}
+
+// HasAppGlobalName returns a boolean if a field has been set.
+func (o *PrivilegedAccountDetailsAppAccountAllOfDetails) HasAppGlobalName() bool {
+	if o != nil && !IsNil(o.AppGlobalName) {
+		return true
+	}
+
+	return false
+}
+
+// SetAppGlobalName gets a reference to the given string and assigns it to the AppGlobalName field.
+func (o *PrivilegedAccountDetailsAppAccountAllOfDetails) SetAppGlobalName(v string) *PrivilegedAccountDetailsAppAccountAllOfDetails {
+	o.AppGlobalName = &v
+	return o
+}
+
 func (o PrivilegedAccountDetailsAppAccountAllOfDetails) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -140,9 +175,12 @@ func (o PrivilegedAccountDetailsAppAccountAllOfDetails) MarshalJSON() ([]byte, e
 func (o PrivilegedAccountDetailsAppAccountAllOfDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["credentials"] = o.Credentials
-	toSerialize["okta_application_id"] = o.OktaApplicationId
+	toSerialize["oktaApplicationId"] = o.OktaApplicationId
 	if !IsNil(o.AppInstanceName) {
-		toSerialize["app_instance_name"] = o.AppInstanceName
+		toSerialize["appInstanceName"] = o.AppInstanceName
+	}
+	if !IsNil(o.AppGlobalName) {
+		toSerialize["appGlobalName"] = o.AppGlobalName
 	}
 	return toSerialize, nil
 }

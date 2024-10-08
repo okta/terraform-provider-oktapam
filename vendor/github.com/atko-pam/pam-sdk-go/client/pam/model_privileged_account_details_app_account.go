@@ -28,13 +28,10 @@ type PrivilegedAccountDetailsAppAccount struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPrivilegedAccountDetailsAppAccount(details PrivilegedAccountDetailsAppAccountAllOfDetails, name string, description string, accountType PrivilegedAccountType, ownerUserIds []string, ownerGroupIds []string) *PrivilegedAccountDetailsAppAccount {
+func NewPrivilegedAccountDetailsAppAccount(details PrivilegedAccountDetailsAppAccountAllOfDetails, name string, accountType PrivilegedAccountType) *PrivilegedAccountDetailsAppAccount {
 	this := PrivilegedAccountDetailsAppAccount{}
 	this.Name = name
-	this.Description = description
 	this.AccountType = accountType
-	this.OwnerUserIds = ownerUserIds
-	this.OwnerGroupIds = ownerGroupIds
 	this.Details = details
 	return &this
 }

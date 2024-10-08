@@ -15,27 +15,25 @@ import (
 	"encoding/json"
 )
 
-// PrivilegedAccountStatus Describes the current state of a Privileged Account
+// PrivilegedAccountStatus Describes the current status of a Privileged Account
 type PrivilegedAccountStatus string
 
 // List of PrivilegedAccountStatus
 const (
-	PrivilegedAccountStatus_STAGED     PrivilegedAccountStatus = "STAGED"
-	PrivilegedAccountStatus_EMPTY      PrivilegedAccountStatus = "EMPTY"
-	PrivilegedAccountStatus_STATIC     PrivilegedAccountStatus = "STATIC"
-	PrivilegedAccountStatus_LCM_ACTIVE PrivilegedAccountStatus = "LCM_ACTIVE"
-	PrivilegedAccountStatus_LCM_FAILED PrivilegedAccountStatus = "LCM_FAILED"
-	PrivilegedAccountStatus_EXTERNAL   PrivilegedAccountStatus = "EXTERNAL"
+	PrivilegedAccountStatus_NO_ISSUES PrivilegedAccountStatus = "NO_ISSUES"
+	PrivilegedAccountStatus_UNSECURED PrivilegedAccountStatus = "UNSECURED"
+	PrivilegedAccountStatus_INFO      PrivilegedAccountStatus = "INFO"
+	PrivilegedAccountStatus_ALERT     PrivilegedAccountStatus = "ALERT"
+	PrivilegedAccountStatus_ERROR     PrivilegedAccountStatus = "ERROR"
 )
 
 // All allowed values of PrivilegedAccountStatus enum
 var AllowedPrivilegedAccountStatusEnumValues = []PrivilegedAccountStatus{
-	"STAGED",
-	"EMPTY",
-	"STATIC",
-	"LCM_ACTIVE",
-	"LCM_FAILED",
-	"EXTERNAL",
+	"NO_ISSUES",
+	"UNSECURED",
+	"INFO",
+	"ALERT",
+	"ERROR",
 }
 
 func (v *PrivilegedAccountStatus) UnmarshalJSON(src []byte) error {

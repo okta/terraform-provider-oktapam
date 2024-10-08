@@ -77,6 +77,12 @@ type APIClient struct {
 	SudoCommandsAPI *SudoCommandsAPIService
 
 	ActiveDirectoryConnectionAPI *ActiveDirectoryConnectionAPIService
+
+	ActiveDirectoryAccountAPI *ActiveDirectoryAccountsAPIService
+
+	SaaSAppAccountsAPI *SaasAppAccountsAPIService
+
+	OktaUDAccountsAPI *OktaUniversalDirectoryAccountsAPIService
 }
 
 type service struct {
@@ -121,6 +127,9 @@ func NewAPIClient(opts ...ConfigOption) (*APIClient, error) {
 	apiClient.CloudEntiltlementsAPI = (*CloudEntitlementsAPIService)(&apiClient.common)
 	apiClient.SudoCommandsAPI = (*SudoCommandsAPIService)(&apiClient.common)
 	apiClient.ActiveDirectoryConnectionAPI = (*ActiveDirectoryConnectionAPIService)(&apiClient.common)
+	apiClient.ActiveDirectoryAccountAPI = (*ActiveDirectoryAccountsAPIService)(&apiClient.common)
+	apiClient.SaaSAppAccountsAPI = (*SaasAppAccountsAPIService)(&apiClient.common)
+	apiClient.OktaUDAccountsAPI = (*OktaUniversalDirectoryAccountsAPIService)(&apiClient.common)
 	return apiClient, nil
 }
 
@@ -358,14 +367,14 @@ func (apiClient *APIClient) callAPI(
 		defer sp.Finish()
 	}
 
-	// Using SetDoNotParseResponse tell resty not to parse or close the response in http.Client.Do(requset)
-	// This means you need to ensure that the body is read and closed properly to avoid resource leaks.
+	// Using SetResult and SetError automatically parses the response body into the result and error objects
 	req := apiClient.restyClient.R().
 		SetContext(ctx).
 		SetHeaders(headerParams).
 		SetQueryParamsFromValues(queryParams).
 		SetFormDataFromValues(formParams).
-		SetDoNotParseResponse(true)
+		SetResult(&result).
+		SetError(&APIError{})
 	req.Method = method
 
 	for _, ff := range formFiles {
@@ -388,12 +397,10 @@ func (apiClient *APIClient) callAPI(
 		return response.RawResponse, nil
 	}
 
-	respBody, err := io.ReadAll(response.RawResponse.Body)
+	respBody, err := json.Marshal(result)
 	if err != nil {
 		return nil, fmt.Errorf("error reading the raw HTTP response body: %w", err)
 	}
-
-	_ = response.RawResponse.Body.Close()
 
 	// duplicate the response body so we can return it for the caller to use
 	bodyBuffer := bytes.NewBuffer(respBody)
@@ -417,11 +424,6 @@ func (apiClient *APIClient) callAPI(
 		return newRawResponse, &APIError{
 			Message: response.Status(),
 		}
-	}
-
-	// unmarshal the response body into the result interface
-	if err := json.Unmarshal(respBody, &result); err != nil {
-		return nil, fmt.Errorf("error unmarshalling the raw HTTP response body: %w", err)
 	}
 
 	return response.RawResponse, nil
@@ -638,9 +640,15 @@ func (apiClient *APIClient) GetHTTPClient() *http.Client {
 	return apiClient.restyClient.GetClient()
 }
 
+type APIErrorPath struct {
+	Path    string `json:"path"`
+	Message string `json:"message"`
+}
+
 // APIError Provides access to the body, error and model on returned errors.
 type APIError struct {
-	Message string `json:"message"`
+	Message string         `json:"message"`
+	Errors  []APIErrorPath `json:"errors,omitempty"`
 }
 
 // Error returns non-empty string if there was an error.

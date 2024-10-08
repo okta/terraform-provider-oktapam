@@ -15,6 +15,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"reflect"
 	"strings"
 )
 
@@ -66,7 +67,7 @@ func (a *StagedPrivilegedAccountsAPIService) AssignStagedPrivilegedAccountExecut
 		formFiles          []formFile
 	)
 
-	localVarPath := "/v1/teams/{team_name}/resource_assignment/privileged_accounts/{staged_privileged_account_id}/assign/{project_id}"
+	localVarPath := "/v1/teams/{team_name}/resource_assignment/universal_directory/accounts/{staged_privileged_account_id}/assign/{project_id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"staged_privileged_account_id"+"}", url.PathEscape(parameterValueToString(r.stagedPrivilegedAccountId, "stagedPrivilegedAccountId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
@@ -102,9 +103,23 @@ func (a *StagedPrivilegedAccountsAPIService) AssignStagedPrivilegedAccountExecut
 }
 
 type ApiListStagedPrivilegedAccountsRequest struct {
-	ctx        context.Context
-	ApiService *StagedPrivilegedAccountsAPIService
-	teamName   string
+	ctx           context.Context
+	ApiService    *StagedPrivilegedAccountsAPIService
+	teamName      string
+	managed       *bool
+	appInstanceId *[]string
+}
+
+// If &#x60;true&#x60;, only return staged accounts that support password rotation. If &#x60;false&#x60;, only return staged accounts that do not support password rotation.
+func (r ApiListStagedPrivilegedAccountsRequest) Managed(managed bool) ApiListStagedPrivilegedAccountsRequest {
+	r.managed = &managed
+	return r
+}
+
+// Only return staged accounts with the specified application instance ids.
+func (r ApiListStagedPrivilegedAccountsRequest) AppInstanceId(appInstanceId []string) ApiListStagedPrivilegedAccountsRequest {
+	r.appInstanceId = &appInstanceId
+	return r
 }
 
 func (r ApiListStagedPrivilegedAccountsRequest) Execute() (*ListStagedPrivilegedAccountsResponse, *http.Response, error) {
@@ -142,13 +157,27 @@ func (a *StagedPrivilegedAccountsAPIService) ListStagedPrivilegedAccountsExecute
 		localVarReturnValue *ListStagedPrivilegedAccountsResponse
 	)
 
-	localVarPath := "/v1/teams/{team_name}/resource_assignment/privileged_accounts"
+	localVarPath := "/v1/teams/{team_name}/resource_assignment/universal_directory/accounts"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.managed != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "managed", r.managed, "")
+	}
+	if r.appInstanceId != nil {
+		t := *r.appInstanceId
+		if reflect.TypeOf(t).Kind() == reflect.Slice {
+			s := reflect.ValueOf(t)
+			for i := 0; i < s.Len(); i++ {
+				parameterAddToHeaderOrQuery(localVarQueryParams, "app_instance_id", s.Index(i).Interface(), "multi")
+			}
+		} else {
+			parameterAddToHeaderOrQuery(localVarQueryParams, "app_instance_id", t, "multi")
+		}
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 

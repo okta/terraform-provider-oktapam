@@ -20,6 +20,8 @@ var _ MappedNullable = &ServerAccountCheckedOutResourceDetails{}
 
 // ServerAccountCheckedOutResourceDetails struct for ServerAccountCheckedOutResourceDetails
 type ServerAccountCheckedOutResourceDetails struct {
+	// Type of this Resource object
+	Type *string `json:"_type,omitempty"`
 	// The hostname of the server associated with the Resource
 	Hostname string `json:"hostname"`
 	// The UUID of the server associated with the Resource
@@ -43,6 +45,39 @@ func NewServerAccountCheckedOutResourceDetails(hostname string, serverId string)
 func NewServerAccountCheckedOutResourceDetailsWithDefaults() *ServerAccountCheckedOutResourceDetails {
 	this := ServerAccountCheckedOutResourceDetails{}
 	return &this
+}
+
+// GetType returns the Type field value if set, zero value otherwise.
+func (o *ServerAccountCheckedOutResourceDetails) GetType() string {
+	if o == nil || IsNil(o.Type) {
+		var ret string
+		return ret
+	}
+	return *o.Type
+}
+
+// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ServerAccountCheckedOutResourceDetails) GetTypeOk() (*string, bool) {
+	if o == nil || IsNil(o.Type) {
+		return nil, false
+	}
+	return o.Type, true
+}
+
+// HasType returns a boolean if a field has been set.
+func (o *ServerAccountCheckedOutResourceDetails) HasType() bool {
+	if o != nil && !IsNil(o.Type) {
+		return true
+	}
+
+	return false
+}
+
+// SetType gets a reference to the given string and assigns it to the Type field.
+func (o *ServerAccountCheckedOutResourceDetails) SetType(v string) *ServerAccountCheckedOutResourceDetails {
+	o.Type = &v
+	return o
 }
 
 // GetHostname returns the Hostname field value
@@ -105,6 +140,9 @@ func (o ServerAccountCheckedOutResourceDetails) MarshalJSON() ([]byte, error) {
 
 func (o ServerAccountCheckedOutResourceDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.Type) {
+		toSerialize["_type"] = o.Type
+	}
 	toSerialize["hostname"] = o.Hostname
 	toSerialize["server_id"] = o.ServerId
 	return toSerialize, nil
