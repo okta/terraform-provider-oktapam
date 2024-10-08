@@ -73,9 +73,10 @@ func checkTeamApplicable(t *testing.T, isPAMTest bool) {
 	}
 }
 
-// subNamedObjects is used within tests to allow for comparing objects that include named objects.  generally the struct which is created within a test
-// will only know either the ids or the names for the named objects.  this method assumes the expectedNamedObjects were returned from the server
-// and will have both the id and name.  the method will match up the named objects based on the key the test knows about and return a list with the
+// subNamedObjects is used within tests to allow for comparing objects that include named objects. Generally the
+// struct which is created within a test will only know either the ids or the names for the named objects. This
+// method assumes the expectedNamedObjects were returned from the server and will have both the id and name. The
+// method will match up the named objects based on the key the test knows about and return a list with the
 // values from the expected list
 func subNamedObjects(expectedNamedObjects, actualNamedObjects []client.NamedObject, matchByID bool) ([]client.NamedObject, error) {
 	if len(expectedNamedObjects) != len(actualNamedObjects) {

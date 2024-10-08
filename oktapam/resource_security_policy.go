@@ -45,7 +45,7 @@ func resourceSecurityPolicy() *schema.Resource {
 			attributes.ResourceGroup: {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: descriptions.SecurityPolicyResouceGroup,
+				Description: descriptions.SecurityPolicyResourceGroup,
 			},
 			attributes.Principals: {
 				Type:        schema.TypeList,
@@ -123,6 +123,35 @@ func resourceSecurityPolicy() *schema.Resource {
 																Type:        schema.TypeString,
 																Required:    true,
 																Description: descriptions.SecretFolderID,
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+									attributes.Databases: {
+										Type:        schema.TypeList,
+										Optional:    true,
+										MinItems:    1,
+										MaxItems:    1,
+										Description: descriptions.SecurityPolicyDatabases,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												attributes.LabelSelectors: {
+													Type:        schema.TypeList,
+													Optional:    true,
+													MaxItems:    1,
+													Description: descriptions.SecurityPolicyLabelSelectors,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															attributes.DatabaseLabels: {
+																Type:        schema.TypeMap,
+																Required:    true,
+																Description: descriptions.SecurityPolicyDatabaseLabels,
+																Elem: &schema.Schema{
+																	Type: schema.TypeString,
+																},
 															},
 														},
 													},
@@ -257,6 +286,21 @@ func resourceSecurityPolicy() *schema.Resource {
 													Type:        schema.TypeBool,
 													Required:    true,
 													Description: descriptions.PrivilegeSecretUpdate,
+												},
+											},
+										},
+									},
+									attributes.PasswordCheckoutDatabase: {
+										Type:        schema.TypeList,
+										Optional:    true,
+										MaxItems:    1,
+										Description: descriptions.PrivilegePasswordCheckoutDatabase,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												attributes.Enabled: {
+													Type:        schema.TypeBool,
+													Required:    true,
+													Description: descriptions.PrivilegeEnabled,
 												},
 											},
 										},
@@ -445,9 +489,9 @@ func resourceSecurityPolicy() *schema.Resource {
 	}
 }
 
-func resourceSecurityPolicyRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+func resourceSecurityPolicyRead(ctx context.Context, d *schema.ResourceData, metadata any) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := getLocalClientFromMetadata(m)
+	c := getLocalClientFromMetadata(metadata)
 	id := d.Id()
 	policy, err := c.GetSecurityPolicy(ctx, id)
 
@@ -636,8 +680,8 @@ func readRulesFromResourceData(d *schema.ResourceData, securityPolicyId *string)
 
 		rules = append(rules, rule)
 
-		if validation := validateRule(rule); validation != nil {
-			diags = append(diags, validation...)
+		if diagnostics := validateRule(rule); diagnostics != nil {
+			diags = append(diags, diagnostics...)
 		}
 	}
 
@@ -687,6 +731,8 @@ func resourceTypeToAttribute(resourceSelectorType client.ResourceSelectorType) s
 
 func privilegeTypeToAttribute(privilegeType client.PrivilegeType) string {
 	switch privilegeType {
+	case client.PasswordCheckoutDatabasePrivilegeType:
+		return attributes.PasswordCheckoutDatabase
 	case client.PasswordCheckoutRDPPrivilegeType:
 		return attributes.PasswordCheckoutRDP
 	case client.PrincipalAccountRDPPrivilegeType:
@@ -795,11 +841,11 @@ func readConditions(conditionsAttr []any) ([]*client.SecurityPolicyRuleCondition
 		for _, mfaI := range mfaArr {
 			mfaM := mfaI.(map[string]any)
 
-			reauthFrequency := mfaM[attributes.ReAuthFrequencyInSeconds].(int)
+			reAuthFrequency := mfaM[attributes.ReAuthFrequencyInSeconds].(int)
 			acrValues := mfaM[attributes.ACRValues].(string)
 
 			mfa := &client.MFACondition{
-				ReAuthFrequencyInSeconds: &reauthFrequency,
+				ReAuthFrequencyInSeconds: &reAuthFrequency,
 				ACRValues:                &acrValues,
 			}
 
@@ -837,6 +883,16 @@ func readResourceSelector(resourcesAttr []any) (client.SecurityPolicyRuleResourc
 		}
 	}
 
+	if databasesI, ok := resourcesI[attributes.Databases]; ok {
+		if subSelectors, d := readDatabasesSelector(databasesI); d != nil {
+			diags = append(diags, d...)
+		} else if subSelectors != nil {
+			selector = &client.DatabaseBasedResourceSelector{
+				Selectors: subSelectors,
+			}
+		}
+	}
+
 	if secretsI, ok := resourcesI[attributes.Secrets]; ok {
 		if subSelectors, d := readSecretsSelector(secretsI); d != nil {
 			diags = append(diags, d...)
@@ -857,7 +913,7 @@ func readResourceSelector(resourcesAttr []any) (client.SecurityPolicyRuleResourc
 	if selector == nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
-			Summary:  fmt.Sprintf("must supply either %s or %s values under %s", attributes.Servers, attributes.Secrets, attributes.Resources),
+			Summary:  fmt.Sprintf("must supply either %s, %s or %s values under %s", attributes.Databases, attributes.Servers, attributes.Secrets, attributes.Resources),
 		})
 	}
 
@@ -963,6 +1019,35 @@ func readSecretFolderSubSelectors(secretFolderArr []any) ([]*client.SecretFolder
 	return subSelectors, diags
 }
 
+func readDatabasesSelector(databasesAttr any) ([]client.DatabaseBasedResourceSubSelectorContainer, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	subSelectors := make([]client.DatabaseBasedResourceSubSelectorContainer, 0, 5)
+
+	databasesArr := databasesAttr.([]any)
+	if len(databasesArr) == 0 || databasesArr[0] == nil {
+		// we don't have any databases defined
+		return nil, nil
+	}
+	databasesM := databasesArr[0].(map[string]any)
+
+	if labelSelectorsAttr, ok := databasesM[attributes.LabelSelectors]; ok {
+		labelSelectorsArr := labelSelectorsAttr.([]any)
+		if selectors, labelSelectorsDiag := readDatabaseLabelBasedSubSelectors(labelSelectorsArr); labelSelectorsDiag == nil {
+			for _, selector := range selectors {
+				subSelectors = append(subSelectors, client.DatabaseBasedResourceSubSelectorContainer{
+					SelectorType: selector.DatabaseBasedResourceSubSelectorType(),
+					Selector:     selector,
+				})
+			}
+		} else {
+			diags = append(diags, labelSelectorsDiag...)
+		}
+	}
+
+	return subSelectors, diags
+}
+
 func readServersSelector(serversAttr any) ([]client.ServerBasedResourceSubSelectorContainer, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -1015,6 +1100,45 @@ func readServersSelector(serversAttr any) ([]client.ServerBasedResourceSubSelect
 		} else {
 			diags = append(diags, labelSelectorsDiag...)
 		}
+	}
+
+	return subSelectors, diags
+}
+
+func readDatabaseLabelBasedSubSelectors(labelSelectorsArr []any) ([]*client.DatabaseLabelsBasedSubSelector, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	subSelectors := make([]*client.DatabaseLabelsBasedSubSelector, len(labelSelectorsArr))
+
+	for idx, labelSelectorsI := range labelSelectorsArr {
+		subSelector := &client.DatabaseLabelsBasedSubSelector{}
+		labelSelectorsM := labelSelectorsI.(map[string]any)
+
+		databaseLabelsI := labelSelectorsM[attributes.DatabaseLabels]
+		databaseLabelsM := databaseLabelsI.(map[string]any)
+		databaseLabels := make(map[string]string, len(databaseLabelsM))
+		for k, v := range databaseLabelsM {
+			s := v.(string)
+			if strings.ContainsAny(k, "=,") {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Error,
+					Summary:  fmt.Sprintf("%s key cannot contain a ':', '=', ',' character: %s", attributes.DatabaseLabels, s),
+				})
+			}
+
+			if strings.ContainsAny(s, ":=,") {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Error,
+					Summary:  fmt.Sprintf("%s value cannot contain a ':', '=', ',' character: %s", attributes.DatabaseLabels, s),
+				})
+			}
+			databaseLabels[k] = s
+		}
+		subSelector.DatabaseSelector = &client.DatabaseLabelsDatabaseSelector{
+			Labels: databaseLabels,
+		}
+
+		subSelectors[idx] = subSelector
 	}
 
 	return subSelectors, diags
@@ -1139,6 +1263,17 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 
 	hasRDPPriv := false
 	hasSSHPriv := false
+
+	if passwordCheckoutDatabaseI, ok := privilegesM[attributes.PasswordCheckoutDatabase]; ok {
+		if enabled, hasValue := readPrivilegeEnabled(passwordCheckoutDatabaseI); hasValue {
+			privileges = append(privileges, &client.SecurityPolicyRulePrivilegeContainer{
+				PrivilegeType: client.PasswordCheckoutDatabasePrivilegeType,
+				PrivilegeValue: &client.PasswordCheckoutDatabasePrivilege{
+					Enabled: &enabled,
+				},
+			})
+		}
+	}
 
 	if passwordCheckoutRDPI, ok := privilegesM[attributes.PasswordCheckoutRDP]; ok {
 		if enabled, hasValue := readPrivilegeEnabled(passwordCheckoutRDPI); hasValue {
@@ -1364,14 +1499,14 @@ func readSudoCommandBundles(privilege any) []client.NamedObject {
 	privilegeM := privilegeArr[0].(map[string]any)
 
 	var result []client.NamedObject
-	if scbs, ok := privilegeM[attributes.SudoCommandBundles]; ok {
-		for _, scb := range scbs.([]any) {
-			bundle := scb.(map[string]any)
-			Id := bundle[attributes.ID].(string)
-			Name := bundle[attributes.Name].(string)
+	if sudoCommandBundles, ok := privilegeM[attributes.SudoCommandBundles]; ok {
+		for _, sudoCommandBundle := range sudoCommandBundles.([]any) {
+			bundle := sudoCommandBundle.(map[string]any)
+			id := bundle[attributes.ID].(string)
+			name := bundle[attributes.Name].(string)
 			result = append(result, client.NamedObject{
-				Id:   &Id,
-				Name: &Name,
+				Id:   &id,
+				Name: &name,
 				Type: client.SudoCommandBundleNamedObjectType,
 			})
 		}

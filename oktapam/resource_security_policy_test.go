@@ -1,11 +1,13 @@
 package oktapam
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"os"
 	"regexp"
 	"testing"
+	"text/template"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
@@ -33,6 +35,7 @@ func TestAccSecurityPolicy(t *testing.T) {
 	group1Name := fmt.Sprintf("test_acc_security_policy_group1_%s", randSeq())
 	group2Name := fmt.Sprintf("test_acc_security_policy_group2_%s", randSeq())
 	sudoCommandBundle1Name := fmt.Sprintf("scb-test_acc_sudo_command_bundle1_%s", randSeq())
+	databaseResourceName := fmt.Sprintf("my-database-%s", randIdentifier)
 	validServerID := getValidServerID()
 
 	initialSecurityPolicy := &client.SecurityPolicy{
@@ -276,11 +279,59 @@ func TestAccSecurityPolicy(t *testing.T) {
 		},
 	}
 
+	databaseSecurityPolicy := &client.SecurityPolicy{
+		Name:        &securityPolicyName,
+		Active:      utils.AsBoolPtr(true),
+		Description: utils.AsStringPtr("allow access to database by its canonical name"),
+		Principals: &client.SecurityPolicyPrincipals{
+			UserGroups: []client.NamedObject{
+				{
+					Name: utils.AsStringPtr(group1Name),
+				},
+			},
+		},
+		Rules: []*client.SecurityPolicyRule{
+			{
+				Name:         utils.AsStringPtr("database rule"),
+				ResourceType: client.DatabaseBasedResourceSelectorType,
+				Conditions:   []*client.SecurityPolicyRuleConditionContainer{},
+				ResourceSelector: &client.DatabaseBasedResourceSelector{
+					Selectors: []client.DatabaseBasedResourceSubSelectorContainer{
+						{
+							SelectorType: client.DatabaseLabelsDatabaseSubSelectorType,
+							Selector: &client.DatabaseLabelsBasedSubSelector{
+								DatabaseSelector: &client.DatabaseLabelsDatabaseSelector{
+									Labels: map[string]string{
+										"system.canonical_name": databaseResourceName,
+									},
+								},
+							},
+						},
+					},
+				},
+				Privileges: []*client.SecurityPolicyRulePrivilegeContainer{
+					{
+						PrivilegeType: client.PasswordCheckoutDatabasePrivilegeType,
+						PrivilegeValue: &client.PasswordCheckoutDatabasePrivilege{
+							Enabled: utils.AsBoolPtr(true),
+						},
+					},
+				},
+			},
+		},
+	}
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviders,
 		CheckDestroy:      testAccSecurityPolicyCheckDestroy(securityPolicyName),
 		Steps: []resource.TestStep{
+			{
+				Config: createTestAccDatabaseSecurityPolicyCreateConfig(group1Name, securityPolicyName, databaseResourceName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccSecurityPolicyCheckExists(resourceName, databaseSecurityPolicy),
+				),
+			},
 			{
 				// Ensure that we get an error when we try to create a policy with invalid config.
 				Config:      createTestAccSecurityPolicyInvalidAdminPrivilegesConfig(group1Name, securityPolicyName, validServerID),
@@ -327,11 +378,11 @@ func TestAccSecurityPolicy(t *testing.T) {
 	})
 }
 
-func testAccSecurityPolicyCheckExists(rn string, expectedSecurityPolicy *client.SecurityPolicy) resource.TestCheckFunc {
+func testAccSecurityPolicyCheckExists(resourceName string, expectedSecurityPolicy *client.SecurityPolicy) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[rn]
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
-			return fmt.Errorf("resource not found: %s", rn)
+			return fmt.Errorf("resource not found: %s", resourceName)
 		}
 
 		id := rs.Primary.ID
@@ -342,10 +393,10 @@ func testAccSecurityPolicyCheckExists(rn string, expectedSecurityPolicy *client.
 		} else if securityPolicy == nil {
 			return fmt.Errorf("security policy does not exist")
 		}
-		err = insertComputedValuesForSecurityPolicy(expectedSecurityPolicy, securityPolicy)
-		if err != nil {
+		if err := insertComputedValuesForSecurityPolicy(expectedSecurityPolicy, securityPolicy); err != nil {
 			return err
 		}
+
 		// Ignore Id as it is not possible to get ID generated at runtime in tests and it is not a computed property
 		// of the tf resource.
 		comparison := cmp.Diff(expectedSecurityPolicy, securityPolicy, cmpopts.IgnoreFields(client.NamedObject{}, "Id"))
@@ -399,6 +450,29 @@ func insertComputedValuesForSecurityPolicyRule(expectedRule *client.SecurityPoli
 	}
 
 	switch expectedRule.ResourceType {
+	case client.DatabaseBasedResourceSelectorType:
+		expectedResourceSelector := expectedRule.ResourceSelector.(*client.DatabaseBasedResourceSelector)
+		actualResourceSelector := actualRule.ResourceSelector.(*client.DatabaseBasedResourceSelector)
+
+		if len(expectedResourceSelector.Selectors) != len(actualResourceSelector.Selectors) {
+			return fmt.Errorf("number of selectors did not match between expected and actual for rule %s", *expectedRule.Name)
+		}
+
+		for idx, expectedSel := range expectedResourceSelector.Selectors {
+			actualSel := actualResourceSelector.Selectors[idx]
+
+			if expectedSel.SelectorType != actualSel.SelectorType {
+				return fmt.Errorf("database based selector type did not match within rule %s", *expectedRule.Name)
+			}
+
+			//TODO(ja) we don't seem to do anything with label based selectors?
+			//if expectedSel.SelectorType == client.DatabaseLabelsDatabaseSubSelectorType {
+			//	expectedSubSel := expectedSel.Selector.(*client.DatabaseLabelsBasedSubSelector)
+			//	actualSubSel := actualSel.Selector.(*client.DatabaseLabelsBasedSubSelector)
+			//
+			//	expectedSubSel.Labels = fillNamedObjectValues(expectedSubSel.Labels, actualSubSel.Labels)
+			//}
+		}
 	case client.ServerBasedResourceSelectorType:
 		expectedResourceSelector := expectedRule.ResourceSelector.(*client.ServerBasedResourceSelector)
 		actualResourceSelector := actualRule.ResourceSelector.(*client.ServerBasedResourceSelector)
@@ -438,7 +512,7 @@ func insertComputedValuesForSecurityPolicyRule(expectedRule *client.SecurityPoli
 			actualSel := actualResourceSelector.Selectors[idx]
 
 			if expectedSel.SelectorType != actualSel.SelectorType {
-				return fmt.Errorf("server based selector type did not match within rule %s", *expectedRule.Name)
+				return fmt.Errorf("secret based selector type did not match within rule %s", *expectedRule.Name)
 			}
 
 			if expectedSel.SelectorType == client.SecretFolderSubSelectorType {
@@ -463,8 +537,8 @@ func insertComputedValuesForSecurityPolicyRule(expectedRule *client.SecurityPoli
 
 func testAccSecurityPolicyCheckDestroy(securityPolicyName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := getLocalClientFromMetadata(testAccProvider.Meta())
-		securityPolicies, err := client.ListSecurityPolicies(context.Background())
+		opaClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		securityPolicies, err := opaClient.ListSecurityPolicies(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting security policies: %w", err)
 		}
@@ -542,6 +616,56 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 				request_type_id = "wxyz"
 				request_type_name = "bar"
 				expires_after_seconds = 1800
+			}
+		}
+	}
+}
+`
+
+func createTestAccDatabaseSecurityPolicyCreateConfig(groupName string, securityPolicyName string, databaseCanonicalName string) string {
+	tmpl, err := template.New("config").Parse(testAccDatabaseSecurityPolicyCreateConfigFormat)
+	if err != nil {
+		panic(err)
+	}
+	var buffer bytes.Buffer
+	type Values struct {
+		GroupName             string
+		SecurityPolicyName    string
+		DatabaseCanonicalName string
+	}
+	if err := tmpl.Execute(&buffer, Values{GroupName: groupName, DatabaseCanonicalName: databaseCanonicalName, SecurityPolicyName: securityPolicyName}); err != nil {
+		panic(err)
+	}
+
+	return buffer.String()
+}
+
+const testAccDatabaseSecurityPolicyCreateConfigFormat = `
+resource "oktapam_group" "test_security_policy_group1" {
+	name = "{{ .GroupName }}"
+}
+
+resource "oktapam_security_policy" "test_acc_security_policy" {
+	name = "{{ .SecurityPolicyName }}"
+	description = "allow access to database by its canonical name"
+	active = true
+	principals {
+		groups = [oktapam_group.test_security_policy_group1.id]
+	}
+	rule {
+		name = "database rule"
+		resources {
+			databases {
+				label_selectors {
+					database_labels = {
+						"system.canonical_name" = "{{ .DatabaseCanonicalName }}"
+					}
+				}
+			}
+		}
+		privileges {
+			password_checkout_database {
+				enabled = true
 			}
 		}
 	}

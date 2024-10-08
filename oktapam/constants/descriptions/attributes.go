@@ -6,8 +6,8 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/typed_strings"
 )
 
+// Attribute Descriptions
 var (
-	// Attribute Descriptions
 	ADConnectionID                            = "The UUID of an associated AD connection."
 	ADRuleAssignments                         = "The rules used to assign discovered servers to Projects."
 	ADRuleAssignmentsBaseDN                   = "The domain to search for servers."
@@ -127,6 +127,7 @@ var (
 	PeriodicRotationDurationInSeconds         = "If `periodic_rotation` is enabled, specifies how often passwords are rotated."
 	PrincipalGroupIDs                         = "The UUIDs of existing Groups."
 	PrivilegeEnabled                          = "If `true`, grants the privilege to Principals on matching resources."
+	PrivilegePasswordCheckoutDatabase         = "Defines the privilege to make databases connections to a database through an account with a vaulted password."
 	PrivilegePasswordCheckoutRDP              = "Defines the privilege to make RDP connections to a server with a vaulted password."
 	PrivilegePasswordCheckoutSSH              = "Defines the privilege to make SSH connections to a server with a vaulted password."
 	PrivilegePrincipalAccountRDP              = "Defines the privilege to make RDP connections to a server with the user's principal account."
@@ -161,9 +162,11 @@ var (
 	SecretID                      = "The UUID of the Secret."
 	SecretKeyValues               = "Defines the key value pairs that are used to store sensitive information, like usernames, passwords, API tokens, keys, or any string value."
 	SecurityPolicyActive          = "If true, indicates that the Security Policy is active."
+	SecurityPolicyDatabaseLabels  = "Defines a map of key-value pairs used to match databases by labels."
+	SecurityPolicyDatabases       = "Defines the database-based resources targeted by the Security Policy."
 	SecurityPolicyLabelSelectors  = "Defines the label selectors used to target resources by the Security Policy."
 	SecurityPolicyPrincipals      = "Defines the users bound to the Security Policy."
-	SecurityPolicyResouceGroup    = "The UUID of a specific Resource Group associated with the Security Policy. If undefined, the Security Policy applies to all resources for your Team. This value must be defined if the current user has the Delegated Security Admin role."
+	SecurityPolicyResourceGroup   = "The UUID of a specific Resource Group associated with the Security Policy. If undefined, the Security Policy applies to all resources for your Team. This value must be defined if the current user has the Delegated Security Admin role."
 	SecurityPolicyResources       = "Defines the resources targeted by the Security Policy."
 	SecurityPolicyRule            = "Defines the privileges available to resources matched to the Security Policy."
 	SecurityPolicySecret          = "Defines a specific Secret targeted by the Security Policy."

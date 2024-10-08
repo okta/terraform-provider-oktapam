@@ -57,11 +57,20 @@ Optional:
 
 Optional:
 
+- `password_checkout_database` (Block List, Max: 1) Defines the privilege to make databases connections to a database through an account with a vaulted password. (see [below for nested schema](#nestedblock--rule--privileges--password_checkout_database))
 - `password_checkout_rdp` (Block List, Max: 1) Defines the privilege to make RDP connections to a server with a vaulted password. (see [below for nested schema](#nestedblock--rule--privileges--password_checkout_rdp))
 - `password_checkout_ssh` (Block List, Max: 1) Defines the privilege to make SSH connections to a server with a vaulted password. (see [below for nested schema](#nestedblock--rule--privileges--password_checkout_ssh))
 - `principal_account_rdp` (Block List, Max: 1) Defines the privilege to make RDP connections to a server with the user's principal account. (see [below for nested schema](#nestedblock--rule--privileges--principal_account_rdp))
 - `principal_account_ssh` (Block List, Max: 1) Defines the privilege to make SSH connections to a server with the user's principal account. (see [below for nested schema](#nestedblock--rule--privileges--principal_account_ssh))
 - `secret` (Block List, Max: 1) Defines the privilege to operate on Secrets and Secret Folders. (see [below for nested schema](#nestedblock--rule--privileges--secret))
+
+<a id="nestedblock--rule--privileges--password_checkout_database"></a>
+### Nested Schema for `rule.privileges.password_checkout_database`
+
+Required:
+
+- `enabled` (Boolean) If `true`, grants the privilege to Principals on matching resources.
+
 
 <a id="nestedblock--rule--privileges--password_checkout_rdp"></a>
 ### Nested Schema for `rule.privileges.password_checkout_rdp`
@@ -139,8 +148,25 @@ Required:
 
 Optional:
 
+- `databases` (Block List, Max: 1) Defines the database-based resources targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--databases))
 - `secrets` (Block List, Max: 1) Defines the secret-based resources targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--secrets))
 - `servers` (Block List, Max: 1) Defines the server-based resources targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--servers))
+
+<a id="nestedblock--rule--resources--databases"></a>
+### Nested Schema for `rule.resources.databases`
+
+Optional:
+
+- `label_selectors` (Block List, Max: 1) Defines the label selectors used to target resources by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--databases--label_selectors))
+
+<a id="nestedblock--rule--resources--databases--label_selectors"></a>
+### Nested Schema for `rule.resources.databases.label_selectors`
+
+Required:
+
+- `database_labels` (Map of String) Defines a map of key-value pairs used to match databases by labels.
+
+
 
 <a id="nestedblock--rule--resources--secrets"></a>
 ### Nested Schema for `rule.resources.secrets`
