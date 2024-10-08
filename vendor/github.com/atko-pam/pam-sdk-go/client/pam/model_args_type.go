@@ -15,7 +15,7 @@ import (
 	"encoding/json"
 )
 
-// ArgsType The args_type are only allowed for 'executable' command type
+// ArgsType The `args_type` is only allowed for the 'executable' command type
 type ArgsType string
 
 // List of args_type
