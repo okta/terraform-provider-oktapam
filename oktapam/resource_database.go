@@ -57,6 +57,29 @@ var mysqlConnectionDetails = &schema.Resource{
 	},
 }
 
+var databaseRoles = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		attributes.Name: {
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: descriptions.DatabaseRoleName,
+		},
+		attributes.Type: {
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: descriptions.DatabaseRoleType,
+		},
+		attributes.Accounts: {
+			Type:        schema.TypeSet,
+			Required:    false,
+			MinItems:    1,
+			Optional:    true,
+			Description: descriptions.DatabaseRoleAccounts,
+			Elem:        &schema.Schema{Type: schema.TypeString},
+		},
+	},
+}
+
 var mySQLBasicAuthDetails = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		attributes.Username: {
@@ -105,6 +128,11 @@ func resourceDatabase() *schema.Resource {
 				Optional:    true,
 				Description: descriptions.CanonicalName,
 			},
+			attributes.NetworkAddress: {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: descriptions.NetworkAddress,
+			},
 			attributes.DatabaseType: {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -137,6 +165,12 @@ func resourceDatabase() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: descriptions.ManagementGatewaySelectorID,
+			},
+			attributes.Role: {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: descriptions.DatabaseRole,
+				Elem:        databaseRoles,
 			},
 		},
 		Importer: &schema.ResourceImporter{
