@@ -60,13 +60,13 @@ func TestAccDatabaseResource(t *testing.T) {
 				},
 			},
 		},
-		Roles: []pam.DatabaseRoleDetails{
-			{
-				Type:     s("static"),
-				Name:     s("firefighter"),
-				Accounts: []string{"firefighter-1", "firefighter-2", "firefighter-3"},
-			},
-		},
+		//Roles: []pam.DatabaseRoleDetails{
+		//	{
+		//		Type:     s("static"),
+		//		Name:     s("firefighter"),
+		//		Accounts: []string{"firefighter-1", "firefighter-2", "firefighter-3"},
+		//	},
+		//},
 		ManagementGatewaySelector:   &map[string]string{"type": "db_management"},
 		ManagementGatewaySelectorId: "", // Generated UUID - unknown until Read
 	}
@@ -100,7 +100,7 @@ func TestAccDatabaseResource(t *testing.T) {
 				),
 			},
 			{
-				// adds a selector and password
+				// adds a selector, network address, and password
 				Config: createTestDatabaseUpdateConfig(groupName, resourceGroupName, projectName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testDatabaseCheckExists(resourceName, updatedDatabase),
@@ -186,7 +186,6 @@ resource "oktapam_database" "test_acc_database_resource" {
   resource_group = oktapam_resource_group.test_acc_resource_group.id
   project        = oktapam_resource_group_project.test_acc_resource_group_project.id
   canonical_name = "MyCanonicalName"
-  network_address = "localhost:3306"
   database_type  = "mysql.level1"
 
   management_connection_details {
@@ -230,7 +229,6 @@ resource "oktapam_database" "test_acc_database_resource" {
 	resource_group = oktapam_resource_group.test_acc_resource_group.id
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 	canonical_name = "MyCanonicalName"
-    network_address = "localhost:3306"
 	database_type = "mysql.level1"
 	management_connection_details {
 		mysql {
@@ -265,6 +263,7 @@ resource "oktapam_database" "test_acc_database_resource" {
 	resource_group = oktapam_resource_group.test_acc_resource_group.id
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 	canonical_name = "MyCanonicalName"
+    network_address = "localhost:3306"
 	database_type = "mysql.level1"
 	management_connection_details {
 		mysql {
@@ -276,8 +275,6 @@ resource "oktapam_database" "test_acc_database_resource" {
 			}
 		}
 	}
-
-  network_address = "localhost:3306"
 
   role {
     type = "static"

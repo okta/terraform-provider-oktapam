@@ -184,6 +184,7 @@ func resourceDatabaseCreate(ctx context.Context, d *schema.ResourceData, m any) 
 	resourceGroupID := d.Get(attributes.ResourceGroup).(string)
 	projectID := d.Get(attributes.Project).(string)
 	canonicalName := d.Get(attributes.CanonicalName).(string)
+	networkAddress := d.Get(attributes.NetworkAddress).(string)
 	dbType := d.Get(attributes.DatabaseType).(string)
 
 	selectorLabels, err := GetMapPtrFromResource[string](attributes.ManagementGatewaySelector, d)
@@ -196,7 +197,7 @@ func resourceDatabaseCreate(ctx context.Context, d *schema.ResourceData, m any) 
 		return err
 	}
 
-	if createdDb, err := client.CreateDatabase(ctx, c, resourceGroupID, projectID, canonicalName, dbType, mgmtType, *mgmtDetails, selectorLabels); err != nil {
+	if createdDb, err := client.CreateDatabase(ctx, c, resourceGroupID, projectID, canonicalName, networkAddress, dbType, mgmtType, *mgmtDetails, selectorLabels); err != nil {
 		return diag.FromErr(err)
 	} else if createdDb == nil {
 		d.SetId("")
@@ -235,6 +236,7 @@ func resourceDatabaseUpdate(ctx context.Context, d *schema.ResourceData, m any) 
 	resourceGroupID := d.Get(attributes.ResourceGroup).(string)
 	projectID := d.Get(attributes.Project).(string)
 	canonicalName := d.Get(attributes.CanonicalName).(string)
+	networkAddress := d.Get(attributes.NetworkAddress).(string)
 	dbType := d.Get(attributes.DatabaseType).(string)
 
 	selectorLabels, err := GetMapPtrFromResource[string](attributes.ManagementGatewaySelector, d)
@@ -247,7 +249,7 @@ func resourceDatabaseUpdate(ctx context.Context, d *schema.ResourceData, m any) 
 		return err
 	}
 
-	if err := client.UpdateDatabase(ctx, c, dbID, resourceGroupID, projectID, canonicalName, dbType, mgmtType, *mgmtDetails, selectorLabels); err != nil {
+	if err := client.UpdateDatabase(ctx, c, dbID, resourceGroupID, projectID, canonicalName, networkAddress, dbType, mgmtType, *mgmtDetails, selectorLabels); err != nil {
 		return diag.FromErr(err)
 	}
 
