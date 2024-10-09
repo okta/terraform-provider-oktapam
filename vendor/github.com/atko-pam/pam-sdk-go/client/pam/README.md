@@ -293,6 +293,7 @@ Class | Method | HTTP request | Description
  - [DatabaseResourceResponse](docs/DatabaseResourceResponse.md)
  - [DatabaseResourceStaticAccountCreateOrUpdateRequest](docs/DatabaseResourceStaticAccountCreateOrUpdateRequest.md)
  - [DatabaseResourceStaticAccountResponse](docs/DatabaseResourceStaticAccountResponse.md)
+ - [DatabaseRoleDetails](docs/DatabaseRoleDetails.md)
  - [DatabaseType](docs/DatabaseType.md)
  - [DeleteSecretFolderForbiddenResponse](docs/DeleteSecretFolderForbiddenResponse.md)
  - [DeleteSecretForbiddenResponse](docs/DeleteSecretForbiddenResponse.md)

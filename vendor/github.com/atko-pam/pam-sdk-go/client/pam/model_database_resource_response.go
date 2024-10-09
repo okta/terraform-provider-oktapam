@@ -35,7 +35,8 @@ type DatabaseResourceResponse struct {
 	// A selector is composed of key-value pairs and is used to dynamically allocate tasks to Gateways for Database Resources. Only those Gateways that match the criteria defined by the selector are eligible to claim and execute the work.
 	ManagementGatewaySelector *map[string]string `json:"management_gateway_selector,omitempty"`
 	// The ID of the selector used to identify the Gateway associated with the Database Resource
-	ManagementGatewaySelectorId string `json:"management_gateway_selector_id"`
+	ManagementGatewaySelectorId string                `json:"management_gateway_selector_id"`
+	Roles                       []DatabaseRoleDetails `json:"roles,omitempty"`
 	// A timestamp that indicates when the Database Resource was created
 	CreatedAt time.Time `json:"created_at"`
 	// A timestamp that indicates when the Database Resource was updated
@@ -316,6 +317,39 @@ func (o *DatabaseResourceResponse) SetManagementGatewaySelectorId(v string) *Dat
 	return o
 }
 
+// GetRoles returns the Roles field value if set, zero value otherwise.
+func (o *DatabaseResourceResponse) GetRoles() []DatabaseRoleDetails {
+	if o == nil || IsNil(o.Roles) {
+		var ret []DatabaseRoleDetails
+		return ret
+	}
+	return o.Roles
+}
+
+// GetRolesOk returns a tuple with the Roles field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *DatabaseResourceResponse) GetRolesOk() ([]DatabaseRoleDetails, bool) {
+	if o == nil || IsNil(o.Roles) {
+		return nil, false
+	}
+	return o.Roles, true
+}
+
+// HasRoles returns a boolean if a field has been set.
+func (o *DatabaseResourceResponse) HasRoles() bool {
+	if o != nil && !IsNil(o.Roles) {
+		return true
+	}
+
+	return false
+}
+
+// SetRoles gets a reference to the given []DatabaseRoleDetails and assigns it to the Roles field.
+func (o *DatabaseResourceResponse) SetRoles(v []DatabaseRoleDetails) *DatabaseResourceResponse {
+	o.Roles = v
+	return o
+}
+
 // GetCreatedAt returns the CreatedAt field value
 func (o *DatabaseResourceResponse) GetCreatedAt() time.Time {
 	if o == nil {
@@ -391,6 +425,9 @@ func (o DatabaseResourceResponse) ToMap() (map[string]interface{}, error) {
 		toSerialize["management_gateway_selector"] = o.ManagementGatewaySelector
 	}
 	toSerialize["management_gateway_selector_id"] = o.ManagementGatewaySelectorId
+	if !IsNil(o.Roles) {
+		toSerialize["roles"] = o.Roles
+	}
 	toSerialize["created_at"] = o.CreatedAt
 	toSerialize["updated_at"] = o.UpdatedAt
 	return toSerialize, nil

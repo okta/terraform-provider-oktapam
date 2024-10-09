@@ -18,21 +18,19 @@ func TestAccDatabaseResource(t *testing.T) {
 	groupName := fmt.Sprintf("test_acc_group_%s", randSeq())
 	resourceGroupName := fmt.Sprintf("test_acc_resource_group_%s", randSeq())
 	projectName := fmt.Sprintf("test_acc_project_%s", randSeq())
-	mySQLBasicAuth := MySqlBasicAuth
 
 	networkAddress := "localhost:3306"
 
 	initialDatabase := &pam.DatabaseResourceResponse{
 		CanonicalName:                   "MyCanonicalName",
-		NetworkAddress:                  &networkAddress,
 		DatabaseType:                    "mysql.level1",
 		RecipeBookId:                    nil,
-		ManagementConnectionDetailsType: MySqlBasicAuth,
+		ManagementConnectionDetailsType: MySQLBasicAuth,
 		ManagementConnectionDetails: pam.ManagementConnectionDetails{
 			MySQLBasicAuthManagementConnectionDetails: &pam.MySQLBasicAuthManagementConnectionDetails{
 				Hostname: "mysql.example.org",
 				Port:     "3306",
-				Type:     &mySQLBasicAuth,
+				Type:     s(MySQLBasicAuth),
 				AuthDetails: pam.MySQLBasicAuthDetails{
 					Username:    "user",
 					PasswordJwe: nil,
@@ -49,17 +47,24 @@ func TestAccDatabaseResource(t *testing.T) {
 		NetworkAddress:                  &networkAddress,
 		DatabaseType:                    "mysql.level1",
 		RecipeBookId:                    nil,
-		ManagementConnectionDetailsType: MySqlBasicAuth,
+		ManagementConnectionDetailsType: MySQLBasicAuth,
 		ManagementConnectionDetails: pam.ManagementConnectionDetails{
 			MySQLBasicAuthManagementConnectionDetails: &pam.MySQLBasicAuthManagementConnectionDetails{
 				Hostname: "mysql.example.org",
 				Port:     "3306",
-				Type:     &mySQLBasicAuth,
+				Type:     s(MySQLBasicAuth),
 				AuthDetails: pam.MySQLBasicAuthDetails{
 					Username:    "user",
 					PasswordJwe: nil, // this is only used for POST/PUT, not GET
 					SecretId:    nil, // Generated UUID - unknown until Read
 				},
+			},
+		},
+		Roles: []pam.DatabaseRoleDetails{
+			{
+				Type:     s("static"),
+				Name:     s("firefighter"),
+				Accounts: []string{"firefighter-1", "firefighter-2", "firefighter-3"},
 			},
 		},
 		ManagementGatewaySelector:   &map[string]string{"type": "db_management"},
@@ -260,7 +265,6 @@ resource "oktapam_database" "test_acc_database_resource" {
 	resource_group = oktapam_resource_group.test_acc_resource_group.id
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 	canonical_name = "MyCanonicalName"
-    network_address = "localhost:3306"
 	database_type = "mysql.level1"
 	management_connection_details {
 		mysql {
@@ -412,4 +416,8 @@ func testAccDatabaseImportStateId(resourceName string) resource.ImportStateIdFun
 		}
 		return fmt.Sprintf("%s/%s/%s", rs.Primary.Attributes[attributes.ResourceGroup], rs.Primary.Attributes[attributes.Project], rs.Primary.Attributes[attributes.ID]), nil
 	}
+}
+
+func s(in string) *string {
+	return &in
 }

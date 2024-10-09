@@ -31,6 +31,7 @@ type DatabaseResourceCreateOrUpdateRequest struct {
 	ManagementGatewaySelector       *map[string]string              `json:"management_gateway_selector,omitempty"`
 	ManagementConnectionDetailsType ManagementConnectionDetailsType `json:"management_connection_details_type"`
 	ManagementConnectionDetails     ManagementConnectionDetails     `json:"management_connection_details"`
+	Roles                           []DatabaseRoleDetails           `json:"roles,omitempty"`
 }
 
 // NewDatabaseResourceCreateOrUpdateRequest instantiates a new DatabaseResourceCreateOrUpdateRequest object
@@ -253,6 +254,39 @@ func (o *DatabaseResourceCreateOrUpdateRequest) SetManagementConnectionDetails(v
 	return o
 }
 
+// GetRoles returns the Roles field value if set, zero value otherwise.
+func (o *DatabaseResourceCreateOrUpdateRequest) GetRoles() []DatabaseRoleDetails {
+	if o == nil || IsNil(o.Roles) {
+		var ret []DatabaseRoleDetails
+		return ret
+	}
+	return o.Roles
+}
+
+// GetRolesOk returns a tuple with the Roles field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *DatabaseResourceCreateOrUpdateRequest) GetRolesOk() ([]DatabaseRoleDetails, bool) {
+	if o == nil || IsNil(o.Roles) {
+		return nil, false
+	}
+	return o.Roles, true
+}
+
+// HasRoles returns a boolean if a field has been set.
+func (o *DatabaseResourceCreateOrUpdateRequest) HasRoles() bool {
+	if o != nil && !IsNil(o.Roles) {
+		return true
+	}
+
+	return false
+}
+
+// SetRoles gets a reference to the given []DatabaseRoleDetails and assigns it to the Roles field.
+func (o *DatabaseResourceCreateOrUpdateRequest) SetRoles(v []DatabaseRoleDetails) *DatabaseResourceCreateOrUpdateRequest {
+	o.Roles = v
+	return o
+}
+
 func (o DatabaseResourceCreateOrUpdateRequest) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -276,6 +310,9 @@ func (o DatabaseResourceCreateOrUpdateRequest) ToMap() (map[string]interface{}, 
 	}
 	toSerialize["management_connection_details_type"] = o.ManagementConnectionDetailsType
 	toSerialize["management_connection_details"] = o.ManagementConnectionDetails
+	if !IsNil(o.Roles) {
+		toSerialize["roles"] = o.Roles
+	}
 	return toSerialize, nil
 }
 

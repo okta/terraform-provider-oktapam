@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	MySqlBasicAuth = "mysql.basic_auth"
+	MySQLBasicAuth = "mysql.basic_auth"
 )
 
 var dbConnectionTypes = &schema.Resource{
@@ -322,7 +322,7 @@ func mgmtConnectionDetailsFromResource(_ context.Context, pamClient client.SDKCl
 
 func getDatabaseManagementType(details *pam.ManagementConnectionDetails) string {
 	if details.MySQLBasicAuthManagementConnectionDetails != nil {
-		return MySqlBasicAuth
+		return MySQLBasicAuth
 	}
 	return ""
 }
