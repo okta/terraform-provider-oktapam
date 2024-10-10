@@ -20,10 +20,8 @@ var _ MappedNullable = &ActiveDirectoryAccountRuleRequest{}
 
 // ActiveDirectoryAccountRuleRequest struct for ActiveDirectoryAccountRuleRequest
 type ActiveDirectoryAccountRuleRequest struct {
-	// The name of the Active Directory domain
-	DomainName *string `json:"domain_name,omitempty"`
 	// The name of the Active Directory account rule
-	RuleName *string `json:"rule_name,omitempty"`
+	Name *string `json:"name,omitempty"`
 	// The type of the Active Directory account rule
 	RuleType *string `json:"rule_type,omitempty"`
 	// The list of organizational units to discover individual accounts from
@@ -49,69 +47,36 @@ func NewActiveDirectoryAccountRuleRequestWithDefaults() *ActiveDirectoryAccountR
 	return &this
 }
 
-// GetDomainName returns the DomainName field value if set, zero value otherwise.
-func (o *ActiveDirectoryAccountRuleRequest) GetDomainName() string {
-	if o == nil || IsNil(o.DomainName) {
+// GetName returns the Name field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountRuleRequest) GetName() string {
+	if o == nil || IsNil(o.Name) {
 		var ret string
 		return ret
 	}
-	return *o.DomainName
+	return *o.Name
 }
 
-// GetDomainNameOk returns a tuple with the DomainName field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ActiveDirectoryAccountRuleRequest) GetDomainNameOk() (*string, bool) {
-	if o == nil || IsNil(o.DomainName) {
+func (o *ActiveDirectoryAccountRuleRequest) GetNameOk() (*string, bool) {
+	if o == nil || IsNil(o.Name) {
 		return nil, false
 	}
-	return o.DomainName, true
+	return o.Name, true
 }
 
-// HasDomainName returns a boolean if a field has been set.
-func (o *ActiveDirectoryAccountRuleRequest) HasDomainName() bool {
-	if o != nil && !IsNil(o.DomainName) {
+// HasName returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountRuleRequest) HasName() bool {
+	if o != nil && !IsNil(o.Name) {
 		return true
 	}
 
 	return false
 }
 
-// SetDomainName gets a reference to the given string and assigns it to the DomainName field.
-func (o *ActiveDirectoryAccountRuleRequest) SetDomainName(v string) *ActiveDirectoryAccountRuleRequest {
-	o.DomainName = &v
-	return o
-}
-
-// GetRuleName returns the RuleName field value if set, zero value otherwise.
-func (o *ActiveDirectoryAccountRuleRequest) GetRuleName() string {
-	if o == nil || IsNil(o.RuleName) {
-		var ret string
-		return ret
-	}
-	return *o.RuleName
-}
-
-// GetRuleNameOk returns a tuple with the RuleName field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *ActiveDirectoryAccountRuleRequest) GetRuleNameOk() (*string, bool) {
-	if o == nil || IsNil(o.RuleName) {
-		return nil, false
-	}
-	return o.RuleName, true
-}
-
-// HasRuleName returns a boolean if a field has been set.
-func (o *ActiveDirectoryAccountRuleRequest) HasRuleName() bool {
-	if o != nil && !IsNil(o.RuleName) {
-		return true
-	}
-
-	return false
-}
-
-// SetRuleName gets a reference to the given string and assigns it to the RuleName field.
-func (o *ActiveDirectoryAccountRuleRequest) SetRuleName(v string) *ActiveDirectoryAccountRuleRequest {
-	o.RuleName = &v
+// SetName gets a reference to the given string and assigns it to the Name field.
+func (o *ActiveDirectoryAccountRuleRequest) SetName(v string) *ActiveDirectoryAccountRuleRequest {
+	o.Name = &v
 	return o
 }
 
@@ -257,11 +222,8 @@ func (o ActiveDirectoryAccountRuleRequest) MarshalJSON() ([]byte, error) {
 
 func (o ActiveDirectoryAccountRuleRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.DomainName) {
-		toSerialize["domain_name"] = o.DomainName
-	}
-	if !IsNil(o.RuleName) {
-		toSerialize["rule_name"] = o.RuleName
+	if !IsNil(o.Name) {
+		toSerialize["name"] = o.Name
 	}
 	if !IsNil(o.RuleType) {
 		toSerialize["rule_type"] = o.RuleType

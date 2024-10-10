@@ -21,16 +21,16 @@ var _ MappedNullable = &ActiveDirectoryAccountRuleResponse{}
 // ActiveDirectoryAccountRuleResponse struct for ActiveDirectoryAccountRuleResponse
 type ActiveDirectoryAccountRuleResponse struct {
 	Id interface{} `json:"id,omitempty"`
-	// The name of the Active Directory domain
-	DomainName *string `json:"domain_name,omitempty"`
 	// The name of the Active Directory account rule
-	RuleName *string `json:"rule_name,omitempty"`
+	Name *string `json:"name,omitempty"`
 	// The type of the Active Directory account rule
 	RuleType *string `json:"rule_type,omitempty"`
 	// The list of organizational units to discover individual accounts from
-	OrganizationalUnits []string     `json:"organizational_units,omitempty"`
-	ResourceGroup       *NamedObject `json:"resource_group,omitempty"`
-	Project             *NamedObject `json:"project,omitempty"`
+	OrganizationalUnits []string `json:"organizational_units,omitempty"`
+	// The priority of the Active Directory account rule
+	Priority      *int32       `json:"priority,omitempty"`
+	ResourceGroup *NamedObject `json:"resource_group,omitempty"`
+	Project       *NamedObject `json:"project,omitempty"`
 }
 
 // NewActiveDirectoryAccountRuleResponse instantiates a new ActiveDirectoryAccountRuleResponse object
@@ -84,69 +84,36 @@ func (o *ActiveDirectoryAccountRuleResponse) SetId(v interface{}) *ActiveDirecto
 	return o
 }
 
-// GetDomainName returns the DomainName field value if set, zero value otherwise.
-func (o *ActiveDirectoryAccountRuleResponse) GetDomainName() string {
-	if o == nil || IsNil(o.DomainName) {
+// GetName returns the Name field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountRuleResponse) GetName() string {
+	if o == nil || IsNil(o.Name) {
 		var ret string
 		return ret
 	}
-	return *o.DomainName
+	return *o.Name
 }
 
-// GetDomainNameOk returns a tuple with the DomainName field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ActiveDirectoryAccountRuleResponse) GetDomainNameOk() (*string, bool) {
-	if o == nil || IsNil(o.DomainName) {
+func (o *ActiveDirectoryAccountRuleResponse) GetNameOk() (*string, bool) {
+	if o == nil || IsNil(o.Name) {
 		return nil, false
 	}
-	return o.DomainName, true
+	return o.Name, true
 }
 
-// HasDomainName returns a boolean if a field has been set.
-func (o *ActiveDirectoryAccountRuleResponse) HasDomainName() bool {
-	if o != nil && !IsNil(o.DomainName) {
+// HasName returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountRuleResponse) HasName() bool {
+	if o != nil && !IsNil(o.Name) {
 		return true
 	}
 
 	return false
 }
 
-// SetDomainName gets a reference to the given string and assigns it to the DomainName field.
-func (o *ActiveDirectoryAccountRuleResponse) SetDomainName(v string) *ActiveDirectoryAccountRuleResponse {
-	o.DomainName = &v
-	return o
-}
-
-// GetRuleName returns the RuleName field value if set, zero value otherwise.
-func (o *ActiveDirectoryAccountRuleResponse) GetRuleName() string {
-	if o == nil || IsNil(o.RuleName) {
-		var ret string
-		return ret
-	}
-	return *o.RuleName
-}
-
-// GetRuleNameOk returns a tuple with the RuleName field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *ActiveDirectoryAccountRuleResponse) GetRuleNameOk() (*string, bool) {
-	if o == nil || IsNil(o.RuleName) {
-		return nil, false
-	}
-	return o.RuleName, true
-}
-
-// HasRuleName returns a boolean if a field has been set.
-func (o *ActiveDirectoryAccountRuleResponse) HasRuleName() bool {
-	if o != nil && !IsNil(o.RuleName) {
-		return true
-	}
-
-	return false
-}
-
-// SetRuleName gets a reference to the given string and assigns it to the RuleName field.
-func (o *ActiveDirectoryAccountRuleResponse) SetRuleName(v string) *ActiveDirectoryAccountRuleResponse {
-	o.RuleName = &v
+// SetName gets a reference to the given string and assigns it to the Name field.
+func (o *ActiveDirectoryAccountRuleResponse) SetName(v string) *ActiveDirectoryAccountRuleResponse {
+	o.Name = &v
 	return o
 }
 
@@ -213,6 +180,39 @@ func (o *ActiveDirectoryAccountRuleResponse) HasOrganizationalUnits() bool {
 // SetOrganizationalUnits gets a reference to the given []string and assigns it to the OrganizationalUnits field.
 func (o *ActiveDirectoryAccountRuleResponse) SetOrganizationalUnits(v []string) *ActiveDirectoryAccountRuleResponse {
 	o.OrganizationalUnits = v
+	return o
+}
+
+// GetPriority returns the Priority field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountRuleResponse) GetPriority() int32 {
+	if o == nil || IsNil(o.Priority) {
+		var ret int32
+		return ret
+	}
+	return *o.Priority
+}
+
+// GetPriorityOk returns a tuple with the Priority field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountRuleResponse) GetPriorityOk() (*int32, bool) {
+	if o == nil || IsNil(o.Priority) {
+		return nil, false
+	}
+	return o.Priority, true
+}
+
+// HasPriority returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountRuleResponse) HasPriority() bool {
+	if o != nil && !IsNil(o.Priority) {
+		return true
+	}
+
+	return false
+}
+
+// SetPriority gets a reference to the given int32 and assigns it to the Priority field.
+func (o *ActiveDirectoryAccountRuleResponse) SetPriority(v int32) *ActiveDirectoryAccountRuleResponse {
+	o.Priority = &v
 	return o
 }
 
@@ -295,17 +295,17 @@ func (o ActiveDirectoryAccountRuleResponse) ToMap() (map[string]interface{}, err
 	if o.Id != nil {
 		toSerialize["id"] = o.Id
 	}
-	if !IsNil(o.DomainName) {
-		toSerialize["domain_name"] = o.DomainName
-	}
-	if !IsNil(o.RuleName) {
-		toSerialize["rule_name"] = o.RuleName
+	if !IsNil(o.Name) {
+		toSerialize["name"] = o.Name
 	}
 	if !IsNil(o.RuleType) {
 		toSerialize["rule_type"] = o.RuleType
 	}
 	if !IsNil(o.OrganizationalUnits) {
 		toSerialize["organizational_units"] = o.OrganizationalUnits
+	}
+	if !IsNil(o.Priority) {
+		toSerialize["priority"] = o.Priority
 	}
 	if !IsNil(o.ResourceGroup) {
 		toSerialize["resource_group"] = o.ResourceGroup

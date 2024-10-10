@@ -63,7 +63,7 @@ func (a *PrivilegedAccountsAPIService) CreatePrivilegedAccountExecute(r ApiCreat
 		localVarReturnValue *PrivilegedAccount
 	)
 
-	localVarPath := "/v1/privileged-accounts"
+	localVarPath := "/v1/service_accounts"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -138,7 +138,7 @@ func (a *PrivilegedAccountsAPIService) DeletePrivilegedAccountExecute(r ApiDelet
 		formFiles          []formFile
 	)
 
-	localVarPath := "/v1/privileged-accounts/{privileged_account_id}"
+	localVarPath := "/v1/service_accounts/{privileged_account_id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"privileged_account_id"+"}", url.PathEscape(parameterValueToString(r.privilegedAccountId, "privilegedAccountId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -212,7 +212,7 @@ func (a *PrivilegedAccountsAPIService) GetPrivilegedAccountExecute(r ApiGetPrivi
 		localVarReturnValue *PrivilegedAccount
 	)
 
-	localVarPath := "/v1/privileged-accounts/{privileged_account_id}"
+	localVarPath := "/v1/service_accounts/{privileged_account_id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"privileged_account_id"+"}", url.PathEscape(parameterValueToString(r.privilegedAccountId, "privilegedAccountId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -281,7 +281,7 @@ func (a *PrivilegedAccountsAPIService) ListPrivilegedAccountsExecute(r ApiListPr
 		localVarReturnValue *ListPrivilegedAccountsResponse
 	)
 
-	localVarPath := "/v1/privileged-accounts"
+	localVarPath := "/v1/service_accounts"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -360,7 +360,7 @@ func (a *PrivilegedAccountsAPIService) UpdatePrivilegedAccountExecute(r ApiUpdat
 		localVarReturnValue *PrivilegedAccount
 	)
 
-	localVarPath := "/v1/privileged-accounts/{privileged_account_id}"
+	localVarPath := "/v1/service_accounts/{privileged_account_id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"privileged_account_id"+"}", url.PathEscape(parameterValueToString(r.privilegedAccountId, "privilegedAccountId")), -1)
 
 	localVarHeaderParams := make(map[string]string)

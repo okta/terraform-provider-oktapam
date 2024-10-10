@@ -273,6 +273,122 @@ func (a *ActiveDirectoryAccountsAPIService) CreateActiveDirectoryAccountRuleExec
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiDeleteActiveDirectoryAccountRuleRequest struct {
+	ctx             context.Context
+	ApiService      *ActiveDirectoryAccountsAPIService
+	teamName        string
+	adConnectionId  interface{}
+	adAccountRuleId interface{}
+}
+
+func (r ApiDeleteActiveDirectoryAccountRuleRequest) Execute() (*http.Response, error) {
+	return r.ApiService.DeleteActiveDirectoryAccountRuleExecute(r)
+}
+
+/*
+	DeleteActiveDirectoryAccountRule Delete an Active Directory Account Rule
+
+	    Deletes the Active Directory Account Rule
+
+This endpoint requires the following role: `resource_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param adConnectionId The UUID of a Active Directory Connection
+	    @param adAccountRuleId The UUID of a Active Directory account rule
+	@return ApiDeleteActiveDirectoryAccountRuleRequest
+*/
+func (a *ActiveDirectoryAccountsAPIService) DeleteActiveDirectoryAccountRule(ctx context.Context, teamName string, adConnectionId interface{}, adAccountRuleId interface{}) ApiDeleteActiveDirectoryAccountRuleRequest {
+	return ApiDeleteActiveDirectoryAccountRuleRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		adConnectionId:  adConnectionId,
+		adAccountRuleId: adAccountRuleId,
+	}
+}
+
+// Execute executes the request
+func (a *ActiveDirectoryAccountsAPIService) DeleteActiveDirectoryAccountRuleExecute(r ApiDeleteActiveDirectoryAccountRuleRequest) (*http.Response, error) {
+	var (
+		traceKey           = "activedirectoryaccountsapi.deleteActiveDirectoryAccountRule"
+		localVarHTTPMethod = http.MethodDelete
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_assignment/active_directory/{ad_connection_id}/rules/{ad_account_rule_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"ad_connection_id"+"}", url.PathEscape(parameterValueToString(r.adConnectionId, "adConnectionId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"ad_account_rule_id"+"}", url.PathEscape(parameterValueToString(r.adAccountRuleId, "adAccountRuleId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
+	if localVarHTTPResponse.StatusCode == 401 {
+
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v UnauthorizedAccessResponse
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return localVarHTTPResponse, nonDefaultResponse
+	}
+	if localVarHTTPResponse.StatusCode == 404 {
+
+		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+		localVarHTTPResponse.Body.Close()
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		if err != nil {
+			return localVarHTTPResponse, err
+		}
+
+		var nonDefaultResponse ErrNonDefaultResponse
+		var v NotFoundResponse
+		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			return localVarHTTPResponse, err
+		}
+		nonDefaultResponse.Result = v
+		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+		return localVarHTTPResponse, nonDefaultResponse
+	}
+
+	return localVarHTTPResponse, err
+}
+
 type ApiGetActiveDirectoryAccountRequest struct {
 	ctx            context.Context
 	ApiService     *ActiveDirectoryAccountsAPIService

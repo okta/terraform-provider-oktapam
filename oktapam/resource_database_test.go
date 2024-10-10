@@ -30,7 +30,7 @@ func TestAccDatabaseResource(t *testing.T) {
 			MySQLBasicAuthManagementConnectionDetails: &pam.MySQLBasicAuthManagementConnectionDetails{
 				Hostname: "mysql.example.org",
 				Port:     "3306",
-				Type:     s(MySQLBasicAuth),
+				Type:     pam.PtrString(MySQLBasicAuth),
 				AuthDetails: pam.MySQLBasicAuthDetails{
 					Username:    "user",
 					PasswordJwe: nil,
@@ -52,7 +52,7 @@ func TestAccDatabaseResource(t *testing.T) {
 			MySQLBasicAuthManagementConnectionDetails: &pam.MySQLBasicAuthManagementConnectionDetails{
 				Hostname: "mysql.example.org",
 				Port:     "3306",
-				Type:     s(MySQLBasicAuth),
+				Type:     pam.PtrString(MySQLBasicAuth),
 				AuthDetails: pam.MySQLBasicAuthDetails{
 					Username:    "user",
 					PasswordJwe: nil, // this is only used for POST/PUT, not GET
@@ -60,13 +60,13 @@ func TestAccDatabaseResource(t *testing.T) {
 				},
 			},
 		},
-		//Roles: []pam.DatabaseRoleDetails{
-		//	{
-		//		Type:     s("static"),
-		//		Name:     s("firefighter"),
-		//		Accounts: []string{"firefighter-1", "firefighter-2", "firefighter-3"},
-		//	},
-		//},
+		Roles: []pam.DatabaseRoleDetails{
+			{
+				Type:     "static",
+				Name:     "firefighter",
+				Accounts: []string{"firefighter-1", "firefighter-2", "firefighter-3"},
+			},
+		},
 		ManagementGatewaySelector:   &map[string]string{"type": "db_management"},
 		ManagementGatewaySelectorId: "", // Generated UUID - unknown until Read
 	}
@@ -226,6 +226,17 @@ resource "oktapam_resource_group_project" "test_acc_resource_group_project" {
 	account_discovery 	 = true
 }
 resource "oktapam_database" "test_acc_database_resource" {
+  role {
+    type = "static"
+    name = "example"
+    accounts = ["user-1", "user-2"]
+  }
+  role {
+    type = "static"
+    name = "example2"
+    accounts = ["user-3", "user-4"]
+  }
+
 	resource_group = oktapam_resource_group.test_acc_resource_group.id
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 	canonical_name = "MyCanonicalName"
@@ -413,8 +424,4 @@ func testAccDatabaseImportStateId(resourceName string) resource.ImportStateIdFun
 		}
 		return fmt.Sprintf("%s/%s/%s", rs.Primary.Attributes[attributes.ResourceGroup], rs.Primary.Attributes[attributes.Project], rs.Primary.Attributes[attributes.ID]), nil
 	}
-}
-
-func s(in string) *string {
-	return &in
 }

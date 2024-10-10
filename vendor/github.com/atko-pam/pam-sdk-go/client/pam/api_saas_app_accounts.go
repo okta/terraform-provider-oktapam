@@ -29,13 +29,6 @@ type ApiGetOktaUDPrivilegedAccountEndUserRequest struct {
 	ApiService                      *SaasAppAccountsAPIService
 	teamName                        string
 	oktaUniversalDirectoryAccountId string
-	includeCheckoutDetails          *bool
-}
-
-// If &#x60;true&#x60;, include checkout details while fetching resource details
-func (r ApiGetOktaUDPrivilegedAccountEndUserRequest) IncludeCheckoutDetails(includeCheckoutDetails bool) ApiGetOktaUDPrivilegedAccountEndUserRequest {
-	r.includeCheckoutDetails = &includeCheckoutDetails
-	return r
 }
 
 func (r ApiGetOktaUDPrivilegedAccountEndUserRequest) Execute() (*PrivilegedAccountEndUser, *http.Response, error) {
@@ -83,9 +76,6 @@ func (a *SaasAppAccountsAPIService) GetOktaUDPrivilegedAccountEndUserExecute(r A
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.includeCheckoutDetails != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_checkout_details", r.includeCheckoutDetails, "")
-	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -113,18 +103,11 @@ func (a *SaasAppAccountsAPIService) GetOktaUDPrivilegedAccountEndUserExecute(r A
 }
 
 type ApiGetSaaSApplicationPrivilegedAccountEndUserRequest struct {
-	ctx                    context.Context
-	ApiService             *SaasAppAccountsAPIService
-	teamName               string
-	saasAppInstanceId      string
-	saasAppAccountId       string
-	includeCheckoutDetails *bool
-}
-
-// If &#x60;true&#x60;, include checkout details while fetching resource details
-func (r ApiGetSaaSApplicationPrivilegedAccountEndUserRequest) IncludeCheckoutDetails(includeCheckoutDetails bool) ApiGetSaaSApplicationPrivilegedAccountEndUserRequest {
-	r.includeCheckoutDetails = &includeCheckoutDetails
-	return r
+	ctx               context.Context
+	ApiService        *SaasAppAccountsAPIService
+	teamName          string
+	saasAppInstanceId string
+	saasAppAccountId  string
 }
 
 func (r ApiGetSaaSApplicationPrivilegedAccountEndUserRequest) Execute() (*PrivilegedAccountEndUser, *http.Response, error) {
@@ -175,9 +158,6 @@ func (a *SaasAppAccountsAPIService) GetSaaSApplicationPrivilegedAccountEndUserEx
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.includeCheckoutDetails != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_checkout_details", r.includeCheckoutDetails, "")
-	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -475,14 +455,13 @@ func (a *SaasAppAccountsAPIService) ListAllSaasAppAccountsForSecurityAdminExecut
 }
 
 type ApiListOktaUDPrivilegedAccountsEndUserRequest struct {
-	ctx                    context.Context
-	ApiService             *SaasAppAccountsAPIService
-	teamName               string
-	count                  *int32
-	prev                   *bool
-	offset                 *string
-	descending             *bool
-	includeCheckoutDetails *bool
+	ctx        context.Context
+	ApiService *SaasAppAccountsAPIService
+	teamName   string
+	count      *int32
+	prev       *bool
+	offset     *string
+	descending *bool
 }
 
 // The number of objects per page
@@ -506,12 +485,6 @@ func (r ApiListOktaUDPrivilegedAccountsEndUserRequest) Offset(offset string) Api
 // The object order
 func (r ApiListOktaUDPrivilegedAccountsEndUserRequest) Descending(descending bool) ApiListOktaUDPrivilegedAccountsEndUserRequest {
 	r.descending = &descending
-	return r
-}
-
-// If &#x60;true&#x60;, include checkout details while fetching resource details
-func (r ApiListOktaUDPrivilegedAccountsEndUserRequest) IncludeCheckoutDetails(includeCheckoutDetails bool) ApiListOktaUDPrivilegedAccountsEndUserRequest {
-	r.includeCheckoutDetails = &includeCheckoutDetails
 	return r
 }
 
@@ -568,9 +541,6 @@ func (a *SaasAppAccountsAPIService) ListOktaUDPrivilegedAccountsEndUserExecute(r
 	}
 	if r.descending != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
-	}
-	if r.includeCheckoutDetails != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_checkout_details", r.includeCheckoutDetails, "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -701,15 +671,14 @@ func (a *SaasAppAccountsAPIService) ListResourceGroupProjectSaasAppAccountsExecu
 }
 
 type ApiListSaaSApplicationPrivilegedAccountsEndUserRequest struct {
-	ctx                    context.Context
-	ApiService             *SaasAppAccountsAPIService
-	teamName               string
-	saasAppInstanceId      string
-	count                  *int32
-	prev                   *bool
-	offset                 *string
-	descending             *bool
-	includeCheckoutDetails *bool
+	ctx               context.Context
+	ApiService        *SaasAppAccountsAPIService
+	teamName          string
+	saasAppInstanceId string
+	count             *int32
+	prev              *bool
+	offset            *string
+	descending        *bool
 }
 
 // The number of objects per page
@@ -733,12 +702,6 @@ func (r ApiListSaaSApplicationPrivilegedAccountsEndUserRequest) Offset(offset st
 // The object order
 func (r ApiListSaaSApplicationPrivilegedAccountsEndUserRequest) Descending(descending bool) ApiListSaaSApplicationPrivilegedAccountsEndUserRequest {
 	r.descending = &descending
-	return r
-}
-
-// If &#x60;true&#x60;, include checkout details while fetching resource details
-func (r ApiListSaaSApplicationPrivilegedAccountsEndUserRequest) IncludeCheckoutDetails(includeCheckoutDetails bool) ApiListSaaSApplicationPrivilegedAccountsEndUserRequest {
-	r.includeCheckoutDetails = &includeCheckoutDetails
 	return r
 }
 
@@ -798,9 +761,6 @@ func (a *SaasAppAccountsAPIService) ListSaaSApplicationPrivilegedAccountsEndUser
 	}
 	if r.descending != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
-	}
-	if r.includeCheckoutDetails != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_checkout_details", r.includeCheckoutDetails, "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}

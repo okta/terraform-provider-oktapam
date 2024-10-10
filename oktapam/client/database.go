@@ -20,11 +20,12 @@ func GetDatabase(ctx context.Context, sdkClient SDKClientWrapper, resourceGroupI
 	return resp, nil
 }
 
-func CreateDatabase(ctx context.Context, sdkClient SDKClientWrapper, resourceGroupID string, projectID string, canonicalName string, networkAddress string, databaseType string, managementConnectionDetailsType string, managementConnectionDetails pam.ManagementConnectionDetails, selector *map[string]string) (*pam.DatabaseResourceResponse, error) {
+func CreateDatabase(ctx context.Context, sdkClient SDKClientWrapper, resourceGroupID, projectID, canonicalName, networkAddress, databaseType, managementConnectionDetailsType string, managementConnectionDetails pam.ManagementConnectionDetails, databaseRoles []pam.DatabaseRoleDetails, selector *map[string]string) (*pam.DatabaseResourceResponse, error) {
 	payload := pam.NewDatabaseResourceCreateOrUpdateRequest(canonicalName, pam.DatabaseType(databaseType), pam.ManagementConnectionDetailsType(managementConnectionDetailsType), managementConnectionDetails)
 	if networkAddress != "" {
 		payload.NetworkAddress = &networkAddress
 	}
+	payload.Roles = databaseRoles
 	payload.ManagementGatewaySelector = selector
 	request := sdkClient.SDKClient.DatabaseResourcesAPI.
 		CreateDatabaseResource(ctx, sdkClient.Team, resourceGroupID, projectID).
@@ -42,11 +43,12 @@ func CreateDatabase(ctx context.Context, sdkClient SDKClientWrapper, resourceGro
 	return resp, nil
 }
 
-func UpdateDatabase(ctx context.Context, sdkClient SDKClientWrapper, dbID, resourceGroupID, projectID, canonicalName, networkAddress, databaseType, managementConnectionDetailsType string, managementConnectionDetails pam.ManagementConnectionDetails, selector *map[string]string) error {
+func UpdateDatabase(ctx context.Context, sdkClient SDKClientWrapper, dbID, resourceGroupID, projectID, canonicalName, networkAddress, databaseType, managementConnectionDetailsType string, managementConnectionDetails pam.ManagementConnectionDetails, selector *map[string]string, dbRoles []pam.DatabaseRoleDetails) error {
 	payload := pam.NewDatabaseResourceCreateOrUpdateRequest(canonicalName, pam.DatabaseType(databaseType), pam.ManagementConnectionDetailsType(managementConnectionDetailsType), managementConnectionDetails)
 	if networkAddress != "" {
 		payload.NetworkAddress = &networkAddress
 	}
+	payload.Roles = dbRoles
 	payload.ManagementGatewaySelector = selector
 	request := sdkClient.SDKClient.DatabaseResourcesAPI.
 		UpdateDatabaseResource(ctx, sdkClient.Team, resourceGroupID, projectID, dbID).

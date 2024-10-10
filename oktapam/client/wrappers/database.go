@@ -46,6 +46,10 @@ func (w DatabaseResourceResponseWrapper) ToResourceMap(o attributeOverrides) map
 	m[attributes.NetworkAddress] = w.GetNetworkAddress()
 	m[attributes.DatabaseType] = w.GetDatabaseType()
 	m[attributes.RecipeBook] = w.GetRecipeBookId()
+	if w.GetRoles() != nil {
+		m[attributes.Roles] = w.GetRoles()
+	}
+
 	if selectorID, ok := w.GetManagementGatewaySelectorIdOk(); ok {
 		m[attributes.ManagementGatewaySelectorID] = *selectorID
 	}

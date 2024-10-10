@@ -28,10 +28,6 @@ type PrivilegedAccountForUpdate struct {
 	OwnerUserIds []string `json:"ownerUserIds,omitempty"`
 	// A list of IDs for the Okta groups who own the Privileged Account
 	OwnerGroupIds []string `json:"ownerGroupIds,omitempty"`
-	// The username associated with the Privileged Account
-	Username *string `json:"username,omitempty"`
-	// The email address for the Okta Universal Directory Account
-	Email *string `json:"email,omitempty"`
 }
 
 // NewPrivilegedAccountForUpdate instantiates a new PrivilegedAccountForUpdate object
@@ -183,72 +179,6 @@ func (o *PrivilegedAccountForUpdate) SetOwnerGroupIds(v []string) *PrivilegedAcc
 	return o
 }
 
-// GetUsername returns the Username field value if set, zero value otherwise.
-func (o *PrivilegedAccountForUpdate) GetUsername() string {
-	if o == nil || IsNil(o.Username) {
-		var ret string
-		return ret
-	}
-	return *o.Username
-}
-
-// GetUsernameOk returns a tuple with the Username field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *PrivilegedAccountForUpdate) GetUsernameOk() (*string, bool) {
-	if o == nil || IsNil(o.Username) {
-		return nil, false
-	}
-	return o.Username, true
-}
-
-// HasUsername returns a boolean if a field has been set.
-func (o *PrivilegedAccountForUpdate) HasUsername() bool {
-	if o != nil && !IsNil(o.Username) {
-		return true
-	}
-
-	return false
-}
-
-// SetUsername gets a reference to the given string and assigns it to the Username field.
-func (o *PrivilegedAccountForUpdate) SetUsername(v string) *PrivilegedAccountForUpdate {
-	o.Username = &v
-	return o
-}
-
-// GetEmail returns the Email field value if set, zero value otherwise.
-func (o *PrivilegedAccountForUpdate) GetEmail() string {
-	if o == nil || IsNil(o.Email) {
-		var ret string
-		return ret
-	}
-	return *o.Email
-}
-
-// GetEmailOk returns a tuple with the Email field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *PrivilegedAccountForUpdate) GetEmailOk() (*string, bool) {
-	if o == nil || IsNil(o.Email) {
-		return nil, false
-	}
-	return o.Email, true
-}
-
-// HasEmail returns a boolean if a field has been set.
-func (o *PrivilegedAccountForUpdate) HasEmail() bool {
-	if o != nil && !IsNil(o.Email) {
-		return true
-	}
-
-	return false
-}
-
-// SetEmail gets a reference to the given string and assigns it to the Email field.
-func (o *PrivilegedAccountForUpdate) SetEmail(v string) *PrivilegedAccountForUpdate {
-	o.Email = &v
-	return o
-}
-
 func (o PrivilegedAccountForUpdate) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -270,12 +200,6 @@ func (o PrivilegedAccountForUpdate) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.OwnerGroupIds) {
 		toSerialize["ownerGroupIds"] = o.OwnerGroupIds
-	}
-	if !IsNil(o.Username) {
-		toSerialize["username"] = o.Username
-	}
-	if !IsNil(o.Email) {
-		toSerialize["email"] = o.Email
 	}
 	return toSerialize, nil
 }
