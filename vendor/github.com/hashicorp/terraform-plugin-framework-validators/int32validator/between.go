@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: MPL-2.0
 
-package int64validator
+package int32validator
 
 import (
 	"context"
@@ -12,11 +12,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/helpers/validatordiag"
 )
 
-var _ validator.Int64 = betweenValidator{}
+var _ validator.Int32 = betweenValidator{}
 
 // betweenValidator validates that an integer Attribute's value is in a range.
 type betweenValidator struct {
-	min, max int64
+	min, max int32
 }
 
 // Description describes the validation in plain text formatting.
@@ -29,17 +29,17 @@ func (validator betweenValidator) MarkdownDescription(ctx context.Context) strin
 	return validator.Description(ctx)
 }
 
-// ValidateInt64 performs the validation.
-func (v betweenValidator) ValidateInt64(ctx context.Context, request validator.Int64Request, response *validator.Int64Response) {
+// ValidateInt32 performs the validation.
+func (v betweenValidator) ValidateInt32(ctx context.Context, request validator.Int32Request, response *validator.Int32Response) {
 	if request.ConfigValue.IsNull() || request.ConfigValue.IsUnknown() {
 		return
 	}
 
-	if request.ConfigValue.ValueInt64() < v.min || request.ConfigValue.ValueInt64() > v.max {
+	if request.ConfigValue.ValueInt32() < v.min || request.ConfigValue.ValueInt32() > v.max {
 		response.Diagnostics.Append(validatordiag.InvalidAttributeValueDiagnostic(
 			request.Path,
 			v.Description(ctx),
-			fmt.Sprintf("%d", request.ConfigValue.ValueInt64()),
+			fmt.Sprintf("%d", request.ConfigValue.ValueInt32()),
 		))
 	}
 }
@@ -47,11 +47,11 @@ func (v betweenValidator) ValidateInt64(ctx context.Context, request validator.I
 // Between returns an AttributeValidator which ensures that any configured
 // attribute value:
 //
-//   - Is a number, which can be represented by a 64-bit integer.
+//   - Is a number, which can be represented by a 32-bit integer.
 //   - Is greater than or equal to the given minimum and less than or equal to the given maximum.
 //
 // Null (unconfigured) and unknown (known after apply) values are skipped.
-func Between(min, max int64) validator.Int64 {
+func Between(min, max int32) validator.Int32 {
 	if min > max {
 		return nil
 	}

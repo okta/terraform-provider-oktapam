@@ -1,12 +1,13 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: MPL-2.0
 
-package int64validator
+package int32validator
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-validators/internal/schemavalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+
+	"github.com/hashicorp/terraform-plugin-framework-validators/internal/schemavalidator"
 )
 
 // AtLeastOneOf checks that of a set of path.Expression,
@@ -20,7 +21,7 @@ import (
 //
 // Any relative path.Expression will be resolved using the attribute being
 // validated.
-func AtLeastOneOf(expressions ...path.Expression) validator.Int64 {
+func AtLeastOneOf(expressions ...path.Expression) validator.Int32 {
 	return schemavalidator.AtLeastOneOfValidator{
 		PathExpressions: expressions,
 	}

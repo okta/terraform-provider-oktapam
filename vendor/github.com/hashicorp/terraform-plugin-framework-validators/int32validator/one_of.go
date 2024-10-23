@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: MPL-2.0
 
-package int64validator
+package int32validator
 
 import (
 	"context"
@@ -13,11 +13,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/helpers/validatordiag"
 )
 
-var _ validator.Int64 = oneOfValidator{}
+var _ validator.Int32 = oneOfValidator{}
 
 // oneOfValidator validates that the value matches one of expected values.
 type oneOfValidator struct {
-	values []types.Int64
+	values []types.Int32
 }
 
 func (v oneOfValidator) Description(ctx context.Context) string {
@@ -28,7 +28,7 @@ func (v oneOfValidator) MarkdownDescription(_ context.Context) string {
 	return fmt.Sprintf("value must be one of: %q", v.values)
 }
 
-func (v oneOfValidator) ValidateInt64(ctx context.Context, request validator.Int64Request, response *validator.Int64Response) {
+func (v oneOfValidator) ValidateInt32(ctx context.Context, request validator.Int32Request, response *validator.Int32Response) {
 	if request.ConfigValue.IsNull() || request.ConfigValue.IsUnknown() {
 		return
 	}
@@ -48,13 +48,13 @@ func (v oneOfValidator) ValidateInt64(ctx context.Context, request validator.Int
 	))
 }
 
-// OneOf checks that the Int64 held in the attribute
+// OneOf checks that the Int32 held in the attribute
 // is one of the given `values`.
-func OneOf(values ...int64) validator.Int64 {
-	frameworkValues := make([]types.Int64, 0, len(values))
+func OneOf(values ...int32) validator.Int32 {
+	frameworkValues := make([]types.Int32, 0, len(values))
 
 	for _, value := range values {
-		frameworkValues = append(frameworkValues, types.Int64Value(value))
+		frameworkValues = append(frameworkValues, types.Int32Value(value))
 	}
 
 	return oneOfValidator{

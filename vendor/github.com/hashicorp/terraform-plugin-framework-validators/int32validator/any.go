@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: MPL-2.0
 
-package int64validator
+package int32validator
 
 import (
 	"context"
@@ -18,17 +18,17 @@ import (
 // conflicting logic, only warnings from the passing validator are returned.
 // Use AnyWithAllWarnings() to return warnings from non-passing validators
 // as well.
-func Any(validators ...validator.Int64) validator.Int64 {
+func Any(validators ...validator.Int32) validator.Int32 {
 	return anyValidator{
 		validators: validators,
 	}
 }
 
-var _ validator.Int64 = anyValidator{}
+var _ validator.Int32 = anyValidator{}
 
 // anyValidator implements the validator.
 type anyValidator struct {
-	validators []validator.Int64
+	validators []validator.Int32
 }
 
 // Description describes the validation in plain text formatting.
@@ -47,12 +47,12 @@ func (v anyValidator) MarkdownDescription(ctx context.Context) string {
 	return v.Description(ctx)
 }
 
-// ValidateInt64 performs the validation.
-func (v anyValidator) ValidateInt64(ctx context.Context, req validator.Int64Request, resp *validator.Int64Response) {
+// ValidateInt32 performs the validation.
+func (v anyValidator) ValidateInt32(ctx context.Context, req validator.Int32Request, resp *validator.Int32Response) {
 	for _, subValidator := range v.validators {
-		validateResp := &validator.Int64Response{}
+		validateResp := &validator.Int32Response{}
 
-		subValidator.ValidateInt64(ctx, req, validateResp)
+		subValidator.ValidateInt32(ctx, req, validateResp)
 
 		if !validateResp.Diagnostics.HasError() {
 			resp.Diagnostics = validateResp.Diagnostics

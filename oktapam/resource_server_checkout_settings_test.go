@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"regexp"
 	"testing"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
@@ -49,6 +50,43 @@ resource "oktapam_server_checkout_settings" "test_acc_server_checkout_settings" 
 }
 `
 
+const testAccServerCheckoutSettingsUpdateWithExcludeListConfigFormat = `
+resource "oktapam_server_checkout_settings" "test_acc_server_checkout_settings" {
+	resource_group = oktapam_resource_group.test_acc_resource_group.id
+	project = oktapam_resource_group_project.test_acc_resource_group_project.id
+	checkout_required = true
+	checkout_duration_in_seconds = 3600
+	exclude_list = ["excluded_account_1", "excluded_account_2"]
+}
+`
+
+const testAccServerCheckoutSettingsUpdateWithBothListsConfigFormat = `
+resource "oktapam_server_checkout_settings" "test_acc_server_checkout_settings" {
+	resource_group = oktapam_resource_group.test_acc_resource_group.id
+	project = oktapam_resource_group_project.test_acc_resource_group_project.id
+	checkout_required = true
+	checkout_duration_in_seconds = 7200
+	include_list = ["included_account_1", "included_account_2"]
+	exclude_list = ["excluded_account_1", "excluded_account_2"]
+}
+`
+
+const testAccServerCheckoutSettingsUpdateProjectConfigFormat = `
+resource "oktapam_resource_group_project" "test_acc_updated_project" {
+	name = "%s"
+	resource_group = oktapam_resource_group.test_acc_resource_group.id
+	ssh_certificate_type  = "CERT_TYPE_ED25519_01"
+	account_discovery     = true
+}
+
+resource "oktapam_server_checkout_settings" "test_acc_server_checkout_settings" {
+	resource_group = oktapam_resource_group.test_acc_resource_group.id
+	project = oktapam_resource_group_project.test_acc_updated_project.id
+	checkout_required = true
+	checkout_duration_in_seconds = 5400
+}
+`
+
 const testAccServerCheckoutSettingsDeleteConfigFormat = `
 resource "oktapam_group" "test_resource_group_dga_group" {
 	name = "%s"
@@ -74,9 +112,11 @@ func TestAccServerCheckoutSettings(t *testing.T) {
 	resourceName := "oktapam_server_checkout_settings.test_acc_server_checkout_settings"
 	resourceGroupName := fmt.Sprintf("test_acc_resource_group_%s", randSeq())
 	projectName := fmt.Sprintf("test_acc_resource_group_project_%s", randSeq())
+	updatedProjectName := fmt.Sprintf("test_acc_updated_resource_group_project_%s", randSeq())
 	delegatedAdminGroupName := fmt.Sprintf("test_acc_resource_group_dga_%s", randSeq())
 	defaultCheckoutDuration := int32(900)
 	updatedCheckoutDuration := int32(3600)
+	updatedProjectCheckoutDuration := int32(5400)
 
 	initialServerCheckoutSettings := &pam.ResourceCheckoutSettings{
 		CheckoutRequired:          true,
@@ -87,6 +127,17 @@ func TestAccServerCheckoutSettings(t *testing.T) {
 		CheckoutRequired:          true,
 		CheckoutDurationInSeconds: &updatedCheckoutDuration,
 		IncludeList:               []string{"vaulted_account_1", "vaulted_account_2"},
+	}
+
+	excludeListServerCheckoutSettings := &pam.ResourceCheckoutSettings{
+		CheckoutRequired:          true,
+		CheckoutDurationInSeconds: &updatedCheckoutDuration,
+		ExcludeList:               []string{"excluded_account_1", "excluded_account_2"},
+	}
+
+	updatedProjectServerCheckoutSettings := &pam.ResourceCheckoutSettings{
+		CheckoutRequired:          true,
+		CheckoutDurationInSeconds: &updatedProjectCheckoutDuration,
 	}
 
 	resource.Test(t, resource.TestCase{
@@ -105,6 +156,26 @@ func TestAccServerCheckoutSettings(t *testing.T) {
 				Config: createServerCheckoutSettingsUpdateConfig(delegatedAdminGroupName, resourceGroupName, projectName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccServerCheckoutSettingsCheckExists(resourceName, updatedServerCheckoutSettings),
+				),
+			},
+			// Update testing with exclude list
+			{
+				Config: createServerCheckoutSettingsUpdateWithExcludeListConfig(delegatedAdminGroupName, resourceGroupName, projectName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccServerCheckoutSettingsCheckExists(resourceName, excludeListServerCheckoutSettings),
+				),
+			},
+			// Update with both lists
+			{
+				Config:      createServerCheckoutSettingsUpdateWithBothListsConfig(delegatedAdminGroupName, resourceGroupName, projectName),
+				ExpectError: regexp.MustCompile(`400 Bad Request`),
+			},
+
+			// Update project
+			{
+				Config: createServerCheckoutSettingsUpdateProjectConfig(delegatedAdminGroupName, resourceGroupName, projectName, updatedProjectName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccServerCheckoutSettingsCheckExists(resourceName, updatedProjectServerCheckoutSettings),
 				),
 			},
 			// Delete testing
@@ -172,4 +243,16 @@ func createServerCheckoutSettingsCreateConfig(delegatedAdminGroupName string, re
 
 func createServerCheckoutSettingsUpdateConfig(delegatedAdminGroupName string, resourceGroupName string, projectName string) string {
 	return createServerCheckoutSettingsBaseConfig(delegatedAdminGroupName, resourceGroupName, projectName) + testAccServerCheckoutSettingsUpdateConfigFormat
+}
+
+func createServerCheckoutSettingsUpdateWithExcludeListConfig(delegatedAdminGroupName string, resourceGroupName string, projectName string) string {
+	return createServerCheckoutSettingsBaseConfig(delegatedAdminGroupName, resourceGroupName, projectName) + testAccServerCheckoutSettingsUpdateWithExcludeListConfigFormat
+}
+
+func createServerCheckoutSettingsUpdateWithBothListsConfig(delegatedAdminGroupName string, resourceGroupName string, projectName string) string {
+	return createServerCheckoutSettingsBaseConfig(delegatedAdminGroupName, resourceGroupName, projectName) + testAccServerCheckoutSettingsUpdateWithBothListsConfigFormat
+}
+
+func createServerCheckoutSettingsUpdateProjectConfig(delegatedAdminGroupName string, resourceGroupName string, projectName string, updatedProjectName string) string {
+	return fmt.Sprintf(createServerCheckoutSettingsBaseConfig(delegatedAdminGroupName, resourceGroupName, projectName)+testAccServerCheckoutSettingsUpdateProjectConfigFormat, updatedProjectName)
 }

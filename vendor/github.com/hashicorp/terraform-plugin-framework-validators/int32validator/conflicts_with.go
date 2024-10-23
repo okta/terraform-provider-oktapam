@@ -1,12 +1,13 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: MPL-2.0
 
-package int64validator
+package int32validator
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-validators/internal/schemavalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+
+	"github.com/hashicorp/terraform-plugin-framework-validators/internal/schemavalidator"
 )
 
 // ConflictsWith checks that a set of path.Expression,
@@ -20,7 +21,7 @@ import (
 //
 // Relative path.Expression will be resolved using the attribute being
 // validated.
-func ConflictsWith(expressions ...path.Expression) validator.Int64 {
+func ConflictsWith(expressions ...path.Expression) validator.Int32 {
 	return schemavalidator.ConflictsWithValidator{
 		PathExpressions: expressions,
 	}

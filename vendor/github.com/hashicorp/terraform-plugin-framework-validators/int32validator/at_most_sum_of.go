@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: MPL-2.0
 
-package int64validator
+package int32validator
 
 import (
 	"context"
@@ -17,31 +17,31 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/helpers/validatordiag"
 )
 
-var _ validator.Int64 = equalToSumOfValidator{}
+var _ validator.Int32 = atMostSumOfValidator{}
 
-// equalToSumOfValidator validates that an integer Attribute's value equals the sum of one
+// atMostSumOfValidator validates that an integer Attribute's value is at most the sum of one
 // or more integer Attributes retrieved via the given path expressions.
-type equalToSumOfValidator struct {
+type atMostSumOfValidator struct {
 	attributesToSumPathExpressions path.Expressions
 }
 
 // Description describes the validation in plain text formatting.
-func (av equalToSumOfValidator) Description(_ context.Context) string {
+func (av atMostSumOfValidator) Description(_ context.Context) string {
 	var attributePaths []string
 	for _, p := range av.attributesToSumPathExpressions {
 		attributePaths = append(attributePaths, p.String())
 	}
 
-	return fmt.Sprintf("value must be equal to the sum of %s", strings.Join(attributePaths, " + "))
+	return fmt.Sprintf("value must be at most sum of %s", strings.Join(attributePaths, " + "))
 }
 
 // MarkdownDescription describes the validation in Markdown formatting.
-func (av equalToSumOfValidator) MarkdownDescription(ctx context.Context) string {
+func (av atMostSumOfValidator) MarkdownDescription(ctx context.Context) string {
 	return av.Description(ctx)
 }
 
-// ValidateInt64 performs the validation.
-func (av equalToSumOfValidator) ValidateInt64(ctx context.Context, request validator.Int64Request, response *validator.Int64Response) {
+// ValidateInt32 performs the validation.
+func (av atMostSumOfValidator) ValidateInt32(ctx context.Context, request validator.Int32Request, response *validator.Int32Response) {
 	if request.ConfigValue.IsNull() || request.ConfigValue.IsUnknown() {
 		return
 	}
@@ -50,7 +50,7 @@ func (av equalToSumOfValidator) ValidateInt64(ctx context.Context, request valid
 	expressions := request.PathExpression.MergeExpressions(av.attributesToSumPathExpressions...)
 
 	// Sum the value of all the attributes involved, but only if they are all known.
-	var sumOfAttribs int64
+	var sumOfAttribs int32
 	for _, expression := range expressions {
 		matchedPaths, diags := request.Config.PathMatches(ctx, expression)
 		response.Diagnostics.Append(diags...)
@@ -84,33 +84,33 @@ func (av equalToSumOfValidator) ValidateInt64(ctx context.Context, request valid
 			}
 
 			// We know there is a value, convert it to the expected type
-			var attribToSum types.Int64
+			var attribToSum types.Int32
 			diags = tfsdk.ValueAs(ctx, matchedValue, &attribToSum)
 			response.Diagnostics.Append(diags...)
 			if diags.HasError() {
 				continue
 			}
 
-			sumOfAttribs += attribToSum.ValueInt64()
+			sumOfAttribs += attribToSum.ValueInt32()
 		}
 	}
 
-	if request.ConfigValue.ValueInt64() != sumOfAttribs {
+	if request.ConfigValue.ValueInt32() > sumOfAttribs {
 		response.Diagnostics.Append(validatordiag.InvalidAttributeValueDiagnostic(
 			request.Path,
 			av.Description(ctx),
-			fmt.Sprintf("%d", request.ConfigValue.ValueInt64()),
+			fmt.Sprintf("%d", request.ConfigValue.ValueInt32()),
 		))
 	}
 }
 
-// EqualToSumOf returns an AttributeValidator which ensures that any configured
+// AtMostSumOf returns an AttributeValidator which ensures that any configured
 // attribute value:
 //
-//   - Is a number, which can be represented by a 64-bit integer.
-//   - Is equal to the sum of the given attributes retrieved via the given path expression(s).
+//   - Is a number, which can be represented by a 32-bit integer.
+//   - Is at most the sum of the given attributes retrieved via the given path expression(s).
 //
 // Null (unconfigured) and unknown (known after apply) values are skipped.
-func EqualToSumOf(attributesToSumPathExpressions ...path.Expression) validator.Int64 {
-	return equalToSumOfValidator{attributesToSumPathExpressions}
+func AtMostSumOf(attributesToSumPathExpressions ...path.Expression) validator.Int32 {
+	return atMostSumOfValidator{attributesToSumPathExpressions}
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int32validator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -35,7 +35,7 @@ type serverCheckoutSettingsResourceModel struct {
 	ResourceGroup             string       `tfsdk:"resource_group"`
 	Project                   string       `tfsdk:"project"`
 	CheckoutRequired          bool         `tfsdk:"checkout_required"`
-	CheckoutDurationInSeconds *int32       `tfsdk:"checkout_duration_in_seconds"`
+	CheckoutDurationInSeconds types.Int32  `tfsdk:"checkout_duration_in_seconds"`
 	IncludeList               []string     `tfsdk:"include_list"`
 	ExcludeList               []string     `tfsdk:"exclude_list"`
 }
@@ -56,12 +56,11 @@ func (r *serverCheckoutSettingsResource) Schema(_ context.Context, _ resource.Sc
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"checkout_duration_in_seconds": schema.Int64Attribute{
-				Optional:    true,
-				Computed:    true,
+			"checkout_duration_in_seconds": schema.Int32Attribute{
+				Required:    true,
 				Description: descriptions.CheckoutDurationInSeconds,
-				Validators: []validator.Int64{
-					int64validator.Between(900, 86400),
+				Validators: []validator.Int32{
+					int32validator.Between(900, 86400),
 				},
 			},
 			"checkout_required": schema.BoolAttribute{
@@ -108,12 +107,12 @@ func (r *serverCheckoutSettingsResource) Create(ctx context.Context, req resourc
 	// Call the SDK client to creat the server checkout settings from plan
 	serverCheckoutSettings := &pam.ResourceCheckoutSettings{
 		CheckoutRequired:          plan.CheckoutRequired,
-		CheckoutDurationInSeconds: plan.CheckoutDurationInSeconds,
+		CheckoutDurationInSeconds: plan.CheckoutDurationInSeconds.ValueInt32Pointer(),
 		IncludeList:               plan.IncludeList,
 		ExcludeList:               plan.ExcludeList,
 	}
 
-	err := r.client.UpdateServerCheckoutSettings(ctx, plan.ResourceGroup, plan.Project, serverCheckoutSettings)
+	_, err := r.client.SDKClient.ProjectsAPI.UpdateResourceGroupServerBasedProjectCheckoutSettings(ctx, r.client.Team, plan.ResourceGroup, plan.Project).ResourceCheckoutSettings(*serverCheckoutSettings).Execute()
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating server checkout settings", err.Error())
@@ -121,7 +120,11 @@ func (r *serverCheckoutSettingsResource) Create(ctx context.Context, req resourc
 	}
 	// Set state to fully populated data
 	plan.Id = types.StringValue(formatServerCheckoutSettingsID(plan.ResourceGroup, plan.Project))
-	resp.Diagnostics.Append(resp.State.Set(ctx, plan)...)
+	diags = resp.State.Set(ctx, plan)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 }
 
 // Read implements resource.Resource.
@@ -135,7 +138,7 @@ func (r *serverCheckoutSettingsResource) Read(ctx context.Context, req resource.
 	}
 
 	// Get refreshed server checkout settings from API host
-	serverCheckoutSettings, err := r.client.GetServerCheckoutSettings(ctx, state.ResourceGroup, state.Project)
+	serverCheckoutSettings, _, err := r.client.SDKClient.ProjectsAPI.FetchResourceGroupServerBasedProjectCheckoutSettings(ctx, r.client.Team, state.ResourceGroup, state.Project).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading server checkout settings",
@@ -146,7 +149,7 @@ func (r *serverCheckoutSettingsResource) Read(ctx context.Context, req resource.
 
 	// Overwrite server checkout settings with refreshed state
 	state.CheckoutRequired = serverCheckoutSettings.CheckoutRequired
-	state.CheckoutDurationInSeconds = serverCheckoutSettings.CheckoutDurationInSeconds
+	state.CheckoutDurationInSeconds = types.Int32PointerValue(serverCheckoutSettings.CheckoutDurationInSeconds)
 	state.IncludeList = serverCheckoutSettings.IncludeList
 	state.ExcludeList = serverCheckoutSettings.ExcludeList
 
@@ -171,12 +174,12 @@ func (r *serverCheckoutSettingsResource) Update(ctx context.Context, req resourc
 	// Update the existing server checkout settings with the new values
 	serverCheckoutSettings := &pam.ResourceCheckoutSettings{
 		CheckoutRequired:          plan.CheckoutRequired,
-		CheckoutDurationInSeconds: plan.CheckoutDurationInSeconds,
+		CheckoutDurationInSeconds: plan.CheckoutDurationInSeconds.ValueInt32Pointer(),
 		IncludeList:               plan.IncludeList,
 		ExcludeList:               plan.ExcludeList,
 	}
 
-	err := r.client.UpdateServerCheckoutSettings(ctx, plan.ResourceGroup, plan.Project, serverCheckoutSettings)
+	_, err := r.client.SDKClient.ProjectsAPI.UpdateResourceGroupServerBasedProjectCheckoutSettings(ctx, r.client.Team, plan.ResourceGroup, plan.Project).ResourceCheckoutSettings(*serverCheckoutSettings).Execute()
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error updating server checkout settings", err.Error())
@@ -184,7 +187,7 @@ func (r *serverCheckoutSettingsResource) Update(ctx context.Context, req resourc
 	}
 
 	// Fetch the updated server checkout settings from the API host
-	updatedServerCheckoutSettings, err := r.client.GetServerCheckoutSettings(ctx, plan.ResourceGroup, plan.Project)
+	updatedServerCheckoutSettings, _, err := r.client.SDKClient.ProjectsAPI.FetchResourceGroupServerBasedProjectCheckoutSettings(ctx, r.client.Team, plan.ResourceGroup, plan.Project).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading server checkout settings",
@@ -195,7 +198,7 @@ func (r *serverCheckoutSettingsResource) Update(ctx context.Context, req resourc
 
 	// update the state with the updated server checkout settings
 	plan.CheckoutRequired = updatedServerCheckoutSettings.CheckoutRequired
-	plan.CheckoutDurationInSeconds = updatedServerCheckoutSettings.CheckoutDurationInSeconds
+	plan.CheckoutDurationInSeconds = types.Int32PointerValue(updatedServerCheckoutSettings.CheckoutDurationInSeconds)
 	plan.IncludeList = updatedServerCheckoutSettings.IncludeList
 	plan.ExcludeList = updatedServerCheckoutSettings.ExcludeList
 
@@ -225,7 +228,7 @@ func (r *serverCheckoutSettingsResource) Delete(ctx context.Context, req resourc
 		ExcludeList:               []string{},
 	}
 
-	err := r.client.UpdateServerCheckoutSettings(ctx, state.ResourceGroup, state.Project, serverCheckoutSettings)
+	_, err := r.client.SDKClient.ProjectsAPI.UpdateResourceGroupServerBasedProjectCheckoutSettings(ctx, r.client.Team, state.ResourceGroup, state.Project).ResourceCheckoutSettings(*serverCheckoutSettings).Execute()
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error updating server checkout settings", err.Error())
@@ -252,12 +255,23 @@ func (r *serverCheckoutSettingsResource) Configure(_ context.Context, req resour
 	}
 
 	sdkClient := getSDKClientFromMetadata(req.ProviderData)
-
+	//provider, ok := req.ProviderData.(*OktapamFrameworkProvider)
+	//
+	//if !ok {
+	//	resp.Diagnostics.AddError(
+	//		"Unexpected Data Source Configure Type",
+	//		fmt.Sprintf("Expected *OktapamFrameworkProvider, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+	//	)
+	//
+	//	return
+	//}
 	r.client = &sdkClient
 }
 
 func formatServerCheckoutSettingsID(resourceGroupID string, projectID string) string {
 	// server checkout settings don't have an identifier in itself and is really an attribute of a project.
 	// we manage it as a separate resource since it's lifecycle is somewhat separate from a project.
-	return fmt.Sprintf("%s/%s", resourceGroupID, projectID)
+	// since project password settings are managed as a separate resource with format resourceGroupID/projectID already,
+	// we can just append the server_checkout_settings to the end of the ID
+	return fmt.Sprintf("%s/%s/server_checkout_settings", resourceGroupID, projectID)
 }

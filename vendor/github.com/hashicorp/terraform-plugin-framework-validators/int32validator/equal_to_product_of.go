@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: MPL-2.0
 
-package int64validator
+package int32validator
 
 import (
 	"context"
@@ -17,40 +17,40 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/helpers/validatordiag"
 )
 
-var _ validator.Int64 = atLeastSumOfValidator{}
+var _ validator.Int32 = equalToProductOfValidator{}
 
-// atLeastSumOfValidator validates that an integer Attribute's value is at least the sum of one
+// equalToProductOfValidator validates that an integer Attribute's value equals the product of one
 // or more integer Attributes retrieved via the given path expressions.
-type atLeastSumOfValidator struct {
-	attributesToSumPathExpressions path.Expressions
+type equalToProductOfValidator struct {
+	attributesToMultiplyPathExpressions path.Expressions
 }
 
 // Description describes the validation in plain text formatting.
-func (av atLeastSumOfValidator) Description(_ context.Context) string {
+func (av equalToProductOfValidator) Description(_ context.Context) string {
 	var attributePaths []string
-	for _, p := range av.attributesToSumPathExpressions {
+	for _, p := range av.attributesToMultiplyPathExpressions {
 		attributePaths = append(attributePaths, p.String())
 	}
 
-	return fmt.Sprintf("value must be at least sum of %s", strings.Join(attributePaths, " + "))
+	return fmt.Sprintf("value must be equal to the product of %s", strings.Join(attributePaths, " + "))
 }
 
 // MarkdownDescription describes the validation in Markdown formatting.
-func (av atLeastSumOfValidator) MarkdownDescription(ctx context.Context) string {
+func (av equalToProductOfValidator) MarkdownDescription(ctx context.Context) string {
 	return av.Description(ctx)
 }
 
-// ValidateInt64 performs the validation.
-func (av atLeastSumOfValidator) ValidateInt64(ctx context.Context, request validator.Int64Request, response *validator.Int64Response) {
+// ValidateInt32 performs the validation.
+func (av equalToProductOfValidator) ValidateInt32(ctx context.Context, request validator.Int32Request, response *validator.Int32Response) {
 	if request.ConfigValue.IsNull() || request.ConfigValue.IsUnknown() {
 		return
 	}
 
 	// Ensure input path expressions resolution against the current attribute
-	expressions := request.PathExpression.MergeExpressions(av.attributesToSumPathExpressions...)
+	expressions := request.PathExpression.MergeExpressions(av.attributesToMultiplyPathExpressions...)
 
-	// Sum the value of all the attributes involved, but only if they are all known.
-	var sumOfAttribs int64
+	// Multiply the value of all the attributes involved, but only if they are all known.
+	productOfAttribs := int32(1)
 	for _, expression := range expressions {
 		matchedPaths, diags := request.Config.PathMatches(ctx, expression)
 		response.Diagnostics.Append(diags...)
@@ -80,37 +80,37 @@ func (av atLeastSumOfValidator) ValidateInt64(ctx context.Context, request valid
 			}
 
 			if matchedValue.IsNull() {
-				continue
+				return
 			}
 
 			// We know there is a value, convert it to the expected type
-			var attribToSum types.Int64
-			diags = tfsdk.ValueAs(ctx, matchedValue, &attribToSum)
+			var attribToMultiply types.Int32
+			diags = tfsdk.ValueAs(ctx, matchedValue, &attribToMultiply)
 			response.Diagnostics.Append(diags...)
 			if diags.HasError() {
 				continue
 			}
 
-			sumOfAttribs += attribToSum.ValueInt64()
+			productOfAttribs *= attribToMultiply.ValueInt32()
 		}
 	}
 
-	if request.ConfigValue.ValueInt64() < sumOfAttribs {
+	if request.ConfigValue.ValueInt32() != productOfAttribs {
 		response.Diagnostics.Append(validatordiag.InvalidAttributeValueDiagnostic(
 			request.Path,
 			av.Description(ctx),
-			fmt.Sprintf("%d", request.ConfigValue.ValueInt64()),
+			fmt.Sprintf("%d", request.ConfigValue.ValueInt32()),
 		))
 	}
 }
 
-// AtLeastSumOf returns an AttributeValidator which ensures that any configured
+// EqualToProductOf returns an AttributeValidator which ensures that any configured
 // attribute value:
 //
-//   - Is a number, which can be represented by a 64-bit integer.
-//   - Is at least the sum of the attributes retrieved via the given path expression(s).
+//   - Is a number, which can be represented by a 32-bit integer.
+//   - Is equal to the product of the given attributes retrieved via the given path expression(s).
 //
-// Null (unconfigured) and unknown (known after apply) values are skipped.
-func AtLeastSumOf(attributesToSumPathExpressions ...path.Expression) validator.Int64 {
-	return atLeastSumOfValidator{attributesToSumPathExpressions}
+// Validation is skipped if any null (unconfigured) and/or unknown (known after apply) values are present.
+func EqualToProductOf(attributesToMultiplyPathExpressions ...path.Expression) validator.Int32 {
+	return equalToProductOfValidator{attributesToMultiplyPathExpressions}
 }
