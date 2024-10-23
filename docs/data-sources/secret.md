@@ -27,5 +27,3 @@ Returns an existing PAM Secret. For details, see [Secrets](https://help.okta.com
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
 - `parent_folder` (String) The UUID of the directory which contains this Secret/Secret Folder element.
 - `secret` (Map of String, Sensitive) Defines the key value pairs that are used to store sensitive information, like usernames, passwords, API tokens, keys, or any string value.
-
-

@@ -3,7 +3,7 @@
 page_title: "oktapam_projects Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of all Projects associated with the Team specified by the OKTAPAMTEAM environment variable. For details, [Projects](https://help.okta.com/asa/en-us/Content/Topics/AdvServer_Access/docs/setup/projects.htm).
+  Returns a list of all Projects associated with the Team specified by the OKTAPAM_TEAM environment variable. For details, Projects https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/projects.htm.
 ---
 
 # oktapam_projects (Data Source)
@@ -24,5 +24,3 @@ Returns a list of all Projects associated with the Team specified by the OKTAPAM
 
 - `id` (String) The ID of this resource.
 - `names` (List of String)
-
-

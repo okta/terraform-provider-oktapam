@@ -28,5 +28,3 @@ Returns an existing PAM Project associated with a specific PAM Resource Group. F
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
 - `ssh_certificate_type` (String) The SSH certificate type used by access requests. Options include: [`CERT_TYPE_ED25519_01`, `CERT_TYPE_ECDSA_521_01`, `CERT_TYPE_ECDSA_384_01`, `CERT_TYPE_ECDSA_256_01`, `CERT_TYPE_RSA_01`]. 'CERT_TYPE_RSA_01' is a deprecated key algorithm type. This option should only be used to connect to legacy systems that cannot use newer SSH versions. If you do need to use 'CERT_TYPE_RSA_01', it is recommended to connect via a gateway with traffic forwarding. Otherwise, please use a more current key algorithm. If left unspecified, 'CERT_TYPE_ED25519_01' is used by default.
 - `team` (String) The human-readable name of the ASA Team that owns the resource. Values are lower-case.
-
-

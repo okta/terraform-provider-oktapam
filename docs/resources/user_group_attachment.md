@@ -23,5 +23,3 @@ Manages a single assignment of an ASA/PAM User to a Group.
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-
-

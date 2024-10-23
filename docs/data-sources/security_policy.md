@@ -127,7 +127,7 @@ Read-Only:
 - `sudo_display_name` (String)
 
 <a id="nestedobjatt--rule--privileges--principal_account_ssh--sudo_command_bundles"></a>
-### Nested Schema for `rule.privileges.principal_account_ssh.sudo_display_name`
+### Nested Schema for `rule.privileges.principal_account_ssh.sudo_command_bundles`
 
 Read-Only:
 
@@ -170,7 +170,7 @@ Read-Only:
 - `secret_folder` (List of Object) (see [below for nested schema](#nestedobjatt--rule--resources--secrets--secret_folder))
 
 <a id="nestedobjatt--rule--resources--secrets--secret"></a>
-### Nested Schema for `rule.resources.secrets.secret_folder`
+### Nested Schema for `rule.resources.secrets.secret`
 
 Read-Only:
 
@@ -196,7 +196,7 @@ Read-Only:
 - `server_account` (List of Object) (see [below for nested schema](#nestedobjatt--rule--resources--servers--server_account))
 
 <a id="nestedobjatt--rule--resources--servers--label_selectors"></a>
-### Nested Schema for `rule.resources.servers.server_account`
+### Nested Schema for `rule.resources.servers.label_selectors`
 
 Read-Only:
 
@@ -205,7 +205,7 @@ Read-Only:
 
 
 <a id="nestedobjatt--rule--resources--servers--server"></a>
-### Nested Schema for `rule.resources.servers.server_account`
+### Nested Schema for `rule.resources.servers.server`
 
 Read-Only:
 
@@ -219,5 +219,3 @@ Read-Only:
 
 - `account` (String)
 - `server_id` (String)
-
-

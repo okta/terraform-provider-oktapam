@@ -27,5 +27,3 @@ Team-level settings for a specific Team, such as authentication and enrollment d
 ### Read-Only
 
 - `id` (String) Team name is populated as the ID for team settings.
-
-
