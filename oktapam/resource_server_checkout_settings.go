@@ -81,10 +81,16 @@ func (r *serverCheckoutSettingsResource) Schema(_ context.Context, _ resource.Sc
 			"project": schema.StringAttribute{
 				Required:    true,
 				Description: descriptions.ProjectID,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"resource_group": schema.StringAttribute{
 				Required:    true,
 				Description: descriptions.ResourceGroupID,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 		},
 	}
