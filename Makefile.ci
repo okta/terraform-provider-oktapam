@@ -60,12 +60,6 @@ ci-check-generate: ci-container
 		-e TF_ACC_TERRAFORM_PATH \
 		-e TF_ACC_TERRAFORM_VERSION \
 		-v ${TF_ACC_TERRAFORM_PATH}:/usr/local/bin/terraform \
-		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C ${SRC_DIR} update-go-deps check-generate
+		-v "$(CURDIR)/build/ci-output:/output" `cat ./build/ci-output/container.txt` /usr/bin/make -C ${SRC_DIR} check-generate
 
-.PHONY: update-go-deps
-update-go-deps:
-	export GOPRIVATE=github.com/atko-pam && \
-	go mod tidy && \
-	go mod vendor
-
-.PHONY: all ci-compile ci-test ci-acceptance-test ci-check-generate update-go-deps
+.PHONY: all ci-compile ci-test ci-acceptance-test ci-check-generate
