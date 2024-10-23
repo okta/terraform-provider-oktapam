@@ -72,3 +72,8 @@ updatedep:
 	GOPRIVATE=${GOPRIVATE} go get $(dep)@latest
 	GOPRIVATE=${GOPRIVATE} go mod tidy
 	GOPRIVATE=${GOPRIVATE} go mod vendor
+
+update-go-deps:
+	export GOPRIVATE=github.com/atko-pam && \
+	go mod tidy && \
+	go mod vendor

@@ -1,10 +1,8 @@
-FROM golang:1.22-bullseye
+FROM golang:1.21-bullseye
 
 ARG APP_PATH
 
 RUN go install github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs@v0.19.4
-RUN go mod vendor
-RUN go mod tidy
 
 RUN mkdir -p $APP_PATH
 COPY . $APP_PATH
