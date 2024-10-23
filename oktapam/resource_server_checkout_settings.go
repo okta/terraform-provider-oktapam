@@ -255,23 +255,12 @@ func (r *serverCheckoutSettingsResource) Configure(_ context.Context, req resour
 	}
 
 	sdkClient := getSDKClientFromMetadata(req.ProviderData)
-	//provider, ok := req.ProviderData.(*OktapamFrameworkProvider)
-	//
-	//if !ok {
-	//	resp.Diagnostics.AddError(
-	//		"Unexpected Data Source Configure Type",
-	//		fmt.Sprintf("Expected *OktapamFrameworkProvider, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-	//	)
-	//
-	//	return
-	//}
+
 	r.client = &sdkClient
 }
 
 func formatServerCheckoutSettingsID(resourceGroupID string, projectID string) string {
 	// server checkout settings don't have an identifier in itself and is really an attribute of a project.
 	// we manage it as a separate resource since it's lifecycle is somewhat separate from a project.
-	// since project password settings are managed as a separate resource with format resourceGroupID/projectID already,
-	// we can just append the server_checkout_settings to the end of the ID
-	return fmt.Sprintf("%s/%s/server_checkout_settings", resourceGroupID, projectID)
+	return fmt.Sprintf("%s/%s", resourceGroupID, projectID)
 }
