@@ -6,8 +6,8 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
@@ -49,8 +49,8 @@ func TestAccResourceGroupPasswordSettings(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
 		// use the resource group check destroy since we create a new one here and deletion of the resource group will cascade delete the project / password settings
 		CheckDestroy: testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
@@ -138,7 +138,7 @@ func testAccPasswordSettingsCheckExists(rn string, expectedPasswordSettings *cli
 		if id != expectedID {
 			return fmt.Errorf("unexpected id: %s, expected: %s", id, expectedID)
 		}
-		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		pamClient := getTestAccAPIClients().LocalClient
 		passwordSettings, err := pamClient.GetPasswordSettings(context.Background(), resourceGroupID, projectID)
 		if err != nil {
 			return fmt.Errorf("error getting password settings: %w", err)

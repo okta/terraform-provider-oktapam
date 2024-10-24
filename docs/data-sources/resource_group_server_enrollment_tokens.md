@@ -24,5 +24,3 @@ Returns a list of Server Enrollment Tokens associated with a specific Project. F
 
 - `id` (String) The ID of this resource.
 - `ids` (List of String)
-
-

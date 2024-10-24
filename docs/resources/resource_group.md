@@ -24,5 +24,3 @@ A PAM construct that contains a group of projects. For details, see [Resource Gr
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-
-

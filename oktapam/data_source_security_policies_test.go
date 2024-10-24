@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
@@ -28,9 +28,9 @@ func TestAccDatasourceSecurityPoliciesList(t *testing.T) {
 	list2Config := testAccDatasourceSecurityPoliciesConfig("data2", identifier+"-2")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccSecurityPoliciesCheckDestroy(identifier+"-1", identifier+"-2"),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccSecurityPoliciesCheckDestroy(identifier+"-1", identifier+"-2"),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,
@@ -49,7 +49,7 @@ func TestAccDatasourceSecurityPoliciesList(t *testing.T) {
 
 func testAccSecurityPoliciesCheckDestroy(identifiers ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getLocalClientFromMetadata(testAccProvider.Meta())
+		c := getTestAccAPIClients().LocalClient
 
 		securityPolicies, err := c.ListSecurityPolicies(context.Background())
 		if err != nil {

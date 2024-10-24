@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/config"
+
 	"github.com/google/uuid"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
@@ -19,9 +21,9 @@ func TestAccResourceCloudConnection(t *testing.T) {
 	uuid := uuid.New().String()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      utils.CreateCheckResourceDestroy(providerCloudConnectionKey, cloudConnectionExists),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             utils.CreateCheckResourceDestroy(config.ProviderCloudConnectionKey, cloudConnectionExists),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccCloudConnectionCreateConfig(cloudConnectionName, uuid),
@@ -37,7 +39,7 @@ func TestAccResourceCloudConnection(t *testing.T) {
 }
 
 func cloudConnectionExists(id string) (bool, error) {
-	client := getLocalClientFromMetadata(testAccProvider.Meta())
+	client := getTestAccAPIClients().LocalClient
 	logging.Debugf("Checking if resource deleted %s", id)
 	cloudConnection, err := client.GetCloudConnection(context.Background(), id)
 	return cloudConnection != nil && cloudConnection.Exists() && err == nil, err

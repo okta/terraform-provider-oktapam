@@ -46,5 +46,3 @@ Optional:
 - `args` (String)
 - `args_type` (String)
 - `rendered_command` (String)
-
-

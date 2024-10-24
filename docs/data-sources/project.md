@@ -34,5 +34,3 @@ Returns an existing Project. For details, [Projects](https://help.okta.com/asa/e
 - `ssh_session_recording` (Boolean) If `true`, enables ssh recording on server access requests.
 - `team` (String) The human-readable name of the ASA Team that owns the resource. Values are lower-case.
 - `user_on_demand_period` (Number) If defined, set time period in seconds that an on-demand user account exists on the server following an access request.
-
-

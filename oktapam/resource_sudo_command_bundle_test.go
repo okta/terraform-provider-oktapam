@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/config"
+
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
@@ -18,9 +20,9 @@ func TestAccResourceSudoCommandBundle(t *testing.T) {
 	sudoCommandBundleName := fmt.Sprintf("test-sudo-command-bundle-%s", randSeq())
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      utils.CreateCheckResourceDestroy(providerSudoCommandBundleKey, sudoCommandBundleExists),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             utils.CreateCheckResourceDestroy(config.ProviderSudoCommandBundleKey, sudoCommandBundleExists),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccSudoCommandBundleCreateConfig(sudoCommandBundleName),
@@ -61,7 +63,7 @@ func TestAccResourceSudoCommandBundle(t *testing.T) {
 }
 
 func sudoCommandBundleExists(id string) (bool, error) {
-	c := getSDKClientFromMetadata(testAccProvider.Meta())
+	c := getTestAccAPIClients().SDKClient
 	logging.Debugf("Checking if resource deleted %s", id)
 	scb, err := client.GetSudoCommandBundle(context.Background(), c, id)
 	return scb != nil && *scb.Id != "" && err == nil, err

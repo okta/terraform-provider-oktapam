@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
@@ -23,9 +23,9 @@ func TestAccDataSourceSudoCommandBundlesList(t *testing.T) {
 	list2Config := testAccDataSourceSudoCommandBundlesConfig("data2", identifier+"-2")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccSudoCommandBundlesCheckDestroy(identifier+"-1", identifier+"-2"),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccSudoCommandBundlesCheckDestroy(identifier+"-1", identifier+"-2"),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,
@@ -75,7 +75,7 @@ func testAccDataSourceSudoCommandBundlesConfig(resourceName, name string) string
 
 func testAccSudoCommandBundlesCheckDestroy(identifiers ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getSDKClientFromMetadata(testAccProvider.Meta())
+		c := getTestAccAPIClients().SDKClient
 
 		respList, err := client.ListSudoCommandBundles(context.Background(), c)
 		if err != nil {

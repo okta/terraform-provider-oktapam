@@ -125,7 +125,7 @@ func ListServiceUsers(ctx context.Context, sdkClient SDKClientWrapper) ([]User, 
 				Name:           &user.Name,
 				TeamName:       &user.TeamName,
 				UserType:       (*typed_strings.UserType)(&user.UserType),
-				Status:         ((*typed_strings.UserStatus)(&user.Status)),
+				Status:         (*typed_strings.UserStatus)(&user.Status),
 				ServerUserName: &user.Name,
 			}
 			users = append(users, usr)

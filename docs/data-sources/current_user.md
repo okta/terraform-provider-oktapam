@@ -19,5 +19,3 @@ Returns the username of the user used to invoke the terraform.
 
 - `id` (String) The ID of this resource.
 - `name` (String) The human-readable name of the User.
-
-

@@ -63,5 +63,3 @@ Optional:
 Read-Only:
 
 - `secret` (String) The UUID of the secret corresponding to the stored database password.
-
-

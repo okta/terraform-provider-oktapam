@@ -42,5 +42,3 @@ Optional:
 - `punctuation` (Boolean) If `true`, passwords can include one or more punctuation/symbol characters.
 - `require_from_each_set` (Boolean) If `true`, passwords must include at least one character from the selected sets.
 - `upper_case` (Boolean) If `true`, passwords can include one or more uppercase characters.
-
-

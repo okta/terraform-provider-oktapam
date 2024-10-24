@@ -8,7 +8,7 @@ import (
 	"text/template"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/id"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
@@ -33,7 +33,7 @@ func TestAccKubernetesClusterConnection(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: testAccProviders,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccKubernetesClusterConnectionConfig(id.PrefixedUniqueId("cluster-key-"), clusterConnection),

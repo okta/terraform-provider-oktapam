@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
@@ -45,9 +45,9 @@ func TestAccResourceGroup(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccResourceGroupCheckDestroy(initialResourceGroupName, updatedResourceGroupName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccResourceGroupCheckDestroy(initialResourceGroupName, updatedResourceGroupName),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccResourceGroupCreateConfig(delegatedAdminGroup1Name, delegatedAdminGroup2Name, initialResourceGroupName),
@@ -90,7 +90,8 @@ func testAccResourceGroupCheckExists(rn string, expectedResourceGroup *client.Re
 		}
 
 		resourceGroupID := rs.Primary.Attributes[attributes.ID]
-		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		//pamClient := getTestAccAPIClients().LocalClient
+		pamClient := getTestAccAPIClients().LocalClient
 		resourceGroup, err := pamClient.GetResourceGroup(context.Background(), resourceGroupID)
 		if err != nil {
 			return fmt.Errorf("error getting resource group: %w", err)
@@ -124,7 +125,8 @@ func insertComputedValuesForResourceGroup(expectedResourceGroup, actualResourceG
 
 func testAccResourceGroupCheckDestroy(resourceGroupNames ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := getLocalClientFromMetadata(testAccProvider.Meta())
+		//client := getTestAccAPIClients().LocalClient
+		client := getTestAccAPIClients().LocalClient
 		resourceGroups, err := client.ListResourceGroups(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting resource groups: %w", err)

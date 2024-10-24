@@ -27,5 +27,3 @@ Returns a list of Projects associated with an existing Resource Group. For detai
 
 - `id` (String) The ID of this resource.
 - `ids` (List of String)
-
-

@@ -3,12 +3,13 @@ package oktapam
 import (
 	"context"
 	"fmt"
-	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"sort"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/atko-pam/pam-sdk-go/client/pam"
+
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
@@ -51,8 +52,8 @@ func TestAccResourceGroupDatabasePasswordSettings(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
 		// use the resource group check destroy since we create a new one here and deletion of the resource group will cascade delete the project / password settings
 		CheckDestroy: testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
@@ -108,7 +109,7 @@ func testAccDatabasePasswordSettingsCheckExists(rn string, expectedPasswordSetti
 		if id != expectedID {
 			return fmt.Errorf("unexpected id: %s, expected: %s", id, expectedID)
 		}
-		pamClient := getSDKClientFromMetadata(testAccProvider.Meta())
+		pamClient := getTestAccAPIClients().SDKClient
 		req := pamClient.SDKClient.ProjectsAPI.GetProjectPasswordPolicyForDatabaseResources(context.Background(), pamClient.Team, resourceGroupID, projectID)
 		passwordSettings, _, err := req.Execute()
 		if err != nil {

@@ -2,8 +2,9 @@ package client
 
 import (
 	"context"
-	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"net/http"
+
+	"github.com/atko-pam/pam-sdk-go/client/pam"
 )
 
 func GetDatabase(ctx context.Context, sdkClient SDKClientWrapper, resourceGroupID, projectID, databaseID string) (*pam.DatabaseResourceResponse, error) {

@@ -3,7 +3,7 @@
 page_title: "oktapam_security_policies Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of Security Policies associated with the Team specified by the OKTAPAMTEAM environment variable. For details, see [Security policy](https://help.okta.com/oktahelp.htm?type=oie&id=ext-pam-policy).
+  Returns a list of Security Policies associated with the Team specified by the OKTAPAM_TEAM environment variable. For details, see Security policy https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-policy.
 ---
 
 # oktapam_security_policies (Data Source)
@@ -23,5 +23,3 @@ Returns a list of Security Policies associated with the Team specified by the OK
 
 - `id` (String) The ID of this resource.
 - `ids` (List of String)
-
-
