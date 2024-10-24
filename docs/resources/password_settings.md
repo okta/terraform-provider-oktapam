@@ -42,5 +42,3 @@ Required:
 - `lower_case` (Boolean) If `true`, passwords can include one or more lowercase characters.
 - `punctuation` (Boolean) If `true`, passwords can include one or more punctuation/symbol characters.
 - `upper_case` (Boolean) If `true`, passwords can include one or more uppercase characters.
-
-

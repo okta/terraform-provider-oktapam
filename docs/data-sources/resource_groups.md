@@ -3,7 +3,7 @@
 page_title: "oktapam_resource_groups Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of Resource Groups associated with the Team specified by the OKTAPAMTEAM environment variable. For details, see [Resource Groups](https://help.okta.com/oktahelp.htm?type=oie&id=ext-pam-resource-groups).
+  Returns a list of Resource Groups associated with the Team specified by the OKTAPAM_TEAM environment variable. For details, see Resource Groups https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-resource-groups.
 ---
 
 # oktapam_resource_groups (Data Source)
@@ -23,5 +23,3 @@ Returns a list of Resource Groups associated with the Team specified by the OKTA
 
 - `id` (String) The ID of this resource.
 - `ids` (List of String)
-
-

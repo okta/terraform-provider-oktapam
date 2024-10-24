@@ -7,7 +7,7 @@ import (
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccDatasourceGatewaySetupTokenList(t *testing.T) {
@@ -28,9 +28,9 @@ func TestAccDatasourceGatewaySetupTokenList(t *testing.T) {
 	listConfig := testAccDatasourceGatewaySetupTokensConfig(dataName, identifier)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccGatewaySetupTokenCheckDestroy(identifier),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccGatewaySetupTokenCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,

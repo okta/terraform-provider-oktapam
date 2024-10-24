@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccDatasourceProjectGroupFetch(t *testing.T) {
@@ -17,9 +17,9 @@ func TestAccDatasourceProjectGroupFetch(t *testing.T) {
 	testConfig := createTestAccDatasourceProjectGroupInitConfig(identifier)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccProjectGroupsCheckDestroy(identifier + "-1"),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccProjectGroupsCheckDestroy(identifier + "-1"),
 		Steps: []resource.TestStep{
 			{
 				Config: testConfig,

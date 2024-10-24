@@ -24,5 +24,3 @@ Returns an existing Group. For details, see [Groups](https://help.okta.com/asa/e
 - `deleted_at` (String) The UTC time when the resource was deleted. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `id` (String) The ID of this resource.
 - `roles` (Set of String) A list of roles for the ASA Group. Options are 'access_user', 'access_admin', and 'reporting_user'.
-
-

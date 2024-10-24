@@ -23,5 +23,3 @@ Returns a list of Sudo Commands Bundles. For details, see [Sudo Commands Bundle]
 
 - `id` (String) The ID of this resource.
 - `ids` (List of String)
-
-

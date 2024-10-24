@@ -29,5 +29,3 @@ Returns an existing Group assigned to a specified Project. For details, see [Add
 - `server_access` (Boolean) If `true`, members of this Group have access to the servers enrolled in the Project.
 - `server_admin` (Boolean) If `true`, provides sudo permissions to members of this Group on servers enrolled in this Project.
 - `servers_selector` (Map of String) Enables access to servers with labels matching all selectors. Only available to Teams with the Early Access Policy Sync feature.
-
-

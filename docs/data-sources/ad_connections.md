@@ -38,5 +38,3 @@ Read-Only:
 - `gateway_id` (String)
 - `id` (String)
 - `name` (String)
-
-

@@ -37,5 +37,3 @@ Read-Only:
 - `command` (String)
 - `command_type` (String)
 - `rendered_command` (String)
-
-

@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
@@ -37,9 +37,9 @@ func TestAccADUserSyncTaskSettings(t *testing.T) {
 	updatedStartHourUTC := 6
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccADUserSyncTaskCheckDestroy(adConnectionResourceName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccADUserSyncTaskCheckDestroy(adConnectionResourceName),
 		Steps: []resource.TestStep{
 			{
 				//Step 1: Create couple of AD User Sync Task Settings
@@ -95,7 +95,7 @@ func testAccADUserSyncTaskCheckExists(adUserSyncTaskSettingsResourceName string)
 		adConnID := adUserSyncTaskRS.Primary.Attributes[attributes.ADConnectionID]
 		adUserSyncTaskSettingsID := adUserSyncTaskRS.Primary.ID
 
-		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		pamClient := getTestAccAPIClients().LocalClient
 		adUserSyncTaskSettings, err := pamClient.GetADUserSyncTaskSettings(context.Background(), adConnID, adUserSyncTaskSettingsID)
 		if err != nil {
 			return fmt.Errorf("error getting ad user sync task settings: %w", err)
@@ -114,7 +114,7 @@ func testAccADUserSyncTaskCheckDestroy(adConnectionResourceName string) resource
 			return fmt.Errorf("resource not found: %s", adConnectionResourceName)
 		}
 		adConnID := adConnectionRS.Primary.ID
-		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		pamClient := getTestAccAPIClients().LocalClient
 		parameters := client.ListADUserSyncTaskSettingsParameters{}
 		adUserSyncTaskList, err := pamClient.ListADUserSyncTaskSettings(context.Background(), adConnID, parameters)
 		if err != nil {

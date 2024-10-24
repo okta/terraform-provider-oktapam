@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccDatasourceServerEnrollmentTokenFetch(t *testing.T) {
@@ -19,9 +19,9 @@ func TestAccDatasourceServerEnrollmentTokenFetch(t *testing.T) {
 	testConfig := createTestAccDatasourceServerEnrollmentTokenInitListFetchConfig(projectName, description)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccServerEnrollmentTokenCheckDestroy(projectName, identifier),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccServerEnrollmentTokenCheckDestroy(projectName, identifier),
 		Steps: []resource.TestStep{
 			{
 				Config: testConfig,

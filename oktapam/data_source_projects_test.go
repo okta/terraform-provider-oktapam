@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
@@ -28,9 +28,9 @@ func TestAccDatasourceProjectList(t *testing.T) {
 	listConfig := testAccProjectsContainsConfig(dataName, identifier+"-1")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccProjectsCheckDestroy(identifier),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccProjectsCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,
@@ -45,7 +45,7 @@ func TestAccDatasourceProjectList(t *testing.T) {
 
 func testAccProjectsCheckDestroy(identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getLocalClientFromMetadata(testAccProvider.Meta())
+		c := getTestAccAPIClients().LocalClient
 
 		params := client.ListProjectsParameters{
 			Contains: identifier,

@@ -27,5 +27,3 @@ Returns a list of all AD user sync jobs a specified AD Connection. For more info
 
 - `ad_user_sync_task_settings_id_list` (List of String)
 - `id` (String) The ID of this resource.
-
-

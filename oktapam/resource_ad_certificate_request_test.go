@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/config"
+
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/typed_strings"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
@@ -12,7 +14,7 @@ import (
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 const (
@@ -26,9 +28,9 @@ func TestAccADCertificateRequest_CSR(t *testing.T) {
 	csrName := fmt.Sprintf("test-acc-csr-%s", randSeq())
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      utils.CreateCheckResourceDestroy(providerADCertificateRequestKey, adCertificateExists),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             utils.CreateCheckResourceDestroy(config.ProviderADCertificateRequestKey, adCertificateExists),
 		Steps: []resource.TestStep{
 			{
 				//Ensure CSR Creation Works
@@ -49,9 +51,9 @@ func TestAccADCertificateRequest_SelfSigned(t *testing.T) {
 	certName := fmt.Sprintf("test-acc-self-signed-cert-%s", randSeq())
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      utils.CreateCheckResourceDestroy(providerADCertificateRequestKey, adCertificateExists),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             utils.CreateCheckResourceDestroy(config.ProviderADCertificateRequestKey, adCertificateExists),
 		Steps: []resource.TestStep{
 			{
 				//Ensure Self Signed Cert Creation Works
@@ -67,7 +69,7 @@ func TestAccADCertificateRequest_SelfSigned(t *testing.T) {
 }
 
 func adCertificateExists(id string) (bool, error) {
-	client := getLocalClientFromMetadata(testAccProvider.Meta())
+	client := getTestAccAPIClients().LocalClient
 	logging.Debugf("Checking if resource deleted %s", id)
 	adCertificate, err := client.GetADSmartcardCertificate(context.Background(), id)
 

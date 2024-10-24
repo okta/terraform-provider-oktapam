@@ -27,5 +27,3 @@ Returns Team-level settings, such as authentication and enrollment details, for 
 - `reactivate_users_via_idp` (Boolean) If a disabled or deleted User is able to authenticate through the IdP, their user settings are re-enabled.
 - `user_provisioning_exact_username` (Boolean) If true, ASA has ASA Users configured through SCIM to maintain the exact username that is specified.
 - `web_session_duration` (Number) Defines the duration of the web session. Configure the web session to be between 30 minutes and 25 hours.
-
-

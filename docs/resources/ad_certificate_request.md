@@ -40,5 +40,3 @@ Optional:
 - `organizational_unit` (String)
 - `province` (String)
 - `ttl_days` (Number)
-
-

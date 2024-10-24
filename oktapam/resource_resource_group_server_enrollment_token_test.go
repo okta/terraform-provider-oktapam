@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
@@ -25,8 +25,8 @@ func TestAccResourceGroupServerEnrollmentToken(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
 		// use the resource group check destroy since we create a new one here and deletion of the resource group will cascade delete the projects / tokens
 		CheckDestroy: testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
@@ -59,7 +59,7 @@ func testAccResourceGroupServerEnrollmentTokenCheckExists(rn string, expectedRes
 		resourceGroupID := rs.Primary.Attributes[attributes.ResourceGroup]
 		projectID := rs.Primary.Attributes[attributes.Project]
 		serverEnrollmentTokenID := rs.Primary.Attributes[attributes.ID]
-		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		pamClient := getTestAccAPIClients().LocalClient
 		resourceGroupServerEnrollmentToken, err := pamClient.GetResourceGroupServerEnrollmentToken(context.Background(), resourceGroupID, projectID, serverEnrollmentTokenID)
 		if err != nil {
 			return fmt.Errorf("error getting resource group server enrollment token: %w", err)
@@ -77,7 +77,7 @@ func testAccResourceGroupServerEnrollmentTokenCheckExists(rn string, expectedRes
 
 func testAccResourceGroupServerEnrollmentTokenCheckDestroy(resourceGroupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := getLocalClientFromMetadata(testAccProvider.Meta())
+		client := getTestAccAPIClients().LocalClient
 		resourceGroups, err := client.ListResourceGroups(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting resource groups: %w", err)

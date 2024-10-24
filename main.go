@@ -1,12 +1,13 @@
 package main
 
 import (
+	"context"
 	"flag"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
+	"log"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam"
+
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6/tf6server"
 )
 
 // Run the docs generation tool, check its repository for more information on how it works and how docs
@@ -19,10 +20,22 @@ func main() {
 	flag.BoolVar(&debug, "debug", false, "set to true to run the provider with support for debuggers like delve")
 	flag.Parse()
 
-	plugin.Serve(&plugin.ServeOpts{
-		Debug: debug,
-		ProviderFunc: func() *schema.Provider {
-			return oktapam.Provider()
-		},
-	})
+	ctx := context.Background()
+
+	muxServer, err := oktapam.V6ProviderServerFactory(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var serveOpts []tf6server.ServeOpt
+
+	if debug {
+		serveOpts = append(serveOpts, tf6server.WithManagedDebug())
+	}
+
+	_ = tf6server.Serve(
+		"registry.terraform.io/okta.com/pam/oktapam",
+		muxServer,
+		serveOpts...,
+	)
 }

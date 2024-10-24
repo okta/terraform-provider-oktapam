@@ -105,16 +105,13 @@ Optional:
 - `sudo_display_name` (String) The name for sudo commands that will be visible to end users
 
 <a id="nestedblock--rule--privileges--principal_account_ssh--sudo_command_bundles"></a>
-### Nested Schema for `rule.privileges.principal_account_ssh.sudo_display_name`
+### Nested Schema for `rule.privileges.principal_account_ssh.sudo_command_bundles`
 
 Optional:
 
+- `id` (String)
 - `name` (String)
 - `type` (String)
-
-Read-Only:
-
-- `id` (String) The ID of this resource.
 
 
 
@@ -151,7 +148,7 @@ Optional:
 - `secret_folder` (Block List, Max: 1) Defines a specific Secret Folder targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--secrets--secret_folder))
 
 <a id="nestedblock--rule--resources--secrets--secret"></a>
-### Nested Schema for `rule.resources.secrets.secret_folder`
+### Nested Schema for `rule.resources.secrets.secret`
 
 Required:
 
@@ -177,7 +174,7 @@ Optional:
 - `server_account` (Block List) Defines a local server account targeted by the Security Policy. (see [below for nested schema](#nestedblock--rule--resources--servers--server_account))
 
 <a id="nestedblock--rule--resources--servers--label_selectors"></a>
-### Nested Schema for `rule.resources.servers.server_account`
+### Nested Schema for `rule.resources.servers.label_selectors`
 
 Required:
 
@@ -189,7 +186,7 @@ Optional:
 
 
 <a id="nestedblock--rule--resources--servers--server"></a>
-### Nested Schema for `rule.resources.servers.server_account`
+### Nested Schema for `rule.resources.servers.server`
 
 Required:
 
@@ -245,5 +242,3 @@ Required:
 
 - `acr_values` (String) The authentication context class reference (ACR) for this policy. This defines a specific set of assurance level requirements required by a protected resource.
 - `reauth_frequency_in_seconds` (Number) The number of seconds an MFA verification remains valid. After this time users need to reauthenticate before they can open new connections to resources. Defining a value of `0` requires users to authenticate for every connection.
-
-

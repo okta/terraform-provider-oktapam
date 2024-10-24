@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/config"
+
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
@@ -19,9 +21,9 @@ func TestAccADConnection(t *testing.T) {
 	domainName := fmt.Sprintf("%s.example.com", nameIdentifier)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      utils.CreateCheckResourceDestroy(providerADConnectionKey, adConnectionExists),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             utils.CreateCheckResourceDestroy(config.ProviderADConnectionKey, adConnectionExists),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccADConnectionCreateConfig(connectionName, domainName),
@@ -58,7 +60,7 @@ func TestAccADConnection(t *testing.T) {
 }
 
 func adConnectionExists(id string) (bool, error) {
-	client := getLocalClientFromMetadata(testAccProvider.Meta())
+	client := getTestAccAPIClients().LocalClient
 	logging.Debugf("Checking if resource deleted %s", id)
 	adConnection, err := client.GetADConnection(context.Background(), id, false)
 

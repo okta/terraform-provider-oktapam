@@ -26,5 +26,3 @@ Returns a previously created ASA Server Enrollment Token associated with a speci
 - `id` (String) The ID of this resource.
 - `issued_at` (String) The UTC time when the token was issued. Format is '2022-01-01 00:00:00 +0000 UTC'.
 - `token` (String) The secret used for resource enrollment.
-
-

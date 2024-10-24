@@ -25,5 +25,3 @@ Upload the Enterprise Signed certificate for use with an AD Connection. For more
 - `enterprise_signed` (Boolean) If `true`, indicates the certificate is signed by AD Certificate Services.
 - `id` (String) The ID of this resource.
 - `status` (String) Certificate status - Valid/Request Created.
-
-

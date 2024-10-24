@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
@@ -28,9 +28,9 @@ func TestAccDatasourceSecretFetch(t *testing.T) {
 	data2Config := createTestAccDatasourceSecretDataConfig("data2", "oktapam_secret.test_acc_secret_2.id")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccResourceGroupCheckDestroy(resourceGroupName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,

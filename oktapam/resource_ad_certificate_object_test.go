@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/config"
+
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
@@ -28,10 +30,10 @@ func TestAccADCertificateObject(t *testing.T) {
 	externalProviders["tls"] = tlsExternalProvider
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		ExternalProviders: externalProviders,
-		CheckDestroy:      utils.CreateCheckResourceDestroy(providerADCertificateRequestKey, adCertificateExists),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ExternalProviders:        externalProviders,
+		CheckDestroy:             utils.CreateCheckResourceDestroy(config.ProviderADCertificateRequestKey, adCertificateExists),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccADCertificateUploadConfig(csrDisplayName),

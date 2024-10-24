@@ -7,3 +7,6 @@
 build
 terraform-provider-oktapam
 oktapam/test.log
+playground
+.tool-versions
+!vendor/github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs/build/
