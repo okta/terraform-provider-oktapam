@@ -466,9 +466,7 @@ func writeObjectChildren(w io.Writer, parents []string, ty cty.Type, group group
 
 	for _, name := range sortedNames {
 		att := atts[name]
-		path := make([]string, len(parents), len(parents)+1)
-		copy(path, parents)
-		path = append(path, name)
+		path := append(parents, name)
 
 		nt, err := writeObjectAttribute(w, path, att, group)
 		if err != nil {
@@ -524,9 +522,7 @@ func writeNestedAttributeChildren(w io.Writer, parents []string, nestedAttribute
 
 		for _, name := range names {
 			att := nestedAttributes.Attributes[name]
-			path := make([]string, len(parents), len(parents)+1)
-			copy(path, parents)
-			path = append(path, name)
+			path := append(parents, name)
 
 			nt, err := writeAttribute(w, path, att, group)
 			if err != nil {
