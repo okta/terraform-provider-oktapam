@@ -30,7 +30,6 @@ func TestAccSecurityPolicy(t *testing.T) {
 	secretsResourceName := "oktapam_security_policy.test_acc_secrets_security_policy"
 	securityPolicyName := fmt.Sprintf("test_acc_security_policy_%s", randSeq())
 	secretsSecurityPolicyName := fmt.Sprintf("test_acc_secrets_security_policy_%s", randSeq())
-	secretsSecurityPolicyName := fmt.Sprintf("test_acc_secrets_security_policy_%s", randSeq())
 	group1Name := fmt.Sprintf("test_acc_security_policy_group1_%s", randSeq())
 	group2Name := fmt.Sprintf("test_acc_security_policy_group2_%s", randSeq())
 	sudoCommandBundle1Name := fmt.Sprintf("scb-test_acc_sudo_command_bundle1_%s", randSeq())
@@ -352,7 +351,6 @@ func testAccSecurityPolicyCheckExists(rn string, expectedSecurityPolicy *client.
 		comparison := cmp.Diff(expectedSecurityPolicy, securityPolicy, cmpopts.IgnoreFields(client.NamedObject{}, "Id"))
 		if comparison != "" {
 			return fmt.Errorf("expected security policy does not match returned security policy.\n%s", comparison)
-			return fmt.Errorf("expected security policy does not match returned security policy.\n%s", comparison)
 		}
 		return nil
 	}
@@ -650,118 +648,6 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 			password_checkout_rdp {
 				enabled = true
 			}
-			principal_account_rdp {
-				enabled = false
-				admin_level_permissions = false
-			}
-		}
-		conditions {
-			access_request {
-				request_type_id = "abcd"
-				request_type_name = "foo"
-				expires_after_seconds = 1200
-			}
-			access_request {
-				request_type_id = "wxyz"
-				request_type_name = "bar"
-				expires_after_seconds = 1800
-			}
-			gateway {
-				traffic_forwarding = true
-				session_recording  = true
-			}
-		}
-	}
-}
-`
-
-const testAccSecurityPolicyInvalidRDPAndSSHConfigFormat = `
-resource "oktapam_group" "test_security_policy_group1" {
-	name = "%s"
-}
-resource "oktapam_security_policy" "test_acc_security_policy" {
-	name = "%s"
-	description = "updated description"
-	active = true
-	principals {
-		groups = [oktapam_group.test_security_policy_group1.id]
-	}
-	rule {
-		name = "first rule"
-		resources {
-			servers {
-				server_account {
-					server_id = "%s"
-					account   = "pamadmin"
-				}
-				label_selectors {
-					server_labels = {
-						"system.os_type" = "windows"
-					}
-					accounts = ["pamadmin"]
-				}
-			}
-		}
-		privileges {
-			password_checkout_rdp {
-				enabled = true
-			}
-			principal_account_rdp {
-				enabled = false
-				admin_level_permissions = false
-			}
-		}
-		conditions {
-			access_request {
-				request_type_id = "abcd"
-				request_type_name = "foo"
-				expires_after_seconds = 1200
-			}
-			access_request {
-				request_type_id = "wxyz"
-				request_type_name = "bar"
-				expires_after_seconds = 1800
-			}
-			gateway {
-				traffic_forwarding = true
-				session_recording  = true
-			}
-		}
-	}
-}
-`
-
-const testAccSecurityPolicyInvalidRDPAndSSHConfigFormat = `
-resource "oktapam_group" "test_security_policy_group1" {
-	name = "%s"
-}
-resource "oktapam_security_policy" "test_acc_security_policy" {
-	name = "%s"
-	description = "updated description"
-	active = true
-	principals {
-		groups = [oktapam_group.test_security_policy_group1.id]
-	}
-	rule {
-		name = "first rule"
-		resources {
-			servers {
-				server_account {
-					server_id = "%s"
-					account   = "pamadmin"
-				}
-				label_selectors {
-					server_labels = {
-						"system.os_type" = "windows"
-					}
-					accounts = ["pamadmin"]
-				}
-			}
-		}
-		privileges {
-			password_checkout_rdp {
-				enabled = true
-			}
 			password_checkout_ssh {
 				enabled = true
 			}
@@ -797,7 +683,6 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 // When the principal accounts are not enabled, terraform should not allow the users to enable
 // admin level permissions for those accounts.
 const testAccSecurityPolicyInvalidAdminPrivilegesConfigFormat = `
-const testAccSecurityPolicyInvalidAdminPrivilegesConfigFormat = `
 resource "oktapam_group" "test_security_policy_group1" {
 	name = "%s"
 }
@@ -828,7 +713,6 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 			password_checkout_rdp {
 				enabled = true
 			}
-			principal_account_rdp {
 			principal_account_rdp {
 				enabled = false
 				admin_level_permissions = true
