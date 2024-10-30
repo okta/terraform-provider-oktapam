@@ -2,7 +2,7 @@ package oktapam
 
 import (
 	"context"
-	"github.com/atko-pam/pam-sdk-go/client/pam"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -29,6 +29,7 @@ const (
 	providerADTaskSettingsKey                      = "oktapam_ad_task_settings"
 	providerADUserSyncTaskSettingsKey              = "oktapam_ad_user_sync_task_settings"
 	providerADUserSyncTaskSettingsIDListKey        = "oktapam_ad_user_sync_task_settings_id_list"
+	providerCurrentUser                            = "oktapam_current_user"
 	providerGatewaysKey                            = "oktapam_gateways"
 	providerGatewaySetupTokenKey                   = "oktapam_gateway_setup_token"
 	providerGatewaySetupTokensKey                  = "oktapam_gateway_setup_tokens"
@@ -48,11 +49,14 @@ const (
 	providerResourceGroupProjectsKey               = "oktapam_resource_group_projects"
 	providerResourceGroupServerEnrollmentTokenKey  = "oktapam_resource_group_server_enrollment_token"
 	providerResourceGroupServerEnrollmentTokensKey = "oktapam_resource_group_server_enrollment_tokens"
+	providerSecretFolderKey                        = "oktapam_secret_folder"
+	providerSecretFoldersKey                       = "oktapam_secret_folders"
 	providerSecurityPoliciesKey                    = "oktapam_security_policies"
 	providerSecurityPolicyKey                      = "oktapam_security_policy"
 	providerServerEnrollmentTokenKey               = "oktapam_server_enrollment_token"
 	providerServerEnrollmentTokensKey              = "oktapam_server_enrollment_tokens"
 	providerTeamSettingsKey                        = "oktapam_team_settings"
+	providerUserGroupAttachmentKey                 = "oktapam_user_group_attachment"
 	providerUserKey                                = "oktapam_user"
 )
 
@@ -62,25 +66,21 @@ func Provider() *schema.Provider {
 			apiHostKey: {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc(apiHostSchemaEnvVar, DefaultAPIBaseURL),
 				Description: "Okta PAM API Host",
 			},
 			apiKeyKey: {
 				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc(apiKeySchemaEnvVar, nil),
+				Optional:    true,
 				Description: "Okta PAM API Key",
 			},
 			apiKeySecretKey: {
 				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc(apiKeySecretSchemaEnvVar, nil),
+				Optional:    true,
 				Description: "Okta PAM API Secret",
 			},
 			teamKey: {
 				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc(teamSchemaEnvVar, nil),
+				Optional:    true,
 				Description: "Okta PAM Team",
 			},
 		},
@@ -101,14 +101,17 @@ func Provider() *schema.Provider {
 			providerResourceGroupKey:                      resourceResourceGroup(),
 			providerResourceGroupProjectKey:               resourceResourceGroupProject(),
 			providerResourceGroupServerEnrollmentTokenKey: resourceResourceGroupServerEnrollmentToken(),
+			providerSecretFolderKey:                       resourceSecretFolder(),
 			providerSecurityPolicyKey:                     resourceSecurityPolicy(),
 			providerServerEnrollmentTokenKey:              resourceServerEnrollmentToken(),
 			providerTeamSettingsKey:                       resourceTeamSettings(),
+			providerUserGroupAttachmentKey:                resourceUserGroupAttachment(),
 			providerUserKey:                               resourceUser(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
 			providerADConnectionsKey:                       dataSourceADConnections(),
+			providerCurrentUser:                            dataSourceCurrentUser(),
 			providerGatewaysKey:                            dataSourceGateways(),
 			providerGatewaySetupTokenKey:                   dataSourceGatewaySetupToken(),
 			providerGatewaySetupTokensKey:                  dataSourceGatewaySetupTokens(),
@@ -125,6 +128,7 @@ func Provider() *schema.Provider {
 			providerResourceGroupProjectsKey:               dataSourceResourceGroupProjects(),
 			providerResourceGroupServerEnrollmentTokenKey:  dataSourceResourceGroupServerEnrollmentToken(),
 			providerResourceGroupServerEnrollmentTokensKey: dataSourceResourceGroupServerEnrollmentTokens(),
+			providerSecretFoldersKey:                       dataSourceSecretFolders(),
 			providerSecurityPoliciesKey:                    dataSourceSecurityPolicies(),
 			providerSecurityPolicyKey:                      dataSourceSecurityPolicy(),
 			providerServerEnrollmentTokenKey:               dataSourceServerEnrollmentToken(),
@@ -138,16 +142,45 @@ func Provider() *schema.Provider {
 }
 
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (any, diag.Diagnostics) {
+	if d.Get(apiKeyKey).(string) == "" {
+		if apiKey := os.Getenv(apiKeySchemaEnvVar); apiKey != "" {
+			d.Set(apiKeyKey, apiKey)
+		}
+	}
+
+	if d.Get(apiHostKey).(string) == "" {
+		if apiKey := os.Getenv(apiHostSchemaEnvVar); apiKey != "" {
+			d.Set(apiHostKey, apiKey)
+		}
+	}
+
+	if d.Get(apiKeySecretKey).(string) == "" {
+		if apiKey := os.Getenv(apiKeySecretSchemaEnvVar); apiKey != "" {
+			d.Set(apiKeySecretKey, apiKey)
+		}
+	}
+
+	if d.Get(teamKey).(string) == "" {
+		if apiKey := os.Getenv(teamSchemaEnvVar); apiKey != "" {
+			d.Set(teamKey, apiKey)
+		}
+	}
+
+	team := d.Get(teamKey).(string)
 	config := &client.OktaPAMProviderConfig{
 		APIKey:       d.Get(apiKeyKey).(string),
 		APIKeySecret: d.Get(apiKeySecretKey).(string),
-		Team:         d.Get(teamKey).(string),
+		Team:         team,
 		APIHost:      d.Get(apiHostKey).(string),
 	}
 
 	sdkClient, err := client.CreateSDKClient(config)
 	if err != nil {
 		return nil, diag.Errorf("failed to load sdk api client: %v", err)
+	}
+	sdkClientWrapper := client.SDKClientWrapper{
+		SDKClient: sdkClient,
+		Team:      team,
 	}
 
 	localClient, err := client.CreateLocalPAMClient(config)
@@ -156,12 +189,12 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (any, diag.D
 	}
 
 	return &client.APIClients{
-		SDKClient:   sdkClient,
+		SDKClient:   sdkClientWrapper,
 		LocalClient: localClient,
 	}, nil
 }
 
-func getSDKClientFromMetadata(meta interface{}) *pam.APIClient {
+func getSDKClientFromMetadata(meta interface{}) client.SDKClientWrapper {
 	return meta.(*client.APIClients).SDKClient
 }
 

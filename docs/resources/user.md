@@ -3,12 +3,12 @@
 page_title: "oktapam_user Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  An ASA User. Valid user types are human and service. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/service-users.htm on ASA Service Users and how they are used.
+  An ASA/PAM User. Valid user types are human and service. For more information check out the documentation https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/service-users.htm on ASA Service Users and how they are used.
 ---
 
 # oktapam_user (Resource)
 
-An ASA User. Valid user types are `human` and `service`. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/service-users.htm) on ASA Service Users and how they are used.
+An ASA/PAM User. Valid user types are `human` and `service`. For more information check out the [documentation](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/service-users.htm) on ASA Service Users and how they are used.
 
 
 

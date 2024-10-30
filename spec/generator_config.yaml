@@ -1,5 +1,5 @@
 provider:
-  name: oktapam_fwk
+  name: oktapam_framework_provider
   # This schema needs to exist in the OpenAPI spec!
   schema_ref: '#/components/schemas/TerraformProviderSchema'
 
@@ -17,3 +17,6 @@ resources:
     delete:
       path: /v1/teams/{team_name}/resource_groups/{resource_group_id}
       method: DELETE
+    schema:
+      ignores:
+        - team_id

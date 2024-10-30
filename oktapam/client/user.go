@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/errors"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/typed_strings"
@@ -103,6 +104,65 @@ func (p ListUsersParameters) toQueryParametersMap() map[string][]string {
 
 type UsersListResponse struct {
 	Users []User `json:"list"`
+}
+
+func ListServiceUsers(ctx context.Context, sdkClient SDKClientWrapper) ([]User, error) {
+	request := sdkClient.SDKClient.ServiceUsersAPI.ListServiceUsers(ctx, sdkClient.Team)
+
+	users := make([]User, 0, 5)
+
+	for {
+		resp, httpResp, callErr := request.Execute()
+		if _, err := checkStatusCodeFromSDK(httpResp, 200); err != nil {
+			return nil, err
+		} else if callErr != nil {
+			return nil, callErr
+		}
+
+		for _, user := range resp.List {
+			usr := User{
+				ID:             &user.Id,
+				Name:           &user.Name,
+				TeamName:       &user.TeamName,
+				UserType:       (*typed_strings.UserType)(&user.UserType),
+				Status:         ((*typed_strings.UserStatus)(&user.Status)),
+				ServerUserName: &user.Name,
+			}
+			users = append(users, usr)
+		}
+
+		linkHeader := httpResp.Header.Get("Link")
+		if linkHeader == "" {
+			break
+		}
+
+		links := linkheader.Parse(linkHeader)
+
+		var nextURLStr string
+		for _, link := range links {
+			if link.Rel == "next" {
+				nextURLStr = link.URL
+			}
+		}
+
+		if nextURLStr == "" {
+			break
+		}
+
+		nextURL, err := url.Parse(nextURLStr)
+		if err != nil {
+			return nil, err
+		}
+		values := nextURL.Query()
+		offset, ok := values["offset"]
+		if !ok || len(offset) != 1 {
+			return nil, fmt.Errorf("invalid offset")
+		}
+
+		request = request.Offset(offset[0])
+	}
+
+	return users, nil
 }
 
 // Commands used by both `human` and `service` users:
@@ -292,4 +352,128 @@ func (c OktaPAMClient) DeleteServiceUser(ctx context.Context, userName string, s
 	}
 	_, err = checkStatusCode(resp, http.StatusOK, http.StatusNotFound)
 	return err
+}
+
+func GetCurrentUser(ctx context.Context, sdkClient SDKClientWrapper) (*pam.CurrentUserInfo, error) {
+	userInfo, httpResp, err := sdkClient.SDKClient.UsersAPI.GetCurrentUserInfo(ctx, sdkClient.Team).Execute()
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := checkStatusCodeFromSDK(httpResp, 200); err != nil {
+		return nil, err
+	}
+
+	return userInfo, nil
+}
+
+func AddUserToGroup(ctx context.Context, sdkClient SDKClientWrapper, groupName string, username string) error {
+	request := sdkClient.SDKClient.GroupsAPI.AddUserToGroup(ctx, sdkClient.Team, groupName)
+	request = request.AddUserToGroupRequest(pam.AddUserToGroupRequest{
+		Name: &username,
+	})
+
+	resp, err := request.Execute()
+	if err != nil {
+		return err
+	}
+
+	if _, err := checkStatusCodeFromSDK(resp, 204); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func RemoveUserFromGroup(ctx context.Context, sdkClient SDKClientWrapper, groupName string, username string) error {
+	request := sdkClient.SDKClient.GroupsAPI.RemoveUserFromGroup(ctx, sdkClient.Team, groupName, username)
+	resp, err := request.Execute()
+	if err != nil {
+		return err
+	}
+
+	if _, err := checkStatusCodeFromSDK(resp, 204); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GroupContainsUser(ctx context.Context, sdkClient SDKClientWrapper, groupName string, username string) (bool, error) {
+	users, err := ListUsersInGroup(ctx, sdkClient, groupName, true)
+	if err != nil {
+		return false, err
+	}
+
+	for _, usr := range users {
+		if *usr.Name == username {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+func ListUsersInGroup(ctx context.Context, sdkClient SDKClientWrapper, groupName string, allow404 bool) ([]User, error) {
+	var list []User
+	request := sdkClient.SDKClient.GroupsAPI.ListUsersInGroup(ctx, sdkClient.Team, groupName)
+
+	for {
+		resp, httpResp, callErr := request.Execute()
+		if httpResp != nil {
+			if allow404 {
+				if httpResp.StatusCode == 404 {
+					return nil, nil
+				}
+			}
+			if _, err := checkStatusCodeFromSDK(httpResp, 200); err != nil {
+				return nil, err
+			}
+		} else if callErr != nil {
+			return nil, callErr
+		}
+
+		for _, u := range resp.List {
+			usr := User{
+				ID:       &u.Id,
+				Name:     &u.Name,
+				TeamName: &u.TeamName,
+				UserType: (*typed_strings.UserType)(&u.UserType),
+			}
+
+			list = append(list, usr)
+		}
+
+		linkHeader := httpResp.Header.Get("Link")
+		if linkHeader == "" {
+			break
+		}
+
+		links := linkheader.Parse(linkHeader)
+
+		var nextURLStr string
+		for _, link := range links {
+			if link.Rel == "next" {
+				nextURLStr = link.URL
+			}
+		}
+
+		if nextURLStr == "" {
+			break
+		}
+
+		nextURL, err := url.Parse(nextURLStr)
+		if err != nil {
+			return nil, err
+		}
+		values := nextURL.Query()
+		offset, ok := values["offset"]
+		if !ok || len(offset) != 1 {
+			return nil, fmt.Errorf("invalid offset")
+		}
+
+		request = request.Offset(offset[0])
+	}
+
+	return list, nil
 }

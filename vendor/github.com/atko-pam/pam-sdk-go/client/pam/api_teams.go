@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The ScaleFT API is a control plane API for operations in Okta Privileged Access (formerly ScaleFT)
+The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -88,6 +88,10 @@ func (a *TeamsAPIService) FetchStatsForTeamExecute(r ApiFetchStatsForTeamRequest
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -157,6 +161,10 @@ func (a *TeamsAPIService) GetTeamSettingsExecute(r ApiGetTeamSettingsRequest) (*
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
 }
@@ -228,6 +236,10 @@ func (a *TeamsAPIService) GetVaultJWKSExecute(r ApiGetVaultJWKSRequest) (*GetVau
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -298,6 +310,10 @@ func (a *TeamsAPIService) ListRolesExecute(r ApiListRolesRequest) (*ListRolesRes
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -305,64 +321,40 @@ type ApiListServersRequest struct {
 	ctx                       context.Context
 	ApiService                *TeamsAPIService
 	teamName                  string
-	offset                    *string
-	count                     *int32
-	descending                *bool
-	prev                      *bool
-	projectName               *string
-	hostname                  *string
+	adServers                 *bool
+	altNamesContains          *string
 	bastion                   *string
 	canonicalName             *string
-	cloudProvider             *string
 	cloudAccount              *string
+	cloudProvider             *string
+	count                     *int32
+	credentialed              *bool
+	descending                *bool
+	hasAccountUnderManagement *bool
+	hostname                  *string
+	id                        *string
 	instanceId                *string
-	altNamesContains          *string
+	managed                   *bool
+	offset                    *string
+	prev                      *bool
+	projectName               *string
 	state                     *string
 	selector                  *string
-	managed                   *bool
-	adServers                 *bool
-	credentialed              *bool
-	hasAccountUnderManagement *bool
-	id                        *string
 }
 
-// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
-func (r ApiListServersRequest) Offset(offset string) ApiListServersRequest {
-	r.offset = &offset
+// If &#x60;true&#x60;, only return AD servers. If &#x60;false&#x60;, only return Non-AD servers
+func (r ApiListServersRequest) AdServers(adServers bool) ApiListServersRequest {
+	r.adServers = &adServers
 	return r
 }
 
-// The number of objects per page
-func (r ApiListServersRequest) Count(count int32) ApiListServersRequest {
-	r.count = &count
+// Only return Servers that contain the specified alternate name
+func (r ApiListServersRequest) AltNamesContains(altNamesContains string) ApiListServersRequest {
+	r.altNamesContains = &altNamesContains
 	return r
 }
 
-// The object order
-func (r ApiListServersRequest) Descending(descending bool) ApiListServersRequest {
-	r.descending = &descending
-	return r
-}
-
-// The direction of paging
-func (r ApiListServersRequest) Prev(prev bool) ApiListServersRequest {
-	r.prev = &prev
-	return r
-}
-
-// A Project name
-func (r ApiListServersRequest) ProjectName(projectName string) ApiListServersRequest {
-	r.projectName = &projectName
-	return r
-}
-
-// A hostname
-func (r ApiListServersRequest) Hostname(hostname string) ApiListServersRequest {
-	r.hostname = &hostname
-	return r
-}
-
-// A bastion hostname
+// Only return Servers associated with the specified bastion
 func (r ApiListServersRequest) Bastion(bastion string) ApiListServersRequest {
 	r.bastion = &bastion
 	return r
@@ -374,69 +366,93 @@ func (r ApiListServersRequest) CanonicalName(canonicalName string) ApiListServer
 	return r
 }
 
-// A Cloud provider: &#x60;aws&#x60; or &#x60;gce&#x60;
-func (r ApiListServersRequest) CloudProvider(cloudProvider string) ApiListServersRequest {
-	r.cloudProvider = &cloudProvider
-	return r
-}
-
-// The id of the cloud account associated with this server
+// Only return Servers associated with the specified cloud account
 func (r ApiListServersRequest) CloudAccount(cloudAccount string) ApiListServersRequest {
 	r.cloudAccount = &cloudAccount
 	return r
 }
 
-// The instance ids of the servers
-func (r ApiListServersRequest) InstanceId(instanceId string) ApiListServersRequest {
-	r.instanceId = &instanceId
+// Only return Servers associated with the specified cloud provider. Possible values: &#x60;aws&#x60; or &#x60;gce&#x60;
+func (r ApiListServersRequest) CloudProvider(cloudProvider string) ApiListServersRequest {
+	r.cloudProvider = &cloudProvider
 	return r
 }
 
-// Include Servers that contain the value of &#x60;alt_name_contains&#x60; in their &#x60;alt_names&#x60;
-func (r ApiListServersRequest) AltNamesContains(altNamesContains string) ApiListServersRequest {
-	r.altNamesContains = &altNamesContains
+// The number of objects per page
+func (r ApiListServersRequest) Count(count int32) ApiListServersRequest {
+	r.count = &count
 	return r
 }
 
-// State of the Server: &#x60;ACTIVE&#x60; or &#x60;INACTIVE&#x60;
-func (r ApiListServersRequest) State(state string) ApiListServersRequest {
-	r.state = &state
-	return r
-}
-
-// Server selectors. Syntax is selector&#x3D;key1&#x3D;value1,key2&#x3D;value2
-func (r ApiListServersRequest) Selector(selector string) ApiListServersRequest {
-	r.selector = &selector
-	return r
-}
-
-// If &#x60;true&#x60;, only include managed servers. If &#x60;false&#x60;, only include unmanaged servers
-func (r ApiListServersRequest) Managed(managed bool) ApiListServersRequest {
-	r.managed = &managed
-	return r
-}
-
-// If &#x60;true&#x60;, only include AD servers. If &#x60;false&#x60;, only include Non AD servers
-func (r ApiListServersRequest) AdServers(adServers bool) ApiListServersRequest {
-	r.adServers = &adServers
-	return r
-}
-
-// If &#x60;true&#x60;, only include unmanaged servers with credential issuance enabled. If &#x60;false&#x60;, only include unmanaged servers with credential issuance disabled.
+// If &#x60;true&#x60;, only return unmanaged Servers with credential issuance enabled. If &#x60;false&#x60;, only return unmanaged Servers with credential issuance disabled.
 func (r ApiListServersRequest) Credentialed(credentialed bool) ApiListServersRequest {
 	r.credentialed = &credentialed
 	return r
 }
 
-// If &#x60;true&#x60;, only include servers that currently have at least one account&#39;s password under management&#39;.  If &#x60;false&#x60;, only include servers that do not currently have an account whose password is under management
+// The object order
+func (r ApiListServersRequest) Descending(descending bool) ApiListServersRequest {
+	r.descending = &descending
+	return r
+}
+
+// If &#x60;true&#x60;, only return Servers that currently have at least one account&#39;s password under management&#39;.  If &#x60;false&#x60;, only return servers that do not currently have an account whose password is under management.
 func (r ApiListServersRequest) HasAccountUnderManagement(hasAccountUnderManagement bool) ApiListServersRequest {
 	r.hasAccountUnderManagement = &hasAccountUnderManagement
 	return r
 }
 
-// Include only servers with the given IDs. Only usable for PAM administrative views of servers, not end user server views.
+// Only return Servers that contain the specified hostname
+func (r ApiListServersRequest) Hostname(hostname string) ApiListServersRequest {
+	r.hostname = &hostname
+	return r
+}
+
+// Only return Servers with the specified IDs. Only usable for PAM administrative views of servers, not end-user Server views.
 func (r ApiListServersRequest) Id(id string) ApiListServersRequest {
 	r.id = &id
+	return r
+}
+
+// Only return Servers that contain the specified instance ID
+func (r ApiListServersRequest) InstanceId(instanceId string) ApiListServersRequest {
+	r.instanceId = &instanceId
+	return r
+}
+
+// If &#x60;true&#x60;, only return managed servers. If &#x60;false&#x60;, only return unmanaged servers.
+func (r ApiListServersRequest) Managed(managed bool) ApiListServersRequest {
+	r.managed = &managed
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListServersRequest) Offset(offset string) ApiListServersRequest {
+	r.offset = &offset
+	return r
+}
+
+// The direction of paging
+func (r ApiListServersRequest) Prev(prev bool) ApiListServersRequest {
+	r.prev = &prev
+	return r
+}
+
+// Only return Servers that belong to the specified Project
+func (r ApiListServersRequest) ProjectName(projectName string) ApiListServersRequest {
+	r.projectName = &projectName
+	return r
+}
+
+// Include Servers with the specified state. Valid statuses: &#x60;ACTIVE&#x60; or &#x60;INACTIVE&#x60;.
+func (r ApiListServersRequest) State(state string) ApiListServersRequest {
+	r.state = &state
+	return r
+}
+
+// Only return Servers that contain the specified Server selectors.
+func (r ApiListServersRequest) Selector(selector string) ApiListServersRequest {
+	r.selector = &selector
 	return r
 }
 
@@ -482,23 +498,11 @@ func (a *TeamsAPIService) ListServersExecute(r ApiListServersRequest) (*ListServ
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.offset != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	if r.adServers != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "AdServers", r.adServers, "")
 	}
-	if r.count != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
-	}
-	if r.descending != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
-	}
-	if r.prev != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
-	}
-	if r.projectName != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "project_name", r.projectName, "")
-	}
-	if r.hostname != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "hostname", r.hostname, "")
+	if r.altNamesContains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "alt_names_contains", r.altNamesContains, "")
 	}
 	if r.bastion != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "bastion", r.bastion, "")
@@ -506,38 +510,50 @@ func (a *TeamsAPIService) ListServersExecute(r ApiListServersRequest) (*ListServ
 	if r.canonicalName != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "canonical_name", r.canonicalName, "")
 	}
+	if r.cloudAccount != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "cloud_account", r.cloudAccount, "")
+	}
 	if r.cloudProvider != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "cloud_provider", r.cloudProvider, "")
 	}
-	if r.cloudAccount != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "cloud_account", r.cloudAccount, "")
+	if r.count != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
+	}
+	if r.credentialed != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "credentialed", r.credentialed, "")
+	}
+	if r.descending != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.hasAccountUnderManagement != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "has_account_under_management", r.hasAccountUnderManagement, "")
+	}
+	if r.hostname != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "hostname", r.hostname, "")
+	}
+	if r.id != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "id", r.id, "")
 	}
 	if r.instanceId != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "instance_id", r.instanceId, "")
 	}
-	if r.altNamesContains != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "alt_names_contains", r.altNamesContains, "")
+	if r.managed != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "managed", r.managed, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
+	if r.prev != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
+	}
+	if r.projectName != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "project_name", r.projectName, "")
 	}
 	if r.state != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "state", r.state, "")
 	}
 	if r.selector != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "selector", r.selector, "")
-	}
-	if r.managed != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "managed", r.managed, "")
-	}
-	if r.adServers != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "AdServers", r.adServers, "")
-	}
-	if r.credentialed != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "credentialed", r.credentialed, "")
-	}
-	if r.hasAccountUnderManagement != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "has_account_under_management", r.hasAccountUnderManagement, "")
-	}
-	if r.id != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "id", r.id, "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -557,6 +573,10 @@ func (a *TeamsAPIService) ListServersExecute(r ApiListServersRequest) (*ListServ
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
 }
@@ -635,6 +655,10 @@ func (a *TeamsAPIService) UpdateTeamSettingsExecute(r ApiUpdateTeamSettingsReque
 	// body params
 	localVarPostBody = r.teamSettings
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
 
 	return localVarHTTPResponse, err
 }

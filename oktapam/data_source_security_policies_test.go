@@ -16,9 +16,10 @@ func TestAccDatasourceSecurityPoliciesList(t *testing.T) {
 
 	// Generate details
 	identifier := randSeq()
+	validServerID := getValidServerID()
 
 	// config to create the resources
-	initConfig := createTestAccDatasourceSecurityPoliciesInitConfig(identifier)
+	initConfig := createTestAccDatasourceSecurityPoliciesInitConfig(identifier, validServerID)
 
 	// config for the datasources
 	dataSource1Name := fmt.Sprintf("%s.%s", prefix, "data1")
@@ -86,7 +87,7 @@ resource "oktapam_security_policy" "test_ds_security_policies_1" {
 		resources {
 			servers {
 				server {
-					server_id = "9103335f-1147-407b-84d7-dbfc57f75c99"
+					server_id = "%s"
 				}
 				label_selectors {
 					server_labels = {
@@ -131,7 +132,7 @@ resource "oktapam_security_policy" "test_ds_security_policies_2" {
 		resources {
 			servers {
 				server_account {
-					server_id = "9103335f-1147-407b-84d7-dbfc57f75c99"
+					server_id = "%s"
 					account   = "pamadmin"
 				}
 				label_selectors {
@@ -170,8 +171,8 @@ resource "oktapam_security_policy" "test_ds_security_policies_2" {
 }
 `
 
-func createTestAccDatasourceSecurityPoliciesInitConfig(identifier string) string {
-	return fmt.Sprintf(testAccDatasourceSecurityPoliciesCreateConfigFormat, identifier, identifier, identifier)
+func createTestAccDatasourceSecurityPoliciesInitConfig(identifier string, serverID string) string {
+	return fmt.Sprintf(testAccDatasourceSecurityPoliciesCreateConfigFormat, identifier, identifier, serverID, identifier, serverID)
 }
 
 const testAccDatasourceSecurityPoliciesFormat = `

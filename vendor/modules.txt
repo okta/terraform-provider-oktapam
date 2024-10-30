@@ -36,7 +36,7 @@ github.com/apparentlymart/go-textseg/v15/textseg
 # github.com/armon/go-radix v0.0.0-20180808171621-7fddfc383310
 ## explicit
 github.com/armon/go-radix
-# github.com/atko-pam/pam-sdk-go v1.0.31
+# github.com/atko-pam/pam-sdk-go v1.0.53
 ## explicit; go 1.20
 github.com/atko-pam/pam-sdk-go/client/pam
 # github.com/bgentry/speakeasy v0.1.0
@@ -251,6 +251,21 @@ github.com/hashicorp/terraform-plugin-sdk/v2/internal/tfdiags
 github.com/hashicorp/terraform-plugin-sdk/v2/meta
 github.com/hashicorp/terraform-plugin-sdk/v2/plugin
 github.com/hashicorp/terraform-plugin-sdk/v2/terraform
+# github.com/hashicorp/terraform-plugin-testing v1.6.0
+## explicit; go 1.20
+github.com/hashicorp/terraform-plugin-testing/config
+github.com/hashicorp/terraform-plugin-testing/helper/resource
+github.com/hashicorp/terraform-plugin-testing/internal/addrs
+github.com/hashicorp/terraform-plugin-testing/internal/configs/configschema
+github.com/hashicorp/terraform-plugin-testing/internal/configs/hcl2shim
+github.com/hashicorp/terraform-plugin-testing/internal/logging
+github.com/hashicorp/terraform-plugin-testing/internal/plugintest
+github.com/hashicorp/terraform-plugin-testing/internal/teststep
+github.com/hashicorp/terraform-plugin-testing/internal/tfdiags
+github.com/hashicorp/terraform-plugin-testing/plancheck
+github.com/hashicorp/terraform-plugin-testing/terraform
+github.com/hashicorp/terraform-plugin-testing/tfjsonpath
+github.com/hashicorp/terraform-plugin-testing/tfversion
 # github.com/hashicorp/terraform-registry-address v0.2.3
 ## explicit; go 1.19
 github.com/hashicorp/terraform-registry-address
@@ -357,6 +372,9 @@ golang.org/x/crypto/hkdf
 golang.org/x/crypto/pbkdf2
 golang.org/x/crypto/scrypt
 golang.org/x/crypto/sha3
+# golang.org/x/exp v0.0.0-20230809150735-7b3493d9a819
+## explicit; go 1.20
+golang.org/x/exp/constraints
 # golang.org/x/mod v0.14.0
 ## explicit; go 1.18
 golang.org/x/mod/internal/lazyregexp

@@ -3,12 +3,12 @@
 page_title: "oktapam_resource_group_server_enrollment_tokens Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of Server Enrollment Tokens associated with a specific Project. For details, see Server Enrollment https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/server-agent/pam-enroll-a-server.htm.
+  Returns a list of Server Enrollment Tokens associated with a specific Project. For details, see Server Enrollment https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-server-enrollment.
 ---
 
 # oktapam_resource_group_server_enrollment_tokens (Data Source)
 
-Returns a list of Server Enrollment Tokens associated with a specific Project. For details, see [Server Enrollment](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/server-agent/pam-enroll-a-server.htm).
+Returns a list of Server Enrollment Tokens associated with a specific Project. For details, see [Server Enrollment](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-server-enrollment).
 
 
 

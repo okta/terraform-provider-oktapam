@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The ScaleFT API is a control plane API for operations in Okta Privileged Access (formerly ScaleFT)
+The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -26,7 +26,7 @@ type SecretFolderResponse struct {
 	Name string `json:"name"`
 	// A description of the Secret Folder
 	Description NullableString `json:"description,omitempty"`
-	Path        *SecretPath    `json:"path,omitempty"`
+	Path        []SecretPath   `json:"path,omitempty"`
 }
 
 // NewSecretFolderResponse instantiates a new SecretFolderResponse object
@@ -145,17 +145,17 @@ func (o *SecretFolderResponse) UnsetDescription() *SecretFolderResponse {
 }
 
 // GetPath returns the Path field value if set, zero value otherwise.
-func (o *SecretFolderResponse) GetPath() SecretPath {
+func (o *SecretFolderResponse) GetPath() []SecretPath {
 	if o == nil || IsNil(o.Path) {
-		var ret SecretPath
+		var ret []SecretPath
 		return ret
 	}
-	return *o.Path
+	return o.Path
 }
 
 // GetPathOk returns a tuple with the Path field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *SecretFolderResponse) GetPathOk() (*SecretPath, bool) {
+func (o *SecretFolderResponse) GetPathOk() ([]SecretPath, bool) {
 	if o == nil || IsNil(o.Path) {
 		return nil, false
 	}
@@ -171,9 +171,9 @@ func (o *SecretFolderResponse) HasPath() bool {
 	return false
 }
 
-// SetPath gets a reference to the given SecretPath and assigns it to the Path field.
-func (o *SecretFolderResponse) SetPath(v SecretPath) *SecretFolderResponse {
-	o.Path = &v
+// SetPath gets a reference to the given []SecretPath and assigns it to the Path field.
+func (o *SecretFolderResponse) SetPath(v []SecretPath) *SecretFolderResponse {
+	o.Path = v
 	return o
 }
 
