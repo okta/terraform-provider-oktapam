@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The ScaleFT API is a control plane API for operations in Okta Privileged Access (formerly ScaleFT)
+The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -99,6 +99,10 @@ func (a *GatewaysAPIService) CreateGatewaySetupTokenExecute(r ApiCreateGatewaySe
 	localVarPostBody = r.gatewaySetupToken
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -122,7 +126,7 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param gatewayId The UUID of the Gateway
+	    @param gatewayId The UUID of a Gateway
 	@return ApiDeleteGatewayInstanceRequest
 */
 func (a *GatewaysAPIService) DeleteGatewayInstance(ctx context.Context, teamName string, gatewayId string) ApiDeleteGatewayInstanceRequest {
@@ -170,6 +174,10 @@ func (a *GatewaysAPIService) DeleteGatewayInstanceExecute(r ApiDeleteGatewayInst
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
 	return localVarHTTPResponse, err
 }
 
@@ -193,7 +201,7 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param gatewaySetupTokenId The UUID of the Gateway Setup Token
+	    @param gatewaySetupTokenId The UUID of a Gateway Setup Token
 	@return ApiDeleteGatewaySetupTokenRequest
 */
 func (a *GatewaysAPIService) DeleteGatewaySetupToken(ctx context.Context, teamName string, gatewaySetupTokenId string) ApiDeleteGatewaySetupTokenRequest {
@@ -241,6 +249,10 @@ func (a *GatewaysAPIService) DeleteGatewaySetupTokenExecute(r ApiDeleteGatewaySe
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
 	return localVarHTTPResponse, err
 }
 
@@ -264,7 +276,7 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param gatewaySetupTokenId The UUID of the Gateway Setup Token
+	    @param gatewaySetupTokenId The UUID of a Gateway Setup Token
 	@return ApiFetchGatewaySetupTokenRequest
 */
 func (a *GatewaysAPIService) FetchGatewaySetupToken(ctx context.Context, teamName string, gatewaySetupTokenId string) ApiFetchGatewaySetupTokenRequest {
@@ -315,6 +327,10 @@ func (a *GatewaysAPIService) FetchGatewaySetupTokenExecute(r ApiFetchGatewaySetu
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -338,7 +354,7 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param gatewaySetupTokenId The UUID of the Gateway Setup Token
+	    @param gatewaySetupTokenId The UUID of a Gateway Setup Token
 	@return ApiFetchGatewaySetupTokenAsAgentTokenRequest
 */
 func (a *GatewaysAPIService) FetchGatewaySetupTokenAsAgentToken(ctx context.Context, teamName string, gatewaySetupTokenId string) ApiFetchGatewaySetupTokenAsAgentTokenRequest {
@@ -389,6 +405,10 @@ func (a *GatewaysAPIService) FetchGatewaySetupTokenAsAgentTokenExecute(r ApiFetc
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -412,7 +432,7 @@ This endpoint requires one of the following roles: `resource_admin`, `delegated_
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param gatewayId The UUID of the Gateway
+	    @param gatewayId The UUID of a Gateway
 	@return ApiGetGatewayInstanceRequest
 */
 func (a *GatewaysAPIService) GetGatewayInstance(ctx context.Context, teamName string, gatewayId string) ApiGetGatewayInstanceRequest {
@@ -463,6 +483,10 @@ func (a *GatewaysAPIService) GetGatewayInstanceExecute(r ApiGetGatewayInstanceRe
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -486,7 +510,7 @@ This endpoint requires one of the following roles: `resource_admin`, `delegated_
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param gatewayId The UUID of the Gateway
+	    @param gatewayId The UUID of a Gateway
 	@return ApiGetGatewayStatusReportRequest
 */
 func (a *GatewaysAPIService) GetGatewayStatusReport(ctx context.Context, teamName string, gatewayId string) ApiGetGatewayStatusReportRequest {
@@ -537,6 +561,10 @@ func (a *GatewaysAPIService) GetGatewayStatusReportExecute(r ApiGetGatewayStatus
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -544,16 +572,10 @@ type ApiListGatewaySetupTokensRequest struct {
 	ctx        context.Context
 	ApiService *GatewaysAPIService
 	teamName   string
-	offset     *string
 	count      *int32
 	descending *bool
+	offset     *string
 	prev       *bool
-}
-
-// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
-func (r ApiListGatewaySetupTokensRequest) Offset(offset string) ApiListGatewaySetupTokensRequest {
-	r.offset = &offset
-	return r
 }
 
 // The number of objects per page
@@ -565,6 +587,12 @@ func (r ApiListGatewaySetupTokensRequest) Count(count int32) ApiListGatewaySetup
 // The object order
 func (r ApiListGatewaySetupTokensRequest) Descending(descending bool) ApiListGatewaySetupTokensRequest {
 	r.descending = &descending
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListGatewaySetupTokensRequest) Offset(offset string) ApiListGatewaySetupTokensRequest {
+	r.offset = &offset
 	return r
 }
 
@@ -616,14 +644,14 @@ func (a *GatewaysAPIService) ListGatewaySetupTokensExecute(r ApiListGatewaySetup
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.offset != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
-	}
 	if r.count != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
 	}
 	if r.descending != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
 	}
 	if r.prev != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
@@ -647,6 +675,10 @@ func (a *GatewaysAPIService) ListGatewaySetupTokensExecute(r ApiListGatewaySetup
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -654,16 +686,16 @@ type ApiListGatewaysRequest struct {
 	ctx        context.Context
 	ApiService *GatewaysAPIService
 	teamName   string
-	offset     *string
+	contains   *string
 	count      *int32
 	descending *bool
+	offset     *string
 	prev       *bool
-	contains   *string
 }
 
-// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
-func (r ApiListGatewaysRequest) Offset(offset string) ApiListGatewaysRequest {
-	r.offset = &offset
+// Only return results that include the specified value
+func (r ApiListGatewaysRequest) Contains(contains string) ApiListGatewaysRequest {
+	r.contains = &contains
 	return r
 }
 
@@ -679,15 +711,15 @@ func (r ApiListGatewaysRequest) Descending(descending bool) ApiListGatewaysReque
 	return r
 }
 
-// The direction of paging
-func (r ApiListGatewaysRequest) Prev(prev bool) ApiListGatewaysRequest {
-	r.prev = &prev
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListGatewaysRequest) Offset(offset string) ApiListGatewaysRequest {
+	r.offset = &offset
 	return r
 }
 
-// If a value is provided, the results are filtered to only contain Gateways whose name contains that value.
-func (r ApiListGatewaysRequest) Contains(contains string) ApiListGatewaysRequest {
-	r.contains = &contains
+// The direction of paging
+func (r ApiListGatewaysRequest) Prev(prev bool) ApiListGatewaysRequest {
+	r.prev = &prev
 	return r
 }
 
@@ -733,8 +765,8 @@ func (a *GatewaysAPIService) ListGatewaysExecute(r ApiListGatewaysRequest) (*Lis
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.offset != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	if r.contains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
 	}
 	if r.count != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
@@ -742,11 +774,11 @@ func (a *GatewaysAPIService) ListGatewaysExecute(r ApiListGatewaysRequest) (*Lis
 	if r.descending != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
 	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
 	if r.prev != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
-	}
-	if r.contains != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -766,6 +798,10 @@ func (a *GatewaysAPIService) ListGatewaysExecute(r ApiListGatewaysRequest) (*Lis
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
 }
@@ -796,7 +832,7 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param gatewayId The UUID of the Gateway
+	    @param gatewayId The UUID of a Gateway
 	@return ApiUpdateGatewayInstanceRequest
 */
 func (a *GatewaysAPIService) UpdateGatewayInstance(ctx context.Context, teamName string, gatewayId string) ApiUpdateGatewayInstanceRequest {
@@ -848,6 +884,10 @@ func (a *GatewaysAPIService) UpdateGatewayInstanceExecute(r ApiUpdateGatewayInst
 	// body params
 	localVarPostBody = r.gatewayAgent
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
 
 	return localVarHTTPResponse, err
 }

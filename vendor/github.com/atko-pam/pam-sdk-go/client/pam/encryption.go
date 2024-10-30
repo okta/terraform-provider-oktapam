@@ -9,5 +9,5 @@ type EncryptedString struct {
 var _ json.Marshaler = new(EncryptedString)
 
 func (e EncryptedString) MarshalJSON() ([]byte, error) {
-	return []byte(e.Payload), nil
+	return json.Marshal(e.Payload)
 }

@@ -3,12 +3,12 @@
 page_title: "oktapam_resource_group Resource - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Limited Early Access Feature: A PAM construct that contains a group of projects. For details, see Resource Groups https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-resource-groups.htm.
+  A PAM construct that contains a group of projects. For details, see Resource Groups https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-resource-groups.
 ---
 
 # oktapam_resource_group (Resource)
 
-Limited Early Access Feature: A PAM construct that contains a group of projects. For details, see [Resource Groups](https://help.okta.com/en/programs/opa-pam/Content/Topics/privileged-access/pam-resource-groups.htm).
+A PAM construct that contains a group of projects. For details, see [Resource Groups](https://help.okta.com/okta_help.htm?type=oie&id=ext-pam-resource-groups).
 
 
 

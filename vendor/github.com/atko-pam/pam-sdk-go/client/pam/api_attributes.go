@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The ScaleFT API is a control plane API for operations in Okta Privileged Access (formerly ScaleFT)
+The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -42,8 +42,8 @@ This endpoint requires one of the following roles: `resource_admin`, `delegated_
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param groupName The name of the Group
-	    @param attributeId The UUID of the Attribute
+	    @param groupName The name of a Group
+	    @param attributeId The UUID of an Attribute
 	@return ApiFetchGroupAttributeRequest
 */
 func (a *AttributesAPIService) FetchGroupAttribute(ctx context.Context, teamName string, groupName string, attributeId string) ApiFetchGroupAttributeRequest {
@@ -96,6 +96,10 @@ func (a *AttributesAPIService) FetchGroupAttributeExecute(r ApiFetchGroupAttribu
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -120,8 +124,8 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param userName The relevant username
-	    @param attributeId The UUID of the Attribute
+	    @param userName The username for an existing User
+	    @param attributeId The UUID of an Attribute
 	@return ApiFetchUserAttributeRequest
 */
 func (a *AttributesAPIService) FetchUserAttribute(ctx context.Context, teamName string, userName string, attributeId string) ApiFetchUserAttributeRequest {
@@ -174,6 +178,10 @@ func (a *AttributesAPIService) FetchUserAttributeExecute(r ApiFetchUserAttribute
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -182,17 +190,11 @@ type ApiListGroupAttributesRequest struct {
 	ApiService  *AttributesAPIService
 	teamName    string
 	groupName   string
-	offset      *string
 	count       *int32
 	descending  *bool
+	offset      *string
 	prev        *bool
 	conflicting *bool
-}
-
-// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
-func (r ApiListGroupAttributesRequest) Offset(offset string) ApiListGroupAttributesRequest {
-	r.offset = &offset
-	return r
 }
 
 // The number of objects per page
@@ -207,13 +209,19 @@ func (r ApiListGroupAttributesRequest) Descending(descending bool) ApiListGroupA
 	return r
 }
 
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListGroupAttributesRequest) Offset(offset string) ApiListGroupAttributesRequest {
+	r.offset = &offset
+	return r
+}
+
 // The direction of paging
 func (r ApiListGroupAttributesRequest) Prev(prev bool) ApiListGroupAttributesRequest {
 	r.prev = &prev
 	return r
 }
 
-// When true, returns only attributes that conflict with other Group attributes on your Team.
+// When &#x60;true&#x60;, only return attributes that conflict with other attributes on your Team
 func (r ApiListGroupAttributesRequest) Conflicting(conflicting bool) ApiListGroupAttributesRequest {
 	r.conflicting = &conflicting
 	return r
@@ -232,7 +240,7 @@ This endpoint requires one of the following roles: `resource_admin`, `delegated_
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param groupName The name of the Group
+	    @param groupName The name of a Group
 	@return ApiListGroupAttributesRequest
 */
 func (a *AttributesAPIService) ListGroupAttributes(ctx context.Context, teamName string, groupName string) ApiListGroupAttributesRequest {
@@ -264,14 +272,14 @@ func (a *AttributesAPIService) ListGroupAttributesExecute(r ApiListGroupAttribut
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.offset != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
-	}
 	if r.count != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
 	}
 	if r.descending != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
 	}
 	if r.prev != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
@@ -298,6 +306,10 @@ func (a *AttributesAPIService) ListGroupAttributesExecute(r ApiListGroupAttribut
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -305,16 +317,10 @@ type ApiListTeamUserAttributeConflictsRequest struct {
 	ctx        context.Context
 	ApiService *AttributesAPIService
 	teamName   string
-	offset     *string
 	count      *int32
 	descending *bool
+	offset     *string
 	prev       *bool
-}
-
-// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
-func (r ApiListTeamUserAttributeConflictsRequest) Offset(offset string) ApiListTeamUserAttributeConflictsRequest {
-	r.offset = &offset
-	return r
 }
 
 // The number of objects per page
@@ -326,6 +332,12 @@ func (r ApiListTeamUserAttributeConflictsRequest) Count(count int32) ApiListTeam
 // The object order
 func (r ApiListTeamUserAttributeConflictsRequest) Descending(descending bool) ApiListTeamUserAttributeConflictsRequest {
 	r.descending = &descending
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListTeamUserAttributeConflictsRequest) Offset(offset string) ApiListTeamUserAttributeConflictsRequest {
+	r.offset = &offset
 	return r
 }
 
@@ -377,14 +389,14 @@ func (a *AttributesAPIService) ListTeamUserAttributeConflictsExecute(r ApiListTe
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.offset != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
-	}
 	if r.count != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
 	}
 	if r.descending != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
 	}
 	if r.prev != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
@@ -408,6 +420,10 @@ func (a *AttributesAPIService) ListTeamUserAttributeConflictsExecute(r ApiListTe
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
@@ -416,17 +432,11 @@ type ApiListUserAttributesRequest struct {
 	ApiService  *AttributesAPIService
 	teamName    string
 	userName    string
-	offset      *string
 	count       *int32
 	descending  *bool
+	offset      *string
 	prev        *bool
 	conflicting *bool
-}
-
-// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
-func (r ApiListUserAttributesRequest) Offset(offset string) ApiListUserAttributesRequest {
-	r.offset = &offset
-	return r
 }
 
 // The number of objects per page
@@ -441,13 +451,19 @@ func (r ApiListUserAttributesRequest) Descending(descending bool) ApiListUserAtt
 	return r
 }
 
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListUserAttributesRequest) Offset(offset string) ApiListUserAttributesRequest {
+	r.offset = &offset
+	return r
+}
+
 // The direction of paging
 func (r ApiListUserAttributesRequest) Prev(prev bool) ApiListUserAttributesRequest {
 	r.prev = &prev
 	return r
 }
 
-// When true, returns only attributes that conflict with other User attributes on your Team
+// When &#x60;true&#x60;, only return attributes that conflict with other attributes on your Team
 func (r ApiListUserAttributesRequest) Conflicting(conflicting bool) ApiListUserAttributesRequest {
 	r.conflicting = &conflicting
 	return r
@@ -466,7 +482,7 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param userName The relevant username
+	    @param userName The username for an existing User
 	@return ApiListUserAttributesRequest
 */
 func (a *AttributesAPIService) ListUserAttributes(ctx context.Context, teamName string, userName string) ApiListUserAttributesRequest {
@@ -498,14 +514,14 @@ func (a *AttributesAPIService) ListUserAttributesExecute(r ApiListUserAttributes
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.offset != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
-	}
 	if r.count != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
 	}
 	if r.descending != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
 	}
 	if r.prev != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
@@ -531,6 +547,10 @@ func (a *AttributesAPIService) ListUserAttributesExecute(r ApiListUserAttributes
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
 }
@@ -562,8 +582,8 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param groupName The name of the Group
-	    @param attributeId The UUID of the Attribute
+	    @param groupName The name of a Group
+	    @param attributeId The UUID of an Attribute
 	@return ApiUpdateGroupAttributeRequest
 */
 func (a *AttributesAPIService) UpdateGroupAttribute(ctx context.Context, teamName string, groupName string, attributeId string) ApiUpdateGroupAttributeRequest {
@@ -618,6 +638,10 @@ func (a *AttributesAPIService) UpdateGroupAttributeExecute(r ApiUpdateGroupAttri
 	localVarPostBody = r.updateGroupAttribute
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
 	return localVarHTTPResponse, err
 }
 
@@ -648,8 +672,8 @@ This endpoint requires the following role: `resource_admin`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
-	    @param userName The relevant username
-	    @param attributeId The UUID of the Attribute
+	    @param userName The username for an existing User
+	    @param attributeId The UUID of an Attribute
 	@return ApiUpdateUserAttributeRequest
 */
 func (a *AttributesAPIService) UpdateUserAttribute(ctx context.Context, teamName string, userName string, attributeId string) ApiUpdateUserAttributeRequest {
@@ -703,6 +727,10 @@ func (a *AttributesAPIService) UpdateUserAttributeExecute(r ApiUpdateUserAttribu
 	// body params
 	localVarPostBody = r.updateAttribute
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
 
 	return localVarHTTPResponse, err
 }
