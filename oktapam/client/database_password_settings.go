@@ -2,8 +2,9 @@ package client
 
 import (
 	"context"
-	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"net/http"
+
+	"github.com/atko-pam/pam-sdk-go/client/pam"
 )
 
 func GetDatabasePasswordSettings(ctx context.Context, sdkClient SDKClientWrapper, resourceGroupID string, projectID string) (*pam.PasswordPolicy, error) {

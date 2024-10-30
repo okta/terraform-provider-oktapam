@@ -29,5 +29,3 @@ A file-system like construct that contains secrets or nested secret folders. For
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-
-

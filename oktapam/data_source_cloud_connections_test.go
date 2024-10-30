@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
@@ -23,9 +23,9 @@ func TestAccDataSourceCloudConnectionsList(t *testing.T) {
 	list2Config := testAccDataSourceCloudConnectionsConfig("data2", identifier+"-2")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccCloudConnectionsCheckDestroy(identifier+"-1", identifier+"-2"),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccCloudConnectionsCheckDestroy(identifier+"-1", identifier+"-2"),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,
@@ -81,7 +81,7 @@ func testAccDataSourceCloudConnectionsConfig(resourceName, name string) string {
 
 func testAccCloudConnectionsCheckDestroy(identifiers ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getLocalClientFromMetadata(testAccProvider.Meta())
+		c := getTestAccAPIClients().LocalClient
 
 		cloudConnections, err := c.ListCloudConnections(context.Background())
 		if err != nil {

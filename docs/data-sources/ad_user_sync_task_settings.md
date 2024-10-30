@@ -31,5 +31,3 @@ Returns an existing AD user sync job. For more information check out the [docume
 - `sid_field` (String) The AD attribute that defines the security identifier (SID) for accounts. Most AD tenants use `objectSID`.
 - `start_hour_utc` (Number) A UTC timestamp that indicates the hour range when the user sync job runs. Only used if `frequency`is set to 24.
 - `upn_field` (String) The AD attribute that defines the User Principal Name (UPN) for accounts. Most AD tenants use `userPrincipalName`.
-
-

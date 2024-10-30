@@ -7,8 +7,8 @@ import (
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
@@ -43,10 +43,11 @@ func TestAccProject(t *testing.T) {
 		SSHCertificateType:     utils.AsStringPtr("CERT_TYPE_RSA_01"),
 		UserOnDemandPeriod:     utils.AsIntPtr(10),
 	}
+
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccProjectCheckDestroy(projectName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccProjectCheckDestroy(projectName),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccProjectCreateConfig(projectName),
@@ -115,7 +116,7 @@ func testAccProjectCheckExists(rn string, expectedProject client.Project) resour
 			return fmt.Errorf("resource id not set")
 		}
 
-		client := getLocalClientFromMetadata(testAccProvider.Meta())
+		client := getTestAccAPIClients().LocalClient
 		proj, err := client.GetProject(context.Background(), *expectedProject.Name, false)
 		if err != nil {
 			return fmt.Errorf("error getting project :%w", err)
@@ -135,7 +136,7 @@ func testAccProjectCheckExists(rn string, expectedProject client.Project) resour
 
 func testAccProjectCheckDestroy(projectName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := getLocalClientFromMetadata(testAccProvider.Meta())
+		client := getTestAccAPIClients().LocalClient
 		proj, err := client.GetProject(context.Background(), projectName, false)
 		if err != nil {
 			return fmt.Errorf("error getting project: %w", err)

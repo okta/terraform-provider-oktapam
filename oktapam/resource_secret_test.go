@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client/wrappers"
@@ -47,9 +47,9 @@ func TestAccSecret(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccResourceGroupCheckDestroy(resourceGroupName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccSecretCreateConfig(delegatedAdminGroupName, resourceGroupName, projectName, topLevelFolderName, topLevelFolderSecurityPolicyName, initialSecretName),
@@ -90,7 +90,7 @@ func testAccSecretCheckExists(rn string, expectedSecret *wrappers.SecretWrapper)
 		projectID := rs.Primary.Attributes[attributes.Project]
 		secretID := rs.Primary.Attributes[attributes.ID]
 
-		pamClient := testAccProvider.Meta().(*client.APIClients).SDKClient
+		pamClient := getTestAccAPIClients().SDKClient
 		secret, err := client.RevealSecret(context.Background(), pamClient, resourceGroupID, projectID, secretID)
 		if err != nil {
 			return fmt.Errorf("error getting secret: %w", err)
