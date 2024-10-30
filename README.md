@@ -85,7 +85,7 @@ To add a new resource or data source using the new Terraform Provider Framework:
 
 4. Register the new resource or data source in the `Resources`/`DataSources` method in `provider_pluginframework.go`.
 
-5. Add any necessary helper functions or API client methods.
+5. Add any necessary helper functions or API client methods in `oktapam/client/`.
 
 6. Create corresponding test files (`resource_<resource_name>_test.go` or `data_source_<data_source_name>_test.go`) and implement acceptance tests.
 
