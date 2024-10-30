@@ -108,6 +108,93 @@ func (a *ProjectsAPIService) AdminCheckinResourceExecute(r ApiAdminCheckinResour
 	return localVarHTTPResponse, err
 }
 
+type ApiAdminRotateResourceRequest struct {
+	ctx                   context.Context
+	ApiService            *ProjectsAPIService
+	teamName              string
+	resourceGroupId       string
+	projectId             string
+	rotateResourceRequest *RotateResourceRequest
+}
+
+func (r ApiAdminRotateResourceRequest) RotateResourceRequest(rotateResourceRequest RotateResourceRequest) ApiAdminRotateResourceRequest {
+	r.rotateResourceRequest = &rotateResourceRequest
+	return r
+}
+
+func (r ApiAdminRotateResourceRequest) Execute() (*http.Response, error) {
+	return r.ApiService.AdminRotateResourceExecute(r)
+}
+
+/*
+	AdminRotateResource Rotate the password for a given resource in a project
+
+	    Rotates the password for a resource within a specified resource group and project.
+
+This endpoint requires one of the following roles: `resource_admin`, `security_admin`, `delegated_security_admin`, `delegated_resource_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param resourceGroupId The UUID of a Resource Group
+	    @param projectId The UUID of a Project
+	@return ApiAdminRotateResourceRequest
+*/
+func (a *ProjectsAPIService) AdminRotateResource(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiAdminRotateResourceRequest {
+	return ApiAdminRotateResourceRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+func (a *ProjectsAPIService) AdminRotateResourceExecute(r ApiAdminRotateResourceRequest) (*http.Response, error) {
+	var (
+		traceKey           = "projectsapi.adminRotateResource"
+		localVarHTTPMethod = http.MethodPost
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/rotate_resource"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.rotateResourceRequest
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return nil, err
+	}
+
+	return localVarHTTPResponse, err
+}
+
 type ApiCreateResourceGroupProjectRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
@@ -284,7 +371,7 @@ func (a *ProjectsAPIService) CreateResourceGroupProjectServerEnrollmentTokenExec
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
-type ApiFetchResourceGroupOktaUDBasedProjectCheckoutSettingsRequest struct {
+type ApiFetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
 	teamName        string
@@ -292,12 +379,12 @@ type ApiFetchResourceGroupOktaUDBasedProjectCheckoutSettingsRequest struct {
 	projectId       string
 }
 
-func (r ApiFetchResourceGroupOktaUDBasedProjectCheckoutSettingsRequest) Execute() (*ResourceCheckoutSettings, *http.Response, error) {
-	return r.ApiService.FetchResourceGroupOktaUDBasedProjectCheckoutSettingsExecute(r)
+func (r ApiFetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest) Execute() (*APIServiceAccountCheckoutSettings, *http.Response, error) {
+	return r.ApiService.FetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsExecute(r)
 }
 
 /*
-	FetchResourceGroupOktaUDBasedProjectCheckoutSettings Retrieves the checkout settings configured for a project, specific to the Okta Universal Directory resource type
+	FetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings Retrieves the checkout settings configured for a project, specific to the Okta Universal Directory resource type
 
 	    Retrieves the checkout settings configured for a project, specific to the Okta Universal Directory resource type.
 
@@ -307,10 +394,10 @@ This endpoint requires one of the following roles: `resource_admin`, `delegated_
 	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	@return ApiFetchResourceGroupOktaUDBasedProjectCheckoutSettingsRequest
+	@return ApiFetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest
 */
-func (a *ProjectsAPIService) FetchResourceGroupOktaUDBasedProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiFetchResourceGroupOktaUDBasedProjectCheckoutSettingsRequest {
-	return ApiFetchResourceGroupOktaUDBasedProjectCheckoutSettingsRequest{
+func (a *ProjectsAPIService) FetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiFetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest {
+	return ApiFetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest{
 		ApiService:      a,
 		ctx:             ctx,
 		teamName:        teamName,
@@ -321,17 +408,17 @@ func (a *ProjectsAPIService) FetchResourceGroupOktaUDBasedProjectCheckoutSetting
 
 // Execute executes the request
 //
-//	@return ResourceCheckoutSettings
-func (a *ProjectsAPIService) FetchResourceGroupOktaUDBasedProjectCheckoutSettingsExecute(r ApiFetchResourceGroupOktaUDBasedProjectCheckoutSettingsRequest) (*ResourceCheckoutSettings, *http.Response, error) {
+//	@return APIServiceAccountCheckoutSettings
+func (a *ProjectsAPIService) FetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsExecute(r ApiFetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest) (*APIServiceAccountCheckoutSettings, *http.Response, error) {
 	var (
-		traceKey            = "projectsapi.fetchResourceGroupOktaUDBasedProjectCheckoutSettings"
+		traceKey            = "projectsapi.fetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings"
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *ResourceCheckoutSettings
+		localVarReturnValue *APIServiceAccountCheckoutSettings
 	)
 
-	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_checkout_settings"
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_universal_directory_checkout_settings"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
@@ -456,7 +543,7 @@ type ApiFetchResourceGroupSaasAppBasedProjectCheckoutSettingsRequest struct {
 	projectId       string
 }
 
-func (r ApiFetchResourceGroupSaasAppBasedProjectCheckoutSettingsRequest) Execute() (*ResourceCheckoutSettings, *http.Response, error) {
+func (r ApiFetchResourceGroupSaasAppBasedProjectCheckoutSettingsRequest) Execute() (*APIServiceAccountCheckoutSettings, *http.Response, error) {
 	return r.ApiService.FetchResourceGroupSaasAppBasedProjectCheckoutSettingsExecute(r)
 }
 
@@ -485,14 +572,14 @@ func (a *ProjectsAPIService) FetchResourceGroupSaasAppBasedProjectCheckoutSettin
 
 // Execute executes the request
 //
-//	@return ResourceCheckoutSettings
-func (a *ProjectsAPIService) FetchResourceGroupSaasAppBasedProjectCheckoutSettingsExecute(r ApiFetchResourceGroupSaasAppBasedProjectCheckoutSettingsRequest) (*ResourceCheckoutSettings, *http.Response, error) {
+//	@return APIServiceAccountCheckoutSettings
+func (a *ProjectsAPIService) FetchResourceGroupSaasAppBasedProjectCheckoutSettingsExecute(r ApiFetchResourceGroupSaasAppBasedProjectCheckoutSettingsRequest) (*APIServiceAccountCheckoutSettings, *http.Response, error) {
 	var (
 		traceKey            = "projectsapi.fetchResourceGroupSaasAppBasedProjectCheckoutSettings"
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *ResourceCheckoutSettings
+		localVarReturnValue *APIServiceAccountCheckoutSettings
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_checkout_settings"
@@ -776,7 +863,7 @@ func (a *ProjectsAPIService) GetProjectPasswordPolicyForDatabaseResourcesExecute
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
-type ApiGetProjectPasswordPolicyForOktaUDResourcesRequest struct {
+type ApiGetProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
 	teamName        string
@@ -784,12 +871,12 @@ type ApiGetProjectPasswordPolicyForOktaUDResourcesRequest struct {
 	projectId       string
 }
 
-func (r ApiGetProjectPasswordPolicyForOktaUDResourcesRequest) Execute() (*PasswordPolicyWithExclude, *http.Response, error) {
-	return r.ApiService.GetProjectPasswordPolicyForOktaUDResourcesExecute(r)
+func (r ApiGetProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest) Execute() (*PasswordPolicyWithExclude, *http.Response, error) {
+	return r.ApiService.GetProjectPasswordPolicyForOktaUniversalDirectoryResourcesExecute(r)
 }
 
 /*
-	GetProjectPasswordPolicyForOktaUDResources Retrieve a Project Password Policy for Okta Universal Directory Resources
+	GetProjectPasswordPolicyForOktaUniversalDirectoryResources Retrieve a Project Password Policy for Okta Universal Directory Resources
 
 	    Retrieves a Project Password Policy for Okta Universal Directory Resources in a Resource Group
 
@@ -799,10 +886,10 @@ This endpoint requires one of the following roles: `resource_admin`, `delegated_
 	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	@return ApiGetProjectPasswordPolicyForOktaUDResourcesRequest
+	@return ApiGetProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest
 */
-func (a *ProjectsAPIService) GetProjectPasswordPolicyForOktaUDResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiGetProjectPasswordPolicyForOktaUDResourcesRequest {
-	return ApiGetProjectPasswordPolicyForOktaUDResourcesRequest{
+func (a *ProjectsAPIService) GetProjectPasswordPolicyForOktaUniversalDirectoryResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiGetProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest {
+	return ApiGetProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest{
 		ApiService:      a,
 		ctx:             ctx,
 		teamName:        teamName,
@@ -814,16 +901,16 @@ func (a *ProjectsAPIService) GetProjectPasswordPolicyForOktaUDResources(ctx cont
 // Execute executes the request
 //
 //	@return PasswordPolicyWithExclude
-func (a *ProjectsAPIService) GetProjectPasswordPolicyForOktaUDResourcesExecute(r ApiGetProjectPasswordPolicyForOktaUDResourcesRequest) (*PasswordPolicyWithExclude, *http.Response, error) {
+func (a *ProjectsAPIService) GetProjectPasswordPolicyForOktaUniversalDirectoryResourcesExecute(r ApiGetProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest) (*PasswordPolicyWithExclude, *http.Response, error) {
 	var (
-		traceKey            = "projectsapi.getProjectPasswordPolicyForOktaUDResources"
+		traceKey            = "projectsapi.getProjectPasswordPolicyForOktaUniversalDirectoryResources"
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
 		localVarReturnValue *PasswordPolicyWithExclude
 	)
 
-	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_password_settings"
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_universal_directory_password_settings"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
@@ -1126,7 +1213,7 @@ type ApiListAllCheckedOutResourcesByAdminRequest struct {
 	prev                  *bool
 }
 
-// If specified, only returns resources with a matching type. Valid resource types: &#x60;server_account_password_login&#x60;.
+// If specified, only returns resources with a matching type. Valid resource types: &#x60;server_account_password_login&#x60;, &#x60;managed_saas_app_account_password_login&#x60;, &#x60;okta_universal_directory_account_password_login&#x60;.
 func (r ApiListAllCheckedOutResourcesByAdminRequest) ResourceType(resourceType string) ApiListAllCheckedOutResourcesByAdminRequest {
 	r.resourceType = &resourceType
 	return r
@@ -1924,7 +2011,7 @@ func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForDatabaseResourcesExec
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
-type ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest struct {
+type ApiUpdateProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest struct {
 	ctx                       context.Context
 	ApiService                *ProjectsAPIService
 	teamName                  string
@@ -1933,17 +2020,17 @@ type ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest struct {
 	passwordPolicyWithExclude *PasswordPolicyWithExclude
 }
 
-func (r ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest) PasswordPolicyWithExclude(passwordPolicyWithExclude PasswordPolicyWithExclude) ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest {
+func (r ApiUpdateProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest) PasswordPolicyWithExclude(passwordPolicyWithExclude PasswordPolicyWithExclude) ApiUpdateProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest {
 	r.passwordPolicyWithExclude = &passwordPolicyWithExclude
 	return r
 }
 
-func (r ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest) Execute() (*PasswordPolicyWithExclude, *http.Response, error) {
-	return r.ApiService.UpdateProjectPasswordPolicyForOktaUDResourcesExecute(r)
+func (r ApiUpdateProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest) Execute() (*PasswordPolicyWithExclude, *http.Response, error) {
+	return r.ApiService.UpdateProjectPasswordPolicyForOktaUniversalDirectoryResourcesExecute(r)
 }
 
 /*
-	UpdateProjectPasswordPolicyForOktaUDResources Update a Project Password Policy for Okta Universal Directory Resources
+	UpdateProjectPasswordPolicyForOktaUniversalDirectoryResources Update a Project Password Policy for Okta Universal Directory Resources
 
 	    Updates a Project Password Policy for Okta Universal Directory Resources in a Resource Group
 
@@ -1953,10 +2040,10 @@ This endpoint requires one of the following roles: `resource_admin`, `delegated_
 	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	@return ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest
+	@return ApiUpdateProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest
 */
-func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForOktaUDResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest {
-	return ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest{
+func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForOktaUniversalDirectoryResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest {
+	return ApiUpdateProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest{
 		ApiService:      a,
 		ctx:             ctx,
 		teamName:        teamName,
@@ -1968,16 +2055,16 @@ func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForOktaUDResources(ctx c
 // Execute executes the request
 //
 //	@return PasswordPolicyWithExclude
-func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForOktaUDResourcesExecute(r ApiUpdateProjectPasswordPolicyForOktaUDResourcesRequest) (*PasswordPolicyWithExclude, *http.Response, error) {
+func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForOktaUniversalDirectoryResourcesExecute(r ApiUpdateProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest) (*PasswordPolicyWithExclude, *http.Response, error) {
 	var (
-		traceKey            = "projectsapi.updateProjectPasswordPolicyForOktaUDResources"
+		traceKey            = "projectsapi.updateProjectPasswordPolicyForOktaUniversalDirectoryResources"
 		localVarHTTPMethod  = http.MethodPut
 		localVarPostBody    interface{}
 		formFiles           []formFile
 		localVarReturnValue *PasswordPolicyWithExclude
 	)
 
-	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_password_settings"
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_universal_directory_password_settings"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
@@ -2104,26 +2191,26 @@ func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForSaasAppResourcesExecu
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
-type ApiUpdateResourceGroupOktaUDBasedProjectCheckoutSettingsRequest struct {
-	ctx                      context.Context
-	ApiService               *ProjectsAPIService
-	teamName                 string
-	resourceGroupId          string
-	projectId                string
-	resourceCheckoutSettings *ResourceCheckoutSettings
+type ApiUpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest struct {
+	ctx                               context.Context
+	ApiService                        *ProjectsAPIService
+	teamName                          string
+	resourceGroupId                   string
+	projectId                         string
+	aPIServiceAccountCheckoutSettings *APIServiceAccountCheckoutSettings
 }
 
-func (r ApiUpdateResourceGroupOktaUDBasedProjectCheckoutSettingsRequest) ResourceCheckoutSettings(resourceCheckoutSettings ResourceCheckoutSettings) ApiUpdateResourceGroupOktaUDBasedProjectCheckoutSettingsRequest {
-	r.resourceCheckoutSettings = &resourceCheckoutSettings
+func (r ApiUpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest) APIServiceAccountCheckoutSettings(aPIServiceAccountCheckoutSettings APIServiceAccountCheckoutSettings) ApiUpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest {
+	r.aPIServiceAccountCheckoutSettings = &aPIServiceAccountCheckoutSettings
 	return r
 }
 
-func (r ApiUpdateResourceGroupOktaUDBasedProjectCheckoutSettingsRequest) Execute() (*http.Response, error) {
-	return r.ApiService.UpdateResourceGroupOktaUDBasedProjectCheckoutSettingsExecute(r)
+func (r ApiUpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest) Execute() (*http.Response, error) {
+	return r.ApiService.UpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsExecute(r)
 }
 
 /*
-	UpdateResourceGroupOktaUDBasedProjectCheckoutSettings Update the checkout settings configured for a project, specific to to the Okta Universal Directory resource type
+	UpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings Update the checkout settings configured for a project, specific to to the Okta Universal Directory resource type
 
 	    Update the checkout settings configured for a project, specific to the Okta Universal Directory resource type.
 
@@ -2133,10 +2220,10 @@ This endpoint requires one of the following roles: `security_admin`, `delegated_
 	    @param teamName The name of your Team
 	    @param resourceGroupId The UUID of a Resource Group
 	    @param projectId The UUID of a Project
-	@return ApiUpdateResourceGroupOktaUDBasedProjectCheckoutSettingsRequest
+	@return ApiUpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest
 */
-func (a *ProjectsAPIService) UpdateResourceGroupOktaUDBasedProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateResourceGroupOktaUDBasedProjectCheckoutSettingsRequest {
-	return ApiUpdateResourceGroupOktaUDBasedProjectCheckoutSettingsRequest{
+func (a *ProjectsAPIService) UpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest {
+	return ApiUpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest{
 		ApiService:      a,
 		ctx:             ctx,
 		teamName:        teamName,
@@ -2146,15 +2233,15 @@ func (a *ProjectsAPIService) UpdateResourceGroupOktaUDBasedProjectCheckoutSettin
 }
 
 // Execute executes the request
-func (a *ProjectsAPIService) UpdateResourceGroupOktaUDBasedProjectCheckoutSettingsExecute(r ApiUpdateResourceGroupOktaUDBasedProjectCheckoutSettingsRequest) (*http.Response, error) {
+func (a *ProjectsAPIService) UpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsExecute(r ApiUpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest) (*http.Response, error) {
 	var (
-		traceKey           = "projectsapi.updateResourceGroupOktaUDBasedProjectCheckoutSettings"
+		traceKey           = "projectsapi.updateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings"
 		localVarHTTPMethod = http.MethodPut
 		localVarPostBody   interface{}
 		formFiles          []formFile
 	)
 
-	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_ud_checkout_settings"
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_universal_directory_checkout_settings"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
@@ -2181,7 +2268,7 @@ func (a *ProjectsAPIService) UpdateResourceGroupOktaUDBasedProjectCheckoutSettin
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.resourceCheckoutSettings
+	localVarPostBody = r.aPIServiceAccountCheckoutSettings
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
 	if localVarHTTPResponse == nil && err != nil {
@@ -2282,16 +2369,16 @@ func (a *ProjectsAPIService) UpdateResourceGroupProjectExecute(r ApiUpdateResour
 }
 
 type ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest struct {
-	ctx                      context.Context
-	ApiService               *ProjectsAPIService
-	teamName                 string
-	resourceGroupId          string
-	projectId                string
-	resourceCheckoutSettings *ResourceCheckoutSettings
+	ctx                               context.Context
+	ApiService                        *ProjectsAPIService
+	teamName                          string
+	resourceGroupId                   string
+	projectId                         string
+	aPIServiceAccountCheckoutSettings *APIServiceAccountCheckoutSettings
 }
 
-func (r ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest) ResourceCheckoutSettings(resourceCheckoutSettings ResourceCheckoutSettings) ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest {
-	r.resourceCheckoutSettings = &resourceCheckoutSettings
+func (r ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest) APIServiceAccountCheckoutSettings(aPIServiceAccountCheckoutSettings APIServiceAccountCheckoutSettings) ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest {
+	r.aPIServiceAccountCheckoutSettings = &aPIServiceAccountCheckoutSettings
 	return r
 }
 
@@ -2358,7 +2445,7 @@ func (a *ProjectsAPIService) UpdateResourceGroupSaasAppBasedProjectCheckoutSetti
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.resourceCheckoutSettings
+	localVarPostBody = r.aPIServiceAccountCheckoutSettings
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
 	if localVarHTTPResponse == nil && err != nil {

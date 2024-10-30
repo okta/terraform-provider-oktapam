@@ -23,9 +23,9 @@ type CloudEntitlementResourcesDetailsChildrenInner struct {
 	// The UUID of the nested resource
 	Id *string `json:"id,omitempty"`
 	// The name of the nested resource
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// An AWS role ARN associated with the nested resource
-	Arn *string `json:"arn,omitempty"`
+	Arn string `json:"arn"`
 	// Sub-resources nested within the parent resource
 	Children []map[string]interface{} `json:"children,omitempty"`
 }
@@ -34,8 +34,10 @@ type CloudEntitlementResourcesDetailsChildrenInner struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCloudEntitlementResourcesDetailsChildrenInner() *CloudEntitlementResourcesDetailsChildrenInner {
+func NewCloudEntitlementResourcesDetailsChildrenInner(name string, arn string) *CloudEntitlementResourcesDetailsChildrenInner {
 	this := CloudEntitlementResourcesDetailsChildrenInner{}
+	this.Name = name
+	this.Arn = arn
 	return &this
 }
 
@@ -80,69 +82,53 @@ func (o *CloudEntitlementResourcesDetailsChildrenInner) SetId(v string) *CloudEn
 	return o
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *CloudEntitlementResourcesDetailsChildrenInner) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *CloudEntitlementResourcesDetailsChildrenInner) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *CloudEntitlementResourcesDetailsChildrenInner) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *CloudEntitlementResourcesDetailsChildrenInner) SetName(v string) *CloudEntitlementResourcesDetailsChildrenInner {
-	o.Name = &v
+	o.Name = v
 	return o
 }
 
-// GetArn returns the Arn field value if set, zero value otherwise.
+// GetArn returns the Arn field value
 func (o *CloudEntitlementResourcesDetailsChildrenInner) GetArn() string {
-	if o == nil || IsNil(o.Arn) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Arn
+
+	return o.Arn
 }
 
-// GetArnOk returns a tuple with the Arn field value if set, nil otherwise
+// GetArnOk returns a tuple with the Arn field value
 // and a boolean to check if the value has been set.
 func (o *CloudEntitlementResourcesDetailsChildrenInner) GetArnOk() (*string, bool) {
-	if o == nil || IsNil(o.Arn) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Arn, true
+	return &o.Arn, true
 }
 
-// HasArn returns a boolean if a field has been set.
-func (o *CloudEntitlementResourcesDetailsChildrenInner) HasArn() bool {
-	if o != nil && !IsNil(o.Arn) {
-		return true
-	}
-
-	return false
-}
-
-// SetArn gets a reference to the given string and assigns it to the Arn field.
+// SetArn sets field value
 func (o *CloudEntitlementResourcesDetailsChildrenInner) SetArn(v string) *CloudEntitlementResourcesDetailsChildrenInner {
-	o.Arn = &v
+	o.Arn = v
 	return o
 }
 
@@ -192,12 +178,8 @@ func (o CloudEntitlementResourcesDetailsChildrenInner) ToMap() (map[string]inter
 	if !IsNil(o.Id) {
 		toSerialize["id"] = o.Id
 	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
-	if !IsNil(o.Arn) {
-		toSerialize["arn"] = o.Arn
-	}
+	toSerialize["name"] = o.Name
+	toSerialize["arn"] = o.Arn
 	if !IsNil(o.Children) {
 		toSerialize["children"] = o.Children
 	}

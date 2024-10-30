@@ -20,12 +20,16 @@ type CheckoutResourceType string
 
 // List of CheckoutResourceType
 const (
-	CheckoutResourceType_SERVER_ACCOUNT_PASSWORD_LOGIN CheckoutResourceType = "server_account_password_login"
+	CheckoutResourceType_SERVER_ACCOUNT_PASSWORD_LOGIN                   CheckoutResourceType = "server_account_password_login"
+	CheckoutResourceType_MANAGED_SAAS_APP_ACCOUNT_PASSWORD_LOGIN         CheckoutResourceType = "managed_saas_app_account_password_login"
+	CheckoutResourceType_OKTA_UNIVERSAL_DIRECTORY_ACCOUNT_PASSWORD_LOGIN CheckoutResourceType = "okta_universal_directory_account_password_login"
 )
 
 // All allowed values of CheckoutResourceType enum
 var AllowedCheckoutResourceTypeEnumValues = []CheckoutResourceType{
 	"server_account_password_login",
+	"managed_saas_app_account_password_login",
+	"okta_universal_directory_account_password_login",
 }
 
 func (v *CheckoutResourceType) UnmarshalJSON(src []byte) error {

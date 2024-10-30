@@ -20,7 +20,7 @@ var _ MappedNullable = &ListAccessReportsResponse{}
 
 // ListAccessReportsResponse struct for ListAccessReportsResponse
 type ListAccessReportsResponse struct {
-	List []AccessReport `json:"list,omitempty"`
+	List [][]AccessReport `json:"list,omitempty"`
 }
 
 // NewListAccessReportsResponse instantiates a new ListAccessReportsResponse object
@@ -41,9 +41,9 @@ func NewListAccessReportsResponseWithDefaults() *ListAccessReportsResponse {
 }
 
 // GetList returns the List field value if set, zero value otherwise.
-func (o *ListAccessReportsResponse) GetList() []AccessReport {
+func (o *ListAccessReportsResponse) GetList() [][]AccessReport {
 	if o == nil || IsNil(o.List) {
-		var ret []AccessReport
+		var ret [][]AccessReport
 		return ret
 	}
 	return o.List
@@ -51,7 +51,7 @@ func (o *ListAccessReportsResponse) GetList() []AccessReport {
 
 // GetListOk returns a tuple with the List field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ListAccessReportsResponse) GetListOk() ([]AccessReport, bool) {
+func (o *ListAccessReportsResponse) GetListOk() ([][]AccessReport, bool) {
 	if o == nil || IsNil(o.List) {
 		return nil, false
 	}
@@ -67,8 +67,8 @@ func (o *ListAccessReportsResponse) HasList() bool {
 	return false
 }
 
-// SetList gets a reference to the given []AccessReport and assigns it to the List field.
-func (o *ListAccessReportsResponse) SetList(v []AccessReport) *ListAccessReportsResponse {
+// SetList gets a reference to the given [][]AccessReport and assigns it to the List field.
+func (o *ListAccessReportsResponse) SetList(v [][]AccessReport) *ListAccessReportsResponse {
 	o.List = v
 	return o
 }

@@ -173,6 +173,84 @@ func (a *UsersAPIService) GetUserExecute(r ApiGetUserRequest) (*User, *http.Resp
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiGetUserByIDRequest struct {
+	ctx        context.Context
+	ApiService *UsersAPIService
+	teamName   string
+	userId     string
+}
+
+func (r ApiGetUserByIDRequest) Execute() (*User, *http.Response, error) {
+	return r.ApiService.GetUserByIDExecute(r)
+}
+
+/*
+	GetUserByID Retrieve a User by ID
+
+	    Retrieves a User from your Team by ID
+
+This endpoint requires one of the following roles: `pam_admin`, `resource_admin`, `security_admin`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your Team
+	    @param userId The UUID for an existing User
+	@return ApiGetUserByIDRequest
+*/
+func (a *UsersAPIService) GetUserByID(ctx context.Context, teamName string, userId string) ApiGetUserByIDRequest {
+	return ApiGetUserByIDRequest{
+		ApiService: a,
+		ctx:        ctx,
+		teamName:   teamName,
+		userId:     userId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return User
+func (a *UsersAPIService) GetUserByIDExecute(r ApiGetUserByIDRequest) (*User, *http.Response, error) {
+	var (
+		traceKey            = "usersapi.getUserByID"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *User
+	)
+
+	localVarPath := "/v1/teams/{team_name}/users_by_id/{user_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"user_id"+"}", url.PathEscape(parameterValueToString(r.userId, "userId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if localVarHTTPResponse == nil && err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
 type ApiListUserGroupsRequest struct {
 	ctx                context.Context
 	ApiService         *UsersAPIService

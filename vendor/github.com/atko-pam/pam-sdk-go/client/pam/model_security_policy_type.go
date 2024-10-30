@@ -15,19 +15,19 @@ import (
 	"encoding/json"
 )
 
-// SecurityPolicyType The type of the policy. Determines which resource types are allowed in security policy rules. - 'default': Any valid resource type is allowed except 'okta_privileged_account' - 'okta_privileged_account': Only 'okta_app_based_resource' type is allowed. Only users with Okta Super Admin role can create policies of this type.
+// SecurityPolicyType The type of the policy. Determines which resource types are allowed in security policy rules. - 'default': Any valid resource type is allowed except 'okta_app_based_resource' - 'okta_service_account': Only 'okta_app_based_resource' resource type is allowed. Only users with Okta Super Admin role can create policies of this type.
 type SecurityPolicyType string
 
 // List of SecurityPolicyType
 const (
-	SecurityPolicyType_DEFAULT                  SecurityPolicyType = "default"
-	SecurityPolicyType_OKTA_PRIVILEGED_ACCOUNTS SecurityPolicyType = "okta_privileged_accounts"
+	SecurityPolicyType_DEFAULT              SecurityPolicyType = "default"
+	SecurityPolicyType_OKTA_SERVICE_ACCOUNT SecurityPolicyType = "okta_service_account"
 )
 
 // All allowed values of SecurityPolicyType enum
 var AllowedSecurityPolicyTypeEnumValues = []SecurityPolicyType{
 	"default",
-	"okta_privileged_accounts",
+	"okta_service_account",
 }
 
 func (v *SecurityPolicyType) UnmarshalJSON(src []byte) error {

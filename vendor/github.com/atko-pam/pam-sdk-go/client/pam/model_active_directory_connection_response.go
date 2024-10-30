@@ -20,7 +20,7 @@ var _ MappedNullable = &ActiveDirectoryConnectionResponse{}
 
 // ActiveDirectoryConnectionResponse struct for ActiveDirectoryConnectionResponse
 type ActiveDirectoryConnectionResponse struct {
-	Id interface{} `json:"id,omitempty"`
+	Id string `json:"id"`
 	// The name of the Active Directory connection
 	Name *string `json:"name,omitempty"`
 	// The human-readable name for the domain
@@ -39,8 +39,9 @@ type ActiveDirectoryConnectionResponse struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewActiveDirectoryConnectionResponse() *ActiveDirectoryConnectionResponse {
+func NewActiveDirectoryConnectionResponse(id string) *ActiveDirectoryConnectionResponse {
 	this := ActiveDirectoryConnectionResponse{}
+	this.Id = id
 	return &this
 }
 
@@ -52,36 +53,27 @@ func NewActiveDirectoryConnectionResponseWithDefaults() *ActiveDirectoryConnecti
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *ActiveDirectoryConnectionResponse) GetId() interface{} {
+// GetId returns the Id field value
+func (o *ActiveDirectoryConnectionResponse) GetId() string {
 	if o == nil {
-		var ret interface{}
+		var ret string
 		return ret
 	}
+
 	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *ActiveDirectoryConnectionResponse) GetIdOk() (*interface{}, bool) {
-	if o == nil || IsNil(o.Id) {
+func (o *ActiveDirectoryConnectionResponse) GetIdOk() (*string, bool) {
+	if o == nil {
 		return nil, false
 	}
 	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *ActiveDirectoryConnectionResponse) HasId() bool {
-	if o != nil && IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given interface{} and assigns it to the Id field.
-func (o *ActiveDirectoryConnectionResponse) SetId(v interface{}) *ActiveDirectoryConnectionResponse {
+// SetId sets field value
+func (o *ActiveDirectoryConnectionResponse) SetId(v string) *ActiveDirectoryConnectionResponse {
 	o.Id = v
 	return o
 }
@@ -294,9 +286,7 @@ func (o ActiveDirectoryConnectionResponse) MarshalJSON() ([]byte, error) {
 
 func (o ActiveDirectoryConnectionResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Id != nil {
-		toSerialize["id"] = o.Id
-	}
+	toSerialize["id"] = o.Id
 	if !IsNil(o.Name) {
 		toSerialize["name"] = o.Name
 	}

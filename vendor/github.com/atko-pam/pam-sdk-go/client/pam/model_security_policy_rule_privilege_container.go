@@ -20,9 +20,8 @@ var _ MappedNullable = &SecurityPolicyRulePrivilegeContainer{}
 
 // SecurityPolicyRulePrivilegeContainer struct for SecurityPolicyRulePrivilegeContainer
 type SecurityPolicyRulePrivilegeContainer struct {
-	PrivilegeType *SecurityPolicyRulePrivilegeType `json:"privilege_type,omitempty"`
-	// An object that indicates whether the privilege type is allowed. The key must match the specified privilege type and the value must be set to `true`.
-	PrivilegeValue map[string]interface{} `json:"privilege_value,omitempty"`
+	PrivilegeType  *SecurityPolicyRulePrivilegeType                    `json:"privilege_type,omitempty"`
+	PrivilegeValue *SecurityPolicyRulePrivilegeContainerPrivilegeValue `json:"privilege_value,omitempty"`
 }
 
 // NewSecurityPolicyRulePrivilegeContainer instantiates a new SecurityPolicyRulePrivilegeContainer object
@@ -76,19 +75,19 @@ func (o *SecurityPolicyRulePrivilegeContainer) SetPrivilegeType(v SecurityPolicy
 }
 
 // GetPrivilegeValue returns the PrivilegeValue field value if set, zero value otherwise.
-func (o *SecurityPolicyRulePrivilegeContainer) GetPrivilegeValue() map[string]interface{} {
+func (o *SecurityPolicyRulePrivilegeContainer) GetPrivilegeValue() SecurityPolicyRulePrivilegeContainerPrivilegeValue {
 	if o == nil || IsNil(o.PrivilegeValue) {
-		var ret map[string]interface{}
+		var ret SecurityPolicyRulePrivilegeContainerPrivilegeValue
 		return ret
 	}
-	return o.PrivilegeValue
+	return *o.PrivilegeValue
 }
 
 // GetPrivilegeValueOk returns a tuple with the PrivilegeValue field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *SecurityPolicyRulePrivilegeContainer) GetPrivilegeValueOk() (map[string]interface{}, bool) {
+func (o *SecurityPolicyRulePrivilegeContainer) GetPrivilegeValueOk() (*SecurityPolicyRulePrivilegeContainerPrivilegeValue, bool) {
 	if o == nil || IsNil(o.PrivilegeValue) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
 	return o.PrivilegeValue, true
 }
@@ -102,9 +101,9 @@ func (o *SecurityPolicyRulePrivilegeContainer) HasPrivilegeValue() bool {
 	return false
 }
 
-// SetPrivilegeValue gets a reference to the given map[string]interface{} and assigns it to the PrivilegeValue field.
-func (o *SecurityPolicyRulePrivilegeContainer) SetPrivilegeValue(v map[string]interface{}) *SecurityPolicyRulePrivilegeContainer {
-	o.PrivilegeValue = v
+// SetPrivilegeValue gets a reference to the given SecurityPolicyRulePrivilegeContainerPrivilegeValue and assigns it to the PrivilegeValue field.
+func (o *SecurityPolicyRulePrivilegeContainer) SetPrivilegeValue(v SecurityPolicyRulePrivilegeContainerPrivilegeValue) *SecurityPolicyRulePrivilegeContainer {
+	o.PrivilegeValue = &v
 	return o
 }
 

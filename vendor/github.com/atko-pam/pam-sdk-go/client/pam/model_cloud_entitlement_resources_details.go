@@ -21,7 +21,7 @@ var _ MappedNullable = &CloudEntitlementResourcesDetails{}
 // CloudEntitlementResourcesDetails Details of the associated resource
 type CloudEntitlementResourcesDetails struct {
 	// The name of the resource
-	Name string `json:"name"`
+	Name *string `json:"name,omitempty"`
 	// An AWS account ID
 	AccountId string `json:"account_id"`
 	// The specific region where the resource is stored
@@ -29,7 +29,7 @@ type CloudEntitlementResourcesDetails struct {
 	// The AWS UUID of the resource
 	AwsId string `json:"aws_id"`
 	// An AWS role ARN associated with the resource
-	Arn string `json:"arn"`
+	Arn *string `json:"arn,omitempty"`
 	// The UUID of the resource
 	ResourceId string `json:"resource_id"`
 	// The type of resource returned by the job run. Currently only returns `rds`.
@@ -43,13 +43,11 @@ type CloudEntitlementResourcesDetails struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCloudEntitlementResourcesDetails(name string, accountId string, region string, awsId string, arn string, resourceId string, resourceType string, orgDetails CloudEntitlementResourcesDetailsOrgDetails) *CloudEntitlementResourcesDetails {
+func NewCloudEntitlementResourcesDetails(accountId string, region string, awsId string, resourceId string, resourceType string, orgDetails CloudEntitlementResourcesDetailsOrgDetails) *CloudEntitlementResourcesDetails {
 	this := CloudEntitlementResourcesDetails{}
-	this.Name = name
 	this.AccountId = accountId
 	this.Region = region
 	this.AwsId = awsId
-	this.Arn = arn
 	this.ResourceId = resourceId
 	this.ResourceType = resourceType
 	this.OrgDetails = orgDetails
@@ -64,28 +62,36 @@ func NewCloudEntitlementResourcesDetailsWithDefaults() *CloudEntitlementResource
 	return &this
 }
 
-// GetName returns the Name field value
+// GetName returns the Name field value if set, zero value otherwise.
 func (o *CloudEntitlementResourcesDetails) GetName() string {
-	if o == nil {
+	if o == nil || IsNil(o.Name) {
 		var ret string
 		return ret
 	}
-
-	return o.Name
+	return *o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value
+// GetNameOk returns a tuple with the Name field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *CloudEntitlementResourcesDetails) GetNameOk() (*string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.Name) {
 		return nil, false
 	}
-	return &o.Name, true
+	return o.Name, true
 }
 
-// SetName sets field value
+// HasName returns a boolean if a field has been set.
+func (o *CloudEntitlementResourcesDetails) HasName() bool {
+	if o != nil && !IsNil(o.Name) {
+		return true
+	}
+
+	return false
+}
+
+// SetName gets a reference to the given string and assigns it to the Name field.
 func (o *CloudEntitlementResourcesDetails) SetName(v string) *CloudEntitlementResourcesDetails {
-	o.Name = v
+	o.Name = &v
 	return o
 }
 
@@ -164,28 +170,36 @@ func (o *CloudEntitlementResourcesDetails) SetAwsId(v string) *CloudEntitlementR
 	return o
 }
 
-// GetArn returns the Arn field value
+// GetArn returns the Arn field value if set, zero value otherwise.
 func (o *CloudEntitlementResourcesDetails) GetArn() string {
-	if o == nil {
+	if o == nil || IsNil(o.Arn) {
 		var ret string
 		return ret
 	}
-
-	return o.Arn
+	return *o.Arn
 }
 
-// GetArnOk returns a tuple with the Arn field value
+// GetArnOk returns a tuple with the Arn field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *CloudEntitlementResourcesDetails) GetArnOk() (*string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.Arn) {
 		return nil, false
 	}
-	return &o.Arn, true
+	return o.Arn, true
 }
 
-// SetArn sets field value
+// HasArn returns a boolean if a field has been set.
+func (o *CloudEntitlementResourcesDetails) HasArn() bool {
+	if o != nil && !IsNil(o.Arn) {
+		return true
+	}
+
+	return false
+}
+
+// SetArn gets a reference to the given string and assigns it to the Arn field.
 func (o *CloudEntitlementResourcesDetails) SetArn(v string) *CloudEntitlementResourcesDetails {
-	o.Arn = v
+	o.Arn = &v
 	return o
 }
 
@@ -307,11 +321,15 @@ func (o CloudEntitlementResourcesDetails) MarshalJSON() ([]byte, error) {
 
 func (o CloudEntitlementResourcesDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["name"] = o.Name
+	if !IsNil(o.Name) {
+		toSerialize["name"] = o.Name
+	}
 	toSerialize["account_id"] = o.AccountId
 	toSerialize["region"] = o.Region
 	toSerialize["aws_id"] = o.AwsId
-	toSerialize["arn"] = o.Arn
+	if !IsNil(o.Arn) {
+		toSerialize["arn"] = o.Arn
+	}
 	toSerialize["resource_id"] = o.ResourceId
 	toSerialize["resource_type"] = o.ResourceType
 	toSerialize["org_details"] = o.OrgDetails

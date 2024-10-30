@@ -20,6 +20,8 @@ var _ MappedNullable = &UserAccessMethodServerDetails{}
 
 // UserAccessMethodServerDetails struct for UserAccessMethodServerDetails
 type UserAccessMethodServerDetails struct {
+	// Type of this resource object
+	Type *string `json:"_type,omitempty"`
 	// The ID of the server resource
 	ServerId *string `json:"server_id,omitempty"`
 	// The hostname of the server resource
@@ -46,6 +48,39 @@ func NewUserAccessMethodServerDetails() *UserAccessMethodServerDetails {
 func NewUserAccessMethodServerDetailsWithDefaults() *UserAccessMethodServerDetails {
 	this := UserAccessMethodServerDetails{}
 	return &this
+}
+
+// GetType returns the Type field value if set, zero value otherwise.
+func (o *UserAccessMethodServerDetails) GetType() string {
+	if o == nil || IsNil(o.Type) {
+		var ret string
+		return ret
+	}
+	return *o.Type
+}
+
+// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserAccessMethodServerDetails) GetTypeOk() (*string, bool) {
+	if o == nil || IsNil(o.Type) {
+		return nil, false
+	}
+	return o.Type, true
+}
+
+// HasType returns a boolean if a field has been set.
+func (o *UserAccessMethodServerDetails) HasType() bool {
+	if o != nil && !IsNil(o.Type) {
+		return true
+	}
+
+	return false
+}
+
+// SetType gets a reference to the given string and assigns it to the Type field.
+func (o *UserAccessMethodServerDetails) SetType(v string) *UserAccessMethodServerDetails {
+	o.Type = &v
+	return o
 }
 
 // GetServerId returns the ServerId field value if set, zero value otherwise.
@@ -223,6 +258,9 @@ func (o UserAccessMethodServerDetails) MarshalJSON() ([]byte, error) {
 
 func (o UserAccessMethodServerDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.Type) {
+		toSerialize["_type"] = o.Type
+	}
 	if !IsNil(o.ServerId) {
 		toSerialize["server_id"] = o.ServerId
 	}

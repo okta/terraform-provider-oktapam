@@ -25,6 +25,8 @@ type NamedObject struct {
 	// The human-readable name of the object
 	Name *string          `json:"name,omitempty"`
 	Type *NamedObjectType `json:"type,omitempty"`
+	// Boolean value determining if the named object with the given id is valid or not.
+	Missing *bool `json:"missing,omitempty"`
 }
 
 // NewNamedObject instantiates a new NamedObject object
@@ -143,6 +145,39 @@ func (o *NamedObject) SetType(v NamedObjectType) *NamedObject {
 	return o
 }
 
+// GetMissing returns the Missing field value if set, zero value otherwise.
+func (o *NamedObject) GetMissing() bool {
+	if o == nil || IsNil(o.Missing) {
+		var ret bool
+		return ret
+	}
+	return *o.Missing
+}
+
+// GetMissingOk returns a tuple with the Missing field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *NamedObject) GetMissingOk() (*bool, bool) {
+	if o == nil || IsNil(o.Missing) {
+		return nil, false
+	}
+	return o.Missing, true
+}
+
+// HasMissing returns a boolean if a field has been set.
+func (o *NamedObject) HasMissing() bool {
+	if o != nil && !IsNil(o.Missing) {
+		return true
+	}
+
+	return false
+}
+
+// SetMissing gets a reference to the given bool and assigns it to the Missing field.
+func (o *NamedObject) SetMissing(v bool) *NamedObject {
+	o.Missing = &v
+	return o
+}
+
 func (o NamedObject) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -161,6 +196,9 @@ func (o NamedObject) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.Type) {
 		toSerialize["type"] = o.Type
+	}
+	if !IsNil(o.Missing) {
+		toSerialize["missing"] = o.Missing
 	}
 	return toSerialize, nil
 }
