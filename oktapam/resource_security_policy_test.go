@@ -26,10 +26,7 @@ func getValidServerID() string {
 func TestAccSecurityPolicy(t *testing.T) {
 	checkTeamApplicable(t, true)
 	resourceName := "oktapam_security_policy.test_acc_security_policy"
-<<<<<<< HEAD
-=======
 	randIdentifier := randSeq()
->>>>>>> 12464a0
 	secretsResourceName := "oktapam_security_policy.test_acc_secrets_security_policy"
 	securityPolicyName := fmt.Sprintf("test_acc_security_policy_%s", randSeq())
 	secretsSecurityPolicyName := fmt.Sprintf("test_acc_secrets_security_policy_%s", randSeq())
@@ -236,11 +233,7 @@ func TestAccSecurityPolicy(t *testing.T) {
 							SelectorType: client.SecretFolderSubSelectorType,
 							Selector: &client.SecretFolderSubSelector{
 								SecretFolderID: client.NamedObject{
-<<<<<<< HEAD
-									Id: utils.AsStringPtr("d83d5474-3ea0-48ad-af2c-1e9f70dfc736"),
-=======
 									Type: client.SecretFolderNamedObjectType,
->>>>>>> 12464a0
 								},
 							},
 						},
@@ -290,18 +283,8 @@ func TestAccSecurityPolicy(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				// Ensure that we get an error when we try to create a policy with invalid config.
-<<<<<<< HEAD
-				Config:      createTestAccSecurityPolicyInvalidAdminPrivilegesConfig(group1Name, securityPolicyName),
-				ExpectError: regexp.MustCompile("admin_level_permissions can not be enabled when principal account rdp privilege is not enabled"),
-			},
-			{
-				// Ensure that we get an error when we try to create a policy with invalid config.
-				Config:      createTestAccSecurityPolicyInvalidRDPAndSSHConfig(group1Name, securityPolicyName),
-				ExpectError: regexp.MustCompile("cannot mix SSH and RDP privileges within a Security Policy Rule"),
-=======
 				Config:      createTestAccSecurityPolicyInvalidAdminPrivilegesConfig(group1Name, securityPolicyName, validServerID),
 				ExpectError: regexp.MustCompile("admin_level_permissions can not be enabled when principal account rdp privilege is not enabled"),
->>>>>>> 12464a0
 			},
 			{
 				// Ensure that we get an error when we try to create a policy with invalid config.
@@ -332,11 +315,7 @@ func TestAccSecurityPolicy(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-<<<<<<< HEAD
-				Config: createTestAccSecurityPolicySecretsCreateConfig(group1Name, group2Name, secretsSecurityPolicyName),
-=======
 				Config: createTestAccSecurityPolicySecretsCreateConfig(randIdentifier, group1Name, group2Name, secretsSecurityPolicyName),
->>>>>>> 12464a0
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccSecurityPolicyCheckExists(secretsResourceName, secretsSecurityPolicy),
 					resource.TestCheckResourceAttr(
@@ -669,62 +648,6 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 			password_checkout_rdp {
 				enabled = true
 			}
-			principal_account_rdp {
-				enabled = false
-				admin_level_permissions = false
-			}
-		}
-		conditions {
-			access_request {
-				request_type_id = "abcd"
-				request_type_name = "foo"
-				expires_after_seconds = 1200
-			}
-			access_request {
-				request_type_id = "wxyz"
-				request_type_name = "bar"
-				expires_after_seconds = 1800
-			}
-			gateway {
-				traffic_forwarding = true
-				session_recording  = true
-			}
-		}
-	}
-}
-`
-
-const testAccSecurityPolicyInvalidRDPAndSSHConfigFormat = `
-resource "oktapam_group" "test_security_policy_group1" {
-	name = "%s"
-}
-resource "oktapam_security_policy" "test_acc_security_policy" {
-	name = "%s"
-	description = "updated description"
-	active = true
-	principals {
-		groups = [oktapam_group.test_security_policy_group1.id]
-	}
-	rule {
-		name = "first rule"
-		resources {
-			servers {
-				server_account {
-					server_id = "9103335f-1147-407b-84d7-dbfc57f75c99"
-					account   = "pamadmin"
-				}
-				label_selectors {
-					server_labels = {
-						"system.os_type" = "windows"
-					}
-					accounts = ["pamadmin"]
-				}
-			}
-		}
-		privileges {
-			password_checkout_rdp {
-				enabled = true
-			}
 			password_checkout_ssh {
 				enabled = true
 			}
@@ -815,73 +738,6 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 }
 `
 
-<<<<<<< HEAD
-func createTestAccSecurityPolicySecretsCreateConfig(groupName1, groupName2, securityPolicyName string) string {
-	return fmt.Sprintf(testAccSecurityPolicyCreateSecretsConfigFormat, groupName1, groupName2, securityPolicyName)
-}
-
-const testAccSecurityPolicyCreateSecretsConfigFormat = `
-resource "oktapam_group" "test_security_policy_group1" {
-	name = "%s"
-}
-resource "oktapam_group" "test_security_policy_group2" {
-	name = "%s"
-}
-resource "oktapam_security_policy" "test_acc_secrets_security_policy" {
-	name = "%s"
-	description = "test description"
-	active = true
-	principals {
-		groups = [oktapam_group.test_security_policy_group1.id, oktapam_group.test_security_policy_group2.id]
-	}
-	rule {
-		name = "first rule"
-		resources {
-			secrets {
-				secret_folder {
-					secret_folder_id = "d83d5474-3ea0-48ad-af2c-1e9f70dfc736"
-			  	}
-			}
-		}
-		privileges {
-			secret {
-				list = true
-			  	folder_create = true
-			  	folder_delete = true
-			  	folder_update = true
-			  	secret_create = true
-			  	secret_delete = true
-			  	secret_reveal = true
-			  	secret_update = true
-			}
-		}
-		conditions {
-			access_request {
-				request_type_id = "abcd"
-				request_type_name = "foo"
-				expires_after_seconds = 1200
-			}
-			access_request {
-				request_type_id = "wxyz"
-				request_type_name = "bar"
-				expires_after_seconds = 1800
-			}
-		}
-	}
-}
-`
-
-func createTestAccSecurityPolicyUpdateConfig(group1Name, securityPolicyName string) string {
-	return fmt.Sprintf(testAccSecurityPolicyUpdateConfigFormat, group1Name, securityPolicyName)
-}
-
-func createTestAccSecurityPolicyInvalidAdminPrivilegesConfig(group1Name string, securityPolicyName string) string {
-	return fmt.Sprintf(testAccSecurityPolicyInvalidAdminPrivilegesConfigFormat, group1Name, securityPolicyName)
-}
-
-func createTestAccSecurityPolicyInvalidRDPAndSSHConfig(group1Name string, securityPolicyName string) string {
-	return fmt.Sprintf(testAccSecurityPolicyInvalidRDPAndSSHConfigFormat, group1Name, securityPolicyName)
-=======
 func createTestAccSecurityPolicySecretsCreateConfig(identifier, groupName1, groupName2, securityPolicyName string) string {
 	return fmt.Sprintf(testAccSecurityPolicyCreateSecretsConfigFormat, identifier, identifier, identifier, identifier, groupName1, groupName2, securityPolicyName)
 }
@@ -965,5 +821,4 @@ func createTestAccSecurityPolicyInvalidAdminPrivilegesConfig(group1Name string, 
 
 func createTestAccSecurityPolicyInvalidRDPAndSSHConfig(group1Name string, securityPolicyName string, serverID string) string {
 	return fmt.Sprintf(testAccSecurityPolicyInvalidRDPAndSSHConfigFormat, group1Name, securityPolicyName, serverID)
->>>>>>> 12464a0
 }
