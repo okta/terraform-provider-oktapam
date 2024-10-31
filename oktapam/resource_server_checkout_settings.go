@@ -73,6 +73,9 @@ func fromSDKStringSlice(in []string) []types.String {
 	for i, v := range in {
 		out[i] = types.StringValue(v)
 	}
+	if len(out) == 0 {
+		return nil
+	}
 	return out
 }
 func toSDKStringSlice(in []types.String) []string {
@@ -82,6 +85,9 @@ func toSDKStringSlice(in []types.String) []string {
 	out := make([]string, len(in))
 	for i, v := range in {
 		out[i] = v.ValueString()
+	}
+	if len(out) == 0 {
+		return nil
 	}
 	return out
 }
