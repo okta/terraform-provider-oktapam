@@ -66,22 +66,22 @@ func NewResourceCheckoutSettingsModelFromSDK(sdkValue *pam.ResourceCheckoutSetti
 
 // these two utility methods I'm not sure if we actually need them
 func fromSDKStringSlice(in []string) []types.String {
+	if in == nil {
+		return nil
+	}
 	out := make([]types.String, len(in))
 	for i, v := range in {
 		out[i] = types.StringValue(v)
 	}
-	if len(out) == 0 {
-		return nil
-	}
 	return out
 }
 func toSDKStringSlice(in []types.String) []string {
+	if in == nil {
+		return nil
+	}
 	out := make([]string, len(in))
 	for i, v := range in {
-		out[i] = v.String()
-	}
-	if len(out) == 0 {
-		return nil
+		out[i] = v.ValueString()
 	}
 	return out
 }
