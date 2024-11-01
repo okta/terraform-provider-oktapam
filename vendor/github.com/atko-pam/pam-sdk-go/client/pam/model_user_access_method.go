@@ -39,7 +39,7 @@ type UserAccessMethod struct {
 	// The type of access method
 	UserAccessType *string                  `json:"user_access_type,omitempty"`
 	Details        *UserAccessMethodDetails `json:"details,omitempty"`
-	// Collection of all the sudo-related commands a user can access in a single string format
+	// Collection of all the sudo-related commands a User can access in a single string format
 	SudoCommandBundles *string `json:"sudo_command_bundles,omitempty"`
 	// This is a nickname set on the policy rule that contains one or more sudo command bundles. This helps Users choose the appropriate user access method based on the sudo permissions it grants.
 	SudoDisplayName *string `json:"sudo_display_name,omitempty"`

@@ -19,6 +19,7 @@ func TestAccDatabaseResource(t *testing.T) {
 	groupName := fmt.Sprintf("test_acc_group_%s", randSeq())
 	resourceGroupName := fmt.Sprintf("test_acc_resource_group_%s", randSeq())
 	projectName := fmt.Sprintf("test_acc_project_%s", randSeq())
+	mySQLBasicAuth := MySqlBasicAuth
 
 	initialDatabase := &pam.DatabaseResourceResponse{
 		CanonicalName:                   "MyCanonicalName",
@@ -27,6 +28,7 @@ func TestAccDatabaseResource(t *testing.T) {
 		ManagementConnectionDetailsType: MySqlBasicAuth,
 		ManagementConnectionDetails: pam.ManagementConnectionDetails{
 			MySQLBasicAuthManagementConnectionDetails: &pam.MySQLBasicAuthManagementConnectionDetails{
+				Type:     &mySQLBasicAuth,
 				Hostname: "mysql.example.org",
 				Port:     "3306",
 				AuthDetails: pam.MySQLBasicAuthDetails{
@@ -47,6 +49,7 @@ func TestAccDatabaseResource(t *testing.T) {
 		ManagementConnectionDetailsType: MySqlBasicAuth,
 		ManagementConnectionDetails: pam.ManagementConnectionDetails{
 			MySQLBasicAuthManagementConnectionDetails: &pam.MySQLBasicAuthManagementConnectionDetails{
+				Type:     &mySQLBasicAuth,
 				Hostname: "mysql.example.org",
 				Port:     "3306",
 				AuthDetails: pam.MySQLBasicAuthDetails{

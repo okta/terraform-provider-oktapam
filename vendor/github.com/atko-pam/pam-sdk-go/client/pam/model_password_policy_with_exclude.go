@@ -21,12 +21,13 @@ var _ MappedNullable = &PasswordPolicyWithExclude{}
 
 // PasswordPolicyWithExclude struct for PasswordPolicyWithExclude
 type PasswordPolicyWithExclude struct {
-	// If provided, only the actively managed accounts listed are affected by the Password Policy. Note that only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.
-	IncludeList []string `json:"include_list,omitempty"`
-	// If provided, all of the actively managed accounts in the project except those listed are affected by the Password Policy. Note that only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.
-	ExcludeList []string `json:"exclude_list,omitempty"`
-	// If `true`, rotates account passwords after a period of time has passed. You must also set the `periodic_rotation_duration_in_seconds` param.
-	EnablePeriodicRotation bool `json:"enable_periodic_rotation"`
+	// If `true`, rotates account passwords after a period of time has passed. You must also set the `periodic_rotation_duration_in_seconds` and `periodic_rotation_account_selector_mode` params.
+	EnablePeriodicRotation              bool                 `json:"enable_periodic_rotation"`
+	PeriodicRotationAccountSelectorMode *AccountSelectorMode `json:"periodic_rotation_account_selector_mode,omitempty"`
+	// If `periodic_rotation_account_selector_mode` is set to `INCLUDE`, only the actively managed accounts listed will have their password periodically rotated
+	PeriodicRotationAccountIncludeList []ServiceAccountSettingNameObject `json:"periodic_rotation_account_include_list,omitempty"`
+	// If `periodic_rotation_account_selector_mode` is set to `EXCLUDE`, all of the actively managed accounts in the project except those listed will have their password periodically rotated
+	PeriodicRotationAccountExcludeList []ServiceAccountSettingNameObject `json:"periodic_rotation_account_exclude_list,omitempty"`
 	// Specifies how often the OPA platform rotates account passwords
 	PeriodicRotationDurationInSeconds *int32                         `json:"periodic_rotation_duration_in_seconds,omitempty"`
 	CharacterOptions                  PasswordPolicyCharacterOptions `json:"character_options"`
@@ -59,72 +60,6 @@ func NewPasswordPolicyWithExcludeWithDefaults() *PasswordPolicyWithExclude {
 	return &this
 }
 
-// GetIncludeList returns the IncludeList field value if set, zero value otherwise.
-func (o *PasswordPolicyWithExclude) GetIncludeList() []string {
-	if o == nil || IsNil(o.IncludeList) {
-		var ret []string
-		return ret
-	}
-	return o.IncludeList
-}
-
-// GetIncludeListOk returns a tuple with the IncludeList field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *PasswordPolicyWithExclude) GetIncludeListOk() ([]string, bool) {
-	if o == nil || IsNil(o.IncludeList) {
-		return nil, false
-	}
-	return o.IncludeList, true
-}
-
-// HasIncludeList returns a boolean if a field has been set.
-func (o *PasswordPolicyWithExclude) HasIncludeList() bool {
-	if o != nil && !IsNil(o.IncludeList) {
-		return true
-	}
-
-	return false
-}
-
-// SetIncludeList gets a reference to the given []string and assigns it to the IncludeList field.
-func (o *PasswordPolicyWithExclude) SetIncludeList(v []string) *PasswordPolicyWithExclude {
-	o.IncludeList = v
-	return o
-}
-
-// GetExcludeList returns the ExcludeList field value if set, zero value otherwise.
-func (o *PasswordPolicyWithExclude) GetExcludeList() []string {
-	if o == nil || IsNil(o.ExcludeList) {
-		var ret []string
-		return ret
-	}
-	return o.ExcludeList
-}
-
-// GetExcludeListOk returns a tuple with the ExcludeList field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *PasswordPolicyWithExclude) GetExcludeListOk() ([]string, bool) {
-	if o == nil || IsNil(o.ExcludeList) {
-		return nil, false
-	}
-	return o.ExcludeList, true
-}
-
-// HasExcludeList returns a boolean if a field has been set.
-func (o *PasswordPolicyWithExclude) HasExcludeList() bool {
-	if o != nil && !IsNil(o.ExcludeList) {
-		return true
-	}
-
-	return false
-}
-
-// SetExcludeList gets a reference to the given []string and assigns it to the ExcludeList field.
-func (o *PasswordPolicyWithExclude) SetExcludeList(v []string) *PasswordPolicyWithExclude {
-	o.ExcludeList = v
-	return o
-}
-
 // GetEnablePeriodicRotation returns the EnablePeriodicRotation field value
 func (o *PasswordPolicyWithExclude) GetEnablePeriodicRotation() bool {
 	if o == nil {
@@ -147,6 +82,105 @@ func (o *PasswordPolicyWithExclude) GetEnablePeriodicRotationOk() (*bool, bool) 
 // SetEnablePeriodicRotation sets field value
 func (o *PasswordPolicyWithExclude) SetEnablePeriodicRotation(v bool) *PasswordPolicyWithExclude {
 	o.EnablePeriodicRotation = v
+	return o
+}
+
+// GetPeriodicRotationAccountSelectorMode returns the PeriodicRotationAccountSelectorMode field value if set, zero value otherwise.
+func (o *PasswordPolicyWithExclude) GetPeriodicRotationAccountSelectorMode() AccountSelectorMode {
+	if o == nil || IsNil(o.PeriodicRotationAccountSelectorMode) {
+		var ret AccountSelectorMode
+		return ret
+	}
+	return *o.PeriodicRotationAccountSelectorMode
+}
+
+// GetPeriodicRotationAccountSelectorModeOk returns a tuple with the PeriodicRotationAccountSelectorMode field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PasswordPolicyWithExclude) GetPeriodicRotationAccountSelectorModeOk() (*AccountSelectorMode, bool) {
+	if o == nil || IsNil(o.PeriodicRotationAccountSelectorMode) {
+		return nil, false
+	}
+	return o.PeriodicRotationAccountSelectorMode, true
+}
+
+// HasPeriodicRotationAccountSelectorMode returns a boolean if a field has been set.
+func (o *PasswordPolicyWithExclude) HasPeriodicRotationAccountSelectorMode() bool {
+	if o != nil && !IsNil(o.PeriodicRotationAccountSelectorMode) {
+		return true
+	}
+
+	return false
+}
+
+// SetPeriodicRotationAccountSelectorMode gets a reference to the given AccountSelectorMode and assigns it to the PeriodicRotationAccountSelectorMode field.
+func (o *PasswordPolicyWithExclude) SetPeriodicRotationAccountSelectorMode(v AccountSelectorMode) *PasswordPolicyWithExclude {
+	o.PeriodicRotationAccountSelectorMode = &v
+	return o
+}
+
+// GetPeriodicRotationAccountIncludeList returns the PeriodicRotationAccountIncludeList field value if set, zero value otherwise.
+func (o *PasswordPolicyWithExclude) GetPeriodicRotationAccountIncludeList() []ServiceAccountSettingNameObject {
+	if o == nil || IsNil(o.PeriodicRotationAccountIncludeList) {
+		var ret []ServiceAccountSettingNameObject
+		return ret
+	}
+	return o.PeriodicRotationAccountIncludeList
+}
+
+// GetPeriodicRotationAccountIncludeListOk returns a tuple with the PeriodicRotationAccountIncludeList field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PasswordPolicyWithExclude) GetPeriodicRotationAccountIncludeListOk() ([]ServiceAccountSettingNameObject, bool) {
+	if o == nil || IsNil(o.PeriodicRotationAccountIncludeList) {
+		return nil, false
+	}
+	return o.PeriodicRotationAccountIncludeList, true
+}
+
+// HasPeriodicRotationAccountIncludeList returns a boolean if a field has been set.
+func (o *PasswordPolicyWithExclude) HasPeriodicRotationAccountIncludeList() bool {
+	if o != nil && !IsNil(o.PeriodicRotationAccountIncludeList) {
+		return true
+	}
+
+	return false
+}
+
+// SetPeriodicRotationAccountIncludeList gets a reference to the given []ServiceAccountSettingNameObject and assigns it to the PeriodicRotationAccountIncludeList field.
+func (o *PasswordPolicyWithExclude) SetPeriodicRotationAccountIncludeList(v []ServiceAccountSettingNameObject) *PasswordPolicyWithExclude {
+	o.PeriodicRotationAccountIncludeList = v
+	return o
+}
+
+// GetPeriodicRotationAccountExcludeList returns the PeriodicRotationAccountExcludeList field value if set, zero value otherwise.
+func (o *PasswordPolicyWithExclude) GetPeriodicRotationAccountExcludeList() []ServiceAccountSettingNameObject {
+	if o == nil || IsNil(o.PeriodicRotationAccountExcludeList) {
+		var ret []ServiceAccountSettingNameObject
+		return ret
+	}
+	return o.PeriodicRotationAccountExcludeList
+}
+
+// GetPeriodicRotationAccountExcludeListOk returns a tuple with the PeriodicRotationAccountExcludeList field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PasswordPolicyWithExclude) GetPeriodicRotationAccountExcludeListOk() ([]ServiceAccountSettingNameObject, bool) {
+	if o == nil || IsNil(o.PeriodicRotationAccountExcludeList) {
+		return nil, false
+	}
+	return o.PeriodicRotationAccountExcludeList, true
+}
+
+// HasPeriodicRotationAccountExcludeList returns a boolean if a field has been set.
+func (o *PasswordPolicyWithExclude) HasPeriodicRotationAccountExcludeList() bool {
+	if o != nil && !IsNil(o.PeriodicRotationAccountExcludeList) {
+		return true
+	}
+
+	return false
+}
+
+// SetPeriodicRotationAccountExcludeList gets a reference to the given []ServiceAccountSettingNameObject and assigns it to the PeriodicRotationAccountExcludeList field.
+func (o *PasswordPolicyWithExclude) SetPeriodicRotationAccountExcludeList(v []ServiceAccountSettingNameObject) *PasswordPolicyWithExclude {
+	o.PeriodicRotationAccountExcludeList = v
 	return o
 }
 
@@ -301,13 +335,16 @@ func (o PasswordPolicyWithExclude) MarshalJSON() ([]byte, error) {
 
 func (o PasswordPolicyWithExclude) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.IncludeList) {
-		toSerialize["include_list"] = o.IncludeList
-	}
-	if !IsNil(o.ExcludeList) {
-		toSerialize["exclude_list"] = o.ExcludeList
-	}
 	toSerialize["enable_periodic_rotation"] = o.EnablePeriodicRotation
+	if !IsNil(o.PeriodicRotationAccountSelectorMode) {
+		toSerialize["periodic_rotation_account_selector_mode"] = o.PeriodicRotationAccountSelectorMode
+	}
+	if !IsNil(o.PeriodicRotationAccountIncludeList) {
+		toSerialize["periodic_rotation_account_include_list"] = o.PeriodicRotationAccountIncludeList
+	}
+	if !IsNil(o.PeriodicRotationAccountExcludeList) {
+		toSerialize["periodic_rotation_account_exclude_list"] = o.PeriodicRotationAccountExcludeList
+	}
 	if !IsNil(o.PeriodicRotationDurationInSeconds) {
 		toSerialize["periodic_rotation_duration_in_seconds"] = o.PeriodicRotationDurationInSeconds
 	}

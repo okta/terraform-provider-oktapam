@@ -168,7 +168,7 @@ func TestAccServerCheckoutSettings(t *testing.T) {
 			// Update with both lists
 			{
 				Config:      createServerCheckoutSettingsUpdateWithBothListsConfig(delegatedAdminGroupName, resourceGroupName, projectName),
-				ExpectError: regexp.MustCompile(`400 Bad Request`),
+				ExpectError: regexp.MustCompile(`Only one of 'IncludeList' or 'ExcludeList' can be specified`),
 			},
 
 			// Update project

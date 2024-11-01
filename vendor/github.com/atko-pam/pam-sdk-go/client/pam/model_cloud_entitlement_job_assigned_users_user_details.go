@@ -25,7 +25,7 @@ type CloudEntitlementJobAssignedUsersUserDetails struct {
 	// The email address associated with the user
 	PrimaryEmail *string `json:"primary_email,omitempty"`
 	// The display name of the user
-	DisplayName *int32 `json:"display_name,omitempty"`
+	DisplayName *string `json:"display_name,omitempty"`
 }
 
 // NewCloudEntitlementJobAssignedUsersUserDetails instantiates a new CloudEntitlementJobAssignedUsersUserDetails object
@@ -112,9 +112,9 @@ func (o *CloudEntitlementJobAssignedUsersUserDetails) SetPrimaryEmail(v string) 
 }
 
 // GetDisplayName returns the DisplayName field value if set, zero value otherwise.
-func (o *CloudEntitlementJobAssignedUsersUserDetails) GetDisplayName() int32 {
+func (o *CloudEntitlementJobAssignedUsersUserDetails) GetDisplayName() string {
 	if o == nil || IsNil(o.DisplayName) {
-		var ret int32
+		var ret string
 		return ret
 	}
 	return *o.DisplayName
@@ -122,7 +122,7 @@ func (o *CloudEntitlementJobAssignedUsersUserDetails) GetDisplayName() int32 {
 
 // GetDisplayNameOk returns a tuple with the DisplayName field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CloudEntitlementJobAssignedUsersUserDetails) GetDisplayNameOk() (*int32, bool) {
+func (o *CloudEntitlementJobAssignedUsersUserDetails) GetDisplayNameOk() (*string, bool) {
 	if o == nil || IsNil(o.DisplayName) {
 		return nil, false
 	}
@@ -138,8 +138,8 @@ func (o *CloudEntitlementJobAssignedUsersUserDetails) HasDisplayName() bool {
 	return false
 }
 
-// SetDisplayName gets a reference to the given int32 and assigns it to the DisplayName field.
-func (o *CloudEntitlementJobAssignedUsersUserDetails) SetDisplayName(v int32) *CloudEntitlementJobAssignedUsersUserDetails {
+// SetDisplayName gets a reference to the given string and assigns it to the DisplayName field.
+func (o *CloudEntitlementJobAssignedUsersUserDetails) SetDisplayName(v string) *CloudEntitlementJobAssignedUsersUserDetails {
 	o.DisplayName = &v
 	return o
 }

@@ -20,7 +20,7 @@ var _ MappedNullable = &Aws{}
 
 // Aws struct for Aws
 type Aws struct {
-	// Type of this object
+	// Type of this Resource object
 	Type             *string      `json:"_type,omitempty"`
 	AccountId        string       `json:"account_id"`
 	AvailabilityZone string       `json:"availability_zone"`

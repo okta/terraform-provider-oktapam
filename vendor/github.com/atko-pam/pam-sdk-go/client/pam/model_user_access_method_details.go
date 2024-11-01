@@ -18,8 +18,9 @@ import (
 
 // UserAccessMethodDetails - struct for UserAccessMethodDetails
 type UserAccessMethodDetails struct {
-	UserAccessMethodSecretDetails *UserAccessMethodSecretDetails
-	UserAccessMethodServerDetails *UserAccessMethodServerDetails
+	UserAccessMethodSecretDetails         *UserAccessMethodSecretDetails
+	UserAccessMethodServerDetails         *UserAccessMethodServerDetails
+	UserAccessMethodServiceAccountDetails *UserAccessMethodServiceAccountDetails
 }
 
 // UserAccessMethodSecretDetailsAsUserAccessMethodDetails is a convenience function that returns UserAccessMethodSecretDetails wrapped in UserAccessMethodDetails
@@ -33,6 +34,13 @@ func UserAccessMethodSecretDetailsAsUserAccessMethodDetails(v *UserAccessMethodS
 func UserAccessMethodServerDetailsAsUserAccessMethodDetails(v *UserAccessMethodServerDetails) UserAccessMethodDetails {
 	return UserAccessMethodDetails{
 		UserAccessMethodServerDetails: v,
+	}
+}
+
+// UserAccessMethodServiceAccountDetailsAsUserAccessMethodDetails is a convenience function that returns UserAccessMethodServiceAccountDetails wrapped in UserAccessMethodDetails
+func UserAccessMethodServiceAccountDetailsAsUserAccessMethodDetails(v *UserAccessMethodServiceAccountDetails) UserAccessMethodDetails {
+	return UserAccessMethodDetails{
+		UserAccessMethodServiceAccountDetails: v,
 	}
 }
 
@@ -67,6 +75,18 @@ func (dst *UserAccessMethodDetails) UnmarshalJSON(data []byte) error {
 		} else {
 			dst.UserAccessMethodServerDetails = nil
 			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodServerDetails: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'UserAccessMethodServiceAccountDetails'
+	if jsonDict["_type"] == "UserAccessMethodServiceAccountDetails" {
+		// try to unmarshal JSON data into UserAccessMethodServiceAccountDetails
+		err = json.Unmarshal(data, &dst.UserAccessMethodServiceAccountDetails)
+		if err == nil {
+			return nil // data stored in dst.UserAccessMethodServiceAccountDetails, return on the first match
+		} else {
+			dst.UserAccessMethodServiceAccountDetails = nil
+			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodServiceAccountDetails: %s", err.Error())
 		}
 	}
 
@@ -166,6 +186,18 @@ func (dst *UserAccessMethodDetails) UnmarshalJSON(data []byte) error {
 		}
 	}
 
+	// check if the discriminator value is 'service_account'
+	if jsonDict["_type"] == "service_account" {
+		// try to unmarshal JSON data into UserAccessMethodServiceAccountDetails
+		err = json.Unmarshal(data, &dst.UserAccessMethodServiceAccountDetails)
+		if err == nil {
+			return nil // data stored in dst.UserAccessMethodServiceAccountDetails, return on the first match
+		} else {
+			dst.UserAccessMethodServiceAccountDetails = nil
+			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodServiceAccountDetails: %s", err.Error())
+		}
+	}
+
 	// check if the discriminator value is 'unknown'
 	if jsonDict["_type"] == "unknown" {
 		// try to unmarshal JSON data into UserAccessMethodServerDetails
@@ -203,6 +235,10 @@ func (src UserAccessMethodDetails) MarshalJSON() ([]byte, error) {
 		return json.Marshal(&src.UserAccessMethodServerDetails)
 	}
 
+	if src.UserAccessMethodServiceAccountDetails != nil {
+		return json.Marshal(&src.UserAccessMethodServiceAccountDetails)
+	}
+
 	return nil, nil // no data in oneOf schemas
 }
 
@@ -217,6 +253,10 @@ func (obj *UserAccessMethodDetails) GetActualInstance() interface{} {
 
 	if obj.UserAccessMethodServerDetails != nil {
 		return obj.UserAccessMethodServerDetails
+	}
+
+	if obj.UserAccessMethodServiceAccountDetails != nil {
+		return obj.UserAccessMethodServiceAccountDetails
 	}
 
 	// all schemas are nil

@@ -28,29 +28,20 @@ type SaasAppAccount struct {
 	// The username used to log into the SaaS Application
 	Username *string `json:"username,omitempty"`
 	// A brief description of the SaaS Application Account
-	Description *string                      `json:"description,omitempty"`
-	Status      *PrivilegedAccountStatus     `json:"status,omitempty"`
-	SyncStatus  *PrivilegedAccountSyncStatus `json:"sync_status,omitempty"`
+	Description  *string                     `json:"description,omitempty"`
+	Status       *ServiceAccountStatus       `json:"status,omitempty"`
+	StatusDetail *ServiceAccountStatusDetail `json:"status_detail,omitempty"`
+	SyncStatus   *ServiceAccountSyncStatus   `json:"sync_status,omitempty"`
 	// Whether the password for the SaaS Application Account can be rotated using Okta Lifecycle Management
 	LcmSyncPossible *bool `json:"lcm_sync_possible,omitempty"`
-	// Whether the account's password has been successfully rotated at least once
-	FirstSyncComplete *bool `json:"first_sync_complete,omitempty"`
-	// The Okta privileged resource ID for the SaaS Application Account
-	OktaPrivilegedResourceId *string `json:"okta_privileged_resource_id,omitempty"`
-	// The Okta Resource Name (ORN) for the Privileged Account
-	Orn *string `json:"orn,omitempty"`
 	// A URL pointing to the logo of the SaaS Application
 	LogoUrl *string `json:"logo_url,omitempty"`
 	// The name of the SaaS Application instance
-	ApplicationName *string `json:"application_name,omitempty"`
-	// The name of the SaaS Application in the Okta Integration Network
-	GlobalApplicationName *string `json:"global_application_name,omitempty"`
+	ApplicationInstanceName *string `json:"application_instance_name,omitempty"`
 	// A URL pointing to the login page of the SaaS Application
 	LoginUrl *string `json:"login_url,omitempty"`
 	// The Okta app instance ID of the SaaS Application
-	OktaApplicationId *string `json:"okta_application_id,omitempty"`
-	// The Okta global app ID of the SaaS Application
-	OktaGlobalApplicationId *string `json:"okta_global_application_id,omitempty"`
+	ApplicationInstanceId *string `json:"application_instance_id,omitempty"`
 	// A timestamp that indicates when the OPA managed SaaS Application Account was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// A timestamp that indicates when the OPA managed SaaS Application Account was updated
@@ -207,9 +198,9 @@ func (o *SaasAppAccount) SetDescription(v string) *SaasAppAccount {
 }
 
 // GetStatus returns the Status field value if set, zero value otherwise.
-func (o *SaasAppAccount) GetStatus() PrivilegedAccountStatus {
+func (o *SaasAppAccount) GetStatus() ServiceAccountStatus {
 	if o == nil || IsNil(o.Status) {
-		var ret PrivilegedAccountStatus
+		var ret ServiceAccountStatus
 		return ret
 	}
 	return *o.Status
@@ -217,7 +208,7 @@ func (o *SaasAppAccount) GetStatus() PrivilegedAccountStatus {
 
 // GetStatusOk returns a tuple with the Status field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *SaasAppAccount) GetStatusOk() (*PrivilegedAccountStatus, bool) {
+func (o *SaasAppAccount) GetStatusOk() (*ServiceAccountStatus, bool) {
 	if o == nil || IsNil(o.Status) {
 		return nil, false
 	}
@@ -233,16 +224,49 @@ func (o *SaasAppAccount) HasStatus() bool {
 	return false
 }
 
-// SetStatus gets a reference to the given PrivilegedAccountStatus and assigns it to the Status field.
-func (o *SaasAppAccount) SetStatus(v PrivilegedAccountStatus) *SaasAppAccount {
+// SetStatus gets a reference to the given ServiceAccountStatus and assigns it to the Status field.
+func (o *SaasAppAccount) SetStatus(v ServiceAccountStatus) *SaasAppAccount {
 	o.Status = &v
 	return o
 }
 
+// GetStatusDetail returns the StatusDetail field value if set, zero value otherwise.
+func (o *SaasAppAccount) GetStatusDetail() ServiceAccountStatusDetail {
+	if o == nil || IsNil(o.StatusDetail) {
+		var ret ServiceAccountStatusDetail
+		return ret
+	}
+	return *o.StatusDetail
+}
+
+// GetStatusDetailOk returns a tuple with the StatusDetail field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SaasAppAccount) GetStatusDetailOk() (*ServiceAccountStatusDetail, bool) {
+	if o == nil || IsNil(o.StatusDetail) {
+		return nil, false
+	}
+	return o.StatusDetail, true
+}
+
+// HasStatusDetail returns a boolean if a field has been set.
+func (o *SaasAppAccount) HasStatusDetail() bool {
+	if o != nil && !IsNil(o.StatusDetail) {
+		return true
+	}
+
+	return false
+}
+
+// SetStatusDetail gets a reference to the given ServiceAccountStatusDetail and assigns it to the StatusDetail field.
+func (o *SaasAppAccount) SetStatusDetail(v ServiceAccountStatusDetail) *SaasAppAccount {
+	o.StatusDetail = &v
+	return o
+}
+
 // GetSyncStatus returns the SyncStatus field value if set, zero value otherwise.
-func (o *SaasAppAccount) GetSyncStatus() PrivilegedAccountSyncStatus {
+func (o *SaasAppAccount) GetSyncStatus() ServiceAccountSyncStatus {
 	if o == nil || IsNil(o.SyncStatus) {
-		var ret PrivilegedAccountSyncStatus
+		var ret ServiceAccountSyncStatus
 		return ret
 	}
 	return *o.SyncStatus
@@ -250,7 +274,7 @@ func (o *SaasAppAccount) GetSyncStatus() PrivilegedAccountSyncStatus {
 
 // GetSyncStatusOk returns a tuple with the SyncStatus field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *SaasAppAccount) GetSyncStatusOk() (*PrivilegedAccountSyncStatus, bool) {
+func (o *SaasAppAccount) GetSyncStatusOk() (*ServiceAccountSyncStatus, bool) {
 	if o == nil || IsNil(o.SyncStatus) {
 		return nil, false
 	}
@@ -266,8 +290,8 @@ func (o *SaasAppAccount) HasSyncStatus() bool {
 	return false
 }
 
-// SetSyncStatus gets a reference to the given PrivilegedAccountSyncStatus and assigns it to the SyncStatus field.
-func (o *SaasAppAccount) SetSyncStatus(v PrivilegedAccountSyncStatus) *SaasAppAccount {
+// SetSyncStatus gets a reference to the given ServiceAccountSyncStatus and assigns it to the SyncStatus field.
+func (o *SaasAppAccount) SetSyncStatus(v ServiceAccountSyncStatus) *SaasAppAccount {
 	o.SyncStatus = &v
 	return o
 }
@@ -305,105 +329,6 @@ func (o *SaasAppAccount) SetLcmSyncPossible(v bool) *SaasAppAccount {
 	return o
 }
 
-// GetFirstSyncComplete returns the FirstSyncComplete field value if set, zero value otherwise.
-func (o *SaasAppAccount) GetFirstSyncComplete() bool {
-	if o == nil || IsNil(o.FirstSyncComplete) {
-		var ret bool
-		return ret
-	}
-	return *o.FirstSyncComplete
-}
-
-// GetFirstSyncCompleteOk returns a tuple with the FirstSyncComplete field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *SaasAppAccount) GetFirstSyncCompleteOk() (*bool, bool) {
-	if o == nil || IsNil(o.FirstSyncComplete) {
-		return nil, false
-	}
-	return o.FirstSyncComplete, true
-}
-
-// HasFirstSyncComplete returns a boolean if a field has been set.
-func (o *SaasAppAccount) HasFirstSyncComplete() bool {
-	if o != nil && !IsNil(o.FirstSyncComplete) {
-		return true
-	}
-
-	return false
-}
-
-// SetFirstSyncComplete gets a reference to the given bool and assigns it to the FirstSyncComplete field.
-func (o *SaasAppAccount) SetFirstSyncComplete(v bool) *SaasAppAccount {
-	o.FirstSyncComplete = &v
-	return o
-}
-
-// GetOktaPrivilegedResourceId returns the OktaPrivilegedResourceId field value if set, zero value otherwise.
-func (o *SaasAppAccount) GetOktaPrivilegedResourceId() string {
-	if o == nil || IsNil(o.OktaPrivilegedResourceId) {
-		var ret string
-		return ret
-	}
-	return *o.OktaPrivilegedResourceId
-}
-
-// GetOktaPrivilegedResourceIdOk returns a tuple with the OktaPrivilegedResourceId field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *SaasAppAccount) GetOktaPrivilegedResourceIdOk() (*string, bool) {
-	if o == nil || IsNil(o.OktaPrivilegedResourceId) {
-		return nil, false
-	}
-	return o.OktaPrivilegedResourceId, true
-}
-
-// HasOktaPrivilegedResourceId returns a boolean if a field has been set.
-func (o *SaasAppAccount) HasOktaPrivilegedResourceId() bool {
-	if o != nil && !IsNil(o.OktaPrivilegedResourceId) {
-		return true
-	}
-
-	return false
-}
-
-// SetOktaPrivilegedResourceId gets a reference to the given string and assigns it to the OktaPrivilegedResourceId field.
-func (o *SaasAppAccount) SetOktaPrivilegedResourceId(v string) *SaasAppAccount {
-	o.OktaPrivilegedResourceId = &v
-	return o
-}
-
-// GetOrn returns the Orn field value if set, zero value otherwise.
-func (o *SaasAppAccount) GetOrn() string {
-	if o == nil || IsNil(o.Orn) {
-		var ret string
-		return ret
-	}
-	return *o.Orn
-}
-
-// GetOrnOk returns a tuple with the Orn field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *SaasAppAccount) GetOrnOk() (*string, bool) {
-	if o == nil || IsNil(o.Orn) {
-		return nil, false
-	}
-	return o.Orn, true
-}
-
-// HasOrn returns a boolean if a field has been set.
-func (o *SaasAppAccount) HasOrn() bool {
-	if o != nil && !IsNil(o.Orn) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrn gets a reference to the given string and assigns it to the Orn field.
-func (o *SaasAppAccount) SetOrn(v string) *SaasAppAccount {
-	o.Orn = &v
-	return o
-}
-
 // GetLogoUrl returns the LogoUrl field value if set, zero value otherwise.
 func (o *SaasAppAccount) GetLogoUrl() string {
 	if o == nil || IsNil(o.LogoUrl) {
@@ -437,69 +362,36 @@ func (o *SaasAppAccount) SetLogoUrl(v string) *SaasAppAccount {
 	return o
 }
 
-// GetApplicationName returns the ApplicationName field value if set, zero value otherwise.
-func (o *SaasAppAccount) GetApplicationName() string {
-	if o == nil || IsNil(o.ApplicationName) {
+// GetApplicationInstanceName returns the ApplicationInstanceName field value if set, zero value otherwise.
+func (o *SaasAppAccount) GetApplicationInstanceName() string {
+	if o == nil || IsNil(o.ApplicationInstanceName) {
 		var ret string
 		return ret
 	}
-	return *o.ApplicationName
+	return *o.ApplicationInstanceName
 }
 
-// GetApplicationNameOk returns a tuple with the ApplicationName field value if set, nil otherwise
+// GetApplicationInstanceNameOk returns a tuple with the ApplicationInstanceName field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *SaasAppAccount) GetApplicationNameOk() (*string, bool) {
-	if o == nil || IsNil(o.ApplicationName) {
+func (o *SaasAppAccount) GetApplicationInstanceNameOk() (*string, bool) {
+	if o == nil || IsNil(o.ApplicationInstanceName) {
 		return nil, false
 	}
-	return o.ApplicationName, true
+	return o.ApplicationInstanceName, true
 }
 
-// HasApplicationName returns a boolean if a field has been set.
-func (o *SaasAppAccount) HasApplicationName() bool {
-	if o != nil && !IsNil(o.ApplicationName) {
+// HasApplicationInstanceName returns a boolean if a field has been set.
+func (o *SaasAppAccount) HasApplicationInstanceName() bool {
+	if o != nil && !IsNil(o.ApplicationInstanceName) {
 		return true
 	}
 
 	return false
 }
 
-// SetApplicationName gets a reference to the given string and assigns it to the ApplicationName field.
-func (o *SaasAppAccount) SetApplicationName(v string) *SaasAppAccount {
-	o.ApplicationName = &v
-	return o
-}
-
-// GetGlobalApplicationName returns the GlobalApplicationName field value if set, zero value otherwise.
-func (o *SaasAppAccount) GetGlobalApplicationName() string {
-	if o == nil || IsNil(o.GlobalApplicationName) {
-		var ret string
-		return ret
-	}
-	return *o.GlobalApplicationName
-}
-
-// GetGlobalApplicationNameOk returns a tuple with the GlobalApplicationName field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *SaasAppAccount) GetGlobalApplicationNameOk() (*string, bool) {
-	if o == nil || IsNil(o.GlobalApplicationName) {
-		return nil, false
-	}
-	return o.GlobalApplicationName, true
-}
-
-// HasGlobalApplicationName returns a boolean if a field has been set.
-func (o *SaasAppAccount) HasGlobalApplicationName() bool {
-	if o != nil && !IsNil(o.GlobalApplicationName) {
-		return true
-	}
-
-	return false
-}
-
-// SetGlobalApplicationName gets a reference to the given string and assigns it to the GlobalApplicationName field.
-func (o *SaasAppAccount) SetGlobalApplicationName(v string) *SaasAppAccount {
-	o.GlobalApplicationName = &v
+// SetApplicationInstanceName gets a reference to the given string and assigns it to the ApplicationInstanceName field.
+func (o *SaasAppAccount) SetApplicationInstanceName(v string) *SaasAppAccount {
+	o.ApplicationInstanceName = &v
 	return o
 }
 
@@ -536,69 +428,36 @@ func (o *SaasAppAccount) SetLoginUrl(v string) *SaasAppAccount {
 	return o
 }
 
-// GetOktaApplicationId returns the OktaApplicationId field value if set, zero value otherwise.
-func (o *SaasAppAccount) GetOktaApplicationId() string {
-	if o == nil || IsNil(o.OktaApplicationId) {
+// GetApplicationInstanceId returns the ApplicationInstanceId field value if set, zero value otherwise.
+func (o *SaasAppAccount) GetApplicationInstanceId() string {
+	if o == nil || IsNil(o.ApplicationInstanceId) {
 		var ret string
 		return ret
 	}
-	return *o.OktaApplicationId
+	return *o.ApplicationInstanceId
 }
 
-// GetOktaApplicationIdOk returns a tuple with the OktaApplicationId field value if set, nil otherwise
+// GetApplicationInstanceIdOk returns a tuple with the ApplicationInstanceId field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *SaasAppAccount) GetOktaApplicationIdOk() (*string, bool) {
-	if o == nil || IsNil(o.OktaApplicationId) {
+func (o *SaasAppAccount) GetApplicationInstanceIdOk() (*string, bool) {
+	if o == nil || IsNil(o.ApplicationInstanceId) {
 		return nil, false
 	}
-	return o.OktaApplicationId, true
+	return o.ApplicationInstanceId, true
 }
 
-// HasOktaApplicationId returns a boolean if a field has been set.
-func (o *SaasAppAccount) HasOktaApplicationId() bool {
-	if o != nil && !IsNil(o.OktaApplicationId) {
+// HasApplicationInstanceId returns a boolean if a field has been set.
+func (o *SaasAppAccount) HasApplicationInstanceId() bool {
+	if o != nil && !IsNil(o.ApplicationInstanceId) {
 		return true
 	}
 
 	return false
 }
 
-// SetOktaApplicationId gets a reference to the given string and assigns it to the OktaApplicationId field.
-func (o *SaasAppAccount) SetOktaApplicationId(v string) *SaasAppAccount {
-	o.OktaApplicationId = &v
-	return o
-}
-
-// GetOktaGlobalApplicationId returns the OktaGlobalApplicationId field value if set, zero value otherwise.
-func (o *SaasAppAccount) GetOktaGlobalApplicationId() string {
-	if o == nil || IsNil(o.OktaGlobalApplicationId) {
-		var ret string
-		return ret
-	}
-	return *o.OktaGlobalApplicationId
-}
-
-// GetOktaGlobalApplicationIdOk returns a tuple with the OktaGlobalApplicationId field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *SaasAppAccount) GetOktaGlobalApplicationIdOk() (*string, bool) {
-	if o == nil || IsNil(o.OktaGlobalApplicationId) {
-		return nil, false
-	}
-	return o.OktaGlobalApplicationId, true
-}
-
-// HasOktaGlobalApplicationId returns a boolean if a field has been set.
-func (o *SaasAppAccount) HasOktaGlobalApplicationId() bool {
-	if o != nil && !IsNil(o.OktaGlobalApplicationId) {
-		return true
-	}
-
-	return false
-}
-
-// SetOktaGlobalApplicationId gets a reference to the given string and assigns it to the OktaGlobalApplicationId field.
-func (o *SaasAppAccount) SetOktaGlobalApplicationId(v string) *SaasAppAccount {
-	o.OktaGlobalApplicationId = &v
+// SetApplicationInstanceId gets a reference to the given string and assigns it to the ApplicationInstanceId field.
+func (o *SaasAppAccount) SetApplicationInstanceId(v string) *SaasAppAccount {
+	o.ApplicationInstanceId = &v
 	return o
 }
 
@@ -693,38 +552,26 @@ func (o SaasAppAccount) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Status) {
 		toSerialize["status"] = o.Status
 	}
+	if !IsNil(o.StatusDetail) {
+		toSerialize["status_detail"] = o.StatusDetail
+	}
 	if !IsNil(o.SyncStatus) {
 		toSerialize["sync_status"] = o.SyncStatus
 	}
 	if !IsNil(o.LcmSyncPossible) {
 		toSerialize["lcm_sync_possible"] = o.LcmSyncPossible
 	}
-	if !IsNil(o.FirstSyncComplete) {
-		toSerialize["first_sync_complete"] = o.FirstSyncComplete
-	}
-	if !IsNil(o.OktaPrivilegedResourceId) {
-		toSerialize["okta_privileged_resource_id"] = o.OktaPrivilegedResourceId
-	}
-	if !IsNil(o.Orn) {
-		toSerialize["orn"] = o.Orn
-	}
 	if !IsNil(o.LogoUrl) {
 		toSerialize["logo_url"] = o.LogoUrl
 	}
-	if !IsNil(o.ApplicationName) {
-		toSerialize["application_name"] = o.ApplicationName
-	}
-	if !IsNil(o.GlobalApplicationName) {
-		toSerialize["global_application_name"] = o.GlobalApplicationName
+	if !IsNil(o.ApplicationInstanceName) {
+		toSerialize["application_instance_name"] = o.ApplicationInstanceName
 	}
 	if !IsNil(o.LoginUrl) {
 		toSerialize["login_url"] = o.LoginUrl
 	}
-	if !IsNil(o.OktaApplicationId) {
-		toSerialize["okta_application_id"] = o.OktaApplicationId
-	}
-	if !IsNil(o.OktaGlobalApplicationId) {
-		toSerialize["okta_global_application_id"] = o.OktaGlobalApplicationId
+	if !IsNil(o.ApplicationInstanceId) {
+		toSerialize["application_instance_id"] = o.ApplicationInstanceId
 	}
 	if !IsNil(o.CreatedAt) {
 		toSerialize["created_at"] = o.CreatedAt

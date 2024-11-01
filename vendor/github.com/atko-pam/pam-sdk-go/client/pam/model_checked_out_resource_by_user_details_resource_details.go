@@ -18,7 +18,23 @@ import (
 
 // CheckedOutResourceByUserDetailsResourceDetails - The additional details of the resource. Only returned if a `resource_type` query was specified.
 type CheckedOutResourceByUserDetailsResourceDetails struct {
-	ServerAccountCheckedOutResourceDetails *ServerAccountCheckedOutResourceDetails
+	OktaUniversalDirectoryAccountCheckedOutResourceDetails *OktaUniversalDirectoryAccountCheckedOutResourceDetails
+	SaasAppAccountCheckedOutResourceDetails                *SaasAppAccountCheckedOutResourceDetails
+	ServerAccountCheckedOutResourceDetails                 *ServerAccountCheckedOutResourceDetails
+}
+
+// OktaUniversalDirectoryAccountCheckedOutResourceDetailsAsCheckedOutResourceByUserDetailsResourceDetails is a convenience function that returns OktaUniversalDirectoryAccountCheckedOutResourceDetails wrapped in CheckedOutResourceByUserDetailsResourceDetails
+func OktaUniversalDirectoryAccountCheckedOutResourceDetailsAsCheckedOutResourceByUserDetailsResourceDetails(v *OktaUniversalDirectoryAccountCheckedOutResourceDetails) CheckedOutResourceByUserDetailsResourceDetails {
+	return CheckedOutResourceByUserDetailsResourceDetails{
+		OktaUniversalDirectoryAccountCheckedOutResourceDetails: v,
+	}
+}
+
+// SaasAppAccountCheckedOutResourceDetailsAsCheckedOutResourceByUserDetailsResourceDetails is a convenience function that returns SaasAppAccountCheckedOutResourceDetails wrapped in CheckedOutResourceByUserDetailsResourceDetails
+func SaasAppAccountCheckedOutResourceDetailsAsCheckedOutResourceByUserDetailsResourceDetails(v *SaasAppAccountCheckedOutResourceDetails) CheckedOutResourceByUserDetailsResourceDetails {
+	return CheckedOutResourceByUserDetailsResourceDetails{
+		SaasAppAccountCheckedOutResourceDetails: v,
+	}
 }
 
 // ServerAccountCheckedOutResourceDetailsAsCheckedOutResourceByUserDetailsResourceDetails is a convenience function that returns ServerAccountCheckedOutResourceDetails wrapped in CheckedOutResourceByUserDetailsResourceDetails
@@ -38,6 +54,30 @@ func (dst *CheckedOutResourceByUserDetailsResourceDetails) UnmarshalJSON(data []
 		return fmt.Errorf("failed to unmarshal JSON into map for the discriminator lookup")
 	}
 
+	// check if the discriminator value is 'OktaUniversalDirectoryAccountCheckedOutResourceDetails'
+	if jsonDict["_type"] == "OktaUniversalDirectoryAccountCheckedOutResourceDetails" {
+		// try to unmarshal JSON data into OktaUniversalDirectoryAccountCheckedOutResourceDetails
+		err = json.Unmarshal(data, &dst.OktaUniversalDirectoryAccountCheckedOutResourceDetails)
+		if err == nil {
+			return nil // data stored in dst.OktaUniversalDirectoryAccountCheckedOutResourceDetails, return on the first match
+		} else {
+			dst.OktaUniversalDirectoryAccountCheckedOutResourceDetails = nil
+			return fmt.Errorf("failed to unmarshal CheckedOutResourceByUserDetailsResourceDetails as OktaUniversalDirectoryAccountCheckedOutResourceDetails: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'SaasAppAccountCheckedOutResourceDetails'
+	if jsonDict["_type"] == "SaasAppAccountCheckedOutResourceDetails" {
+		// try to unmarshal JSON data into SaasAppAccountCheckedOutResourceDetails
+		err = json.Unmarshal(data, &dst.SaasAppAccountCheckedOutResourceDetails)
+		if err == nil {
+			return nil // data stored in dst.SaasAppAccountCheckedOutResourceDetails, return on the first match
+		} else {
+			dst.SaasAppAccountCheckedOutResourceDetails = nil
+			return fmt.Errorf("failed to unmarshal CheckedOutResourceByUserDetailsResourceDetails as SaasAppAccountCheckedOutResourceDetails: %s", err.Error())
+		}
+	}
+
 	// check if the discriminator value is 'ServerAccountCheckedOutResourceDetails'
 	if jsonDict["_type"] == "ServerAccountCheckedOutResourceDetails" {
 		// try to unmarshal JSON data into ServerAccountCheckedOutResourceDetails
@@ -47,6 +87,30 @@ func (dst *CheckedOutResourceByUserDetailsResourceDetails) UnmarshalJSON(data []
 		} else {
 			dst.ServerAccountCheckedOutResourceDetails = nil
 			return fmt.Errorf("failed to unmarshal CheckedOutResourceByUserDetailsResourceDetails as ServerAccountCheckedOutResourceDetails: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'managed_saas_app_account_password_login'
+	if jsonDict["_type"] == "managed_saas_app_account_password_login" {
+		// try to unmarshal JSON data into SaasAppAccountCheckedOutResourceDetails
+		err = json.Unmarshal(data, &dst.SaasAppAccountCheckedOutResourceDetails)
+		if err == nil {
+			return nil // data stored in dst.SaasAppAccountCheckedOutResourceDetails, return on the first match
+		} else {
+			dst.SaasAppAccountCheckedOutResourceDetails = nil
+			return fmt.Errorf("failed to unmarshal CheckedOutResourceByUserDetailsResourceDetails as SaasAppAccountCheckedOutResourceDetails: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'okta_universal_directory_account_password_login'
+	if jsonDict["_type"] == "okta_universal_directory_account_password_login" {
+		// try to unmarshal JSON data into OktaUniversalDirectoryAccountCheckedOutResourceDetails
+		err = json.Unmarshal(data, &dst.OktaUniversalDirectoryAccountCheckedOutResourceDetails)
+		if err == nil {
+			return nil // data stored in dst.OktaUniversalDirectoryAccountCheckedOutResourceDetails, return on the first match
+		} else {
+			dst.OktaUniversalDirectoryAccountCheckedOutResourceDetails = nil
+			return fmt.Errorf("failed to unmarshal CheckedOutResourceByUserDetailsResourceDetails as OktaUniversalDirectoryAccountCheckedOutResourceDetails: %s", err.Error())
 		}
 	}
 
@@ -67,6 +131,14 @@ func (dst *CheckedOutResourceByUserDetailsResourceDetails) UnmarshalJSON(data []
 
 // Marshal data from the first non-nil pointers in the struct to JSON
 func (src CheckedOutResourceByUserDetailsResourceDetails) MarshalJSON() ([]byte, error) {
+	if src.OktaUniversalDirectoryAccountCheckedOutResourceDetails != nil {
+		return json.Marshal(&src.OktaUniversalDirectoryAccountCheckedOutResourceDetails)
+	}
+
+	if src.SaasAppAccountCheckedOutResourceDetails != nil {
+		return json.Marshal(&src.SaasAppAccountCheckedOutResourceDetails)
+	}
+
 	if src.ServerAccountCheckedOutResourceDetails != nil {
 		return json.Marshal(&src.ServerAccountCheckedOutResourceDetails)
 	}
@@ -79,6 +151,14 @@ func (obj *CheckedOutResourceByUserDetailsResourceDetails) GetActualInstance() i
 	if obj == nil {
 		return nil
 	}
+	if obj.OktaUniversalDirectoryAccountCheckedOutResourceDetails != nil {
+		return obj.OktaUniversalDirectoryAccountCheckedOutResourceDetails
+	}
+
+	if obj.SaasAppAccountCheckedOutResourceDetails != nil {
+		return obj.SaasAppAccountCheckedOutResourceDetails
+	}
+
 	if obj.ServerAccountCheckedOutResourceDetails != nil {
 		return obj.ServerAccountCheckedOutResourceDetails
 	}
