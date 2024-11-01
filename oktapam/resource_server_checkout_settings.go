@@ -51,11 +51,11 @@ func (r *ResourceCheckoutSettingsModel) toSDK(ctx context.Context) (*pam.Resourc
 	res.CheckoutRequired = r.CheckoutRequired.ValueBool()
 	res.CheckoutDurationInSeconds = r.CheckoutDurationInSeconds.ValueInt32Pointer()
 
-	if diags := r.IncludeList.ElementsAs(ctx, res.IncludeList, false); diags.HasError() {
+	if diags := r.IncludeList.ElementsAs(ctx, &res.IncludeList, false); diags.HasError() {
 		return nil, diags
 	}
 
-	if diags := r.ExcludeList.ElementsAs(ctx, res.ExcludeList, false); diags.HasError() {
+	if diags := r.ExcludeList.ElementsAs(ctx, &res.ExcludeList, false); diags.HasError() {
 		return nil, diags
 	}
 
