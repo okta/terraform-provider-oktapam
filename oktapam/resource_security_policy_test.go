@@ -9,8 +9,8 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
@@ -90,7 +90,7 @@ func TestAccSecurityPolicy(t *testing.T) {
 						PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
 						PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
 							Enabled:               utils.AsBoolPtr(true),
-							AdminLevelPermissions: utils.AsBoolPtrZero(false, true),
+							AdminLevelPermissions: utils.AsBoolPtrZero(false, false),
 							SudoCommandBundles: []client.NamedObject{
 								{
 									Name: &sudoCommandBundle1Name,
@@ -176,7 +176,7 @@ func TestAccSecurityPolicy(t *testing.T) {
 						PrivilegeType: client.PrincipalAccountRDPPrivilegeType,
 						PrivilegeValue: &client.PrincipalAccountRDPPrivilege{
 							Enabled:               utils.AsBoolPtrZero(false, true),
-							AdminLevelPermissions: utils.AsBoolPtrZero(false, true),
+							AdminLevelPermissions: utils.AsBoolPtrZero(false, false),
 						},
 					},
 				},
@@ -277,9 +277,9 @@ func TestAccSecurityPolicy(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccSecurityPolicyCheckDestroy(securityPolicyName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccSecurityPolicyCheckDestroy(securityPolicyName),
 		Steps: []resource.TestStep{
 			{
 				// Ensure that we get an error when we try to create a policy with invalid config.
@@ -335,7 +335,7 @@ func testAccSecurityPolicyCheckExists(rn string, expectedSecurityPolicy *client.
 		}
 
 		id := rs.Primary.ID
-		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		pamClient := getTestAccAPIClients().LocalClient
 		securityPolicy, err := pamClient.GetSecurityPolicy(context.Background(), id)
 		if err != nil {
 			return fmt.Errorf("error getting security policy: %w", err)
@@ -463,7 +463,7 @@ func insertComputedValuesForSecurityPolicyRule(expectedRule *client.SecurityPoli
 
 func testAccSecurityPolicyCheckDestroy(securityPolicyName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := getLocalClientFromMetadata(testAccProvider.Meta())
+		client := getTestAccAPIClients().LocalClient
 		securityPolicies, err := client.ListSecurityPolicies(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting security policies: %w", err)

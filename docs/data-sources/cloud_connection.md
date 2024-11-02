@@ -36,5 +36,3 @@ Read-Only:
 - `account_id` (String)
 - `external_id` (String)
 - `role_arn` (String)
-
-

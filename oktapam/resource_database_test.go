@@ -3,13 +3,14 @@ package oktapam
 import (
 	"context"
 	"fmt"
-	"github.com/atko-pam/pam-sdk-go/client/pam"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/kylelemons/godebug/pretty"
-	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"regexp"
 	"testing"
+
+	"github.com/atko-pam/pam-sdk-go/client/pam"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/kylelemons/godebug/pretty"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
 func TestAccDatabaseResource(t *testing.T) {
@@ -18,6 +19,7 @@ func TestAccDatabaseResource(t *testing.T) {
 	groupName := fmt.Sprintf("test_acc_group_%s", randSeq())
 	resourceGroupName := fmt.Sprintf("test_acc_resource_group_%s", randSeq())
 	projectName := fmt.Sprintf("test_acc_project_%s", randSeq())
+	mySQLBasicAuth := MySqlBasicAuth
 
 	initialDatabase := &pam.DatabaseResourceResponse{
 		CanonicalName:                   "MyCanonicalName",
@@ -26,6 +28,7 @@ func TestAccDatabaseResource(t *testing.T) {
 		ManagementConnectionDetailsType: MySqlBasicAuth,
 		ManagementConnectionDetails: pam.ManagementConnectionDetails{
 			MySQLBasicAuthManagementConnectionDetails: &pam.MySQLBasicAuthManagementConnectionDetails{
+				Type:     &mySQLBasicAuth,
 				Hostname: "mysql.example.org",
 				Port:     "3306",
 				AuthDetails: pam.MySQLBasicAuthDetails{
@@ -46,6 +49,7 @@ func TestAccDatabaseResource(t *testing.T) {
 		ManagementConnectionDetailsType: MySqlBasicAuth,
 		ManagementConnectionDetails: pam.ManagementConnectionDetails{
 			MySQLBasicAuthManagementConnectionDetails: &pam.MySQLBasicAuthManagementConnectionDetails{
+				Type:     &mySQLBasicAuth,
 				Hostname: "mysql.example.org",
 				Port:     "3306",
 				AuthDetails: pam.MySQLBasicAuthDetails{
@@ -60,9 +64,9 @@ func TestAccDatabaseResource(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccResourceGroupCheckDestroy(resourceGroupName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
 			// negative cases must go first
 			{
@@ -350,7 +354,7 @@ func testDatabaseCheckExists(rn string, expectedDatabase *pam.DatabaseResourceRe
 		resourceGroupID := rs.Primary.Attributes[attributes.ResourceGroup]
 		projectID := rs.Primary.Attributes[attributes.Project]
 		databaseID := rs.Primary.Attributes[attributes.ID]
-		pamClient := getSDKClientFromMetadata(testAccProvider.Meta())
+		pamClient := getTestAccAPIClients().SDKClient
 		database, _, err := pamClient.SDKClient.DatabaseResourcesAPI.GetDatabaseResource(context.Background(), pamClient.Team, resourceGroupID, projectID, databaseID).Execute()
 		if err != nil {
 			return fmt.Errorf("error getting database: %w", err)

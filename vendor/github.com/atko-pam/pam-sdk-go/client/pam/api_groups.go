@@ -126,7 +126,7 @@ func (r ApiCreateGroupRequest) Execute() (*Group, *http.Response, error) {
 /*
 	CreateGroup Create a Group
 
-	    Creates a Group for your Team. Groups allow you to assign RBAC roles to users and manage user access to Resource Groups and Projects. To assign the `delegated_resource_admin` role, you need to add the Group to the `delegated_resource_admin_groups` list for a specific Resource Group. See [Resource Groups](/openapi/opa/tag/resource-groups).
+	    Creates a Group for your Team. Groups allow you to assign RBAC roles to users and manage user access to Resource Groups and Projects. To assign the `delegated_resource_admin` role, you need to add the Group to the `delegated_resource_admin_groups` list for a specific Resource Group. See [Resource Groups](/openapi/opa/opa/tag/resource-groups).
 
 This endpoint requires the following role: `pam_admin`.
 
@@ -763,7 +763,7 @@ func (r ApiUpdateGroupRequest) Execute() (*http.Response, error) {
 /*
 	UpdateGroup Update a Group
 
-	    Updates the access privileges of the specified Group. To assign the `delegated_resource_admin` role, you need to add the Group to the `delegated_resource_admin_groups` list for a specific Resource Group. See [Resource Groups](/openapi/opa/tag/resource-groups).
+	    Updates the access privileges of the specified Group. To assign the `delegated_resource_admin` role, you need to add the Group to the `delegated_resource_admin_groups` list for a specific Resource Group. See [Resource Groups](/openapi/opa/opa/tag/resource-groups).
 
 This endpoint requires the following role: `pam_admin`.
 

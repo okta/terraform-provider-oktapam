@@ -20,12 +20,14 @@ var _ MappedNullable = &UserAccessMethodSecretDetails{}
 
 // UserAccessMethodSecretDetails struct for UserAccessMethodSecretDetails
 type UserAccessMethodSecretDetails struct {
+	// Type of this resource object
+	Type *string `json:"_type,omitempty"`
 	// The name of the secret used to access the resource
 	SecretName *string `json:"secret_name,omitempty"`
 	// The ID of the secret used to access the resource
-	SecretId   *string          `json:"secret_id,omitempty"`
-	Path       []SecretPath     `json:"path,omitempty"`
-	Privileges *SecretPrivilege `json:"privileges,omitempty"`
+	SecretId   *string                        `json:"secret_id,omitempty"`
+	Path       []SecretPath                   `json:"path,omitempty"`
+	Privileges *SecurityPolicySecretPrivilege `json:"privileges,omitempty"`
 }
 
 // NewUserAccessMethodSecretDetails instantiates a new UserAccessMethodSecretDetails object
@@ -43,6 +45,39 @@ func NewUserAccessMethodSecretDetails() *UserAccessMethodSecretDetails {
 func NewUserAccessMethodSecretDetailsWithDefaults() *UserAccessMethodSecretDetails {
 	this := UserAccessMethodSecretDetails{}
 	return &this
+}
+
+// GetType returns the Type field value if set, zero value otherwise.
+func (o *UserAccessMethodSecretDetails) GetType() string {
+	if o == nil || IsNil(o.Type) {
+		var ret string
+		return ret
+	}
+	return *o.Type
+}
+
+// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserAccessMethodSecretDetails) GetTypeOk() (*string, bool) {
+	if o == nil || IsNil(o.Type) {
+		return nil, false
+	}
+	return o.Type, true
+}
+
+// HasType returns a boolean if a field has been set.
+func (o *UserAccessMethodSecretDetails) HasType() bool {
+	if o != nil && !IsNil(o.Type) {
+		return true
+	}
+
+	return false
+}
+
+// SetType gets a reference to the given string and assigns it to the Type field.
+func (o *UserAccessMethodSecretDetails) SetType(v string) *UserAccessMethodSecretDetails {
+	o.Type = &v
+	return o
 }
 
 // GetSecretName returns the SecretName field value if set, zero value otherwise.
@@ -145,9 +180,9 @@ func (o *UserAccessMethodSecretDetails) SetPath(v []SecretPath) *UserAccessMetho
 }
 
 // GetPrivileges returns the Privileges field value if set, zero value otherwise.
-func (o *UserAccessMethodSecretDetails) GetPrivileges() SecretPrivilege {
+func (o *UserAccessMethodSecretDetails) GetPrivileges() SecurityPolicySecretPrivilege {
 	if o == nil || IsNil(o.Privileges) {
-		var ret SecretPrivilege
+		var ret SecurityPolicySecretPrivilege
 		return ret
 	}
 	return *o.Privileges
@@ -155,7 +190,7 @@ func (o *UserAccessMethodSecretDetails) GetPrivileges() SecretPrivilege {
 
 // GetPrivilegesOk returns a tuple with the Privileges field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UserAccessMethodSecretDetails) GetPrivilegesOk() (*SecretPrivilege, bool) {
+func (o *UserAccessMethodSecretDetails) GetPrivilegesOk() (*SecurityPolicySecretPrivilege, bool) {
 	if o == nil || IsNil(o.Privileges) {
 		return nil, false
 	}
@@ -171,8 +206,8 @@ func (o *UserAccessMethodSecretDetails) HasPrivileges() bool {
 	return false
 }
 
-// SetPrivileges gets a reference to the given SecretPrivilege and assigns it to the Privileges field.
-func (o *UserAccessMethodSecretDetails) SetPrivileges(v SecretPrivilege) *UserAccessMethodSecretDetails {
+// SetPrivileges gets a reference to the given SecurityPolicySecretPrivilege and assigns it to the Privileges field.
+func (o *UserAccessMethodSecretDetails) SetPrivileges(v SecurityPolicySecretPrivilege) *UserAccessMethodSecretDetails {
 	o.Privileges = &v
 	return o
 }
@@ -187,6 +222,9 @@ func (o UserAccessMethodSecretDetails) MarshalJSON() ([]byte, error) {
 
 func (o UserAccessMethodSecretDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.Type) {
+		toSerialize["_type"] = o.Type
+	}
 	if !IsNil(o.SecretName) {
 		toSerialize["secret_name"] = o.SecretName
 	}

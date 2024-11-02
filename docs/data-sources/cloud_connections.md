@@ -23,5 +23,3 @@ Returns a list of Cloud Connections. For details, see [Cloud Connection](https:/
 
 - `id` (String) The ID of this resource.
 - `ids` (List of String)
-
-

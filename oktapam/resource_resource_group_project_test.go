@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
@@ -35,8 +35,8 @@ func TestAccResourceGroupProject(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
 		// use the resource group check destroy since we create a new one here and deletion of the resource group will cascade delete the projects
 		CheckDestroy: testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
@@ -92,7 +92,7 @@ func testAccResourceGroupProjectCheckExists(rn string, expectedResourceGroupProj
 
 		resourceGroupID := rs.Primary.Attributes[attributes.ResourceGroup]
 		projectID := rs.Primary.Attributes[attributes.ID]
-		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		pamClient := getTestAccAPIClients().LocalClient
 		resourceGroupProject, err := pamClient.GetResourceGroupProject(context.Background(), resourceGroupID, projectID, false)
 		if err != nil {
 			return fmt.Errorf("error getting resource group project: %w", err)

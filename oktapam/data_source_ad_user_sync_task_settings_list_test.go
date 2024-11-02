@@ -6,7 +6,7 @@ import (
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 )
 
@@ -27,9 +27,9 @@ func TestAccDataSourceADUserSyncTaskSettingsIDList(t *testing.T) {
 	preConfig := createTestAccADUserSyncTaskSettingsPreConfig(adConnectionName, projectName, domainName)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccADUserSyncTaskCheckDestroy(adConnectionResourceName),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccADUserSyncTaskCheckDestroy(adConnectionResourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccDataSourceADUserSyncTaskSettingsIDListInitConfig(preConfig, adUserSyncTaskNamePrefix),

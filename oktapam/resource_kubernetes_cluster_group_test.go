@@ -11,8 +11,8 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/id"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 )
 
@@ -45,9 +45,9 @@ func TestAccKubernetesClusterGroup(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccClusterGroupCheckDestroy(clusterGroup1),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccClusterGroupCheckDestroy(clusterGroup1),
 		Steps: []resource.TestStep{
 			{
 				// ensure create works
@@ -94,7 +94,7 @@ func createTestAccKubernetesClusterGroupCreateConfig(body string, clusterGroup c
 
 func testAccClusterGroupCheckDestroy(expectedClusterGroup client.KubernetesClusterGroup) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		pamClient := getTestAccAPIClients().LocalClient
 		clusterGroups, err := pamClient.ListKubernetesClusterGroups(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting cluster groups: %w", err)

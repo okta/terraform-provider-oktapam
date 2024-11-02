@@ -7,8 +7,8 @@ import (
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/utils"
@@ -34,9 +34,9 @@ func TestAccProjectGroup(t *testing.T) {
 		CreateServerGroup: true,
 	}
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccProjectGroupCheckDestroy(initialProjectGroup),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccProjectGroupCheckDestroy(initialProjectGroup),
 		Steps: []resource.TestStep{
 			{
 				Config: createTestAccProjectGroupCreateConfig(initialProjectGroup),
@@ -102,7 +102,7 @@ func testAccProjectGroupCheckExists(rn string, expectedProjectGroup client.Proje
 		project := rs.Primary.Attributes[attributes.ProjectName]
 		group := rs.Primary.Attributes[attributes.GroupName]
 
-		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		pamClient := getTestAccAPIClients().LocalClient
 		projectGroup, err := pamClient.GetProjectGroup(context.Background(), project, group)
 		if err != nil {
 			return fmt.Errorf("error getting project group: %w", err)
@@ -122,7 +122,7 @@ func testAccProjectGroupCheckExists(rn string, expectedProjectGroup client.Proje
 
 func testAccProjectGroupCheckDestroy(projectGroup client.ProjectGroup) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		pamClient := getLocalClientFromMetadata(testAccProvider.Meta())
+		pamClient := getTestAccAPIClients().LocalClient
 		pg, err := pamClient.GetProjectGroup(context.Background(), *projectGroup.Project, *projectGroup.Group)
 		if err != nil {
 			return fmt.Errorf("error getting project group: %w", err)

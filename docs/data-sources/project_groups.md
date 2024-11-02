@@ -31,5 +31,3 @@ Returns a list of Project Groups associated with a Project. For details, see [Ad
 
 - `group_names` (List of String)
 - `id` (String) The ID of this resource.
-
-

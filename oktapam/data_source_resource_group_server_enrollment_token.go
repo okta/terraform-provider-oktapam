@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/config"
+
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/errors"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
@@ -78,7 +80,7 @@ func dataSourceResourceGroupServerEnrollmentTokenFetch(ctx context.Context, d *s
 			}
 		}
 	} else {
-		return diag.Errorf("%s %s does not exist", providerServerEnrollmentTokenKey, id)
+		return diag.Errorf("%s %s does not exist", config.ProviderServerEnrollmentTokenKey, id)
 	}
 
 	return nil

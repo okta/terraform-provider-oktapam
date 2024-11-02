@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
 
@@ -24,9 +24,9 @@ func TestAccDatasourceSecurityPolicyFetch(t *testing.T) {
 	resourceName := "data.oktapam_security_policy.security_policy"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProviders,
-		CheckDestroy:      testAccSecurityPoliciesCheckDestroy(identifier),
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		CheckDestroy:             testAccSecurityPoliciesCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{
 				Config: initConfig,
@@ -39,6 +39,9 @@ func TestAccDatasourceSecurityPolicyFetch(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, attributes.Active, "true"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Principals), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.#", attributes.Principals, attributes.Groups), "1"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Rule), "2"),
+
+					// server rule
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.#", attributes.Rule), "2"),
 
 					// server rule
@@ -71,6 +74,20 @@ func TestAccDatasourceSecurityPolicyFetch(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.#", attributes.Rule, attributes.Resources, attributes.Servers, attributes.Server), "1"),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.0.%s", attributes.Rule, attributes.Resources, attributes.Servers, attributes.Server, attributes.ServerID), validServerID),
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.0.%s.0.%s.0.%s.#", attributes.Rule, attributes.Resources, attributes.Servers, attributes.ServerAccount), "0"),
+
+					// secret rule
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.#", attributes.Rule, attributes.Conditions), "0"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s", attributes.Rule, attributes.Name), "second rule"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.#", attributes.Rule, attributes.Privileges), "1"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.#", attributes.Rule, attributes.Privileges, attributes.Secret), "1"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.List), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.FolderCreate), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.FolderDelete), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.FolderUpdate), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.SecretCreate), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.SecretDelete), "true"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.SecretReveal), "false"),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.0.%s.0.%s", attributes.Rule, attributes.Privileges, attributes.Secret, attributes.SecretUpdate), "true"),
 
 					// secret rule
 					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("%s.1.%s.#", attributes.Rule, attributes.Conditions), "0"),

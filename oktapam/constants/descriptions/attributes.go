@@ -192,4 +192,10 @@ var (
 	UserProvisioningExactUserName = "If true, ASA has ASA Users configured through SCIM to maintain the exact username that is specified."
 	UserType                      = "The user type. Valid types are 'human' and 'service'."
 	WebSessionDuration            = "Defines the duration of the web session. Configure the web session to be between 30 minutes and 25 hours."
+
+	// Checkout Settings Descriptions
+	CheckoutDurationInSeconds = "The duration in seconds for the checkout. If the checkout is enabled, the duration is the maximum time a user can access the resource before the checkout expires."
+	CheckoutRequired          = "Indicates whether a checkout is mandatory for accessing resources within the project. If `true`, checkout is enforced for all applicable resources by default. If `false`, checkout is not required, and resources are accessible without it."
+	ExcludeList               = "If provided, only the account identifiers listed are excluded from the checkout requirement. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive."
+	IncludeList               = "If provided, only the account identifiers listed are required to perform a checkout to access the resource. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive."
 )

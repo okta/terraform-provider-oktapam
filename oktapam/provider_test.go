@@ -1,18 +1,18 @@
 package oktapam
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"os"
+	"sync"
 	"testing"
-	"time"
 
-	"math/rand"
-
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/config"
 )
-
-const DefaultTestTeam = "pam-tf-provider-testing"
 
 func TestProvider(t *testing.T) {
 	if err := Provider().InternalValidate(); err != nil {
@@ -20,14 +20,33 @@ func TestProvider(t *testing.T) {
 	}
 }
 
-var testAccProviders map[string]func() (*schema.Provider, error)
-var testAccProvider *schema.Provider
+var testAccSDKV2Providers map[string]func() (*schema.Provider, error)
+var testAccSDKV2Provider *schema.Provider
+
+var (
+	// testAccV6ProviderFactories are used to instantiate a provider during acceptance testing.
+	// The factory function is invoked for every TF CLI command executed to create a provider server to which the CLI can reattach.
+	testAccV6ProviderFactories map[string]func() (tfprotov6.ProviderServer, error)
+	testAccAPIClients          *client.APIClients
+	clientOnce                 sync.Once
+)
 
 func init() {
-	testAccProvider = Provider()
-	testAccProviders = map[string]func() (*schema.Provider, error){}
-	testAccProviders["oktapam"] = func() (*schema.Provider, error) {
-		return testAccProvider, nil
+	testAccSDKV2Provider = Provider()
+	testAccSDKV2Providers = map[string]func() (*schema.Provider, error){}
+	testAccSDKV2Providers["oktapam"] = func() (*schema.Provider, error) {
+		return testAccSDKV2Provider, nil
+	}
+
+	// this is used in acceptance test
+	serverFactory, err := V6ProviderServerFactory(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
+	testAccV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
+		"oktapam": func() (tfprotov6.ProviderServer, error) {
+			return serverFactory(), nil
+		},
 	}
 }
 
@@ -36,7 +55,7 @@ func TestProvider_impl(t *testing.T) {
 }
 
 func testAccPreCheck(t *testing.T) {
-	requiredEnvVars := []string{apiKeySchemaEnvVar, apiKeySecretSchemaEnvVar, teamSchemaEnvVar}
+	requiredEnvVars := []string{config.ApiKeySchemaEnvVar, config.ApiKeySecretSchemaEnvVar, config.TeamSchemaEnvVar}
 
 	for _, envVar := range requiredEnvVars {
 		if err := os.Getenv(envVar); err == "" {
@@ -45,101 +64,44 @@ func testAccPreCheck(t *testing.T) {
 	}
 }
 
-const defaultRandSeqLength = 20
+func newTestAccAPIClients() (*client.APIClients, error) {
+	apiKey := os.Getenv(config.ApiKeySchemaEnvVar)
+	apiHost := os.Getenv(config.ApiHostSchemaEnvVar)
+	apiSecret := os.Getenv(config.ApiKeySecretSchemaEnvVar)
+	team := os.Getenv(config.TeamSchemaEnvVar)
 
-var randChars = []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	cfg := &client.OktaPAMProviderConfig{
+		APIKey:       apiKey,
+		APIKeySecret: apiSecret,
+		Team:         team,
+		APIHost:      apiHost,
+	}
 
-func randSeq() string {
-	return randSeqWithLength(defaultRandSeqLength)
+	sdkClient, err := client.CreateSDKClient(cfg)
+	if err != nil {
+		return nil, fmt.Errorf("error while creating sdk client: %w", err)
+	}
+
+	sdkClientWrapper := client.SDKClientWrapper{
+		SDKClient: sdkClient,
+		Team:      team,
+	}
+
+	localClient, err := client.CreateLocalPAMClient(cfg)
+	if err != nil {
+		return nil, fmt.Errorf("error while creating sdk client: %w", err)
+	}
+
+	return &client.APIClients{
+		SDKClient:   sdkClientWrapper,
+		LocalClient: localClient,
+	}, nil
 }
 
-func randSeqWithLength(length uint) string {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	b := make([]rune, length) // Character length
-	for i := range b {
-		b[i] = randChars[r.Intn(len(randChars))]
-	}
-	return string(b)
-}
+func getTestAccAPIClients() *client.APIClients {
+	clientOnce.Do(func() {
+		testAccAPIClients, _ = newTestAccAPIClients()
+	})
 
-func isExecutingPAMTest() bool {
-	pamAccEnv := os.Getenv("TF_ACC_PAM")
-	return pamAccEnv != "" && pamAccEnv != "0"
-}
-
-func checkTeamApplicable(t *testing.T, isPAMTest bool) {
-	if isExecutingPAMTest() != isPAMTest {
-		t.Skip("skipping due to team/test mismatch")
-	}
-}
-
-// subNamedObjects is used within tests to allow for comparing objects that include named objects.  generally the struct which is created within a test
-// will only know either the ids or the names for the named objects.  this method assumes the expectedNamedObjects were returned from the server
-// and will have both the id and name.  the method will match up the named objects based on the key the test knows about and return a list with the
-// values from the expected list
-func subNamedObjects(expectedNamedObjects, actualNamedObjects []client.NamedObject, matchByID bool) ([]client.NamedObject, error) {
-	if len(expectedNamedObjects) != len(actualNamedObjects) {
-		return nil, fmt.Errorf("number of named objects does not match.  expected %d, got %d", len(expectedNamedObjects), len(actualNamedObjects))
-	}
-
-	m := make(map[string]client.NamedObject)
-
-	for _, no := range actualNamedObjects {
-		if matchByID {
-			m[*no.Id] = no
-		} else {
-			m[*no.Name] = no
-		}
-	}
-
-	subs := make([]client.NamedObject, len(expectedNamedObjects))
-
-	for idx, no := range expectedNamedObjects {
-		var key string
-		if matchByID {
-			key = *no.Id
-		} else {
-			key = *no.Name
-		}
-
-		if _, ok := m[key]; ok {
-			subs[idx] = no
-		} else {
-			return nil, fmt.Errorf("could not match named object with key: %s", key)
-		}
-	}
-
-	return subs, nil
-}
-
-func fillNamedObjectValues(expectedNamedObject client.NamedObject, actualNamedObject client.NamedObject) client.NamedObject {
-	filled := client.NamedObject{}
-
-	if expectedNamedObject.Id != nil {
-		filled.Id = expectedNamedObject.Id
-	} else {
-		filled.Id = actualNamedObject.Id
-	}
-
-	if expectedNamedObject.Name != nil {
-		filled.Name = expectedNamedObject.Name
-	} else {
-		filled.Name = actualNamedObject.Name
-	}
-
-	if string(expectedNamedObject.Type) != "" {
-		filled.Type = expectedNamedObject.Type
-	} else {
-		filled.Type = actualNamedObject.Type
-	}
-
-	return filled
-}
-
-func getTeamName() string {
-	teamName := os.Getenv(teamSchemaEnvVar)
-	if teamName != "" {
-		return teamName
-	}
-	return DefaultTestTeam
+	return testAccAPIClients
 }
