@@ -525,11 +525,7 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 				enabled = true
 				admin_level_permissions = false
 				sudo_display_name = "foo-uam"
-				sudo_command_bundles {
-					id = oktapam_sudo_command_bundle.test_acc_sudo_command_bundle.id
-					name = oktapam_sudo_command_bundle.test_acc_sudo_command_bundle.name
-					type = "sudo_command_bundle"
-				}
+				sudo_command_bundles = [oktapam_sudo_command_bundle.test_acc_sudo_command_bundle.id]
 			}
 		}
 		conditions {
