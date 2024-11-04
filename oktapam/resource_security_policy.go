@@ -1358,7 +1358,7 @@ func readSudoCommandBundles(privilege any) ([]client.NamedObject, diag.Diagnosti
 		if bundles, bundlesDiag := GetUUIDSlice(scbs, attributes.SudoCommandBundles); bundlesDiag == nil {
 			result = ConvertToNamedObjectSlice(bundles, client.SudoCommandBundleNamedObjectType)
 		} else {
-			return result, bundlesDiag
+			return nil, bundlesDiag
 		}
 	}
 
