@@ -331,24 +331,11 @@ func resourceSecurityPolicy() *schema.Resource {
 													Description: descriptions.AdminLevelPermissions,
 												},
 												attributes.SudoCommandBundles: {
-													Type:        schema.TypeList,
+													Type:        schema.TypeSet,
 													Description: descriptions.SudoCommandBundles,
 													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															attributes.ID: {
-																Type:     schema.TypeString,
-																Optional: true,
-															},
-															attributes.Name: {
-																Type:     schema.TypeString,
-																Optional: true,
-															},
-															attributes.Type: {
-																Type:     schema.TypeString,
-																Optional: true,
-															},
-														},
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
 													},
 												},
 												attributes.SudoDisplayName: {
@@ -1187,7 +1174,10 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 	if principalAccountSSHI, ok := privilegesM[attributes.PrincipalAccountSSH]; ok {
 		if enabled, hasValue := readPrivilegeEnabled(principalAccountSSHI); hasValue {
 			adminLevelPermissions := readAdminLevelPermissionEnabled(principalAccountSSHI)
-			sudoCommandBundles := readSudoCommandBundles(principalAccountSSHI)
+			sudoCommandBundles, bundlesDiag := readSudoCommandBundles(principalAccountSSHI)
+			if bundlesDiag != nil {
+				diags = append(diags, bundlesDiag...)
+			}
 			SudoDisplayName := readSudoDisplayName(principalAccountSSHI)
 			p := &client.PrincipalAccountSSHPrivilege{
 				Enabled:               &enabled,
@@ -1354,30 +1344,25 @@ func readAdminLevelPermissionEnabled(privilege any) bool {
 	return false
 }
 
-func readSudoCommandBundles(privilege any) []client.NamedObject {
+func readSudoCommandBundles(privilege any) ([]client.NamedObject, diag.Diagnostics) {
 	privilegeArr := privilege.([]any)
 
 	if len(privilegeArr) == 0 {
-		return nil
+		return nil, nil
 	}
 
 	privilegeM := privilegeArr[0].(map[string]any)
 
 	var result []client.NamedObject
 	if scbs, ok := privilegeM[attributes.SudoCommandBundles]; ok {
-		for _, scb := range scbs.([]any) {
-			bundle := scb.(map[string]any)
-			Id := bundle[attributes.ID].(string)
-			Name := bundle[attributes.Name].(string)
-			result = append(result, client.NamedObject{
-				Id:   &Id,
-				Name: &Name,
-				Type: client.SudoCommandBundleNamedObjectType,
-			})
+		if bundles, bundlesDiag := GetUUIDSlice(scbs, attributes.SudoCommandBundles); bundlesDiag == nil {
+			result = ConvertToNamedObjectSlice(bundles, client.SudoCommandBundleNamedObjectType)
+		} else {
+			return nil, bundlesDiag
 		}
 	}
 
-	return result
+	return result, nil
 }
 
 func readSudoDisplayName(privilege any) string {

@@ -123,18 +123,8 @@ Read-Only:
 
 - `admin_level_permissions` (Boolean)
 - `enabled` (Boolean)
-- `sudo_command_bundles` (List of Object) (see [below for nested schema](#nestedobjatt--rule--privileges--principal_account_ssh--sudo_command_bundles))
+- `sudo_command_bundles` (Set of String)
 - `sudo_display_name` (String)
-
-<a id="nestedobjatt--rule--privileges--principal_account_ssh--sudo_command_bundles"></a>
-### Nested Schema for `rule.privileges.principal_account_ssh.sudo_command_bundles`
-
-Read-Only:
-
-- `id` (String)
-- `name` (String)
-- `type` (String)
-
 
 
 <a id="nestedobjatt--rule--privileges--secret"></a>

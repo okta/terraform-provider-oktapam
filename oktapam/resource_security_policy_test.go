@@ -3,6 +3,7 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"os"
 	"regexp"
 	"testing"
@@ -301,6 +302,16 @@ func TestAccSecurityPolicy(t *testing.T) {
 				),
 			},
 			{
+				// check for planned changes before applying any configurations
+				// here same config is used without any updates so expecting empty plan
+				Config: createTestAccSecurityPolicyCreateConfig(group1Name, group2Name, sudoCommandBundle1Name, securityPolicyName, validServerID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
 				Config: createTestAccSecurityPolicyUpdateConfig(group1Name, sudoCommandBundle1Name, securityPolicyName, validServerID),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccSecurityPolicyCheckExists(resourceName, updatedSecurityPolicy),
@@ -525,11 +536,7 @@ resource "oktapam_security_policy" "test_acc_security_policy" {
 				enabled = true
 				admin_level_permissions = false
 				sudo_display_name = "foo-uam"
-				sudo_command_bundles {
-					id = oktapam_sudo_command_bundle.test_acc_sudo_command_bundle.id
-					name = oktapam_sudo_command_bundle.test_acc_sudo_command_bundle.name
-					type = "sudo_command_bundle"
-				}
+				sudo_command_bundles = [oktapam_sudo_command_bundle.test_acc_sudo_command_bundle.id]
 			}
 		}
 		conditions {

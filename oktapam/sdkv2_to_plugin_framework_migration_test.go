@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -34,17 +35,12 @@ func TestAccResourceGroupUpgradeFromSdkv2(t *testing.T) {
 			{
 				ProtoV6ProviderFactories: testAccV6ProviderFactories,
 				Config:                   createTestAccGroupCreateConfig(groupName),
-				// // ConfigPlanChecks is a terraform-plugin-testing feature.
-				// // If acceptance testing is still using terraform-plugin-sdk/v2,
-				// // use `PlanOnly: true` instead. When migrating to
-				// // terraform-plugin-testing, switch to `ConfigPlanChecks` or you
-				// // will likely experience test failures.
-				// ConfigPlanChecks: resource.ConfigPlanChecks{
-				// 	PreApply: []plancheck.PlanCheck{
-				// 		&plancheck.ExpectEmptyPlan{},
-				// 	},
-				// },
-				PlanOnly: true,
+				// assert plan is a no-op prior to, terraform apply phase
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
 		},
 	})

@@ -181,7 +181,7 @@ var (
 	ServiceAccountPassword        = "The password of the service account used to query the domain."
 	ServiceAccountUsername        = "The username of a service account used to query the domain."
 	Status                        = "The status of the ASA User. Valid statuses are 'ACTIVE', 'DISABLED', and 'DELETED'."
-	SudoCommandBundles            = "These commands have been created by the resource administrator"
+	SudoCommandBundles            = "UUIDs of the existing sudo command bundles. These commands have been created by the resource administrator"
 	TeamName                      = "The human-readable name of the ASA Team that owns the resource. Values are lower-case."
 	TeamSettingsID                = "Team name is populated as the ID for team settings."
 	Token                         = "The secret used for resource enrollment."

@@ -101,18 +101,8 @@ Required:
 Optional:
 
 - `admin_level_permissions` (Boolean) Provides coarse grain (full admin) access to the user.
-- `sudo_command_bundles` (Block List) These commands have been created by the resource administrator (see [below for nested schema](#nestedblock--rule--privileges--principal_account_ssh--sudo_command_bundles))
+- `sudo_command_bundles` (Set of String) UUIDs of the existing sudo command bundles. These commands have been created by the resource administrator
 - `sudo_display_name` (String) The name for sudo commands that will be visible to end users
-
-<a id="nestedblock--rule--privileges--principal_account_ssh--sudo_command_bundles"></a>
-### Nested Schema for `rule.privileges.principal_account_ssh.sudo_command_bundles`
-
-Optional:
-
-- `id` (String)
-- `name` (String)
-- `type` (String)
-
 
 
 <a id="nestedblock--rule--privileges--secret"></a>

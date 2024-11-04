@@ -647,13 +647,9 @@ func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
 		m[attributes.AdminLevelPermissions] = false
 	}
 	if len(p.SudoCommandBundles) > 0 {
-		scbs := make([]map[string]any, len(p.SudoCommandBundles))
+		scbs := make([]any, len(p.SudoCommandBundles))
 		for i, scb := range p.SudoCommandBundles {
-			scbs[i] = map[string]any{
-				attributes.ID:   scb.Id,
-				attributes.Type: scb.Type,
-				attributes.Name: scb.Name,
-			}
+			scbs[i] = *scb.Id
 		}
 		m[attributes.SudoCommandBundles] = scbs
 		m[attributes.SudoDisplayName] = p.SudoDisplayName
