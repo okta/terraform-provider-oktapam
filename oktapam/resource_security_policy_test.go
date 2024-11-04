@@ -3,6 +3,7 @@ package oktapam
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"os"
 	"regexp"
 	"testing"
@@ -299,6 +300,16 @@ func TestAccSecurityPolicy(t *testing.T) {
 						resourceName, attributes.Name, securityPolicyName,
 					),
 				),
+			},
+			{
+				// check for planned changes before applying any configurations
+				// here same config is used without any updates so expecting empty plan
+				Config: createTestAccSecurityPolicyCreateConfig(group1Name, group2Name, sudoCommandBundle1Name, securityPolicyName, validServerID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
 			{
 				Config: createTestAccSecurityPolicyUpdateConfig(group1Name, sudoCommandBundle1Name, securityPolicyName, validServerID),

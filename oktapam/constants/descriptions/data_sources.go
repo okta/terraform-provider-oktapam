@@ -47,5 +47,5 @@ var (
 	SourceSecrets                             = fmt.Sprintf("Returns a list of Secrets, constrained by the given parameters. %s", LinkSecret)
 	SourceSecurityPolicies                    = fmt.Sprintf("Returns a list of Security Policies associated with the Team specified by the OKTAPAM_TEAM environment variable. %s", LinkSecurityPolicy)
 	SourceCloudConnections                    = fmt.Sprintf("Returns a list of Cloud Connections. %s", LinkCloudConnection)
-	SourceSudoCommandsBundles                 = fmt.Sprintf("Returns a list of Sudo Commands Bundles. %s", LinkSudoCommandsBundle)
+	SourceSudoCommandsBundles                 = fmt.Sprintf("Returns a list of Sudo Commands Bundles UUIDs. %s", LinkSudoCommandsBundle)
 )

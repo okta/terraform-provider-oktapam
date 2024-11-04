@@ -3,12 +3,12 @@
 page_title: "oktapam_sudo_command_bundles Data Source - terraform-provider-oktapam"
 subcategory: ""
 description: |-
-  Returns a list of Sudo Commands Bundles. For details, see Sudo Commands Bundle https://help.okta.com/okta_help.htm?type=oie&id=csh-pam-sudo-commands.
+  Returns a list of Sudo Commands Bundles UUIDs. For details, see Sudo Commands Bundle https://help.okta.com/okta_help.htm?type=oie&id=csh-pam-sudo-commands.
 ---
 
 # oktapam_sudo_command_bundles (Data Source)
 
-Returns a list of Sudo Commands Bundles. For details, see [Sudo Commands Bundle](https://help.okta.com/okta_help.htm?type=oie&id=csh-pam-sudo-commands).
+Returns a list of Sudo Commands Bundles UUIDs. For details, see [Sudo Commands Bundle](https://help.okta.com/okta_help.htm?type=oie&id=csh-pam-sudo-commands).
 
 
 
