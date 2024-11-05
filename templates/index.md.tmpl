@@ -17,13 +17,12 @@ This provider can also be used for the Advanced Server Access (ASA) product. Not
 - Adds support for configuring Active Directory connections for supporting AD Joined user authentication.
 - Data sources are now available for AD connections, Gateway Setup and Server Enrollment tokens and Projects/Project Groups.
 
-Additionally, this provider adds support for specific Beta features. Users should not use resources marked as 'Beta' in production environments and before confirming that the Beta feature has been enabled for your OPA or ASA org.
+Additionally, this provider adds support for specific Beta features. Users should not use resources marked as 'Beta' in production environments and before confirming that the Beta feature has been enabled for your OPA or ASA team.
 
 ## Authentication
-The Okta PAM providers require a service user account that is granted the 'Admin' role. The provider uses the service user account to authenticate to OPA or ASA.
+The Okta PAM providers require a service user account that is granted the administrator role(s). The provider uses the service user account to authenticate to OPA or ASA.
 
-
-1) Follow the [guide](https://help.okta.com/en-us/content/topics/privileged-access/pam-service-users.htm) to create a service user account with admin permissions.
+1) Follow the [guide](https://help.okta.com/en-us/content/topics/privileged-access/pam-service-users.htm) to create a service user account with administrator permissions.
 - Use your OPA or ASA Team name (the same team that the service account in step 1 resides in) as the value for the 'oktapam_team' value.
 - Use the service account ID for the 'oktapam_key' value.
 - Use the service account key for the 'oktapam_secret' value.
