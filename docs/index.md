@@ -25,8 +25,8 @@ The Okta PAM Providers require a service user account that is granted the 'Admin
 
 1) Follow the [guide](https://help.okta.com/en-us/content/topics/privileged-access/pam-service-users.htm) to create a service user account with admin permissions.
 - Use your OPA or ASA Team name (the same team that the service account in step 1 resides in) as the value for the 'oktapam_team' value.
-- Use the Service Account ID for the 'oktapam_key' value
-- Use the Service Account key for the 'oktapam_secret' value.
+- Use the service account ID for the 'oktapam_key' value.
+- Use the service account key for the 'oktapam_secret' value.
 
 ## Schema
 
