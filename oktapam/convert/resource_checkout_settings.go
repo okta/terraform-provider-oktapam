@@ -2,6 +2,10 @@ package convert
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int32validator"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -14,6 +18,37 @@ type ResourceCheckoutSettingsModel struct {
 	CheckoutDurationInSeconds types.Int32 `tfsdk:"checkout_duration_in_seconds"`
 	IncludeList               types.List  `tfsdk:"include_list"`
 	ExcludeList               types.List  `tfsdk:"exclude_list"`
+}
+
+func ResourceCheckoutSettingsSchemaAttributes(mergeIntoMap map[string]schema.Attribute) map[string]schema.Attribute {
+	myMap := map[string]schema.Attribute{
+		"checkout_duration_in_seconds": schema.Int32Attribute{
+			Required:    true,
+			Description: descriptions.CheckoutDurationInSeconds,
+			Validators: []validator.Int32{
+				int32validator.Between(900, 86400),
+			},
+		},
+		"checkout_required": schema.BoolAttribute{
+			Required:    true,
+			Description: descriptions.CheckoutRequired,
+		},
+		"exclude_list": schema.ListAttribute{
+			ElementType: types.StringType,
+			Optional:    true,
+			Description: descriptions.ExcludeList,
+		},
+		"include_list": schema.ListAttribute{
+			ElementType: types.StringType,
+			Optional:    true,
+			Description: descriptions.IncludeList,
+		},
+	}
+
+	for key, value := range myMap {
+		mergeIntoMap[key] = value
+	}
+	return mergeIntoMap
 }
 
 func ResourceCheckoutSettingsFromModelToSDK(ctx context.Context, model *ResourceCheckoutSettingsModel, sdkValue *pam.ResourceCheckoutSettings) diag.Diagnostics {

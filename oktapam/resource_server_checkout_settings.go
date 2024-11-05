@@ -7,12 +7,10 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/convert"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int32validator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
@@ -47,33 +45,12 @@ func (r *serverCheckoutSettingsResource) Metadata(_ context.Context, req resourc
 func (r *serverCheckoutSettingsResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: descriptions.ResourceServerCheckoutSettings,
-		Attributes: map[string]schema.Attribute{
+		Attributes: convert.ResourceCheckoutSettingsSchemaAttributes(map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
-			},
-			"checkout_duration_in_seconds": schema.Int32Attribute{
-				Required:    true,
-				Description: descriptions.CheckoutDurationInSeconds,
-				Validators: []validator.Int32{
-					int32validator.Between(900, 86400),
-				},
-			},
-			"checkout_required": schema.BoolAttribute{
-				Required:    true,
-				Description: descriptions.CheckoutRequired,
-			},
-			"exclude_list": schema.ListAttribute{
-				ElementType: types.StringType,
-				Optional:    true,
-				Description: descriptions.ExcludeList,
-			},
-			"include_list": schema.ListAttribute{
-				ElementType: types.StringType,
-				Optional:    true,
-				Description: descriptions.IncludeList,
 			},
 			"project": schema.StringAttribute{
 				Required:    true,
@@ -89,7 +66,7 @@ func (r *serverCheckoutSettingsResource) Schema(_ context.Context, _ resource.Sc
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
-		},
+		}),
 	}
 }
 
