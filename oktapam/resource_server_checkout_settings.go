@@ -3,7 +3,6 @@ package oktapam
 import (
 	"context"
 	"fmt"
-
 	"github.com/okta/terraform-provider-oktapam/oktapam/convert"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
