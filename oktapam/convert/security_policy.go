@@ -11,15 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type NamedObjectTypeModel types.String
-
-type NamedObjectModel struct {
-	Id      types.String         `tfsdk:"id"`
-	Name    types.String         `tfsdk:"name"`
-	Type    NamedObjectTypeModel `tfsdk:"type"`
-	Missing types.Bool           `tfsdk:"missing"`
-}
-
 type SecurityPolicyTypeModel types.String
 
 type SecurityPolicyResourceModel struct {
@@ -60,6 +51,9 @@ func SecurityPolicySchema(attributes map[string]schema.Attribute, blocks map[str
 		"rule":       SecurityPolicyRuleBlock(),
 	}
 
+	for key, value := range myBlocks {
+		blocks[key] = value
+	}
 }
 
 func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourceModel, out *pam.SecurityPolicy) diag.Diagnostics {

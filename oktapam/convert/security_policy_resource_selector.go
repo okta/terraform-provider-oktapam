@@ -10,24 +10,19 @@ import (
 
 type SecurityPolicyRuleResourceSelectorModel struct {
 	Servers *SecurityPolicyRuleServerBasedResourceSelectorModel `tfsdk:"servers"`
-	//ManagedSaasApp   *SecurityPolicyRuleManagedSaasAppBasedResourceSelector   `tfsdk:"managed_saas_app"`
-	//UnmanagedSaasApp *SecurityPolicyRuleUnmanagedSaasAppBasedResourceSelector `tfsdk:"unmanaged_saas_app"`
-	//OktaApp          *SecurityPolicyRuleOktaAppBasedResourceSelector          `tfsdk:"okta_app"`
+	//ManagedSaasApp   *SecurityPolicyRuleManagedSaasAppBasedResourceSelectorModel   `tfsdk:"managed_saas_app"`
+	//UnmanagedSaasApp *SecurityPolicyRuleUnmanagedSaasAppBasedResourceSelectorModel `tfsdk:"unmanaged_saas_app"`
+	//OktaApp          *SecurityPolicyRuleOktaAppBasedResourceSelectorModel          `tfsdk:"okta_app"`
 }
 
-func SecurityPolicyRuleResourceSelectorSchema() schema.Attribute {
-	var s schema.Schema
-
-	s.
-	return schema.NestedAttributeObject{}
-	return schema.NestedAttributeObject{
-		Attributes: map[string]schema.Attribute{
-			"servers": SecurityPolicyRuleServerBasedResourceSelectorSchema(),
-			// "managed_saas_app":
-			// "unmanaged_saas_app":
-			// "okta_app":
-		},
-	}
+func SecurityPolicyRuleResourceSelectorBlock() schema.Block {
+	return schema.SingleNestedBlock{
+		Blocks: map[string]schema.Block{
+			"servers": SecurityPolicyRuleServerBasedResourceSelectorBlock(),
+			//"managed_saas_app":   SecurityPolicyRuleManagedSaasAppBasedResourceSelectorBlock(),
+			//"unmanaged_saas_app": SecurityPolicyRuleUnmanagedSaasAppBasedResourceSelectorBlock(),
+			//"okta_app":           SecurityPolicyRuleOktaAppBasedResourceSelectorBlock(),
+		}}
 }
 
 func SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleResourceSelectorModel, out *pam.SecurityPolicyRuleResourceSelectorContainer) diag.Diagnostics {
@@ -43,12 +38,12 @@ type SecurityPolicyRuleServerBasedResourceSelectorModel struct {
 	SelectorServerLabel     *SelectorServerLabelModel             `tfsdk:"server_label"`
 }
 
-func SecurityPolicyRuleServerBasedResourceSelectorSchema() schema.Attribute {
-	return schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"individual_server":         SelectorIndividualServerSchema(),
-			"individual_server_account": SelectorIndividualServerAccountSchema(),
-			"server_label":              SelectorServerLabelSchema(),,
+func SecurityPolicyRuleServerBasedResourceSelectorBlock() schema.Block {
+	return schema.SingleNestedBlock{
+		Blocks: map[string]schema.Block{
+			"individual_server":         SelectorIndividualServerBlock(),
+			"individual_server_account": SelectorIndividualServerAccountBlock(),
+			"server_label":              SelectorServerLabelBlock(),
 		},
 	}
 }
@@ -78,8 +73,8 @@ type SelectorIndividualServerModel struct {
 	Server NamedObjectModel `tfsdk:"server"`
 }
 
-func SelectorIndividualServerSchema() schema.Attribute {
-	return schema.Attribute{
+func SelectorIndividualServerBlock() schema.Block {
+	return schema.SingleNestedBlock{
 		Attributes: map[string]schema.Attribute{
 			"server": schema.StringAttribute{
 				Required: true,
@@ -88,9 +83,12 @@ func SelectorIndividualServerSchema() schema.Attribute {
 	}
 }
 
+func SelectorIndividualServerFromSDKToModel(ctx context.Context, in *pam.SelectorIndividualServer, out *SelectorIndividualServerModel) diag.Diagnostics {
+	return NamedObjectFromSDKToModel(ctx, in.Server, &out.Server)
+}
+
 func SelectorIndividualServerFromModelToSDK(ctx context.Context, in *SelectorIndividualServerModel, out *pam.SelectorIndividualServer) diag.Diagnostics {
-	out.Server = in.Server
-	return nil
+	return NamedObjectFromModelToSDK(ctx, in.Server, out.Server)
 }
 
 type SelectorIndividualServerAccountModel struct {
@@ -98,15 +96,29 @@ type SelectorIndividualServerAccountModel struct {
 	Username types.String     `tfsdk:"username"`
 }
 
+func SelectorIndividualServerAccountBlock() schema.Block {
+	return schema.SingleNestedBlock{
+		Attributes: map[string]schema.Attribute{
+			"server_id": schema.StringAttribute{Required: true},
+			"username":  schema.StringAttribute{Required: true},
+		},
+	}
+}
+
 func SelectorIndividualServerAccountFromModelToSDK(ctx context.Context, in *SelectorIndividualServerAccountModel, out *pam.SelectorIndividualServerAccount) diag.Diagnostics {
 	out.Username = in.Username.ValueStringPointer()
-	out.ServerId = in.ServerId
-	return nil
+	return NamedObjectFromModelToSDK(ctx, in.ServerId, out.ServerId)
 }
 
 type SelectorServerLabelModel struct {
 	ServerSelector  *SelectorServerLabelServerSelectorModel `tfsdk:"server_selector"`
-	AccountSelector types.List /*types.String*/             `tfsdk:"usernames"`
+	AccountSelector types.List/*types.String*/ `tfsdk:"usernames"`
+}
+
+func SelectorServerLabelBlock() schema.Block {
+	return schema.SingleNestedBlock{
+		//TODO(ja)
+	}
 }
 
 func SelectorServerLabelFromModelToSDK(ctx context.Context, in *SelectorServerLabelModel, out *pam.SelectorServerLabel) diag.Diagnostics {

@@ -13,18 +13,14 @@ type SecurityPolicyPasswordCheckoutDatabasePrivilegeModel struct {
 	PasswordCheckoutDatabase types.Bool `tfsdk:"password_checkout_database"`
 }
 
-func SecurityPolicyPasswordCheckoutDatabasePrivilegeSchemaAttributes(mergeIntoMap map[string]schema.Attribute) map[string]schema.Attribute {
-	myMap := map[string]schema.Attribute{
-		"password_checkout_database": schema.BoolAttribute{
-			Required:    true,
-			Description: "TODO",
+func SecurityPolicyPasswordCheckoutDatabasePrivilegeBlock() schema.Block {
+	return schema.SingleNestedBlock{
+		Attributes: map[string]schema.Attribute{
+			"password_checkout_database": schema.BoolAttribute{
+				Required: true,
+			},
 		},
 	}
-
-	for key, value := range myMap {
-		mergeIntoMap[key] = value
-	}
-	return mergeIntoMap
 }
 
 func SecurityPolicyPasswordCheckoutDatabasePrivilegeFromModelToSDK(in *SecurityPolicyPasswordCheckoutDatabasePrivilegeModel, out *pam.SecurityPolicyPasswordCheckoutDatabasePrivilege) diag.Diagnostics {

@@ -34,28 +34,26 @@ func SecurityPolicyPrincipalAccountSSHPrivilegeFromModelToSDK(in *SecurityPolicy
 	return nil
 }
 
-func SecurityPolicyPrincipalAccountSSHPrivilegeSchemaAttributes(mergeIntoMap map[string]schema.Attribute) map[string]schema.Attribute {
-	myMap := map[string]schema.Attribute{
-		"principal_account_ssh": schema.BoolAttribute{
-			Required:    true,
-			Description: descriptions.PrivilegePrincipalAccountSSH,
-		},
-		"admin_level_permissions": schema.BoolAttribute{
-			Optional:    true,
-			Description: descriptions.AdminLevelPermissions,
-		},
-		"sudo_display_name": schema.StringAttribute{
-			Optional:    true,
-			Description: descriptions.SudoDisplayName,
-		},
-		"sudo_command_bundles": schema.ListAttribute{
-			ElementType: types.StringType,
-			Optional:    true,
-			Description: descriptions.SudoCommandBundles,
+func SecurityPolicyPrincipalAccountSSHPrivilegeBlock() schema.Block {
+	return schema.SingleNestedBlock{
+		Attributes: map[string]schema.Attribute{
+			"principal_account_ssh": schema.BoolAttribute{
+				Required:    true,
+				Description: descriptions.PrivilegePrincipalAccountSSH,
+			},
+			"admin_level_permissions": schema.BoolAttribute{
+				Optional:    true,
+				Description: descriptions.AdminLevelPermissions,
+			},
+			"sudo_display_name": schema.StringAttribute{
+				Optional:    true,
+				Description: descriptions.SudoDisplayName,
+			},
+			"sudo_command_bundles": schema.ListAttribute{
+				ElementType: types.StringType,
+				Optional:    true,
+				Description: descriptions.SudoCommandBundles,
+			},
 		},
 	}
-	for key, value := range myMap {
-		mergeIntoMap[key] = value
-	}
-	return mergeIntoMap
 }
