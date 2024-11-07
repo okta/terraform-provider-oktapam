@@ -2,8 +2,9 @@ package oktapam
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
