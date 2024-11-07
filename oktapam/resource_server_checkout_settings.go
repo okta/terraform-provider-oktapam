@@ -12,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 )
 
@@ -26,7 +25,8 @@ func NewServerCheckoutSettingsResource() resource.Resource {
 }
 
 type serverCheckoutSettingsResource struct {
-	client *client.SDKClientWrapper
+	api      *pam.ProjectsAPIService
+	teamName string
 }
 
 type serverCheckoutSettingsResourceModel struct {
@@ -73,31 +73,27 @@ func (r *serverCheckoutSettingsResource) Schema(_ context.Context, _ resource.Sc
 func (r *serverCheckoutSettingsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	// Retrieve the server checkout settings values from the plan
 	var plan serverCheckoutSettingsResourceModel
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
+	if diags := req.Plan.Get(ctx, &plan); diags.HasError() {
+		resp.Diagnostics.Append(diags...)
 		return
 	}
 
 	var resourceCheckoutSettings pam.ResourceCheckoutSettings
 
-	diags = convert.ResourceCheckoutSettingsFromModelToSDK(ctx, &plan.ResourceCheckoutSettingsModel, &resourceCheckoutSettings)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
+	if diags := convert.ResourceCheckoutSettingsFromModelToSDK(ctx, &plan.ResourceCheckoutSettingsModel, &resourceCheckoutSettings); diags.HasError() {
+		resp.Diagnostics.Append(diags...)
 		return
 	}
 
-	_, err := r.client.SDKClient.ProjectsAPI.UpdateResourceGroupServerBasedProjectCheckoutSettings(ctx, r.client.Team, plan.ResourceGroup, plan.Project).ResourceCheckoutSettings(resourceCheckoutSettings).Execute()
-
-	if err != nil {
+	if _, err := r.api.UpdateResourceGroupServerBasedProjectCheckoutSettings(ctx, r.teamName, plan.ResourceGroup, plan.Project).ResourceCheckoutSettings(resourceCheckoutSettings).Execute(); err != nil {
 		resp.Diagnostics.AddError("Error creating server checkout settings", err.Error())
 		return
 	}
 	// Set state to fully populated data
 	plan.Id = types.StringValue(formatServerCheckoutSettingsID(plan.ResourceGroup, plan.Project))
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
+
+	if diags := resp.State.Set(ctx, plan); diags.HasError() {
+		resp.Diagnostics.Append(diags...)
 		return
 	}
 }
@@ -106,32 +102,32 @@ func (r *serverCheckoutSettingsResource) Create(ctx context.Context, req resourc
 func (r *serverCheckoutSettingsResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	// Get current state
 	var state serverCheckoutSettingsResourceModel
-	diags := req.State.Get(ctx, &state)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
+	if diags := req.State.Get(ctx, &state); diags.HasError() {
+		resp.Diagnostics.Append(diags...)
 		return
 	}
 
 	// Get refreshed server checkout settings from API host
-	if checkoutSettings, _, err := r.client.SDKClient.ProjectsAPI.FetchResourceGroupServerBasedProjectCheckoutSettings(ctx, r.client.Team, state.ResourceGroup, state.Project).Execute(); err != nil {
+	if checkoutSettings, _, err := r.api.FetchResourceGroupServerBasedProjectCheckoutSettings(ctx, r.teamName, state.ResourceGroup, state.Project).Execute(); err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading server checkout settings",
-			"Could not read server checkout settings for team:"+r.client.Team+"resource_group:"+state.ResourceGroup+"project_id:"+state.Project+": "+err.Error(),
-		)
+			fmt.Sprintf("Could not read server checkout settings for team: %q resource_group: %q project_id: %q: Error: %s",
+				r.teamName,
+				state.ResourceGroup,
+				state.Project,
+				err.Error()))
 		return
 	} else {
 		// Overwrite server checkout settings with refreshed state
-		diags = convert.ResourceCheckoutSettingsFromSDKToModel(ctx, checkoutSettings, &state.ResourceCheckoutSettingsModel)
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
+		if diags := convert.ResourceCheckoutSettingsFromSDKToModel(ctx, checkoutSettings, &state.ResourceCheckoutSettingsModel); diags.HasError() {
+			resp.Diagnostics.Append(diags...)
 			return
 		}
 	}
 
 	// Set state to fully populated data
-	diags = resp.State.Set(ctx, state)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
+	if diags := resp.State.Set(ctx, state); diags.HasError() {
+		resp.Diagnostics.Append(diags...)
 		return
 	}
 }
@@ -140,46 +136,45 @@ func (r *serverCheckoutSettingsResource) Read(ctx context.Context, req resource.
 func (r *serverCheckoutSettingsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	// Retrieve the server checkout settings values from the plan
 	var plan serverCheckoutSettingsResourceModel
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
+
+	if diags := req.Plan.Get(ctx, &plan); diags.HasError() {
+		resp.Diagnostics.Append(diags...)
 		return
 	}
 
 	// Update the existing checkout settings with the new values
 	var resourceCheckoutSettings pam.ResourceCheckoutSettings
-	diags = convert.ResourceCheckoutSettingsFromModelToSDK(ctx, &plan.ResourceCheckoutSettingsModel, &resourceCheckoutSettings)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
+	if diags := convert.ResourceCheckoutSettingsFromModelToSDK(ctx, &plan.ResourceCheckoutSettingsModel, &resourceCheckoutSettings); diags.HasError() {
+		resp.Diagnostics.Append(diags...)
 		return
 	}
 
-	if _, err := r.client.SDKClient.ProjectsAPI.UpdateResourceGroupServerBasedProjectCheckoutSettings(ctx, r.client.Team, plan.ResourceGroup, plan.Project).ResourceCheckoutSettings(resourceCheckoutSettings).Execute(); err != nil {
+	if _, err := r.api.UpdateResourceGroupServerBasedProjectCheckoutSettings(ctx, r.teamName, plan.ResourceGroup, plan.Project).ResourceCheckoutSettings(resourceCheckoutSettings).Execute(); err != nil {
 		resp.Diagnostics.AddError("Error updating server checkout settings", err.Error())
 		return
 	}
 
 	// Fetch the updated server checkout settings from the API host
-	updatedServerCheckoutSettings, _, err := r.client.SDKClient.ProjectsAPI.FetchResourceGroupServerBasedProjectCheckoutSettings(ctx, r.client.Team, plan.ResourceGroup, plan.Project).Execute()
-	if err != nil {
+	if updatedServerCheckoutSettings, _, err := r.api.FetchResourceGroupServerBasedProjectCheckoutSettings(ctx, r.teamName, plan.ResourceGroup, plan.Project).Execute(); err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading server checkout settings",
-			"Could not read server checkout settings for team:"+r.client.Team+"resource_group:"+plan.ResourceGroup+"project_id:"+plan.Project+": "+err.Error(),
-		)
+			fmt.Sprintf("Could not read server checkout settings for team: %q resource_group: %q project_id: %q: Error: %s",
+				r.teamName,
+				plan.ResourceGroup,
+				plan.Project,
+				err.Error()))
 		return
-	}
-
-	// update the state with the updated checkout settings
-	diags = convert.ResourceCheckoutSettingsFromSDKToModel(ctx, updatedServerCheckoutSettings, &plan.ResourceCheckoutSettingsModel)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
+	} else {
+		// update the state with the updated checkout settings
+		if diags := convert.ResourceCheckoutSettingsFromSDKToModel(ctx, updatedServerCheckoutSettings, &plan.ResourceCheckoutSettingsModel); diags.HasError() {
+			resp.Diagnostics.Append(diags...)
+			return
+		}
 	}
 
 	// Set state to fully populated data
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
+	if diags := resp.State.Set(ctx, plan); diags.HasError() {
+		resp.Diagnostics.Append(diags...)
 		return
 	}
 }
@@ -188,11 +183,11 @@ func (r *serverCheckoutSettingsResource) Update(ctx context.Context, req resourc
 func (r *serverCheckoutSettingsResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	// Retrieve the server checkout settings values from the plan
 	var state serverCheckoutSettingsResourceModel
-	diags := req.State.Get(ctx, &state)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
+	if diags := req.State.Get(ctx, &state); diags.HasError() {
+		resp.Diagnostics.Append(diags...)
 		return
 	}
+
 	defaultCheckoutDurationInSeconds := int32(900)
 	// Call the SDK client to reset the server checkout settings to default values
 	checkoutSettings := &pam.ResourceCheckoutSettings{
@@ -202,16 +197,15 @@ func (r *serverCheckoutSettingsResource) Delete(ctx context.Context, req resourc
 		ExcludeList:               []string{},
 	}
 
-	if _, err := r.client.SDKClient.ProjectsAPI.UpdateResourceGroupServerBasedProjectCheckoutSettings(ctx, r.client.Team, state.ResourceGroup, state.Project).ResourceCheckoutSettings(*checkoutSettings).Execute(); err != nil {
+	if _, err := r.api.UpdateResourceGroupServerBasedProjectCheckoutSettings(ctx, r.teamName, state.ResourceGroup, state.Project).ResourceCheckoutSettings(*checkoutSettings).Execute(); err != nil {
 		resp.Diagnostics.AddError("Error updating server checkout settings", err.Error())
 		return
 	}
 
 	// Set state to empty data
 	state.Id = types.StringValue("")
-	diags = resp.State.Set(ctx, state)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
+	if diags := resp.State.Set(ctx, state); diags.HasError() {
+		resp.Diagnostics.Append(diags...)
 		return
 	}
 }
@@ -225,7 +219,8 @@ func (r *serverCheckoutSettingsResource) Configure(_ context.Context, req resour
 	}
 
 	sdkClient := getSDKClientFromMetadata(req.ProviderData)
-	r.client = &sdkClient
+	r.api = sdkClient.SDKClient.ProjectsAPI
+	r.teamName = sdkClient.Team
 }
 
 func formatServerCheckoutSettingsID(resourceGroupID string, projectID string) string {
