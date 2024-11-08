@@ -26,7 +26,7 @@ type SecurityPolicyRuleModel struct {
 func SecurityPolicyRuleBlock() schema.Block {
 	return schema.SingleNestedBlock{
 		Attributes: map[string]schema.Attribute{
-			"name":                       schema.StringAttribute{},
+			"name":                       schema.StringAttribute{Required: true},
 			"resource_type":              schema.StringAttribute{Optional: true},
 			"override_checkout_duration": schema.Int64Attribute{Optional: true},
 			"security_policy_id":         schema.StringAttribute{Optional: true}, //TODO(ja) do I even need this?

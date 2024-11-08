@@ -36,7 +36,7 @@ type ConditionsAccessRequestsModel struct {
 func ConditionsAccessRequestsBlock() schema.Block {
 	return schema.SingleNestedBlock{
 		Attributes: map[string]schema.Attribute{
-			"request_type_id":       schema.StringAttribute{ /*TODO(ja)*/ },
+			"request_type_id":       schema.StringAttribute{Optional: true},
 			"request_type_name":     schema.StringAttribute{Required: true},
 			"expires_after_seconds": schema.Int32Attribute{Optional: true},
 		},
@@ -65,8 +65,8 @@ type ConditionsMFAModel struct {
 func ConditionsMFABlock() schema.Block {
 	return schema.SingleNestedBlock{
 		Attributes: map[string]schema.Attribute{
-			"re_auth_frequency_in_seconds": schema.Int32Attribute{},
-			"acr_values":                   schema.StringAttribute{},
+			"re_auth_frequency_in_seconds": schema.Int32Attribute{Optional: true},
+			"acr_values":                   schema.StringAttribute{Optional: true},
 		},
 	}
 }
