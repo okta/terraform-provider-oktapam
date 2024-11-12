@@ -42,7 +42,7 @@ func SecurityPolicySchema() map[string]schema.Attribute {
 			Optional: true,
 		},
 		"principals": SecurityPolicyPrincipalsSchema(),
-		"rule":       SecurityPolicyRuleSchema(),
+		"rules":      SecurityPolicyRulesSchema(),
 	}
 
 	return myAttributes
