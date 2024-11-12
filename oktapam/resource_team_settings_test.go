@@ -12,7 +12,7 @@ func TestAccTeamSettings(t *testing.T) {
 	resourceName := "oktapam_team_settings.test_team_setting"
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             testAccTeamSettingCheckDestroy(),
 		Steps: []resource.TestStep{
 			{

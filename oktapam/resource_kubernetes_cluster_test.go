@@ -50,7 +50,7 @@ func TestAccKubernetesCluster(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             testAccClusterCheckDestroy(cluster1),
 		Steps: []resource.TestStep{
 			{

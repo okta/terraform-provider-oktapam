@@ -22,7 +22,7 @@ func TestAccResourceCloudConnection(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             utils.CreateCheckResourceDestroy(config.ProviderCloudConnectionKey, cloudConnectionExists),
 		Steps: []resource.TestStep{
 			{

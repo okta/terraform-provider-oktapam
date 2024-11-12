@@ -26,7 +26,7 @@ func TestAccResourceGroupServerEnrollmentToken(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		// use the resource group check destroy since we create a new one here and deletion of the resource group will cascade delete the projects / tokens
 		CheckDestroy: testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
