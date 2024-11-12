@@ -102,7 +102,7 @@ func testAccProjectGroupCheckExists(rn string, expectedProjectGroup client.Proje
 		project := rs.Primary.Attributes[attributes.ProjectName]
 		group := rs.Primary.Attributes[attributes.GroupName]
 
-		pamClient := getTestAccAPIClients().LocalClient
+		pamClient := mustTestAccAPIClients().LocalClient
 		projectGroup, err := pamClient.GetProjectGroup(context.Background(), project, group)
 		if err != nil {
 			return fmt.Errorf("error getting project group: %w", err)
@@ -122,7 +122,7 @@ func testAccProjectGroupCheckExists(rn string, expectedProjectGroup client.Proje
 
 func testAccProjectGroupCheckDestroy(projectGroup client.ProjectGroup) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		pamClient := getTestAccAPIClients().LocalClient
+		pamClient := mustTestAccAPIClients().LocalClient
 		pg, err := pamClient.GetProjectGroup(context.Background(), *projectGroup.Project, *projectGroup.Group)
 		if err != nil {
 			return fmt.Errorf("error getting project group: %w", err)

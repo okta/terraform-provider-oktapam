@@ -101,7 +101,7 @@ func testAccSecretFolderCheckExists(rn string, expectedSecretFolder *client.Secr
 		resourceGroupID := rs.Primary.Attributes[attributes.ResourceGroup]
 		projectID := rs.Primary.Attributes[attributes.Project]
 		secretFolderID := rs.Primary.Attributes[attributes.ID]
-		pamClient := getTestAccAPIClients().LocalClient
+		pamClient := mustTestAccAPIClients().LocalClient
 		secretFolder, err := pamClient.GetSecretFolder(context.Background(), resourceGroupID, projectID, secretFolderID)
 		if err != nil {
 			return fmt.Errorf("error getting secret folder: %w", err)

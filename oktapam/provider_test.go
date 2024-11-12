@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sync"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
@@ -22,11 +21,6 @@ func TestProvider(t *testing.T) {
 func TestProvider_impl(t *testing.T) {
 	var _ *schema.Provider = Provider()
 }
-
-var (
-	testAccAPIClients *client.APIClients
-	clientOnce        sync.Once
-)
 
 // testAccV6ProviderFactories is used to instantiate a provider during acceptance testing. The factory function is
 // invoked for every TF CLI command executed to create a provider server to which the CLI can reattach.
@@ -88,10 +82,10 @@ func newTestAccAPIClients() (*client.APIClients, error) {
 	}, nil
 }
 
-func getTestAccAPIClients() *client.APIClients {
-	clientOnce.Do(func() {
-		testAccAPIClients, _ = newTestAccAPIClients()
-	})
-
-	return testAccAPIClients
+func mustTestAccAPIClients() *client.APIClients {
+	c, err := newTestAccAPIClients()
+	if err != nil {
+		panic("failed to create acceptance test client")
+	}
+	return c
 }

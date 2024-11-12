@@ -48,7 +48,7 @@ func TestAccDatasourceResourceGroupsList(t *testing.T) {
 
 func testAccResourceGroupsCheckDestroy(identifiers ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getTestAccAPIClients().LocalClient
+		c := mustTestAccAPIClients().LocalClient
 
 		resourceGroups, err := c.ListResourceGroups(context.Background())
 		if err != nil {

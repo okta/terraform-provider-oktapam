@@ -37,7 +37,7 @@ func TestAccDatasourceTeamSettingsFetch(t *testing.T) {
 
 func testAccTeamSettingCheckDestroy() resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := getTestAccAPIClients().LocalClient
+		client := mustTestAccAPIClients().LocalClient
 		teamSettings, err := client.GetTeamSettings(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting team settings: %w", err)

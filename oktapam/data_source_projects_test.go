@@ -45,7 +45,7 @@ func TestAccDatasourceProjectList(t *testing.T) {
 
 func testAccProjectsCheckDestroy(identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getTestAccAPIClients().LocalClient
+		c := mustTestAccAPIClients().LocalClient
 
 		params := client.ListProjectsParameters{
 			Contains: identifier,

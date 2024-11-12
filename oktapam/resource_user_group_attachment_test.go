@@ -62,7 +62,7 @@ func testAccUserGroupAttachmentCheckExists(rn string, expectedGroupName string, 
 			return fmt.Errorf("resource id is not set")
 		}
 
-		c := getTestAccAPIClients().SDKClient
+		c := mustTestAccAPIClients().SDKClient
 
 		if hasAttachment, err := client.GroupContainsUser(context.Background(), c, expectedGroupName, expectedUsername); err != nil {
 			return err
@@ -76,7 +76,7 @@ func testAccUserGroupAttachmentCheckExists(rn string, expectedGroupName string, 
 
 func testAccUserGroupAttachmentDestroy(groupName string, username string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getTestAccAPIClients().SDKClient
+		c := mustTestAccAPIClients().SDKClient
 
 		if hasAttachment, err := client.GroupContainsUser(context.Background(), c, groupName, username); err != nil {
 			return err
