@@ -34,7 +34,7 @@ func TestAccDatasourceGroupList(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             testAccGroupsCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{
@@ -50,7 +50,7 @@ func TestAccDatasourceGroupList(t *testing.T) {
 
 func testAccGroupsCheckDestroy(identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getTestAccAPIClients().LocalClient
+		c := mustTestAccAPIClients().LocalClient
 
 		params := client.ListGroupsParameters{
 			Contains: identifier,

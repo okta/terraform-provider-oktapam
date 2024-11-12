@@ -24,7 +24,7 @@ func TestAccDataSourceSudoCommandBundlesList(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             testAccSudoCommandBundlesCheckDestroy(identifier+"-1", identifier+"-2"),
 		Steps: []resource.TestStep{
 			{
@@ -75,7 +75,7 @@ func testAccDataSourceSudoCommandBundlesConfig(resourceName, name string) string
 
 func testAccSudoCommandBundlesCheckDestroy(identifiers ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getTestAccAPIClients().SDKClient
+		c := mustTestAccAPIClients().SDKClient
 
 		respList, err := client.ListSudoCommandBundles(context.Background(), c)
 		if err != nil {

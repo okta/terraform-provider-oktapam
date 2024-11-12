@@ -65,7 +65,7 @@ func TestAccDatabaseResource(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
 			// negative cases must go first
@@ -354,7 +354,7 @@ func testDatabaseCheckExists(rn string, expectedDatabase *pam.DatabaseResourceRe
 		resourceGroupID := rs.Primary.Attributes[attributes.ResourceGroup]
 		projectID := rs.Primary.Attributes[attributes.Project]
 		databaseID := rs.Primary.Attributes[attributes.ID]
-		pamClient := getTestAccAPIClients().SDKClient
+		pamClient := mustTestAccAPIClients().SDKClient
 		database, _, err := pamClient.SDKClient.DatabaseResourcesAPI.GetDatabaseResource(context.Background(), pamClient.Team, resourceGroupID, projectID, databaseID).Execute()
 		if err != nil {
 			return fmt.Errorf("error getting database: %w", err)

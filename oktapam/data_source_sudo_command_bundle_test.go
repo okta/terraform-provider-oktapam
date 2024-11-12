@@ -17,7 +17,7 @@ func TestAccDataSourceSudoCommandBundle(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             testAccSudoCommandBundlesCheckDestroy(identifier + "-1"),
 		Steps: []resource.TestStep{
 			{

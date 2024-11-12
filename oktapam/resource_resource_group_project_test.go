@@ -36,7 +36,7 @@ func TestAccResourceGroupProject(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		// use the resource group check destroy since we create a new one here and deletion of the resource group will cascade delete the projects
 		CheckDestroy: testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
@@ -92,7 +92,7 @@ func testAccResourceGroupProjectCheckExists(rn string, expectedResourceGroupProj
 
 		resourceGroupID := rs.Primary.Attributes[attributes.ResourceGroup]
 		projectID := rs.Primary.Attributes[attributes.ID]
-		pamClient := getTestAccAPIClients().LocalClient
+		pamClient := mustTestAccAPIClients().LocalClient
 		resourceGroupProject, err := pamClient.GetResourceGroupProject(context.Background(), resourceGroupID, projectID, false)
 		if err != nil {
 			return fmt.Errorf("error getting resource group project: %w", err)

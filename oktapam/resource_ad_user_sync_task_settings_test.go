@@ -38,7 +38,7 @@ func TestAccADUserSyncTaskSettings(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             testAccADUserSyncTaskCheckDestroy(adConnectionResourceName),
 		Steps: []resource.TestStep{
 			{
@@ -95,7 +95,7 @@ func testAccADUserSyncTaskCheckExists(adUserSyncTaskSettingsResourceName string)
 		adConnID := adUserSyncTaskRS.Primary.Attributes[attributes.ADConnectionID]
 		adUserSyncTaskSettingsID := adUserSyncTaskRS.Primary.ID
 
-		pamClient := getTestAccAPIClients().LocalClient
+		pamClient := mustTestAccAPIClients().LocalClient
 		adUserSyncTaskSettings, err := pamClient.GetADUserSyncTaskSettings(context.Background(), adConnID, adUserSyncTaskSettingsID)
 		if err != nil {
 			return fmt.Errorf("error getting ad user sync task settings: %w", err)
@@ -114,7 +114,7 @@ func testAccADUserSyncTaskCheckDestroy(adConnectionResourceName string) resource
 			return fmt.Errorf("resource not found: %s", adConnectionResourceName)
 		}
 		adConnID := adConnectionRS.Primary.ID
-		pamClient := getTestAccAPIClients().LocalClient
+		pamClient := mustTestAccAPIClients().LocalClient
 		parameters := client.ListADUserSyncTaskSettingsParameters{}
 		adUserSyncTaskList, err := pamClient.ListADUserSyncTaskSettings(context.Background(), adConnID, parameters)
 		if err != nil {

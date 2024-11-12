@@ -22,7 +22,7 @@ func TestAccADConnection(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             utils.CreateCheckResourceDestroy(config.ProviderADConnectionKey, adConnectionExists),
 		Steps: []resource.TestStep{
 			{
@@ -60,7 +60,7 @@ func TestAccADConnection(t *testing.T) {
 }
 
 func adConnectionExists(id string) (bool, error) {
-	client := getTestAccAPIClients().LocalClient
+	client := mustTestAccAPIClients().LocalClient
 	logging.Debugf("Checking if resource deleted %s", id)
 	adConnection, err := client.GetADConnection(context.Background(), id, false)
 

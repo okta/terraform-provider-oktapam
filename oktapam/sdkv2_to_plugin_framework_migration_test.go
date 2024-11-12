@@ -34,7 +34,7 @@ func TestAccResourceGroupUpgradeFromSdkv2(t *testing.T) {
 				),
 			},
 			{
-				ProtoV6ProviderFactories: testAccV6ProviderFactories,
+				ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 				Config:                   createTestAccGroupCreateConfig(groupName),
 				// assert plan is a no-op prior to, terraform apply phase
 				ConfigPlanChecks: resource.ConfigPlanChecks{
@@ -74,12 +74,12 @@ func TestAccDataSourceResourceGroupProjectUpgradeFromSdkv2(t *testing.T) {
 				Config: initConfig,
 			},
 			{
-				ProtoV6ProviderFactories: testAccV6ProviderFactories,
+				ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 				Config:                   initConfig,
 				PlanOnly:                 true,
 			},
 			{
-				ProtoV6ProviderFactories: testAccV6ProviderFactories,
+				ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 				Config:                   fmt.Sprintf("%s\n%s", initConfig, fetchConfig),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(
