@@ -27,15 +27,10 @@ func (s *SecurityPolicyResource) Metadata(_ context.Context, request resource.Me
 }
 
 func (s *SecurityPolicyResource) Schema(_ context.Context, _ resource.SchemaRequest, response *resource.SchemaResponse) {
-	mySchema := schema.Schema{
+	response.Schema = schema.Schema{
 		Description: descriptions.ResourceSecurityPolicy,
-		Attributes:  make(map[string]schema.Attribute),
-		Blocks:      make(map[string]schema.Block),
+		Attributes:  convert.SecurityPolicySchema(),
 	}
-
-	convert.SecurityPolicySchema(mySchema.Attributes, mySchema.Blocks)
-
-	response.Schema = mySchema
 }
 
 func (s *SecurityPolicyResource) Create(ctx context.Context, request resource.CreateRequest, response *resource.CreateResponse) {

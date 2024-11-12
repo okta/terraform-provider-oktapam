@@ -13,14 +13,15 @@ type SecurityPolicyPrincipalsModel struct {
 	UserGroups types.List `tfsdk:"groups"` // openapi field: user_groups
 }
 
-func SecurityPolicyPrincipalsBlock() schema.Block {
-	return schema.SingleNestedBlock{
+func SecurityPolicyPrincipalsSchema() schema.Attribute {
+	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
 			"groups": schema.ListAttribute{
 				ElementType: types.StringType,
 				Optional:    true,
 			},
 		},
+		Required: true,
 	}
 }
 

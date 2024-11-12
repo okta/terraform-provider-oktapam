@@ -13,13 +13,14 @@ type SecurityPolicyPasswordCheckoutDatabasePrivilegeModel struct {
 	PasswordCheckoutDatabase types.Bool `tfsdk:"password_checkout_database"`
 }
 
-func SecurityPolicyPasswordCheckoutDatabasePrivilegeBlock() schema.Block {
-	return schema.SingleNestedBlock{
+func SecurityPolicyPasswordCheckoutDatabasePrivilegeSchema() schema.Attribute {
+	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
 			"password_checkout_database": schema.BoolAttribute{
 				Required: true,
 			},
 		},
+		Optional: true,
 	}
 }
 

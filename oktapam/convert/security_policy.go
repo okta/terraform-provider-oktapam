@@ -23,7 +23,7 @@ type SecurityPolicyResourceModel struct {
 	Rules       []SecurityPolicyRuleModel     `tfsdk:"rule"` // openapi field: rules
 }
 
-func SecurityPolicySchema(attributes map[string]schema.Attribute, blocks map[string]schema.Block) {
+func SecurityPolicySchema() map[string]schema.Attribute {
 	myAttributes := map[string]schema.Attribute{
 		"id": schema.StringAttribute{
 			Computed:      true,
@@ -41,19 +41,11 @@ func SecurityPolicySchema(attributes map[string]schema.Attribute, blocks map[str
 		"active": schema.BoolAttribute{
 			Optional: true,
 		},
-	}
-	for key, value := range myAttributes {
-		attributes[key] = value
-	}
-
-	myBlocks := map[string]schema.Block{
-		"principals": SecurityPolicyPrincipalsBlock(),
-		"rule":       SecurityPolicyRuleBlock(),
+		"principals": SecurityPolicyPrincipalsSchema(),
+		"rule":       SecurityPolicyRuleSchema(),
 	}
 
-	for key, value := range myBlocks {
-		blocks[key] = value
-	}
+	return myAttributes
 }
 
 func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourceModel, out *pam.SecurityPolicy) diag.Diagnostics {

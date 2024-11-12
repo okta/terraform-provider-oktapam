@@ -24,11 +24,11 @@ type SecurityPolicyRulePrivilegeContainerModel struct {
 	//PrivilegeValue SecurityPolicyRulePrivilegeContainerPrivilegeValueModel `tfsdk:"privilege_value"`
 }
 
-func SecurityPolicyRulePrivilegesBlock() schema.Block {
-	return schema.SingleNestedBlock{
-		Blocks: map[string]schema.Block{
-			"password_checkout_database": SecurityPolicyPasswordCheckoutDatabasePrivilegeBlock(),
-			"principal_account_ssh":      SecurityPolicyPrincipalAccountSSHPrivilegeBlock(),
+func SecurityPolicyRulePrivilegesSchema() schema.Attribute {
+	return schema.SingleNestedAttribute{
+		Attributes: map[string]schema.Attribute{
+			"password_checkout_database": SecurityPolicyPasswordCheckoutDatabasePrivilegeSchema(),
+			"principal_account_ssh":      SecurityPolicyPrincipalAccountSSHPrivilegeSchema(),
 			// "password_checkout_rdp":
 			// "password_checkout_ssh":
 			// "principal_account_rdp":
@@ -36,5 +36,6 @@ func SecurityPolicyRulePrivilegesBlock() schema.Block {
 			// "secret":
 			// "update_password":
 		},
+		Required: true,
 	}
 }

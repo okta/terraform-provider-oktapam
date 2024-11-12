@@ -34,8 +34,8 @@ func SecurityPolicyPrincipalAccountSSHPrivilegeFromModelToSDK(in *SecurityPolicy
 	return nil
 }
 
-func SecurityPolicyPrincipalAccountSSHPrivilegeBlock() schema.Block {
-	return schema.SingleNestedBlock{
+func SecurityPolicyPrincipalAccountSSHPrivilegeSchema() schema.Attribute {
+	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
 			"principal_account_ssh": schema.BoolAttribute{
 				Required:    true,
@@ -55,5 +55,6 @@ func SecurityPolicyPrincipalAccountSSHPrivilegeBlock() schema.Block {
 				Description: descriptions.SudoCommandBundles,
 			},
 		},
+		Optional: true,
 	}
 }

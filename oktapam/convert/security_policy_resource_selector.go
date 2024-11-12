@@ -16,14 +16,16 @@ type SecurityPolicyRuleResourceSelectorModel struct {
 	//OktaApp          *SecurityPolicyRuleOktaAppBasedResourceSelectorModel          `tfsdk:"okta_app"`
 }
 
-func SecurityPolicyRuleResourceSelectorBlock() schema.Block {
-	return schema.SingleNestedBlock{
-		Blocks: map[string]schema.Block{
-			"servers": SecurityPolicyRuleServerBasedResourceSelectorBlock(),
-			//"managed_saas_app":   SecurityPolicyRuleManagedSaasAppBasedResourceSelectorBlock(),
-			//"unmanaged_saas_app": SecurityPolicyRuleUnmanagedSaasAppBasedResourceSelectorBlock(),
-			//"okta_app":           SecurityPolicyRuleOktaAppBasedResourceSelectorBlock(),
-		}}
+func SecurityPolicyRuleResourceSelectorSchema() schema.Attribute {
+	return schema.SingleNestedAttribute{
+		Attributes: map[string]schema.Attribute{
+			"servers": SecurityPolicyRuleServerBasedResourceSelectorSchema(), // server_based_resource
+			//"managed_saas_app":   SecurityPolicyRuleManagedSaasAppBasedResourceSelectorSchema(),
+			//"unmanaged_saas_app": SecurityPolicyRuleUnmanagedSaasAppBasedResourceSelectorSchema(),
+			//"okta_app":           SecurityPolicyRuleOktaAppBasedResourceSelectorSchema(),
+		},
+		Required: true,
+	}
 }
 
 func SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleResourceSelectorModel, out *pam.SecurityPolicyRuleResourceSelectorContainer) diag.Diagnostics {
@@ -36,16 +38,17 @@ func SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx context.Context, in *S
 type SecurityPolicyRuleServerBasedResourceSelectorModel struct {
 	IndividualServer        *SelectorIndividualServerModel        `tfsdk:"individual_server"`
 	IndividualServerAccount *SelectorIndividualServerAccountModel `tfsdk:"individual_server_account"`
-	SelectorServerLabel     *SelectorServerLabelModel             `tfsdk:"server_label"`
+	SelectorServerLabel     *SelectorServerLabelModel             `tfsdk:"server_label"` // TODO(ja) - this is "server_label" in the spec, but "server_labels" in _v1
 }
 
-func SecurityPolicyRuleServerBasedResourceSelectorBlock() schema.Block {
-	return schema.SingleNestedBlock{
-		Blocks: map[string]schema.Block{
-			"individual_server":         SelectorIndividualServerBlock(),
-			"individual_server_account": SelectorIndividualServerAccountBlock(),
-			"server_label":              SelectorServerLabelBlock(),
+func SecurityPolicyRuleServerBasedResourceSelectorSchema() schema.Attribute {
+	return schema.SingleNestedAttribute{ //TODO(ja) is array in spec
+		Attributes: map[string]schema.Attribute{
+			"individual_server":         SelectorIndividualServerSchema(),
+			"individual_server_account": SelectorIndividualServerAccountSchema(),
+			"server_label":              SelectorServerLabelSchema(), // TODO(ja) - this is "server_label" in the spec, but "server_labels" in _v1
 		},
+		Optional: true,
 	}
 }
 
@@ -74,13 +77,14 @@ type SelectorIndividualServerModel struct {
 	Server NamedObjectModel `tfsdk:"server"`
 }
 
-func SelectorIndividualServerBlock() schema.Block {
-	return schema.SingleNestedBlock{
+func SelectorIndividualServerSchema() schema.Attribute {
+	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
 			"server": schema.StringAttribute{
 				Required: true,
 			},
 		},
+		Optional: true,
 	}
 }
 
@@ -97,12 +101,13 @@ type SelectorIndividualServerAccountModel struct {
 	Username types.String     `tfsdk:"username"`
 }
 
-func SelectorIndividualServerAccountBlock() schema.Block {
-	return schema.SingleNestedBlock{
+func SelectorIndividualServerAccountSchema() schema.Attribute {
+	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
 			"server_id": schema.StringAttribute{Required: true},
 			"username":  schema.StringAttribute{Required: true},
 		},
+		Optional: true,
 	}
 }
 
@@ -112,16 +117,19 @@ func SelectorIndividualServerAccountFromModelToSDK(ctx context.Context, in *Sele
 }
 
 type SelectorServerLabelModel struct {
-	ServerSelector  *SelectorServerLabelServerSelectorModel `tfsdk:"server_selector"`
-	AccountSelector types.List/*types.String*/ `tfsdk:"usernames"`
+	ServerSelector  *SelectorServerLabelServerSelectorModel       `tfsdk:"server_selector"`
+	AccountSelector types.List/*types.String*/ `tfsdk:"accounts"` // TODO(ja) "accounts" is not a list of accounts, but a list of usernames
 }
 
-func SelectorServerLabelBlock() schema.Block {
-	return schema.SingleNestedBlock{
-		//TODO(ja)
+func SelectorServerLabelSchema() schema.Attribute {
+	return schema.SingleNestedAttribute{
+		Attributes: map[string]schema.Attribute{
+			"server_selector": SelectorServerLabelServerSelectorSchema(),
+			"accounts":        schema.ListAttribute{ElementType: types.StringType, Required: true}, //TODO(ja) required?
+		},
+		Optional: true,
 	}
 }
-
 func SelectorServerLabelFromModelToSDK(ctx context.Context, in *SelectorServerLabelModel, out *pam.SelectorServerLabel) diag.Diagnostics {
 	// AccountSelector
 	// ServerSelector
@@ -132,6 +140,14 @@ type SelectorServerLabelServerSelectorModel struct {
 	Labels types.MapType `tfsdk:"labels"`
 }
 
-type SelectorServerLabelAccountSelectorModel struct {
-	Usernames []types.String `tfsdk:"usernames"`
+func SelectorServerLabelServerSelectorSchema() schema.Attribute {
+	return schema.SingleNestedAttribute{
+		Attributes: map[string]schema.Attribute{
+			"labels": schema.MapAttribute{
+				ElementType: types.StringType,
+				Required:    true,
+			},
+		},
+		Optional: true,
+	}
 }

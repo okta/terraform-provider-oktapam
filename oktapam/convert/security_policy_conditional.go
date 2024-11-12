@@ -17,13 +17,14 @@ type SecurityPolicyRuleConditionModel struct {
 	ConditionsMFA            *ConditionsMFAModel            `tfsdk:"mfa"`
 }
 
-func SecurityPolicyRuleConditionsBlock() schema.Block {
-	return schema.SingleNestedBlock{
-		Blocks: map[string]schema.Block{
-			"access_request": ConditionsAccessRequestsBlock(),
-			"gateway":        ConditionsGatewayBlock(),
-			"mfa":            ConditionsMFABlock(),
+func SecurityPolicyRuleConditionsSchema() schema.Attribute {
+	return schema.SingleNestedAttribute{
+		Attributes: map[string]schema.Attribute{
+			"access_request": ConditionsAccessRequestsSchema(),
+			"gateway":        ConditionsGatewaySchema(),
+			"mfa":            ConditionsMFASchema(),
 		},
+		Optional: true,
 	}
 }
 
@@ -33,13 +34,14 @@ type ConditionsAccessRequestsModel struct {
 	ExpiresAfterSeconds types.Int32  `tfsdk:"expires_after_seconds"`
 }
 
-func ConditionsAccessRequestsBlock() schema.Block {
-	return schema.SingleNestedBlock{
+func ConditionsAccessRequestsSchema() schema.Attribute {
+	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
 			"request_type_id":       schema.StringAttribute{Optional: true},
 			"request_type_name":     schema.StringAttribute{Required: true},
 			"expires_after_seconds": schema.Int32Attribute{Optional: true},
 		},
+		Optional: true,
 	}
 }
 
@@ -48,12 +50,13 @@ type ConditionsGatewayModel struct {
 	SessionRecording  types.Bool `tfsdk:"session_recording"`
 }
 
-func ConditionsGatewayBlock() schema.Block {
-	return schema.SingleNestedBlock{
+func ConditionsGatewaySchema() schema.Attribute {
+	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
 			"traffic_forwarding": schema.BoolAttribute{Optional: true},
 			"session_recording":  schema.BoolAttribute{Optional: true},
 		},
+		Optional: true,
 	}
 }
 
@@ -62,11 +65,12 @@ type ConditionsMFAModel struct {
 	AcrValues                ConditionsMFAACRValuesModel `tfsdk:"acr_values"`
 }
 
-func ConditionsMFABlock() schema.Block {
-	return schema.SingleNestedBlock{
+func ConditionsMFASchema() schema.Attribute {
+	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
 			"re_auth_frequency_in_seconds": schema.Int32Attribute{Optional: true},
 			"acr_values":                   schema.StringAttribute{Optional: true},
 		},
+		Optional: true,
 	}
 }

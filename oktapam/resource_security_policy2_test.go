@@ -18,14 +18,17 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
     name = "linux server account and user level access"
     resources {
       servers {
-        label_selectors {
-          server_labels = {
-            "system.os_type" = "linux"
-          }
+        server_label {
           accounts = ["root", "pamadmin"]
+          server_selector {
+            labels = {
+              "system.os_type" = "linux"
+            }
+          }
         }
       }
     }
+
     privileges {
       password_checkout_ssh {
         enabled = true
