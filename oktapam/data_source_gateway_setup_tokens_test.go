@@ -29,7 +29,7 @@ func TestAccDatasourceGatewaySetupTokenList(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             testAccGatewaySetupTokenCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{

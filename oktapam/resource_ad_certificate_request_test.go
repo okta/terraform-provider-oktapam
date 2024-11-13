@@ -29,7 +29,7 @@ func TestAccADCertificateRequest_CSR(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             utils.CreateCheckResourceDestroy(config.ProviderADCertificateRequestKey, adCertificateExists),
 		Steps: []resource.TestStep{
 			{
@@ -52,7 +52,7 @@ func TestAccADCertificateRequest_SelfSigned(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             utils.CreateCheckResourceDestroy(config.ProviderADCertificateRequestKey, adCertificateExists),
 		Steps: []resource.TestStep{
 			{
@@ -69,7 +69,7 @@ func TestAccADCertificateRequest_SelfSigned(t *testing.T) {
 }
 
 func adCertificateExists(id string) (bool, error) {
-	client := getTestAccAPIClients().LocalClient
+	client := mustTestAccAPIClients().LocalClient
 	logging.Debugf("Checking if resource deleted %s", id)
 	adCertificate, err := client.GetADSmartcardCertificate(context.Background(), id)
 

@@ -24,7 +24,7 @@ func TestAccDatasourceResourceGroupServerEnrollmentTokensList(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             testAccResourceGroupServerEnrollmentTokensCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{
@@ -40,7 +40,7 @@ func TestAccDatasourceResourceGroupServerEnrollmentTokensList(t *testing.T) {
 
 func testAccResourceGroupServerEnrollmentTokensCheckDestroy(identifiers ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getTestAccAPIClients().LocalClient
+		c := mustTestAccAPIClients().LocalClient
 
 		resourceGroups, err := c.ListResourceGroups(context.Background())
 		if err != nil {

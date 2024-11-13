@@ -21,7 +21,7 @@ func TestAccResourceSudoCommandBundle(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             utils.CreateCheckResourceDestroy(config.ProviderSudoCommandBundleKey, sudoCommandBundleExists),
 		Steps: []resource.TestStep{
 			{
@@ -63,7 +63,7 @@ func TestAccResourceSudoCommandBundle(t *testing.T) {
 }
 
 func sudoCommandBundleExists(id string) (bool, error) {
-	c := getTestAccAPIClients().SDKClient
+	c := mustTestAccAPIClients().SDKClient
 	logging.Debugf("Checking if resource deleted %s", id)
 	scb, err := client.GetSudoCommandBundle(context.Background(), c, id)
 	return scb != nil && *scb.Id != "" && err == nil, err

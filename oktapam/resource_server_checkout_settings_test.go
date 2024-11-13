@@ -142,7 +142,7 @@ func TestAccServerCheckoutSettings(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			// Create testing
 			{
@@ -199,7 +199,7 @@ func testAccServerCheckoutSettingsCheckExists(resourceName string, expectedServe
 		resourceGroupID := rs.Primary.Attributes[attributes.ResourceGroup]
 		projectID := rs.Primary.Attributes[attributes.Project]
 
-		client := getTestAccAPIClients().SDKClient
+		client := mustTestAccAPIClients().SDKClient
 		serverCheckoutSettings, _, err := client.SDKClient.ProjectsAPI.FetchResourceGroupServerBasedProjectCheckoutSettings(context.Background(), client.Team, resourceGroupID, projectID).Execute()
 		if err != nil {
 			return fmt.Errorf("Error fetching server checkout settings: %s", err)

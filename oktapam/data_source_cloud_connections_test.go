@@ -24,7 +24,7 @@ func TestAccDataSourceCloudConnectionsList(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             testAccCloudConnectionsCheckDestroy(identifier+"-1", identifier+"-2"),
 		Steps: []resource.TestStep{
 			{
@@ -81,7 +81,7 @@ func testAccDataSourceCloudConnectionsConfig(resourceName, name string) string {
 
 func testAccCloudConnectionsCheckDestroy(identifiers ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		c := getTestAccAPIClients().LocalClient
+		c := mustTestAccAPIClients().LocalClient
 
 		cloudConnections, err := c.ListCloudConnections(context.Background())
 		if err != nil {

@@ -22,7 +22,7 @@ func TestAccResourceCloudConnection(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             utils.CreateCheckResourceDestroy(config.ProviderCloudConnectionKey, cloudConnectionExists),
 		Steps: []resource.TestStep{
 			{
@@ -39,7 +39,7 @@ func TestAccResourceCloudConnection(t *testing.T) {
 }
 
 func cloudConnectionExists(id string) (bool, error) {
-	client := getTestAccAPIClients().LocalClient
+	client := mustTestAccAPIClients().LocalClient
 	logging.Debugf("Checking if resource deleted %s", id)
 	cloudConnection, err := client.GetCloudConnection(context.Background(), id)
 	return cloudConnection != nil && cloudConnection.Exists() && err == nil, err

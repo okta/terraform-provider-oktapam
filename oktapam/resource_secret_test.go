@@ -48,7 +48,7 @@ func TestAccSecret(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
 			{
@@ -90,7 +90,7 @@ func testAccSecretCheckExists(rn string, expectedSecret *wrappers.SecretWrapper)
 		projectID := rs.Primary.Attributes[attributes.Project]
 		secretID := rs.Primary.Attributes[attributes.ID]
 
-		pamClient := getTestAccAPIClients().SDKClient
+		pamClient := mustTestAccAPIClients().SDKClient
 		secret, err := client.RevealSecret(context.Background(), pamClient, resourceGroupID, projectID, secretID)
 		if err != nil {
 			return fmt.Errorf("error getting secret: %w", err)

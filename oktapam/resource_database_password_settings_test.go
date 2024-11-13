@@ -53,7 +53,7 @@ func TestAccResourceGroupDatabasePasswordSettings(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		// use the resource group check destroy since we create a new one here and deletion of the resource group will cascade delete the project / password settings
 		CheckDestroy: testAccResourceGroupCheckDestroy(resourceGroupName),
 		Steps: []resource.TestStep{
@@ -109,7 +109,7 @@ func testAccDatabasePasswordSettingsCheckExists(rn string, expectedPasswordSetti
 		if id != expectedID {
 			return fmt.Errorf("unexpected id: %s, expected: %s", id, expectedID)
 		}
-		pamClient := getTestAccAPIClients().SDKClient
+		pamClient := mustTestAccAPIClients().SDKClient
 		req := pamClient.SDKClient.ProjectsAPI.GetProjectPasswordPolicyForDatabaseResources(context.Background(), pamClient.Team, resourceGroupID, projectID)
 		passwordSettings, _, err := req.Execute()
 		if err != nil {

@@ -46,7 +46,7 @@ func TestAccResourceGroup(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             testAccResourceGroupCheckDestroy(initialResourceGroupName, updatedResourceGroupName),
 		Steps: []resource.TestStep{
 			{
@@ -90,8 +90,8 @@ func testAccResourceGroupCheckExists(rn string, expectedResourceGroup *client.Re
 		}
 
 		resourceGroupID := rs.Primary.Attributes[attributes.ID]
-		//pamClient := getTestAccAPIClients().LocalClient
-		pamClient := getTestAccAPIClients().LocalClient
+		//pamClient := mustTestAccAPIClients().LocalClient
+		pamClient := mustTestAccAPIClients().LocalClient
 		resourceGroup, err := pamClient.GetResourceGroup(context.Background(), resourceGroupID)
 		if err != nil {
 			return fmt.Errorf("error getting resource group: %w", err)
@@ -125,9 +125,8 @@ func insertComputedValuesForResourceGroup(expectedResourceGroup, actualResourceG
 
 func testAccResourceGroupCheckDestroy(resourceGroupNames ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		//client := getTestAccAPIClients().LocalClient
-		client := getTestAccAPIClients().LocalClient
-		resourceGroups, err := client.ListResourceGroups(context.Background())
+		pamClient := mustTestAccAPIClients().LocalClient
+		resourceGroups, err := pamClient.ListResourceGroups(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting resource groups: %w", err)
 		}

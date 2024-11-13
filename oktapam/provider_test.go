@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sync"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
@@ -15,43 +14,28 @@ import (
 )
 
 func TestProvider(t *testing.T) {
-	if err := Provider().InternalValidate(); err != nil {
+	if err := V5Provider(nil).InternalValidate(); err != nil {
 		t.Fatalf("err: %s", err)
 	}
 }
+func TestProvider_impl(t *testing.T) {
+	var _ *schema.Provider = V5Provider(nil)
+}
 
-var testAccSDKV2Providers map[string]func() (*schema.Provider, error)
-var testAccSDKV2Provider *schema.Provider
-
-var (
-	// testAccV6ProviderFactories are used to instantiate a provider during acceptance testing.
-	// The factory function is invoked for every TF CLI command executed to create a provider server to which the CLI can reattach.
-	testAccV6ProviderFactories map[string]func() (tfprotov6.ProviderServer, error)
-	testAccAPIClients          *client.APIClients
-	clientOnce                 sync.Once
-)
-
-func init() {
-	testAccSDKV2Provider = Provider()
-	testAccSDKV2Providers = map[string]func() (*schema.Provider, error){}
-	testAccSDKV2Providers["oktapam"] = func() (*schema.Provider, error) {
-		return testAccSDKV2Provider, nil
-	}
-
+// testAccV6ProviderFactories is used to instantiate a provider during acceptance testing. The factory function is
+// invoked for every TF CLI command executed to create a provider server to which the CLI can reattach.
+func testAccV6ProviderFactories() map[string]func() (tfprotov6.ProviderServer, error) {
 	// this is used in acceptance test
-	serverFactory, err := V6ProviderServerFactory(context.Background())
+	serverFactory, err := ProviderServerFactory(context.Background(), nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-	testAccV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
+	factories := map[string]func() (tfprotov6.ProviderServer, error){
 		"oktapam": func() (tfprotov6.ProviderServer, error) {
 			return serverFactory(), nil
 		},
 	}
-}
-
-func TestProvider_impl(t *testing.T) {
-	var _ *schema.Provider = Provider()
+	return factories
 }
 
 func testAccPreCheck(t *testing.T) {
@@ -98,10 +82,10 @@ func newTestAccAPIClients() (*client.APIClients, error) {
 	}, nil
 }
 
-func getTestAccAPIClients() *client.APIClients {
-	clientOnce.Do(func() {
-		testAccAPIClients, _ = newTestAccAPIClients()
-	})
-
-	return testAccAPIClients
+func mustTestAccAPIClients() *client.APIClients {
+	c, err := newTestAccAPIClients()
+	if err != nil {
+		panic("failed to create acceptance test client")
+	}
+	return c
 }

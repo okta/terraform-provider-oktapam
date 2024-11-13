@@ -50,7 +50,7 @@ func TestAccKubernetesCluster(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             testAccClusterCheckDestroy(cluster1),
 		Steps: []resource.TestStep{
 			{
@@ -97,7 +97,7 @@ func createTestAccKubernetesClusterConfig(cluster client.KubernetesCluster) stri
 
 func testAccClusterCheckDestroy(expectedCluster client.KubernetesCluster) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		pamClient := getTestAccAPIClients().LocalClient
+		pamClient := mustTestAccAPIClients().LocalClient
 		clusters, err := pamClient.ListKubernetesClusters(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting cluster groups: %w", err)

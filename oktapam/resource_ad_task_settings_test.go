@@ -40,7 +40,7 @@ func TestAccADServerSyncTaskSettings(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             testAccADTaskCheckDestroy(adTaskResourceName),
 		Steps: []resource.TestStep{
 			{
@@ -116,7 +116,7 @@ func testAccADTaskCheckExists(adServerSyncTaskSettingsResourceName string) resou
 		adConnID := adTaskRS.Primary.Attributes[attributes.ADConnectionID]
 		adServerSyncTaskSettingsID := adTaskRS.Primary.ID
 
-		pamClient := getTestAccAPIClients().LocalClient
+		pamClient := mustTestAccAPIClients().LocalClient
 		adServerSyncTaskSettings, err := pamClient.GetADServerSyncTaskSettings(context.Background(), adConnID, adServerSyncTaskSettingsID)
 		if err != nil {
 			return fmt.Errorf("error getting ad task settings: %w", err)
@@ -139,7 +139,7 @@ func testAccADTaskCheckDestroy(adServerSyncTaskSettingsResourceName string) reso
 		adConnID := adTaskRS.Primary.Attributes[attributes.ADConnectionID]
 		adServerSyncTaskSettingsID := adTaskRS.Primary.ID
 
-		pamClient := getTestAccAPIClients().LocalClient
+		pamClient := mustTestAccAPIClients().LocalClient
 		adTask, err := pamClient.GetADServerSyncTaskSettings(context.Background(), adConnID, adServerSyncTaskSettingsID)
 		if err != nil {
 			return fmt.Errorf("error getting ad task settings: %w", err)

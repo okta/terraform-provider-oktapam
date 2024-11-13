@@ -28,7 +28,7 @@ func TestAccGatewaySetupToken(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             testAccGatewaySetupTokenCheckDestroy(identifier),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,7 @@ func testAccGatewaySetupTokenCheckExists(rn string, expectedGatewaySetupToken cl
 
 		resourceID := rs.Primary.ID
 
-		client := getTestAccAPIClients().LocalClient
+		client := mustTestAccAPIClients().LocalClient
 		token, err := client.GetGatewaySetupToken(context.Background(), resourceID)
 		if err != nil {
 			return fmt.Errorf("error getting gateway setup token: %w", err)
@@ -83,7 +83,7 @@ func testAccGatewaySetupTokenCheckExists(rn string, expectedGatewaySetupToken cl
 
 func testAccGatewaySetupTokenCheckDestroy(identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := getTestAccAPIClients().LocalClient
+		client := mustTestAccAPIClients().LocalClient
 		tokens, err := client.ListGatewaySetupTokens(context.Background(), identifier)
 		if err != nil {
 			return fmt.Errorf("error getting tokens: %w", err)

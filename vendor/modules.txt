@@ -308,6 +308,10 @@ github.com/huandu/xstrings
 # github.com/imdario/mergo v0.3.15
 ## explicit; go 1.13
 github.com/imdario/mergo
+# github.com/jarcoal/httpmock v1.3.1
+## explicit; go 1.18
+github.com/jarcoal/httpmock
+github.com/jarcoal/httpmock/internal
 # github.com/kelseyhightower/envconfig v1.4.0
 ## explicit
 github.com/kelseyhightower/envconfig

@@ -3,10 +3,11 @@ package oktapam
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"os"
 	"regexp"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
@@ -279,7 +280,7 @@ func TestAccSecurityPolicy(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		CheckDestroy:             testAccSecurityPolicyCheckDestroy(securityPolicyName),
 		Steps: []resource.TestStep{
 			{
@@ -346,7 +347,7 @@ func testAccSecurityPolicyCheckExists(rn string, expectedSecurityPolicy *client.
 		}
 
 		id := rs.Primary.ID
-		pamClient := getTestAccAPIClients().LocalClient
+		pamClient := mustTestAccAPIClients().LocalClient
 		securityPolicy, err := pamClient.GetSecurityPolicy(context.Background(), id)
 		if err != nil {
 			return fmt.Errorf("error getting security policy: %w", err)
@@ -474,8 +475,8 @@ func insertComputedValuesForSecurityPolicyRule(expectedRule *client.SecurityPoli
 
 func testAccSecurityPolicyCheckDestroy(securityPolicyName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := getTestAccAPIClients().LocalClient
-		securityPolicies, err := client.ListSecurityPolicies(context.Background())
+		pamClient := mustTestAccAPIClients().LocalClient
+		securityPolicies, err := pamClient.ListSecurityPolicies(context.Background())
 		if err != nil {
 			return fmt.Errorf("error getting security policies: %w", err)
 		}
