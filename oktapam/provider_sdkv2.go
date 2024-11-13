@@ -11,8 +11,10 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 )
 
-func Provider() *schema.Provider {
-	return &schema.Provider{
+type V5ClientCreator func(ctx context.Context, diagnostics diag.Diagnostics, data *schema.ResourceData) (*client.APIClients, diag.Diagnostics)
+
+func V5Provider(v5ClientCreator V5ClientCreator) *schema.Provider {
+	provider := &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			config.ApiHostKey: {
 				Type:        schema.TypeString,
@@ -101,13 +103,18 @@ func Provider() *schema.Provider {
 			config.ProviderADUserSyncTaskSettingsKey:              dataSourceADUserSyncTaskSettings(),
 			config.ProviderADUserSyncTaskSettingsIDListKey:        dataSourceADUserSyncTaskSettingsIDList(),
 		},
-		ConfigureContextFunc: providerConfigure,
 	}
+
+	if v5ClientCreator == nil {
+		provider.ConfigureContextFunc = providerConfigureFactory(defaultV5ClientCreator)
+	} else {
+		provider.ConfigureContextFunc = providerConfigureFactory(v5ClientCreator)
+	}
+
+	return provider
 }
 
-func providerConfigure(_ context.Context, d *schema.ResourceData) (any, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
+func defaultV5ClientCreator(_ context.Context, diags diag.Diagnostics, d *schema.ResourceData) (*client.APIClients, diag.Diagnostics) {
 	if d.Get(config.ApiKeyKey).(string) == "" {
 		if apiKey := os.Getenv(config.ApiKeySchemaEnvVar); apiKey != "" {
 			if err := d.Set(config.ApiKeyKey, apiKey); err != nil {
@@ -166,5 +173,14 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (any, diag.Dia
 		return apiClients, nil
 	} else {
 		return nil, diag.Errorf("failed to get api clients: %v", err)
+	}
+}
+
+func providerConfigureFactory(v5ClientCreator V5ClientCreator) func(context.Context, *schema.ResourceData) (any, diag.Diagnostics) {
+	return func(ctx context.Context, d *schema.ResourceData) (any, diag.Diagnostics) {
+		var diags diag.Diagnostics
+		// If there was more setup for the provider, you would do it here. Instead, the V5 provider only needs
+		// an SDK Client, so it's the only thing that happens.
+		return v5ClientCreator(ctx, diags, d)
 	}
 }
