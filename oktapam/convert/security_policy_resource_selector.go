@@ -125,7 +125,7 @@ func SelectorServerLabelSchema() schema.Attribute {
 	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
 			"server_selector": SelectorServerLabelServerSelectorSchema(),
-			"accounts":        schema.ListAttribute{ElementType: types.StringType, Required: true}, //TODO(ja) required?
+			"accounts":        schema.ListAttribute{ElementType: types.StringType, Optional: true},
 		},
 		Optional: true,
 	}
@@ -137,7 +137,7 @@ func SelectorServerLabelFromModelToSDK(ctx context.Context, in *SelectorServerLa
 }
 
 type SelectorServerLabelServerSelectorModel struct {
-	Labels types.MapType `tfsdk:"labels"`
+	Labels types.Map `tfsdk:"labels"`
 }
 
 func SelectorServerLabelServerSelectorSchema() schema.Attribute {

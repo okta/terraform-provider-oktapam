@@ -7,10 +7,6 @@ import (
 
 type ConditionsMFAACRValuesModel types.String
 
-type SecurityPolicyRuleConditionContainerModel struct {
-	SecurityPolicyRuleConditionModel
-}
-
 type SecurityPolicyRuleConditionModel struct {
 	ConditionsAccessRequests *ConditionsAccessRequestsModel `tfsdk:"access_request"`
 	ConditionsGateway        *ConditionsGatewayModel        `tfsdk:"gateway"`

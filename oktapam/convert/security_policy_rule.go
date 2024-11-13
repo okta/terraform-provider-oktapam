@@ -18,7 +18,7 @@ type SecurityPolicyRuleModel struct {
 	//ResourceType                      SecurityPolicyRuleResourceTypeModel                     `tfsdk:"resource_type"`
 	ResourceSelector                  SecurityPolicyRuleResourceSelectorModel                 `tfsdk:"resources"` // openapi field: resource_selector
 	Privileges                        SecurityPolicyRulePrivilegeContainerPrivilegeValueModel `tfsdk:"privileges"`
-	Conditions                        SecurityPolicyRuleConditionContainerModel               `tfsdk:"conditions"`
+	Conditions                        *SecurityPolicyRuleConditionModel                       `tfsdk:"conditions"`
 	OverrideCheckoutDurationInSeconds types.Int64                                             `tfsdk:"override_checkout_duration_in_seconds"`
 	SecurityPolicyID                  types.String                                            `tfsdk:"security_policy_id"` // openapi readOnly
 }

@@ -51,9 +51,11 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
       name = "linux server with sudo"
       resources = {
         servers = {
-          label_selectors = {
-            server_labels = {
-              "system.os_type" = "linux"
+          server_label = {
+            server_selector = {
+              labels = {
+                "system.os_type" = "linux"
+              }
             }
           }
         }
@@ -75,9 +77,11 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
       name = "linux server account and admin level access"
       resources = {
         servers = {
-          label_selectors = {
-            server_labels = {
-              "system.os_type" = "linux"
+          server_label = {
+            server_selector = {
+              labels = {
+                "system.os_type" = "linux"
+              }
             }
             accounts = ["root", "pamadmin"]
           }
