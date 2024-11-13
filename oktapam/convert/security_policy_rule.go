@@ -16,7 +16,7 @@ import (
 type SecurityPolicyRuleModel struct {
 	Name types.String `tfsdk:"name"`
 	//ResourceType                      SecurityPolicyRuleResourceTypeModel                     `tfsdk:"resource_type"`
-	ResourceSelector                  SecurityPolicyRuleResourceSelectorModel                 `tfsdk:"resources"` // openapi field: resource_selector
+	ResourceSelector                  SecurityPolicyRuleResourceSelectorModel                 `tfsdk:"resource_selector"`
 	Privileges                        SecurityPolicyRulePrivilegeContainerPrivilegeValueModel `tfsdk:"privileges"`
 	Conditions                        *SecurityPolicyRuleConditionModel                       `tfsdk:"conditions"`
 	OverrideCheckoutDurationInSeconds types.Int64                                             `tfsdk:"override_checkout_duration_in_seconds"`
@@ -31,7 +31,7 @@ func SecurityPolicyRulesSchema() schema.Attribute {
 				//"resource_type":                         schema.StringAttribute{Optional: true},
 				"override_checkout_duration_in_seconds": schema.Int64Attribute{Optional: true},
 				"security_policy_id":                    schema.StringAttribute{Optional: true}, //TODO(ja) do I even need this?
-				"resources":                             SecurityPolicyRuleResourceSelectorSchema(),
+				"resource_selector":                     SecurityPolicyRuleResourceSelectorSchema(),
 				"privileges":                            SecurityPolicyRulePrivilegesSchema(),
 				"conditions":                            SecurityPolicyRuleConditionsSchema(),
 			},

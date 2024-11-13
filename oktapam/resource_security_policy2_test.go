@@ -24,7 +24,7 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
   rules = [
     {
       name = "linux server account and user level access"
-      resources = {
+      resource_selector = {
         server_based_resource = {
           selectors = [
             {
@@ -55,7 +55,7 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
     #rule with ssh privilege and sudo access
     {
       name = "linux server with sudo"
-      resources = {
+      resource_selector = {
         server_based_resource = {
           selectors = [
             {
@@ -85,7 +85,7 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
     # rule with ssh privilege and admin + mfa every 1hr
     {
       name = "linux server account and admin level access"
-      resources = {
+      resource_selector = {
         server_based_resource = {
           selectors = [
             {
