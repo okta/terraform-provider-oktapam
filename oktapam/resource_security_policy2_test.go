@@ -1,9 +1,11 @@
 package oktapam
 
 import (
+	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/jarcoal/httpmock"
+	"net/http"
 	"regexp"
 	"testing"
 )
@@ -126,8 +128,18 @@ resource "oktapam_sudo_command_bundle" "tilt_sudo_remove_directories" {
 const terraformConfig = sudoCommandBundlesTerraform + "\n" + securityPolicyTerraform
 
 func setupHTTPMock() {
-	httpmock.RegisterRegexpResponder("POST", regexp.MustCompile(`.*`),
-		httpmock.NewStringResponder(404, `hello`),
+	prefix := "/v1/teams/httpmock-test-team"
+	sudoCommandBundle1 := pam.NewSudoCommandBundle("bundle-1").SetId("1")
+	httpmock.RegisterResponder(http.MethodPost, prefix+`/sudo_command_bundles`,
+		httpmock.NewJsonResponderOrPanic(http.StatusCreated, sudoCommandBundle1),
+	)
+
+	httpmock.RegisterResponder(http.MethodGet, prefix+`/sudo_command_bundles/`+sudoCommandBundle1.GetId(),
+		httpmock.NewJsonResponderOrPanic(http.StatusOK, sudoCommandBundle1),
+	)
+
+	httpmock.RegisterRegexpResponder(http.MethodDelete, regexp.MustCompile(`.*`),
+		httpmock.NewStringResponder(http.StatusOK, ""),
 	)
 }
 
