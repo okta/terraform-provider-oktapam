@@ -2,6 +2,8 @@ package oktapam
 
 import (
 	"context"
+	"log"
+
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/go-resty/resty/v2"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -10,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/jarcoal/httpmock"
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
-	"log"
 )
 
 // httpMockTestV6ProviderFactories is the cousin of testAccV6ProviderFactories, except that
