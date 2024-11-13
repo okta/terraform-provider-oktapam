@@ -22,7 +22,7 @@ func main() {
 
 	ctx := context.Background()
 
-	muxServer, err := oktapam.V6ProviderServerFactory(ctx)
+	muxServer, err := oktapam.ProviderServerFactory(ctx, nil)
 	if err != nil {
 		log.Fatal(err)
 	}

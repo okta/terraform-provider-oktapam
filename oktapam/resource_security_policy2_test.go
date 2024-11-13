@@ -3,6 +3,8 @@ package oktapam
 import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/jarcoal/httpmock"
+	"regexp"
 	"testing"
 )
 
@@ -123,14 +125,21 @@ resource "oktapam_sudo_command_bundle" "tilt_sudo_remove_directories" {
 
 const terraformConfig = sudoCommandBundlesTerraform + "\n" + securityPolicyTerraform
 
+func setupHTTPMock() {
+	httpmock.RegisterRegexpResponder("POST", regexp.MustCompile(`.*`),
+		httpmock.NewStringResponder(404, `hello`),
+	)
+}
+
 func TestSimple(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		IsUnitTest:               true,
-		ProtoV6ProviderFactories: testAccV6ProviderFactories,
+		ProtoV6ProviderFactories: httpMockTestV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config: terraformConfig,
+				PreConfig: setupHTTPMock,
+				Config:    terraformConfig,
 				Check: func(s *terraform.State) error {
 					return nil
 				},

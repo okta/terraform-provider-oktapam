@@ -46,6 +46,18 @@ func CreateLocalPAMClient(providerConfig *OktaPAMProviderConfig) (*OktaPAMClient
 	}
 }
 
+func NewOktaPAMClient(restyClient *resty.Client, providerConfig *OktaPAMProviderConfig) (*OktaPAMClient, error) {
+	cli := &OktaPAMClient{
+		Team: providerConfig.Team,
+		client: setBaseHTTPSettings(restyClient, providerConfig.APIHost, ServiceToken{
+			TeamName:    providerConfig.Team,
+			BearerToken: "unit-test-bearer-token",
+			ExpiresAt:   time.Now().Add(365 * 24 * time.Hour),
+		}),
+	}
+	return cli, nil
+}
+
 func checkTrustedDomain(apiHost string) error {
 	// this is more of a check for misconfiguration than anything as we allow it to be overriden
 	// for testing/debugging purposes

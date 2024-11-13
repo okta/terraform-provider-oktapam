@@ -17,13 +17,50 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-func New() func() provider.Provider {
-	return func() provider.Provider {
-		return &FrameworkProvider{}
+type V6ClientCreator func(p *FrameworkProvider, m FrameworkProviderModel) (*client.APIClients, diag.Diagnostics)
+
+func V6Provider(customClientCreator V6ClientCreator) provider.Provider {
+	fp := &FrameworkProvider{clientCreator: defaultV6ClientCreator}
+	if customClientCreator != nil {
+		fp.clientCreator = customClientCreator
 	}
+	return fp
 }
 
-type FrameworkProvider struct{}
+func defaultV6ClientCreator(p *FrameworkProvider, m FrameworkProviderModel) (*client.APIClients, diag.Diagnostics) {
+	diags := p.ConfigureConfigDefaults(&m)
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	team := m.OktapamTeam.ValueString()
+
+	clientConfig := &client.OktaPAMProviderConfig{
+		APIKey:       m.OktapamApiKey.ValueString(),
+		APIKeySecret: m.OktapamSecret.ValueString(),
+		Team:         team,
+		APIHost:      m.OktapamApiHost.ValueString(),
+	}
+
+	sdkClient, err := client.CreateSDKClient(clientConfig)
+
+	if err != nil {
+		diags.Append(diag.NewErrorDiagnostic("error while creating sdk client", err.Error()))
+		return nil, diags
+	}
+
+	apiClients := &client.APIClients{
+		SDKClient: client.SDKClientWrapper{
+			SDKClient: sdkClient,
+			Team:      team,
+		},
+	}
+	return apiClients, diags
+}
+
+type FrameworkProvider struct {
+	clientCreator V6ClientCreator
+}
 
 type FrameworkProviderModel struct {
 	OktapamApiHost types.String `tfsdk:"oktapam_api_host"`
@@ -62,36 +99,14 @@ func (p *FrameworkProvider) Configure(ctx context.Context, req provider.Configur
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	diags := p.ConfigureConfigDefaults(&d)
 
-	if diags.HasError() {
+	if apiClients, diags := p.clientCreator(p, d); diags.HasError() {
 		resp.Diagnostics.Append(diags...)
+		return
+	} else {
+		resp.DataSourceData = apiClients
+		resp.ResourceData = apiClients
 	}
-
-	team := d.OktapamTeam.ValueString()
-
-	config := &client.OktaPAMProviderConfig{
-		APIKey:       d.OktapamApiKey.ValueString(),
-		APIKeySecret: d.OktapamSecret.ValueString(),
-		Team:         team,
-		APIHost:      d.OktapamApiHost.ValueString(),
-	}
-
-	sdkClient, err := client.CreateSDKClient(config)
-
-	if err != nil {
-		resp.Diagnostics.Append(diag.NewErrorDiagnostic("error while creating sdk client", err.Error()))
-	}
-
-	apiClients := &client.APIClients{
-		SDKClient: client.SDKClientWrapper{
-			SDKClient: sdkClient,
-			Team:      team,
-		},
-	}
-
-	resp.DataSourceData = apiClients
-	resp.ResourceData = apiClients
 }
 
 func (p *FrameworkProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
