@@ -5,6 +5,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/jarcoal/httpmock"
+	"github.com/stretchr/testify/require"
+	"io"
 	"net/http"
 	"regexp"
 	"testing"
@@ -107,6 +109,23 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
 }
  `
 
+const securityPolicyJSON = `
+{
+  "active" : true,
+  "description" : "",
+  "id" : "",
+  "name" : "tilt-security-policy",
+  "principals" : {
+    "user_groups" : [ {
+      "name" : "user_group_id_1"
+    }, {
+      "name" : "user_group_id_2"
+    } ]
+  },
+  "rules" : null
+}
+`
+
 const sudoCommandBundlesTerraform = `# Create a sudo command bundle
 resource "oktapam_sudo_command_bundle" "tilt_sudo_create_directories" {
   name = "create_directories"
@@ -131,7 +150,7 @@ resource "oktapam_sudo_command_bundle" "tilt_sudo_remove_directories" {
 
 const terraformConfig = sudoCommandBundlesTerraform + "\n" + securityPolicyTerraform
 
-func setupHTTPMock() {
+func setupHTTPMock(t *testing.T) {
 	prefix := "/v1/teams/httpmock-test-team"
 	sudoCommandBundle1 := pam.NewSudoCommandBundle("bundle-1").SetId("1")
 	httpmock.RegisterResponder(http.MethodPost, prefix+`/sudo_command_bundles`,
@@ -145,6 +164,15 @@ func setupHTTPMock() {
 	httpmock.RegisterRegexpResponder(http.MethodDelete, regexp.MustCompile(`.*`),
 		httpmock.NewStringResponder(http.StatusOK, ""),
 	)
+
+	httpmock.RegisterResponder(http.MethodPost, prefix+"/security_policy",
+		func(request *http.Request) (*http.Response, error) {
+
+			body, _ := io.ReadAll(request.Body)
+			require.JSONEq(t, securityPolicyJSON, string(body))
+			return httpmock.NewJsonResponse(http.StatusCreated, pam.NewSecurityPolicy("name", "description", false, *pam.NewSecurityPolicyPrincipals(), nil).SetId("policy-id-1"))
+		},
+	)
 }
 
 func TestSimple(t *testing.T) {
@@ -154,7 +182,7 @@ func TestSimple(t *testing.T) {
 		ProtoV6ProviderFactories: httpMockTestV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				PreConfig: setupHTTPMock,
+				PreConfig: func() { setupHTTPMock(t) },
 				Config:    terraformConfig,
 				Check: func(s *terraform.State) error {
 					return nil

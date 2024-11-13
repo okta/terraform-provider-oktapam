@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type SecurityPolicyTypeModel types.String
+//type SecurityPolicyTypeModel types.String
 
 type SecurityPolicyResourceModel struct {
 	ID          types.String                  `tfsdk:"id"`

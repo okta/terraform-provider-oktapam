@@ -9,9 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type SecurityPolicyRuleResourceTypeModel types.String
-type SecurityPolicyRuleConditionTypeModel types.String
-type SecurityPolicyRuleResourceSelectorTypeModel types.String
+//type SecurityPolicyRuleResourceTypeModel types.String
+//type SecurityPolicyRuleConditionTypeModel types.String
+//type SecurityPolicyRuleResourceSelectorTypeModel types.String
 
 type SecurityPolicyRuleModel struct {
 	Name types.String `tfsdk:"name"`

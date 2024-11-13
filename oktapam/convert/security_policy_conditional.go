@@ -5,8 +5,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type ConditionsMFAACRValuesModel types.String
-
 type SecurityPolicyRuleConditionModel struct {
 	ConditionsAccessRequests *ConditionsAccessRequestsModel `tfsdk:"access_request"`
 	ConditionsGateway        *ConditionsGatewayModel        `tfsdk:"gateway"`
@@ -57,8 +55,8 @@ func ConditionsGatewaySchema() schema.Attribute {
 }
 
 type ConditionsMFAModel struct {
-	ReAuthFrequencyInSeconds types.Int32                 `tfsdk:"re_auth_frequency_in_seconds"`
-	AcrValues                ConditionsMFAACRValuesModel `tfsdk:"acr_values"`
+	ReAuthFrequencyInSeconds types.Int32 `tfsdk:"re_auth_frequency_in_seconds"`
+	AcrValues                types.String/*ConditionsMFAACRValuesModel*/ `tfsdk:"acr_values"`
 }
 
 func ConditionsMFASchema() schema.Attribute {

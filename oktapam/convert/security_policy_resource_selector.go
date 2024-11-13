@@ -74,7 +74,7 @@ func SecurityPolicyRuleServerBasedResourceSelectorFromModelToSDK(ctx context.Con
 }
 
 type SelectorIndividualServerModel struct {
-	Server NamedObjectModel `tfsdk:"server"`
+	Server types.String /*NamedObject*/ `tfsdk:"server"`
 }
 
 func SelectorIndividualServerSchema() schema.Attribute {
@@ -89,16 +89,22 @@ func SelectorIndividualServerSchema() schema.Attribute {
 }
 
 func SelectorIndividualServerFromSDKToModel(ctx context.Context, in *pam.SelectorIndividualServer, out *SelectorIndividualServerModel) diag.Diagnostics {
-	return NamedObjectFromSDKToModel(ctx, in.Server, &out.Server)
+	if val, ok := in.Server.GetIdOk(); ok {
+		out.Server = types.StringPointerValue(val)
+	}
+	return nil
 }
 
 func SelectorIndividualServerFromModelToSDK(ctx context.Context, in *SelectorIndividualServerModel, out *pam.SelectorIndividualServer) diag.Diagnostics {
-	return NamedObjectFromModelToSDK(ctx, in.Server, out.Server)
+	if !in.Server.IsNull() {
+		out.Server = pam.NewNamedObject().SetId(in.Server.ValueString())
+	}
+	return nil
 }
 
 type SelectorIndividualServerAccountModel struct {
-	ServerId NamedObjectModel `tfsdk:"server_id"`
-	Username types.String     `tfsdk:"username"`
+	ServerId types.String/*NamedObject*/ `tfsdk:"server_id"`
+	Username types.String `tfsdk:"username"`
 }
 
 func SelectorIndividualServerAccountSchema() schema.Attribute {
@@ -113,7 +119,10 @@ func SelectorIndividualServerAccountSchema() schema.Attribute {
 
 func SelectorIndividualServerAccountFromModelToSDK(ctx context.Context, in *SelectorIndividualServerAccountModel, out *pam.SelectorIndividualServerAccount) diag.Diagnostics {
 	out.Username = in.Username.ValueStringPointer()
-	return NamedObjectFromModelToSDK(ctx, in.ServerId, out.ServerId)
+	if !in.ServerId.IsNull() {
+		out.ServerId = pam.NewNamedObject().SetId(in.ServerId.ValueString())
+	}
+	return nil
 }
 
 type SelectorServerLabelModel struct {

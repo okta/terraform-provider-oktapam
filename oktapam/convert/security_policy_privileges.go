@@ -2,10 +2,9 @@ package convert
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type SecurityPolicyRulePrivilegeTypeModel types.String
+//type SecurityPolicyRulePrivilegeTypeModel types.String
 
 type SecurityPolicyRulePrivilegeContainerPrivilegeValueModel struct {
 	SecurityPolicyPasswordCheckoutDatabasePrivilege *SecurityPolicyPasswordCheckoutDatabasePrivilegeModel `tfsdk:"password_checkout_database"`

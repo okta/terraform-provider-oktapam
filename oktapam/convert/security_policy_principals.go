@@ -35,8 +35,14 @@ func SecurityPolicyPrincipalFromSDKToModel(ctx context.Context, in *pam.Security
 }
 
 func SecurityPolicyPrincipalFromModelToSDK(ctx context.Context, in *SecurityPolicyPrincipalsModel, out *pam.SecurityPolicyPrincipals) diag.Diagnostics {
-	if diags := in.UserGroups.ElementsAs(ctx, &out.UserGroups, false); diags.HasError() {
+	//TODO(ja) there must be a better way to do this, also I'm not checking a lot of things.
+	userGroups := make([]types.String, 0, len(in.UserGroups.Elements()))
+
+	if diags := in.UserGroups.ElementsAs(ctx, &userGroups, false); diags.HasError() {
 		return diags
+	}
+	for _, userGroup := range userGroups {
+		out.UserGroups = append(out.UserGroups, *pam.NewNamedObject().SetName(userGroup.ValueString()))
 	}
 	return nil
 }

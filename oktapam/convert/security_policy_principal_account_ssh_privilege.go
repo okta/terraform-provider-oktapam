@@ -11,10 +11,10 @@ import (
 // Begin SecurityPolicyPrincipalAccountSSH
 
 type SecurityPolicyPrincipalAccountSSHPrivilegeModel struct {
-	PrincipalAccountSSH   types.Bool         `tfsdk:"principal_account_ssh"`
-	AdminLevelPermissions types.Bool         `tfsdk:"admin_level_permissions"`
-	SudoDisplayName       types.String       `tfsdk:"sudo_display_name"`
-	SudoCommandBundles    []NamedObjectModel `tfsdk:"sudo_command_bundles"`
+	PrincipalAccountSSH   types.Bool   `tfsdk:"principal_account_ssh"`
+	AdminLevelPermissions types.Bool   `tfsdk:"admin_level_permissions"`
+	SudoDisplayName       types.String `tfsdk:"sudo_display_name"`
+	SudoCommandBundles    []types.String/*NamedObject*/ `tfsdk:"sudo_command_bundles"`
 }
 
 func SecurityPolicyPrincipalAccountSSHPrivilegeFromSDKToModel(in *pam.SecurityPolicyPrincipalAccountSSHPrivilege, out *SecurityPolicyPrincipalAccountSSHPrivilegeModel) diag.Diagnostics {
