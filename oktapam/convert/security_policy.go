@@ -20,7 +20,7 @@ type SecurityPolicyResourceModel struct {
 	Description types.String                  `tfsdk:"description"`
 	Active      types.Bool                    `tfsdk:"active"`
 	Principals  SecurityPolicyPrincipalsModel `tfsdk:"principals"`
-	Rules       []SecurityPolicyRuleModel     `tfsdk:"rule"` // openapi field: rules
+	Rules       []SecurityPolicyRuleModel     `tfsdk:"rules"`
 }
 
 func SecurityPolicySchema() map[string]schema.Attribute {
