@@ -14,19 +14,19 @@ import (
 )
 
 func TestProvider(t *testing.T) {
-	if err := Provider().InternalValidate(); err != nil {
+	if err := V5Provider(nil).InternalValidate(); err != nil {
 		t.Fatalf("err: %s", err)
 	}
 }
 func TestProvider_impl(t *testing.T) {
-	var _ *schema.Provider = Provider()
+	var _ *schema.Provider = V5Provider(nil)
 }
 
 // testAccV6ProviderFactories is used to instantiate a provider during acceptance testing. The factory function is
 // invoked for every TF CLI command executed to create a provider server to which the CLI can reattach.
 func testAccV6ProviderFactories() map[string]func() (tfprotov6.ProviderServer, error) {
 	// this is used in acceptance test
-	serverFactory, err := V6ProviderServerFactory(context.Background())
+	serverFactory, err := ProviderServerFactory(context.Background(), nil)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -10,9 +10,18 @@ import (
 	"github.com/hashicorp/terraform-plugin-mux/tf6muxserver"
 )
 
-func V6ProviderServerFactory(ctx context.Context) (func() tfprotov6.ProviderServer, error) {
-	v5Provider := Provider()
-	v6Provider := New()()
+type ProviderServerConfig struct {
+	V5ClientCreator V5ClientCreator
+	V6ClientCreator V6ClientCreator
+}
+
+// ProviderServerFactory provides a muxed V5 and V6 provider.
+func ProviderServerFactory(ctx context.Context, config *ProviderServerConfig) (func() tfprotov6.ProviderServer, error) {
+	if config == nil {
+		config = &ProviderServerConfig{}
+	}
+	v5Provider := V5Provider(config.V5ClientCreator)
+	v6Provider := V6Provider(config.V6ClientCreator)
 	// SDKV2 used for tf plugin development is designed for maintaining tf plugins that are compatible with Plugin
 	// Protocol version 5. Plugins need to communicate with Terraform CLI, protocol version 5 is supported by CLI version
 	// 0.12 and later. Protocol version 6 support tf cli version 1.0 or later.

@@ -18,6 +18,7 @@ require (
 	github.com/hashicorp/terraform-plugin-mux v0.17.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.34.0
 	github.com/hashicorp/terraform-plugin-testing v1.10.0
+	github.com/jarcoal/httpmock v1.3.1
 	github.com/kylelemons/godebug v1.1.0
 	github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80
 	gopkg.in/square/go-jose.v2 v2.6.0
