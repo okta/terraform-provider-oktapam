@@ -20,20 +20,25 @@ var _ MappedNullable = &ConditionsAccessRequests{}
 
 // ConditionsAccessRequests Identifies an existing Request Type in Access Requests
 type ConditionsAccessRequests struct {
+	Type string `json:"_type"`
 	// The ID for a specific Request Type
-	RequestTypeId *string `json:"request_type_id,omitempty"`
+	RequestTypeId string `json:"request_type_id"`
 	// The name of a specific Request Type
-	RequestTypeName *string `json:"request_type_name,omitempty"`
+	RequestTypeName string `json:"request_type_name"`
 	// The number of seconds the approval remains valid
-	ExpiresAfterSeconds *int32 `json:"expires_after_seconds,omitempty"`
+	ExpiresAfterSeconds int32 `json:"expires_after_seconds"`
 }
 
 // NewConditionsAccessRequests instantiates a new ConditionsAccessRequests object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewConditionsAccessRequests() *ConditionsAccessRequests {
+func NewConditionsAccessRequests(type_ string, requestTypeId string, requestTypeName string, expiresAfterSeconds int32) *ConditionsAccessRequests {
 	this := ConditionsAccessRequests{}
+	this.Type = type_
+	this.RequestTypeId = requestTypeId
+	this.RequestTypeName = requestTypeName
+	this.ExpiresAfterSeconds = expiresAfterSeconds
 	return &this
 }
 
@@ -45,102 +50,103 @@ func NewConditionsAccessRequestsWithDefaults() *ConditionsAccessRequests {
 	return &this
 }
 
-// GetRequestTypeId returns the RequestTypeId field value if set, zero value otherwise.
-func (o *ConditionsAccessRequests) GetRequestTypeId() string {
-	if o == nil || IsNil(o.RequestTypeId) {
+// GetType returns the Type field value
+func (o *ConditionsAccessRequests) GetType() string {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.RequestTypeId
+
+	return o.Type
 }
 
-// GetRequestTypeIdOk returns a tuple with the RequestTypeId field value if set, nil otherwise
+// GetTypeOk returns a tuple with the Type field value
+// and a boolean to check if the value has been set.
+func (o *ConditionsAccessRequests) GetTypeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Type, true
+}
+
+// SetType sets field value
+func (o *ConditionsAccessRequests) SetType(v string) *ConditionsAccessRequests {
+	o.Type = v
+	return o
+}
+
+// GetRequestTypeId returns the RequestTypeId field value
+func (o *ConditionsAccessRequests) GetRequestTypeId() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.RequestTypeId
+}
+
+// GetRequestTypeIdOk returns a tuple with the RequestTypeId field value
 // and a boolean to check if the value has been set.
 func (o *ConditionsAccessRequests) GetRequestTypeIdOk() (*string, bool) {
-	if o == nil || IsNil(o.RequestTypeId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.RequestTypeId, true
+	return &o.RequestTypeId, true
 }
 
-// HasRequestTypeId returns a boolean if a field has been set.
-func (o *ConditionsAccessRequests) HasRequestTypeId() bool {
-	if o != nil && !IsNil(o.RequestTypeId) {
-		return true
-	}
-
-	return false
-}
-
-// SetRequestTypeId gets a reference to the given string and assigns it to the RequestTypeId field.
+// SetRequestTypeId sets field value
 func (o *ConditionsAccessRequests) SetRequestTypeId(v string) *ConditionsAccessRequests {
-	o.RequestTypeId = &v
+	o.RequestTypeId = v
 	return o
 }
 
-// GetRequestTypeName returns the RequestTypeName field value if set, zero value otherwise.
+// GetRequestTypeName returns the RequestTypeName field value
 func (o *ConditionsAccessRequests) GetRequestTypeName() string {
-	if o == nil || IsNil(o.RequestTypeName) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.RequestTypeName
+
+	return o.RequestTypeName
 }
 
-// GetRequestTypeNameOk returns a tuple with the RequestTypeName field value if set, nil otherwise
+// GetRequestTypeNameOk returns a tuple with the RequestTypeName field value
 // and a boolean to check if the value has been set.
 func (o *ConditionsAccessRequests) GetRequestTypeNameOk() (*string, bool) {
-	if o == nil || IsNil(o.RequestTypeName) {
+	if o == nil {
 		return nil, false
 	}
-	return o.RequestTypeName, true
+	return &o.RequestTypeName, true
 }
 
-// HasRequestTypeName returns a boolean if a field has been set.
-func (o *ConditionsAccessRequests) HasRequestTypeName() bool {
-	if o != nil && !IsNil(o.RequestTypeName) {
-		return true
-	}
-
-	return false
-}
-
-// SetRequestTypeName gets a reference to the given string and assigns it to the RequestTypeName field.
+// SetRequestTypeName sets field value
 func (o *ConditionsAccessRequests) SetRequestTypeName(v string) *ConditionsAccessRequests {
-	o.RequestTypeName = &v
+	o.RequestTypeName = v
 	return o
 }
 
-// GetExpiresAfterSeconds returns the ExpiresAfterSeconds field value if set, zero value otherwise.
+// GetExpiresAfterSeconds returns the ExpiresAfterSeconds field value
 func (o *ConditionsAccessRequests) GetExpiresAfterSeconds() int32 {
-	if o == nil || IsNil(o.ExpiresAfterSeconds) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.ExpiresAfterSeconds
+
+	return o.ExpiresAfterSeconds
 }
 
-// GetExpiresAfterSecondsOk returns a tuple with the ExpiresAfterSeconds field value if set, nil otherwise
+// GetExpiresAfterSecondsOk returns a tuple with the ExpiresAfterSeconds field value
 // and a boolean to check if the value has been set.
 func (o *ConditionsAccessRequests) GetExpiresAfterSecondsOk() (*int32, bool) {
-	if o == nil || IsNil(o.ExpiresAfterSeconds) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ExpiresAfterSeconds, true
+	return &o.ExpiresAfterSeconds, true
 }
 
-// HasExpiresAfterSeconds returns a boolean if a field has been set.
-func (o *ConditionsAccessRequests) HasExpiresAfterSeconds() bool {
-	if o != nil && !IsNil(o.ExpiresAfterSeconds) {
-		return true
-	}
-
-	return false
-}
-
-// SetExpiresAfterSeconds gets a reference to the given int32 and assigns it to the ExpiresAfterSeconds field.
+// SetExpiresAfterSeconds sets field value
 func (o *ConditionsAccessRequests) SetExpiresAfterSeconds(v int32) *ConditionsAccessRequests {
-	o.ExpiresAfterSeconds = &v
+	o.ExpiresAfterSeconds = v
 	return o
 }
 
@@ -154,15 +160,10 @@ func (o ConditionsAccessRequests) MarshalJSON() ([]byte, error) {
 
 func (o ConditionsAccessRequests) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.RequestTypeId) {
-		toSerialize["request_type_id"] = o.RequestTypeId
-	}
-	if !IsNil(o.RequestTypeName) {
-		toSerialize["request_type_name"] = o.RequestTypeName
-	}
-	if !IsNil(o.ExpiresAfterSeconds) {
-		toSerialize["expires_after_seconds"] = o.ExpiresAfterSeconds
-	}
+	toSerialize["_type"] = o.Type
+	toSerialize["request_type_id"] = o.RequestTypeId
+	toSerialize["request_type_name"] = o.RequestTypeName
+	toSerialize["expires_after_seconds"] = o.ExpiresAfterSeconds
 	return toSerialize, nil
 }
 

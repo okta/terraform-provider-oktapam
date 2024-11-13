@@ -20,7 +20,8 @@ var _ MappedNullable = &SelectorIndividualServerAccount{}
 
 // SelectorIndividualServerAccount This resource selector identifies a specific user account that exists on a specific enrolled server
 type SelectorIndividualServerAccount struct {
-	ServerId *NamedObject `json:"server_id,omitempty"`
+	Type   string      `json:"_type"`
+	Server NamedObject `json:"server"`
 	// A server account that exists on the Server
 	Username *string `json:"username,omitempty"`
 }
@@ -29,8 +30,10 @@ type SelectorIndividualServerAccount struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSelectorIndividualServerAccount() *SelectorIndividualServerAccount {
+func NewSelectorIndividualServerAccount(type_ string, server NamedObject) *SelectorIndividualServerAccount {
 	this := SelectorIndividualServerAccount{}
+	this.Type = type_
+	this.Server = server
 	return &this
 }
 
@@ -42,36 +45,53 @@ func NewSelectorIndividualServerAccountWithDefaults() *SelectorIndividualServerA
 	return &this
 }
 
-// GetServerId returns the ServerId field value if set, zero value otherwise.
-func (o *SelectorIndividualServerAccount) GetServerId() NamedObject {
-	if o == nil || IsNil(o.ServerId) {
+// GetType returns the Type field value
+func (o *SelectorIndividualServerAccount) GetType() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.Type
+}
+
+// GetTypeOk returns a tuple with the Type field value
+// and a boolean to check if the value has been set.
+func (o *SelectorIndividualServerAccount) GetTypeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Type, true
+}
+
+// SetType sets field value
+func (o *SelectorIndividualServerAccount) SetType(v string) *SelectorIndividualServerAccount {
+	o.Type = v
+	return o
+}
+
+// GetServer returns the Server field value
+func (o *SelectorIndividualServerAccount) GetServer() NamedObject {
+	if o == nil {
 		var ret NamedObject
 		return ret
 	}
-	return *o.ServerId
+
+	return o.Server
 }
 
-// GetServerIdOk returns a tuple with the ServerId field value if set, nil otherwise
+// GetServerOk returns a tuple with the Server field value
 // and a boolean to check if the value has been set.
-func (o *SelectorIndividualServerAccount) GetServerIdOk() (*NamedObject, bool) {
-	if o == nil || IsNil(o.ServerId) {
+func (o *SelectorIndividualServerAccount) GetServerOk() (*NamedObject, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ServerId, true
+	return &o.Server, true
 }
 
-// HasServerId returns a boolean if a field has been set.
-func (o *SelectorIndividualServerAccount) HasServerId() bool {
-	if o != nil && !IsNil(o.ServerId) {
-		return true
-	}
-
-	return false
-}
-
-// SetServerId gets a reference to the given NamedObject and assigns it to the ServerId field.
-func (o *SelectorIndividualServerAccount) SetServerId(v NamedObject) *SelectorIndividualServerAccount {
-	o.ServerId = &v
+// SetServer sets field value
+func (o *SelectorIndividualServerAccount) SetServer(v NamedObject) *SelectorIndividualServerAccount {
+	o.Server = v
 	return o
 }
 
@@ -118,9 +138,8 @@ func (o SelectorIndividualServerAccount) MarshalJSON() ([]byte, error) {
 
 func (o SelectorIndividualServerAccount) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.ServerId) {
-		toSerialize["server_id"] = o.ServerId
-	}
+	toSerialize["_type"] = o.Type
+	toSerialize["server"] = o.Server
 	if !IsNil(o.Username) {
 		toSerialize["username"] = o.Username
 	}

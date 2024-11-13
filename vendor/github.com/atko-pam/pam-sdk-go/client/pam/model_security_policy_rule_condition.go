@@ -47,58 +47,86 @@ func ConditionsMFAAsSecurityPolicyRuleCondition(v *ConditionsMFA) SecurityPolicy
 // Unmarshal JSON data into one of the pointers in the struct
 func (dst *SecurityPolicyRuleCondition) UnmarshalJSON(data []byte) error {
 	var err error
-	match := 0
-	// try to unmarshal data into ConditionsAccessRequests
-	err = json.Unmarshal(data, &dst.ConditionsAccessRequests)
-	if err == nil {
-		jsonConditionsAccessRequests, _ := json.Marshal(dst.ConditionsAccessRequests)
-		if string(jsonConditionsAccessRequests) == "{}" { // empty struct
+	// use discriminator value to speed up the lookup
+	var jsonDict map[string]interface{}
+	err = newStrictDecoder(data).Decode(&jsonDict)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal JSON into map for the discriminator lookup")
+	}
+
+	// check if the discriminator value is 'ConditionsAccessRequests'
+	if jsonDict["_type"] == "ConditionsAccessRequests" {
+		// try to unmarshal JSON data into ConditionsAccessRequests
+		err = json.Unmarshal(data, &dst.ConditionsAccessRequests)
+		if err == nil {
+			return nil // data stored in dst.ConditionsAccessRequests, return on the first match
+		} else {
 			dst.ConditionsAccessRequests = nil
-		} else {
-			match++
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleCondition as ConditionsAccessRequests: %s", err.Error())
 		}
-	} else {
-		dst.ConditionsAccessRequests = nil
 	}
 
-	// try to unmarshal data into ConditionsGateway
-	err = json.Unmarshal(data, &dst.ConditionsGateway)
-	if err == nil {
-		jsonConditionsGateway, _ := json.Marshal(dst.ConditionsGateway)
-		if string(jsonConditionsGateway) == "{}" { // empty struct
+	// check if the discriminator value is 'ConditionsGateway'
+	if jsonDict["_type"] == "ConditionsGateway" {
+		// try to unmarshal JSON data into ConditionsGateway
+		err = json.Unmarshal(data, &dst.ConditionsGateway)
+		if err == nil {
+			return nil // data stored in dst.ConditionsGateway, return on the first match
+		} else {
 			dst.ConditionsGateway = nil
-		} else {
-			match++
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleCondition as ConditionsGateway: %s", err.Error())
 		}
-	} else {
-		dst.ConditionsGateway = nil
 	}
 
-	// try to unmarshal data into ConditionsMFA
-	err = json.Unmarshal(data, &dst.ConditionsMFA)
-	if err == nil {
-		jsonConditionsMFA, _ := json.Marshal(dst.ConditionsMFA)
-		if string(jsonConditionsMFA) == "{}" { // empty struct
+	// check if the discriminator value is 'ConditionsMFA'
+	if jsonDict["_type"] == "ConditionsMFA" {
+		// try to unmarshal JSON data into ConditionsMFA
+		err = json.Unmarshal(data, &dst.ConditionsMFA)
+		if err == nil {
+			return nil // data stored in dst.ConditionsMFA, return on the first match
+		} else {
 			dst.ConditionsMFA = nil
-		} else {
-			match++
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleCondition as ConditionsMFA: %s", err.Error())
 		}
-	} else {
-		dst.ConditionsMFA = nil
 	}
 
-	if match > 1 { // more than 1 match
-		// reset to nil
-		dst.ConditionsAccessRequests = nil
-		dst.ConditionsGateway = nil
-		dst.ConditionsMFA = nil
-
-		return fmt.Errorf("data matches more than one schema in oneOf(SecurityPolicyRuleCondition)")
-	} else if match == 1 {
-		return nil // exactly one match
-	} else { // no match
-		return fmt.Errorf("data failed to match schemas in oneOf(SecurityPolicyRuleCondition)")
+	// check if the discriminator value is 'access_request'
+	if jsonDict["_type"] == "access_request" {
+		// try to unmarshal JSON data into ConditionsAccessRequests
+		err = json.Unmarshal(data, &dst.ConditionsAccessRequests)
+		if err == nil {
+			return nil // data stored in dst.ConditionsAccessRequests, return on the first match
+		} else {
+			dst.ConditionsAccessRequests = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleCondition as ConditionsAccessRequests: %s", err.Error())
+		}
 	}
+
+	// check if the discriminator value is 'gateway'
+	if jsonDict["_type"] == "gateway" {
+		// try to unmarshal JSON data into ConditionsGateway
+		err = json.Unmarshal(data, &dst.ConditionsGateway)
+		if err == nil {
+			return nil // data stored in dst.ConditionsGateway, return on the first match
+		} else {
+			dst.ConditionsGateway = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleCondition as ConditionsGateway: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'mfa'
+	if jsonDict["_type"] == "mfa" {
+		// try to unmarshal JSON data into ConditionsMFA
+		err = json.Unmarshal(data, &dst.ConditionsMFA)
+		if err == nil {
+			return nil // data stored in dst.ConditionsMFA, return on the first match
+		} else {
+			dst.ConditionsMFA = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleCondition as ConditionsMFA: %s", err.Error())
+		}
+	}
+
+	return nil
 }
 
 // Marshal data from the first non-nil pointers in the struct to JSON

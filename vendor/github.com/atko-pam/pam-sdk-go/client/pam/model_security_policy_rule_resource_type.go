@@ -20,12 +20,18 @@ type SecurityPolicyRuleResourceType string
 
 // List of SecurityPolicyRuleResourceType
 const (
-	SecurityPolicyRuleResourceType_SERVER_BASED_RESOURCE SecurityPolicyRuleResourceType = "server_based_resource"
+	SecurityPolicyRuleResourceType_SERVER_BASED_RESOURCE             SecurityPolicyRuleResourceType = "server_based_resource"
+	SecurityPolicyRuleResourceType_MANAGED_SAAS_APP_BASED_RESOURCE   SecurityPolicyRuleResourceType = "managed_saas_app_based_resource"
+	SecurityPolicyRuleResourceType_UNMANAGED_SAAS_APP_BASED_RESOURCE SecurityPolicyRuleResourceType = "unmanaged_saas_app_based_resource"
+	SecurityPolicyRuleResourceType_ACTIVE_DIRECTORY_BASED_RESOURCE   SecurityPolicyRuleResourceType = "active_directory_based_resource"
 )
 
 // All allowed values of SecurityPolicyRuleResourceType enum
 var AllowedSecurityPolicyRuleResourceTypeEnumValues = []SecurityPolicyRuleResourceType{
 	"server_based_resource",
+	"managed_saas_app_based_resource",
+	"unmanaged_saas_app_based_resource",
+	"active_directory_based_resource",
 }
 
 func (v *SecurityPolicyRuleResourceType) UnmarshalJSON(src []byte) error {

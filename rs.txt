@@ -1,0 +1,20 @@
+rules = [{
+  resource_selector = {
+	server_based_resource = {
+		selectors = {
+			selector = {
+				server_label = {
+					server_selector = {
+						"system.os" = "linux"
+					}
+					account_selector = {
+						usernames = [ "pamadmin", "root" ]
+					}
+				}
+			}
+		}
+	}
+
+  }
+}]
+

@@ -20,7 +20,8 @@ var _ MappedNullable = &SelectorServerLabel{}
 
 // SelectorServerLabel This resource selector identifies every enrolled sever that includes a matching label
 type SelectorServerLabel struct {
-	ServerSelector      *SelectorServerLabelServerSelector      `json:"server_selector,omitempty"`
+	Type                string                                  `json:"_type"`
+	ServerSelector      SelectorServerLabelServerSelector       `json:"server_selector"`
 	AccountSelectorType *SelectorServerLabelAccountSelectorType `json:"account_selector_type,omitempty"`
 	AccountSelector     *SelectorServerLabelAccountSelector     `json:"account_selector,omitempty"`
 }
@@ -29,8 +30,10 @@ type SelectorServerLabel struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSelectorServerLabel() *SelectorServerLabel {
+func NewSelectorServerLabel(type_ string, serverSelector SelectorServerLabelServerSelector) *SelectorServerLabel {
 	this := SelectorServerLabel{}
+	this.Type = type_
+	this.ServerSelector = serverSelector
 	return &this
 }
 
@@ -42,36 +45,53 @@ func NewSelectorServerLabelWithDefaults() *SelectorServerLabel {
 	return &this
 }
 
-// GetServerSelector returns the ServerSelector field value if set, zero value otherwise.
+// GetType returns the Type field value
+func (o *SelectorServerLabel) GetType() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.Type
+}
+
+// GetTypeOk returns a tuple with the Type field value
+// and a boolean to check if the value has been set.
+func (o *SelectorServerLabel) GetTypeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Type, true
+}
+
+// SetType sets field value
+func (o *SelectorServerLabel) SetType(v string) *SelectorServerLabel {
+	o.Type = v
+	return o
+}
+
+// GetServerSelector returns the ServerSelector field value
 func (o *SelectorServerLabel) GetServerSelector() SelectorServerLabelServerSelector {
-	if o == nil || IsNil(o.ServerSelector) {
+	if o == nil {
 		var ret SelectorServerLabelServerSelector
 		return ret
 	}
-	return *o.ServerSelector
+
+	return o.ServerSelector
 }
 
-// GetServerSelectorOk returns a tuple with the ServerSelector field value if set, nil otherwise
+// GetServerSelectorOk returns a tuple with the ServerSelector field value
 // and a boolean to check if the value has been set.
 func (o *SelectorServerLabel) GetServerSelectorOk() (*SelectorServerLabelServerSelector, bool) {
-	if o == nil || IsNil(o.ServerSelector) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ServerSelector, true
+	return &o.ServerSelector, true
 }
 
-// HasServerSelector returns a boolean if a field has been set.
-func (o *SelectorServerLabel) HasServerSelector() bool {
-	if o != nil && !IsNil(o.ServerSelector) {
-		return true
-	}
-
-	return false
-}
-
-// SetServerSelector gets a reference to the given SelectorServerLabelServerSelector and assigns it to the ServerSelector field.
+// SetServerSelector sets field value
 func (o *SelectorServerLabel) SetServerSelector(v SelectorServerLabelServerSelector) *SelectorServerLabel {
-	o.ServerSelector = &v
+	o.ServerSelector = v
 	return o
 }
 
@@ -151,9 +171,8 @@ func (o SelectorServerLabel) MarshalJSON() ([]byte, error) {
 
 func (o SelectorServerLabel) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.ServerSelector) {
-		toSerialize["server_selector"] = o.ServerSelector
-	}
+	toSerialize["_type"] = o.Type
+	toSerialize["server_selector"] = o.ServerSelector
 	if !IsNil(o.AccountSelectorType) {
 		toSerialize["account_selector_type"] = o.AccountSelectorType
 	}

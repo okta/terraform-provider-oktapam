@@ -39,7 +39,7 @@ func SecurityPolicySchema() map[string]schema.Attribute {
 			Optional: true,
 		},
 		"active": schema.BoolAttribute{
-			Optional: true,
+			Required: true,
 		},
 		"principals": SecurityPolicyPrincipalsSchema(),
 		"rules":      SecurityPolicyRulesSchema(),
@@ -52,7 +52,7 @@ func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourc
 	out.Id = in.ID.ValueStringPointer()
 	out.Name = in.Name.ValueString()
 	//TODO(ja) - Type
-	out.Description = in.Description.ValueString()
+	out.Description = in.Description.ValueStringPointer()
 	out.Active = in.Active.ValueBool()
 
 	if diags := SecurityPolicyPrincipalFromModelToSDK(ctx, &in.Principals, &out.Principals); diags.HasError() {
@@ -66,7 +66,7 @@ func SecurityPolicyFromSDKToModel(ctx context.Context, in *pam.SecurityPolicy, o
 	out.ID = types.StringPointerValue(in.Id)
 	out.Name = types.StringValue(in.Name)
 	//TODO(ja) - Type
-	out.Description = types.StringValue(in.Description)
+	out.Description = types.StringPointerValue(in.Description)
 	out.Active = types.BoolValue(in.Active)
 
 	if diags := SecurityPolicyPrincipalFromSDKToModel(ctx, &in.Principals, &out.Principals); diags.HasError() {

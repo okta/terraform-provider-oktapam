@@ -24,362 +24,6 @@ import (
 // ActiveDirectoryConnectionAPIService ActiveDirectoryConnectionAPI service
 type ActiveDirectoryConnectionAPIService service
 
-type ApiCreateActiveDirectoryConnectionRequest struct {
-	ctx                              context.Context
-	ApiService                       *ActiveDirectoryConnectionAPIService
-	teamName                         string
-	activeDirectoryConnectionRequest *ActiveDirectoryConnectionRequest
-}
-
-func (r ApiCreateActiveDirectoryConnectionRequest) ActiveDirectoryConnectionRequest(activeDirectoryConnectionRequest ActiveDirectoryConnectionRequest) ApiCreateActiveDirectoryConnectionRequest {
-	r.activeDirectoryConnectionRequest = &activeDirectoryConnectionRequest
-	return r
-}
-
-func (r ApiCreateActiveDirectoryConnectionRequest) Execute() (*ActiveDirectoryConnectionResponse, *http.Response, error) {
-	return r.ApiService.CreateActiveDirectoryConnectionExecute(r)
-}
-
-/*
-	CreateActiveDirectoryConnection Create an Active Directory connection
-
-	    Creates an Active Directory connection.
-
-This endpoint requires the following role: `resource_admin`.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiCreateActiveDirectoryConnectionRequest
-*/
-func (a *ActiveDirectoryConnectionAPIService) CreateActiveDirectoryConnection(ctx context.Context, teamName string) ApiCreateActiveDirectoryConnectionRequest {
-	return ApiCreateActiveDirectoryConnectionRequest{
-		ApiService: a,
-		ctx:        ctx,
-		teamName:   teamName,
-	}
-}
-
-// Execute executes the request
-//
-//	@return ActiveDirectoryConnectionResponse
-func (a *ActiveDirectoryConnectionAPIService) CreateActiveDirectoryConnectionExecute(r ApiCreateActiveDirectoryConnectionRequest) (*ActiveDirectoryConnectionResponse, *http.Response, error) {
-	var (
-		traceKey            = "activedirectoryconnectionapi.createActiveDirectoryConnection"
-		localVarHTTPMethod  = http.MethodPost
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *ActiveDirectoryConnectionResponse
-	)
-
-	localVarPath := "/v1/teams/{team_name}/connections/active_directory"
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.activeDirectoryConnectionRequest == nil {
-		return localVarReturnValue, nil, reportError("activeDirectoryConnectionRequest is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	// body params
-	localVarPostBody = r.activeDirectoryConnectionRequest
-	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
-
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	if localVarHTTPResponse.StatusCode == 401 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v UnauthorizedAccessResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
-	}
-	if localVarHTTPResponse.StatusCode == 404 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v NotFoundResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, err
-}
-
-type ApiCreateActiveDirectoryConnectionTestRequest struct {
-	ctx                              context.Context
-	ApiService                       *ActiveDirectoryConnectionAPIService
-	teamName                         string
-	activeDirectoryConnectionRequest *ActiveDirectoryConnectionRequest
-}
-
-func (r ApiCreateActiveDirectoryConnectionTestRequest) ActiveDirectoryConnectionRequest(activeDirectoryConnectionRequest ActiveDirectoryConnectionRequest) ApiCreateActiveDirectoryConnectionTestRequest {
-	r.activeDirectoryConnectionRequest = &activeDirectoryConnectionRequest
-	return r
-}
-
-func (r ApiCreateActiveDirectoryConnectionTestRequest) Execute() (*ActiveDirectoryConnectionCheckResponse, *http.Response, error) {
-	return r.ApiService.CreateActiveDirectoryConnectionTestExecute(r)
-}
-
-/*
-	CreateActiveDirectoryConnectionTest Create an Active Directory connection test
-
-	    Create an Active Directory connection test.
-
-This endpoint requires the following role: `resource_admin`.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiCreateActiveDirectoryConnectionTestRequest
-*/
-func (a *ActiveDirectoryConnectionAPIService) CreateActiveDirectoryConnectionTest(ctx context.Context, teamName string) ApiCreateActiveDirectoryConnectionTestRequest {
-	return ApiCreateActiveDirectoryConnectionTestRequest{
-		ApiService: a,
-		ctx:        ctx,
-		teamName:   teamName,
-	}
-}
-
-// Execute executes the request
-//
-//	@return ActiveDirectoryConnectionCheckResponse
-func (a *ActiveDirectoryConnectionAPIService) CreateActiveDirectoryConnectionTestExecute(r ApiCreateActiveDirectoryConnectionTestRequest) (*ActiveDirectoryConnectionCheckResponse, *http.Response, error) {
-	var (
-		traceKey            = "activedirectoryconnectionapi.createActiveDirectoryConnectionTest"
-		localVarHTTPMethod  = http.MethodPost
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *ActiveDirectoryConnectionCheckResponse
-	)
-
-	localVarPath := "/v1/teams/{team_name}/connections/active_directory_check"
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.activeDirectoryConnectionRequest == nil {
-		return localVarReturnValue, nil, reportError("activeDirectoryConnectionRequest is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	// body params
-	localVarPostBody = r.activeDirectoryConnectionRequest
-	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
-
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	if localVarHTTPResponse.StatusCode == 401 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v UnauthorizedAccessResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
-	}
-	if localVarHTTPResponse.StatusCode == 404 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v NotFoundResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, err
-}
-
-type ApiDeleteActiveDirectoryConnectionRequest struct {
-	ctx            context.Context
-	ApiService     *ActiveDirectoryConnectionAPIService
-	teamName       string
-	adConnectionId string
-}
-
-func (r ApiDeleteActiveDirectoryConnectionRequest) Execute() (*http.Response, error) {
-	return r.ApiService.DeleteActiveDirectoryConnectionExecute(r)
-}
-
-/*
-DeleteActiveDirectoryConnection Delete a Active Directory connection
-
-	Deletes a Active Directory connection specified by ID
-
-@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-
-	@param teamName The name of your Team
-	@param adConnectionId The UUID of a Active Directory Connection
-
-@return ApiDeleteActiveDirectoryConnectionRequest
-*/
-func (a *ActiveDirectoryConnectionAPIService) DeleteActiveDirectoryConnection(ctx context.Context, teamName string, adConnectionId string) ApiDeleteActiveDirectoryConnectionRequest {
-	return ApiDeleteActiveDirectoryConnectionRequest{
-		ApiService:     a,
-		ctx:            ctx,
-		teamName:       teamName,
-		adConnectionId: adConnectionId,
-	}
-}
-
-// Execute executes the request
-func (a *ActiveDirectoryConnectionAPIService) DeleteActiveDirectoryConnectionExecute(r ApiDeleteActiveDirectoryConnectionRequest) (*http.Response, error) {
-	var (
-		traceKey           = "activedirectoryconnectionapi.deleteActiveDirectoryConnection"
-		localVarHTTPMethod = http.MethodDelete
-		localVarPostBody   interface{}
-		formFiles          []formFile
-	)
-
-	localVarPath := "/v1/teams/{team_name}/connections/active_directory/{ad_connection_id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"ad_connection_id"+"}", url.PathEscape(parameterValueToString(r.adConnectionId, "adConnectionId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
-
-	if localVarHTTPResponse == nil && err != nil {
-		return nil, err
-	}
-
-	if localVarHTTPResponse.StatusCode == 401 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return localVarHTTPResponse, err
-		}
-
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v UnauthorizedAccessResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return localVarHTTPResponse, nonDefaultResponse
-	}
-	if localVarHTTPResponse.StatusCode == 404 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return localVarHTTPResponse, err
-		}
-
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v NotFoundResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return localVarHTTPResponse, nonDefaultResponse
-	}
-
-	return localVarHTTPResponse, err
-}
-
 type ApiGetActiveDirectoryConnectionRequest struct {
 	ctx            context.Context
 	ApiService     *ActiveDirectoryConnectionAPIService
@@ -387,7 +31,7 @@ type ApiGetActiveDirectoryConnectionRequest struct {
 	adConnectionId string
 }
 
-func (r ApiGetActiveDirectoryConnectionRequest) Execute() (*ActiveDirectoryConnectionResponse, *http.Response, error) {
+func (r ApiGetActiveDirectoryConnectionRequest) Execute() (*ActiveDirectoryConnection, *http.Response, error) {
 	return r.ApiService.GetActiveDirectoryConnectionExecute(r)
 }
 
@@ -414,134 +58,19 @@ func (a *ActiveDirectoryConnectionAPIService) GetActiveDirectoryConnection(ctx c
 
 // Execute executes the request
 //
-//	@return ActiveDirectoryConnectionResponse
-func (a *ActiveDirectoryConnectionAPIService) GetActiveDirectoryConnectionExecute(r ApiGetActiveDirectoryConnectionRequest) (*ActiveDirectoryConnectionResponse, *http.Response, error) {
+//	@return ActiveDirectoryConnection
+func (a *ActiveDirectoryConnectionAPIService) GetActiveDirectoryConnectionExecute(r ApiGetActiveDirectoryConnectionRequest) (*ActiveDirectoryConnection, *http.Response, error) {
 	var (
 		traceKey            = "activedirectoryconnectionapi.getActiveDirectoryConnection"
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *ActiveDirectoryConnectionResponse
+		localVarReturnValue *ActiveDirectoryConnection
 	)
 
 	localVarPath := "/v1/teams/{team_name}/connections/active_directory/{ad_connection_id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"ad_connection_id"+"}", url.PathEscape(parameterValueToString(r.adConnectionId, "adConnectionId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
-
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	if localVarHTTPResponse.StatusCode == 401 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v UnauthorizedAccessResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
-	}
-	if localVarHTTPResponse.StatusCode == 404 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v NotFoundResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, err
-}
-
-type ApiGetActiveDirectoryConnectionTestRequest struct {
-	ctx                context.Context
-	ApiService         *ActiveDirectoryConnectionAPIService
-	teamName           string
-	adConnectionTestId string
-}
-
-func (r ApiGetActiveDirectoryConnectionTestRequest) Execute() (*ActiveDirectoryConnectionCheckResponse, *http.Response, error) {
-	return r.ApiService.GetActiveDirectoryConnectionTestExecute(r)
-}
-
-/*
-	GetActiveDirectoryConnectionTest Retrieve an Active Directory connection test
-
-	    Retrieves an Active Directory connection test.
-
-This endpoint requires the following role: `resource_admin`.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param adConnectionTestId The UUID for an Active Directory connection test
-	@return ApiGetActiveDirectoryConnectionTestRequest
-*/
-func (a *ActiveDirectoryConnectionAPIService) GetActiveDirectoryConnectionTest(ctx context.Context, teamName string, adConnectionTestId string) ApiGetActiveDirectoryConnectionTestRequest {
-	return ApiGetActiveDirectoryConnectionTestRequest{
-		ApiService:         a,
-		ctx:                ctx,
-		teamName:           teamName,
-		adConnectionTestId: adConnectionTestId,
-	}
-}
-
-// Execute executes the request
-//
-//	@return ActiveDirectoryConnectionCheckResponse
-func (a *ActiveDirectoryConnectionAPIService) GetActiveDirectoryConnectionTestExecute(r ApiGetActiveDirectoryConnectionTestRequest) (*ActiveDirectoryConnectionCheckResponse, *http.Response, error) {
-	var (
-		traceKey            = "activedirectoryconnectionapi.getActiveDirectoryConnectionTest"
-		localVarHTTPMethod  = http.MethodGet
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *ActiveDirectoryConnectionCheckResponse
-	)
-
-	localVarPath := "/v1/teams/{team_name}/connections/active_directory_check/{ad_connection_test_id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"ad_connection_test_id"+"}", url.PathEscape(parameterValueToString(r.adConnectionTestId, "adConnectionTestId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -844,37 +373,37 @@ func (a *ActiveDirectoryConnectionAPIService) RevealActiveDirectoryConnectionPas
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
-type ApiUpdateActiveDirectoryConnectionRequest struct {
-	ctx                              context.Context
-	ApiService                       *ActiveDirectoryConnectionAPIService
-	teamName                         string
-	adConnectionId                   string
-	activeDirectoryConnectionRequest *ActiveDirectoryConnectionRequest
+type ApiUpdateActiveDirectoryConnectionStatusRequest struct {
+	ctx                                          context.Context
+	ApiService                                   *ActiveDirectoryConnectionAPIService
+	teamName                                     string
+	adConnectionId                               string
+	updateActiveDirectoryConnectionStatusRequest *UpdateActiveDirectoryConnectionStatusRequest
 }
 
-func (r ApiUpdateActiveDirectoryConnectionRequest) ActiveDirectoryConnectionRequest(activeDirectoryConnectionRequest ActiveDirectoryConnectionRequest) ApiUpdateActiveDirectoryConnectionRequest {
-	r.activeDirectoryConnectionRequest = &activeDirectoryConnectionRequest
+func (r ApiUpdateActiveDirectoryConnectionStatusRequest) UpdateActiveDirectoryConnectionStatusRequest(updateActiveDirectoryConnectionStatusRequest UpdateActiveDirectoryConnectionStatusRequest) ApiUpdateActiveDirectoryConnectionStatusRequest {
+	r.updateActiveDirectoryConnectionStatusRequest = &updateActiveDirectoryConnectionStatusRequest
 	return r
 }
 
-func (r ApiUpdateActiveDirectoryConnectionRequest) Execute() (*http.Response, error) {
-	return r.ApiService.UpdateActiveDirectoryConnectionExecute(r)
+func (r ApiUpdateActiveDirectoryConnectionStatusRequest) Execute() (*http.Response, error) {
+	return r.ApiService.UpdateActiveDirectoryConnectionStatusExecute(r)
 }
 
 /*
-	UpdateActiveDirectoryConnection Update an Active Directory connection
+	UpdateActiveDirectoryConnectionStatus Update the status of an Active Directory connection
 
-	    Updates an Active Directory connection.
+	    Sets the status of an Active Directory connection to `connected` or `disconnected`. If the status is set to
 
-This endpoint requires the following role: `resource_admin`.
+`disconnected`, account assignment rules cannot be created for this connection.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	    @param teamName The name of your Team
 	    @param adConnectionId The UUID of a Active Directory Connection
-	@return ApiUpdateActiveDirectoryConnectionRequest
+	@return ApiUpdateActiveDirectoryConnectionStatusRequest
 */
-func (a *ActiveDirectoryConnectionAPIService) UpdateActiveDirectoryConnection(ctx context.Context, teamName string, adConnectionId string) ApiUpdateActiveDirectoryConnectionRequest {
-	return ApiUpdateActiveDirectoryConnectionRequest{
+func (a *ActiveDirectoryConnectionAPIService) UpdateActiveDirectoryConnectionStatus(ctx context.Context, teamName string, adConnectionId string) ApiUpdateActiveDirectoryConnectionStatusRequest {
+	return ApiUpdateActiveDirectoryConnectionStatusRequest{
 		ApiService:     a,
 		ctx:            ctx,
 		teamName:       teamName,
@@ -883,23 +412,23 @@ func (a *ActiveDirectoryConnectionAPIService) UpdateActiveDirectoryConnection(ct
 }
 
 // Execute executes the request
-func (a *ActiveDirectoryConnectionAPIService) UpdateActiveDirectoryConnectionExecute(r ApiUpdateActiveDirectoryConnectionRequest) (*http.Response, error) {
+func (a *ActiveDirectoryConnectionAPIService) UpdateActiveDirectoryConnectionStatusExecute(r ApiUpdateActiveDirectoryConnectionStatusRequest) (*http.Response, error) {
 	var (
-		traceKey           = "activedirectoryconnectionapi.updateActiveDirectoryConnection"
+		traceKey           = "activedirectoryconnectionapi.updateActiveDirectoryConnectionStatus"
 		localVarHTTPMethod = http.MethodPut
 		localVarPostBody   interface{}
 		formFiles          []formFile
 	)
 
-	localVarPath := "/v1/teams/{team_name}/connections/active_directory/{ad_connection_id}"
+	localVarPath := "/v1/teams/{team_name}/connections/active_directory/{ad_connection_id}/status"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"ad_connection_id"+"}", url.PathEscape(parameterValueToString(r.adConnectionId, "adConnectionId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
-	if r.activeDirectoryConnectionRequest == nil {
-		return nil, reportError("activeDirectoryConnectionRequest is required and must be specified")
+	if r.updateActiveDirectoryConnectionStatusRequest == nil {
+		return nil, reportError("updateActiveDirectoryConnectionStatusRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -920,7 +449,7 @@ func (a *ActiveDirectoryConnectionAPIService) UpdateActiveDirectoryConnectionExe
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.activeDirectoryConnectionRequest
+	localVarPostBody = r.updateActiveDirectoryConnectionStatusRequest
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
 	if localVarHTTPResponse == nil && err != nil {

@@ -10,66 +10,100 @@ import (
 )
 
 type SecurityPolicyRuleResourceSelectorModel struct {
-	Servers *SecurityPolicyRuleServerBasedResourceSelectorModel `tfsdk:"servers"`
-	//ManagedSaasApp   *SecurityPolicyRuleManagedSaasAppBasedResourceSelectorModel   `tfsdk:"managed_saas_app"`
-	//UnmanagedSaasApp *SecurityPolicyRuleUnmanagedSaasAppBasedResourceSelectorModel `tfsdk:"unmanaged_saas_app"`
-	//OktaApp          *SecurityPolicyRuleOktaAppBasedResourceSelectorModel          `tfsdk:"okta_app"`
+	Servers *SecurityPolicyRuleServerBasedResourceSelectorModel `tfsdk:"server_based_resource"`
+	//ManagedSaasApp   *SecurityPolicyRuleManagedSaasAppBasedResourceSelectorModel   `tfsdk:"managed_saas_app_based_resource"`
+	//UnmanagedSaasApp *SecurityPolicyRuleUnmanagedSaasAppBasedResourceSelectorModel `tfsdk:"unmanaged_saas_app_based_resource"`
+	//OktaApp          *SecurityPolicyRuleOktaAppBasedResourceSelectorModel          `tfsdk:"okta_app_based_resource"`
+	//Secret *SecurityPolicyRuleSecretBasedResourceSelectorModel `tfsdk:"secret_based_resource"`
+	//ActiveDirectory *SecurityPolicyRuleActiveDirectoryBasedResourceSelectorModel `tfsdk:"active_directory_based_resource"`
 }
 
 func SecurityPolicyRuleResourceSelectorSchema() schema.Attribute {
 	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
-			"servers": SecurityPolicyRuleServerBasedResourceSelectorSchema(), // server_based_resource
+			"server_based_resource": SecurityPolicyRuleServerBasedResourceSelectorSchema(), // server_based_resource
 			//"managed_saas_app":   SecurityPolicyRuleManagedSaasAppBasedResourceSelectorSchema(),
 			//"unmanaged_saas_app": SecurityPolicyRuleUnmanagedSaasAppBasedResourceSelectorSchema(),
 			//"okta_app":           SecurityPolicyRuleOktaAppBasedResourceSelectorSchema(),
+
 		},
 		Required: true,
 	}
 }
 
-func SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleResourceSelectorModel, out *pam.SecurityPolicyRuleResourceSelectorContainer) diag.Diagnostics {
+func SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleResourceSelectorModel, out *pam.SecurityPolicyRuleResourceSelector) diag.Diagnostics {
 	if in.Servers != nil {
-		SecurityPolicyRuleServerBasedResourceSelectorFromModelToSDK(ctx, in.Servers, out)
+		SecurityPolicyRuleServerBasedResourceSelectorFromModelToSDK(ctx, in.Servers, out.SecurityPolicyRuleServerBasedResourceSelector)
 	}
 	return nil
 }
 
+func SecurityPolicyRuleResourceSelectorFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRuleResourceSelector, out *SecurityPolicyRuleResourceSelectorModel) diag.Diagnostics {
+	// TODO(ja)
+	return nil
+}
+
 type SecurityPolicyRuleServerBasedResourceSelectorModel struct {
-	IndividualServer        *SelectorIndividualServerModel        `tfsdk:"individual_server"`
-	IndividualServerAccount *SelectorIndividualServerAccountModel `tfsdk:"individual_server_account"`
-	SelectorServerLabel     *SelectorServerLabelModel             `tfsdk:"server_label"` // TODO(ja) - this is "server_label" in the spec, but "server_labels" in _v1
+	Selectors types.List /*[]SecurityPolicyRuleServerBasedResourceSelectorContainerModel*/ `tfsdk:"selectors"`
 }
 
 func SecurityPolicyRuleServerBasedResourceSelectorSchema() schema.Attribute {
-	return schema.SingleNestedAttribute{ //TODO(ja) is array in spec
+	return schema.SingleNestedAttribute{
+		Attributes: map[string]schema.Attribute{
+			"selectors": schema.ListNestedAttribute{
+				NestedObject: SecurityPolicyRuleServerBasedResourceSelectorContainerSchema(),
+				Required:     true,
+			},
+		},
+		Required: true,
+	}
+}
+func SecurityPolicyRuleServerBasedResourceSelectorFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleServerBasedResourceSelectorModel, out *pam.SecurityPolicyRuleServerBasedResourceSelector) diag.Diagnostics {
+	//TODO(ja)
+	return nil
+}
+
+func SecurityPolicyRuleServerBasedResourceSelectorSchemaFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRuleServerBasedResourceSelector, out *SecurityPolicyRuleServerBasedResourceSelectorModel) diag.Diagnostics {
+	//TODO(ja)
+	return nil
+}
+
+type SecurityPolicyRuleServerBasedResourceSelectorContainerModel struct {
+	IndividualServer        *SelectorIndividualServerModel        `tfsdk:"individual_server"`
+	IndividualServerAccount *SelectorIndividualServerAccountModel `tfsdk:"individual_server_account"`
+	SelectorServerLabel     *SelectorServerLabelModel             `tfsdk:"server_label"`
+}
+
+func SecurityPolicyRuleServerBasedResourceSelectorContainerSchema() schema.NestedAttributeObject {
+	return schema.NestedAttributeObject{
 		Attributes: map[string]schema.Attribute{
 			"individual_server":         SelectorIndividualServerSchema(),
 			"individual_server_account": SelectorIndividualServerAccountSchema(),
-			"server_label":              SelectorServerLabelSchema(), // TODO(ja) - this is "server_label" in the spec, but "server_labels" in _v1
+			"server_label":              SelectorServerLabelSchema(),
 		},
-		Optional: true,
 	}
 }
+func SecurityPolicyRuleServerBasedResourceSelectorContainerFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRuleServerBasedResourceSelectorContainer, out *SecurityPolicyRuleServerBasedResourceSelectorContainerModel) diag.Diagnostics {
+	//TODO(ja)
+	return nil
+}
 
-func SecurityPolicyRuleServerBasedResourceSelectorFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleServerBasedResourceSelectorModel, out *pam.SecurityPolicyRuleResourceSelectorContainer) diag.Diagnostics {
-	out.Selector = &pam.SecurityPolicyRuleResourceSelector{}
-
-	var selectorType pam.SecurityPolicyRuleResourceSelectorType
+func SecurityPolicyRuleServerBasedResourceSelectorContainerFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleServerBasedResourceSelectorContainerModel, out *pam.SecurityPolicyRuleServerBasedResourceSelectorContainer) diag.Diagnostics {
+	var selectorType pam.SecurityPolicyRuleServerBasedResourceSubSelectorType
 
 	if in.IndividualServer != nil {
-		selectorType = pam.SecurityPolicyRuleResourceSelectorType_INDIVIDUAL_SERVER
+		selectorType = pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER
 		SelectorIndividualServerFromModelToSDK(ctx, in.IndividualServer, out.Selector.SelectorIndividualServer)
 	} else if in.IndividualServerAccount != nil {
-		selectorType = pam.SecurityPolicyRuleResourceSelectorType_INDIVIDUAL_SERVER_ACCOUNT
+		selectorType = pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER_ACCOUNT
 		SelectorIndividualServerAccountFromModelToSDK(ctx, in.IndividualServerAccount, out.Selector.SelectorIndividualServerAccount)
 	} else if in.SelectorServerLabel != nil {
-		selectorType = pam.SecurityPolicyRuleResourceSelectorType_SERVER_LABEL
+		selectorType = pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_SERVER_LABEL
 		SelectorServerLabelFromModelToSDK(ctx, in.SelectorServerLabel, out.Selector.SelectorServerLabel)
 	} else {
 		//TODO(ja) unhandled case
 	}
-	out.SelectorType = &selectorType
+	out.SelectorType = selectorType
 	return nil
 }
 
@@ -97,7 +131,7 @@ func SelectorIndividualServerFromSDKToModel(ctx context.Context, in *pam.Selecto
 
 func SelectorIndividualServerFromModelToSDK(ctx context.Context, in *SelectorIndividualServerModel, out *pam.SelectorIndividualServer) diag.Diagnostics {
 	if !in.Server.IsNull() {
-		out.Server = pam.NewNamedObject().SetId(in.Server.ValueString())
+		out.Server = *pam.NewNamedObject().SetId(in.Server.ValueString())
 	}
 	return nil
 }
@@ -117,11 +151,12 @@ func SelectorIndividualServerAccountSchema() schema.Attribute {
 	}
 }
 
-func SelectorIndividualServerAccountFromModelToSDK(ctx context.Context, in *SelectorIndividualServerAccountModel, out *pam.SelectorIndividualServerAccount) diag.Diagnostics {
+func SelectorIndividualServerAccountFromModelToSDK(_ context.Context, in *SelectorIndividualServerAccountModel, out *pam.SelectorIndividualServerAccount) diag.Diagnostics {
 	out.Username = in.Username.ValueStringPointer()
 	if !in.ServerId.IsNull() {
-		out.ServerId = pam.NewNamedObject().SetId(in.ServerId.ValueString())
+		out.Server = *pam.NewNamedObject().SetId(in.ServerId.ValueString())
 	}
+	out.Username = in.Username.ValueStringPointer()
 	return nil
 }
 

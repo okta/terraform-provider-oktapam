@@ -14,8 +14,9 @@ import (
 
 // language=Terraform
 const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_security_policy" {
-  name   = "tilt-security-policy"
-  active = true
+  name        = "tilt-security-policy"
+  description = "An example security policy for Tilt"
+  active      = true
   principals = {
     groups = ["user_group_id_1", "user_group_id_2"]
   }
@@ -24,18 +25,21 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
     {
       name = "linux server account and user level access"
       resources = {
-        servers = {
-          server_label = {
-            accounts = ["root", "pamadmin"]
-            server_selector = {
-              labels = {
-                "system.os_type" = "linux"
+        server_based_resource = {
+          selectors = [
+            {
+              server_label = {
+                accounts = ["root", "pamadmin"]
+                server_selector = {
+                  labels = {
+                    "system.os_type" = "linux"
+                  }
+                }
               }
             }
-          }
+          ]
         }
       }
-
 
       privileges = {
         password_checkout_ssh = {
@@ -52,14 +56,18 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
     {
       name = "linux server with sudo"
       resources = {
-        servers = {
-          server_label = {
-            server_selector = {
-              labels = {
-                "system.os_type" = "linux"
+        server_based_resource = {
+          selectors = [
+            {
+              server_label = {
+                server_selector = {
+                  labels = {
+                    "system.os_type" = "linux"
+                  }
+                }
               }
             }
-          }
+          ]
         }
       }
 
@@ -78,17 +86,22 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
     {
       name = "linux server account and admin level access"
       resources = {
-        servers = {
-          server_label = {
-            server_selector = {
-              labels = {
-                "system.os_type" = "linux"
+        server_based_resource = {
+          selectors = [
+            {
+              server_label = {
+                server_selector = {
+                  labels = {
+                    "system.os_type" = "linux"
+                  }
+                }
+                accounts = ["root", "pamadmin"]
               }
             }
-            accounts = ["root", "pamadmin"]
-          }
+          ]
         }
       }
+
       privileges = {
         password_checkout_ssh = {
           password_checkout_ssh = true
@@ -170,7 +183,8 @@ func setupHTTPMock(t *testing.T) {
 
 			body, _ := io.ReadAll(request.Body)
 			require.JSONEq(t, securityPolicyJSON, string(body))
-			return httpmock.NewJsonResponse(http.StatusCreated, pam.NewSecurityPolicy("name", "description", false, *pam.NewSecurityPolicyPrincipals(), nil).SetId("policy-id-1"))
+			return httpmock.NewJsonResponse(http.StatusCreated,
+				pam.NewSecurityPolicy("name", true, *pam.NewSecurityPolicyPrincipals(), nil).SetId("policy-id-1"))
 		},
 	)
 }

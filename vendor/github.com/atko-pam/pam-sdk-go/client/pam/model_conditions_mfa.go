@@ -20,6 +20,7 @@ var _ MappedNullable = &ConditionsMFA{}
 
 // ConditionsMFA Configures MFA requirements for the security policy
 type ConditionsMFA struct {
+	Type string `json:"_type"`
 	// Defines the number of seconds an MFA verification remains valid. After this time users need to reauthenticate before they can open new connections to resources. Defining a value of `0` requires users to authenticate for every connection.
 	ReAuthFrequencyInSeconds *int32                  `json:"re_auth_frequency_in_seconds,omitempty"`
 	AcrValues                *ConditionsMFAACRValues `json:"acr_values,omitempty"`
@@ -29,8 +30,9 @@ type ConditionsMFA struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewConditionsMFA() *ConditionsMFA {
+func NewConditionsMFA(type_ string) *ConditionsMFA {
 	this := ConditionsMFA{}
+	this.Type = type_
 	var reAuthFrequencyInSeconds int32 = 1800
 	this.ReAuthFrequencyInSeconds = &reAuthFrequencyInSeconds
 	return &this
@@ -44,6 +46,31 @@ func NewConditionsMFAWithDefaults() *ConditionsMFA {
 	var reAuthFrequencyInSeconds int32 = 1800
 	this.ReAuthFrequencyInSeconds = &reAuthFrequencyInSeconds
 	return &this
+}
+
+// GetType returns the Type field value
+func (o *ConditionsMFA) GetType() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.Type
+}
+
+// GetTypeOk returns a tuple with the Type field value
+// and a boolean to check if the value has been set.
+func (o *ConditionsMFA) GetTypeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Type, true
+}
+
+// SetType sets field value
+func (o *ConditionsMFA) SetType(v string) *ConditionsMFA {
+	o.Type = v
+	return o
 }
 
 // GetReAuthFrequencyInSeconds returns the ReAuthFrequencyInSeconds field value if set, zero value otherwise.
@@ -122,6 +149,7 @@ func (o ConditionsMFA) MarshalJSON() ([]byte, error) {
 
 func (o ConditionsMFA) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	toSerialize["_type"] = o.Type
 	if !IsNil(o.ReAuthFrequencyInSeconds) {
 		toSerialize["re_auth_frequency_in_seconds"] = o.ReAuthFrequencyInSeconds
 	}

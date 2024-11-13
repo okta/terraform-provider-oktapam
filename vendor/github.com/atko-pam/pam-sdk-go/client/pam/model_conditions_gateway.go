@@ -20,6 +20,7 @@ var _ MappedNullable = &ConditionsGateway{}
 
 // ConditionsGateway Configures traffic settings for an existing OPA Gateway
 type ConditionsGateway struct {
+	Type string `json:"_type"`
 	// Whether to forward traffic through an OPA Gateway
 	TrafficForwarding *bool `json:"traffic_forwarding,omitempty"`
 	// Whether to record sessions made through an OPA Gateway
@@ -30,8 +31,9 @@ type ConditionsGateway struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewConditionsGateway() *ConditionsGateway {
+func NewConditionsGateway(type_ string) *ConditionsGateway {
 	this := ConditionsGateway{}
+	this.Type = type_
 	return &this
 }
 
@@ -41,6 +43,31 @@ func NewConditionsGateway() *ConditionsGateway {
 func NewConditionsGatewayWithDefaults() *ConditionsGateway {
 	this := ConditionsGateway{}
 	return &this
+}
+
+// GetType returns the Type field value
+func (o *ConditionsGateway) GetType() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.Type
+}
+
+// GetTypeOk returns a tuple with the Type field value
+// and a boolean to check if the value has been set.
+func (o *ConditionsGateway) GetTypeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Type, true
+}
+
+// SetType sets field value
+func (o *ConditionsGateway) SetType(v string) *ConditionsGateway {
+	o.Type = v
+	return o
 }
 
 // GetTrafficForwarding returns the TrafficForwarding field value if set, zero value otherwise.
@@ -119,6 +146,7 @@ func (o ConditionsGateway) MarshalJSON() ([]byte, error) {
 
 func (o ConditionsGateway) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	toSerialize["_type"] = o.Type
 	if !IsNil(o.TrafficForwarding) {
 		toSerialize["traffic_forwarding"] = o.TrafficForwarding
 	}

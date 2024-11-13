@@ -26,7 +26,7 @@ type SecurityPolicy struct {
 	Name string              `json:"name"`
 	Type *SecurityPolicyType `json:"type,omitempty"`
 	// The description of the Security Policy
-	Description string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// If `true`, indicates that the Security Policy is active
 	Active     bool                     `json:"active"`
 	Principals SecurityPolicyPrincipals `json:"principals"`
@@ -38,10 +38,9 @@ type SecurityPolicy struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSecurityPolicy(name string, description string, active bool, principals SecurityPolicyPrincipals, rules []SecurityPolicyRule) *SecurityPolicy {
+func NewSecurityPolicy(name string, active bool, principals SecurityPolicyPrincipals, rules []SecurityPolicyRule) *SecurityPolicy {
 	this := SecurityPolicy{}
 	this.Name = name
-	this.Description = description
 	this.Active = active
 	this.Principals = principals
 	this.Rules = rules
@@ -147,28 +146,36 @@ func (o *SecurityPolicy) SetType(v SecurityPolicyType) *SecurityPolicy {
 	return o
 }
 
-// GetDescription returns the Description field value
+// GetDescription returns the Description field value if set, zero value otherwise.
 func (o *SecurityPolicy) GetDescription() string {
-	if o == nil {
+	if o == nil || IsNil(o.Description) {
 		var ret string
 		return ret
 	}
-
-	return o.Description
+	return *o.Description
 }
 
-// GetDescriptionOk returns a tuple with the Description field value
+// GetDescriptionOk returns a tuple with the Description field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *SecurityPolicy) GetDescriptionOk() (*string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.Description) {
 		return nil, false
 	}
-	return &o.Description, true
+	return o.Description, true
 }
 
-// SetDescription sets field value
+// HasDescription returns a boolean if a field has been set.
+func (o *SecurityPolicy) HasDescription() bool {
+	if o != nil && !IsNil(o.Description) {
+		return true
+	}
+
+	return false
+}
+
+// SetDescription gets a reference to the given string and assigns it to the Description field.
 func (o *SecurityPolicy) SetDescription(v string) *SecurityPolicy {
-	o.Description = v
+	o.Description = &v
 	return o
 }
 
@@ -264,7 +271,9 @@ func (o SecurityPolicy) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Type) {
 		toSerialize["type"] = o.Type
 	}
-	toSerialize["description"] = o.Description
+	if !IsNil(o.Description) {
+		toSerialize["description"] = o.Description
+	}
 	toSerialize["active"] = o.Active
 	toSerialize["principals"] = o.Principals
 	toSerialize["rules"] = o.Rules

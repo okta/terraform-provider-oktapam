@@ -20,14 +20,15 @@ type NamedObjectType string
 
 // List of NamedObjectType
 const (
-	NamedObjectType_USER             NamedObjectType = "user"
-	NamedObjectType_USER_GROUP       NamedObjectType = "user_group"
-	NamedObjectType_SERVER           NamedObjectType = "server"
-	NamedObjectType_PROJECT          NamedObjectType = "project"
-	NamedObjectType_SUDO_ENTITLEMENT NamedObjectType = "sudo_entitlement"
-	NamedObjectType_RESOURCE_GROUP   NamedObjectType = "resource_group"
-	NamedObjectType_SECRET_FOLDER    NamedObjectType = "secret_folder"
-	NamedObjectType_SECRET           NamedObjectType = "secret"
+	NamedObjectType_USER                     NamedObjectType = "user"
+	NamedObjectType_USER_GROUP               NamedObjectType = "user_group"
+	NamedObjectType_SERVER                   NamedObjectType = "server"
+	NamedObjectType_PROJECT                  NamedObjectType = "project"
+	NamedObjectType_SUDO_ENTITLEMENT         NamedObjectType = "sudo_entitlement"
+	NamedObjectType_RESOURCE_GROUP           NamedObjectType = "resource_group"
+	NamedObjectType_SECRET_FOLDER            NamedObjectType = "secret_folder"
+	NamedObjectType_SECRET                   NamedObjectType = "secret"
+	NamedObjectType_ACTIVE_DIRECTORY_ACCOUNT NamedObjectType = "active_directory_account"
 )
 
 // All allowed values of NamedObjectType enum
@@ -40,6 +41,7 @@ var AllowedNamedObjectTypeEnumValues = []NamedObjectType{
 	"resource_group",
 	"secret_folder",
 	"secret",
+	"active_directory_account",
 }
 
 func (v *NamedObjectType) UnmarshalJSON(src []byte) error {
