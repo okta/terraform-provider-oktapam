@@ -10,13 +10,13 @@ import (
 )
 
 type SecurityPolicyPrincipalsModel struct {
-	UserGroups types.List `tfsdk:"groups"` // openapi field: user_groups
+	UserGroups types.List `tfsdk:"user_groups"`
 }
 
 func SecurityPolicyPrincipalsSchema() schema.Attribute {
 	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
-			"groups": schema.ListAttribute{
+			"user_groups": schema.ListAttribute{
 				ElementType: types.StringType,
 				Optional:    true,
 			},
@@ -35,14 +35,13 @@ func SecurityPolicyPrincipalFromSDKToModel(ctx context.Context, in *pam.Security
 }
 
 func SecurityPolicyPrincipalFromModelToSDK(ctx context.Context, in *SecurityPolicyPrincipalsModel, out *pam.SecurityPolicyPrincipals) diag.Diagnostics {
-	//TODO(ja) there must be a better way to do this, also I'm not checking a lot of things.
 	userGroups := make([]types.String, 0, len(in.UserGroups.Elements()))
 
 	if diags := in.UserGroups.ElementsAs(ctx, &userGroups, false); diags.HasError() {
 		return diags
 	}
 	for _, userGroup := range userGroups {
-		out.UserGroups = append(out.UserGroups, *pam.NewNamedObject().SetName(userGroup.ValueString()))
+		out.UserGroups = append(out.UserGroups, *pam.NewNamedObject().SetId(userGroup.ValueString()))
 	}
 	return nil
 }

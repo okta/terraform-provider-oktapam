@@ -33,13 +33,19 @@ func SecurityPolicyRuleResourceSelectorSchema() schema.Attribute {
 
 func SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleResourceSelectorModel, out *pam.SecurityPolicyRuleResourceSelector) diag.Diagnostics {
 	if in.Servers != nil {
-		SecurityPolicyRuleServerBasedResourceSelectorFromModelToSDK(ctx, in.Servers, out.SecurityPolicyRuleServerBasedResourceSelector)
+		if diags := SecurityPolicyRuleServerBasedResourceSelectorFromModelToSDK(ctx, in.Servers, out.SecurityPolicyRuleServerBasedResourceSelector); diags.HasError() {
+			return diags
+		}
 	}
 	return nil
 }
 
 func SecurityPolicyRuleResourceSelectorFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRuleResourceSelector, out *SecurityPolicyRuleResourceSelectorModel) diag.Diagnostics {
-	// TODO(ja)
+	if in.SecurityPolicyRuleServerBasedResourceSelector != nil {
+		if diags := SecurityPolicyRuleServerBasedResourceSelectorFromSDKToModel(ctx, in.SecurityPolicyRuleServerBasedResourceSelector, out.Servers); diags.HasError() {
+			return diags
+		}
+	}
 	return nil
 }
 
@@ -63,7 +69,7 @@ func SecurityPolicyRuleServerBasedResourceSelectorFromModelToSDK(ctx context.Con
 	return nil
 }
 
-func SecurityPolicyRuleServerBasedResourceSelectorSchemaFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRuleServerBasedResourceSelector, out *SecurityPolicyRuleServerBasedResourceSelectorModel) diag.Diagnostics {
+func SecurityPolicyRuleServerBasedResourceSelectorFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRuleServerBasedResourceSelector, out *SecurityPolicyRuleServerBasedResourceSelectorModel) diag.Diagnostics {
 	//TODO(ja)
 	return nil
 }

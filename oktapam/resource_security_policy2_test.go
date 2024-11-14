@@ -18,7 +18,7 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
   description = "An example security policy for Tilt"
   active      = true
   principals = {
-    groups = ["user_group_id_1", "user_group_id_2"]
+    user_groups = ["user_group_id_1", "user_group_id_2"]
   }
   # rule with vaulted account and user level access
   rules = [
@@ -182,6 +182,7 @@ func setupHTTPMock(t *testing.T) {
 		func(request *http.Request) (*http.Response, error) {
 
 			body, _ := io.ReadAll(request.Body)
+			t.Log(string(body))
 			require.JSONEq(t, securityPolicyJSON, string(body))
 			return httpmock.NewJsonResponse(http.StatusCreated,
 				pam.NewSecurityPolicy("name", true, *pam.NewSecurityPolicyPrincipals(), nil).SetId("policy-id-1"))

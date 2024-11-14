@@ -20,7 +20,7 @@ type SecurityPolicyResourceModel struct {
 	Description types.String                  `tfsdk:"description"`
 	Active      types.Bool                    `tfsdk:"active"`
 	Principals  SecurityPolicyPrincipalsModel `tfsdk:"principals"`
-	Rules       []SecurityPolicyRuleModel     `tfsdk:"rules"`
+	Rules       types.List/*SecurityPolicyRuleModel*/ `tfsdk:"rules"`
 }
 
 func SecurityPolicySchema() map[string]schema.Attribute {
@@ -42,7 +42,10 @@ func SecurityPolicySchema() map[string]schema.Attribute {
 			Required: true,
 		},
 		"principals": SecurityPolicyPrincipalsSchema(),
-		"rules":      SecurityPolicyRulesSchema(),
+		"rules": schema.ListNestedAttribute{
+			NestedObject: SecurityPolicyRuleSchema(),
+			Required:     true,
+		},
 	}
 
 	return myAttributes
@@ -51,14 +54,20 @@ func SecurityPolicySchema() map[string]schema.Attribute {
 func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourceModel, out *pam.SecurityPolicy) diag.Diagnostics {
 	out.Id = in.ID.ValueStringPointer()
 	out.Name = in.Name.ValueString()
-	//TODO(ja) - Type
+	if !in.Type.IsNull() {
+		out.SetType(pam.SecurityPolicyType(in.Type.ValueString()))
+	}
 	out.Description = in.Description.ValueStringPointer()
 	out.Active = in.Active.ValueBool()
 
 	if diags := SecurityPolicyPrincipalFromModelToSDK(ctx, &in.Principals, &out.Principals); diags.HasError() {
 		return diags
 	}
-	//TODO(ja) - Rules
+
+	//in.Rules.ElementsAs()
+	//if diags := SecurityPolicyRulesFromModelToSDK(ctx, &in.Rules, &out.Rules); diags.HasError() {
+	//	return diags
+	//}
 	return nil
 }
 

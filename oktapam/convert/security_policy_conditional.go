@@ -11,14 +11,13 @@ type SecurityPolicyRuleConditionModel struct {
 	ConditionsMFA            *ConditionsMFAModel            `tfsdk:"mfa"`
 }
 
-func SecurityPolicyRuleConditionsSchema() schema.Attribute {
-	return schema.SingleNestedAttribute{
+func SecurityPolicyRuleConditionsSchema() schema.NestedAttributeObject {
+	return schema.NestedAttributeObject{
 		Attributes: map[string]schema.Attribute{
 			"access_request": ConditionsAccessRequestsSchema(),
 			"gateway":        ConditionsGatewaySchema(),
 			"mfa":            ConditionsMFASchema(),
 		},
-		Optional: true,
 	}
 }
 

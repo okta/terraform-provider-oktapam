@@ -23,27 +23,32 @@ type SecurityPolicyRuleModel struct {
 	SecurityPolicyID                  types.String                                            `tfsdk:"security_policy_id"` // openapi readOnly
 }
 
-func SecurityPolicyRulesSchema() schema.Attribute {
-	return schema.ListNestedAttribute{
-		NestedObject: schema.NestedAttributeObject{
-			Attributes: map[string]schema.Attribute{
-				"name": schema.StringAttribute{Required: true},
-				//"resource_type":                         schema.StringAttribute{Optional: true},
-				"override_checkout_duration_in_seconds": schema.Int64Attribute{Optional: true},
-				"security_policy_id":                    schema.StringAttribute{Optional: true}, //TODO(ja) do I even need this?
-				"resource_selector":                     SecurityPolicyRuleResourceSelectorSchema(),
-				"privileges":                            SecurityPolicyRulePrivilegesSchema(),
-				"conditions":                            SecurityPolicyRuleConditionsSchema(),
+func SecurityPolicyRuleSchema() schema.NestedAttributeObject {
+	return schema.NestedAttributeObject{
+		Attributes: map[string]schema.Attribute{
+			"name": schema.StringAttribute{Required: true},
+			//"resource_type":                         schema.StringAttribute{Optional: true}, //TODO(ja) do I even need this?
+			"override_checkout_duration_in_seconds": schema.Int64Attribute{Optional: true},
+			//"security_policy_id":                    schema.StringAttribute{Optional: true}, //TODO(ja) do I even need this?
+			"resource_selector": SecurityPolicyRuleResourceSelectorSchema(),
+			"privileges": schema.ListNestedAttribute{
+				NestedObject: SecurityPolicyRulePrivilegesSchema(),
+				Required:     true,
+			},
+			"conditions": schema.ListNestedAttribute{
+				NestedObject: SecurityPolicyRuleConditionsSchema(),
+				Required:     true,
 			},
 		},
-		Required: true,
 	}
 }
 
 func SecurityPolicyRuleFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleModel, out *pam.SecurityPolicyRule) diag.Diagnostics {
 	out.Name = in.Name.ValueString()
-	// ResourceType
-	// ResourceSelector
+	if diags := SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx, &in.ResourceSelector, &out.ResourceSelector); diags.HasError() {
+		return diags
+	}
+
 	// Privileges
 	// Conditions
 	out.OverrideCheckoutDurationInSeconds.Set(in.OverrideCheckoutDurationInSeconds.ValueInt64Pointer())
@@ -52,6 +57,11 @@ func SecurityPolicyRuleFromModelToSDK(ctx context.Context, in *SecurityPolicyRul
 
 func SecurityPolicyRuleFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRule, out *SecurityPolicyRuleModel) diag.Diagnostics {
 	out.Name = types.StringValue(in.Name)
+
+	if diags := SecurityPolicyRuleResourceSelectorFromSDKToModel(ctx, &in.ResourceSelector, &out.ResourceSelector); diags.HasError() {
+		return diags
+	}
+
 	out.OverrideCheckoutDurationInSeconds = types.Int64PointerValue(in.OverrideCheckoutDurationInSeconds.Get())
 
 	return nil
