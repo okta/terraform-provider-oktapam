@@ -64,10 +64,17 @@ func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourc
 		return diags
 	}
 
-	//in.Rules.ElementsAs()
-	//if diags := SecurityPolicyRulesFromModelToSDK(ctx, &in.Rules, &out.Rules); diags.HasError() {
-	//	return diags
-	//}
+	ruleModels := make([]SecurityPolicyRuleModel, 0, len(in.Rules.Elements()))
+	if diags := in.Rules.ElementsAs(ctx, &ruleModels, false); diags.HasError() {
+		return diags
+	}
+	for _, ruleModel := range ruleModels {
+		var outPolicyRule pam.SecurityPolicyRule
+		if diags := SecurityPolicyRuleFromModelToSDK(ctx, &ruleModel, &outPolicyRule); diags.HasError() {
+			return diags
+		}
+		out.Rules = append(out.Rules, outPolicyRule)
+	}
 	return nil
 }
 

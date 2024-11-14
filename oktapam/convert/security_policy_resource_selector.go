@@ -33,9 +33,11 @@ func SecurityPolicyRuleResourceSelectorSchema() schema.Attribute {
 
 func SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleResourceSelectorModel, out *pam.SecurityPolicyRuleResourceSelector) diag.Diagnostics {
 	if in.Servers != nil {
-		if diags := SecurityPolicyRuleServerBasedResourceSelectorFromModelToSDK(ctx, in.Servers, out.SecurityPolicyRuleServerBasedResourceSelector); diags.HasError() {
+		var outSelector pam.SecurityPolicyRuleServerBasedResourceSelector
+		if diags := SecurityPolicyRuleServerBasedResourceSelectorFromModelToSDK(ctx, in.Servers, &outSelector); diags.HasError() {
 			return diags
 		}
+		out.SecurityPolicyRuleServerBasedResourceSelector = &outSelector
 	}
 	return nil
 }
@@ -65,7 +67,17 @@ func SecurityPolicyRuleServerBasedResourceSelectorSchema() schema.Attribute {
 	}
 }
 func SecurityPolicyRuleServerBasedResourceSelectorFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleServerBasedResourceSelectorModel, out *pam.SecurityPolicyRuleServerBasedResourceSelector) diag.Diagnostics {
-	//TODO(ja)
+	selectorModels := make([]SecurityPolicyRuleServerBasedResourceSelectorContainerModel, 0, len(in.Selectors.Elements()))
+	if diags := in.Selectors.ElementsAs(ctx, &selectorModels, false); diags.HasError() {
+		return diags
+	}
+	for _, selectorModel := range selectorModels {
+		var outSelector pam.SecurityPolicyRuleServerBasedResourceSelectorContainer
+		if diags := SecurityPolicyRuleServerBasedResourceSelectorContainerFromModelToSDK(ctx, &selectorModel, &outSelector); diags.HasError() {
+			return diags
+		}
+		out.Selectors = append(out.Selectors, outSelector)
+	}
 	return nil
 }
 
@@ -99,13 +111,19 @@ func SecurityPolicyRuleServerBasedResourceSelectorContainerFromModelToSDK(ctx co
 
 	if in.IndividualServer != nil {
 		selectorType = pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER
-		SelectorIndividualServerFromModelToSDK(ctx, in.IndividualServer, out.Selector.SelectorIndividualServer)
+		var outVal pam.SelectorIndividualServer
+		SelectorIndividualServerFromModelToSDK(ctx, in.IndividualServer, &outVal)
+		out.Selector.SelectorIndividualServer = &outVal
 	} else if in.IndividualServerAccount != nil {
 		selectorType = pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER_ACCOUNT
-		SelectorIndividualServerAccountFromModelToSDK(ctx, in.IndividualServerAccount, out.Selector.SelectorIndividualServerAccount)
+		var outVal pam.SelectorIndividualServerAccount
+		SelectorIndividualServerAccountFromModelToSDK(ctx, in.IndividualServerAccount, &outVal)
+		out.Selector.SelectorIndividualServerAccount = &outVal
 	} else if in.SelectorServerLabel != nil {
 		selectorType = pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_SERVER_LABEL
-		SelectorServerLabelFromModelToSDK(ctx, in.SelectorServerLabel, out.Selector.SelectorServerLabel)
+		var outVal pam.SelectorServerLabel
+		SelectorServerLabelFromModelToSDK(ctx, in.SelectorServerLabel, &outVal)
+		out.Selector.SelectorServerLabel = &outVal
 	} else {
 		//TODO(ja) unhandled case
 	}

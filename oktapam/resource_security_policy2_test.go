@@ -41,15 +41,18 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
         }
       }
 
-      privileges = {
-        password_checkout_ssh = {
-          password_checkout_ssh = true
+      privileges = [
+        {
+          password_checkout_ssh = {
+            password_checkout_ssh = true
+          }
+        }, {
+          principal_account_ssh = {
+            principal_account_ssh   = true
+            admin_level_permissions = false
+          }
         }
-        principal_account_ssh = {
-          principal_account_ssh   = true
-          admin_level_permissions = false
-        }
-      }
+      ]
     },
 
     #rule with ssh privilege and sudo access
@@ -71,16 +74,18 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
         }
       }
 
-      privileges = {
-        principal_account_ssh = {
-          principal_account_ssh = true
-          sudo_display_name     = "sudo-display-name for end user"
-          sudo_command_bundles = [
-            oktapam_sudo_command_bundle.tilt_sudo_create_directories.id,
-            oktapam_sudo_command_bundle.tilt_sudo_remove_directories.id
-          ]
+      privileges = [
+        {
+          principal_account_ssh = {
+            principal_account_ssh = true
+            sudo_display_name     = "sudo-display-name for end user"
+            sudo_command_bundles = [
+              oktapam_sudo_command_bundle.tilt_sudo_create_directories.id,
+              oktapam_sudo_command_bundle.tilt_sudo_remove_directories.id
+            ]
+          }
         }
-      }
+      ]
     },
     # rule with ssh privilege and admin + mfa every 1hr
     {
@@ -102,25 +107,31 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
         }
       }
 
-      privileges = {
-        password_checkout_ssh = {
-          password_checkout_ssh = true
+      privileges = [
+        {
+          password_checkout_ssh = {
+            password_checkout_ssh = true
+          }
+        }, {
+          principal_account_ssh = {
+            principal_account_ssh   = true
+            admin_level_permissions = true
+          }
         }
-        principal_account_ssh = {
-          principal_account_ssh   = true
-          admin_level_permissions = true
+      ]
+
+      conditions = [
+        {
+          mfa = {
+            acr_values                  = "urn:okta:loa:2fa:any"
+            reauth_frequency_in_seconds = 3600
+          }
         }
-      }
-      conditions = {
-        mfa = {
-          acr_values                  = "urn:okta:loa:2fa:any"
-          reauth_frequency_in_seconds = 3600
-        }
-      }
+      ]
     }
   ]
 }
- `
+`
 
 const securityPolicyJSON = `
 {

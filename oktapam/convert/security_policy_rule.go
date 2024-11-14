@@ -16,11 +16,11 @@ import (
 type SecurityPolicyRuleModel struct {
 	Name types.String `tfsdk:"name"`
 	//ResourceType                      SecurityPolicyRuleResourceTypeModel                     `tfsdk:"resource_type"`
-	ResourceSelector                  SecurityPolicyRuleResourceSelectorModel                 `tfsdk:"resource_selector"`
-	Privileges                        SecurityPolicyRulePrivilegeContainerPrivilegeValueModel `tfsdk:"privileges"`
-	Conditions                        *SecurityPolicyRuleConditionModel                       `tfsdk:"conditions"`
-	OverrideCheckoutDurationInSeconds types.Int64                                             `tfsdk:"override_checkout_duration_in_seconds"`
-	SecurityPolicyID                  types.String                                            `tfsdk:"security_policy_id"` // openapi readOnly
+	ResourceSelector                  SecurityPolicyRuleResourceSelectorModel                                                    `tfsdk:"resource_selector"`
+	Privileges                        types.List/*SecurityPolicyRulePrivilegeContainerPrivilegeValueModel*/ `tfsdk:"privileges"` //TODO(ja) should this be privilege_value ?!
+	Conditions                        types.List/**SecurityPolicyRuleConditionModel*/ `tfsdk:"conditions"`
+	OverrideCheckoutDurationInSeconds types.Int64  `tfsdk:"override_checkout_duration_in_seconds"`
+	SecurityPolicyID                  types.String `tfsdk:"security_policy_id"` // openapi readOnly
 }
 
 func SecurityPolicyRuleSchema() schema.NestedAttributeObject {
@@ -29,15 +29,15 @@ func SecurityPolicyRuleSchema() schema.NestedAttributeObject {
 			"name": schema.StringAttribute{Required: true},
 			//"resource_type":                         schema.StringAttribute{Optional: true}, //TODO(ja) do I even need this?
 			"override_checkout_duration_in_seconds": schema.Int64Attribute{Optional: true},
-			//"security_policy_id":                    schema.StringAttribute{Optional: true}, //TODO(ja) do I even need this?
-			"resource_selector": SecurityPolicyRuleResourceSelectorSchema(),
+			"security_policy_id":                    schema.StringAttribute{Optional: true}, //TODO(ja) do I even need this?
+			"resource_selector":                     SecurityPolicyRuleResourceSelectorSchema(),
 			"privileges": schema.ListNestedAttribute{
-				NestedObject: SecurityPolicyRulePrivilegesSchema(),
+				NestedObject: SecurityPolicyRulePrivilegeContainerSchema(),
 				Required:     true,
 			},
 			"conditions": schema.ListNestedAttribute{
 				NestedObject: SecurityPolicyRuleConditionsSchema(),
-				Required:     true,
+				Optional:     true,
 			},
 		},
 	}
@@ -49,7 +49,18 @@ func SecurityPolicyRuleFromModelToSDK(ctx context.Context, in *SecurityPolicyRul
 		return diags
 	}
 
-	// Privileges
+	privilegesModel := make([]SecurityPolicyRulePrivilegeContainerModel, 0, len(in.Privileges.Elements()))
+	if diags := in.Privileges.ElementsAs(ctx, &privilegesModel, false); diags.HasError() {
+		return diags
+	}
+	for _, privilege := range privilegesModel {
+		var outPrivilege pam.SecurityPolicyRulePrivilegeContainer
+		if diags := SecurityPolicyRulePrivilegeContainerFromModelToSDK(ctx, &privilege, &outPrivilege); diags.HasError() {
+			return diags
+		}
+		out.Privileges = append(out.Privileges, outPrivilege)
+	}
+
 	// Conditions
 	out.OverrideCheckoutDurationInSeconds.Set(in.OverrideCheckoutDurationInSeconds.ValueInt64Pointer())
 	return nil
