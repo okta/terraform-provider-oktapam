@@ -52,6 +52,7 @@ func SecurityPolicySchema() map[string]schema.Attribute {
 }
 
 func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourceModel, out *pam.SecurityPolicy) diag.Diagnostics {
+	//TODO(ja) do this pattern everywhere
 	if !in.ID.IsNull() && !in.ID.IsUnknown() {
 		out.Id = in.ID.ValueStringPointer()
 	}
@@ -85,7 +86,10 @@ func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourc
 func SecurityPolicyFromSDKToModel(ctx context.Context, in *pam.SecurityPolicy, out *SecurityPolicyResourceModel) diag.Diagnostics {
 	out.ID = types.StringPointerValue(in.Id)
 	out.Name = types.StringValue(in.Name)
-	//TODO(ja) - Type
+	if in.Type != nil {
+		out.Type = types.StringValue(string(*in.Type))
+	}
+
 	out.Description = types.StringPointerValue(in.Description)
 	out.Active = types.BoolValue(in.Active)
 

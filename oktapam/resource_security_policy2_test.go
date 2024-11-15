@@ -17,6 +17,7 @@ import (
 
 // language=Terraform
 const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_security_policy" {
+  type        = "default"
   name        = "tilt-security-policy"
   description = "An example security policy for Tilt"
   active      = true
