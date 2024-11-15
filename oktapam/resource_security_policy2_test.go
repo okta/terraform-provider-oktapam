@@ -1,6 +1,7 @@
 package oktapam
 
 import (
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"github.com/atko-pam/pam-sdk-go/client/pam"
@@ -179,25 +180,48 @@ resource "oktapam_sudo_command_bundle" "tilt_sudo_remove_directories" {
 
 const terraformConfig = sudoCommandBundlesTerraform + "\n" + securityPolicyTerraform
 
-var nextId = 1
-var entities = make(map[string]any)
+func entityId(body []byte) string {
+	sum := sha256.Sum256(body)
+	return fmt.Sprintf("%x", sum)
+}
 
 func setupHTTPMock(t *testing.T) {
+	var entities = make(map[string]any)
+
 	prefix := "/v1/teams/httpmock-test-team"
-	httpmock.RegisterResponder(http.MethodPost, prefix+`/sudo_command_bundles`,
+
+	// This is a quick hack that unmarshals a given entity, assigns it an ID then stores it in a map. It then marshals
+	// the ID-enhanced entity as a response.
+	httpmock.RegisterRegexpResponder(http.MethodPost, regexp.MustCompile(prefix+`/(sudo_command_bundles|security_policy)`),
 		func(request *http.Request) (*http.Response, error) {
-			var sudoCommandBundle pam.SudoCommandBundle
+			var created any
 
 			body, err := io.ReadAll(request.Body)
 			require.NoError(t, err)
-			err = json.Unmarshal(body, &sudoCommandBundle)
-			require.NoError(t, err)
-			sudoCommandBundle.SetId(fmt.Sprintf("sudo-command-bundle-%d", nextId))
-			entities[sudoCommandBundle.GetId()] = sudoCommandBundle
-			nextId++
-			return httpmock.NewJsonResponse(http.StatusCreated, sudoCommandBundle)
+
+			id := entityId(body)
+			entityType := httpmock.MustGetSubmatch(request, 1)
+
+			switch entityType {
+			case "sudo_command_bundles":
+				var sudoCommandBundle pam.SudoCommandBundle
+				require.NoError(t, json.Unmarshal(body, &sudoCommandBundle))
+				sudoCommandBundle.SetId(id)
+				created = sudoCommandBundle
+			case "security_policy":
+				var securityPolicy pam.SecurityPolicy
+				require.NoError(t, json.Unmarshal(body, &securityPolicy))
+				securityPolicy.SetId(id)
+				created = securityPolicy
+			default:
+				panic("don't know how to create " + entityType)
+			}
+			entities[id] = created
+			return httpmock.NewJsonResponse(http.StatusCreated, created)
 		})
 
+	// This is the cousin of the quick hack above that looks up the entity in the map and marshals whatever is there as
+	// a response.
 	httpmock.RegisterRegexpResponder(http.MethodGet, regexp.MustCompile(prefix+`/(sudo_command_bundles|security_policy)/(.*)`),
 		func(request *http.Request) (*http.Response, error) {
 			id := httpmock.MustGetSubmatch(request, 2)
@@ -206,21 +230,6 @@ func setupHTTPMock(t *testing.T) {
 
 	httpmock.RegisterRegexpResponder(http.MethodDelete, regexp.MustCompile(`.*`),
 		httpmock.NewStringResponder(http.StatusOK, ""),
-	)
-
-	httpmock.RegisterResponder(http.MethodPost, prefix+"/security_policy",
-		func(request *http.Request) (*http.Response, error) {
-			var securityPolicy pam.SecurityPolicy
-
-			body, err := io.ReadAll(request.Body)
-			require.NoError(t, err)
-			err = json.Unmarshal(body, &securityPolicy)
-			require.NoError(t, err)
-			securityPolicy.SetId(fmt.Sprintf("security-policy-%d", nextId))
-			entities[securityPolicy.GetId()] = securityPolicy
-			nextId++
-			return httpmock.NewJsonResponse(http.StatusCreated, securityPolicy)
-		},
 	)
 }
 
