@@ -58,29 +58,36 @@ func SecurityPolicyRulePrivilegeContainerFromSDKToModel(ctx context.Context, in 
 }
 
 func SecurityPolicyRulePrivilegeContainerFromModelToSDK(ctx context.Context, in *SecurityPolicyRulePrivilegeContainerModel, out *pam.SecurityPolicyRulePrivilegeContainer) diag.Diagnostics {
+	var privilegeValue pam.SecurityPolicyRulePrivilegeContainerPrivilegeValue
+	var privilegeType pam.SecurityPolicyRulePrivilegeType
 	if in.SecurityPolicyPasswordCheckoutDatabasePrivilege != nil {
 		var outVal pam.SecurityPolicyPasswordCheckoutDatabasePrivilege
 		if diags := SecurityPolicyPasswordCheckoutDatabasePrivilegeFromModelToSDK(ctx, in.SecurityPolicyPasswordCheckoutDatabasePrivilege, &outVal); diags.HasError() {
 			return diags
 		}
-		privilegeValue := pam.SecurityPolicyPasswordCheckoutDatabasePrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(&outVal)
+		privilegeValue = pam.SecurityPolicyPasswordCheckoutDatabasePrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(&outVal)
+		privilegeType = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_DATABASE
 		out.PrivilegeValue = &privilegeValue
 	} else if in.SecurityPolicyPrincipalAccountSSHPrivilege != nil {
 		var outVal pam.SecurityPolicyPrincipalAccountSSHPrivilege
 		if diags := SecurityPolicyPrincipalAccountSSHPrivilegeFromModelToSDK(ctx, in.SecurityPolicyPrincipalAccountSSHPrivilege, &outVal); diags.HasError() {
 			return diags
 		}
-		privilegeValue := pam.SecurityPolicyPrincipalAccountSSHPrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(&outVal)
+		privilegeValue = pam.SecurityPolicyPrincipalAccountSSHPrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(&outVal)
+		privilegeType = pam.SecurityPolicyRulePrivilegeType_PRINCIPAL_ACCOUNT_SSH
 		out.PrivilegeValue = &privilegeValue
 	} else if in.SecurityPolicyPasswordCheckoutSSHPrivilege != nil {
 		var outVal pam.SecurityPolicyPasswordCheckoutSSHPrivilege
 		if diags := SecurityPolicyPasswordCheckoutSSHPrivilegeFromModelToSDK(ctx, in.SecurityPolicyPasswordCheckoutSSHPrivilege, &outVal); diags.HasError() {
 			return diags
 		}
-		privilegeValue := pam.SecurityPolicyPasswordCheckoutSSHPrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(&outVal)
+		privilegeValue = pam.SecurityPolicyPasswordCheckoutSSHPrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(&outVal)
+		privilegeType = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_SSH
 		out.PrivilegeValue = &privilegeValue
 	} else {
 		panic("missing stanza in SecurityPolicyRulePrivilegeContainerFromModelToSDK")
 	}
+	out.PrivilegeValue = &privilegeValue
+	out.PrivilegeType = &privilegeType
 	return nil
 }

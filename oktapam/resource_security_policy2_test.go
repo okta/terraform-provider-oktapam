@@ -1,6 +1,8 @@
 package oktapam
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
@@ -23,13 +25,14 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
   # rule with vaulted account and user level access
   rules = [
     {
-      name = "linux server account and user level access"
+      name          = "linux server account and user level access"
+      resource_type = "server_based_resource"
       resource_selector = {
         server_based_resource = {
           selectors = [
             {
               server_label = {
-                accounts = ["root", "pamadmin"]
+                account_selector = ["root", "pamadmin"]
                 server_selector = {
                   labels = {
                     "system.os_type" = "linux"
@@ -57,7 +60,8 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
 
     #rule with ssh privilege and sudo access
     {
-      name = "linux server with sudo"
+      name          = "linux server with sudo"
+      resource_type = "server_based_resource"
       resource_selector = {
         server_based_resource = {
           selectors = [
@@ -89,7 +93,8 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
     },
     # rule with ssh privilege and admin + mfa every 1hr
     {
-      name = "linux server account and admin level access"
+      name          = "linux server account and admin level access"
+      resource_type = "server_based_resource"
       resource_selector = {
         server_based_resource = {
           selectors = [
@@ -100,7 +105,7 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
                     "system.os_type" = "linux"
                   }
                 }
-                accounts = ["root", "pamadmin"]
+                account_selector = ["root", "pamadmin"]
               }
             }
           ]
@@ -174,16 +179,30 @@ resource "oktapam_sudo_command_bundle" "tilt_sudo_remove_directories" {
 
 const terraformConfig = sudoCommandBundlesTerraform + "\n" + securityPolicyTerraform
 
+var nextId = 1
+var entities = make(map[string]any)
+
 func setupHTTPMock(t *testing.T) {
 	prefix := "/v1/teams/httpmock-test-team"
-	sudoCommandBundle1 := pam.NewSudoCommandBundle("bundle-1").SetId("1")
 	httpmock.RegisterResponder(http.MethodPost, prefix+`/sudo_command_bundles`,
-		httpmock.NewJsonResponderOrPanic(http.StatusCreated, sudoCommandBundle1),
-	)
+		func(request *http.Request) (*http.Response, error) {
+			var sudoCommandBundle pam.SudoCommandBundle
 
-	httpmock.RegisterResponder(http.MethodGet, prefix+`/sudo_command_bundles/`+sudoCommandBundle1.GetId(),
-		httpmock.NewJsonResponderOrPanic(http.StatusOK, sudoCommandBundle1),
-	)
+			body, err := io.ReadAll(request.Body)
+			require.NoError(t, err)
+			err = json.Unmarshal(body, &sudoCommandBundle)
+			require.NoError(t, err)
+			sudoCommandBundle.SetId(fmt.Sprintf("sudo-command-bundle-%d", nextId))
+			entities[sudoCommandBundle.GetId()] = sudoCommandBundle
+			nextId++
+			return httpmock.NewJsonResponse(http.StatusCreated, sudoCommandBundle)
+		})
+
+	httpmock.RegisterRegexpResponder(http.MethodGet, regexp.MustCompile(prefix+`/(sudo_command_bundles|security_policy)/(.*)`),
+		func(request *http.Request) (*http.Response, error) {
+			id := httpmock.MustGetSubmatch(request, 2)
+			return httpmock.NewJsonResponse(http.StatusOK, entities[id])
+		})
 
 	httpmock.RegisterRegexpResponder(http.MethodDelete, regexp.MustCompile(`.*`),
 		httpmock.NewStringResponder(http.StatusOK, ""),
@@ -191,12 +210,16 @@ func setupHTTPMock(t *testing.T) {
 
 	httpmock.RegisterResponder(http.MethodPost, prefix+"/security_policy",
 		func(request *http.Request) (*http.Response, error) {
+			var securityPolicy pam.SecurityPolicy
 
-			body, _ := io.ReadAll(request.Body)
-			t.Log(string(body))
-			require.JSONEq(t, securityPolicyJSON, string(body))
-			return httpmock.NewJsonResponse(http.StatusCreated,
-				pam.NewSecurityPolicy("name", true, *pam.NewSecurityPolicyPrincipals(), nil).SetId("policy-id-1"))
+			body, err := io.ReadAll(request.Body)
+			require.NoError(t, err)
+			err = json.Unmarshal(body, &securityPolicy)
+			require.NoError(t, err)
+			securityPolicy.SetId(fmt.Sprintf("security-policy-%d", nextId))
+			entities[securityPolicy.GetId()] = securityPolicy
+			nextId++
+			return httpmock.NewJsonResponse(http.StatusCreated, securityPolicy)
 		},
 	)
 }

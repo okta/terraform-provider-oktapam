@@ -14,8 +14,8 @@ import (
 //type SecurityPolicyRuleResourceSelectorTypeModel types.String
 
 type SecurityPolicyRuleModel struct {
-	Name types.String `tfsdk:"name"`
-	//ResourceType                      SecurityPolicyRuleResourceTypeModel                     `tfsdk:"resource_type"`
+	Name                              types.String                                                                               `tfsdk:"name"`
+	ResourceType                      types.String                                                                               `tfsdk:"resource_type"`
 	ResourceSelector                  SecurityPolicyRuleResourceSelectorModel                                                    `tfsdk:"resource_selector"`
 	Privileges                        types.List/*SecurityPolicyRulePrivilegeContainerPrivilegeValueModel*/ `tfsdk:"privileges"` //TODO(ja) should this be privilege_value ?!
 	Conditions                        types.List/**SecurityPolicyRuleConditionModel*/ `tfsdk:"conditions"`
@@ -26,8 +26,8 @@ type SecurityPolicyRuleModel struct {
 func SecurityPolicyRuleSchema() schema.NestedAttributeObject {
 	return schema.NestedAttributeObject{
 		Attributes: map[string]schema.Attribute{
-			"name": schema.StringAttribute{Required: true},
-			//"resource_type":                         schema.StringAttribute{Optional: true}, //TODO(ja) do I even need this?
+			"name":                                  schema.StringAttribute{Required: true},
+			"resource_type":                         schema.StringAttribute{Required: true},
 			"override_checkout_duration_in_seconds": schema.Int64Attribute{Optional: true},
 			"security_policy_id":                    schema.StringAttribute{Optional: true}, //TODO(ja) do I even need this?
 			"resource_selector":                     SecurityPolicyRuleResourceSelectorSchema(),
@@ -49,20 +49,28 @@ func SecurityPolicyRuleFromModelToSDK(ctx context.Context, in *SecurityPolicyRul
 		return diags
 	}
 
-	privilegesModel := make([]SecurityPolicyRulePrivilegeContainerModel, 0, len(in.Privileges.Elements()))
-	if diags := in.Privileges.ElementsAs(ctx, &privilegesModel, false); diags.HasError() {
-		return diags
-	}
-	for _, privilege := range privilegesModel {
-		var outPrivilege pam.SecurityPolicyRulePrivilegeContainer
-		if diags := SecurityPolicyRulePrivilegeContainerFromModelToSDK(ctx, &privilege, &outPrivilege); diags.HasError() {
+	out.ResourceType = pam.SecurityPolicyRuleResourceType(in.ResourceType.ValueString())
+
+	if !in.Privileges.IsNull() && len(in.Privileges.Elements()) > 0 {
+		privilegesModel := make([]SecurityPolicyRulePrivilegeContainerModel, 0, len(in.Privileges.Elements()))
+		if diags := in.Privileges.ElementsAs(ctx, &privilegesModel, false); diags.HasError() {
 			return diags
 		}
-		out.Privileges = append(out.Privileges, outPrivilege)
+		for _, privilege := range privilegesModel {
+			var outPrivilege pam.SecurityPolicyRulePrivilegeContainer
+			if diags := SecurityPolicyRulePrivilegeContainerFromModelToSDK(ctx, &privilege, &outPrivilege); diags.HasError() {
+				return diags
+			}
+			out.Privileges = append(out.Privileges, outPrivilege)
+		}
+	}
+
+	if !in.OverrideCheckoutDurationInSeconds.IsNull() && !in.OverrideCheckoutDurationInSeconds.IsUnknown() {
+		out.OverrideCheckoutDurationInSeconds.Set(in.OverrideCheckoutDurationInSeconds.ValueInt64Pointer())
 	}
 
 	// Conditions
-	out.OverrideCheckoutDurationInSeconds.Set(in.OverrideCheckoutDurationInSeconds.ValueInt64Pointer())
+
 	return nil
 }
 

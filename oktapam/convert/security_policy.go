@@ -52,9 +52,11 @@ func SecurityPolicySchema() map[string]schema.Attribute {
 }
 
 func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourceModel, out *pam.SecurityPolicy) diag.Diagnostics {
-	out.Id = in.ID.ValueStringPointer()
+	if !in.ID.IsNull() && !in.ID.IsUnknown() {
+		out.Id = in.ID.ValueStringPointer()
+	}
 	out.Name = in.Name.ValueString()
-	if !in.Type.IsNull() {
+	if !in.Type.IsNull() && !in.Type.IsUnknown() {
 		out.SetType(pam.SecurityPolicyType(in.Type.ValueString()))
 	}
 	out.Description = in.Description.ValueStringPointer()
@@ -64,16 +66,18 @@ func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourc
 		return diags
 	}
 
-	ruleModels := make([]SecurityPolicyRuleModel, 0, len(in.Rules.Elements()))
-	if diags := in.Rules.ElementsAs(ctx, &ruleModels, false); diags.HasError() {
-		return diags
-	}
-	for _, ruleModel := range ruleModels {
-		var outPolicyRule pam.SecurityPolicyRule
-		if diags := SecurityPolicyRuleFromModelToSDK(ctx, &ruleModel, &outPolicyRule); diags.HasError() {
+	if !in.Rules.IsNull() && len(in.Rules.Elements()) > 0 {
+		ruleModels := make([]SecurityPolicyRuleModel, 0, len(in.Rules.Elements()))
+		if diags := in.Rules.ElementsAs(ctx, &ruleModels, false); diags.HasError() {
 			return diags
 		}
-		out.Rules = append(out.Rules, outPolicyRule)
+		for _, ruleModel := range ruleModels {
+			var outPolicyRule pam.SecurityPolicyRule
+			if diags := SecurityPolicyRuleFromModelToSDK(ctx, &ruleModel, &outPolicyRule); diags.HasError() {
+				return diags
+			}
+			out.Rules = append(out.Rules, outPolicyRule)
+		}
 	}
 	return nil
 }

@@ -35,13 +35,15 @@ func SecurityPolicyPrincipalFromSDKToModel(ctx context.Context, in *pam.Security
 }
 
 func SecurityPolicyPrincipalFromModelToSDK(ctx context.Context, in *SecurityPolicyPrincipalsModel, out *pam.SecurityPolicyPrincipals) diag.Diagnostics {
-	userGroups := make([]types.String, 0, len(in.UserGroups.Elements()))
+	if !in.UserGroups.IsNull() && len(in.UserGroups.Elements()) > 0 {
+		userGroups := make([]types.String, 0, len(in.UserGroups.Elements()))
 
-	if diags := in.UserGroups.ElementsAs(ctx, &userGroups, false); diags.HasError() {
-		return diags
-	}
-	for _, userGroup := range userGroups {
-		out.UserGroups = append(out.UserGroups, *pam.NewNamedObject().SetId(userGroup.ValueString()))
+		if diags := in.UserGroups.ElementsAs(ctx, &userGroups, false); diags.HasError() {
+			return diags
+		}
+		for _, userGroup := range userGroups {
+			out.UserGroups = append(out.UserGroups, *pam.NewNamedObject().SetId(userGroup.ValueString()))
+		}
 	}
 	return nil
 }
