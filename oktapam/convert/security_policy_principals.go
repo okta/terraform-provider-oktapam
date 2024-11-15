@@ -2,6 +2,7 @@ package convert
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -10,7 +11,7 @@ import (
 )
 
 type SecurityPolicyPrincipalsModel struct {
-	UserGroups types.List `tfsdk:"user_groups"`
+	UserGroups types.List /*NamedObject*/ `tfsdk:"user_groups"`
 }
 
 func SecurityPolicyPrincipalsSchema() schema.Attribute {
@@ -25,11 +26,20 @@ func SecurityPolicyPrincipalsSchema() schema.Attribute {
 	}
 }
 
-func SecurityPolicyPrincipalFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyPrincipals, out *SecurityPolicyPrincipalsModel) diag.Diagnostics {
-	if userGroups, diags := types.ListValueFrom(ctx, types.StringType, in.UserGroups); diags.HasError() {
-		return diags
-	} else {
-		out.UserGroups = userGroups
+func SecurityPolicyPrincipalFromSDKToModel(_ context.Context, in *pam.SecurityPolicyPrincipals, out *SecurityPolicyPrincipalsModel) diag.Diagnostics {
+	if len(in.UserGroups) > 0 {
+		var outUserGroups []attr.Value
+		for _, userGroup := range in.UserGroups {
+			if id, ok := userGroup.GetIdOk(); ok {
+				outUserGroups = append(outUserGroups, types.StringValue(*id))
+			}
+		}
+
+		if userGroups, diags := types.ListValue(types.StringType, outUserGroups); diags.HasError() {
+			return diags
+		} else {
+			out.UserGroups = userGroups
+		}
 	}
 	return nil
 }
