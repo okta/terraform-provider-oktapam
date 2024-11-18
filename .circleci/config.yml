@@ -41,7 +41,7 @@ jobs:
           name: Run Reversing Labs Wrapper Scanner
           command: |
             rl-wrapper \
-              --artifact ./terraform-provider-oktapam \
+              --artifact ${CIRCLE_WORKING_DIRECTORY}/terraform-provider-oktapam \
               --name $CIRCLE_PROJECT_REPONAME\
               --version $CIRCLE_SHA1\
               --repository $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME \
