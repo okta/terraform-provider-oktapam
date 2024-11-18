@@ -4,22 +4,72 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"regexp"
+	"testing"
+
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/require"
-	"io"
-	"net/http"
-	"regexp"
-	"testing"
 )
 
+const individualServerAccountSelectorPolicyTerraform = `resource "oktapam_security_policy_v2" "individual_server_account_policy" {
+  name   = "test individual server account selector"
+  active = true
+  principals = { user_groups = ["user_group_1", "user_group_2"] }
+  rules = [
+    {
+      name          = "test"
+      resource_type = "server_based_resource"
+      resource_selector = {
+        server_based_resource = {
+          selectors = [
+            {
+              individual_server_account = {
+                server   = "server-id-goes-here"
+                username = "root"
+              }
+            }
+          ]
+        }
+      }
+      privileges = [{ password_checkout_ssh = { password_checkout_ssh = true } }]
+    }
+  ]
+}
+`
+
+const individualServerSelectorPolicyTerraform = `resource "oktapam_security_policy_v2" "individual_server_policy" {
+  name = "test individual server selector"
+  active = true
+  principals = { user_groups = ["user_group_1", "user_group_2"] }
+  rules = [
+    {
+      name          = "test"
+      resource_type = "server_based_resource"
+      resource_selector = {
+        server_based_resource = {
+          selectors = [
+            { individual_server = { server = "server-id-goes-here" } }
+          ]
+        }
+      }
+      privileges = [{ password_checkout_ssh = { password_checkout_ssh = true } }]
+    }
+  ]
+}
+
+
+`
+
 // language=Terraform
-const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_security_policy" {
+const devEnvSecurityPolicyTerraform = `resource "oktapam_security_policy_v2" "devenv_security_policy" {
   type        = "default"
-  name        = "tilt-security-policy"
-  description = "An example security policy for Tilt"
+  name        = "development environment policy"
+  description = "An example security policy for dev environment"
   active      = true
   principals = {
     user_groups = ["user_group_id_1", "user_group_id_2"]
@@ -140,23 +190,6 @@ const securityPolicyTerraform = `resource "oktapam_security_policy_v2" "tilt_sec
 }
 `
 
-const securityPolicyJSON = `
-{
-  "active" : true,
-  "description" : "",
-  "id" : "",
-  "name" : "tilt-security-policy",
-  "principals" : {
-    "user_groups" : [ {
-      "name" : "user_group_id_1"
-    }, {
-      "name" : "user_group_id_2"
-    } ]
-  },
-  "rules" : null
-}
-`
-
 const sudoCommandBundlesTerraform = `# Create a sudo command bundle
 resource "oktapam_sudo_command_bundle" "tilt_sudo_create_directories" {
   name = "create_directories"
@@ -179,7 +212,7 @@ resource "oktapam_sudo_command_bundle" "tilt_sudo_remove_directories" {
 }
 `
 
-const terraformConfig = sudoCommandBundlesTerraform + "\n" + securityPolicyTerraform
+const devEnvTerraformConfig = sudoCommandBundlesTerraform + "\n" + devEnvSecurityPolicyTerraform
 
 func entityId(body []byte) string {
 	sum := sha256.Sum256(body)
@@ -234,7 +267,15 @@ func setupHTTPMock(t *testing.T) {
 	)
 }
 
-func TestSimple(t *testing.T) {
+// Loopback tests are designed to convert a Terraform resource into the SDK representation, marshal it, pretend
+// to call an HTTP call which will unmarshal it, assign it an ID, then marshal a response and send that back. The
+// Terraform provider will in turn unmarshal from JSON to SDK, then convert from SDK to Terraform model. At its
+// root, loopback tests are Garbage In/Garbage Out. For example, if you don't take a resource field and set it in
+// the SDK, _and_ you're not converting it from the SDK back to the Terraform resource, then nobody will notice. You
+// can improve that by including a canonical expectation of what the JSON should look like and require.JSONEq checking.
+
+// TestSecurityPolicyLoopback_DevEnv uses an example policy from our development environment.
+func TestSecurityPolicyLoopback_DevEnv(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		IsUnitTest:               true,
@@ -242,7 +283,43 @@ func TestSimple(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() { setupHTTPMock(t) },
-				Config:    terraformConfig,
+				Config:    devEnvTerraformConfig,
+				Check: func(s *terraform.State) error {
+					return nil
+				},
+			},
+		},
+	})
+}
+
+// TestSecurityPolicyLoopback_IndividualServer does a test on a resource with an "individual server" resource
+// selector.
+func TestSecurityPolicyLoopback_IndividualServer(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		IsUnitTest:               true,
+		ProtoV6ProviderFactories: httpMockTestV6ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() { setupHTTPMock(t) },
+				Config:    individualServerSelectorPolicyTerraform,
+				Check: func(s *terraform.State) error {
+					return nil
+				},
+			},
+		},
+	})
+}
+
+// TestSecurityPolicyLoopback_IndividualServerAccount does a loopback test on a resource with an "individual server
+// account" resource selector.
+func TestSecurityPolicyLoopback_IndividualServerAccount(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		IsUnitTest:               true,
+		ProtoV6ProviderFactories: httpMockTestV6ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() { setupHTTPMock(t) },
+				Config:    individualServerAccountSelectorPolicyTerraform,
 				Check: func(s *terraform.State) error {
 					return nil
 				},

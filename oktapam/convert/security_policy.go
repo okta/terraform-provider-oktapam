@@ -90,13 +90,26 @@ func SecurityPolicyFromSDKToModel(ctx context.Context, in *pam.SecurityPolicy, o
 		out.Type = types.StringValue(string(*in.Type))
 	}
 
-	out.Description = types.StringPointerValue(in.Description)
+	if in.Description != nil {
+		out.Description = types.StringPointerValue(in.Description)
+	}
+
 	out.Active = types.BoolValue(in.Active)
 
 	if diags := SecurityPolicyPrincipalFromSDKToModel(ctx, &in.Principals, &out.Principals); diags.HasError() {
 		return diags
 	}
 
+	if len(in.Rules) > 0 {
+		var outRules []SecurityPolicyRuleModel
+		for _, rule := range in.Rules {
+			var outRule SecurityPolicyRuleModel
+			if diags := SecurityPolicyRuleFromSDKToModel(ctx, &rule, &outRule); diags.HasError() {
+				return diags
+			}
+			outRules = append(outRules, outRule)
+		}
+	}
 	//TODO(ja) - Rules
 	return nil
 }

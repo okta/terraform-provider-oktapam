@@ -2,7 +2,9 @@ package convert
 
 import (
 	"context"
+
 	"github.com/atko-pam/pam-sdk-go/client/pam"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -57,5 +59,14 @@ func SecurityPolicyPrincipalAccountSSHPrivilegeSchema() schema.Attribute {
 			},
 		},
 		Optional: true,
+	}
+}
+
+func SecurityPolicyPrincipalAccountSSHPrivilegeAttrTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"principal_account_ssh":   types.BoolType,
+		"admin_level_permissions": types.BoolType,
+		"sudo_display_name":       types.StringType,
+		"sudo_command_bundles":    types.ListType{ElemType: types.StringType},
 	}
 }

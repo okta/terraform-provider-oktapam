@@ -75,13 +75,21 @@ func SecurityPolicyRuleFromModelToSDK(ctx context.Context, in *SecurityPolicyRul
 }
 
 func SecurityPolicyRuleFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRule, out *SecurityPolicyRuleModel) diag.Diagnostics {
+
+	if securityPolicyID, ok := in.GetSecurityPolicyIdOk(); ok {
+		out.SecurityPolicyID = types.StringPointerValue(securityPolicyID)
+	}
 	out.Name = types.StringValue(in.Name)
+	out.ResourceType = types.StringValue(string(in.ResourceType))
 
 	if diags := SecurityPolicyRuleResourceSelectorFromSDKToModel(ctx, &in.ResourceSelector, &out.ResourceSelector); diags.HasError() {
 		return diags
 	}
 
+	// TODO(ja) Privileges
+
 	out.OverrideCheckoutDurationInSeconds = types.Int64PointerValue(in.OverrideCheckoutDurationInSeconds.Get())
 
+	// TODO(ja) Conditions
 	return nil
 }

@@ -2,9 +2,12 @@ package convert
 
 import (
 	"context"
+
 	"github.com/atko-pam/pam-sdk-go/client/pam"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 //type SecurityPolicyRulePrivilegeTypeModel types.String
@@ -35,6 +38,14 @@ func SecurityPolicyRulePrivilegeContainerSchema() schema.NestedAttributeObject {
 			// "secret":
 			// "update_password":
 		},
+	}
+}
+
+func SecurityPolicyRulePrivilegeContainerAttrTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"password_checkout_database": types.ObjectType{AttrTypes: SecurityPolicyPasswordCheckoutDatabasePrivilegeAttrTypes()},
+		"principal_account_ssh":      types.ObjectType{AttrTypes: SecurityPolicyPrincipalAccountSSHPrivilegeAttrTypes()},
+		"password_checkout_ssh":      types.ObjectType{AttrTypes: SecurityPolicyPasswordCheckoutSSHPrivilegeAttrTypes()},
 	}
 }
 

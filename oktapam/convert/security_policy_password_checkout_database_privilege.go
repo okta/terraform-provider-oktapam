@@ -2,7 +2,9 @@ package convert
 
 import (
 	"context"
+
 	"github.com/atko-pam/pam-sdk-go/client/pam"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -22,6 +24,12 @@ func SecurityPolicyPasswordCheckoutDatabasePrivilegeSchema() schema.Attribute {
 			},
 		},
 		Optional: true,
+	}
+}
+
+func SecurityPolicyPasswordCheckoutDatabasePrivilegeAttrTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"password_checkout_database": types.BoolType,
 	}
 }
 

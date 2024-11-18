@@ -165,15 +165,15 @@ func SelectorIndividualServerFromModelToSDK(_ context.Context, in *SelectorIndiv
 }
 
 type SelectorIndividualServerAccountModel struct {
-	ServerId types.String/*NamedObject*/ `tfsdk:"server_id"`
+	Server   types.String/*NamedObject*/ `tfsdk:"server"`
 	Username types.String `tfsdk:"username"`
 }
 
 func SelectorIndividualServerAccountSchema() schema.Attribute {
 	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
-			"server_id": schema.StringAttribute{Required: true},
-			"username":  schema.StringAttribute{Required: true},
+			"server":   schema.StringAttribute{Required: true},
+			"username": schema.StringAttribute{Required: true},
 		},
 		Optional: true,
 	}
@@ -182,8 +182,8 @@ func SelectorIndividualServerAccountSchema() schema.Attribute {
 func SelectorIndividualServerAccountFromModelToSDK(_ context.Context, in *SelectorIndividualServerAccountModel, out *pam.SelectorIndividualServerAccount) diag.Diagnostics {
 	out.Type = string(pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER_ACCOUNT) //TODO(ja) this should probably be hard coded
 	out.Username = in.Username.ValueStringPointer()
-	if !in.ServerId.IsNull() {
-		out.Server = *pam.NewNamedObject().SetId(in.ServerId.ValueString())
+	if !in.Server.IsNull() && !in.Server.IsUnknown() {
+		out.Server = *pam.NewNamedObject().SetId(in.Server.ValueString())
 	}
 	out.Username = in.Username.ValueStringPointer()
 	return nil
