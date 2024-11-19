@@ -292,7 +292,7 @@ func SelectorIndividualServerAccountFromSDKToModel(_ context.Context, in *pam.Se
 }
 func SelectorIndividualServerAccountFromModelToSDK(_ context.Context, in *SelectorIndividualServerAccountModel) (*pam.SelectorIndividualServerAccount, diag.Diagnostics) {
 	var out pam.SelectorIndividualServerAccount
-	out.Type = string(pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER_ACCOUNT) //TODO(ja) this should probably be hard coded
+	out.Type = string(pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER_ACCOUNT)
 	out.Username = in.Username.ValueStringPointer()
 	if !in.Server.IsNull() && !in.Server.IsUnknown() {
 		out.Server = *pam.NewNamedObject().SetId(in.Server.ValueString())
