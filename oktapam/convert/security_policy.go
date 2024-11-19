@@ -115,6 +115,15 @@ func SecurityPolicyFromSDKToModel(ctx context.Context, in *pam.SecurityPolicy) (
 				outRules = append(outRules, *outRule)
 			}
 		}
+
+		if listValue, diags := types.ListValueFrom(ctx, types.ObjectType{AttrTypes: SecurityPolicyRuleAttrTypes()}, outRules); diags.HasError() {
+			return nil, diags
+		} else {
+			out.Rules = listValue
+		}
+	} else {
+		out.Rules = types.ListNull(types.ObjectType{AttrTypes: SecurityPolicyRuleAttrTypes()})
 	}
+
 	return &out, nil
 }

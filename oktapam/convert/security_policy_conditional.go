@@ -1,17 +1,21 @@
 package convert
 
 import (
+	"context"
+	"github.com/atko-pam/pam-sdk-go/client/pam"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type SecurityPolicyRuleConditionModel struct {
+type SecurityPolicyRuleConditionContainerModel struct {
 	ConditionsAccessRequests *ConditionsAccessRequestsModel `tfsdk:"access_request"`
 	ConditionsGateway        *ConditionsGatewayModel        `tfsdk:"gateway"`
 	ConditionsMFA            *ConditionsMFAModel            `tfsdk:"mfa"`
 }
 
-func SecurityPolicyRuleConditionsSchema() schema.NestedAttributeObject {
+func SecurityPolicyRuleConditionContainerSchema() schema.NestedAttributeObject {
 	return schema.NestedAttributeObject{
 		Attributes: map[string]schema.Attribute{
 			"access_request": ConditionsAccessRequestsSchema(),
@@ -19,6 +23,23 @@ func SecurityPolicyRuleConditionsSchema() schema.NestedAttributeObject {
 			"mfa":            ConditionsMFASchema(),
 		},
 	}
+}
+
+func SecurityPolicyRuleConditionContainerAttrTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"access_request": types.ObjectType{AttrTypes: ConditionsAccessRequestsAttrTypes()},
+		"gateway":        types.ObjectType{AttrTypes: ConditionsGatewayAttrTypes()},
+		"mfa":            types.ObjectType{AttrTypes: ConditionsMFAAttrTypes()},
+	}
+}
+func SecurityPolicyRuleConditionFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleConditionContainerModel) (*pam.SecurityPolicyRuleCondition, diag.Diagnostics) {
+	var out pam.SecurityPolicyRuleCondition
+	return &out, nil
+}
+
+func SecurityPolicyRuleConditionContainerFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRuleCondition) (*SecurityPolicyRuleConditionContainerModel, diag.Diagnostics) {
+	var out SecurityPolicyRuleConditionContainerModel
+	return &out, nil
 }
 
 type ConditionsAccessRequestsModel struct {
@@ -38,6 +59,24 @@ func ConditionsAccessRequestsSchema() schema.Attribute {
 	}
 }
 
+func ConditionsAccessRequestsAttrTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"request_type_id":       types.StringType,
+		"request_type_name":     types.StringType,
+		"expires_after_seconds": types.Int32Type,
+	}
+}
+
+func ConditionsAccessRequestFromSDKToModel(ctx context.Context, in *pam.ConditionsAccessRequests) (*ConditionsAccessRequestsModel, diag.Diagnostics) {
+	var out ConditionsAccessRequestsModel
+	return &out, nil
+}
+func ConditionsAccessRequestFromModelToSDK(ctx context.Context, in *ConditionsAccessRequestsModel) (*pam.ConditionsAccessRequests, diag.Diagnostics) {
+	var out pam.ConditionsAccessRequests
+
+	return &out, nil
+}
+
 type ConditionsGatewayModel struct {
 	TrafficForwarding types.Bool `tfsdk:"traffic_forwarding"`
 	SessionRecording  types.Bool `tfsdk:"session_recording"`
@@ -53,6 +92,25 @@ func ConditionsGatewaySchema() schema.Attribute {
 	}
 }
 
+func ConditionsGatewayAttrTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"traffic_forwarding": types.BoolType,
+		"session_recording":  types.BoolType,
+	}
+}
+
+func ConditionsGatewayFromSDKToModel(ctx context.Context, in *pam.ConditionsGateway) (*ConditionsGatewayModel, diag.Diagnostics) {
+	var out ConditionsGatewayModel
+
+	return &out, nil
+}
+
+func ConditionsGatewayFromModelToSDK(ctx context.Context, in *ConditionsGatewayModel) (*pam.ConditionsGateway, diag.Diagnostics) {
+	var out pam.ConditionsGateway
+
+	return &out, nil
+}
+
 type ConditionsMFAModel struct {
 	ReAuthFrequencyInSeconds types.Int32 `tfsdk:"re_auth_frequency_in_seconds"`
 	AcrValues                types.String/*ConditionsMFAACRValuesModel*/ `tfsdk:"acr_values"`
@@ -66,4 +124,22 @@ func ConditionsMFASchema() schema.Attribute {
 		},
 		Optional: true,
 	}
+}
+
+func ConditionsMFAAttrTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"re_auth_frequency_in_seconds": types.Int32Type,
+		"acr_values":                   types.StringType,
+	}
+}
+
+func ConditionsMFAFromSDKToModel(ctx context.Context, in *pam.ConditionsMFA) (*ConditionsMFAModel, diag.Diagnostics) {
+	var out ConditionsMFAModel
+
+	return &out, nil
+}
+func ConditionsMFAFromModelToSDK(ctx context.Context, in *ConditionsMFAModel) (*pam.ConditionsMFA, diag.Diagnostics) {
+	var out pam.ConditionsMFA
+
+	return &out, nil
 }

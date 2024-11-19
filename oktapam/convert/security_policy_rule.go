@@ -3,6 +3,7 @@ package convert
 import (
 	"context"
 	"github.com/atko-pam/pam-sdk-go/client/pam"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,7 +18,7 @@ type SecurityPolicyRuleModel struct {
 	ResourceType                      types.String `tfsdk:"resource_type"`
 	ResourceSelector                  types.Object/*SecurityPolicyRuleResourceSelectorModel*/ `tfsdk:"resource_selector"`
 	Privileges                        types.List `tfsdk:"privileges"`
-	Conditions                        types.List/**SecurityPolicyRuleConditionModel*/ `tfsdk:"conditions"`
+	Conditions                        types.List/**SecurityPolicyRuleConditionContainerModel*/ `tfsdk:"conditions"`
 	OverrideCheckoutDurationInSeconds types.Int64  `tfsdk:"override_checkout_duration_in_seconds"`
 	SecurityPolicyID                  types.String `tfsdk:"security_policy_id"` // openapi readOnly
 }
@@ -35,10 +36,22 @@ func SecurityPolicyRuleSchema() schema.NestedAttributeObject {
 				Required:     true,
 			},
 			"conditions": schema.ListNestedAttribute{
-				NestedObject: SecurityPolicyRuleConditionsSchema(),
+				NestedObject: SecurityPolicyRuleConditionContainerSchema(),
 				Optional:     true,
 			},
 		},
+	}
+}
+
+func SecurityPolicyRuleAttrTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"name":                                  types.StringType,
+		"resource_type":                         types.StringType,
+		"override_checkout_duration_in_seconds": types.Int64Type,
+		"security_policy_id":                    types.StringType,
+		"resource_selector":                     types.ObjectType{AttrTypes: SecurityPolicyRuleResourceSelectorAttrTypes()},
+		"privileges":                            types.ListType{ElemType: types.ObjectType{AttrTypes: SecurityPolicyRulePrivilegeContainerAttrTypes()}},
+		"conditions":                            types.ListType{ElemType: types.ObjectType{AttrTypes: SecurityPolicyRuleConditionContainerAttrTypes()}},
 	}
 }
 
@@ -108,6 +121,17 @@ func SecurityPolicyRuleFromSDKToModel(ctx context.Context, in *pam.SecurityPolic
 
 	out.OverrideCheckoutDurationInSeconds = types.Int64PointerValue(in.OverrideCheckoutDurationInSeconds.Get())
 
-	// TODO(ja) Conditions
+	if len(in.Conditions) > 0 {
+		var outConditions []SecurityPolicyRuleConditionContainerModel
+		for _, condition := range in.Conditions {
+			if outCondition, diags := SecurityPolicyRuleConditionContainerFromSDKToModel(ctx, &condition); diags.HasError() {
+				return nil, diags
+			} else {
+				outConditions = append(outConditions, *outCondition)
+			}
+		}
+	} else {
+		out.Conditions = types.ListNull(types.ObjectType{AttrTypes: SecurityPolicyRuleConditionContainerAttrTypes()})
+	}
 	return &out, nil
 }
