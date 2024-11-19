@@ -34,9 +34,19 @@ func PrincipalAccountSSHPrivilegeFromSDKToModel(_ context.Context, in *pam.Secur
 func PrincipalAccountSSHPrivilegeFromModelToSDK(_ context.Context, in *PrincipalAccountSSHPrivilegeModel) (*pam.SecurityPolicyPrincipalAccountSSHPrivilege, diag.Diagnostics) {
 	var out pam.SecurityPolicyPrincipalAccountSSHPrivilege
 	out.Type = pam.SecurityPolicyRulePrivilegeType_PRINCIPAL_ACCOUNT_SSH
-	out.PrincipalAccountSsh = in.PrincipalAccountSSH.ValueBool()
-	out.AdminLevelPermissions = in.AdminLevelPermissions.ValueBoolPointer()
-	out.SudoDisplayName = in.SudoDisplayName.ValueStringPointer()
+
+	if !in.PrincipalAccountSSH.IsNull() && !in.PrincipalAccountSSH.IsUnknown() {
+		out.PrincipalAccountSsh = in.PrincipalAccountSSH.ValueBool()
+	}
+
+	if !in.AdminLevelPermissions.IsNull() && !in.AdminLevelPermissions.IsUnknown() {
+		out.AdminLevelPermissions = in.AdminLevelPermissions.ValueBoolPointer()
+	}
+
+	if !in.SudoDisplayName.IsNull() && !in.SudoDisplayName.IsUnknown() {
+		out.SudoDisplayName = in.SudoDisplayName.ValueStringPointer()
+	}
+
 	for _, sudoCommandBundle := range in.SudoCommandBundles {
 		if !sudoCommandBundle.IsNull() && !sudoCommandBundle.IsUnknown() {
 			out.SudoCommandBundles = append(out.SudoCommandBundles, *pam.NewNamedObject().SetId(sudoCommandBundle.ValueString()))

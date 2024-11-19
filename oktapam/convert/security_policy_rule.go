@@ -58,14 +58,20 @@ func SecurityPolicyRuleAttrTypes() map[string]attr.Type {
 
 func SecurityPolicyRuleFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleModel) (*pam.SecurityPolicyRule, diag.Diagnostics) {
 	var out pam.SecurityPolicyRule
-	out.Name = in.Name.ValueString()
-	if outSelector, diags := SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx, in.ResourceSelector); diags.HasError() {
-		return nil, diags
-	} else {
-		out.ResourceSelector = *outSelector
-	}
 
 	out.ResourceType = pam.SecurityPolicyRuleResourceType(in.ResourceType.ValueString())
+
+	if !in.Name.IsNull() && !in.Name.IsUnknown() {
+		out.Name = in.Name.ValueString()
+	}
+
+	if !in.ResourceSelector.IsNull() && !in.ResourceSelector.IsUnknown() {
+		if outSelector, diags := SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx, in.ResourceSelector); diags.HasError() {
+			return nil, diags
+		} else {
+			out.ResourceSelector = *outSelector
+		}
+	}
 
 	if !in.Privileges.IsNull() && len(in.Privileges.Elements()) > 0 {
 		privilegesModel := make([]SecurityPolicyRulePrivilegeContainerModel, 0, len(in.Privileges.Elements()))

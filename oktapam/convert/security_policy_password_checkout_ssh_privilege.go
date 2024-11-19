@@ -36,7 +36,10 @@ func PasswordCheckoutSSHPrivilegeAttrTypes() map[string]attr.Type {
 func PasswordCheckoutSSHPrivilegeFromModelToSDK(_ context.Context, in *PasswordCheckoutSSHPrivilegeModel) (*pam.SecurityPolicyPasswordCheckoutSSHPrivilege, diag.Diagnostics) {
 	var out pam.SecurityPolicyPasswordCheckoutSSHPrivilege
 	out.Type = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_SSH
-	out.PasswordCheckoutSsh = in.PasswordCheckoutSSH.ValueBool()
+
+	if !in.PasswordCheckoutSSH.IsNull() && !in.PasswordCheckoutSSH.IsUnknown() {
+		out.PasswordCheckoutSsh = in.PasswordCheckoutSSH.ValueBool()
+	}
 	return &out, nil
 }
 

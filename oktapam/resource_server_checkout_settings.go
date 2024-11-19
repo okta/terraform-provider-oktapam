@@ -80,9 +80,11 @@ func (r *serverCheckoutSettingsResource) Create(ctx context.Context, req resourc
 
 	var resourceCheckoutSettings pam.ResourceCheckoutSettings
 
-	if diags := convert.ResourceCheckoutSettingsFromModelToSDK(ctx, &plan.ResourceCheckoutSettingsModel, &resourceCheckoutSettings); diags.HasError() {
+	if inSettings, diags := convert.ResourceCheckoutSettingsFromModelToSDK(ctx, &plan.ResourceCheckoutSettingsModel); diags.HasError() {
 		resp.Diagnostics.Append(diags...)
 		return
+	} else {
+		resourceCheckoutSettings = *inSettings
 	}
 
 	if _, err := r.api.UpdateResourceGroupServerBasedProjectCheckoutSettings(ctx, r.teamName, plan.ResourceGroup, plan.Project).ResourceCheckoutSettings(resourceCheckoutSettings).Execute(); err != nil {
@@ -144,9 +146,11 @@ func (r *serverCheckoutSettingsResource) Update(ctx context.Context, req resourc
 
 	// Update the existing checkout settings with the new values
 	var resourceCheckoutSettings pam.ResourceCheckoutSettings
-	if diags := convert.ResourceCheckoutSettingsFromModelToSDK(ctx, &plan.ResourceCheckoutSettingsModel, &resourceCheckoutSettings); diags.HasError() {
+	if inSettings, diags := convert.ResourceCheckoutSettingsFromModelToSDK(ctx, &plan.ResourceCheckoutSettingsModel); diags.HasError() {
 		resp.Diagnostics.Append(diags...)
 		return
+	} else {
+		resourceCheckoutSettings = *inSettings
 	}
 
 	if _, err := r.api.UpdateResourceGroupServerBasedProjectCheckoutSettings(ctx, r.teamName, plan.ResourceGroup, plan.Project).ResourceCheckoutSettings(resourceCheckoutSettings).Execute(); err != nil {

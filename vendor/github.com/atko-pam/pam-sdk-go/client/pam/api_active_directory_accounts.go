@@ -103,45 +103,49 @@ func (a *ActiveDirectoryAccountsAPIService) ConfigureActiveDirectoryAccountRuleS
 	localVarPostBody = r.activeDirectoryAccountRuleSettings
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return nil, err
-	}
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return nil, err
+		}
 
-	if localVarHTTPResponse.StatusCode == 401 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarHTTPResponse, err
+			return nil, err
 		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v UnauthorizedAccessResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return localVarHTTPResponse, nonDefaultResponse
-	}
-	if localVarHTTPResponse.StatusCode == 404 {
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return localVarHTTPResponse, nonDefaultResponse
 
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return localVarHTTPResponse, err
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v NotFoundResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
 			return localVarHTTPResponse, err
 		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return localVarHTTPResponse, nonDefaultResponse
+		return localVarHTTPResponse, apiError
 	}
 
 	return localVarHTTPResponse, err
@@ -229,45 +233,49 @@ func (a *ActiveDirectoryAccountsAPIService) CreateActiveDirectoryAccountRuleExec
 	localVarPostBody = r.activeDirectoryAccountRuleRequest
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
-	}
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
 
-	if localVarHTTPResponse.StatusCode == 401 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, localVarHTTPResponse, err
+			return localVarReturnValue, nil, err
 		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v UnauthorizedAccessResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
-	}
-	if localVarHTTPResponse.StatusCode == 404 {
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
 
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return nil, localVarHTTPResponse, err
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v NotFoundResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
 		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
@@ -345,45 +353,49 @@ func (a *ActiveDirectoryAccountsAPIService) DeleteActiveDirectoryAccountRuleExec
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return nil, err
-	}
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return nil, err
+		}
 
-	if localVarHTTPResponse.StatusCode == 401 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarHTTPResponse, err
+			return nil, err
 		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v UnauthorizedAccessResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return localVarHTTPResponse, nonDefaultResponse
-	}
-	if localVarHTTPResponse.StatusCode == 404 {
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return localVarHTTPResponse, nonDefaultResponse
 
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return localVarHTTPResponse, err
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v NotFoundResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
 			return localVarHTTPResponse, err
 		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return localVarHTTPResponse, nonDefaultResponse
+		return localVarHTTPResponse, apiError
 	}
 
 	return localVarHTTPResponse, err
@@ -464,45 +476,49 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountExecute(r A
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
-	}
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
 
-	if localVarHTTPResponse.StatusCode == 401 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, localVarHTTPResponse, err
+			return localVarReturnValue, nil, err
 		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v UnauthorizedAccessResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
-	}
-	if localVarHTTPResponse.StatusCode == 404 {
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
 
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return nil, localVarHTTPResponse, err
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v NotFoundResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
 		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
@@ -585,45 +601,49 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountMatchExecut
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
-	}
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
 
-	if localVarHTTPResponse.StatusCode == 401 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, localVarHTTPResponse, err
+			return localVarReturnValue, nil, err
 		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v UnauthorizedAccessResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
-	}
-	if localVarHTTPResponse.StatusCode == 404 {
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
 
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return nil, localVarHTTPResponse, err
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v NotFoundResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
 		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
@@ -704,8 +724,25 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountRuleExecute
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
@@ -782,45 +819,49 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountRuleSetting
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
-	}
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
 
-	if localVarHTTPResponse.StatusCode == 401 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, localVarHTTPResponse, err
+			return localVarReturnValue, nil, err
 		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v UnauthorizedAccessResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
-	}
-	if localVarHTTPResponse.StatusCode == 404 {
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
 
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return nil, localVarHTTPResponse, err
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v NotFoundResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
 		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
@@ -897,45 +938,49 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountRulesExecu
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
-	}
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
 
-	if localVarHTTPResponse.StatusCode == 401 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, localVarHTTPResponse, err
+			return localVarReturnValue, nil, err
 		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v UnauthorizedAccessResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
-	}
-	if localVarHTTPResponse.StatusCode == 404 {
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
 
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return nil, localVarHTTPResponse, err
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v NotFoundResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
 		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
@@ -1012,45 +1057,49 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountsExecute(r
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
-	}
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
 
-	if localVarHTTPResponse.StatusCode == 401 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, localVarHTTPResponse, err
+			return localVarReturnValue, nil, err
 		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v UnauthorizedAccessResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
-	}
-	if localVarHTTPResponse.StatusCode == 404 {
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
 
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return nil, localVarHTTPResponse, err
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v NotFoundResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
 		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
@@ -1135,81 +1184,73 @@ func (a *ActiveDirectoryAccountsAPIService) ReorderActiveDirectoryAccountRulesEx
 	localVarPostBody = r.reorderActiveDirectoryAccountRuleRequest
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
-	}
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
 
-	if localVarHTTPResponse.StatusCode == 400 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, localVarHTTPResponse, err
+			return localVarReturnValue, nil, err
 		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 400 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v BadRequestResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
-	}
-	if localVarHTTPResponse.StatusCode == 401 {
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v BadRequestResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
 
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return nil, localVarHTTPResponse, err
 		}
+		if localVarHTTPResponse.StatusCode == 401 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v UnauthorizedAccessResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
-	}
-	if localVarHTTPResponse.StatusCode == 404 {
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
 
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return nil, localVarHTTPResponse, err
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v NotFoundResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
-	}
-	if localVarHTTPResponse.StatusCode == 409 {
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
 
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return nil, localVarHTTPResponse, err
 		}
+		if localVarHTTPResponse.StatusCode == 409 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v ConflictResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v ConflictResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
 		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
@@ -1300,45 +1341,49 @@ func (a *ActiveDirectoryAccountsAPIService) UpdateActiveDirectoryAccountMatchExe
 	localVarPostBody = r.activeDirectoryAccountMatchRequest
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
-	}
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
 
-	if localVarHTTPResponse.StatusCode == 401 {
-
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, localVarHTTPResponse, err
+			return localVarReturnValue, nil, err
 		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v UnauthorizedAccessResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
-		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
-	}
-	if localVarHTTPResponse.StatusCode == 404 {
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
 
-		localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-		if err != nil {
-			return nil, localVarHTTPResponse, err
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
 
-		var nonDefaultResponse ErrNonDefaultResponse
-		var v NotFoundResponse
-		if err := json.Unmarshal(localVarBody, &v); err != nil {
-			return nil, localVarHTTPResponse, err
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
 		}
-		nonDefaultResponse.Result = v
-		nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-		return nil, localVarHTTPResponse, nonDefaultResponse
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
@@ -1424,8 +1469,25 @@ func (a *ActiveDirectoryAccountsAPIService) UpdateActiveDirectoryAccountRuleExec
 	localVarPostBody = r.activeDirectoryAccountRuleRequest
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return nil, err
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarHTTPResponse, err
+		}
+		return localVarHTTPResponse, apiError
 	}
 
 	return localVarHTTPResponse, err

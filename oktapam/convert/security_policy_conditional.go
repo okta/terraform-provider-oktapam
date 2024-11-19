@@ -239,9 +239,10 @@ func ConditionsMFAFromSDKToModel(_ context.Context, in *pam.ConditionsMFA) (*Con
 	if val, ok := in.GetReAuthFrequencyInSecondsOk(); ok {
 		out.ReAuthFrequencyInSeconds = types.Int32PointerValue(val)
 	}
-	if valPtr, ok := in.GetAcrValuesOk(); ok {
-		val := string(*valPtr)
-		out.AcrValues = types.StringValue(val)
+
+	if val, ok := in.GetAcrValuesOk(); ok {
+		valStr := string(*val)
+		out.AcrValues = types.StringValue(valStr)
 	}
 
 	return &out, nil

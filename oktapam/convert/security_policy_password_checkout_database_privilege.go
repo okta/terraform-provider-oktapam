@@ -36,13 +36,19 @@ func PasswordCheckoutDatabasePrivilegeAttrTypes() map[string]attr.Type {
 func PasswordCheckoutDatabasePrivilegeFromModelToSDK(_ context.Context, in *PasswordCheckoutDatabasePrivilegeModel) (*pam.SecurityPolicyPasswordCheckoutDatabasePrivilege, diag.Diagnostics) {
 	var out pam.SecurityPolicyPasswordCheckoutDatabasePrivilege
 	out.Type = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_DATABASE
-	out.PasswordCheckoutDatabase = in.PasswordCheckoutDatabase.ValueBool()
+
+	if !in.PasswordCheckoutDatabase.IsNull() && !in.PasswordCheckoutDatabase.IsUnknown() {
+		out.PasswordCheckoutDatabase = in.PasswordCheckoutDatabase.ValueBool()
+	}
+
 	return &out, nil
 }
 
 func PasswordCheckoutDatabasePrivilegeFromSDKToModel(_ context.Context, in *pam.SecurityPolicyPasswordCheckoutDatabasePrivilege) (*PasswordCheckoutDatabasePrivilegeModel, diag.Diagnostics) {
 	var out PasswordCheckoutDatabasePrivilegeModel
-	out.PasswordCheckoutDatabase = types.BoolValue(in.PasswordCheckoutDatabase)
+	if val, ok := in.GetPasswordCheckoutDatabaseOk(); ok {
+		out.PasswordCheckoutDatabase = types.BoolPointerValue(val)
+	}
 	return &out, nil
 }
 

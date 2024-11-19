@@ -52,16 +52,28 @@ func ResourceCheckoutSettingsSchemaAttributes(mergeIntoMap map[string]schema.Att
 	return mergeIntoMap
 }
 
-func ResourceCheckoutSettingsFromModelToSDK(ctx context.Context, model *ResourceCheckoutSettingsModel, sdkValue *pam.ResourceCheckoutSettings) diag.Diagnostics {
-	sdkValue.CheckoutRequired = model.CheckoutRequired.ValueBool()
-	sdkValue.CheckoutDurationInSeconds = model.CheckoutDurationInSeconds.ValueInt32Pointer()
-	if diags := model.IncludeList.ElementsAs(ctx, &sdkValue.IncludeList, false); diags.HasError() {
-		return diags
+func ResourceCheckoutSettingsFromModelToSDK(ctx context.Context, in *ResourceCheckoutSettingsModel) (*pam.ResourceCheckoutSettings, diag.Diagnostics) {
+	var out pam.ResourceCheckoutSettings
+
+	if !in.CheckoutRequired.IsNull() && !in.CheckoutRequired.IsUnknown() {
+		out.CheckoutRequired = in.CheckoutRequired.ValueBool()
 	}
-	if diags := model.ExcludeList.ElementsAs(ctx, &sdkValue.ExcludeList, false); diags.HasError() {
-		return diags
+	if !in.CheckoutDurationInSeconds.IsNull() && !in.CheckoutDurationInSeconds.IsUnknown() {
+		out.CheckoutDurationInSeconds = in.CheckoutDurationInSeconds.ValueInt32Pointer()
 	}
-	return nil
+
+	if !in.ExcludeList.IsNull() && !in.ExcludeList.IsUnknown() {
+		if diags := in.IncludeList.ElementsAs(ctx, &out.IncludeList, false); diags.HasError() {
+			return nil, diags
+		}
+	}
+
+	if !in.ExcludeList.IsNull() && in.ExcludeList.IsUnknown() {
+		if diags := in.ExcludeList.ElementsAs(ctx, &out.ExcludeList, false); diags.HasError() {
+			return nil, diags
+		}
+	}
+	return &out, nil
 }
 
 func ResourceCheckoutSettingsFromSDKToModel(ctx context.Context, sdkValue *pam.ResourceCheckoutSettings, model *ResourceCheckoutSettingsModel) diag.Diagnostics {

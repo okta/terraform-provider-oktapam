@@ -61,8 +61,14 @@ func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourc
 	if !in.Type.IsNull() && !in.Type.IsUnknown() {
 		out.SetType(pam.SecurityPolicyType(in.Type.ValueString()))
 	}
-	out.Description = in.Description.ValueStringPointer()
-	out.Active = in.Active.ValueBool()
+
+	if !in.Description.IsNull() && !in.Description.IsUnknown() {
+		out.Description = in.Description.ValueStringPointer()
+	}
+
+	if !in.Active.IsNull() && !in.Active.IsUnknown() {
+		out.Active = in.Active.ValueBool()
+	}
 
 	if principals, diags := SecurityPolicyPrincipalFromModelToSDK(ctx, &in.Principals); diags.HasError() {
 		return nil, diags
@@ -88,17 +94,24 @@ func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourc
 
 func SecurityPolicyFromSDKToModel(ctx context.Context, in *pam.SecurityPolicy) (*SecurityPolicyResourceModel, diag.Diagnostics) {
 	var out SecurityPolicyResourceModel
+
 	out.ID = types.StringPointerValue(in.Id)
-	out.Name = types.StringValue(in.Name)
-	if in.Type != nil {
-		out.Type = types.StringValue(string(*in.Type))
+	if val, ok := in.GetNameOk(); ok {
+		out.Name = types.StringPointerValue(val)
 	}
 
-	if in.Description != nil {
-		out.Description = types.StringPointerValue(in.Description)
+	if val, ok := in.GetTypeOk(); ok {
+		valStr := string(*val)
+		out.Type = types.StringValue(valStr)
 	}
 
-	out.Active = types.BoolValue(in.Active)
+	if val, ok := in.GetDescriptionOk(); ok {
+		out.Description = types.StringPointerValue(val)
+	}
+
+	if val, ok := in.GetActiveOk(); ok {
+		out.Active = types.BoolPointerValue(val)
+	}
 
 	if principals, diags := SecurityPolicyPrincipalFromSDKToModel(ctx, &in.Principals); diags.HasError() {
 		return nil, diags

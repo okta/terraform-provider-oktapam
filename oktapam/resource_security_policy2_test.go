@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"sync"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/config"
@@ -25,6 +26,8 @@ func entityId(body []byte) string {
 }
 
 func setupHTTPMock(t *testing.T, entities map[string]any) {
+
+	var entitiesLock sync.Mutex
 
 	prefix := "/v1/teams/httpmock-test-team"
 
@@ -55,6 +58,8 @@ func setupHTTPMock(t *testing.T, entities map[string]any) {
 			default:
 				panic("don't know how to create " + entityType)
 			}
+			entitiesLock.Lock()
+			defer entitiesLock.Unlock()
 			entities[id] = created
 			return httpmock.NewJsonResponse(http.StatusCreated, created)
 		})
@@ -64,12 +69,14 @@ func setupHTTPMock(t *testing.T, entities map[string]any) {
 	httpmock.RegisterRegexpResponder(http.MethodGet, regexp.MustCompile(prefix+`/(sudo_command_bundles|security_policy)/(.*)`),
 		func(request *http.Request) (*http.Response, error) {
 			id := httpmock.MustGetSubmatch(request, 2)
+			entitiesLock.Lock()
+			defer entitiesLock.Unlock()
 			return httpmock.NewJsonResponse(http.StatusOK, entities[id])
 		})
 
 	// This doesn't actually delete anything, if you need it, feel free to add it in.
 	httpmock.RegisterRegexpResponder(http.MethodDelete, regexp.MustCompile(`.*`),
-		httpmock.NewStringResponder(http.StatusOK, ""),
+		httpmock.NewStringResponder(http.StatusNoContent, ""),
 	)
 }
 

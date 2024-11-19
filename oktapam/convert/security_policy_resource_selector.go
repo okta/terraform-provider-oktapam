@@ -43,16 +43,20 @@ func SecurityPolicyRuleResourceSelectorAttrTypes() map[string]attr.Type {
 
 func SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx context.Context, in types.Object) (*pam.SecurityPolicyRuleResourceSelector, diag.Diagnostics) {
 	var out pam.SecurityPolicyRuleResourceSelector
-	var resourceSelectorModel SecurityPolicyRuleResourceSelectorModel
-	if diags := in.As(ctx, &resourceSelectorModel, basetypes.ObjectAsOptions{}); diags.HasError() {
-		return nil, diags
-	}
 
-	if resourceSelectorModel.ServerBasedResource != nil {
-		if outSelector, diags := ServerBasedResourceSelectorFromModelToSDK(ctx, resourceSelectorModel.ServerBasedResource); diags.HasError() {
+	if !in.IsUnknown() && !in.IsNull() {
+		var resourceSelectorModel SecurityPolicyRuleResourceSelectorModel
+
+		if diags := in.As(ctx, &resourceSelectorModel, basetypes.ObjectAsOptions{}); diags.HasError() {
 			return nil, diags
-		} else {
-			out.SecurityPolicyRuleServerBasedResourceSelector = outSelector
+		}
+
+		if resourceSelectorModel.ServerBasedResource != nil {
+			if outSelector, diags := ServerBasedResourceSelectorFromModelToSDK(ctx, resourceSelectorModel.ServerBasedResource); diags.HasError() {
+				return nil, diags
+			} else {
+				out.SecurityPolicyRuleServerBasedResourceSelector = outSelector
+			}
 		}
 	}
 	return &out, nil
@@ -251,7 +255,7 @@ func SelectorIndividualServerFromSDKToModel(_ context.Context, in *pam.SelectorI
 func SelectorIndividualServerFromModelToSDK(_ context.Context, in *SelectorIndividualServerModel) (*pam.SelectorIndividualServer, diag.Diagnostics) {
 	var out pam.SelectorIndividualServer
 	out.Type = string(pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER)
-	if !in.Server.IsNull() {
+	if !in.Server.IsNull() && !in.Server.IsUnknown() {
 		out.Server = *pam.NewNamedObject().SetId(in.Server.ValueString())
 	}
 	return &out, nil
@@ -293,11 +297,13 @@ func SelectorIndividualServerAccountFromSDKToModel(_ context.Context, in *pam.Se
 func SelectorIndividualServerAccountFromModelToSDK(_ context.Context, in *SelectorIndividualServerAccountModel) (*pam.SelectorIndividualServerAccount, diag.Diagnostics) {
 	var out pam.SelectorIndividualServerAccount
 	out.Type = string(pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER_ACCOUNT)
-	out.Username = in.Username.ValueStringPointer()
+	if !in.Username.IsNull() && !in.Username.IsUnknown() {
+		out.Username = in.Username.ValueStringPointer()
+	}
+
 	if !in.Server.IsNull() && !in.Server.IsUnknown() {
 		out.Server = *pam.NewNamedObject().SetId(in.Server.ValueString())
 	}
-	out.Username = in.Username.ValueStringPointer()
 	return &out, nil
 }
 
@@ -351,6 +357,7 @@ func SelectorServerLabelFromModelToSDK(ctx context.Context, in *SelectorServerLa
 	var out pam.SelectorServerLabel
 
 	out.Type = string(pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_SERVER_LABEL)
+
 	if outSelector, diags := ServerLabelServerSelectorFromModelToSDK(ctx, in.ServerSelector); diags.HasError() {
 		return nil, diags
 	} else {
@@ -397,15 +404,18 @@ func ServerLabelServerSelectorAttrTypes() map[string]attr.Type {
 
 func ServerLabelServerSelectorFromModelToSDK(ctx context.Context, in *ServerLabelServerSelectorModel) (*pam.SelectorServerLabelServerSelector, diag.Diagnostics) {
 	var out pam.SelectorServerLabelServerSelector
-	elements := make(map[string]types.String, len(in.Labels.Elements()))
-	if diags := in.Labels.ElementsAs(ctx, &elements, false); diags.HasError() {
-		return nil, diags
+
+	if len(in.Labels.Elements()) > 0 {
+		elements := make(map[string]types.String, len(in.Labels.Elements()))
+		if diags := in.Labels.ElementsAs(ctx, &elements, false); diags.HasError() {
+			return nil, diags
+		}
+		outMap := make(map[string]any, len(elements))
+		for k, v := range elements {
+			outMap[k] = v.ValueString()
+		}
+		out.Labels = outMap
 	}
-	outMap := make(map[string]any, len(elements))
-	for k, v := range elements {
-		outMap[k] = v.ValueString()
-	}
-	out.Labels = outMap
 	return &out, nil
 }
 

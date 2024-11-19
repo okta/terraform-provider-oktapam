@@ -48,6 +48,7 @@ func SecurityPolicyPrincipalFromSDKToModel(_ context.Context, in *pam.SecurityPo
 
 func SecurityPolicyPrincipalFromModelToSDK(ctx context.Context, in *SecurityPolicyPrincipalsModel) (*pam.SecurityPolicyPrincipals, diag.Diagnostics) {
 	var out pam.SecurityPolicyPrincipals
+
 	if !in.UserGroups.IsNull() && len(in.UserGroups.Elements()) > 0 {
 		userGroups := make([]types.String, 0, len(in.UserGroups.Elements()))
 
