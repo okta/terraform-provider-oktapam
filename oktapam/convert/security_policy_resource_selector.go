@@ -120,17 +120,18 @@ func ServerBasedResourceSelectorFromSDKToModel(ctx context.Context, in *pam.Secu
 				container.IndividualServer = outSelector
 			}
 		} else if selector.Selector.SelectorIndividualServerAccount != nil {
-			//if diags := SelectorIndividualServerAccountFromSDKToModel(ctx, selector.Selector.SelectorIndividualServerAccount, container.IndividualServerAccount); diags.HasError() {
-			//	return diags
-			//}
-			// TODO(ja) -^
+			if outSelector, diags := SelectorIndividualServerAccountFromSDKToModel(ctx, selector.Selector.SelectorIndividualServerAccount); diags.HasError() {
+				return nil, diags
+			} else {
+				container.IndividualServerAccount = outSelector
+			}
 		} else {
 			panic("missing stanza in ServerBasedResourceSelectorFromSDKToModel")
 		}
 		outSelectors = append(outSelectors, container)
 	}
 
-	if listValue, diags := types.ListValueFrom(ctx, types.ObjectType{AttrTypes: ServerBasedResourceSelectorAttrTypes()}, outSelectors); diags.HasError() {
+	if listValue, diags := types.ListValueFrom(ctx, types.ObjectType{AttrTypes: ServerBasedResourceSelectorContainerAttrTypes()}, outSelectors); diags.HasError() {
 		return nil, diags
 	} else {
 		out.Selectors = listValue
@@ -182,13 +183,13 @@ func ServerBasedResourceSelectorContainerAttrTypes() map[string]attr.Type {
 }
 
 func ServerBasedResourceSelectorContainerFromModelToSDK(ctx context.Context, in *ServerBasedResourceSelectorContainerModel) (*pam.SecurityPolicyRuleServerBasedResourceSelectorContainer, diag.Diagnostics) {
-	var selectorContainer *pam.SecurityPolicyRuleServerBasedResourceSelectorContainer
+	var out pam.SecurityPolicyRuleServerBasedResourceSelectorContainer
 
 	if in.IndividualServer != nil {
 		if outVal, diags := SelectorIndividualServerFromModelToSDK(ctx, in.IndividualServer); diags.HasError() {
 			return nil, diags
 		} else {
-			selectorContainer = pam.NewSecurityPolicyRuleServerBasedResourceSelectorContainer(
+			out = *pam.NewSecurityPolicyRuleServerBasedResourceSelectorContainer(
 				pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER,
 				pam.SelectorIndividualServerAsSecurityPolicyRuleResourceServerBasedResourceSubSelector(outVal),
 			)
@@ -197,7 +198,7 @@ func ServerBasedResourceSelectorContainerFromModelToSDK(ctx context.Context, in 
 		if outVal, diags := SelectorIndividualServerAccountFromModelToSDK(ctx, in.IndividualServerAccount); diags.HasError() {
 			return nil, diags
 		} else {
-			selectorContainer = pam.NewSecurityPolicyRuleServerBasedResourceSelectorContainer(
+			out = *pam.NewSecurityPolicyRuleServerBasedResourceSelectorContainer(
 				pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER_ACCOUNT,
 				pam.SelectorIndividualServerAccountAsSecurityPolicyRuleResourceServerBasedResourceSubSelector(outVal),
 			)
@@ -206,7 +207,7 @@ func ServerBasedResourceSelectorContainerFromModelToSDK(ctx context.Context, in 
 		if outVal, diags := SelectorServerLabelFromModelToSDK(ctx, in.SelectorServerLabel); diags.HasError() {
 			return nil, diags
 		} else {
-			selectorContainer = pam.NewSecurityPolicyRuleServerBasedResourceSelectorContainer(
+			out = *pam.NewSecurityPolicyRuleServerBasedResourceSelectorContainer(
 				pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_SERVER_LABEL,
 				pam.SelectorServerLabelAsSecurityPolicyRuleResourceServerBasedResourceSubSelector(outVal))
 		}
@@ -214,7 +215,7 @@ func ServerBasedResourceSelectorContainerFromModelToSDK(ctx context.Context, in 
 		panic("missing stanza in ServerBasedResourceSelectorContainerFromModelToSDK")
 	}
 
-	return selectorContainer, nil
+	return &out, nil
 }
 
 type SelectorIndividualServerModel struct {
@@ -277,6 +278,17 @@ func SelectorIndividualServerAccountAttrTypes() map[string]attr.Type {
 	}
 }
 
+func SelectorIndividualServerAccountFromSDKToModel(_ context.Context, in *pam.SelectorIndividualServerAccount) (*SelectorIndividualServerAccountModel, diag.Diagnostics) {
+	var out SelectorIndividualServerAccountModel
+
+	out.Username = types.StringPointerValue(in.Username)
+
+	if server, ok := in.GetServerOk(); ok {
+		out.Server = types.StringPointerValue(server.Id)
+	}
+
+	return &out, nil
+}
 func SelectorIndividualServerAccountFromModelToSDK(_ context.Context, in *SelectorIndividualServerAccountModel) (*pam.SelectorIndividualServerAccount, diag.Diagnostics) {
 	var out pam.SelectorIndividualServerAccount
 	out.Type = string(pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER_ACCOUNT) //TODO(ja) this should probably be hard coded
@@ -319,16 +331,19 @@ func SelectorServerLabelFromSDKToModel(ctx context.Context, in *pam.SelectorServ
 	}
 
 	var usernames []types.String
-	//TODO(ja) this is supposed to be a separate model
-	for _, username := range in.AccountSelector.Usernames {
-		usernames = append(usernames, types.StringValue(username))
-	}
-	if usernameList, diags := types.ListValueFrom(ctx, types.StringType, usernames); diags.HasError() {
-		return nil, diags
+	if in.AccountSelector.HasUsernames() {
+		//TODO(ja) this is supposed to be a separate model
+		for _, username := range in.AccountSelector.Usernames {
+			usernames = append(usernames, types.StringValue(username))
+		}
+		if usernameList, diags := types.ListValueFrom(ctx, types.StringType, usernames); diags.HasError() {
+			return nil, diags
+		} else {
+			out.AccountSelector = usernameList
+		}
 	} else {
-		out.AccountSelector = usernameList
+		out.AccountSelector = types.ListNull(types.StringType)
 	}
-
 	return &out, nil
 }
 func SelectorServerLabelFromModelToSDK(ctx context.Context, in *SelectorServerLabelModel) (*pam.SelectorServerLabel, diag.Diagnostics) {
