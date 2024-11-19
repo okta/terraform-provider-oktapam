@@ -62,7 +62,7 @@ func ResourceCheckoutSettingsFromModelToSDK(ctx context.Context, in *ResourceChe
 		out.CheckoutDurationInSeconds = in.CheckoutDurationInSeconds.ValueInt32Pointer()
 	}
 
-	if !in.ExcludeList.IsNull() && !in.ExcludeList.IsUnknown() {
+	if !in.IncludeList.IsNull() && !in.IncludeList.IsUnknown() {
 		if diags := in.IncludeList.ElementsAs(ctx, &out.IncludeList, false); diags.HasError() {
 			return nil, diags
 		}
@@ -76,20 +76,27 @@ func ResourceCheckoutSettingsFromModelToSDK(ctx context.Context, in *ResourceChe
 	return &out, nil
 }
 
-func ResourceCheckoutSettingsFromSDKToModel(ctx context.Context, sdkValue *pam.ResourceCheckoutSettings, model *ResourceCheckoutSettingsModel) diag.Diagnostics {
-	if includeList, diags := types.ListValueFrom(ctx, types.StringType, sdkValue.IncludeList); diags.HasError() {
-		return diags
-	} else {
-		model.IncludeList = includeList
+func ResourceCheckoutSettingsFromSDKToModel(ctx context.Context, in *pam.ResourceCheckoutSettings) (*ResourceCheckoutSettingsModel, diag.Diagnostics) {
+	var out ResourceCheckoutSettingsModel
+
+	if val, ok := in.GetCheckoutRequiredOk(); ok {
+		out.CheckoutRequired = types.BoolPointerValue(val)
 	}
 
-	if excludeList, diags := types.ListValueFrom(ctx, types.StringType, sdkValue.ExcludeList); diags.HasError() {
-		return diags
-	} else {
-		model.ExcludeList = excludeList
+	if val, ok := in.GetCheckoutDurationInSecondsOk(); ok {
+		out.CheckoutDurationInSeconds = types.Int32PointerValue(val)
 	}
 
-	model.CheckoutRequired = types.BoolValue(sdkValue.CheckoutRequired)
-	model.CheckoutDurationInSeconds = types.Int32PointerValue(sdkValue.CheckoutDurationInSeconds)
-	return nil
+	if includeList, diags := types.ListValueFrom(ctx, types.StringType, in.IncludeList); diags.HasError() {
+		return nil, diags
+	} else {
+		out.IncludeList = includeList
+	}
+
+	if excludeList, diags := types.ListValueFrom(ctx, types.StringType, in.ExcludeList); diags.HasError() {
+		return nil, diags
+	} else {
+		out.ExcludeList = excludeList
+	}
+	return &out, nil
 }

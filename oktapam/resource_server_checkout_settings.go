@@ -121,9 +121,11 @@ func (r *serverCheckoutSettingsResource) Read(ctx context.Context, req resource.
 		return
 	} else {
 		// Overwrite server checkout settings with refreshed state
-		if diags := convert.ResourceCheckoutSettingsFromSDKToModel(ctx, checkoutSettings, &state.ResourceCheckoutSettingsModel); diags.HasError() {
+		if settingsModel, diags := convert.ResourceCheckoutSettingsFromSDKToModel(ctx, checkoutSettings); diags.HasError() {
 			resp.Diagnostics.Append(diags...)
 			return
+		} else {
+			state.ResourceCheckoutSettingsModel = *settingsModel
 		}
 	}
 
@@ -170,9 +172,11 @@ func (r *serverCheckoutSettingsResource) Update(ctx context.Context, req resourc
 		return
 	} else {
 		// update the state with the updated checkout settings
-		if diags := convert.ResourceCheckoutSettingsFromSDKToModel(ctx, updatedServerCheckoutSettings, &plan.ResourceCheckoutSettingsModel); diags.HasError() {
+		if settingsModel, diags := convert.ResourceCheckoutSettingsFromSDKToModel(ctx, updatedServerCheckoutSettings); diags.HasError() {
 			resp.Diagnostics.Append(diags...)
 			return
+		} else {
+			plan.ResourceCheckoutSettingsModel = *settingsModel
 		}
 	}
 
