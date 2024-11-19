@@ -67,6 +67,7 @@ func setupHTTPMock(t *testing.T, entities map[string]any) {
 			return httpmock.NewJsonResponse(http.StatusOK, entities[id])
 		})
 
+	// This doesn't actually delete anything, if you need it, feel free to add it in.
 	httpmock.RegisterRegexpResponder(http.MethodDelete, regexp.MustCompile(`.*`),
 		httpmock.NewStringResponder(http.StatusOK, ""),
 	)
