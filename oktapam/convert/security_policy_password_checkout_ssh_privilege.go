@@ -12,11 +12,11 @@ import (
 
 // Begin SecurityPolicyPasswordCheckoutSSH
 
-type SecurityPolicyPasswordCheckoutSSHPrivilegeModel struct {
+type PasswordCheckoutSSHPrivilegeModel struct {
 	PasswordCheckoutSSH types.Bool `tfsdk:"password_checkout_ssh"`
 }
 
-func SecurityPolicyPasswordCheckoutSSHPrivilegeSchema() schema.Attribute {
+func PasswordCheckoutSSHPrivilegeSchema() schema.Attribute {
 	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
 			"password_checkout_ssh": schema.BoolAttribute{
@@ -27,19 +27,19 @@ func SecurityPolicyPasswordCheckoutSSHPrivilegeSchema() schema.Attribute {
 	}
 }
 
-func SecurityPolicyPasswordCheckoutSSHPrivilegeAttrTypes() map[string]attr.Type {
+func PasswordCheckoutSSHPrivilegeAttrTypes() map[string]attr.Type {
 	return map[string]attr.Type{
 		"password_checkout_ssh": types.BoolType,
 	}
 }
 
-func SecurityPolicyPasswordCheckoutSSHPrivilegeFromModelToSDK(_ context.Context, in *SecurityPolicyPasswordCheckoutSSHPrivilegeModel, out *pam.SecurityPolicyPasswordCheckoutSSHPrivilege) diag.Diagnostics {
+func PasswordCheckoutSSHPrivilegeFromModelToSDK(_ context.Context, in *PasswordCheckoutSSHPrivilegeModel, out *pam.SecurityPolicyPasswordCheckoutSSHPrivilege) diag.Diagnostics {
 	out.Type = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_SSH
 	out.PasswordCheckoutSsh = in.PasswordCheckoutSSH.ValueBool()
 	return nil
 }
 
-func SecurityPolicyPasswordCheckoutSSHPrivilegeFromSDKToModel(_ context.Context, in *pam.SecurityPolicyPasswordCheckoutSSHPrivilege, out *SecurityPolicyPasswordCheckoutSSHPrivilegeModel) diag.Diagnostics {
+func PasswordCheckoutSSHPrivilegeFromSDKToModel(_ context.Context, in *pam.SecurityPolicyPasswordCheckoutSSHPrivilege, out *PasswordCheckoutSSHPrivilegeModel) diag.Diagnostics {
 	out.PasswordCheckoutSSH = types.BoolValue(in.PasswordCheckoutSsh)
 	return nil
 }

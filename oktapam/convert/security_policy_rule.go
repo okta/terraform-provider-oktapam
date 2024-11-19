@@ -2,7 +2,6 @@ package convert
 
 import (
 	"context"
-
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -14,10 +13,10 @@ import (
 //type SecurityPolicyRuleResourceSelectorTypeModel types.String
 
 type SecurityPolicyRuleModel struct {
-	Name                              types.String                                                                               `tfsdk:"name"`
-	ResourceType                      types.String                                                                               `tfsdk:"resource_type"`
-	ResourceSelector                  SecurityPolicyRuleResourceSelectorModel                                                    `tfsdk:"resource_selector"`
-	Privileges                        types.List/*SecurityPolicyRulePrivilegeContainerPrivilegeValueModel*/ `tfsdk:"privileges"` //TODO(ja) should this be privilege_value ?!
+	Name                              types.String `tfsdk:"name"`
+	ResourceType                      types.String `tfsdk:"resource_type"`
+	ResourceSelector                  types.Object/*SecurityPolicyRuleResourceSelectorModel*/ `tfsdk:"resource_selector"`
+	Privileges                        types.List `tfsdk:"privileges"`
 	Conditions                        types.List/**SecurityPolicyRuleConditionModel*/ `tfsdk:"conditions"`
 	OverrideCheckoutDurationInSeconds types.Int64  `tfsdk:"override_checkout_duration_in_seconds"`
 	SecurityPolicyID                  types.String `tfsdk:"security_policy_id"` // openapi readOnly
@@ -45,7 +44,7 @@ func SecurityPolicyRuleSchema() schema.NestedAttributeObject {
 
 func SecurityPolicyRuleFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleModel, out *pam.SecurityPolicyRule) diag.Diagnostics {
 	out.Name = in.Name.ValueString()
-	if diags := SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx, &in.ResourceSelector, &out.ResourceSelector); diags.HasError() {
+	if diags := SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx, in.ResourceSelector, &out.ResourceSelector); diags.HasError() {
 		return diags
 	}
 
@@ -86,7 +85,20 @@ func SecurityPolicyRuleFromSDKToModel(ctx context.Context, in *pam.SecurityPolic
 		return diags
 	}
 
-	// TODO(ja) Privileges
+	var outPrivileges []SecurityPolicyRulePrivilegeContainerModel
+	for _, privilege := range in.Privileges {
+		var outPrivilege SecurityPolicyRulePrivilegeContainerModel
+		if diags := SecurityPolicyRulePrivilegeContainerFromSDKToModel(ctx, &privilege, &outPrivilege); diags.HasError() {
+			return diags
+		}
+		outPrivileges = append(outPrivileges, outPrivilege)
+	}
+
+	if listValue, diags := types.ListValueFrom(ctx, types.ObjectType{AttrTypes: SecurityPolicyRulePrivilegeContainerAttrTypes()}, outPrivileges); diags.HasError() {
+		return diags
+	} else {
+		out.Privileges = listValue
+	}
 
 	out.OverrideCheckoutDurationInSeconds = types.Int64PointerValue(in.OverrideCheckoutDurationInSeconds.Get())
 

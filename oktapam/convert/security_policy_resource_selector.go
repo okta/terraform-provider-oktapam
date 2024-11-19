@@ -2,6 +2,9 @@ package convert
 
 import (
 	"context"
+	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -10,7 +13,7 @@ import (
 )
 
 type SecurityPolicyRuleResourceSelectorModel struct {
-	Servers *SecurityPolicyRuleServerBasedResourceSelectorModel `tfsdk:"server_based_resource"`
+	ServerBasedResource *ServerBasedResourceSelectorModel `tfsdk:"server_based_resource"`
 	//ManagedSaasApp   *SecurityPolicyRuleManagedSaasAppBasedResourceSelectorModel   `tfsdk:"managed_saas_app_based_resource"`
 	//UnmanagedSaasApp *SecurityPolicyRuleUnmanagedSaasAppBasedResourceSelectorModel `tfsdk:"unmanaged_saas_app_based_resource"`
 	//OktaApp          *SecurityPolicyRuleOktaAppBasedResourceSelectorModel          `tfsdk:"okta_app_based_resource"`
@@ -21,7 +24,7 @@ type SecurityPolicyRuleResourceSelectorModel struct {
 func SecurityPolicyRuleResourceSelectorSchema() schema.Attribute {
 	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
-			"server_based_resource": SecurityPolicyRuleServerBasedResourceSelectorSchema(), // server_based_resource
+			"server_based_resource": ServerBasedResourceSelectorSchema(), // server_based_resource
 			//"managed_saas_app":   SecurityPolicyRuleManagedSaasAppBasedResourceSelectorSchema(),
 			//"unmanaged_saas_app": SecurityPolicyRuleUnmanagedSaasAppBasedResourceSelectorSchema(),
 			//"okta_app":           SecurityPolicyRuleOktaAppBasedResourceSelectorSchema(),
@@ -31,10 +34,21 @@ func SecurityPolicyRuleResourceSelectorSchema() schema.Attribute {
 	}
 }
 
-func SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleResourceSelectorModel, out *pam.SecurityPolicyRuleResourceSelector) diag.Diagnostics {
-	if in.Servers != nil {
+func SecurityPolicyRuleResourceSelectorAttrTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"server_based_resource": types.ObjectType{AttrTypes: ServerBasedResourceSelectorAttrTypes()},
+	}
+}
+
+func SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx context.Context, in types.Object, out *pam.SecurityPolicyRuleResourceSelector) diag.Diagnostics {
+	var resourceSelectorModel SecurityPolicyRuleResourceSelectorModel
+	if diags := in.As(ctx, &resourceSelectorModel, basetypes.ObjectAsOptions{}); diags.HasError() {
+		return diags
+	}
+
+	if resourceSelectorModel.ServerBasedResource != nil {
 		var outSelector pam.SecurityPolicyRuleServerBasedResourceSelector
-		if diags := SecurityPolicyRuleServerBasedResourceSelectorFromModelToSDK(ctx, in.Servers, &outSelector); diags.HasError() {
+		if diags := ServerBasedResourceSelectorFromModelToSDK(ctx, resourceSelectorModel.ServerBasedResource, &outSelector); diags.HasError() {
 			return diags
 		}
 		out.SecurityPolicyRuleServerBasedResourceSelector = &outSelector
@@ -42,40 +56,91 @@ func SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx context.Context, in *S
 	return nil
 }
 
-func SecurityPolicyRuleResourceSelectorFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRuleResourceSelector, out *SecurityPolicyRuleResourceSelectorModel) diag.Diagnostics {
+func SecurityPolicyRuleResourceSelectorFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRuleResourceSelector, out *types.Object) diag.Diagnostics {
+	var outModel SecurityPolicyRuleResourceSelectorModel
+
 	if in.SecurityPolicyRuleServerBasedResourceSelector != nil {
-		if diags := SecurityPolicyRuleServerBasedResourceSelectorFromSDKToModel(ctx, in.SecurityPolicyRuleServerBasedResourceSelector, out.Servers); diags.HasError() {
+		if diags := ServerBasedResourceSelectorFromSDKToModel(ctx, in.SecurityPolicyRuleServerBasedResourceSelector, outModel.ServerBasedResource); diags.HasError() {
 			return diags
 		}
+	} else {
+		panic("missing stanza in SecurityPolicyRuleResourceSelectorFromSDKToModel")
+	}
+
+	if objectValue, diags := types.ObjectValueFrom(ctx, SecurityPolicyRuleResourceSelectorAttrTypes(), &outModel); diags.HasError() {
+		return diags
+	} else {
+		out = &objectValue
 	}
 	return nil
 }
 
-type SecurityPolicyRuleServerBasedResourceSelectorModel struct {
-	Selectors types.List /*[]SecurityPolicyRuleServerBasedResourceSelectorContainerModel*/ `tfsdk:"selectors"`
+type ServerBasedResourceSelectorModel struct {
+	Selectors types.List /*ServerBasedResourceSelectorContainerModel*/ `tfsdk:"selectors"`
 }
 
-func SecurityPolicyRuleServerBasedResourceSelectorSchema() schema.Attribute {
+func ServerBasedResourceSelectorSchema() schema.Attribute {
 	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
 			"selectors": schema.ListNestedAttribute{
-				NestedObject: SecurityPolicyRuleServerBasedResourceSelectorContainerSchema(),
+				NestedObject: ServerBasedResourceSelectorContainerSchema(),
 				Required:     true,
 			},
 		},
 		Required: true,
 	}
 }
-func SecurityPolicyRuleServerBasedResourceSelectorFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleServerBasedResourceSelectorModel, out *pam.SecurityPolicyRuleServerBasedResourceSelector) diag.Diagnostics {
+
+func ServerBasedResourceSelectorAttrTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"selectors": types.ListType{ElemType: types.ObjectType{AttrTypes: ServerBasedResourceSelectorContainerAttrTypes()}},
+	}
+}
+
+func ServerBasedResourceSelectorFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRuleServerBasedResourceSelector, out *ServerBasedResourceSelectorModel) diag.Diagnostics {
+	var outSelectors []ServerBasedResourceSelectorContainerModel
+
+	//TODO(ja) this should be wrapped in a Container.
+
+	for _, selector := range in.Selectors {
+		var container ServerBasedResourceSelectorContainerModel
+		if selector.Selector.SelectorServerLabel != nil {
+			if diags := SelectorServerLabelFromSDKToModel(ctx, selector.Selector.SelectorServerLabel, container.SelectorServerLabel); diags.HasError() {
+				return diags
+			}
+		} else if selector.Selector.SelectorIndividualServer != nil {
+			if diags := SelectorIndividualServerFromSDKToModel(ctx, selector.Selector.SelectorIndividualServer, container.IndividualServer); diags.HasError() {
+				return diags
+			}
+		} else if selector.Selector.SelectorIndividualServerAccount != nil {
+			//if diags := SelectorIndividualServerAccountFromSDKToModel(ctx, selector.Selector.SelectorIndividualServerAccount, container.IndividualServerAccount); diags.HasError() {
+			//	return diags
+			//}
+			// TODO(ja) -^
+		} else {
+			panic("missing stanza in ServerBasedResourceSelectorFromSDKToModel")
+		}
+		outSelectors = append(outSelectors, container)
+	}
+
+	if listValue, diags := types.ListValueFrom(ctx, types.ObjectType{AttrTypes: ServerBasedResourceSelectorAttrTypes()}, outSelectors); diags.HasError() {
+		return diags
+	} else {
+		out.Selectors = listValue
+	}
+	return nil
+}
+
+func ServerBasedResourceSelectorFromModelToSDK(ctx context.Context, in *ServerBasedResourceSelectorModel, out *pam.SecurityPolicyRuleServerBasedResourceSelector) diag.Diagnostics {
 	out.Type = string(pam.SecurityPolicyRuleResourceType_SERVER_BASED_RESOURCE)
 	if !in.Selectors.IsNull() && len(in.Selectors.Elements()) > 0 {
-		selectorModels := make([]SecurityPolicyRuleServerBasedResourceSelectorContainerModel, 0, len(in.Selectors.Elements()))
+		selectorModels := make([]ServerBasedResourceSelectorContainerModel, 0, len(in.Selectors.Elements()))
 		if diags := in.Selectors.ElementsAs(ctx, &selectorModels, false); diags.HasError() {
 			return diags
 		}
 		for _, selectorModel := range selectorModels {
 			var outSelector pam.SecurityPolicyRuleServerBasedResourceSelectorContainer
-			if diags := SecurityPolicyRuleServerBasedResourceSelectorContainerFromModelToSDK(ctx, &selectorModel, &outSelector); diags.HasError() {
+			if diags := ServerBasedResourceSelectorContainerFromModelToSDK(ctx, &selectorModel, &outSelector); diags.HasError() {
 				return diags
 			}
 			out.Selectors = append(out.Selectors, outSelector)
@@ -84,18 +149,13 @@ func SecurityPolicyRuleServerBasedResourceSelectorFromModelToSDK(ctx context.Con
 	return nil
 }
 
-func SecurityPolicyRuleServerBasedResourceSelectorFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRuleServerBasedResourceSelector, out *SecurityPolicyRuleServerBasedResourceSelectorModel) diag.Diagnostics {
-	//TODO(ja)
-	return nil
-}
-
-type SecurityPolicyRuleServerBasedResourceSelectorContainerModel struct {
+type ServerBasedResourceSelectorContainerModel struct {
 	IndividualServer        *SelectorIndividualServerModel        `tfsdk:"individual_server"`
 	IndividualServerAccount *SelectorIndividualServerAccountModel `tfsdk:"individual_server_account"`
 	SelectorServerLabel     *SelectorServerLabelModel             `tfsdk:"server_label"`
 }
 
-func SecurityPolicyRuleServerBasedResourceSelectorContainerSchema() schema.NestedAttributeObject {
+func ServerBasedResourceSelectorContainerSchema() schema.NestedAttributeObject {
 	return schema.NestedAttributeObject{
 		Attributes: map[string]schema.Attribute{
 			"individual_server":         SelectorIndividualServerSchema(),
@@ -104,33 +164,49 @@ func SecurityPolicyRuleServerBasedResourceSelectorContainerSchema() schema.Neste
 		},
 	}
 }
-func SecurityPolicyRuleServerBasedResourceSelectorContainerFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRuleServerBasedResourceSelectorContainer, out *SecurityPolicyRuleServerBasedResourceSelectorContainerModel) diag.Diagnostics {
-	//TODO(ja)
-	return nil
+
+func ServerBasedResourceSelectorContainerAttrTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"individual_server":         types.ObjectType{AttrTypes: SelectorIndividualServerAttrTypes()},
+		"individual_server_account": types.ObjectType{AttrTypes: SelectorIndividualServerAccountAttrTypes()},
+		"server_label":              types.ObjectType{AttrTypes: SelectorServerLabelAttrTypes()},
+	}
 }
 
-func SecurityPolicyRuleServerBasedResourceSelectorContainerFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleServerBasedResourceSelectorContainerModel, out *pam.SecurityPolicyRuleServerBasedResourceSelectorContainer) diag.Diagnostics {
-	var selectorType pam.SecurityPolicyRuleServerBasedResourceSubSelectorType
+func ServerBasedResourceSelectorContainerFromModelToSDK(ctx context.Context, in *ServerBasedResourceSelectorContainerModel, out *pam.SecurityPolicyRuleServerBasedResourceSelectorContainer) diag.Diagnostics {
+	var selectorContainer *pam.SecurityPolicyRuleServerBasedResourceSelectorContainer
 
 	if in.IndividualServer != nil {
-		selectorType = pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER
 		var outVal pam.SelectorIndividualServer
-		SelectorIndividualServerFromModelToSDK(ctx, in.IndividualServer, &outVal)
-		out.Selector.SelectorIndividualServer = &outVal
+		if diags := SelectorIndividualServerFromModelToSDK(ctx, in.IndividualServer, &outVal); diags.HasError() {
+			return diags
+		}
+		selectorContainer = pam.NewSecurityPolicyRuleServerBasedResourceSelectorContainer(
+			pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER,
+			pam.SelectorIndividualServerAsSecurityPolicyRuleResourceServerBasedResourceSubSelector(&outVal),
+		)
+		//out.Selector.SelectorIndividualServer = &outVal
 	} else if in.IndividualServerAccount != nil {
-		selectorType = pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER_ACCOUNT
 		var outVal pam.SelectorIndividualServerAccount
-		SelectorIndividualServerAccountFromModelToSDK(ctx, in.IndividualServerAccount, &outVal)
-		out.Selector.SelectorIndividualServerAccount = &outVal
+		if diags := SelectorIndividualServerAccountFromModelToSDK(ctx, in.IndividualServerAccount, &outVal); diags.HasError() {
+			return diags
+		}
+		selectorContainer = pam.NewSecurityPolicyRuleServerBasedResourceSelectorContainer(
+			pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER_ACCOUNT,
+			pam.SelectorIndividualServerAccountAsSecurityPolicyRuleResourceServerBasedResourceSubSelector(&outVal),
+		)
 	} else if in.SelectorServerLabel != nil {
-		selectorType = pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_SERVER_LABEL
 		var outVal pam.SelectorServerLabel
-		SelectorServerLabelFromModelToSDK(ctx, in.SelectorServerLabel, &outVal)
-		out.Selector.SelectorServerLabel = &outVal
+		if diags := SelectorServerLabelFromModelToSDK(ctx, in.SelectorServerLabel, &outVal); diags.HasError() {
+			return diags
+		}
+		selectorContainer = pam.NewSecurityPolicyRuleServerBasedResourceSelectorContainer(
+			pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_SERVER_LABEL,
+			pam.SelectorServerLabelAsSecurityPolicyRuleResourceServerBasedResourceSubSelector(&outVal))
 	} else {
-		//TODO(ja) unhandled case
+		panic("missing stanza in ServerBasedResourceSelectorContainerFromModelToSDK")
 	}
-	out.SelectorType = selectorType
+	out = selectorContainer
 	return nil
 }
 
@@ -146,6 +222,12 @@ func SelectorIndividualServerSchema() schema.Attribute {
 			},
 		},
 		Optional: true,
+	}
+}
+
+func SelectorIndividualServerAttrTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"server": types.StringType,
 	}
 }
 
@@ -179,6 +261,13 @@ func SelectorIndividualServerAccountSchema() schema.Attribute {
 	}
 }
 
+func SelectorIndividualServerAccountAttrTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"server":   types.StringType,
+		"username": types.StringType,
+	}
+}
+
 func SelectorIndividualServerAccountFromModelToSDK(_ context.Context, in *SelectorIndividualServerAccountModel, out *pam.SelectorIndividualServerAccount) diag.Diagnostics {
 	out.Type = string(pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_INDIVIDUAL_SERVER_ACCOUNT) //TODO(ja) this should probably be hard coded
 	out.Username = in.Username.ValueStringPointer()
@@ -190,27 +279,51 @@ func SelectorIndividualServerAccountFromModelToSDK(_ context.Context, in *Select
 }
 
 type SelectorServerLabelModel struct {
-	ServerSelector  *SelectorServerLabelServerSelectorModel `tfsdk:"server_selector"`
+	ServerSelector  *ServerLabelServerSelectorModel `tfsdk:"server_selector"`
 	AccountSelector types.List/*types.String*/ `tfsdk:"account_selector"`
 }
 
 func SelectorServerLabelSchema() schema.Attribute {
 	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
-			"server_selector":  SelectorServerLabelServerSelectorSchema(),
+			"server_selector":  ServerLabelServerSelectorSchema(),
 			"account_selector": schema.ListAttribute{ElementType: types.StringType, Optional: true},
 		},
 		Optional: true,
 	}
 }
-func SelectorServerLabelFromModelToSDK(ctx context.Context, in *SelectorServerLabelModel, out *pam.SelectorServerLabel) diag.Diagnostics {
 
-	out.Type = string(pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_SERVER_LABEL) //TODO(ja) this should probably be a hard-coded string
-	if diags := SelectorServerLabelServerSelectorFromModelToSDK(ctx, in.ServerSelector, &out.ServerSelector); diags.HasError() {
+func SelectorServerLabelAttrTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"server_selector":  types.ObjectType{AttrTypes: ServerLabelServerSelectorAttrTypes()},
+		"account_selector": types.ListType{ElemType: types.StringType},
+	}
+}
+
+func SelectorServerLabelFromSDKToModel(ctx context.Context, in *pam.SelectorServerLabel, out *SelectorServerLabelModel) diag.Diagnostics {
+	if diags := ServerLabelServerSelectorFromSDKToModel(ctx, &in.ServerSelector, out.ServerSelector); diags.HasError() {
 		return diags
 	}
 
-	//TODO(ja) I think this is supposed to be its own separate ModelToSDK()
+	var usernames []types.String
+	//TODO(ja) this is supposed to be a separate model
+	for _, username := range in.AccountSelector.Usernames {
+		usernames = append(usernames, types.StringValue(username))
+	}
+	if usernameList, diags := types.ListValueFrom(ctx, types.StringType, usernames); diags.HasError() {
+		return diags
+	} else {
+		out.AccountSelector = usernameList
+	}
+
+	return nil
+}
+func SelectorServerLabelFromModelToSDK(ctx context.Context, in *SelectorServerLabelModel, out *pam.SelectorServerLabel) diag.Diagnostics {
+
+	out.Type = string(pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_SERVER_LABEL) //TODO(ja) this should probably be a hard-coded string
+	if diags := ServerLabelServerSelectorFromModelToSDK(ctx, in.ServerSelector, &out.ServerSelector); diags.HasError() {
+		return diags
+	}
 
 	if !in.AccountSelector.IsNull() && len(in.AccountSelector.Elements()) > 0 {
 		accountSelectorModel := make([]types.String, 0, len(in.AccountSelector.Elements()))
@@ -228,11 +341,11 @@ func SelectorServerLabelFromModelToSDK(ctx context.Context, in *SelectorServerLa
 	return nil
 }
 
-type SelectorServerLabelServerSelectorModel struct {
+type ServerLabelServerSelectorModel struct {
 	Labels types.Map `tfsdk:"labels"`
 }
 
-func SelectorServerLabelServerSelectorSchema() schema.Attribute {
+func ServerLabelServerSelectorSchema() schema.Attribute {
 	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
 			"labels": schema.MapAttribute{
@@ -244,7 +357,13 @@ func SelectorServerLabelServerSelectorSchema() schema.Attribute {
 	}
 }
 
-func SelectorServerLabelServerSelectorFromModelToSDK(ctx context.Context, in *SelectorServerLabelServerSelectorModel, out *pam.SelectorServerLabelServerSelector) diag.Diagnostics {
+func ServerLabelServerSelectorAttrTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"labels": types.MapType{ElemType: types.StringType},
+	}
+}
+
+func ServerLabelServerSelectorFromModelToSDK(ctx context.Context, in *ServerLabelServerSelectorModel, out *pam.SelectorServerLabelServerSelector) diag.Diagnostics {
 	elements := make(map[string]types.String, len(in.Labels.Elements()))
 	if diags := in.Labels.ElementsAs(ctx, &elements, false); diags.HasError() {
 		return diags
@@ -257,6 +376,16 @@ func SelectorServerLabelServerSelectorFromModelToSDK(ctx context.Context, in *Se
 	return nil
 }
 
-func SelectorServerLabelServerSelectorFromSDKToModel(ctx context.Context, in *pam.SelectorServerLabelServerSelector, out *SelectorServerLabelServerSelectorModel) diag.Diagnostics {
+func ServerLabelServerSelectorFromSDKToModel(_ context.Context, in *pam.SelectorServerLabelServerSelector, out *ServerLabelServerSelectorModel) diag.Diagnostics {
+	elements := make(map[string]attr.Value, len(in.Labels))
+	for k, v := range in.Labels {
+		elements[k] = types.StringValue(fmt.Sprintf("%s", v))
+	}
+
+	if mapValue, diags := types.MapValue(types.StringType, elements); diags.HasError() {
+		return diags
+	} else {
+		out.Labels = mapValue
+	}
 	return nil
 }

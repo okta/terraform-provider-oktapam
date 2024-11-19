@@ -12,11 +12,11 @@ import (
 
 // Begin SecurityPolicyPasswordCheckoutDatabase
 
-type SecurityPolicyPasswordCheckoutDatabasePrivilegeModel struct {
+type PasswordCheckoutDatabasePrivilegeModel struct {
 	PasswordCheckoutDatabase types.Bool `tfsdk:"password_checkout_database"`
 }
 
-func SecurityPolicyPasswordCheckoutDatabasePrivilegeSchema() schema.Attribute {
+func PasswordCheckoutDatabasePrivilegeSchema() schema.Attribute {
 	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
 			"password_checkout_database": schema.BoolAttribute{
@@ -27,19 +27,19 @@ func SecurityPolicyPasswordCheckoutDatabasePrivilegeSchema() schema.Attribute {
 	}
 }
 
-func SecurityPolicyPasswordCheckoutDatabasePrivilegeAttrTypes() map[string]attr.Type {
+func PasswordCheckoutDatabasePrivilegeAttrTypes() map[string]attr.Type {
 	return map[string]attr.Type{
 		"password_checkout_database": types.BoolType,
 	}
 }
 
-func SecurityPolicyPasswordCheckoutDatabasePrivilegeFromModelToSDK(_ context.Context, in *SecurityPolicyPasswordCheckoutDatabasePrivilegeModel, out *pam.SecurityPolicyPasswordCheckoutDatabasePrivilege) diag.Diagnostics {
+func PasswordCheckoutDatabasePrivilegeFromModelToSDK(_ context.Context, in *PasswordCheckoutDatabasePrivilegeModel, out *pam.SecurityPolicyPasswordCheckoutDatabasePrivilege) diag.Diagnostics {
 	out.Type = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_DATABASE
 	out.PasswordCheckoutDatabase = in.PasswordCheckoutDatabase.ValueBool()
 	return nil
 }
 
-func SecurityPolicyPasswordCheckoutDatabasePrivilegeFromSDKToModel(_ context.Context, in *pam.SecurityPolicyPasswordCheckoutDatabasePrivilege, out *SecurityPolicyPasswordCheckoutDatabasePrivilegeModel) diag.Diagnostics {
+func PasswordCheckoutDatabasePrivilegeFromSDKToModel(_ context.Context, in *pam.SecurityPolicyPasswordCheckoutDatabasePrivilege, out *PasswordCheckoutDatabasePrivilegeModel) diag.Diagnostics {
 	out.PasswordCheckoutDatabase = types.BoolValue(in.PasswordCheckoutDatabase)
 	return nil
 }
