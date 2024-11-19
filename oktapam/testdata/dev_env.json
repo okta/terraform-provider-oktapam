@@ -1,7 +1,7 @@
 {
   "active": true,
   "description": "An example security policy for dev environment",
-  "id": "0c6d279b7f088f4f8cbc302919d1d3f92a2118e73b77ebe19c929651af700f32",
+  "id": "718d40f88dbd3c224907ec416d03d21b85e10852ff658e0c9758a1bce9ffc453",
   "name": "development environment policy",
   "principals": {
     "user_groups": [
@@ -96,6 +96,15 @@
       "resource_type": "server_based_resource"
     },
     {
+      "conditions": [
+        {
+          "condition_type": "mfa",
+          "condition_value": {
+            "_type": "mfa",
+            "acr_values": "urn:okta:loa:2fa:any"
+          }
+        }
+      ],
       "name": "linux server account and admin level access",
       "privileges": [
         {

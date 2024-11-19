@@ -14,59 +14,9 @@ import (
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/require"
 )
-
-const individualServerAccountSelectorPolicyTerraform = `resource "oktapam_security_policy_v2" "individual_server_account_policy" {
-  name   = "test individual server account selector"
-  active = true
-  principals = { user_groups = ["user_group_1", "user_group_2"] }
-  rules = [
-    {
-      name          = "test"
-      resource_type = "server_based_resource"
-      resource_selector = {
-        server_based_resource = {
-          selectors = [
-            {
-              individual_server_account = {
-                server   = "server-id-goes-here"
-                username = "root"
-              }
-            }
-          ]
-        }
-      }
-      privileges = [{ password_checkout_ssh = { password_checkout_ssh = true } }]
-    }
-  ]
-}
-`
-
-const individualServerSelectorPolicyTerraform = `resource "oktapam_security_policy_v2" "individual_server_policy" {
-  name = "test individual server selector"
-  active = true
-  principals = { user_groups = ["user_group_1", "user_group_2"] }
-  rules = [
-    {
-      name          = "test"
-      resource_type = "server_based_resource"
-      resource_selector = {
-        server_based_resource = {
-          selectors = [
-            { individual_server = { server = "server-id-goes-here" } }
-          ]
-        }
-      }
-      privileges = [{ password_checkout_ssh = { password_checkout_ssh = true } }]
-    }
-  ]
-}
-
-
-`
 
 func entityId(body []byte) string {
 	sum := sha256.Sum256(body)
@@ -78,7 +28,8 @@ func setupHTTPMock(t *testing.T, entities map[string]any) {
 	prefix := "/v1/teams/httpmock-test-team"
 
 	// This is a quick hack that unmarshals a given entity, assigns it an ID then stores it in a map. It then marshals
-	// the ID-enhanced entity as a response.
+	// the ID-enhanced entity as a response. The ID is generated from hashing the contents because the order of
+	// requests from Terraform is not guaranteed.
 	httpmock.RegisterRegexpResponder(http.MethodPost, regexp.MustCompile(prefix+`/(sudo_command_bundles|security_policy)`),
 		func(request *http.Request) (*http.Response, error) {
 			var created any
@@ -149,18 +100,7 @@ func TestSecurityPolicyLoopback_DevEnv(t *testing.T) {
 				}},
 		},
 	})
-
-	for _, entity := range entities {
-		switch entity.(type) {
-		case pam.SecurityPolicy:
-			expectedJSONBytes, err := os.ReadFile("testdata/dev_env.json")
-			require.NoError(t, err)
-			actualJSONBytes, err := json.Marshal(entity)
-			require.NoError(t, err)
-			require.JSONEq(t, string(expectedJSONBytes), string(actualJSONBytes))
-		}
-	}
-	require.Len(t, entities, 3)
+	checkSecurityPolicyJSON(t, entities, "testdata/dev_env.json")
 }
 
 // TestSecurityPolicyLoopback_IndividualServer does a test on a resource with an "individual server" resource
@@ -168,26 +108,25 @@ func TestSecurityPolicyLoopback_DevEnv(t *testing.T) {
 func TestSecurityPolicyLoopback_IndividualServer(t *testing.T) {
 	var entities = make(map[string]any)
 
+	setupHTTPMock(t, entities)
 	resource.Test(t, resource.TestCase{
 		IsUnitTest:               true,
 		ProtoV6ProviderFactories: httpMockTestV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				PreConfig: func() { setupHTTPMock(t, entities) },
-				Config:    individualServerSelectorPolicyTerraform,
-				Check: func(s *terraform.State) error {
-					return nil
+				ConfigFile: config.StaticFile("testdata/individual_server_selector.tf"),
+			},
+			{
+				ConfigFile: config.StaticFile("testdata/individual_server_selector.tf"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
 				},
 			},
 		},
 	})
-	require.Len(t, entities, 1)
-	for _, entity := range entities {
-		policy := entity.(pam.SecurityPolicy)
-		require.Len(t, policy.Rules, 1)
-		require.Len(t, policy.Rules[0].Privileges, 1)
-		require.Equal(t, "password_checkout_ssh", string(*policy.Rules[0].Privileges[0].PrivilegeType))
-	}
+	checkSecurityPolicyJSON(t, entities, "testdata/individual_server_selector.json")
 }
 
 // TestSecurityPolicyLoopback_IndividualServerAccount does a loopback test on a resource with an "individual server
@@ -195,17 +134,43 @@ func TestSecurityPolicyLoopback_IndividualServer(t *testing.T) {
 func TestSecurityPolicyLoopback_IndividualServerAccount(t *testing.T) {
 	var entities = make(map[string]any)
 
+	setupHTTPMock(t, entities)
 	resource.Test(t, resource.TestCase{
 		IsUnitTest:               true,
 		ProtoV6ProviderFactories: httpMockTestV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				PreConfig: func() { setupHTTPMock(t, entities) },
-				Config:    individualServerAccountSelectorPolicyTerraform,
-				Check: func(s *terraform.State) error {
-					return nil
+				ConfigFile: config.StaticFile("testdata/individual_server_account_selector.tf"),
+			},
+			{
+				ConfigFile: config.StaticFile("testdata/individual_server_account_selector.tf"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
 				},
 			},
 		},
 	})
+
+	checkSecurityPolicyJSON(t, entities, "testdata/individual_server_account_selector.json")
+}
+
+// checkSecurityPolicyJSON digs through the entities to find the first pam.SecurityPolicy and ensures
+// its contents match the contents of the specified file. This is a bit brittle, do expect things to break
+// if you change the .tf file.
+func checkSecurityPolicyJSON(t *testing.T, entities map[string]any, jsonFilename string) {
+	jsonChecked := false
+	for _, entity := range entities {
+		switch entity.(type) {
+		case pam.SecurityPolicy:
+			expectedJSONBytes, err := os.ReadFile(jsonFilename)
+			require.NoError(t, err)
+			actualJSONBytes, err := json.Marshal(entity)
+			require.NoError(t, err)
+			require.JSONEq(t, string(expectedJSONBytes), string(actualJSONBytes), "security policy json must match, check that you haven't broken anything")
+			jsonChecked = true
+		}
+	}
+	require.True(t, jsonChecked, "security policy json must be checked")
 }

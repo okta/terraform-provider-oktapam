@@ -32,13 +32,72 @@ func SecurityPolicyRuleConditionContainerAttrTypes() map[string]attr.Type {
 		"mfa":            types.ObjectType{AttrTypes: ConditionsMFAAttrTypes()},
 	}
 }
-func SecurityPolicyRuleConditionFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleConditionContainerModel) (*pam.SecurityPolicyRuleCondition, diag.Diagnostics) {
-	var out pam.SecurityPolicyRuleCondition
-	return &out, nil
+func SecurityPolicyRuleConditionContainerFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleConditionContainerModel) (*pam.SecurityPolicyRuleConditionContainer, diag.Diagnostics) {
+
+	var outType pam.SecurityPolicyRuleConditionType
+	var outCondition pam.SecurityPolicyRuleCondition
+
+	if in.ConditionsMFA != nil {
+		if outVal, diags := ConditionsMFAFromModelToSDK(ctx, in.ConditionsMFA); diags.HasError() {
+			return nil, diags
+		} else {
+			outType = pam.SecurityPolicyRuleConditionType_MFA
+			outCondition.ConditionsMFA = outVal
+		}
+	} else if in.ConditionsAccessRequests != nil {
+		if outVal, diags := ConditionsAccessRequestFromModelToSDK(ctx, in.ConditionsAccessRequests); diags.HasError() {
+			return nil, diags
+		} else {
+			outType = pam.SecurityPolicyRuleConditionType_ACCESS_REQUEST
+			outCondition.ConditionsAccessRequests = outVal
+		}
+	} else if in.ConditionsGateway != nil {
+		if outVal, diags := ConditionsGatewayFromModelToSDK(ctx, in.ConditionsGateway); diags.HasError() {
+			return nil, diags
+		} else {
+			outType = pam.SecurityPolicyRuleConditionType_GATEWAY
+			outCondition.ConditionsGateway = outVal
+		}
+	} else {
+		panic("missing stanza from SecurityPolicyRuleConditionContainerFromModelToSDK")
+	}
+
+	out := pam.NewSecurityPolicyRuleConditionContainer().
+		SetConditionValue(outCondition).
+		SetConditionType(outType)
+
+	return out, nil
 }
 
-func SecurityPolicyRuleConditionContainerFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRuleCondition) (*SecurityPolicyRuleConditionContainerModel, diag.Diagnostics) {
+func SecurityPolicyRuleConditionContainerFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRuleConditionContainer) (*SecurityPolicyRuleConditionContainerModel, diag.Diagnostics) {
 	var out SecurityPolicyRuleConditionContainerModel
+
+	if !in.HasConditionType() {
+		panic("TODO(ja)")
+	}
+
+	switch *in.ConditionType {
+	case pam.SecurityPolicyRuleConditionType_MFA:
+		if outModel, diags := ConditionsMFAFromSDKToModel(ctx, in.ConditionValue.ConditionsMFA); diags.HasError() {
+			return nil, diags
+		} else {
+			out.ConditionsMFA = outModel
+		}
+	case pam.SecurityPolicyRuleConditionType_ACCESS_REQUEST:
+		if outModel, diags := ConditionsAccessRequestFromSDKToModel(ctx, in.ConditionValue.ConditionsAccessRequests); diags.HasError() {
+			return nil, diags
+		} else {
+			out.ConditionsAccessRequests = outModel
+		}
+	case pam.SecurityPolicyRuleConditionType_GATEWAY:
+		if outModel, diags := ConditionsGatewayFromSDKToModel(ctx, in.ConditionValue.ConditionsGateway); diags.HasError() {
+			return nil, diags
+		} else {
+			out.ConditionsGateway = outModel
+		}
+	default:
+		panic("missing condition type stanza in SecurityPolicyRuleConditionContainerFromSDKToModel")
+	}
 	return &out, nil
 }
 
@@ -67,12 +126,38 @@ func ConditionsAccessRequestsAttrTypes() map[string]attr.Type {
 	}
 }
 
-func ConditionsAccessRequestFromSDKToModel(ctx context.Context, in *pam.ConditionsAccessRequests) (*ConditionsAccessRequestsModel, diag.Diagnostics) {
+func ConditionsAccessRequestFromSDKToModel(_ context.Context, in *pam.ConditionsAccessRequests) (*ConditionsAccessRequestsModel, diag.Diagnostics) {
 	var out ConditionsAccessRequestsModel
+
+	if val, ok := in.GetRequestTypeNameOk(); ok {
+		out.RequestTypeName = types.StringPointerValue(val)
+	}
+
+	if val, ok := in.GetRequestTypeIdOk(); ok {
+		out.RequestTypeId = types.StringPointerValue(val)
+	}
+
+	if val, ok := in.GetExpiresAfterSecondsOk(); ok {
+		out.ExpiresAfterSeconds = types.Int32PointerValue(val)
+	}
 	return &out, nil
 }
-func ConditionsAccessRequestFromModelToSDK(ctx context.Context, in *ConditionsAccessRequestsModel) (*pam.ConditionsAccessRequests, diag.Diagnostics) {
+
+func ConditionsAccessRequestFromModelToSDK(_ context.Context, in *ConditionsAccessRequestsModel) (*pam.ConditionsAccessRequests, diag.Diagnostics) {
 	var out pam.ConditionsAccessRequests
+
+	out.Type = string(pam.SecurityPolicyRuleConditionType_ACCESS_REQUEST)
+	if !in.RequestTypeId.IsUnknown() && !in.RequestTypeId.IsNull() {
+		out.SetRequestTypeId(in.RequestTypeId.ValueString())
+	}
+
+	if !in.RequestTypeName.IsUnknown() && !in.RequestTypeName.IsNull() {
+		out.SetRequestTypeName(in.RequestTypeName.ValueString())
+	}
+
+	if !in.ExpiresAfterSeconds.IsUnknown() && !in.ExpiresAfterSeconds.IsNull() {
+		out.SetExpiresAfterSeconds(in.ExpiresAfterSeconds.ValueInt32())
+	}
 
 	return &out, nil
 }
@@ -99,15 +184,29 @@ func ConditionsGatewayAttrTypes() map[string]attr.Type {
 	}
 }
 
-func ConditionsGatewayFromSDKToModel(ctx context.Context, in *pam.ConditionsGateway) (*ConditionsGatewayModel, diag.Diagnostics) {
+func ConditionsGatewayFromSDKToModel(_ context.Context, in *pam.ConditionsGateway) (*ConditionsGatewayModel, diag.Diagnostics) {
 	var out ConditionsGatewayModel
 
+	if val, ok := in.GetTrafficForwardingOk(); ok {
+		out.TrafficForwarding = types.BoolPointerValue(val)
+	}
+	if val, ok := in.GetSessionRecordingOk(); ok {
+		out.SessionRecording = types.BoolPointerValue(val)
+	}
 	return &out, nil
 }
 
-func ConditionsGatewayFromModelToSDK(ctx context.Context, in *ConditionsGatewayModel) (*pam.ConditionsGateway, diag.Diagnostics) {
+func ConditionsGatewayFromModelToSDK(_ context.Context, in *ConditionsGatewayModel) (*pam.ConditionsGateway, diag.Diagnostics) {
 	var out pam.ConditionsGateway
 
+	out.Type = string(pam.SecurityPolicyRuleConditionType_GATEWAY)
+	if !in.TrafficForwarding.IsUnknown() && !in.TrafficForwarding.IsNull() {
+		out.TrafficForwarding = in.TrafficForwarding.ValueBoolPointer()
+	}
+
+	if !in.SessionRecording.IsUnknown() && !in.SessionRecording.IsNull() {
+		out.SessionRecording = in.SessionRecording.ValueBoolPointer()
+	}
 	return &out, nil
 }
 
@@ -133,13 +232,35 @@ func ConditionsMFAAttrTypes() map[string]attr.Type {
 	}
 }
 
-func ConditionsMFAFromSDKToModel(ctx context.Context, in *pam.ConditionsMFA) (*ConditionsMFAModel, diag.Diagnostics) {
+func ConditionsMFAFromSDKToModel(_ context.Context, in *pam.ConditionsMFA) (*ConditionsMFAModel, diag.Diagnostics) {
 	var out ConditionsMFAModel
+
+	if val, ok := in.GetReAuthFrequencyInSecondsOk(); ok {
+		out.ReAuthFrequencyInSeconds = types.Int32PointerValue(val)
+	}
+	if valPtr, ok := in.GetAcrValuesOk(); ok {
+		val := string(*valPtr)
+		out.AcrValues = types.StringValue(val)
+	}
 
 	return &out, nil
 }
-func ConditionsMFAFromModelToSDK(ctx context.Context, in *ConditionsMFAModel) (*pam.ConditionsMFA, diag.Diagnostics) {
+func ConditionsMFAFromModelToSDK(_ context.Context, in *ConditionsMFAModel) (*pam.ConditionsMFA, diag.Diagnostics) {
 	var out pam.ConditionsMFA
+
+	out.Type = string(pam.SecurityPolicyRuleConditionType_MFA)
+	if !in.AcrValues.IsUnknown() && !in.AcrValues.IsNull() {
+		val, err := pam.NewConditionsMFAACRValuesFromValue(in.AcrValues.ValueString())
+		if err != nil {
+			//TODO(ja) fixme
+			panic("fixme")
+		}
+		out.SetAcrValues(*val)
+	}
+
+	if !in.ReAuthFrequencyInSeconds.IsUnknown() && !in.ReAuthFrequencyInSeconds.IsNull() {
+		out.SetReAuthFrequencyInSeconds(in.ReAuthFrequencyInSeconds.ValueInt32())
+	}
 
 	return &out, nil
 }

@@ -84,7 +84,19 @@ func SecurityPolicyRuleFromModelToSDK(ctx context.Context, in *SecurityPolicyRul
 		out.OverrideCheckoutDurationInSeconds.Set(in.OverrideCheckoutDurationInSeconds.ValueInt64Pointer())
 	}
 
-	// Conditions
+	if !in.Conditions.IsNull() && len(in.Conditions.Elements()) > 0 {
+		conditionsModel := make([]SecurityPolicyRuleConditionContainerModel, 0, len(in.Conditions.Elements()))
+		if diags := in.Conditions.ElementsAs(ctx, &conditionsModel, false); diags.HasError() {
+			return nil, diags
+		}
+		for _, condition := range conditionsModel {
+			if outCondition, diags := SecurityPolicyRuleConditionContainerFromModelToSDK(ctx, &condition); diags.HasError() {
+				return nil, diags
+			} else {
+				out.Conditions = append(out.Conditions, *outCondition)
+			}
+		}
+	}
 
 	return &out, nil
 }
@@ -122,13 +134,18 @@ func SecurityPolicyRuleFromSDKToModel(ctx context.Context, in *pam.SecurityPolic
 	out.OverrideCheckoutDurationInSeconds = types.Int64PointerValue(in.OverrideCheckoutDurationInSeconds.Get())
 
 	if len(in.Conditions) > 0 {
-		var outConditions []SecurityPolicyRuleConditionContainerModel
+		var conditions []SecurityPolicyRuleConditionContainerModel
 		for _, condition := range in.Conditions {
 			if outCondition, diags := SecurityPolicyRuleConditionContainerFromSDKToModel(ctx, &condition); diags.HasError() {
 				return nil, diags
 			} else {
-				outConditions = append(outConditions, *outCondition)
+				conditions = append(conditions, *outCondition)
 			}
+		}
+		if outConditions, diags := types.ListValueFrom(ctx, types.ObjectType{AttrTypes: SecurityPolicyRuleConditionContainerAttrTypes()}, conditions); diags.HasError() {
+			return nil, diags
+		} else {
+			out.Conditions = outConditions
 		}
 	} else {
 		out.Conditions = types.ListNull(types.ObjectType{AttrTypes: SecurityPolicyRuleConditionContainerAttrTypes()})
