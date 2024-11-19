@@ -68,7 +68,7 @@ func ResourceCheckoutSettingsFromModelToSDK(ctx context.Context, in *ResourceChe
 		}
 	}
 
-	if !in.ExcludeList.IsNull() && in.ExcludeList.IsUnknown() {
+	if !in.ExcludeList.IsNull() && !in.ExcludeList.IsUnknown() {
 		if diags := in.ExcludeList.ElementsAs(ctx, &out.ExcludeList, false); diags.HasError() {
 			return nil, diags
 		}
