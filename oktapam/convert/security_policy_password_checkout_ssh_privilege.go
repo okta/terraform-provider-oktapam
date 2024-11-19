@@ -33,15 +33,17 @@ func PasswordCheckoutSSHPrivilegeAttrTypes() map[string]attr.Type {
 	}
 }
 
-func PasswordCheckoutSSHPrivilegeFromModelToSDK(_ context.Context, in *PasswordCheckoutSSHPrivilegeModel, out *pam.SecurityPolicyPasswordCheckoutSSHPrivilege) diag.Diagnostics {
+func PasswordCheckoutSSHPrivilegeFromModelToSDK(_ context.Context, in *PasswordCheckoutSSHPrivilegeModel) (*pam.SecurityPolicyPasswordCheckoutSSHPrivilege, diag.Diagnostics) {
+	var out pam.SecurityPolicyPasswordCheckoutSSHPrivilege
 	out.Type = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_SSH
 	out.PasswordCheckoutSsh = in.PasswordCheckoutSSH.ValueBool()
-	return nil
+	return &out, nil
 }
 
-func PasswordCheckoutSSHPrivilegeFromSDKToModel(_ context.Context, in *pam.SecurityPolicyPasswordCheckoutSSHPrivilege, out *PasswordCheckoutSSHPrivilegeModel) diag.Diagnostics {
+func PasswordCheckoutSSHPrivilegeFromSDKToModel(_ context.Context, in *pam.SecurityPolicyPasswordCheckoutSSHPrivilege) (*PasswordCheckoutSSHPrivilegeModel, diag.Diagnostics) {
+	var out PasswordCheckoutSSHPrivilegeModel
 	out.PasswordCheckoutSSH = types.BoolValue(in.PasswordCheckoutSsh)
-	return nil
+	return &out, nil
 }
 
 // End SecurityPolicyPasswordCheckoutSSH

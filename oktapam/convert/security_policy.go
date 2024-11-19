@@ -51,7 +51,8 @@ func SecurityPolicySchema() map[string]schema.Attribute {
 	return myAttributes
 }
 
-func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourceModel, out *pam.SecurityPolicy) diag.Diagnostics {
+func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourceModel) (*pam.SecurityPolicy, diag.Diagnostics) {
+	var out pam.SecurityPolicy
 	//TODO(ja) do this pattern everywhere
 	if !in.ID.IsNull() && !in.ID.IsUnknown() {
 		out.Id = in.ID.ValueStringPointer()
@@ -63,27 +64,30 @@ func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourc
 	out.Description = in.Description.ValueStringPointer()
 	out.Active = in.Active.ValueBool()
 
-	if diags := SecurityPolicyPrincipalFromModelToSDK(ctx, &in.Principals, &out.Principals); diags.HasError() {
-		return diags
+	if principals, diags := SecurityPolicyPrincipalFromModelToSDK(ctx, &in.Principals); diags.HasError() {
+		return nil, diags
+	} else {
+		out.Principals = *principals
 	}
 
 	if !in.Rules.IsNull() && len(in.Rules.Elements()) > 0 {
 		ruleModels := make([]SecurityPolicyRuleModel, 0, len(in.Rules.Elements()))
 		if diags := in.Rules.ElementsAs(ctx, &ruleModels, false); diags.HasError() {
-			return diags
+			return nil, diags
 		}
 		for _, ruleModel := range ruleModels {
-			var outPolicyRule pam.SecurityPolicyRule
-			if diags := SecurityPolicyRuleFromModelToSDK(ctx, &ruleModel, &outPolicyRule); diags.HasError() {
-				return diags
+			outPolicyRule, diags := SecurityPolicyRuleFromModelToSDK(ctx, &ruleModel)
+			if diags.HasError() {
+				return nil, diags
 			}
-			out.Rules = append(out.Rules, outPolicyRule)
+			out.Rules = append(out.Rules, *outPolicyRule)
 		}
 	}
-	return nil
+	return &out, nil
 }
 
-func SecurityPolicyFromSDKToModel(ctx context.Context, in *pam.SecurityPolicy, out *SecurityPolicyResourceModel) diag.Diagnostics {
+func SecurityPolicyFromSDKToModel(ctx context.Context, in *pam.SecurityPolicy) (*SecurityPolicyResourceModel, diag.Diagnostics) {
+	var out SecurityPolicyResourceModel
 	out.ID = types.StringPointerValue(in.Id)
 	out.Name = types.StringValue(in.Name)
 	if in.Type != nil {
@@ -96,20 +100,21 @@ func SecurityPolicyFromSDKToModel(ctx context.Context, in *pam.SecurityPolicy, o
 
 	out.Active = types.BoolValue(in.Active)
 
-	if diags := SecurityPolicyPrincipalFromSDKToModel(ctx, &in.Principals, &out.Principals); diags.HasError() {
-		return diags
+	if principals, diags := SecurityPolicyPrincipalFromSDKToModel(ctx, &in.Principals); diags.HasError() {
+		return nil, diags
+	} else {
+		out.Principals = *principals
 	}
 
 	if len(in.Rules) > 0 {
 		var outRules []SecurityPolicyRuleModel
 		for _, rule := range in.Rules {
-			var outRule SecurityPolicyRuleModel
-			if diags := SecurityPolicyRuleFromSDKToModel(ctx, &rule, &outRule); diags.HasError() {
-				return diags
+			if outRule, diags := SecurityPolicyRuleFromSDKToModel(ctx, &rule); diags.HasError() {
+				return nil, diags
+			} else {
+				outRules = append(outRules, *outRule)
 			}
-			outRules = append(outRules, outRule)
 		}
 	}
-	//TODO(ja) - Rules
-	return nil
+	return &out, nil
 }

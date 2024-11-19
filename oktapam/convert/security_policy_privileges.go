@@ -49,63 +49,62 @@ func SecurityPolicyRulePrivilegeContainerAttrTypes() map[string]attr.Type {
 	}
 }
 
-func SecurityPolicyRulePrivilegeContainerFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRulePrivilegeContainer, out *SecurityPolicyRulePrivilegeContainerModel) diag.Diagnostics {
+func SecurityPolicyRulePrivilegeContainerFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRulePrivilegeContainer) (*SecurityPolicyRulePrivilegeContainerModel, diag.Diagnostics) {
+	var out SecurityPolicyRulePrivilegeContainerModel
 	if in.PrivilegeValue.SecurityPolicyPasswordCheckoutDatabasePrivilege != nil {
-		var privilege PasswordCheckoutDatabasePrivilegeModel
-		if diags := PasswordCheckoutDatabasePrivilegeFromSDKToModel(ctx, in.PrivilegeValue.SecurityPolicyPasswordCheckoutDatabasePrivilege, out.PasswordCheckoutDatabasePrivilege); diags.HasError() {
-			return diags
+		if privilege, diags := PasswordCheckoutDatabasePrivilegeFromSDKToModel(ctx, in.PrivilegeValue.SecurityPolicyPasswordCheckoutDatabasePrivilege); diags.HasError() {
+			return nil, diags
 		} else {
-			out.PasswordCheckoutDatabasePrivilege = &privilege
+			out.PasswordCheckoutDatabasePrivilege = privilege
 		}
 	} else if in.PrivilegeValue.SecurityPolicyPrincipalAccountSSHPrivilege != nil {
-		var privilege PrincipalAccountSSHPrivilegeModel
-		if diags := PrincipalAccountSSHPrivilegeFromSDKToModel(ctx, in.PrivilegeValue.SecurityPolicyPrincipalAccountSSHPrivilege, &privilege); diags.HasError() {
-			return diags
+		if privilege, diags := PrincipalAccountSSHPrivilegeFromSDKToModel(ctx, in.PrivilegeValue.SecurityPolicyPrincipalAccountSSHPrivilege); diags.HasError() {
+			return nil, diags
 		} else {
-			out.PrincipalAccountSSHPrivilege = &privilege
+			out.PrincipalAccountSSHPrivilege = privilege
 		}
 	} else if in.PrivilegeValue.SecurityPolicyPasswordCheckoutSSHPrivilege != nil {
-		var privilege PasswordCheckoutSSHPrivilegeModel
-		if diags := PasswordCheckoutSSHPrivilegeFromSDKToModel(ctx, in.PrivilegeValue.SecurityPolicyPasswordCheckoutSSHPrivilege, &privilege); diags.HasError() {
-			return diags
+		if privilege, diags := PasswordCheckoutSSHPrivilegeFromSDKToModel(ctx, in.PrivilegeValue.SecurityPolicyPasswordCheckoutSSHPrivilege); diags.HasError() {
+			return nil, diags
 		} else {
-			out.PasswordCheckoutSSHPrivilege = &privilege
+			out.PasswordCheckoutSSHPrivilege = privilege
 		}
 	} else {
 		panic("missing stanza in SecurityPolicyRulePrivilegeContainerFromSDKToModel")
 	}
-	return nil
+	return &out, nil
 }
 
-func SecurityPolicyRulePrivilegeContainerFromModelToSDK(ctx context.Context, in *SecurityPolicyRulePrivilegeContainerModel, out *pam.SecurityPolicyRulePrivilegeContainer) diag.Diagnostics {
+func SecurityPolicyRulePrivilegeContainerFromModelToSDK(ctx context.Context, in *SecurityPolicyRulePrivilegeContainerModel) (*pam.SecurityPolicyRulePrivilegeContainer, diag.Diagnostics) {
+	var out pam.SecurityPolicyRulePrivilegeContainer
 	var privilegeValue pam.SecurityPolicyRulePrivilegeContainerPrivilegeValue
 	var privilegeType pam.SecurityPolicyRulePrivilegeType
 
 	if in.PasswordCheckoutDatabasePrivilege != nil {
-		var outVal pam.SecurityPolicyPasswordCheckoutDatabasePrivilege
-		if diags := PasswordCheckoutDatabasePrivilegeFromModelToSDK(ctx, in.PasswordCheckoutDatabasePrivilege, &outVal); diags.HasError() {
-			return diags
+		if outVal, diags := PasswordCheckoutDatabasePrivilegeFromModelToSDK(ctx, in.PasswordCheckoutDatabasePrivilege); diags.HasError() {
+			return nil, diags
+		} else {
+			privilegeValue = pam.SecurityPolicyPasswordCheckoutDatabasePrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(outVal)
+			privilegeType = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_DATABASE
 		}
-		privilegeValue = pam.SecurityPolicyPasswordCheckoutDatabasePrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(&outVal)
-		privilegeType = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_DATABASE
 	} else if in.PrincipalAccountSSHPrivilege != nil {
-		var outVal pam.SecurityPolicyPrincipalAccountSSHPrivilege
-		if diags := PrincipalAccountSSHPrivilegeFromModelToSDK(ctx, in.PrincipalAccountSSHPrivilege, &outVal); diags.HasError() {
-			return diags
+		if outVal, diags := PrincipalAccountSSHPrivilegeFromModelToSDK(ctx, in.PrincipalAccountSSHPrivilege); diags.HasError() {
+			return nil, diags
+		} else {
+			privilegeValue = pam.SecurityPolicyPrincipalAccountSSHPrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(outVal)
+			privilegeType = pam.SecurityPolicyRulePrivilegeType_PRINCIPAL_ACCOUNT_SSH
 		}
-		privilegeValue = pam.SecurityPolicyPrincipalAccountSSHPrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(&outVal)
-		privilegeType = pam.SecurityPolicyRulePrivilegeType_PRINCIPAL_ACCOUNT_SSH
 	} else if in.PasswordCheckoutSSHPrivilege != nil {
-		var outVal pam.SecurityPolicyPasswordCheckoutSSHPrivilege
-		if diags := PasswordCheckoutSSHPrivilegeFromModelToSDK(ctx, in.PasswordCheckoutSSHPrivilege, &outVal); diags.HasError() {
-			return diags
+		if outVal, diags := PasswordCheckoutSSHPrivilegeFromModelToSDK(ctx, in.PasswordCheckoutSSHPrivilege); diags.HasError() {
+			return nil, diags
+		} else {
+			privilegeValue = pam.SecurityPolicyPasswordCheckoutSSHPrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(outVal)
+			privilegeType = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_SSH
 		}
-		privilegeValue = pam.SecurityPolicyPasswordCheckoutSSHPrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(&outVal)
-		privilegeType = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_SSH
 	} else {
 		panic("missing stanza in SecurityPolicyRulePrivilegeContainerFromModelToSDK")
 	}
 	out.PrivilegeValue = &privilegeValue
 	out.PrivilegeType = &privilegeType
-	return nil
+	return &out, nil
 }

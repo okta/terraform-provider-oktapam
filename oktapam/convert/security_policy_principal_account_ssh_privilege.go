@@ -19,17 +19,19 @@ type PrincipalAccountSSHPrivilegeModel struct {
 	SudoCommandBundles    []types.String/*NamedObject*/ `tfsdk:"sudo_command_bundles"`
 }
 
-func PrincipalAccountSSHPrivilegeFromSDKToModel(_ context.Context, in *pam.SecurityPolicyPrincipalAccountSSHPrivilege, out *PrincipalAccountSSHPrivilegeModel) diag.Diagnostics {
+func PrincipalAccountSSHPrivilegeFromSDKToModel(_ context.Context, in *pam.SecurityPolicyPrincipalAccountSSHPrivilege) (*PrincipalAccountSSHPrivilegeModel, diag.Diagnostics) {
+	var out PrincipalAccountSSHPrivilegeModel
 	out.PrincipalAccountSSH = types.BoolValue(in.PrincipalAccountSsh)
 	out.AdminLevelPermissions = types.BoolPointerValue(in.AdminLevelPermissions)
 	out.SudoDisplayName = types.StringPointerValue(in.SudoDisplayName)
 	for _, sudoCommandBundle := range in.SudoCommandBundles {
 		out.SudoCommandBundles = append(out.SudoCommandBundles, types.StringPointerValue(sudoCommandBundle.Id))
 	}
-	return nil
+	return &out, nil
 }
 
-func PrincipalAccountSSHPrivilegeFromModelToSDK(_ context.Context, in *PrincipalAccountSSHPrivilegeModel, out *pam.SecurityPolicyPrincipalAccountSSHPrivilege) diag.Diagnostics {
+func PrincipalAccountSSHPrivilegeFromModelToSDK(_ context.Context, in *PrincipalAccountSSHPrivilegeModel) (*pam.SecurityPolicyPrincipalAccountSSHPrivilege, diag.Diagnostics) {
+	var out pam.SecurityPolicyPrincipalAccountSSHPrivilege
 	out.Type = pam.SecurityPolicyRulePrivilegeType_PRINCIPAL_ACCOUNT_SSH
 	out.PrincipalAccountSsh = in.PrincipalAccountSSH.ValueBool()
 	out.AdminLevelPermissions = in.AdminLevelPermissions.ValueBoolPointer()
@@ -39,7 +41,7 @@ func PrincipalAccountSSHPrivilegeFromModelToSDK(_ context.Context, in *Principal
 			out.SudoCommandBundles = append(out.SudoCommandBundles, *pam.NewNamedObject().SetId(sudoCommandBundle.ValueString()))
 		}
 	}
-	return nil
+	return &out, nil
 }
 
 func PrincipalAccountSSHPrivilegeSchema() schema.Attribute {

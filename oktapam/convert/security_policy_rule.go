@@ -42,10 +42,13 @@ func SecurityPolicyRuleSchema() schema.NestedAttributeObject {
 	}
 }
 
-func SecurityPolicyRuleFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleModel, out *pam.SecurityPolicyRule) diag.Diagnostics {
+func SecurityPolicyRuleFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleModel) (*pam.SecurityPolicyRule, diag.Diagnostics) {
+	var out pam.SecurityPolicyRule
 	out.Name = in.Name.ValueString()
-	if diags := SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx, in.ResourceSelector, &out.ResourceSelector); diags.HasError() {
-		return diags
+	if outSelector, diags := SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx, in.ResourceSelector); diags.HasError() {
+		return nil, diags
+	} else {
+		out.ResourceSelector = *outSelector
 	}
 
 	out.ResourceType = pam.SecurityPolicyRuleResourceType(in.ResourceType.ValueString())
@@ -53,14 +56,14 @@ func SecurityPolicyRuleFromModelToSDK(ctx context.Context, in *SecurityPolicyRul
 	if !in.Privileges.IsNull() && len(in.Privileges.Elements()) > 0 {
 		privilegesModel := make([]SecurityPolicyRulePrivilegeContainerModel, 0, len(in.Privileges.Elements()))
 		if diags := in.Privileges.ElementsAs(ctx, &privilegesModel, false); diags.HasError() {
-			return diags
+			return nil, diags
 		}
 		for _, privilege := range privilegesModel {
-			var outPrivilege pam.SecurityPolicyRulePrivilegeContainer
-			if diags := SecurityPolicyRulePrivilegeContainerFromModelToSDK(ctx, &privilege, &outPrivilege); diags.HasError() {
-				return diags
+			if outPrivilege, diags := SecurityPolicyRulePrivilegeContainerFromModelToSDK(ctx, &privilege); diags.HasError() {
+				return nil, diags
+			} else {
+				out.Privileges = append(out.Privileges, *outPrivilege)
 			}
-			out.Privileges = append(out.Privileges, outPrivilege)
 		}
 	}
 
@@ -70,10 +73,11 @@ func SecurityPolicyRuleFromModelToSDK(ctx context.Context, in *SecurityPolicyRul
 
 	// Conditions
 
-	return nil
+	return &out, nil
 }
 
-func SecurityPolicyRuleFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRule, out *SecurityPolicyRuleModel) diag.Diagnostics {
+func SecurityPolicyRuleFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRule) (*SecurityPolicyRuleModel, diag.Diagnostics) {
+	var out SecurityPolicyRuleModel
 
 	if securityPolicyID, ok := in.GetSecurityPolicyIdOk(); ok {
 		out.SecurityPolicyID = types.StringPointerValue(securityPolicyID)
@@ -81,21 +85,23 @@ func SecurityPolicyRuleFromSDKToModel(ctx context.Context, in *pam.SecurityPolic
 	out.Name = types.StringValue(in.Name)
 	out.ResourceType = types.StringValue(string(in.ResourceType))
 
-	if diags := SecurityPolicyRuleResourceSelectorFromSDKToModel(ctx, &in.ResourceSelector, &out.ResourceSelector); diags.HasError() {
-		return diags
+	if outSelector, diags := SecurityPolicyRuleResourceSelectorFromSDKToModel(ctx, &in.ResourceSelector); diags.HasError() {
+		return nil, diags
+	} else {
+		out.ResourceSelector = *outSelector
 	}
 
 	var outPrivileges []SecurityPolicyRulePrivilegeContainerModel
 	for _, privilege := range in.Privileges {
-		var outPrivilege SecurityPolicyRulePrivilegeContainerModel
-		if diags := SecurityPolicyRulePrivilegeContainerFromSDKToModel(ctx, &privilege, &outPrivilege); diags.HasError() {
-			return diags
+		if outPrivilege, diags := SecurityPolicyRulePrivilegeContainerFromSDKToModel(ctx, &privilege); diags.HasError() {
+			return nil, diags
+		} else {
+			outPrivileges = append(outPrivileges, *outPrivilege)
 		}
-		outPrivileges = append(outPrivileges, outPrivilege)
 	}
 
 	if listValue, diags := types.ListValueFrom(ctx, types.ObjectType{AttrTypes: SecurityPolicyRulePrivilegeContainerAttrTypes()}, outPrivileges); diags.HasError() {
-		return diags
+		return nil, diags
 	} else {
 		out.Privileges = listValue
 	}
@@ -103,5 +109,5 @@ func SecurityPolicyRuleFromSDKToModel(ctx context.Context, in *pam.SecurityPolic
 	out.OverrideCheckoutDurationInSeconds = types.Int64PointerValue(in.OverrideCheckoutDurationInSeconds.Get())
 
 	// TODO(ja) Conditions
-	return nil
+	return &out, nil
 }

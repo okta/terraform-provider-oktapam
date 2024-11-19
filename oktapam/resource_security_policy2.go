@@ -40,13 +40,13 @@ func (s *SecurityPolicyResource) Create(ctx context.Context, request resource.Cr
 		return
 	}
 
-	var securityPolicy pam.SecurityPolicy
-	if diags := convert.SecurityPolicyFromModelToSDK(ctx, &plan, &securityPolicy); diags.HasError() {
+	securityPolicy, diags := convert.SecurityPolicyFromModelToSDK(ctx, &plan)
+	if diags.HasError() {
 		response.Diagnostics.Append(diags...)
 		return
 	}
 
-	if policyResponse, _, err := s.api.CreateSecurityPolicy(ctx, s.teamName).SecurityPolicy(securityPolicy).Execute(); err != nil {
+	if policyResponse, _, err := s.api.CreateSecurityPolicy(ctx, s.teamName).SecurityPolicy(*securityPolicy).Execute(); err != nil {
 		response.Diagnostics.AddError("Error creating security policy", err.Error())
 		return
 	} else {
@@ -69,9 +69,11 @@ func (s *SecurityPolicyResource) Read(ctx context.Context, request resource.Read
 		response.Diagnostics.AddError("Error reading security policy", err.Error())
 		return
 	} else {
-		if diags := convert.SecurityPolicyFromSDKToModel(ctx, responsePolicy, &state); diags.HasError() {
+		if policyModel, diags := convert.SecurityPolicyFromSDKToModel(ctx, responsePolicy); diags.HasError() {
 			response.Diagnostics.Append(diags...)
 			return
+		} else {
+			state = *policyModel
 		}
 	}
 
@@ -88,13 +90,13 @@ func (s *SecurityPolicyResource) Update(ctx context.Context, request resource.Up
 		return
 	}
 
-	var securityPolicy pam.SecurityPolicy
-	if diags := convert.SecurityPolicyFromModelToSDK(ctx, &plan, &securityPolicy); diags.HasError() {
+	securityPolicy, diags := convert.SecurityPolicyFromModelToSDK(ctx, &plan)
+	if diags.HasError() {
 		response.Diagnostics.Append(diags...)
 		return
 	}
 
-	if _, err := s.api.UpdateSecurityPolicy(ctx, s.teamName, plan.ID.ValueString()).SecurityPolicy(securityPolicy).Execute(); err != nil {
+	if _, err := s.api.UpdateSecurityPolicy(ctx, s.teamName, plan.ID.ValueString()).SecurityPolicy(*securityPolicy).Execute(); err != nil {
 		response.Diagnostics.AddError("Error updating security policy", err.Error())
 		return
 	}
@@ -103,10 +105,13 @@ func (s *SecurityPolicyResource) Update(ctx context.Context, request resource.Up
 		response.Diagnostics.AddError("Error reading security policy", err.Error())
 		return
 	} else {
-		if diags := convert.SecurityPolicyFromSDKToModel(ctx, updatedPolicy, &plan); diags.HasError() {
+		if policyModel, diags := convert.SecurityPolicyFromSDKToModel(ctx, updatedPolicy); diags.HasError() {
 			response.Diagnostics.Append(diags...)
 			return
+		} else {
+			plan = *policyModel
 		}
+
 		if diags := response.State.Set(ctx, plan); diags.HasError() {
 			response.Diagnostics.Append(diags...)
 			return
