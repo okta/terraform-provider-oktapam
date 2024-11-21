@@ -171,8 +171,8 @@ type ConditionsGatewayModel struct {
 func ConditionsGatewaySchema() schema.Attribute {
 	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
-			"traffic_forwarding": schema.BoolAttribute{Optional: true},
-			"session_recording":  schema.BoolAttribute{Optional: true},
+			"traffic_forwarding": schema.BoolAttribute{Required: true},
+			"session_recording":  schema.BoolAttribute{Required: true},
 		},
 		Optional: true,
 	}

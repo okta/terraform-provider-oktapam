@@ -30,7 +30,7 @@ func SecurityPolicyRuleSchema() schema.NestedAttributeObject {
 			"name":                                  schema.StringAttribute{Required: true},
 			"resource_type":                         schema.StringAttribute{Required: true},
 			"override_checkout_duration_in_seconds": schema.Int64Attribute{Optional: true},
-			"security_policy_id":                    schema.StringAttribute{Optional: true}, //TODO(ja) do I even need this?
+			"security_policy_id":                    schema.StringAttribute{Computed: true, Optional: true},
 			"resource_selector":                     SecurityPolicyRuleResourceSelectorSchema(),
 			"privileges": schema.ListNestedAttribute{
 				NestedObject: SecurityPolicyRulePrivilegeContainerSchema(),

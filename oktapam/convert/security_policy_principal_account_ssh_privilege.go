@@ -2,11 +2,11 @@ package convert
 
 import (
 	"context"
-
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 )
@@ -22,9 +22,22 @@ type PrincipalAccountSSHPrivilegeModel struct {
 
 func PrincipalAccountSSHPrivilegeFromSDKToModel(_ context.Context, in *pam.SecurityPolicyPrincipalAccountSSHPrivilege) (*PrincipalAccountSSHPrivilegeModel, diag.Diagnostics) {
 	var out PrincipalAccountSSHPrivilegeModel
-	out.PrincipalAccountSSH = types.BoolValue(in.PrincipalAccountSsh)
-	out.AdminLevelPermissions = types.BoolPointerValue(in.AdminLevelPermissions)
-	out.SudoDisplayName = types.StringPointerValue(in.SudoDisplayName)
+
+	if val, ok := in.GetPrincipalAccountSshOk(); ok {
+		out.PrincipalAccountSSH = types.BoolPointerValue(val)
+	}
+
+	// NOTE: This is an optional boolean, so if we set it to false, platform just stops returning it as it
+	// can't tell the difference between "set to false" and "not set".
+	if val, ok := in.GetAdminLevelPermissionsOk(); ok {
+		out.AdminLevelPermissions = types.BoolPointerValue(val)
+	} else {
+		out.AdminLevelPermissions = types.BoolValue(false)
+	}
+
+	if val, ok := in.GetSudoDisplayNameOk(); ok {
+		out.SudoDisplayName = types.StringPointerValue(val)
+	}
 	for _, sudoCommandBundle := range in.SudoCommandBundles {
 		out.SudoCommandBundles = append(out.SudoCommandBundles, types.StringPointerValue(sudoCommandBundle.Id))
 	}
@@ -63,7 +76,11 @@ func PrincipalAccountSSHPrivilegeSchema() schema.Attribute {
 				Description: descriptions.PrivilegePrincipalAccountSSH,
 			},
 			"admin_level_permissions": schema.BoolAttribute{
-				Optional:    true,
+				Optional: true,
+				// NOTE: This is an optional boolean, so if we set it to false, platform just stops returning it as it
+				// can't tell the difference between "set to false" and "not set".
+				Computed:    true,
+				Default:     booldefault.StaticBool(false),
 				Description: descriptions.AdminLevelPermissions,
 			},
 			"sudo_display_name": schema.StringAttribute{
