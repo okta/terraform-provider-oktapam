@@ -1,6 +1,6 @@
 resource "oktapam_security_policy_v2" "individual_server_account_policy" {
-  name   = "test individual server account selector"
-  active = true
+  name       = "test individual server account selector"
+  active     = true
   principals = { user_groups = ["user_group_1", "user_group_2"] }
   rules = [
     {
