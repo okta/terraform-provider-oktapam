@@ -219,7 +219,7 @@ type ConditionsMFAModel struct {
 func ConditionsMFASchema() schema.Attribute {
 	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
-			"re_auth_frequency_in_seconds": schema.Int32Attribute{Optional: true},
+			"re_auth_frequency_in_seconds": schema.Int32Attribute{Required: true},
 			"acr_values":                   schema.StringAttribute{Optional: true},
 		},
 		Optional: true,

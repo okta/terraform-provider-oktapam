@@ -1,7 +1,7 @@
 {
   "active": true,
   "description": "An example security policy for dev environment",
-  "id": "718d40f88dbd3c224907ec416d03d21b85e10852ff658e0c9758a1bce9ffc453",
+  "id": "553024cb495b4b4a465ee5d1789c6dad95879b316a241f4393fd528cf42d8a61",
   "name": "development environment policy",
   "principals": {
     "user_groups": [
@@ -40,11 +40,13 @@
             "selector": {
               "_type": "server_label",
               "account_selector": {
+                "_type": "username",
                 "usernames": [
                   "root",
                   "pamadmin"
                 ]
               },
+              "account_selector_type": "username",
               "server_selector": {
                 "labels": {
                   "system.os_type": "linux"
@@ -83,6 +85,10 @@
           {
             "selector": {
               "_type": "server_label",
+              "account_selector": {
+                "_type": "none"
+              },
+              "account_selector_type": "none",
               "server_selector": {
                 "labels": {
                   "system.os_type": "linux"
@@ -101,7 +107,8 @@
           "condition_type": "mfa",
           "condition_value": {
             "_type": "mfa",
-            "acr_values": "urn:okta:loa:2fa:any"
+            "acr_values": "urn:okta:loa:2fa:any",
+            "re_auth_frequency_in_seconds": 3600
           }
         }
       ],
@@ -130,11 +137,13 @@
             "selector": {
               "_type": "server_label",
               "account_selector": {
+                "_type": "username",
                 "usernames": [
                   "root",
                   "pamadmin"
                 ]
               },
+              "account_selector_type": "username",
               "server_selector": {
                 "labels": {
                   "system.os_type": "linux"

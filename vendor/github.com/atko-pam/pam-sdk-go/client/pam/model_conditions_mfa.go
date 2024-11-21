@@ -22,7 +22,7 @@ var _ MappedNullable = &ConditionsMFA{}
 type ConditionsMFA struct {
 	Type string `json:"_type"`
 	// Defines the number of seconds an MFA verification remains valid. After this time users need to reauthenticate before they can open new connections to resources. Defining a value of `0` requires users to authenticate for every connection.
-	ReAuthFrequencyInSeconds *int32                  `json:"re_auth_frequency_in_seconds,omitempty"`
+	ReAuthFrequencyInSeconds int32                   `json:"re_auth_frequency_in_seconds"`
 	AcrValues                *ConditionsMFAACRValues `json:"acr_values,omitempty"`
 }
 
@@ -30,11 +30,10 @@ type ConditionsMFA struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewConditionsMFA(type_ string) *ConditionsMFA {
+func NewConditionsMFA(type_ string, reAuthFrequencyInSeconds int32) *ConditionsMFA {
 	this := ConditionsMFA{}
 	this.Type = type_
-	var reAuthFrequencyInSeconds int32 = 1800
-	this.ReAuthFrequencyInSeconds = &reAuthFrequencyInSeconds
+	this.ReAuthFrequencyInSeconds = reAuthFrequencyInSeconds
 	return &this
 }
 
@@ -44,7 +43,7 @@ func NewConditionsMFA(type_ string) *ConditionsMFA {
 func NewConditionsMFAWithDefaults() *ConditionsMFA {
 	this := ConditionsMFA{}
 	var reAuthFrequencyInSeconds int32 = 1800
-	this.ReAuthFrequencyInSeconds = &reAuthFrequencyInSeconds
+	this.ReAuthFrequencyInSeconds = reAuthFrequencyInSeconds
 	return &this
 }
 
@@ -73,36 +72,28 @@ func (o *ConditionsMFA) SetType(v string) *ConditionsMFA {
 	return o
 }
 
-// GetReAuthFrequencyInSeconds returns the ReAuthFrequencyInSeconds field value if set, zero value otherwise.
+// GetReAuthFrequencyInSeconds returns the ReAuthFrequencyInSeconds field value
 func (o *ConditionsMFA) GetReAuthFrequencyInSeconds() int32 {
-	if o == nil || IsNil(o.ReAuthFrequencyInSeconds) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.ReAuthFrequencyInSeconds
+
+	return o.ReAuthFrequencyInSeconds
 }
 
-// GetReAuthFrequencyInSecondsOk returns a tuple with the ReAuthFrequencyInSeconds field value if set, nil otherwise
+// GetReAuthFrequencyInSecondsOk returns a tuple with the ReAuthFrequencyInSeconds field value
 // and a boolean to check if the value has been set.
 func (o *ConditionsMFA) GetReAuthFrequencyInSecondsOk() (*int32, bool) {
-	if o == nil || IsNil(o.ReAuthFrequencyInSeconds) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ReAuthFrequencyInSeconds, true
+	return &o.ReAuthFrequencyInSeconds, true
 }
 
-// HasReAuthFrequencyInSeconds returns a boolean if a field has been set.
-func (o *ConditionsMFA) HasReAuthFrequencyInSeconds() bool {
-	if o != nil && !IsNil(o.ReAuthFrequencyInSeconds) {
-		return true
-	}
-
-	return false
-}
-
-// SetReAuthFrequencyInSeconds gets a reference to the given int32 and assigns it to the ReAuthFrequencyInSeconds field.
+// SetReAuthFrequencyInSeconds sets field value
 func (o *ConditionsMFA) SetReAuthFrequencyInSeconds(v int32) *ConditionsMFA {
-	o.ReAuthFrequencyInSeconds = &v
+	o.ReAuthFrequencyInSeconds = v
 	return o
 }
 
@@ -150,9 +141,7 @@ func (o ConditionsMFA) MarshalJSON() ([]byte, error) {
 func (o ConditionsMFA) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["_type"] = o.Type
-	if !IsNil(o.ReAuthFrequencyInSeconds) {
-		toSerialize["re_auth_frequency_in_seconds"] = o.ReAuthFrequencyInSeconds
-	}
+	toSerialize["re_auth_frequency_in_seconds"] = o.ReAuthFrequencyInSeconds
 	if !IsNil(o.AcrValues) {
 		toSerialize["acr_values"] = o.AcrValues
 	}

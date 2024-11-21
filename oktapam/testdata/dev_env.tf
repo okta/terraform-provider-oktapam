@@ -16,7 +16,10 @@ resource "oktapam_security_policy_v2" "devenv_security_policy" {
           selectors = [
             {
               server_label = {
-                account_selector = ["root", "pamadmin"]
+                account_selector_type = "username"
+                account_selector = {
+                  usernames = ["root", "pamadmin"]
+                }
                 server_selector = {
                   labels = {
                     "system.os_type" = "linux"
@@ -33,7 +36,8 @@ resource "oktapam_security_policy_v2" "devenv_security_policy" {
           password_checkout_ssh = {
             password_checkout_ssh = true
           }
-        }, {
+        },
+        {
           principal_account_ssh = {
             principal_account_ssh   = true
             admin_level_permissions = false
@@ -51,6 +55,8 @@ resource "oktapam_security_policy_v2" "devenv_security_policy" {
           selectors = [
             {
               server_label = {
+                account_selector_type = "none"
+                account_selector      = {}
                 server_selector = {
                   labels = {
                     "system.os_type" = "linux"
@@ -89,7 +95,10 @@ resource "oktapam_security_policy_v2" "devenv_security_policy" {
                     "system.os_type" = "linux"
                   }
                 }
-                account_selector = ["root", "pamadmin"]
+                account_selector_type = "username"
+                account_selector = {
+                  usernames = ["root", "pamadmin"]
+                }
               }
             }
           ]
@@ -101,7 +110,7 @@ resource "oktapam_security_policy_v2" "devenv_security_policy" {
           password_checkout_ssh = {
             password_checkout_ssh = true
           }
-        }, {
+          }, {
           principal_account_ssh = {
             principal_account_ssh   = true
             admin_level_permissions = true
@@ -112,8 +121,8 @@ resource "oktapam_security_policy_v2" "devenv_security_policy" {
       conditions = [
         {
           mfa = {
-            acr_values                  = "urn:okta:loa:2fa:any"
-            reauth_frequency_in_seconds = 3600
+            acr_values                   = "urn:okta:loa:2fa:any"
+            re_auth_frequency_in_seconds = 3600
           }
         }
       ]
@@ -139,5 +148,5 @@ resource "oktapam_sudo_command_bundle" "tilt_sudo_remove_directories" {
     args_type    = "any"
   }
   no_passwd = true
-  add_env = ["HOME"]
+  add_env   = ["HOME"]
 }
