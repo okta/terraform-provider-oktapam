@@ -2,7 +2,6 @@ package convert
 
 import (
 	"context"
-
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,8 +19,8 @@ type SecurityPolicyRuleModel struct {
 	ResourceSelector                  types.Object/*SecurityPolicyRuleResourceSelectorModel*/ `tfsdk:"resource_selector"`
 	Privileges                        types.List `tfsdk:"privileges"`
 	Conditions                        types.List/**SecurityPolicyRuleConditionContainerModel*/ `tfsdk:"conditions"`
-	OverrideCheckoutDurationInSeconds types.Int64  `tfsdk:"override_checkout_duration_in_seconds"`
-	SecurityPolicyID                  types.String `tfsdk:"security_policy_id"` // openapi readOnly
+	OverrideCheckoutDurationInSeconds types.Int64 `tfsdk:"override_checkout_duration_in_seconds"`
+	//NOTE: We ignore SecurityPolicyID
 }
 
 func SecurityPolicyRuleSchema() schema.NestedAttributeObject {
@@ -30,7 +29,6 @@ func SecurityPolicyRuleSchema() schema.NestedAttributeObject {
 			"name":                                  schema.StringAttribute{Required: true},
 			"resource_type":                         schema.StringAttribute{Required: true},
 			"override_checkout_duration_in_seconds": schema.Int64Attribute{Optional: true},
-			"security_policy_id":                    schema.StringAttribute{Computed: true, Optional: true},
 			"resource_selector":                     SecurityPolicyRuleResourceSelectorSchema(),
 			"privileges": schema.ListNestedAttribute{
 				NestedObject: SecurityPolicyRulePrivilegeContainerSchema(),
@@ -49,7 +47,6 @@ func SecurityPolicyRuleAttrTypes() map[string]attr.Type {
 		"name":                                  types.StringType,
 		"resource_type":                         types.StringType,
 		"override_checkout_duration_in_seconds": types.Int64Type,
-		"security_policy_id":                    types.StringType,
 		"resource_selector":                     types.ObjectType{AttrTypes: SecurityPolicyRuleResourceSelectorAttrTypes()},
 		"privileges":                            types.ListType{ElemType: types.ObjectType{AttrTypes: SecurityPolicyRulePrivilegeContainerAttrTypes()}},
 		"conditions":                            types.ListType{ElemType: types.ObjectType{AttrTypes: SecurityPolicyRuleConditionContainerAttrTypes()}},
@@ -111,9 +108,6 @@ func SecurityPolicyRuleFromModelToSDK(ctx context.Context, in *SecurityPolicyRul
 func SecurityPolicyRuleFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRule) (*SecurityPolicyRuleModel, diag.Diagnostics) {
 	var out SecurityPolicyRuleModel
 
-	if securityPolicyID, ok := in.GetSecurityPolicyIdOk(); ok {
-		out.SecurityPolicyID = types.StringPointerValue(securityPolicyID)
-	}
 	out.Name = types.StringValue(in.Name)
 	out.ResourceType = types.StringValue(string(in.ResourceType))
 
