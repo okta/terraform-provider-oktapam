@@ -2,6 +2,7 @@ package convert
 
 import (
 	"context"
+
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -22,6 +23,7 @@ type PrincipalAccountSSHPrivilegeModel struct {
 
 func PrincipalAccountSSHPrivilegeFromSDKToModel(_ context.Context, in *pam.SecurityPolicyPrincipalAccountSSHPrivilege) (*PrincipalAccountSSHPrivilegeModel, diag.Diagnostics) {
 	var out PrincipalAccountSSHPrivilegeModel
+	var diags diag.Diagnostics
 
 	if val, ok := in.GetPrincipalAccountSshOk(); ok {
 		out.PrincipalAccountSSH = types.BoolPointerValue(val)
@@ -41,11 +43,13 @@ func PrincipalAccountSSHPrivilegeFromSDKToModel(_ context.Context, in *pam.Secur
 	for _, sudoCommandBundle := range in.SudoCommandBundles {
 		out.SudoCommandBundles = append(out.SudoCommandBundles, types.StringPointerValue(sudoCommandBundle.Id))
 	}
-	return &out, nil
+	return &out, diags
 }
 
 func PrincipalAccountSSHPrivilegeFromModelToSDK(_ context.Context, in *PrincipalAccountSSHPrivilegeModel) (*pam.SecurityPolicyPrincipalAccountSSHPrivilege, diag.Diagnostics) {
 	var out pam.SecurityPolicyPrincipalAccountSSHPrivilege
+	var diags diag.Diagnostics
+
 	out.Type = pam.SecurityPolicyRulePrivilegeType_PRINCIPAL_ACCOUNT_SSH
 
 	if !in.PrincipalAccountSSH.IsNull() && !in.PrincipalAccountSSH.IsUnknown() {
@@ -65,7 +69,7 @@ func PrincipalAccountSSHPrivilegeFromModelToSDK(_ context.Context, in *Principal
 			out.SudoCommandBundles = append(out.SudoCommandBundles, *pam.NewNamedObject().SetId(sudoCommandBundle.ValueString()))
 		}
 	}
-	return &out, nil
+	return &out, diags
 }
 
 func PrincipalAccountSSHPrivilegeSchema() schema.Attribute {

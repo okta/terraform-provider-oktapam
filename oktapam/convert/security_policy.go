@@ -53,6 +53,8 @@ func SecurityPolicySchema() map[string]schema.Attribute {
 
 func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourceModel) (*pam.SecurityPolicy, diag.Diagnostics) {
 	var out pam.SecurityPolicy
+	var diags diag.Diagnostics
+
 	//TODO(ja) do this pattern everywhere
 	if !in.ID.IsNull() && !in.ID.IsUnknown() {
 		out.Id = in.ID.ValueStringPointer()
@@ -70,30 +72,37 @@ func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourc
 		out.Active = in.Active.ValueBool()
 	}
 
-	if principals, diags := SecurityPolicyPrincipalFromModelToSDK(ctx, &in.Principals); diags.HasError() {
+	principals, d := SecurityPolicyPrincipalFromModelToSDK(ctx, &in.Principals)
+	diags.Append(d...)
+
+	if diags.HasError() {
 		return nil, diags
-	} else {
-		out.Principals = *principals
 	}
+
+	out.Principals = *principals
 
 	if !in.Rules.IsNull() && len(in.Rules.Elements()) > 0 {
 		ruleModels := make([]SecurityPolicyRuleModel, 0, len(in.Rules.Elements()))
-		if diags := in.Rules.ElementsAs(ctx, &ruleModels, false); diags.HasError() {
+		diags.Append(in.Rules.ElementsAs(ctx, &ruleModels, false)...)
+		if diags.HasError() {
 			return nil, diags
 		}
+
 		for _, ruleModel := range ruleModels {
-			outPolicyRule, diags := SecurityPolicyRuleFromModelToSDK(ctx, &ruleModel)
+			outPolicyRule, d := SecurityPolicyRuleFromModelToSDK(ctx, &ruleModel)
+			diags.Append(d...)
 			if diags.HasError() {
 				return nil, diags
 			}
 			out.Rules = append(out.Rules, *outPolicyRule)
 		}
 	}
-	return &out, nil
+	return &out, diags
 }
 
 func SecurityPolicyFromSDKToModel(ctx context.Context, in *pam.SecurityPolicy) (*SecurityPolicyResourceModel, diag.Diagnostics) {
 	var out SecurityPolicyResourceModel
+	var diags diag.Diagnostics
 
 	out.ID = types.StringPointerValue(in.Id)
 	if val, ok := in.GetNameOk(); ok {
@@ -113,30 +122,37 @@ func SecurityPolicyFromSDKToModel(ctx context.Context, in *pam.SecurityPolicy) (
 		out.Active = types.BoolPointerValue(val)
 	}
 
-	if principals, diags := SecurityPolicyPrincipalFromSDKToModel(ctx, &in.Principals); diags.HasError() {
+	principals, d := SecurityPolicyPrincipalFromSDKToModel(ctx, &in.Principals)
+	diags.Append(d...)
+
+	if diags.HasError() {
 		return nil, diags
-	} else {
-		out.Principals = *principals
 	}
+	out.Principals = *principals
 
 	if len(in.Rules) > 0 {
 		var outRules []SecurityPolicyRuleModel
 		for _, rule := range in.Rules {
-			if outRule, diags := SecurityPolicyRuleFromSDKToModel(ctx, &rule); diags.HasError() {
+			outRule, d := SecurityPolicyRuleFromSDKToModel(ctx, &rule)
+			diags.Append(d...)
+			if diags.HasError() {
 				return nil, diags
-			} else {
-				outRules = append(outRules, *outRule)
 			}
+			outRules = append(outRules, *outRule)
+
 		}
 
-		if listValue, diags := types.ListValueFrom(ctx, types.ObjectType{AttrTypes: SecurityPolicyRuleAttrTypes()}, outRules); diags.HasError() {
+		listValue, d := types.ListValueFrom(ctx, types.ObjectType{AttrTypes: SecurityPolicyRuleAttrTypes()}, outRules)
+		diags.Append(d...)
+		if diags.HasError() {
 			return nil, diags
-		} else {
-			out.Rules = listValue
 		}
+
+		out.Rules = listValue
+
 	} else {
 		out.Rules = types.ListNull(types.ObjectType{AttrTypes: SecurityPolicyRuleAttrTypes()})
 	}
 
-	return &out, nil
+	return &out, diags
 }
