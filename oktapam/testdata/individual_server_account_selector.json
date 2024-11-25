@@ -1,0 +1,45 @@
+{
+  "active": true,
+  "id": "db2aa5e71f2c267cc1e3bd3f07d27f739f0db34f66f1c50c1e458fe990ad42b0",
+  "name": "test individual server account selector",
+  "principals": {
+    "user_groups": [
+      {
+        "id": "user_group_1"
+      },
+      {
+        "id": "user_group_2"
+      }
+    ]
+  },
+  "rules": [
+    {
+      "name": "test",
+      "privileges": [
+        {
+          "privilege_type": "password_checkout_ssh",
+          "privilege_value": {
+            "_type": "password_checkout_ssh",
+            "password_checkout_ssh": true
+          }
+        }
+      ],
+      "resource_selector": {
+        "_type": "server_based_resource",
+        "selectors": [
+          {
+            "selector": {
+              "_type": "individual_server_account",
+              "server": {
+                "id": "server-id-goes-here"
+              },
+              "username": "root"
+            },
+            "selector_type": "individual_server_account"
+          }
+        ]
+      },
+      "resource_type": "server_based_resource"
+    }
+  ]
+}

@@ -3,6 +3,11 @@ package convert
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/int32validator"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
+
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -16,32 +21,82 @@ type ResourceCheckoutSettingsModel struct {
 	ExcludeList               types.List  `tfsdk:"exclude_list"`
 }
 
-func ResourceCheckoutSettingsFromModelToSDK(ctx context.Context, model *ResourceCheckoutSettingsModel, sdkValue *pam.ResourceCheckoutSettings) diag.Diagnostics {
-	sdkValue.CheckoutRequired = model.CheckoutRequired.ValueBool()
-	sdkValue.CheckoutDurationInSeconds = model.CheckoutDurationInSeconds.ValueInt32Pointer()
-	if diags := model.IncludeList.ElementsAs(ctx, &sdkValue.IncludeList, false); diags.HasError() {
-		return diags
+func ResourceCheckoutSettingsSchemaAttributes(mergeIntoMap map[string]schema.Attribute) map[string]schema.Attribute {
+	myMap := map[string]schema.Attribute{
+		"checkout_duration_in_seconds": schema.Int32Attribute{
+			Required:    true,
+			Description: descriptions.CheckoutDurationInSeconds,
+			Validators: []validator.Int32{
+				int32validator.Between(900, 86400),
+			},
+		},
+		"checkout_required": schema.BoolAttribute{
+			Required:    true,
+			Description: descriptions.CheckoutRequired,
+		},
+		"exclude_list": schema.ListAttribute{
+			ElementType: types.StringType,
+			Optional:    true,
+			Description: descriptions.ExcludeList,
+		},
+		"include_list": schema.ListAttribute{
+			ElementType: types.StringType,
+			Optional:    true,
+			Description: descriptions.IncludeList,
+		},
 	}
-	if diags := model.ExcludeList.ElementsAs(ctx, &sdkValue.ExcludeList, false); diags.HasError() {
-		return diags
+
+	for key, value := range myMap {
+		mergeIntoMap[key] = value
 	}
-	return nil
+	return mergeIntoMap
 }
 
-func ResourceCheckoutSettingsFromSDKToModel(ctx context.Context, sdkValue *pam.ResourceCheckoutSettings, model *ResourceCheckoutSettingsModel) diag.Diagnostics {
-	if includeList, diags := types.ListValueFrom(ctx, types.StringType, sdkValue.IncludeList); diags.HasError() {
-		return diags
-	} else {
-		model.IncludeList = includeList
+func ResourceCheckoutSettingsFromModelToSDK(ctx context.Context, in *ResourceCheckoutSettingsModel) (*pam.ResourceCheckoutSettings, diag.Diagnostics) {
+	var out pam.ResourceCheckoutSettings
+
+	if !in.CheckoutRequired.IsNull() && !in.CheckoutRequired.IsUnknown() {
+		out.CheckoutRequired = in.CheckoutRequired.ValueBool()
+	}
+	if !in.CheckoutDurationInSeconds.IsNull() && !in.CheckoutDurationInSeconds.IsUnknown() {
+		out.CheckoutDurationInSeconds = in.CheckoutDurationInSeconds.ValueInt32Pointer()
 	}
 
-	if excludeList, diags := types.ListValueFrom(ctx, types.StringType, sdkValue.ExcludeList); diags.HasError() {
-		return diags
-	} else {
-		model.ExcludeList = excludeList
+	if !in.IncludeList.IsNull() && !in.IncludeList.IsUnknown() {
+		if diags := in.IncludeList.ElementsAs(ctx, &out.IncludeList, false); diags.HasError() {
+			return nil, diags
+		}
 	}
 
-	model.CheckoutRequired = types.BoolValue(sdkValue.CheckoutRequired)
-	model.CheckoutDurationInSeconds = types.Int32PointerValue(sdkValue.CheckoutDurationInSeconds)
-	return nil
+	if !in.ExcludeList.IsNull() && !in.ExcludeList.IsUnknown() {
+		if diags := in.ExcludeList.ElementsAs(ctx, &out.ExcludeList, false); diags.HasError() {
+			return nil, diags
+		}
+	}
+	return &out, nil
+}
+
+func ResourceCheckoutSettingsFromSDKToModel(ctx context.Context, in *pam.ResourceCheckoutSettings) (*ResourceCheckoutSettingsModel, diag.Diagnostics) {
+	var out ResourceCheckoutSettingsModel
+
+	if val, ok := in.GetCheckoutRequiredOk(); ok {
+		out.CheckoutRequired = types.BoolPointerValue(val)
+	}
+
+	if val, ok := in.GetCheckoutDurationInSecondsOk(); ok {
+		out.CheckoutDurationInSeconds = types.Int32PointerValue(val)
+	}
+
+	if includeList, diags := types.ListValueFrom(ctx, types.StringType, in.IncludeList); diags.HasError() {
+		return nil, diags
+	} else {
+		out.IncludeList = includeList
+	}
+
+	if excludeList, diags := types.ListValueFrom(ctx, types.StringType, in.ExcludeList); diags.HasError() {
+		return nil, diags
+	} else {
+		out.ExcludeList = excludeList
+	}
+	return &out, nil
 }

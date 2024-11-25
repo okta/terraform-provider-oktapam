@@ -17,8 +17,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-resty/resty/v2"
 	"github.com/opentracing/opentracing-go"
+
+	"github.com/go-resty/resty/v2"
 	"gopkg.in/square/go-jose.v2"
 )
 
@@ -348,6 +349,11 @@ type formFile struct {
 	formFileName string
 }
 
+// callAPI call api using resty client and unmarshal success response in result. In case of an error, it's caller responsibility
+// to unmarshal the error response into the appropriate struct by analyzing the raw response.
+// This method return error in below cases:
+//   - network error or resty client error
+//   - api return response with error status code
 func (apiClient *APIClient) callAPI(
 	ctx context.Context,
 	traceKey string,
@@ -367,14 +373,14 @@ func (apiClient *APIClient) callAPI(
 		defer sp.Finish()
 	}
 
-	// Using SetResult and SetError automatically parses the response body into the result and error objects
+	// Using SetDoNotParseResponse tell resty not to parse or close the response in http.Client.Do(requset)
+	// This means you need to ensure that the body is read and closed properly to avoid resource leaks.
 	req := apiClient.restyClient.R().
 		SetContext(ctx).
 		SetHeaders(headerParams).
 		SetQueryParamsFromValues(queryParams).
 		SetFormDataFromValues(formParams).
-		SetResult(&result).
-		SetError(&APIError{})
+		SetDoNotParseResponse(true)
 	req.Method = method
 
 	for _, ff := range formFiles {
@@ -388,6 +394,7 @@ func (apiClient *APIClient) callAPI(
 
 	response, err := req.Execute(method, path)
 
+	// network error or Resty-level error
 	if err != nil {
 		return nil, fmt.Errorf("error executing the API request: %w", err)
 	}
@@ -397,35 +404,24 @@ func (apiClient *APIClient) callAPI(
 		return response.RawResponse, nil
 	}
 
-	respBody, err := json.Marshal(result)
+	if response.IsError() {
+		return response.RawResponse, fmt.Errorf("non-successful status code: %d", response.StatusCode())
+	}
+
+	// read response body and reset the original response body for the caller
+	bodyBytes, err := io.ReadAll(response.RawResponse.Body)
 	if err != nil {
 		return nil, fmt.Errorf("error reading the raw HTTP response body: %w", err)
 	}
-
-	// duplicate the response body so we can return it for the caller to use
-	bodyBuffer := bytes.NewBuffer(respBody)
-	newRawResponse := &http.Response{
-		StatusCode: response.RawResponse.StatusCode,
-		Header:     response.RawResponse.Header.Clone(),
-		Body:       io.NopCloser(bytes.NewBuffer(bodyBuffer.Bytes())),
+	if err := response.RawResponse.Body.Close(); err != nil {
+		return nil, err
 	}
+	response.RawResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes))
 
-	// reset the original response body
-	response.RawResponse.Body = io.NopCloser(bytes.NewBuffer(bodyBuffer.Bytes()))
-
-	if response.IsError() {
-		responseError := response.Error()
-		if responseError != nil {
-			if apiError, ok := responseError.(*APIError); ok {
-				return newRawResponse, apiError
-			}
-		}
-
-		return newRawResponse, &APIError{
-			Message: response.Status(),
-		}
+	// unmarshal the response body into the result interface
+	if err := json.Unmarshal(bodyBytes, &result); err != nil {
+		return nil, fmt.Errorf("error unmarshalling the raw HTTP response body: %w", err)
 	}
-
 	return response.RawResponse, nil
 }
 

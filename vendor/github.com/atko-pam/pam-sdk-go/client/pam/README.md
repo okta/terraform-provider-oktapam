@@ -40,14 +40,10 @@ Class | Method | HTTP request | Description
 *ActiveDirectoryAccountsAPI* | [**ReorderActiveDirectoryAccountRules**](docs/ActiveDirectoryAccountsAPI.md#reorderactivedirectoryaccountrules) | **Post** /v1/teams/{team_name}/resource_assignment/active_directory/{ad_connection_id}/rules/reorder | Reorder priority of Active Directory account rules
 *ActiveDirectoryAccountsAPI* | [**UpdateActiveDirectoryAccountMatch**](docs/ActiveDirectoryAccountsAPI.md#updateactivedirectoryaccountmatch) | **Put** /v1/teams/{team_name}/resource_assignment/active_directory/{ad_connection_id}/accounts/{ad_account_id}/match | Update which Okta Privileged Access user an Active Directory account matches
 *ActiveDirectoryAccountsAPI* | [**UpdateActiveDirectoryAccountRule**](docs/ActiveDirectoryAccountsAPI.md#updateactivedirectoryaccountrule) | **Put** /v1/teams/{team_name}/resource_assignment/active_directory/{ad_connection_id}/rules/{ad_account_rule_id} | Update an Active Directory account rule
-*ActiveDirectoryConnectionAPI* | [**CreateActiveDirectoryConnection**](docs/ActiveDirectoryConnectionAPI.md#createactivedirectoryconnection) | **Post** /v1/teams/{team_name}/connections/active_directory | Create an Active Directory connection
-*ActiveDirectoryConnectionAPI* | [**CreateActiveDirectoryConnectionTest**](docs/ActiveDirectoryConnectionAPI.md#createactivedirectoryconnectiontest) | **Post** /v1/teams/{team_name}/connections/active_directory_check | Create an Active Directory connection test
-*ActiveDirectoryConnectionAPI* | [**DeleteActiveDirectoryConnection**](docs/ActiveDirectoryConnectionAPI.md#deleteactivedirectoryconnection) | **Delete** /v1/teams/{team_name}/connections/active_directory/{ad_connection_id} | Delete a Active Directory connection
 *ActiveDirectoryConnectionAPI* | [**GetActiveDirectoryConnection**](docs/ActiveDirectoryConnectionAPI.md#getactivedirectoryconnection) | **Get** /v1/teams/{team_name}/connections/active_directory/{ad_connection_id} | Retrieve an Active Directory connection
-*ActiveDirectoryConnectionAPI* | [**GetActiveDirectoryConnectionTest**](docs/ActiveDirectoryConnectionAPI.md#getactivedirectoryconnectiontest) | **Get** /v1/teams/{team_name}/connections/active_directory_check/{ad_connection_test_id} | Retrieve an Active Directory connection test
 *ActiveDirectoryConnectionAPI* | [**ListActiveDirectoryConnections**](docs/ActiveDirectoryConnectionAPI.md#listactivedirectoryconnections) | **Get** /v1/teams/{team_name}/connections/active_directory | List all Active Directory connections
 *ActiveDirectoryConnectionAPI* | [**RevealActiveDirectoryConnectionPassword**](docs/ActiveDirectoryConnectionAPI.md#revealactivedirectoryconnectionpassword) | **Post** /v1/teams/{team_name}/connections/active_directory/{ad_connection_id}/reveal_password | Reveal a the Active Directory service account password
-*ActiveDirectoryConnectionAPI* | [**UpdateActiveDirectoryConnection**](docs/ActiveDirectoryConnectionAPI.md#updateactivedirectoryconnection) | **Put** /v1/teams/{team_name}/connections/active_directory/{ad_connection_id} | Update an Active Directory connection
+*ActiveDirectoryConnectionAPI* | [**UpdateActiveDirectoryConnectionStatus**](docs/ActiveDirectoryConnectionAPI.md#updateactivedirectoryconnectionstatus) | **Put** /v1/teams/{team_name}/connections/active_directory/{ad_connection_id}/status | Update the status of an Active Directory connection
 *AttributesAPI* | [**FetchGroupAttribute**](docs/AttributesAPI.md#fetchgroupattribute) | **Get** /v1/teams/{team_name}/groups/{group_name}/attributes/{attribute_id} | Retrieve a Group Attribute
 *AttributesAPI* | [**FetchUserAttribute**](docs/AttributesAPI.md#fetchuserattribute) | **Get** /v1/teams/{team_name}/users/{user_name}/attributes/{attribute_id} | Retrieve a User Attribute
 *AttributesAPI* | [**ListGroupAttributes**](docs/AttributesAPI.md#listgroupattributes) | **Get** /v1/teams/{team_name}/groups/{group_name}/attributes | List all Attributes for a Group
@@ -223,6 +219,7 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
+ - [ADConnectionStatus](docs/ADConnectionStatus.md)
  - [APIServiceAccountCheckoutSettings](docs/APIServiceAccountCheckoutSettings.md)
  - [AWSNetwork](docs/AWSNetwork.md)
  - [AccessCredentialType](docs/AccessCredentialType.md)
@@ -243,9 +240,7 @@ Class | Method | HTTP request | Description
  - [ActiveDirectoryAccountRuleRequest](docs/ActiveDirectoryAccountRuleRequest.md)
  - [ActiveDirectoryAccountRuleResponse](docs/ActiveDirectoryAccountRuleResponse.md)
  - [ActiveDirectoryAccountRuleSettings](docs/ActiveDirectoryAccountRuleSettings.md)
- - [ActiveDirectoryConnectionCheckResponse](docs/ActiveDirectoryConnectionCheckResponse.md)
- - [ActiveDirectoryConnectionRequest](docs/ActiveDirectoryConnectionRequest.md)
- - [ActiveDirectoryConnectionResponse](docs/ActiveDirectoryConnectionResponse.md)
+ - [ActiveDirectoryConnection](docs/ActiveDirectoryConnection.md)
  - [ActiveDirectoryMatchingCriteria](docs/ActiveDirectoryMatchingCriteria.md)
  - [AddUserToGroupRequest](docs/AddUserToGroupRequest.md)
  - [Alg](docs/Alg.md)
@@ -432,6 +427,7 @@ Class | Method | HTTP request | Description
  - [SecretRevealResponse](docs/SecretRevealResponse.md)
  - [SecretType](docs/SecretType.md)
  - [SecurityPolicy](docs/SecurityPolicy.md)
+ - [SecurityPolicyNoneAccountSelector](docs/SecurityPolicyNoneAccountSelector.md)
  - [SecurityPolicyPasswordCheckoutDatabasePrivilege](docs/SecurityPolicyPasswordCheckoutDatabasePrivilege.md)
  - [SecurityPolicyPasswordCheckoutRDPPrivilege](docs/SecurityPolicyPasswordCheckoutRDPPrivilege.md)
  - [SecurityPolicyPasswordCheckoutSSHPrivilege](docs/SecurityPolicyPasswordCheckoutSSHPrivilege.md)
@@ -441,21 +437,51 @@ Class | Method | HTTP request | Description
  - [SecurityPolicyPrivilege](docs/SecurityPolicyPrivilege.md)
  - [SecurityPolicyRevealPasswordPrivilege](docs/SecurityPolicyRevealPasswordPrivilege.md)
  - [SecurityPolicyRule](docs/SecurityPolicyRule.md)
+ - [SecurityPolicyRuleActiveDirectoryBasedResourceSelector](docs/SecurityPolicyRuleActiveDirectoryBasedResourceSelector.md)
+ - [SecurityPolicyRuleActiveDirectoryBasedResourceSelectorContainer](docs/SecurityPolicyRuleActiveDirectoryBasedResourceSelectorContainer.md)
+ - [SecurityPolicyRuleActiveDirectoryBasedResourceSubSelector](docs/SecurityPolicyRuleActiveDirectoryBasedResourceSubSelector.md)
+ - [SecurityPolicyRuleActiveDirectoryBasedResourceSubSelectorType](docs/SecurityPolicyRuleActiveDirectoryBasedResourceSubSelectorType.md)
+ - [SecurityPolicyRuleActiveDirectoryIndividualAccountsSelector](docs/SecurityPolicyRuleActiveDirectoryIndividualAccountsSelector.md)
+ - [SecurityPolicyRuleActiveDirectoryIndividualAccountsSelectorByCondition](docs/SecurityPolicyRuleActiveDirectoryIndividualAccountsSelectorByCondition.md)
+ - [SecurityPolicyRuleActiveDirectoryResourceSelector](docs/SecurityPolicyRuleActiveDirectoryResourceSelector.md)
+ - [SecurityPolicyRuleActiveDirectorySharedAccountsSelector](docs/SecurityPolicyRuleActiveDirectorySharedAccountsSelector.md)
  - [SecurityPolicyRuleCondition](docs/SecurityPolicyRuleCondition.md)
  - [SecurityPolicyRuleConditionContainer](docs/SecurityPolicyRuleConditionContainer.md)
  - [SecurityPolicyRuleConditionType](docs/SecurityPolicyRuleConditionType.md)
+ - [SecurityPolicyRuleManagedSaaSAppBasedResourceSelector](docs/SecurityPolicyRuleManagedSaaSAppBasedResourceSelector.md)
+ - [SecurityPolicyRuleManagedSaaSAppBasedResourceSelectorContainer](docs/SecurityPolicyRuleManagedSaaSAppBasedResourceSelectorContainer.md)
+ - [SecurityPolicyRuleManagedSaaSAppBasedResourceSubSelector](docs/SecurityPolicyRuleManagedSaaSAppBasedResourceSubSelector.md)
+ - [SecurityPolicyRuleManagedSaaSAppBasedResourceSubSelectorType](docs/SecurityPolicyRuleManagedSaaSAppBasedResourceSubSelectorType.md)
+ - [SecurityPolicyRuleOktaAppBasedResourceSelector](docs/SecurityPolicyRuleOktaAppBasedResourceSelector.md)
+ - [SecurityPolicyRuleOktaAppBasedResourceSelectorContainer](docs/SecurityPolicyRuleOktaAppBasedResourceSelectorContainer.md)
+ - [SecurityPolicyRuleOktaAppBasedResourceSubSelector](docs/SecurityPolicyRuleOktaAppBasedResourceSubSelector.md)
+ - [SecurityPolicyRuleOktaAppBasedResourceSubSelectorType](docs/SecurityPolicyRuleOktaAppBasedResourceSubSelectorType.md)
  - [SecurityPolicyRulePrivilegeContainer](docs/SecurityPolicyRulePrivilegeContainer.md)
  - [SecurityPolicyRulePrivilegeContainerPrivilegeValue](docs/SecurityPolicyRulePrivilegeContainerPrivilegeValue.md)
  - [SecurityPolicyRulePrivilegeType](docs/SecurityPolicyRulePrivilegeType.md)
  - [SecurityPolicyRulePrivilegeTypeForServiceAccounts](docs/SecurityPolicyRulePrivilegeTypeForServiceAccounts.md)
  - [SecurityPolicyRuleResourceSelector](docs/SecurityPolicyRuleResourceSelector.md)
- - [SecurityPolicyRuleResourceSelectorContainer](docs/SecurityPolicyRuleResourceSelectorContainer.md)
- - [SecurityPolicyRuleResourceSelectorType](docs/SecurityPolicyRuleResourceSelectorType.md)
- - [SecurityPolicyRuleResourceSelectors](docs/SecurityPolicyRuleResourceSelectors.md)
+ - [SecurityPolicyRuleResourceServerBasedResourceSubSelector](docs/SecurityPolicyRuleResourceServerBasedResourceSubSelector.md)
  - [SecurityPolicyRuleResourceType](docs/SecurityPolicyRuleResourceType.md)
+ - [SecurityPolicyRuleSecretBasedResourceSecretFolderSelector](docs/SecurityPolicyRuleSecretBasedResourceSecretFolderSelector.md)
+ - [SecurityPolicyRuleSecretBasedResourceSecretSelector](docs/SecurityPolicyRuleSecretBasedResourceSecretSelector.md)
+ - [SecurityPolicyRuleServerBasedResourceSelector](docs/SecurityPolicyRuleServerBasedResourceSelector.md)
+ - [SecurityPolicyRuleServerBasedResourceSelectorContainer](docs/SecurityPolicyRuleServerBasedResourceSelectorContainer.md)
+ - [SecurityPolicyRuleServerBasedResourceSubSelectorType](docs/SecurityPolicyRuleServerBasedResourceSubSelectorType.md)
+ - [SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector](docs/SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector.md)
+ - [SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelectorContainer](docs/SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelectorContainer.md)
+ - [SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSubSelector](docs/SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSubSelector.md)
+ - [SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSubSelectorType](docs/SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSubSelectorType.md)
+ - [SecurityPolicySecretBasedResourceSelector](docs/SecurityPolicySecretBasedResourceSelector.md)
+ - [SecurityPolicySecretBasedResourceSelectorContainer](docs/SecurityPolicySecretBasedResourceSelectorContainer.md)
+ - [SecurityPolicySecretBasedResourceSelectorContainerSelector](docs/SecurityPolicySecretBasedResourceSelectorContainerSelector.md)
  - [SecurityPolicySecretPrivilege](docs/SecurityPolicySecretPrivilege.md)
  - [SecurityPolicyType](docs/SecurityPolicyType.md)
  - [SecurityPolicyUpdatePasswordPrivilege](docs/SecurityPolicyUpdatePasswordPrivilege.md)
+ - [SecurityPolicyUsernameAccountSelector](docs/SecurityPolicyUsernameAccountSelector.md)
+ - [SelectorIndividualOktaServiceAccount](docs/SelectorIndividualOktaServiceAccount.md)
+ - [SelectorIndividualSaaSAppAccount](docs/SelectorIndividualSaaSAppAccount.md)
+ - [SelectorIndividualSaaSAppAccountSaasApp](docs/SelectorIndividualSaaSAppAccountSaasApp.md)
  - [SelectorIndividualServer](docs/SelectorIndividualServer.md)
  - [SelectorIndividualServerAccount](docs/SelectorIndividualServerAccount.md)
  - [SelectorServerLabel](docs/SelectorServerLabel.md)
@@ -498,8 +524,8 @@ Class | Method | HTTP request | Description
  - [TeamUserAttributeAttributeValue](docs/TeamUserAttributeAttributeValue.md)
  - [TeamUserAttributeConflict](docs/TeamUserAttributeConflict.md)
  - [TeamUserAttributeName](docs/TeamUserAttributeName.md)
- - [TrustedRootCA](docs/TrustedRootCA.md)
  - [UnauthorizedAccessResponse](docs/UnauthorizedAccessResponse.md)
+ - [UpdateActiveDirectoryConnectionStatusRequest](docs/UpdateActiveDirectoryConnectionStatusRequest.md)
  - [UpdateAttribute](docs/UpdateAttribute.md)
  - [UpdateCloudConnection](docs/UpdateCloudConnection.md)
  - [UpdateCloudConnectionDetails](docs/UpdateCloudConnectionDetails.md)
@@ -507,6 +533,7 @@ Class | Method | HTTP request | Description
  - [UpdateSecretFolderForbiddenResponse](docs/UpdateSecretFolderForbiddenResponse.md)
  - [UpdateSecretForbiddenResponse](docs/UpdateSecretForbiddenResponse.md)
  - [UpdateServiceUserBody](docs/UpdateServiceUserBody.md)
+ - [UpdateableADConnectionStatus](docs/UpdateableADConnectionStatus.md)
  - [User](docs/User.md)
  - [UserAccessConditional](docs/UserAccessConditional.md)
  - [UserAccessConditionalType](docs/UserAccessConditionalType.md)

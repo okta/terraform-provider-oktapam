@@ -21,9 +21,9 @@ var _ MappedNullable = &SecurityPolicyRule{}
 // SecurityPolicyRule struct for SecurityPolicyRule
 type SecurityPolicyRule struct {
 	// The name of the Security Policy rule
-	Name             string                              `json:"name"`
-	ResourceType     SecurityPolicyRuleResourceType      `json:"resource_type"`
-	ResourceSelector SecurityPolicyRuleResourceSelectors `json:"resource_selector"`
+	Name             string                             `json:"name"`
+	ResourceType     SecurityPolicyRuleResourceType     `json:"resource_type"`
+	ResourceSelector SecurityPolicyRuleResourceSelector `json:"resource_selector"`
 	// The specific privileges granted to Principals on matching resources.
 	Privileges []SecurityPolicyRulePrivilegeContainer `json:"privileges"`
 	// The conditions required before a privilege is made available to the Principals. All conditions must be met.
@@ -38,7 +38,7 @@ type SecurityPolicyRule struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSecurityPolicyRule(name string, resourceType SecurityPolicyRuleResourceType, resourceSelector SecurityPolicyRuleResourceSelectors, privileges []SecurityPolicyRulePrivilegeContainer) *SecurityPolicyRule {
+func NewSecurityPolicyRule(name string, resourceType SecurityPolicyRuleResourceType, resourceSelector SecurityPolicyRuleResourceSelector, privileges []SecurityPolicyRulePrivilegeContainer) *SecurityPolicyRule {
 	this := SecurityPolicyRule{}
 	this.Name = name
 	this.ResourceType = resourceType
@@ -106,9 +106,9 @@ func (o *SecurityPolicyRule) SetResourceType(v SecurityPolicyRuleResourceType) *
 }
 
 // GetResourceSelector returns the ResourceSelector field value
-func (o *SecurityPolicyRule) GetResourceSelector() SecurityPolicyRuleResourceSelectors {
+func (o *SecurityPolicyRule) GetResourceSelector() SecurityPolicyRuleResourceSelector {
 	if o == nil {
-		var ret SecurityPolicyRuleResourceSelectors
+		var ret SecurityPolicyRuleResourceSelector
 		return ret
 	}
 
@@ -117,7 +117,7 @@ func (o *SecurityPolicyRule) GetResourceSelector() SecurityPolicyRuleResourceSel
 
 // GetResourceSelectorOk returns a tuple with the ResourceSelector field value
 // and a boolean to check if the value has been set.
-func (o *SecurityPolicyRule) GetResourceSelectorOk() (*SecurityPolicyRuleResourceSelectors, bool) {
+func (o *SecurityPolicyRule) GetResourceSelectorOk() (*SecurityPolicyRuleResourceSelector, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -125,7 +125,7 @@ func (o *SecurityPolicyRule) GetResourceSelectorOk() (*SecurityPolicyRuleResourc
 }
 
 // SetResourceSelector sets field value
-func (o *SecurityPolicyRule) SetResourceSelector(v SecurityPolicyRuleResourceSelectors) *SecurityPolicyRule {
+func (o *SecurityPolicyRule) SetResourceSelector(v SecurityPolicyRuleResourceSelector) *SecurityPolicyRule {
 	o.ResourceSelector = v
 	return o
 }

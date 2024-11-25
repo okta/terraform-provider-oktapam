@@ -12,7 +12,10 @@ Contact: support@okta.com
 package pam
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -99,8 +102,25 @@ func (a *ServiceUsersAPIService) CreateServiceUserExecute(r ApiCreateServiceUser
 	localVarPostBody = r.createServiceUserBody
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
@@ -178,8 +198,25 @@ func (a *ServiceUsersAPIService) DeleteServiceUserKeyExecute(r ApiDeleteServiceU
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return nil, err
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarHTTPResponse, err
+		}
+		return localVarHTTPResponse, apiError
 	}
 
 	return localVarHTTPResponse, err
@@ -256,8 +293,25 @@ func (a *ServiceUsersAPIService) GetServiceUserExecute(r ApiGetServiceUserReques
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
@@ -344,8 +398,25 @@ func (a *ServiceUsersAPIService) IssueServiceTokenExecute(r ApiIssueServiceToken
 	localVarPostBody = r.issueServiceTokenRequestBody
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
@@ -422,8 +493,25 @@ func (a *ServiceUsersAPIService) ListServiceUserKeysExecute(r ApiListServiceUser
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
@@ -586,8 +674,25 @@ func (a *ServiceUsersAPIService) ListServiceUsersExecute(r ApiListServiceUsersRe
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
@@ -664,8 +769,25 @@ func (a *ServiceUsersAPIService) RotateServiceUserKeyExecute(r ApiRotateServiceU
 	}
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
@@ -753,8 +875,25 @@ func (a *ServiceUsersAPIService) ServiceUserUpdateExecute(r ApiServiceUserUpdate
 	localVarPostBody = r.updateServiceUserBody
 	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
 
-	if localVarHTTPResponse == nil && err != nil {
-		return localVarReturnValue, nil, err
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err

@@ -20,7 +20,7 @@ var _ MappedNullable = &ListActiveDirectoryConnectionsResponse{}
 
 // ListActiveDirectoryConnectionsResponse struct for ListActiveDirectoryConnectionsResponse
 type ListActiveDirectoryConnectionsResponse struct {
-	List []ActiveDirectoryConnectionResponse `json:"list,omitempty"`
+	List []ActiveDirectoryConnection `json:"list,omitempty"`
 }
 
 // NewListActiveDirectoryConnectionsResponse instantiates a new ListActiveDirectoryConnectionsResponse object
@@ -41,9 +41,9 @@ func NewListActiveDirectoryConnectionsResponseWithDefaults() *ListActiveDirector
 }
 
 // GetList returns the List field value if set, zero value otherwise.
-func (o *ListActiveDirectoryConnectionsResponse) GetList() []ActiveDirectoryConnectionResponse {
+func (o *ListActiveDirectoryConnectionsResponse) GetList() []ActiveDirectoryConnection {
 	if o == nil || IsNil(o.List) {
-		var ret []ActiveDirectoryConnectionResponse
+		var ret []ActiveDirectoryConnection
 		return ret
 	}
 	return o.List
@@ -51,7 +51,7 @@ func (o *ListActiveDirectoryConnectionsResponse) GetList() []ActiveDirectoryConn
 
 // GetListOk returns a tuple with the List field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ListActiveDirectoryConnectionsResponse) GetListOk() ([]ActiveDirectoryConnectionResponse, bool) {
+func (o *ListActiveDirectoryConnectionsResponse) GetListOk() ([]ActiveDirectoryConnection, bool) {
 	if o == nil || IsNil(o.List) {
 		return nil, false
 	}
@@ -67,8 +67,8 @@ func (o *ListActiveDirectoryConnectionsResponse) HasList() bool {
 	return false
 }
 
-// SetList gets a reference to the given []ActiveDirectoryConnectionResponse and assigns it to the List field.
-func (o *ListActiveDirectoryConnectionsResponse) SetList(v []ActiveDirectoryConnectionResponse) *ListActiveDirectoryConnectionsResponse {
+// SetList gets a reference to the given []ActiveDirectoryConnection and assigns it to the List field.
+func (o *ListActiveDirectoryConnectionsResponse) SetList(v []ActiveDirectoryConnection) *ListActiveDirectoryConnectionsResponse {
 	o.List = v
 	return o
 }

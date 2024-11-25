@@ -16,103 +16,239 @@ import (
 	"fmt"
 )
 
-// SecurityPolicyRuleResourceSelector - The specific parameters used to target resources. The organization of this object depends on the `selector_type`.
+// SecurityPolicyRuleResourceSelector - struct for SecurityPolicyRuleResourceSelector
 type SecurityPolicyRuleResourceSelector struct {
-	SelectorIndividualServer        *SelectorIndividualServer
-	SelectorIndividualServerAccount *SelectorIndividualServerAccount
-	SelectorServerLabel             *SelectorServerLabel
+	SecurityPolicyRuleActiveDirectoryBasedResourceSelector  *SecurityPolicyRuleActiveDirectoryBasedResourceSelector
+	SecurityPolicyRuleManagedSaaSAppBasedResourceSelector   *SecurityPolicyRuleManagedSaaSAppBasedResourceSelector
+	SecurityPolicyRuleOktaAppBasedResourceSelector          *SecurityPolicyRuleOktaAppBasedResourceSelector
+	SecurityPolicyRuleServerBasedResourceSelector           *SecurityPolicyRuleServerBasedResourceSelector
+	SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector *SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector
+	SecurityPolicySecretBasedResourceSelector               *SecurityPolicySecretBasedResourceSelector
 }
 
-// SelectorIndividualServerAsSecurityPolicyRuleResourceSelector is a convenience function that returns SelectorIndividualServer wrapped in SecurityPolicyRuleResourceSelector
-func SelectorIndividualServerAsSecurityPolicyRuleResourceSelector(v *SelectorIndividualServer) SecurityPolicyRuleResourceSelector {
+// SecurityPolicyRuleActiveDirectoryBasedResourceSelectorAsSecurityPolicyRuleResourceSelector is a convenience function that returns SecurityPolicyRuleActiveDirectoryBasedResourceSelector wrapped in SecurityPolicyRuleResourceSelector
+func SecurityPolicyRuleActiveDirectoryBasedResourceSelectorAsSecurityPolicyRuleResourceSelector(v *SecurityPolicyRuleActiveDirectoryBasedResourceSelector) SecurityPolicyRuleResourceSelector {
 	return SecurityPolicyRuleResourceSelector{
-		SelectorIndividualServer: v,
+		SecurityPolicyRuleActiveDirectoryBasedResourceSelector: v,
 	}
 }
 
-// SelectorIndividualServerAccountAsSecurityPolicyRuleResourceSelector is a convenience function that returns SelectorIndividualServerAccount wrapped in SecurityPolicyRuleResourceSelector
-func SelectorIndividualServerAccountAsSecurityPolicyRuleResourceSelector(v *SelectorIndividualServerAccount) SecurityPolicyRuleResourceSelector {
+// SecurityPolicyRuleManagedSaaSAppBasedResourceSelectorAsSecurityPolicyRuleResourceSelector is a convenience function that returns SecurityPolicyRuleManagedSaaSAppBasedResourceSelector wrapped in SecurityPolicyRuleResourceSelector
+func SecurityPolicyRuleManagedSaaSAppBasedResourceSelectorAsSecurityPolicyRuleResourceSelector(v *SecurityPolicyRuleManagedSaaSAppBasedResourceSelector) SecurityPolicyRuleResourceSelector {
 	return SecurityPolicyRuleResourceSelector{
-		SelectorIndividualServerAccount: v,
+		SecurityPolicyRuleManagedSaaSAppBasedResourceSelector: v,
 	}
 }
 
-// SelectorServerLabelAsSecurityPolicyRuleResourceSelector is a convenience function that returns SelectorServerLabel wrapped in SecurityPolicyRuleResourceSelector
-func SelectorServerLabelAsSecurityPolicyRuleResourceSelector(v *SelectorServerLabel) SecurityPolicyRuleResourceSelector {
+// SecurityPolicyRuleOktaAppBasedResourceSelectorAsSecurityPolicyRuleResourceSelector is a convenience function that returns SecurityPolicyRuleOktaAppBasedResourceSelector wrapped in SecurityPolicyRuleResourceSelector
+func SecurityPolicyRuleOktaAppBasedResourceSelectorAsSecurityPolicyRuleResourceSelector(v *SecurityPolicyRuleOktaAppBasedResourceSelector) SecurityPolicyRuleResourceSelector {
 	return SecurityPolicyRuleResourceSelector{
-		SelectorServerLabel: v,
+		SecurityPolicyRuleOktaAppBasedResourceSelector: v,
+	}
+}
+
+// SecurityPolicyRuleServerBasedResourceSelectorAsSecurityPolicyRuleResourceSelector is a convenience function that returns SecurityPolicyRuleServerBasedResourceSelector wrapped in SecurityPolicyRuleResourceSelector
+func SecurityPolicyRuleServerBasedResourceSelectorAsSecurityPolicyRuleResourceSelector(v *SecurityPolicyRuleServerBasedResourceSelector) SecurityPolicyRuleResourceSelector {
+	return SecurityPolicyRuleResourceSelector{
+		SecurityPolicyRuleServerBasedResourceSelector: v,
+	}
+}
+
+// SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelectorAsSecurityPolicyRuleResourceSelector is a convenience function that returns SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector wrapped in SecurityPolicyRuleResourceSelector
+func SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelectorAsSecurityPolicyRuleResourceSelector(v *SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector) SecurityPolicyRuleResourceSelector {
+	return SecurityPolicyRuleResourceSelector{
+		SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector: v,
+	}
+}
+
+// SecurityPolicySecretBasedResourceSelectorAsSecurityPolicyRuleResourceSelector is a convenience function that returns SecurityPolicySecretBasedResourceSelector wrapped in SecurityPolicyRuleResourceSelector
+func SecurityPolicySecretBasedResourceSelectorAsSecurityPolicyRuleResourceSelector(v *SecurityPolicySecretBasedResourceSelector) SecurityPolicyRuleResourceSelector {
+	return SecurityPolicyRuleResourceSelector{
+		SecurityPolicySecretBasedResourceSelector: v,
 	}
 }
 
 // Unmarshal JSON data into one of the pointers in the struct
 func (dst *SecurityPolicyRuleResourceSelector) UnmarshalJSON(data []byte) error {
 	var err error
-	match := 0
-	// try to unmarshal data into SelectorIndividualServer
-	err = json.Unmarshal(data, &dst.SelectorIndividualServer)
-	if err == nil {
-		jsonSelectorIndividualServer, _ := json.Marshal(dst.SelectorIndividualServer)
-		if string(jsonSelectorIndividualServer) == "{}" { // empty struct
-			dst.SelectorIndividualServer = nil
+	// use discriminator value to speed up the lookup
+	var jsonDict map[string]interface{}
+	err = newStrictDecoder(data).Decode(&jsonDict)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal JSON into map for the discriminator lookup")
+	}
+
+	// check if the discriminator value is 'SecurityPolicyRuleActiveDirectoryBasedResourceSelector'
+	if jsonDict["_type"] == "SecurityPolicyRuleActiveDirectoryBasedResourceSelector" {
+		// try to unmarshal JSON data into SecurityPolicyRuleActiveDirectoryBasedResourceSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicyRuleActiveDirectoryBasedResourceSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyRuleActiveDirectoryBasedResourceSelector, return on the first match
 		} else {
-			match++
+			dst.SecurityPolicyRuleActiveDirectoryBasedResourceSelector = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleResourceSelector as SecurityPolicyRuleActiveDirectoryBasedResourceSelector: %s", err.Error())
 		}
-	} else {
-		dst.SelectorIndividualServer = nil
 	}
 
-	// try to unmarshal data into SelectorIndividualServerAccount
-	err = json.Unmarshal(data, &dst.SelectorIndividualServerAccount)
-	if err == nil {
-		jsonSelectorIndividualServerAccount, _ := json.Marshal(dst.SelectorIndividualServerAccount)
-		if string(jsonSelectorIndividualServerAccount) == "{}" { // empty struct
-			dst.SelectorIndividualServerAccount = nil
+	// check if the discriminator value is 'SecurityPolicyRuleManagedSaaSAppBasedResourceSelector'
+	if jsonDict["_type"] == "SecurityPolicyRuleManagedSaaSAppBasedResourceSelector" {
+		// try to unmarshal JSON data into SecurityPolicyRuleManagedSaaSAppBasedResourceSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicyRuleManagedSaaSAppBasedResourceSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyRuleManagedSaaSAppBasedResourceSelector, return on the first match
 		} else {
-			match++
+			dst.SecurityPolicyRuleManagedSaaSAppBasedResourceSelector = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleResourceSelector as SecurityPolicyRuleManagedSaaSAppBasedResourceSelector: %s", err.Error())
 		}
-	} else {
-		dst.SelectorIndividualServerAccount = nil
 	}
 
-	// try to unmarshal data into SelectorServerLabel
-	err = json.Unmarshal(data, &dst.SelectorServerLabel)
-	if err == nil {
-		jsonSelectorServerLabel, _ := json.Marshal(dst.SelectorServerLabel)
-		if string(jsonSelectorServerLabel) == "{}" { // empty struct
-			dst.SelectorServerLabel = nil
+	// check if the discriminator value is 'SecurityPolicyRuleOktaAppBasedResourceSelector'
+	if jsonDict["_type"] == "SecurityPolicyRuleOktaAppBasedResourceSelector" {
+		// try to unmarshal JSON data into SecurityPolicyRuleOktaAppBasedResourceSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicyRuleOktaAppBasedResourceSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyRuleOktaAppBasedResourceSelector, return on the first match
 		} else {
-			match++
+			dst.SecurityPolicyRuleOktaAppBasedResourceSelector = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleResourceSelector as SecurityPolicyRuleOktaAppBasedResourceSelector: %s", err.Error())
 		}
-	} else {
-		dst.SelectorServerLabel = nil
 	}
 
-	if match > 1 { // more than 1 match
-		// reset to nil
-		dst.SelectorIndividualServer = nil
-		dst.SelectorIndividualServerAccount = nil
-		dst.SelectorServerLabel = nil
-
-		return fmt.Errorf("data matches more than one schema in oneOf(SecurityPolicyRuleResourceSelector)")
-	} else if match == 1 {
-		return nil // exactly one match
-	} else { // no match
-		return fmt.Errorf("data failed to match schemas in oneOf(SecurityPolicyRuleResourceSelector)")
+	// check if the discriminator value is 'SecurityPolicyRuleServerBasedResourceSelector'
+	if jsonDict["_type"] == "SecurityPolicyRuleServerBasedResourceSelector" {
+		// try to unmarshal JSON data into SecurityPolicyRuleServerBasedResourceSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicyRuleServerBasedResourceSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyRuleServerBasedResourceSelector, return on the first match
+		} else {
+			dst.SecurityPolicyRuleServerBasedResourceSelector = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleResourceSelector as SecurityPolicyRuleServerBasedResourceSelector: %s", err.Error())
+		}
 	}
+
+	// check if the discriminator value is 'SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector'
+	if jsonDict["_type"] == "SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector" {
+		// try to unmarshal JSON data into SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector, return on the first match
+		} else {
+			dst.SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleResourceSelector as SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'SecurityPolicySecretBasedResourceSelector'
+	if jsonDict["_type"] == "SecurityPolicySecretBasedResourceSelector" {
+		// try to unmarshal JSON data into SecurityPolicySecretBasedResourceSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicySecretBasedResourceSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicySecretBasedResourceSelector, return on the first match
+		} else {
+			dst.SecurityPolicySecretBasedResourceSelector = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleResourceSelector as SecurityPolicySecretBasedResourceSelector: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'active_directory_based_resource'
+	if jsonDict["_type"] == "active_directory_based_resource" {
+		// try to unmarshal JSON data into SecurityPolicyRuleActiveDirectoryBasedResourceSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicyRuleActiveDirectoryBasedResourceSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyRuleActiveDirectoryBasedResourceSelector, return on the first match
+		} else {
+			dst.SecurityPolicyRuleActiveDirectoryBasedResourceSelector = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleResourceSelector as SecurityPolicyRuleActiveDirectoryBasedResourceSelector: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'managed_saas_app_based_resource'
+	if jsonDict["_type"] == "managed_saas_app_based_resource" {
+		// try to unmarshal JSON data into SecurityPolicyRuleManagedSaaSAppBasedResourceSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicyRuleManagedSaaSAppBasedResourceSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyRuleManagedSaaSAppBasedResourceSelector, return on the first match
+		} else {
+			dst.SecurityPolicyRuleManagedSaaSAppBasedResourceSelector = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleResourceSelector as SecurityPolicyRuleManagedSaaSAppBasedResourceSelector: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'okta_app_based_resource'
+	if jsonDict["_type"] == "okta_app_based_resource" {
+		// try to unmarshal JSON data into SecurityPolicyRuleOktaAppBasedResourceSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicyRuleOktaAppBasedResourceSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyRuleOktaAppBasedResourceSelector, return on the first match
+		} else {
+			dst.SecurityPolicyRuleOktaAppBasedResourceSelector = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleResourceSelector as SecurityPolicyRuleOktaAppBasedResourceSelector: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'secret_based_resource'
+	if jsonDict["_type"] == "secret_based_resource" {
+		// try to unmarshal JSON data into SecurityPolicySecretBasedResourceSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicySecretBasedResourceSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicySecretBasedResourceSelector, return on the first match
+		} else {
+			dst.SecurityPolicySecretBasedResourceSelector = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleResourceSelector as SecurityPolicySecretBasedResourceSelector: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'server_based_resource'
+	if jsonDict["_type"] == "server_based_resource" {
+		// try to unmarshal JSON data into SecurityPolicyRuleServerBasedResourceSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicyRuleServerBasedResourceSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyRuleServerBasedResourceSelector, return on the first match
+		} else {
+			dst.SecurityPolicyRuleServerBasedResourceSelector = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleResourceSelector as SecurityPolicyRuleServerBasedResourceSelector: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'unmanaged_saas_app_based_resource'
+	if jsonDict["_type"] == "unmanaged_saas_app_based_resource" {
+		// try to unmarshal JSON data into SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector, return on the first match
+		} else {
+			dst.SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleResourceSelector as SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector: %s", err.Error())
+		}
+	}
+
+	return nil
 }
 
 // Marshal data from the first non-nil pointers in the struct to JSON
 func (src SecurityPolicyRuleResourceSelector) MarshalJSON() ([]byte, error) {
-	if src.SelectorIndividualServer != nil {
-		return json.Marshal(&src.SelectorIndividualServer)
+	if src.SecurityPolicyRuleActiveDirectoryBasedResourceSelector != nil {
+		return json.Marshal(&src.SecurityPolicyRuleActiveDirectoryBasedResourceSelector)
 	}
 
-	if src.SelectorIndividualServerAccount != nil {
-		return json.Marshal(&src.SelectorIndividualServerAccount)
+	if src.SecurityPolicyRuleManagedSaaSAppBasedResourceSelector != nil {
+		return json.Marshal(&src.SecurityPolicyRuleManagedSaaSAppBasedResourceSelector)
 	}
 
-	if src.SelectorServerLabel != nil {
-		return json.Marshal(&src.SelectorServerLabel)
+	if src.SecurityPolicyRuleOktaAppBasedResourceSelector != nil {
+		return json.Marshal(&src.SecurityPolicyRuleOktaAppBasedResourceSelector)
+	}
+
+	if src.SecurityPolicyRuleServerBasedResourceSelector != nil {
+		return json.Marshal(&src.SecurityPolicyRuleServerBasedResourceSelector)
+	}
+
+	if src.SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector != nil {
+		return json.Marshal(&src.SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector)
+	}
+
+	if src.SecurityPolicySecretBasedResourceSelector != nil {
+		return json.Marshal(&src.SecurityPolicySecretBasedResourceSelector)
 	}
 
 	return nil, nil // no data in oneOf schemas
@@ -123,16 +259,28 @@ func (obj *SecurityPolicyRuleResourceSelector) GetActualInstance() interface{} {
 	if obj == nil {
 		return nil
 	}
-	if obj.SelectorIndividualServer != nil {
-		return obj.SelectorIndividualServer
+	if obj.SecurityPolicyRuleActiveDirectoryBasedResourceSelector != nil {
+		return obj.SecurityPolicyRuleActiveDirectoryBasedResourceSelector
 	}
 
-	if obj.SelectorIndividualServerAccount != nil {
-		return obj.SelectorIndividualServerAccount
+	if obj.SecurityPolicyRuleManagedSaaSAppBasedResourceSelector != nil {
+		return obj.SecurityPolicyRuleManagedSaaSAppBasedResourceSelector
 	}
 
-	if obj.SelectorServerLabel != nil {
-		return obj.SelectorServerLabel
+	if obj.SecurityPolicyRuleOktaAppBasedResourceSelector != nil {
+		return obj.SecurityPolicyRuleOktaAppBasedResourceSelector
+	}
+
+	if obj.SecurityPolicyRuleServerBasedResourceSelector != nil {
+		return obj.SecurityPolicyRuleServerBasedResourceSelector
+	}
+
+	if obj.SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector != nil {
+		return obj.SecurityPolicyRuleUnmanagedSaaSAppBasedResourceSelector
+	}
+
+	if obj.SecurityPolicySecretBasedResourceSelector != nil {
+		return obj.SecurityPolicySecretBasedResourceSelector
 	}
 
 	// all schemas are nil

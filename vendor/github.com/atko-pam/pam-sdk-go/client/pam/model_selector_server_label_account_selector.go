@@ -13,81 +13,118 @@ package pam
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
-// checks if the SelectorServerLabelAccountSelector type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &SelectorServerLabelAccountSelector{}
-
-// SelectorServerLabelAccountSelector Defines existing Server accounts available for use by the Principals
+// SelectorServerLabelAccountSelector - struct for SelectorServerLabelAccountSelector
 type SelectorServerLabelAccountSelector struct {
-	// A list of Server accounts
-	Usernames []string `json:"usernames,omitempty"`
+	SecurityPolicyNoneAccountSelector     *SecurityPolicyNoneAccountSelector
+	SecurityPolicyUsernameAccountSelector *SecurityPolicyUsernameAccountSelector
 }
 
-// NewSelectorServerLabelAccountSelector instantiates a new SelectorServerLabelAccountSelector object
-// This constructor will assign default values to properties that have it defined,
-// and makes sure properties required by API are set, but the set of arguments
-// will change when the set of required properties is changed
-func NewSelectorServerLabelAccountSelector() *SelectorServerLabelAccountSelector {
-	this := SelectorServerLabelAccountSelector{}
-	return &this
-}
-
-// NewSelectorServerLabelAccountSelectorWithDefaults instantiates a new SelectorServerLabelAccountSelector object
-// This constructor will only assign default values to properties that have it defined,
-// but it doesn't guarantee that properties required by API are set
-func NewSelectorServerLabelAccountSelectorWithDefaults() *SelectorServerLabelAccountSelector {
-	this := SelectorServerLabelAccountSelector{}
-	return &this
-}
-
-// GetUsernames returns the Usernames field value if set, zero value otherwise.
-func (o *SelectorServerLabelAccountSelector) GetUsernames() []string {
-	if o == nil || IsNil(o.Usernames) {
-		var ret []string
-		return ret
+// SecurityPolicyNoneAccountSelectorAsSelectorServerLabelAccountSelector is a convenience function that returns SecurityPolicyNoneAccountSelector wrapped in SelectorServerLabelAccountSelector
+func SecurityPolicyNoneAccountSelectorAsSelectorServerLabelAccountSelector(v *SecurityPolicyNoneAccountSelector) SelectorServerLabelAccountSelector {
+	return SelectorServerLabelAccountSelector{
+		SecurityPolicyNoneAccountSelector: v,
 	}
-	return o.Usernames
 }
 
-// GetUsernamesOk returns a tuple with the Usernames field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *SelectorServerLabelAccountSelector) GetUsernamesOk() ([]string, bool) {
-	if o == nil || IsNil(o.Usernames) {
-		return nil, false
+// SecurityPolicyUsernameAccountSelectorAsSelectorServerLabelAccountSelector is a convenience function that returns SecurityPolicyUsernameAccountSelector wrapped in SelectorServerLabelAccountSelector
+func SecurityPolicyUsernameAccountSelectorAsSelectorServerLabelAccountSelector(v *SecurityPolicyUsernameAccountSelector) SelectorServerLabelAccountSelector {
+	return SelectorServerLabelAccountSelector{
+		SecurityPolicyUsernameAccountSelector: v,
 	}
-	return o.Usernames, true
 }
 
-// HasUsernames returns a boolean if a field has been set.
-func (o *SelectorServerLabelAccountSelector) HasUsernames() bool {
-	if o != nil && !IsNil(o.Usernames) {
-		return true
-	}
-
-	return false
-}
-
-// SetUsernames gets a reference to the given []string and assigns it to the Usernames field.
-func (o *SelectorServerLabelAccountSelector) SetUsernames(v []string) *SelectorServerLabelAccountSelector {
-	o.Usernames = v
-	return o
-}
-
-func (o SelectorServerLabelAccountSelector) MarshalJSON() ([]byte, error) {
-	toSerialize, err := o.ToMap()
+// Unmarshal JSON data into one of the pointers in the struct
+func (dst *SelectorServerLabelAccountSelector) UnmarshalJSON(data []byte) error {
+	var err error
+	// use discriminator value to speed up the lookup
+	var jsonDict map[string]interface{}
+	err = newStrictDecoder(data).Decode(&jsonDict)
 	if err != nil {
-		return []byte{}, err
+		return fmt.Errorf("failed to unmarshal JSON into map for the discriminator lookup")
 	}
-	return json.Marshal(toSerialize)
+
+	// check if the discriminator value is 'SecurityPolicyNoneAccountSelector'
+	if jsonDict["_type"] == "SecurityPolicyNoneAccountSelector" {
+		// try to unmarshal JSON data into SecurityPolicyNoneAccountSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicyNoneAccountSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyNoneAccountSelector, return on the first match
+		} else {
+			dst.SecurityPolicyNoneAccountSelector = nil
+			return fmt.Errorf("failed to unmarshal SelectorServerLabelAccountSelector as SecurityPolicyNoneAccountSelector: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'SecurityPolicyUsernameAccountSelector'
+	if jsonDict["_type"] == "SecurityPolicyUsernameAccountSelector" {
+		// try to unmarshal JSON data into SecurityPolicyUsernameAccountSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicyUsernameAccountSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyUsernameAccountSelector, return on the first match
+		} else {
+			dst.SecurityPolicyUsernameAccountSelector = nil
+			return fmt.Errorf("failed to unmarshal SelectorServerLabelAccountSelector as SecurityPolicyUsernameAccountSelector: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'none'
+	if jsonDict["_type"] == "none" {
+		// try to unmarshal JSON data into SecurityPolicyNoneAccountSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicyNoneAccountSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyNoneAccountSelector, return on the first match
+		} else {
+			dst.SecurityPolicyNoneAccountSelector = nil
+			return fmt.Errorf("failed to unmarshal SelectorServerLabelAccountSelector as SecurityPolicyNoneAccountSelector: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'username'
+	if jsonDict["_type"] == "username" {
+		// try to unmarshal JSON data into SecurityPolicyUsernameAccountSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicyUsernameAccountSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyUsernameAccountSelector, return on the first match
+		} else {
+			dst.SecurityPolicyUsernameAccountSelector = nil
+			return fmt.Errorf("failed to unmarshal SelectorServerLabelAccountSelector as SecurityPolicyUsernameAccountSelector: %s", err.Error())
+		}
+	}
+
+	return nil
 }
 
-func (o SelectorServerLabelAccountSelector) ToMap() (map[string]interface{}, error) {
-	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Usernames) {
-		toSerialize["usernames"] = o.Usernames
+// Marshal data from the first non-nil pointers in the struct to JSON
+func (src SelectorServerLabelAccountSelector) MarshalJSON() ([]byte, error) {
+	if src.SecurityPolicyNoneAccountSelector != nil {
+		return json.Marshal(&src.SecurityPolicyNoneAccountSelector)
 	}
-	return toSerialize, nil
+
+	if src.SecurityPolicyUsernameAccountSelector != nil {
+		return json.Marshal(&src.SecurityPolicyUsernameAccountSelector)
+	}
+
+	return nil, nil // no data in oneOf schemas
+}
+
+// Get the actual instance
+func (obj *SelectorServerLabelAccountSelector) GetActualInstance() interface{} {
+	if obj == nil {
+		return nil
+	}
+	if obj.SecurityPolicyNoneAccountSelector != nil {
+		return obj.SecurityPolicyNoneAccountSelector
+	}
+
+	if obj.SecurityPolicyUsernameAccountSelector != nil {
+		return obj.SecurityPolicyUsernameAccountSelector
+	}
+
+	// all schemas are nil
+	return nil
 }
 
 type NullableSelectorServerLabelAccountSelector struct {
