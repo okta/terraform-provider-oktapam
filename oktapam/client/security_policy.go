@@ -45,6 +45,7 @@ const (
 	MFAConditionType           = ConditionType("mfa")
 )
 
+// Deprecated: use security_policy2.go instead.
 type SecurityPolicy struct {
 	ID            *string                   `json:"id,omitempty"`
 	Name          *string                   `json:"name"`
@@ -55,6 +56,7 @@ type SecurityPolicy struct {
 	Rules         []*SecurityPolicyRule     `json:"rules"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (p SecurityPolicy) ToResourceMap() map[string]any {
 	m := make(map[string]any)
 
@@ -97,10 +99,12 @@ func (p SecurityPolicy) ToResourceMap() map[string]any {
 	return m
 }
 
+// Deprecated: use security_policy2.go instead.
 type SecurityPoliciesListResponse struct {
 	SecurityPolicies []SecurityPolicy `json:"list"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (c OktaPAMClient) ListSecurityPolicies(ctx context.Context) ([]SecurityPolicy, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/security_policy", url.PathEscape(c.Team))
 	securityPolicies := make([]SecurityPolicy, 0)
@@ -139,10 +143,12 @@ func (c OktaPAMClient) ListSecurityPolicies(ctx context.Context) ([]SecurityPoli
 	return securityPolicies, nil
 }
 
+// Deprecated: use security_policy2.go instead.
 type SecurityPolicyPrincipals struct {
 	UserGroups []NamedObject `json:"user_groups"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (p *SecurityPolicyPrincipals) ToResourceMap() map[string]any {
 	m := make(map[string]any)
 
@@ -156,11 +162,13 @@ func (p *SecurityPolicyPrincipals) ToResourceMap() map[string]any {
 	return m
 }
 
+// Deprecated: use security_policy2.go instead.
 type SecurityPolicyRuleConditionContainer struct {
 	ConditionType  ConditionType               `json:"condition_type"`
 	ConditionValue SecurityPolicyRuleCondition `json:"condition_value"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (c *SecurityPolicyRuleConditionContainer) UnmarshalJSON(data []byte) error {
 	tmp := struct {
 		ConditionType  ConditionType   `json:"condition_type"`
@@ -189,17 +197,20 @@ func (c *SecurityPolicyRuleConditionContainer) UnmarshalJSON(data []byte) error 
 	return nil
 }
 
+// Deprecated: use security_policy2.go instead.
 type SecurityPolicyRuleCondition interface {
 	ConditionType() ConditionType
 	ValidForResourceType(resourceSelectorType ResourceSelectorType) bool
 	ToResourceMap() map[string]any
 }
 
+// Deprecated: use security_policy2.go instead.
 type MFACondition struct {
 	ReAuthFrequencyInSeconds *int    `json:"re_auth_frequency_in_seconds"`
 	ACRValues                *string `json:"acr_values"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (c *MFACondition) ToResourceMap() map[string]any {
 	m := make(map[string]any)
 
@@ -209,20 +220,24 @@ func (c *MFACondition) ToResourceMap() map[string]any {
 	return m
 }
 
+// Deprecated: use security_policy2.go instead.
 func (*MFACondition) ConditionType() ConditionType {
 	return MFAConditionType
 }
 
+// Deprecated: use security_policy2.go instead.
 func (*MFACondition) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
 	return true
 }
 
+// Deprecated: use security_policy2.go instead.
 type AccessRequestCondition struct {
 	RequestTypeID       *string `json:"request_type_id"`
 	RequestTypeName     *string `json:"request_type_name"`
 	ExpiresAfterSeconds *int    `json:"expires_after_seconds"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (c *AccessRequestCondition) ToResourceMap() map[string]any {
 	m := make(map[string]any)
 
@@ -235,19 +250,23 @@ func (c *AccessRequestCondition) ToResourceMap() map[string]any {
 	return m
 }
 
+// Deprecated: use security_policy2.go instead.
 func (*AccessRequestCondition) ConditionType() ConditionType {
 	return AccessRequestConditionType
 }
 
+// Deprecated: use security_policy2.go instead.
 func (*AccessRequestCondition) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
 	return true
 }
 
+// Deprecated: use security_policy2.go instead.
 type GatewayCondition struct {
 	TrafficForwarding *bool `json:"traffic_forwarding"`
 	SessionRecording  *bool `json:"session_recording"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (c *GatewayCondition) ToResourceMap() map[string]any {
 	m := make(map[string]any)
 
@@ -257,23 +276,28 @@ func (c *GatewayCondition) ToResourceMap() map[string]any {
 	return m
 }
 
+// Deprecated: use security_policy2.go instead.
 func (*GatewayCondition) ConditionType() ConditionType {
 	return GatewayConditionType
 }
 
+// Deprecated: use security_policy2.go instead.
 func (*GatewayCondition) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
 	return resourceSelectorType == ServerBasedResourceSelectorType
 }
 
+// Deprecated: use security_policy2.go instead.
 type SecurityPolicyRuleResourceSelector interface {
 	ResourceSelectorType() ResourceSelectorType
 	ToResourceMap() map[string]any
 }
 
+// Deprecated: use security_policy2.go instead.
 type ServerBasedResourceSelector struct {
 	Selectors []ServerBasedResourceSubSelectorContainer `json:"selectors"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (s *ServerBasedResourceSelector) ToResourceMap() map[string]any {
 	m := make(map[string]any, 1)
 
@@ -304,34 +328,41 @@ func (s *ServerBasedResourceSelector) ToResourceMap() map[string]any {
 	return m
 }
 
+// Deprecated: use security_policy2.go instead.
 type ServerBasedResourceSubSelector interface {
 	ServerBasedResourceSubSelectorType() ServerBasedResourceSubSelectorType
 	ToResourceMap() map[string]any
 }
 
+// Deprecated: use security_policy2.go instead.
 type IndividualServerSubSelector struct {
 	Server NamedObject `json:"server"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (*IndividualServerSubSelector) ServerBasedResourceSubSelectorType() ServerBasedResourceSubSelectorType {
 	return IndividualServerSubSelectorType
 }
 
+// Deprecated: use security_policy2.go instead.
 func (s *IndividualServerSubSelector) ToResourceMap() map[string]any {
 	m := make(map[string]any)
 	m[attributes.ServerID] = *s.Server.Id
 	return m
 }
 
+// Deprecated: use security_policy2.go instead.
 type IndividualServerAccountSubSelector struct {
 	Server   NamedObject `json:"server"`
 	Username *string     `json:"username"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (*IndividualServerAccountSubSelector) ServerBasedResourceSubSelectorType() ServerBasedResourceSubSelectorType {
 	return IndividualServerAccountSubSelectorType
 }
 
+// Deprecated: use security_policy2.go instead.
 func (s *IndividualServerAccountSubSelector) ToResourceMap() map[string]any {
 	m := make(map[string]any)
 	m[attributes.ServerID] = *s.Server.Id
@@ -339,6 +370,7 @@ func (s *IndividualServerAccountSubSelector) ToResourceMap() map[string]any {
 	return m
 }
 
+// Deprecated: use security_policy2.go instead.
 type ServerLabelBasedSubSelector struct {
 	ServerSelector *ServerLabelServerSelector `json:"server_selector"`
 
@@ -346,10 +378,12 @@ type ServerLabelBasedSubSelector struct {
 	AccountSelector     AccountSelector     `json:"account_selector"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (*ServerLabelBasedSubSelector) ServerBasedResourceSubSelectorType() ServerBasedResourceSubSelectorType {
 	return ServerLabelServerSubSelectorType
 }
 
+// Deprecated: use security_policy2.go instead.
 func (s *ServerLabelBasedSubSelector) ToResourceMap() map[string]any {
 	m := make(map[string]any)
 
@@ -370,6 +404,7 @@ func (s *ServerLabelBasedSubSelector) ToResourceMap() map[string]any {
 	return m
 }
 
+// Deprecated: use security_policy2.go instead.
 func (ss *ServerLabelBasedSubSelector) UnmarshalJSON(data []byte) error {
 	tmp := struct {
 		ServerSelector      *ServerLabelServerSelector `json:"server_selector"`
@@ -399,33 +434,41 @@ func (ss *ServerLabelBasedSubSelector) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Deprecated: use security_policy2.go instead.
 type ServerLabelServerSelector struct {
 	Labels map[string]string `json:"labels"`
 }
 
+// Deprecated: use security_policy2.go instead.
 type AccountSelector interface {
 	AccountSelectorType() AccountSelectorType
 }
 
+// Deprecated: use security_policy2.go instead.
 type NoneAccountSelector struct{}
 
+// Deprecated: use security_policy2.go instead.
 func (*NoneAccountSelector) AccountSelectorType() AccountSelectorType {
 	return NoneAccountSelectorType
 }
 
+// Deprecated: use security_policy2.go instead.
 type UsernameAccountSelector struct {
 	Usernames []string `json:"usernames"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (*UsernameAccountSelector) AccountSelectorType() AccountSelectorType {
 	return UsernameAccountSelectorType
 }
 
+// Deprecated: use security_policy2.go instead.
 type ServerBasedResourceSubSelectorContainer struct {
 	SelectorType ServerBasedResourceSubSelectorType `json:"selector_type"`
 	Selector     ServerBasedResourceSubSelector     `json:"selector"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (c *ServerBasedResourceSubSelectorContainer) UnmarshalJSON(data []byte) error {
 	tmp := struct {
 		SelectorType ServerBasedResourceSubSelectorType `json:"selector_type"`
@@ -454,14 +497,17 @@ func (c *ServerBasedResourceSubSelectorContainer) UnmarshalJSON(data []byte) err
 	return nil
 }
 
+// Deprecated: use security_policy2.go instead.
 func (*ServerBasedResourceSelector) ResourceSelectorType() ResourceSelectorType {
 	return ServerBasedResourceSelectorType
 }
 
+// Deprecated: use security_policy2.go instead.
 type SecretBasedResourceSelector struct {
 	Selectors []SecretBasedResourceSubSelectorContainer `json:"selectors"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (s *SecretBasedResourceSelector) ToResourceMap() map[string]any {
 	m := make(map[string]any, 1)
 
@@ -488,23 +534,28 @@ func (s *SecretBasedResourceSelector) ToResourceMap() map[string]any {
 	return m
 }
 
+// Deprecated: use security_policy2.go instead.
 func (*SecretBasedResourceSelector) ResourceSelectorType() ResourceSelectorType {
 	return SecretBasedResourceSelectorType
 }
 
+// Deprecated: use security_policy2.go instead.
 type SecretBasedResourceSubSelector interface {
 	SecretBasedResourceSubSelectorType() SecretBasedResourceSubSelectorType
 	ToResourceMap() map[string]any
 }
 
+// Deprecated: use security_policy2.go instead.
 type SecretSubSelector struct {
 	SecretID NamedObject `json:"secret"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (*SecretSubSelector) SecretBasedResourceSubSelectorType() SecretBasedResourceSubSelectorType {
 	return SecretSubSelectorType
 }
 
+// Deprecated: use security_policy2.go instead.
 func (s *SecretSubSelector) ToResourceMap() map[string]any {
 	m := make(map[string]any)
 
@@ -513,14 +564,17 @@ func (s *SecretSubSelector) ToResourceMap() map[string]any {
 	return m
 }
 
+// Deprecated: use security_policy2.go instead.
 type SecretFolderSubSelector struct {
 	SecretFolderID NamedObject `json:"secret_folder"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (*SecretFolderSubSelector) SecretBasedResourceSubSelectorType() SecretBasedResourceSubSelectorType {
 	return SecretFolderSubSelectorType
 }
 
+// Deprecated: use security_policy2.go instead.
 func (s *SecretFolderSubSelector) ToResourceMap() map[string]any {
 	m := make(map[string]any)
 
@@ -529,11 +583,13 @@ func (s *SecretFolderSubSelector) ToResourceMap() map[string]any {
 	return m
 }
 
+// Deprecated: use security_policy2.go instead.
 type SecretBasedResourceSubSelectorContainer struct {
 	SelectorType SecretBasedResourceSubSelectorType `json:"selector_type"`
 	Selector     SecretBasedResourceSubSelector     `json:"selector"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (c *SecretBasedResourceSubSelectorContainer) UnmarshalJSON(data []byte) error {
 	tmp := struct {
 		SelectorType SecretBasedResourceSubSelectorType `json:"selector_type"`
@@ -560,17 +616,20 @@ func (c *SecretBasedResourceSubSelectorContainer) UnmarshalJSON(data []byte) err
 	return nil
 }
 
+// Deprecated: use security_policy2.go instead.
 type SecurityPolicyRulePrivilegeContainer struct {
 	PrivilegeType  PrivilegeType               `json:"privilege_type"`
 	PrivilegeValue SecurityPolicyRulePrivilege `json:"privilege_value"`
 }
 
+// Deprecated: use security_policy2.go instead.
 func (c *SecurityPolicyRulePrivilegeContainer) ToResourceMap() map[string]any {
 	m := make(map[string]any, 4)
 
 	return m
 }
 
+// Deprecated: use security_policy2.go instead.
 func (c *SecurityPolicyRulePrivilegeContainer) UnmarshalJSON(data []byte) error {
 	tmp := struct {
 		PrivilegeType  PrivilegeType   `json:"privilege_type"`
@@ -612,10 +671,12 @@ type PrincipalAccountRDPPrivilege struct {
 	AdminLevelPermissions *bool `json:"admin_level_permissions"`
 }
 
+// Deprecated: Use security_policy2.go instead.
 func (*PrincipalAccountRDPPrivilege) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
 	return resourceSelectorType == ServerBasedResourceSelectorType
 }
 
+// Deprecated: Use security_policy2.go instead.
 func (p *PrincipalAccountRDPPrivilege) ToResourceMap() map[string]any {
 	m := make(map[string]any, 2)
 	m[attributes.Enabled] = *p.Enabled
@@ -634,10 +695,12 @@ type PrincipalAccountSSHPrivilege struct {
 	SudoCommandBundles    []NamedObject `json:"sudo_command_bundles"`
 }
 
+// Deprecated: Use security_policy2.go instead.
 func (*PrincipalAccountSSHPrivilege) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
 	return resourceSelectorType == ServerBasedResourceSelectorType
 }
 
+// Deprecated: Use security_policy2.go instead.
 func (p *PrincipalAccountSSHPrivilege) ToResourceMap() map[string]any {
 	m := make(map[string]any)
 	m[attributes.Enabled] = *p.Enabled
@@ -661,12 +724,14 @@ type PasswordCheckoutRDPPrivilege struct {
 	Enabled *bool `json:"password_checkout_rdp"`
 }
 
+// Deprecated: Use security_policy2.go instead.
 func (p *PasswordCheckoutRDPPrivilege) ToResourceMap() map[string]any {
 	m := make(map[string]any, 1)
 	m[attributes.Enabled] = *p.Enabled
 	return m
 }
 
+// Deprecated: Use security_policy2.go instead.
 func (*PasswordCheckoutRDPPrivilege) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
 	return resourceSelectorType == ServerBasedResourceSelectorType
 }
@@ -675,10 +740,12 @@ type PasswordCheckoutSSHPrivilege struct {
 	Enabled *bool `json:"password_checkout_ssh"`
 }
 
+// Deprecated: Use security_policy2.go instead.
 func (*PasswordCheckoutSSHPrivilege) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
 	return resourceSelectorType == ServerBasedResourceSelectorType
 }
 
+// Deprecated: Use security_policy2.go instead.
 func (p *PasswordCheckoutSSHPrivilege) ToResourceMap() map[string]any {
 	m := make(map[string]any, 1)
 	m[attributes.Enabled] = *p.Enabled
@@ -696,10 +763,12 @@ type SecretPrivilege struct {
 	SecretDelete *bool `json:"secret_delete"`
 }
 
+// Deprecated: Use security_policy2.go instead.
 func (*SecretPrivilege) ValidForResourceType(resourceSelectorType ResourceSelectorType) bool {
 	return resourceSelectorType == SecretBasedResourceSelectorType
 }
 
+// Deprecated: Use security_policy2.go instead.
 func (p *SecretPrivilege) ToResourceMap() map[string]any {
 	m := make(map[string]any, 8)
 
@@ -725,6 +794,7 @@ type SecurityPolicyRule struct {
 	Conditions       []*SecurityPolicyRuleConditionContainer `json:"conditions"`
 }
 
+// Deprecated: Use security_policy2.go instead.
 func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 	m := make(map[string]any, 7)
 
@@ -804,6 +874,7 @@ func (r *SecurityPolicyRule) ToResourceMap() map[string]any {
 	return m
 }
 
+// Deprecated: Use security_policy2.go instead.
 func (r *SecurityPolicyRule) UnmarshalJSON(data []byte) error {
 	tmp := struct {
 		ID               *string                                 `json:"id"`
@@ -846,6 +917,7 @@ func (r *SecurityPolicyRule) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Deprecated: Use security_policy2.go instead.
 func (c OktaPAMClient) CreateSecurityPolicy(ctx context.Context, policy SecurityPolicy) (SecurityPolicy, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/security_policy", url.PathEscape(c.Team))
 	logging.Tracef("making POST request to %s", requestURL)
@@ -863,6 +935,7 @@ func (c OktaPAMClient) CreateSecurityPolicy(ctx context.Context, policy Security
 	return resultingPolicy, nil
 }
 
+// Deprecated: Use security_policy2.go instead.
 func (c OktaPAMClient) GetSecurityPolicy(ctx context.Context, securityPolicyID string) (*SecurityPolicy, error) {
 	requestURL := fmt.Sprintf("/v1/teams/%s/security_policy/%s", url.PathEscape(c.Team), url.PathEscape(securityPolicyID))
 	logging.Tracef("making GET request to %s", requestURL)
@@ -883,6 +956,7 @@ func (c OktaPAMClient) GetSecurityPolicy(ctx context.Context, securityPolicyID s
 	return nil, createErrorForInvalidCode(resp, http.StatusOK, http.StatusNotFound)
 }
 
+// Deprecated: Use security_policy2.go instead.
 func (c OktaPAMClient) UpdateSecurityPolicy(ctx context.Context, securityPolicyID string, policy SecurityPolicy) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/security_policy/%s", url.PathEscape(c.Team), url.PathEscape(securityPolicyID))
 	logging.Tracef("making PUt request to %s", requestURL)
@@ -899,6 +973,7 @@ func (c OktaPAMClient) UpdateSecurityPolicy(ctx context.Context, securityPolicyI
 	return nil
 }
 
+// Deprecated: Use security_policy2.go instead.
 func (c OktaPAMClient) DeleteSecurityPolicy(ctx context.Context, securityPolicyID string) error {
 	requestURL := fmt.Sprintf("/v1/teams/%s/security_policy/%s", url.PathEscape(c.Team), url.PathEscape(securityPolicyID))
 	logging.Tracef("making DELETE request to %s", requestURL)

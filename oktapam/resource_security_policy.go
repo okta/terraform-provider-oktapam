@@ -13,6 +13,7 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 )
 
+// Deprecated: use security_policy2.go instead.
 func resourceSecurityPolicy() *schema.Resource {
 	return &schema.Resource{
 		Description:   descriptions.ResourceSecurityPolicy,
@@ -432,6 +433,7 @@ func resourceSecurityPolicy() *schema.Resource {
 	}
 }
 
+// Deprecated: use security_policy2.go instead.
 func resourceSecurityPolicyRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := getLocalClientFromMetadata(m)
@@ -460,6 +462,7 @@ func resourceSecurityPolicyRead(ctx context.Context, d *schema.ResourceData, m a
 	return diags
 }
 
+// Deprecated: use security_policy2.go instead.
 func resourceSecurityPolicyCreate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := getLocalClientFromMetadata(m)
 	policy, diags := readPolicyFromResourceData(d)
@@ -477,6 +480,7 @@ func resourceSecurityPolicyCreate(ctx context.Context, d *schema.ResourceData, m
 	return resourceSecurityPolicyRead(ctx, d, m)
 }
 
+// Deprecated: use security_policy2.go instead.
 func resourceSecurityPolicyUpdate(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	c := getLocalClientFromMetadata(m)
 	id := d.Id()
@@ -495,6 +499,7 @@ func resourceSecurityPolicyUpdate(ctx context.Context, d *schema.ResourceData, m
 	return resourceSecurityPolicyRead(ctx, d, m)
 }
 
+// Deprecated: use security_policy2.go instead.
 func resourceSecurityPolicyDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := getLocalClientFromMetadata(m)
@@ -508,6 +513,7 @@ func resourceSecurityPolicyDelete(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
+// Deprecated: use security_policy2.go instead.
 func readPolicyFromResourceData(d *schema.ResourceData) (client.SecurityPolicy, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	var id *string
@@ -550,6 +556,7 @@ func readPolicyFromResourceData(d *schema.ResourceData) (client.SecurityPolicy, 
 	return policy, diags
 }
 
+// Deprecated: use security_policy2.go instead.
 func readRulesFromResourceData(d *schema.ResourceData, securityPolicyId *string) ([]*client.SecurityPolicyRule, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -631,6 +638,7 @@ func readRulesFromResourceData(d *schema.ResourceData, securityPolicyId *string)
 	return rules, diags
 }
 
+// Deprecated: use security_policy2.go instead.
 func validateRule(rule *client.SecurityPolicyRule) diag.Diagnostics {
 	var diags diag.Diagnostics
 
@@ -661,6 +669,7 @@ func validateRule(rule *client.SecurityPolicyRule) diag.Diagnostics {
 	return diags
 }
 
+// Deprecated: use security_policy2.go instead.
 func resourceTypeToAttribute(resourceSelectorType client.ResourceSelectorType) string {
 	switch resourceSelectorType {
 	case client.SecretBasedResourceSelectorType:
@@ -672,6 +681,7 @@ func resourceTypeToAttribute(resourceSelectorType client.ResourceSelectorType) s
 	}
 }
 
+// Deprecated: use security_policy2.go instead.
 func privilegeTypeToAttribute(privilegeType client.PrivilegeType) string {
 	switch privilegeType {
 	case client.PasswordCheckoutRDPPrivilegeType:
@@ -689,6 +699,7 @@ func privilegeTypeToAttribute(privilegeType client.PrivilegeType) string {
 	}
 }
 
+// Deprecated: use security_policy2.go instead.
 func conditionTypeToAttribute(conditionType client.ConditionType) string {
 	switch conditionType {
 	case client.AccessRequestConditionType:
@@ -702,6 +713,7 @@ func conditionTypeToAttribute(conditionType client.ConditionType) string {
 	}
 }
 
+// Deprecated: use security_policy2.go instead.
 func readConditions(conditionsAttr []any) ([]*client.SecurityPolicyRuleConditionContainer, diag.Diagnostics) {
 	if len(conditionsAttr) == 0 {
 		return nil, nil
@@ -800,6 +812,7 @@ func readConditions(conditionsAttr []any) ([]*client.SecurityPolicyRuleCondition
 	return conditions, diags
 }
 
+// Deprecated: use security_policy2.go instead.
 func readResourceSelector(resourcesAttr []any) (client.SecurityPolicyRuleResourceSelector, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -851,6 +864,7 @@ func readResourceSelector(resourcesAttr []any) (client.SecurityPolicyRuleResourc
 	return selector, diags
 }
 
+// Deprecated: use security_policy2.go instead.
 func readSecretsSelector(secretsAttr any) ([]client.SecretBasedResourceSubSelectorContainer, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -902,6 +916,7 @@ func readSecretsSelector(secretsAttr any) ([]client.SecretBasedResourceSubSelect
 	return subSelectors, diags
 }
 
+// Deprecated: use security_policy2.go instead.
 func readSecretSubSelectors(secretArr []any) ([]*client.SecretSubSelector, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -926,6 +941,7 @@ func readSecretSubSelectors(secretArr []any) ([]*client.SecretSubSelector, diag.
 	return subSelectors, diags
 }
 
+// Deprecated: use security_policy2.go instead.
 func readSecretFolderSubSelectors(secretFolderArr []any) ([]*client.SecretFolderSubSelector, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -950,6 +966,7 @@ func readSecretFolderSubSelectors(secretFolderArr []any) ([]*client.SecretFolder
 	return subSelectors, diags
 }
 
+// Deprecated: Use security_policy2.go instead.
 func readServersSelector(serversAttr any) ([]client.ServerBasedResourceSubSelectorContainer, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -1007,6 +1024,7 @@ func readServersSelector(serversAttr any) ([]client.ServerBasedResourceSubSelect
 	return subSelectors, diags
 }
 
+// Deprecated: Use security_policy2.go instead.
 func readServerLabelBasedSubSelectors(labelSelectorsArr []any) ([]*client.ServerLabelBasedSubSelector, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -1062,6 +1080,7 @@ func readServerLabelBasedSubSelectors(labelSelectorsArr []any) ([]*client.Server
 	return subSelectors, diags
 }
 
+// Deprecated: Use security_policy2.go instead.
 func readIndividualServerAccountSubSelectors(serverAccountsArr []any) ([]*client.IndividualServerAccountSubSelector, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -1087,6 +1106,7 @@ func readIndividualServerAccountSubSelectors(serverAccountsArr []any) ([]*client
 	return subSelectors, diags
 }
 
+// Deprecated: Use security_policy2.go instead.
 func readIndividualServerSubSelectors(serversArr []any) ([]*client.IndividualServerSubSelector, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -1111,6 +1131,7 @@ func readIndividualServerSubSelectors(serversArr []any) ([]*client.IndividualSer
 	return subSelectors, diags
 }
 
+// Deprecated: Use security_policy2.go instead.
 func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilegeContainer, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -1225,6 +1246,7 @@ func readPrivileges(privilegesAttr []any) ([]*client.SecurityPolicyRulePrivilege
 	return privileges, diags
 }
 
+// Deprecated: Use security_policy2.go instead.
 func readSecretPrivilege(privilege any) (*client.SecretPrivilege, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	privilegeArr := privilege.([]any)
@@ -1312,6 +1334,7 @@ func readSecretPrivilege(privilege any) (*client.SecretPrivilege, diag.Diagnosti
 	return priv, diags
 }
 
+// Deprecated: Use security_policy2.go instead.
 func readPrivilegeEnabled(privilege any) (bool, bool) {
 	privilegeArr := privilege.([]any)
 
@@ -1328,6 +1351,7 @@ func readPrivilegeEnabled(privilege any) (bool, bool) {
 	return false, true
 }
 
+// Deprecated: Use security_policy2.go instead.
 func readAdminLevelPermissionEnabled(privilege any) bool {
 	privilegeArr := privilege.([]any)
 
@@ -1344,6 +1368,7 @@ func readAdminLevelPermissionEnabled(privilege any) bool {
 	return false
 }
 
+// Deprecated: Use security_policy2.go instead.
 func readSudoCommandBundles(privilege any) ([]client.NamedObject, diag.Diagnostics) {
 	privilegeArr := privilege.([]any)
 
@@ -1365,6 +1390,7 @@ func readSudoCommandBundles(privilege any) ([]client.NamedObject, diag.Diagnosti
 	return result, nil
 }
 
+// Deprecated: Use security_policy2.go instead.
 func readSudoDisplayName(privilege any) string {
 	privilegeArr := privilege.([]any)
 
@@ -1381,6 +1407,7 @@ func readSudoDisplayName(privilege any) string {
 	return ""
 }
 
+// Deprecated: Use security_policy2.go instead.
 func readPrincipalsFromResourceData(d *schema.ResourceData) (*client.SecurityPolicyPrincipals, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	principals := &client.SecurityPolicyPrincipals{}

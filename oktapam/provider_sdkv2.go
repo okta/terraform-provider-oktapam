@@ -65,6 +65,8 @@ func V5Provider(v5ClientCreator V5ClientCreator) *schema.Provider {
 			config.ProviderTeamSettingsKey:                       resourceTeamSettings(),
 			config.ProviderUserGroupAttachmentKey:                resourceUserGroupAttachment(),
 			config.ProviderUserKey:                               resourceUser(),
+			// Do not add more SDKv2 resources. Use the terraform-plugin-framework, adding to the
+			// Resources() or DataSources() methods in provider_pluginframework.go
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
@@ -102,6 +104,8 @@ func V5Provider(v5ClientCreator V5ClientCreator) *schema.Provider {
 			config.ProviderTeamSettingsKey:                        dataSourceTeamSettings(),
 			config.ProviderADUserSyncTaskSettingsKey:              dataSourceADUserSyncTaskSettings(),
 			config.ProviderADUserSyncTaskSettingsIDListKey:        dataSourceADUserSyncTaskSettingsIDList(),
+			// Do not add more SDKv2 resources. Use the terraform-plugin-framework, adding to the
+			// Resources() or DataSources() methods in provider_pluginframework.go
 		},
 	}
 
