@@ -78,7 +78,8 @@ func SecurityPolicyRuleResourceSelectorFromSDKToModel(ctx context.Context, in *p
 		outModel.ServerBasedResource = selector
 
 	} else {
-		panic("missing stanza in SecurityPolicyRuleResourceSelectorFromSDKToModel")
+		diags.AddError("missing stanza in OktaPAM provider", "missing stanza in SecurityPolicyRuleResourceSelectorFromSDKToModel")
+		return nil, diags
 	}
 
 	objectValue, d := types.ObjectValueFrom(ctx, SecurityPolicyRuleResourceSelectorAttrTypes(), &outModel)
@@ -116,8 +117,6 @@ func ServerBasedResourceSelectorFromSDKToModel(ctx context.Context, in *pam.Secu
 	var outSelectors []ServerBasedResourceSelectorContainerModel
 	var diags diag.Diagnostics
 
-	//TODO(ja) this should be wrapped in a Container.
-
 	for _, selector := range in.Selectors {
 		var container ServerBasedResourceSelectorContainerModel
 		if selector.Selector.SelectorServerLabel != nil {
@@ -145,7 +144,8 @@ func ServerBasedResourceSelectorFromSDKToModel(ctx context.Context, in *pam.Secu
 			container.IndividualServerAccount = outSelector
 
 		} else {
-			panic("missing stanza in ServerBasedResourceSelectorFromSDKToModel")
+			diags.AddError("missing stanza in OktaPAM provider", "missing stanza in ServerBasedResourceSelectorFromSDKToModel")
+			return nil, diags
 		}
 		outSelectors = append(outSelectors, container)
 	}
@@ -243,7 +243,8 @@ func ServerBasedResourceSelectorContainerFromModelToSDK(ctx context.Context, in 
 			pam.SelectorServerLabelAsSecurityPolicyRuleResourceServerBasedResourceSubSelector(outVal))
 
 	} else {
-		panic("missing stanza in ServerBasedResourceSelectorContainerFromModelToSDK")
+		diags.AddError("missing stanza in OktaPAM provider", "missing stanza in ServerBasedResourceSelectorContainerFromModelToSDK")
+		return nil, diags
 	}
 
 	return &out, diags

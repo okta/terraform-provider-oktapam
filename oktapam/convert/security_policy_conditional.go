@@ -65,7 +65,8 @@ func SecurityPolicyRuleConditionContainerFromModelToSDK(ctx context.Context, in 
 		outType = pam.SecurityPolicyRuleConditionType_GATEWAY
 		outCondition.ConditionsGateway = outVal
 	} else {
-		panic("missing stanza from SecurityPolicyRuleConditionContainerFromModelToSDK")
+		diags.AddError("missing stanza in OktaPAM provider", "the function SecurityPolicyRuleConditionContainerFromModelToSDK is missing a stanza")
+		return nil, diags
 	}
 
 	out := pam.NewSecurityPolicyRuleConditionContainer().
@@ -80,7 +81,8 @@ func SecurityPolicyRuleConditionContainerFromSDKToModel(ctx context.Context, in 
 	var diags diag.Diagnostics
 
 	if !in.HasConditionType() {
-		panic("TODO(ja)")
+		diags.AddError("No ConditionType sent from platform", "A ConditionType is required to convert a Condition")
+		return nil, diags
 	}
 
 	switch *in.ConditionType {
@@ -107,7 +109,8 @@ func SecurityPolicyRuleConditionContainerFromSDKToModel(ctx context.Context, in 
 		}
 		out.ConditionsGateway = outModel
 	default:
-		panic("missing condition type stanza in SecurityPolicyRuleConditionContainerFromSDKToModel")
+		diags.AddError("missing stanza in OktaPAM provider", "missing condition type stanza in SecurityPolicyRuleConditionContainerFromSDKToModel")
+		return nil, diags
 	}
 	return &out, diags
 }
@@ -160,6 +163,7 @@ func ConditionsAccessRequestFromModelToSDK(_ context.Context, in *ConditionsAcce
 	var diags diag.Diagnostics
 
 	out.Type = string(pam.SecurityPolicyRuleConditionType_ACCESS_REQUEST)
+
 	if !in.RequestTypeId.IsUnknown() && !in.RequestTypeId.IsNull() {
 		out.SetRequestTypeId(in.RequestTypeId.ValueString())
 	}

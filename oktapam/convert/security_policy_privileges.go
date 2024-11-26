@@ -12,13 +12,11 @@ import (
 
 //type SecurityPolicyRulePrivilegeTypeModel types.String
 
-//TODO(ja) I think this is modelled wrong
-
 type SecurityPolicyRulePrivilegeContainerModel struct {
 	PasswordCheckoutDatabasePrivilege *PasswordCheckoutDatabasePrivilegeModel `tfsdk:"password_checkout_database"`
 	PrincipalAccountSSHPrivilege      *PrincipalAccountSSHPrivilegeModel      `tfsdk:"principal_account_ssh"`
+	PasswordCheckoutSSHPrivilege      *PasswordCheckoutSSHPrivilegeModel      `tfsdk:"password_checkout_ssh"`
 	//SecurityPolicyPasswordCheckoutRDPPrivilege      *SecurityPolicyPasswordCheckoutRDPPrivilegeModel      `tfsdk:"password_checkout_rdp"`
-	PasswordCheckoutSSHPrivilege *PasswordCheckoutSSHPrivilegeModel `tfsdk:"password_checkout_ssh"`
 	//SecurityPolicyPrincipalAccountRDPPrivilege      *SecurityPolicyPrincipalAccountRDPPrivilegeModel      `tfsdk:"principal_account_rdp"`
 	//SecurityPolicyRevealPasswordPrivilege           *SecurityPolicyRevealPasswordPrivilegeModel           `tfsdk:"reveal_password"`
 	//SecurityPolicySecretPrivilege                   *SecurityPolicySecretPrivilegeModel                   `tfsdk:"secret"`
@@ -78,7 +76,8 @@ func SecurityPolicyRulePrivilegeContainerFromSDKToModel(ctx context.Context, in 
 		out.PasswordCheckoutSSHPrivilege = privilege
 
 	} else {
-		panic("missing stanza in SecurityPolicyRulePrivilegeContainerFromSDKToModel")
+		diags.AddError("missing stanza in OktaPAM provider", "missing stanza in SecurityPolicyRulePrivilegeContainerFromSDKToModel")
+		return nil, diags
 	}
 	return &out, diags
 }
@@ -118,7 +117,8 @@ func SecurityPolicyRulePrivilegeContainerFromModelToSDK(ctx context.Context, in 
 		privilegeType = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_SSH
 
 	} else {
-		panic("missing stanza in SecurityPolicyRulePrivilegeContainerFromModelToSDK")
+		diags.AddError("missing stanza in OktaPAM provider", "missing stanza in SecurityPolicyRulePrivilegeContainerFromModelToSDK")
+		return nil, diags
 	}
 	out.PrivilegeValue = &privilegeValue
 	out.PrivilegeType = &privilegeType

@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -60,63 +61,82 @@ func (s *SecurityPolicyResource) Create(ctx context.Context, request resource.Cr
 
 func (s *SecurityPolicyResource) Read(ctx context.Context, request resource.ReadRequest, response *resource.ReadResponse) {
 	var state convert.SecurityPolicyResourceModel
-	if diags := request.State.Get(ctx, &state); diags.HasError() {
+	var diags diag.Diagnostics
+
+	diags.Append(request.State.Get(ctx, &state)...)
+	if diags.HasError() {
 		response.Diagnostics.Append(diags...)
 		return
 	}
 
 	if responsePolicy, _, err := s.api.GetSecurityPolicy(ctx, s.teamName, state.ID.ValueString()).Execute(); err != nil {
-		response.Diagnostics.AddError("Error reading security policy", err.Error())
+		diags.AddError("Error reading security policy", err.Error())
+		response.Diagnostics.Append(diags...)
 		return
 	} else {
-		if policyModel, diags := convert.SecurityPolicyFromSDKToModel(ctx, responsePolicy); diags.HasError() {
+		policyModel, d := convert.SecurityPolicyFromSDKToModel(ctx, responsePolicy)
+		diags.Append(d...)
+		if diags.HasError() {
 			response.Diagnostics.Append(diags...)
 			return
-		} else {
-			state = *policyModel
 		}
+		state = *policyModel
 	}
 
-	if diags := response.State.Set(ctx, state); diags.HasError() {
+	diags.Append(response.State.Set(ctx, state)...)
+	if diags.HasError() {
 		response.Diagnostics.Append(diags...)
 		return
 	}
+
+	response.Diagnostics.Append(diags...)
 }
 
 func (s *SecurityPolicyResource) Update(ctx context.Context, request resource.UpdateRequest, response *resource.UpdateResponse) {
 	var plan convert.SecurityPolicyResourceModel
-	if diags := request.Plan.Get(ctx, &plan); diags.HasError() {
+	var diags diag.Diagnostics
+
+	diags.Append(request.Plan.Get(ctx, &plan)...)
+	if diags.HasError() {
 		response.Diagnostics.Append(diags...)
 		return
 	}
 
-	securityPolicy, diags := convert.SecurityPolicyFromModelToSDK(ctx, &plan)
+	securityPolicy, d := convert.SecurityPolicyFromModelToSDK(ctx, &plan)
+	diags.Append(d...)
+
 	if diags.HasError() {
 		response.Diagnostics.Append(diags...)
 		return
 	}
 
 	if _, err := s.api.UpdateSecurityPolicy(ctx, s.teamName, plan.ID.ValueString()).SecurityPolicy(*securityPolicy).Execute(); err != nil {
-		response.Diagnostics.AddError("Error updating security policy", err.Error())
+		diags.AddError("Error updating security policy", err.Error())
+		response.Diagnostics.Append(diags...)
 		return
 	}
 
 	if updatedPolicy, _, err := s.api.GetSecurityPolicy(ctx, s.teamName, plan.ID.ValueString()).Execute(); err != nil {
-		response.Diagnostics.AddError("Error reading security policy", err.Error())
+		diags.AddError("Error reading security policy", err.Error())
+		response.Diagnostics.Append(diags...)
 		return
 	} else {
-		if policyModel, diags := convert.SecurityPolicyFromSDKToModel(ctx, updatedPolicy); diags.HasError() {
+		policyModel, d := convert.SecurityPolicyFromSDKToModel(ctx, updatedPolicy)
+		diags.Append(d...)
+		if diags.HasError() {
 			response.Diagnostics.Append(diags...)
 			return
-		} else {
-			plan = *policyModel
 		}
+		plan = *policyModel
 
-		if diags := response.State.Set(ctx, plan); diags.HasError() {
+		diags.Append(response.State.Set(ctx, plan)...)
+		if diags.HasError() {
 			response.Diagnostics.Append(diags...)
 			return
 		}
 	}
+
+	response.Diagnostics.Append(diags...)
 }
 
 func (s *SecurityPolicyResource) Delete(ctx context.Context, request resource.DeleteRequest, response *resource.DeleteResponse) {
