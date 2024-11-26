@@ -38,27 +38,32 @@ func SelectorServerLabelAttrTypes() map[string]attr.Type {
 
 func SelectorServerLabelFromSDKToModel(ctx context.Context, in *pam.SelectorServerLabel) (*SelectorServerLabelModel, diag.Diagnostics) {
 	var out SelectorServerLabelModel
-	if selector, diags := ServerLabelServerSelectorFromSDKToModel(ctx, &in.ServerSelector); diags.HasError() {
+	var diags diag.Diagnostics
+
+	selector, d := ServerLabelServerSelectorFromSDKToModel(ctx, &in.ServerSelector)
+	diags.Append(d...)
+	if diags.HasError() {
 		return nil, diags
-	} else {
-		out.ServerSelector = selector
 	}
+	out.ServerSelector = selector
 
 	if val, ok := in.GetAccountSelectorTypeOk(); ok {
 		valStr := string(*val)
 		out.AccountSelectorType = types.StringValue(valStr)
 	}
 
-	if accountSelector, diags := ServerLabelAccountSelectorFromSDKToModel(ctx, &in.AccountSelector); diags.HasError() {
+	accountSelector, d := ServerLabelAccountSelectorFromSDKToModel(ctx, &in.AccountSelector)
+	diags.Append(d...)
+	if diags.HasError() {
 		return nil, diags
-	} else {
-		out.AccountSelector = accountSelector
 	}
+	out.AccountSelector = accountSelector
 
-	return &out, nil
+	return &out, diags
 }
 func ServerLabelAccountSelectorFromSDKToModel(ctx context.Context, in *pam.SelectorServerLabelAccountSelector) (*ServerLabelAccountSelectorModel, diag.Diagnostics) {
 	var out ServerLabelAccountSelectorModel
+	var diags diag.Diagnostics
 
 	switch selector := in.GetActualInstance().(type) {
 	case *pam.SecurityPolicyUsernameAccountSelector:
@@ -66,7 +71,9 @@ func ServerLabelAccountSelectorFromSDKToModel(ctx context.Context, in *pam.Selec
 		for _, username := range selector.Usernames {
 			usernames = append(usernames, types.StringValue(username))
 		}
-		if usernameList, diags := types.ListValueFrom(ctx, types.StringType, usernames); diags.HasError() {
+		usernameList, d := types.ListValueFrom(ctx, types.StringType, usernames)
+		diags.Append(d...)
+		if diags.HasError() {
 			return nil, diags
 		} else {
 			out.Usernames = usernameList
@@ -77,19 +84,21 @@ func ServerLabelAccountSelectorFromSDKToModel(ctx context.Context, in *pam.Selec
 	default:
 		panic("missing stanza in ServerLabelAccountSelectorFromSDKToModel")
 	}
-	return &out, nil
+	return &out, diags
 }
 
 func SelectorServerLabelFromModelToSDK(ctx context.Context, in *SelectorServerLabelModel) (*pam.SelectorServerLabel, diag.Diagnostics) {
 	var out pam.SelectorServerLabel
+	var diags diag.Diagnostics
 
 	out.Type = string(pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_SERVER_LABEL)
 
-	if outSelector, diags := ServerLabelServerSelectorFromModelToSDK(ctx, in.ServerSelector); diags.HasError() {
+	outSelector, d := ServerLabelServerSelectorFromModelToSDK(ctx, in.ServerSelector)
+	diags.Append(d...)
+	if diags.HasError() {
 		return nil, diags
-	} else {
-		out.ServerSelector = *outSelector
 	}
+	out.ServerSelector = *outSelector
 
 	// NOTE: The way this is done is snowflake. AccountSelector is the only place where we have the type on the outside
 	// but also have extra fields, and do a oneOf for the actual AccountSelector. Please don't follow this model.
@@ -98,16 +107,18 @@ func SelectorServerLabelFromModelToSDK(ctx context.Context, in *SelectorServerLa
 		out.AccountSelectorType = pam.SelectorServerLabelAccountSelectorType(in.AccountSelectorType.ValueString())
 	}
 
-	if outAccountSelector, diags := ServerLabelAccountSelectorFromModelToSDK(ctx, in.AccountSelector); diags.HasError() {
+	outAccountSelector, d := ServerLabelAccountSelectorFromModelToSDK(ctx, in.AccountSelector)
+	diags.Append(d...)
+	if diags.HasError() {
 		return nil, diags
-	} else {
-		out.AccountSelector = *outAccountSelector
 	}
+	out.AccountSelector = *outAccountSelector
 
-	return &out, nil
+	return &out, diags
 }
 func ServerLabelAccountSelectorFromModelToSDK(ctx context.Context, in *ServerLabelAccountSelectorModel) (*pam.SelectorServerLabelAccountSelector, diag.Diagnostics) {
 	var out pam.SelectorServerLabelAccountSelector
+	var diags diag.Diagnostics
 
 	if !in.Usernames.IsNull() && !in.Usernames.IsUnknown() {
 		var outUsername pam.SecurityPolicyUsernameAccountSelector
@@ -127,7 +138,7 @@ func ServerLabelAccountSelectorFromModelToSDK(ctx context.Context, in *ServerLab
 		outNone.Type = pam.PtrString(string(pam.SelectorServerLabelAccountSelectorType_NONE))
 		out.SecurityPolicyNoneAccountSelector = &outNone
 	}
-	return &out, nil
+	return &out, diags
 }
 
 type ServerLabelAccountSelectorModel struct {
@@ -173,10 +184,12 @@ func ServerLabelServerSelectorAttrTypes() map[string]attr.Type {
 
 func ServerLabelServerSelectorFromModelToSDK(ctx context.Context, in *ServerLabelServerSelectorModel) (*pam.SelectorServerLabelServerSelector, diag.Diagnostics) {
 	var out pam.SelectorServerLabelServerSelector
+	var diags diag.Diagnostics
 
 	if len(in.Labels.Elements()) > 0 {
 		elements := make(map[string]types.String, len(in.Labels.Elements()))
-		if diags := in.Labels.ElementsAs(ctx, &elements, false); diags.HasError() {
+		diags.Append(in.Labels.ElementsAs(ctx, &elements, false)...)
+		if diags.HasError() {
 			return nil, diags
 		}
 		outMap := make(map[string]any, len(elements))
@@ -185,20 +198,23 @@ func ServerLabelServerSelectorFromModelToSDK(ctx context.Context, in *ServerLabe
 		}
 		out.Labels = outMap
 	}
-	return &out, nil
+	return &out, diags
 }
 
 func ServerLabelServerSelectorFromSDKToModel(_ context.Context, in *pam.SelectorServerLabelServerSelector) (*ServerLabelServerSelectorModel, diag.Diagnostics) {
 	var out ServerLabelServerSelectorModel
+	var diags diag.Diagnostics
+
 	elements := make(map[string]attr.Value, len(in.Labels))
 	for k, v := range in.Labels {
 		elements[k] = types.StringValue(fmt.Sprintf("%s", v))
 	}
 
-	if mapValue, diags := types.MapValue(types.StringType, elements); diags.HasError() {
+	mapValue, d := types.MapValue(types.StringType, elements)
+	diags.Append(d...)
+	if diags.HasError() {
 		return nil, diags
-	} else {
-		out.Labels = mapValue
 	}
-	return &out, nil
+	out.Labels = mapValue
+	return &out, diags
 }

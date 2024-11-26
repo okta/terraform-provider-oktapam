@@ -29,6 +29,8 @@ func SecurityPolicyPrincipalsSchema() schema.Attribute {
 
 func SecurityPolicyPrincipalFromSDKToModel(_ context.Context, in *pam.SecurityPolicyPrincipals) (*SecurityPolicyPrincipalsModel, diag.Diagnostics) {
 	var out SecurityPolicyPrincipalsModel
+	var diags diag.Diagnostics
+
 	if len(in.UserGroups) > 0 {
 		var outUserGroups []attr.Value
 		for _, userGroup := range in.UserGroups {
@@ -37,27 +39,33 @@ func SecurityPolicyPrincipalFromSDKToModel(_ context.Context, in *pam.SecurityPo
 			}
 		}
 
-		if userGroups, diags := types.ListValue(types.StringType, outUserGroups); diags.HasError() {
+		userGroups, d := types.ListValue(types.StringType, outUserGroups)
+		diags.Append(d...)
+
+		if diags.HasError() {
 			return nil, diags
-		} else {
-			out.UserGroups = userGroups
 		}
+		out.UserGroups = userGroups
 	}
-	return &out, nil
+	return &out, diags
 }
 
 func SecurityPolicyPrincipalFromModelToSDK(ctx context.Context, in *SecurityPolicyPrincipalsModel) (*pam.SecurityPolicyPrincipals, diag.Diagnostics) {
 	var out pam.SecurityPolicyPrincipals
+	var diags diag.Diagnostics
 
 	if !in.UserGroups.IsNull() && len(in.UserGroups.Elements()) > 0 {
 		userGroups := make([]types.String, 0, len(in.UserGroups.Elements()))
 
-		if diags := in.UserGroups.ElementsAs(ctx, &userGroups, false); diags.HasError() {
+		diags.Append(in.UserGroups.ElementsAs(ctx, &userGroups, false)...)
+
+		if diags.HasError() {
 			return nil, diags
 		}
+
 		for _, userGroup := range userGroups {
 			out.UserGroups = append(out.UserGroups, *pam.NewNamedObject().SetId(userGroup.ValueString()))
 		}
 	}
-	return &out, nil
+	return &out, diags
 }

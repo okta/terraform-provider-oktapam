@@ -10,8 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// Begin SecurityPolicyPasswordCheckoutSSH
-
 type PasswordCheckoutSSHPrivilegeModel struct {
 	PasswordCheckoutSSH types.Bool `tfsdk:"password_checkout_ssh"`
 }
@@ -35,18 +33,20 @@ func PasswordCheckoutSSHPrivilegeAttrTypes() map[string]attr.Type {
 
 func PasswordCheckoutSSHPrivilegeFromModelToSDK(_ context.Context, in *PasswordCheckoutSSHPrivilegeModel) (*pam.SecurityPolicyPasswordCheckoutSSHPrivilege, diag.Diagnostics) {
 	var out pam.SecurityPolicyPasswordCheckoutSSHPrivilege
+	var diags diag.Diagnostics
+
 	out.Type = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_SSH
 
 	if !in.PasswordCheckoutSSH.IsNull() && !in.PasswordCheckoutSSH.IsUnknown() {
 		out.PasswordCheckoutSsh = in.PasswordCheckoutSSH.ValueBool()
 	}
-	return &out, nil
+	return &out, diags
 }
 
 func PasswordCheckoutSSHPrivilegeFromSDKToModel(_ context.Context, in *pam.SecurityPolicyPasswordCheckoutSSHPrivilege) (*PasswordCheckoutSSHPrivilegeModel, diag.Diagnostics) {
 	var out PasswordCheckoutSSHPrivilegeModel
-	out.PasswordCheckoutSSH = types.BoolValue(in.PasswordCheckoutSsh)
-	return &out, nil
-}
+	var diags diag.Diagnostics
 
-// End SecurityPolicyPasswordCheckoutSSH
+	out.PasswordCheckoutSSH = types.BoolValue(in.PasswordCheckoutSsh)
+	return &out, diags
+}

@@ -2,6 +2,7 @@ package convert
 
 import (
 	"context"
+
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -55,6 +56,7 @@ func SecurityPolicyRuleAttrTypes() map[string]attr.Type {
 
 func SecurityPolicyRuleFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleModel) (*pam.SecurityPolicyRule, diag.Diagnostics) {
 	var out pam.SecurityPolicyRule
+	var diags diag.Diagnostics
 
 	out.ResourceType = pam.SecurityPolicyRuleResourceType(in.ResourceType.ValueString())
 
@@ -63,24 +65,28 @@ func SecurityPolicyRuleFromModelToSDK(ctx context.Context, in *SecurityPolicyRul
 	}
 
 	if !in.ResourceSelector.IsNull() && !in.ResourceSelector.IsUnknown() {
-		if outSelector, diags := SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx, in.ResourceSelector); diags.HasError() {
+		outSelector, d := SecurityPolicyRuleResourceSelectorFromModelToSDK(ctx, in.ResourceSelector)
+		diags.Append(d...)
+		if diags.HasError() {
 			return nil, diags
-		} else {
-			out.ResourceSelector = *outSelector
 		}
+		out.ResourceSelector = *outSelector
 	}
 
 	if !in.Privileges.IsNull() && len(in.Privileges.Elements()) > 0 {
 		privilegesModel := make([]SecurityPolicyRulePrivilegeContainerModel, 0, len(in.Privileges.Elements()))
-		if diags := in.Privileges.ElementsAs(ctx, &privilegesModel, false); diags.HasError() {
+		diags.Append(in.Privileges.ElementsAs(ctx, &privilegesModel, false)...)
+		if diags.HasError() {
 			return nil, diags
 		}
+
 		for _, privilege := range privilegesModel {
-			if outPrivilege, diags := SecurityPolicyRulePrivilegeContainerFromModelToSDK(ctx, &privilege); diags.HasError() {
+			outPrivilege, d := SecurityPolicyRulePrivilegeContainerFromModelToSDK(ctx, &privilege)
+			diags.Append(d...)
+			if diags.HasError() {
 				return nil, diags
-			} else {
-				out.Privileges = append(out.Privileges, *outPrivilege)
 			}
+			out.Privileges = append(out.Privileges, *outPrivilege)
 		}
 	}
 
@@ -90,66 +96,77 @@ func SecurityPolicyRuleFromModelToSDK(ctx context.Context, in *SecurityPolicyRul
 
 	if !in.Conditions.IsNull() && len(in.Conditions.Elements()) > 0 {
 		conditionsModel := make([]SecurityPolicyRuleConditionContainerModel, 0, len(in.Conditions.Elements()))
-		if diags := in.Conditions.ElementsAs(ctx, &conditionsModel, false); diags.HasError() {
+		diags.Append(in.Conditions.ElementsAs(ctx, &conditionsModel, false)...)
+		if diags.HasError() {
 			return nil, diags
 		}
 		for _, condition := range conditionsModel {
-			if outCondition, diags := SecurityPolicyRuleConditionContainerFromModelToSDK(ctx, &condition); diags.HasError() {
+			outCondition, d := SecurityPolicyRuleConditionContainerFromModelToSDK(ctx, &condition)
+			diags.Append(d...)
+			if diags.HasError() {
 				return nil, diags
-			} else {
-				out.Conditions = append(out.Conditions, *outCondition)
 			}
+			out.Conditions = append(out.Conditions, *outCondition)
+
 		}
 	}
-
-	return &out, nil
+	return &out, diags
 }
 
 func SecurityPolicyRuleFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRule) (*SecurityPolicyRuleModel, diag.Diagnostics) {
 	var out SecurityPolicyRuleModel
+	var diags diag.Diagnostics
 
 	out.Name = types.StringValue(in.Name)
 	out.ResourceType = types.StringValue(string(in.ResourceType))
 
-	if outSelector, diags := SecurityPolicyRuleResourceSelectorFromSDKToModel(ctx, &in.ResourceSelector); diags.HasError() {
+	outSelector, d := SecurityPolicyRuleResourceSelectorFromSDKToModel(ctx, &in.ResourceSelector)
+	diags.Append(d...)
+	if diags.HasError() {
 		return nil, diags
-	} else {
-		out.ResourceSelector = *outSelector
 	}
+	out.ResourceSelector = *outSelector
 
 	var outPrivileges []SecurityPolicyRulePrivilegeContainerModel
 	for _, privilege := range in.Privileges {
-		if outPrivilege, diags := SecurityPolicyRulePrivilegeContainerFromSDKToModel(ctx, &privilege); diags.HasError() {
+		outPrivilege, d := SecurityPolicyRulePrivilegeContainerFromSDKToModel(ctx, &privilege)
+		diags.Append(d...)
+		if diags.HasError() {
 			return nil, diags
-		} else {
-			outPrivileges = append(outPrivileges, *outPrivilege)
 		}
+		outPrivileges = append(outPrivileges, *outPrivilege)
+
 	}
 
-	if listValue, diags := types.ListValueFrom(ctx, types.ObjectType{AttrTypes: SecurityPolicyRulePrivilegeContainerAttrTypes()}, outPrivileges); diags.HasError() {
+	listValue, d := types.ListValueFrom(ctx, types.ObjectType{AttrTypes: SecurityPolicyRulePrivilegeContainerAttrTypes()}, outPrivileges)
+	diags.Append(d...)
+	if diags.HasError() {
 		return nil, diags
-	} else {
-		out.Privileges = listValue
 	}
+
+	out.Privileges = listValue
 
 	out.OverrideCheckoutDurationInSeconds = types.Int64PointerValue(in.OverrideCheckoutDurationInSeconds.Get())
 
 	if len(in.Conditions) > 0 {
 		var conditions []SecurityPolicyRuleConditionContainerModel
 		for _, condition := range in.Conditions {
-			if outCondition, diags := SecurityPolicyRuleConditionContainerFromSDKToModel(ctx, &condition); diags.HasError() {
+			outCondition, d := SecurityPolicyRuleConditionContainerFromSDKToModel(ctx, &condition)
+			diags.Append(d...)
+			if diags.HasError() {
 				return nil, diags
-			} else {
-				conditions = append(conditions, *outCondition)
 			}
+			conditions = append(conditions, *outCondition)
 		}
-		if outConditions, diags := types.ListValueFrom(ctx, types.ObjectType{AttrTypes: SecurityPolicyRuleConditionContainerAttrTypes()}, conditions); diags.HasError() {
+		outConditions, d := types.ListValueFrom(ctx, types.ObjectType{AttrTypes: SecurityPolicyRuleConditionContainerAttrTypes()}, conditions)
+		diags.Append(d...)
+		if diags.HasError() {
 			return nil, diags
-		} else {
-			out.Conditions = outConditions
 		}
+		out.Conditions = outConditions
+
 	} else {
 		out.Conditions = types.ListNull(types.ObjectType{AttrTypes: SecurityPolicyRuleConditionContainerAttrTypes()})
 	}
-	return &out, nil
+	return &out, diags
 }

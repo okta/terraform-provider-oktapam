@@ -34,31 +34,36 @@ func SecurityPolicyRuleConditionContainerAttrTypes() map[string]attr.Type {
 	}
 }
 func SecurityPolicyRuleConditionContainerFromModelToSDK(ctx context.Context, in *SecurityPolicyRuleConditionContainerModel) (*pam.SecurityPolicyRuleConditionContainer, diag.Diagnostics) {
-
 	var outType pam.SecurityPolicyRuleConditionType
 	var outCondition pam.SecurityPolicyRuleCondition
+	var diags diag.Diagnostics
 
 	if in.ConditionsMFA != nil {
-		if outVal, diags := ConditionsMFAFromModelToSDK(ctx, in.ConditionsMFA); diags.HasError() {
+		outVal, d := ConditionsMFAFromModelToSDK(ctx, in.ConditionsMFA)
+		diags.Append(d...)
+		if diags.HasError() {
 			return nil, diags
-		} else {
-			outType = pam.SecurityPolicyRuleConditionType_MFA
-			outCondition.ConditionsMFA = outVal
 		}
+		outType = pam.SecurityPolicyRuleConditionType_MFA
+		outCondition.ConditionsMFA = outVal
+
 	} else if in.ConditionsAccessRequests != nil {
-		if outVal, diags := ConditionsAccessRequestFromModelToSDK(ctx, in.ConditionsAccessRequests); diags.HasError() {
+		outVal, d := ConditionsAccessRequestFromModelToSDK(ctx, in.ConditionsAccessRequests)
+		diags.Append(d...)
+		if diags.HasError() {
 			return nil, diags
-		} else {
-			outType = pam.SecurityPolicyRuleConditionType_ACCESS_REQUEST
-			outCondition.ConditionsAccessRequests = outVal
 		}
+		outType = pam.SecurityPolicyRuleConditionType_ACCESS_REQUEST
+		outCondition.ConditionsAccessRequests = outVal
+
 	} else if in.ConditionsGateway != nil {
-		if outVal, diags := ConditionsGatewayFromModelToSDK(ctx, in.ConditionsGateway); diags.HasError() {
+		outVal, d := ConditionsGatewayFromModelToSDK(ctx, in.ConditionsGateway)
+		diags.Append(d...)
+		if diags.HasError() {
 			return nil, diags
-		} else {
-			outType = pam.SecurityPolicyRuleConditionType_GATEWAY
-			outCondition.ConditionsGateway = outVal
 		}
+		outType = pam.SecurityPolicyRuleConditionType_GATEWAY
+		outCondition.ConditionsGateway = outVal
 	} else {
 		panic("missing stanza from SecurityPolicyRuleConditionContainerFromModelToSDK")
 	}
@@ -67,11 +72,12 @@ func SecurityPolicyRuleConditionContainerFromModelToSDK(ctx context.Context, in 
 		SetConditionValue(outCondition).
 		SetConditionType(outType)
 
-	return out, nil
+	return out, diags
 }
 
 func SecurityPolicyRuleConditionContainerFromSDKToModel(ctx context.Context, in *pam.SecurityPolicyRuleConditionContainer) (*SecurityPolicyRuleConditionContainerModel, diag.Diagnostics) {
 	var out SecurityPolicyRuleConditionContainerModel
+	var diags diag.Diagnostics
 
 	if !in.HasConditionType() {
 		panic("TODO(ja)")
@@ -79,27 +85,31 @@ func SecurityPolicyRuleConditionContainerFromSDKToModel(ctx context.Context, in 
 
 	switch *in.ConditionType {
 	case pam.SecurityPolicyRuleConditionType_MFA:
-		if outModel, diags := ConditionsMFAFromSDKToModel(ctx, in.ConditionValue.ConditionsMFA); diags.HasError() {
+		outModel, d := ConditionsMFAFromSDKToModel(ctx, in.ConditionValue.ConditionsMFA)
+		diags.Append(d...)
+		if diags.HasError() {
 			return nil, diags
-		} else {
-			out.ConditionsMFA = outModel
 		}
+		out.ConditionsMFA = outModel
+
 	case pam.SecurityPolicyRuleConditionType_ACCESS_REQUEST:
-		if outModel, diags := ConditionsAccessRequestFromSDKToModel(ctx, in.ConditionValue.ConditionsAccessRequests); diags.HasError() {
+		outModel, d := ConditionsAccessRequestFromSDKToModel(ctx, in.ConditionValue.ConditionsAccessRequests)
+		diags.Append(d...)
+		if diags.HasError() {
 			return nil, diags
-		} else {
-			out.ConditionsAccessRequests = outModel
 		}
+		out.ConditionsAccessRequests = outModel
 	case pam.SecurityPolicyRuleConditionType_GATEWAY:
-		if outModel, diags := ConditionsGatewayFromSDKToModel(ctx, in.ConditionValue.ConditionsGateway); diags.HasError() {
+		outModel, d := ConditionsGatewayFromSDKToModel(ctx, in.ConditionValue.ConditionsGateway)
+		diags.Append(d...)
+		if diags.HasError() {
 			return nil, diags
-		} else {
-			out.ConditionsGateway = outModel
 		}
+		out.ConditionsGateway = outModel
 	default:
 		panic("missing condition type stanza in SecurityPolicyRuleConditionContainerFromSDKToModel")
 	}
-	return &out, nil
+	return &out, diags
 }
 
 type ConditionsAccessRequestsModel struct {
@@ -129,6 +139,7 @@ func ConditionsAccessRequestsAttrTypes() map[string]attr.Type {
 
 func ConditionsAccessRequestFromSDKToModel(_ context.Context, in *pam.ConditionsAccessRequests) (*ConditionsAccessRequestsModel, diag.Diagnostics) {
 	var out ConditionsAccessRequestsModel
+	var diags diag.Diagnostics
 
 	if val, ok := in.GetRequestTypeNameOk(); ok {
 		out.RequestTypeName = types.StringPointerValue(val)
@@ -141,11 +152,12 @@ func ConditionsAccessRequestFromSDKToModel(_ context.Context, in *pam.Conditions
 	if val, ok := in.GetExpiresAfterSecondsOk(); ok {
 		out.ExpiresAfterSeconds = types.Int32PointerValue(val)
 	}
-	return &out, nil
+	return &out, diags
 }
 
 func ConditionsAccessRequestFromModelToSDK(_ context.Context, in *ConditionsAccessRequestsModel) (*pam.ConditionsAccessRequests, diag.Diagnostics) {
 	var out pam.ConditionsAccessRequests
+	var diags diag.Diagnostics
 
 	out.Type = string(pam.SecurityPolicyRuleConditionType_ACCESS_REQUEST)
 	if !in.RequestTypeId.IsUnknown() && !in.RequestTypeId.IsNull() {
@@ -160,7 +172,7 @@ func ConditionsAccessRequestFromModelToSDK(_ context.Context, in *ConditionsAcce
 		out.SetExpiresAfterSeconds(in.ExpiresAfterSeconds.ValueInt32())
 	}
 
-	return &out, nil
+	return &out, diags
 }
 
 type ConditionsGatewayModel struct {
@@ -187,6 +199,7 @@ func ConditionsGatewayAttrTypes() map[string]attr.Type {
 
 func ConditionsGatewayFromSDKToModel(_ context.Context, in *pam.ConditionsGateway) (*ConditionsGatewayModel, diag.Diagnostics) {
 	var out ConditionsGatewayModel
+	var diags diag.Diagnostics
 
 	if val, ok := in.GetTrafficForwardingOk(); ok {
 		out.TrafficForwarding = types.BoolPointerValue(val)
@@ -194,11 +207,12 @@ func ConditionsGatewayFromSDKToModel(_ context.Context, in *pam.ConditionsGatewa
 	if val, ok := in.GetSessionRecordingOk(); ok {
 		out.SessionRecording = types.BoolPointerValue(val)
 	}
-	return &out, nil
+	return &out, diags
 }
 
 func ConditionsGatewayFromModelToSDK(_ context.Context, in *ConditionsGatewayModel) (*pam.ConditionsGateway, diag.Diagnostics) {
 	var out pam.ConditionsGateway
+	var diags diag.Diagnostics
 
 	out.Type = string(pam.SecurityPolicyRuleConditionType_GATEWAY)
 	if !in.TrafficForwarding.IsUnknown() && !in.TrafficForwarding.IsNull() {
@@ -208,7 +222,7 @@ func ConditionsGatewayFromModelToSDK(_ context.Context, in *ConditionsGatewayMod
 	if !in.SessionRecording.IsUnknown() && !in.SessionRecording.IsNull() {
 		out.SessionRecording = in.SessionRecording.ValueBoolPointer()
 	}
-	return &out, nil
+	return &out, diags
 }
 
 type ConditionsMFAModel struct {
@@ -235,6 +249,7 @@ func ConditionsMFAAttrTypes() map[string]attr.Type {
 
 func ConditionsMFAFromSDKToModel(_ context.Context, in *pam.ConditionsMFA) (*ConditionsMFAModel, diag.Diagnostics) {
 	var out ConditionsMFAModel
+	var diags diag.Diagnostics
 
 	if val, ok := in.GetReAuthFrequencyInSecondsOk(); ok {
 		out.ReAuthFrequencyInSeconds = types.Int32PointerValue(val)
@@ -245,17 +260,18 @@ func ConditionsMFAFromSDKToModel(_ context.Context, in *pam.ConditionsMFA) (*Con
 		out.AcrValues = types.StringValue(valStr)
 	}
 
-	return &out, nil
+	return &out, diags
 }
 func ConditionsMFAFromModelToSDK(_ context.Context, in *ConditionsMFAModel) (*pam.ConditionsMFA, diag.Diagnostics) {
 	var out pam.ConditionsMFA
+	var diags diag.Diagnostics
 
 	out.Type = string(pam.SecurityPolicyRuleConditionType_MFA)
 	if !in.AcrValues.IsUnknown() && !in.AcrValues.IsNull() {
 		val, err := pam.NewConditionsMFAACRValuesFromValue(in.AcrValues.ValueString())
 		if err != nil {
-			//TODO(ja) fixme
-			panic("fixme")
+			diags.AddError("could not convert Terraform ConditionsMFAModel to SDK ConditionsMFA", err.Error())
+			return nil, diags
 		}
 		out.SetAcrValues(*val)
 	}
@@ -264,5 +280,5 @@ func ConditionsMFAFromModelToSDK(_ context.Context, in *ConditionsMFAModel) (*pa
 		out.SetReAuthFrequencyInSeconds(in.ReAuthFrequencyInSeconds.ValueInt32())
 	}
 
-	return &out, nil
+	return &out, diags
 }

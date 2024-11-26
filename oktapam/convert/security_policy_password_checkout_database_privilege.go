@@ -10,8 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// Begin SecurityPolicyPasswordCheckoutDatabase
-
 type PasswordCheckoutDatabasePrivilegeModel struct {
 	PasswordCheckoutDatabase types.Bool `tfsdk:"password_checkout_database"`
 }
@@ -35,21 +33,23 @@ func PasswordCheckoutDatabasePrivilegeAttrTypes() map[string]attr.Type {
 
 func PasswordCheckoutDatabasePrivilegeFromModelToSDK(_ context.Context, in *PasswordCheckoutDatabasePrivilegeModel) (*pam.SecurityPolicyPasswordCheckoutDatabasePrivilege, diag.Diagnostics) {
 	var out pam.SecurityPolicyPasswordCheckoutDatabasePrivilege
+	var diags diag.Diagnostics
+
 	out.Type = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_DATABASE
 
 	if !in.PasswordCheckoutDatabase.IsNull() && !in.PasswordCheckoutDatabase.IsUnknown() {
 		out.PasswordCheckoutDatabase = in.PasswordCheckoutDatabase.ValueBool()
 	}
 
-	return &out, nil
+	return &out, diags
 }
 
 func PasswordCheckoutDatabasePrivilegeFromSDKToModel(_ context.Context, in *pam.SecurityPolicyPasswordCheckoutDatabasePrivilege) (*PasswordCheckoutDatabasePrivilegeModel, diag.Diagnostics) {
 	var out PasswordCheckoutDatabasePrivilegeModel
+	var diags diag.Diagnostics
+
 	if val, ok := in.GetPasswordCheckoutDatabaseOk(); ok {
 		out.PasswordCheckoutDatabase = types.BoolPointerValue(val)
 	}
-	return &out, nil
+	return &out, diags
 }
-
-// End SecurityPolicyPasswordCheckoutDatabase

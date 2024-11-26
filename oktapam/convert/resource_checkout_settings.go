@@ -54,6 +54,7 @@ func ResourceCheckoutSettingsSchemaAttributes(mergeIntoMap map[string]schema.Att
 
 func ResourceCheckoutSettingsFromModelToSDK(ctx context.Context, in *ResourceCheckoutSettingsModel) (*pam.ResourceCheckoutSettings, diag.Diagnostics) {
 	var out pam.ResourceCheckoutSettings
+	var diags diag.Diagnostics
 
 	if !in.CheckoutRequired.IsNull() && !in.CheckoutRequired.IsUnknown() {
 		out.CheckoutRequired = in.CheckoutRequired.ValueBool()
@@ -63,21 +64,24 @@ func ResourceCheckoutSettingsFromModelToSDK(ctx context.Context, in *ResourceChe
 	}
 
 	if !in.IncludeList.IsNull() && !in.IncludeList.IsUnknown() {
-		if diags := in.IncludeList.ElementsAs(ctx, &out.IncludeList, false); diags.HasError() {
+		diags.Append(in.IncludeList.ElementsAs(ctx, &out.IncludeList, false)...)
+		if diags.HasError() {
 			return nil, diags
 		}
 	}
 
 	if !in.ExcludeList.IsNull() && !in.ExcludeList.IsUnknown() {
-		if diags := in.ExcludeList.ElementsAs(ctx, &out.ExcludeList, false); diags.HasError() {
+		diags.Append(in.ExcludeList.ElementsAs(ctx, &out.ExcludeList, false)...)
+		if diags.HasError() {
 			return nil, diags
 		}
 	}
-	return &out, nil
+	return &out, diags
 }
 
 func ResourceCheckoutSettingsFromSDKToModel(ctx context.Context, in *pam.ResourceCheckoutSettings) (*ResourceCheckoutSettingsModel, diag.Diagnostics) {
 	var out ResourceCheckoutSettingsModel
+	var diags diag.Diagnostics
 
 	if val, ok := in.GetCheckoutRequiredOk(); ok {
 		out.CheckoutRequired = types.BoolPointerValue(val)
@@ -87,16 +91,19 @@ func ResourceCheckoutSettingsFromSDKToModel(ctx context.Context, in *pam.Resourc
 		out.CheckoutDurationInSeconds = types.Int32PointerValue(val)
 	}
 
-	if includeList, diags := types.ListValueFrom(ctx, types.StringType, in.IncludeList); diags.HasError() {
+	includeList, d := types.ListValueFrom(ctx, types.StringType, in.IncludeList)
+	diags.Append(d...)
+	if diags.HasError() {
 		return nil, diags
-	} else {
-		out.IncludeList = includeList
 	}
+	out.IncludeList = includeList
 
-	if excludeList, diags := types.ListValueFrom(ctx, types.StringType, in.ExcludeList); diags.HasError() {
+	excludeList, d := types.ListValueFrom(ctx, types.StringType, in.ExcludeList)
+	diags.Append(d...)
+	if diags.HasError() {
 		return nil, diags
-	} else {
-		out.ExcludeList = excludeList
 	}
-	return &out, nil
+	out.ExcludeList = excludeList
+
+	return &out, diags
 }
