@@ -8,22 +8,23 @@ resource "oktapam_security_policy_v2" "devenv_security_policy" {
   }
   # rule with vaulted account and user level access
   rules = [
+    # rule with ssh privilege and admin + mfa every 1hr
     {
-      name          = "linux server account and user level access"
+      name          = "linux server account and admin level access"
       resource_type = "server_based_resource"
       resource_selector = {
         server_based_resource = {
           selectors = [
             {
               server_label = {
-                account_selector_type = "username"
-                account_selector = {
-                  usernames = ["root", "pamadmin"]
-                }
                 server_selector = {
                   labels = {
                     "system.os_type" = "linux"
                   }
+                }
+                account_selector_type = "username"
+                account_selector = {
+                  usernames = ["root", "pamadmin"]
                 }
               }
             }
@@ -32,18 +33,20 @@ resource "oktapam_security_policy_v2" "devenv_security_policy" {
       }
 
       privileges = [
-        { /* this is invalid*/ },
         {
           password_checkout_ssh = {
             password_checkout_ssh = true
           }
-        },
-        {
+        }, {
           principal_account_ssh = {
             principal_account_ssh   = true
-            admin_level_permissions = false
+            admin_level_permissions = true
           }
         }
+      ]
+
+      conditions = [
+        { /* this is invalid */ }
       ]
     }
   ]

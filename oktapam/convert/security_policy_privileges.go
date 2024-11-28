@@ -116,11 +116,11 @@ func SecurityPolicyRulePrivilegeContainerFromModelToSDK(ctx context.Context, in 
 		privilegeType = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_SSH
 
 	} else {
-		diags.AddError("unknown or missing privilege listed in policy",
+		diags.AddError("unknown or missing privilege listed in policy rule",
 			"One of the privileges listed in this policy is either incorrect "+
 				"or unknown to this version of the OktaPAM Terraform provider. Please make "+
-				"sure each of of your privileges are correct, and you're using the latest available version of "+
-				"the OktaPAM Terraform provider. If you've done both of these things, it could be that the "+
+				"sure each of your privileges are correct, and you're using the latest available version of "+
+				"the OktaPAM Terraform provider. If you've done these things, it could be that the "+
 				"privilege you're using is not yet supported and you are encouraged to file an issue in our GitHub repository.")
 		return nil, diags
 	}

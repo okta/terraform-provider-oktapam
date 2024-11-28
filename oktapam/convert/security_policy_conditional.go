@@ -65,7 +65,13 @@ func SecurityPolicyRuleConditionContainerFromModelToSDK(ctx context.Context, in 
 		outType = pam.SecurityPolicyRuleConditionType_GATEWAY
 		outCondition.ConditionsGateway = outVal
 	} else {
-		diags.AddError("missing stanza in OktaPAM provider", "the function SecurityPolicyRuleConditionContainerFromModelToSDK is missing a stanza")
+		diags.AddError("unknown or missing condition listed in policy rule",
+			"One of the conditions listed in this policy is either incorrect "+
+				"or unknown to this version of the OktaPAM Terraform Provider. Please make "+
+				"sure each of your conditions are correct, and you're using the latest available version of "+
+				"the OktaPAM Terraform provider. If you've done these things, it could be that the "+
+				"privilege you're using is not yet supported and you are encouraged to file an issue in "+
+				"our GitHub repository.")
 		return nil, diags
 	}
 
