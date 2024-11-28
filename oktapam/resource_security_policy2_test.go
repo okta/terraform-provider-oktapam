@@ -165,6 +165,26 @@ func TestSecurityPolicyLoopback_IndividualServerAccount(t *testing.T) {
 	checkSecurityPolicyJSON(t, entities, "testdata/individual_server_account_selector.json")
 }
 
+// TestSecurityPolicyLoopback_InvalidPrivileges1 ensures that at least one privilege must be put in the privilege
+// container.
+func TestSecurityPolicyLoopback_InvalidPrivileges1(t *testing.T) {
+	var entities = make(map[string]any)
+
+	setupHTTPMock(t, entities)
+	resource.Test(t, resource.TestCase{
+		IsUnitTest:               true,
+		ProtoV6ProviderFactories: httpMockTestV6ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:  config.StaticFile("testdata/invalid_privileges_1.tf"),
+				ExpectError: regexp.MustCompile(".*privilege listed in policy.*"),
+			},
+		},
+	})
+
+	//checkSecurityPolicyJSON(t, entities, "testdata/individual_server_account_selector.json")
+}
+
 // checkSecurityPolicyJSON digs through the entities to find the first pam.SecurityPolicy and ensures
 // its contents match the contents of the specified file. This is a bit brittle, do expect things to break
 // if you change the .tf file.
