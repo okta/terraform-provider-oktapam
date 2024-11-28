@@ -166,7 +166,7 @@ func TestSecurityPolicyLoopback_IndividualServerAccount(t *testing.T) {
 }
 
 // TestSecurityPolicyLoopback_InvalidPrivileges1 ensures that at least one privilege must be put in the privilege
-// container.
+// container - in this case we have an empty stanza for a privilege container, which errors out.
 func TestSecurityPolicyLoopback_InvalidPrivileges1(t *testing.T) {
 	var entities = make(map[string]any)
 
