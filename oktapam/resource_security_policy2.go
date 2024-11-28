@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
