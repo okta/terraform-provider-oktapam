@@ -165,6 +165,60 @@ func TestSecurityPolicyLoopback_IndividualServerAccount(t *testing.T) {
 	checkSecurityPolicyJSON(t, entities, "testdata/individual_server_account_selector.json")
 }
 
+// TestSecurityPolicyLoopback_InvalidPrivileges1 ensures that at least one privilege must be put in the privilege
+// container - in this case we have an empty stanza for a privilege container, which errors out.
+func TestSecurityPolicyLoopback_InvalidPrivileges1(t *testing.T) {
+	var entities = make(map[string]any)
+
+	setupHTTPMock(t, entities)
+	resource.Test(t, resource.TestCase{
+		IsUnitTest:               true,
+		ProtoV6ProviderFactories: httpMockTestV6ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:  config.StaticFile("testdata/invalid_privileges_1.tf"),
+				ExpectError: regexp.MustCompile(".*privilege listed in policy rule.*"),
+			},
+		},
+	})
+}
+
+// TestSecurityPolicyLoopback_InvalidConditions1 similar to privileges, an empty stanza as a condition in the
+// conditions container is invalid in a policy rule. This then errors out.
+func TestSecurityPolicyLoopback_InvalidConditions1(t *testing.T) {
+	var entities = make(map[string]any)
+
+	setupHTTPMock(t, entities)
+	resource.Test(t, resource.TestCase{
+		IsUnitTest:               true,
+		ProtoV6ProviderFactories: httpMockTestV6ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:  config.StaticFile("testdata/invalid_conditions_1.tf"),
+				ExpectError: regexp.MustCompile(".*condition listed in policy rule.*"),
+			},
+		},
+	})
+}
+
+// TestSecurityPolicyLoopback_InvalidServerBasedSubSelectors1 similar to conditions and privileges, an empty stanza
+// as a "server based sub selector" is invalid. This test ensures it errors out if one is found.
+func TestSecurityPolicyLoopback_InvalidServerBasedSubSelectors1(t *testing.T) {
+	var entities = make(map[string]any)
+
+	setupHTTPMock(t, entities)
+	resource.Test(t, resource.TestCase{
+		IsUnitTest:               true,
+		ProtoV6ProviderFactories: httpMockTestV6ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:  config.StaticFile("testdata/invalid_server_based_sub_selector_1.tf"),
+				ExpectError: regexp.MustCompile(".*selector listed in policy rule.*"),
+			},
+		},
+	})
+}
+
 // checkSecurityPolicyJSON digs through the entities to find the first pam.SecurityPolicy and ensures
 // its contents match the contents of the specified file. This is a bit brittle, do expect things to break
 // if you change the .tf file.

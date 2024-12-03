@@ -55,11 +55,14 @@ func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourc
 	var out pam.SecurityPolicy
 	var diags diag.Diagnostics
 
-	//TODO(ja) do this pattern everywhere
 	if !in.ID.IsNull() && !in.ID.IsUnknown() {
 		out.Id = in.ID.ValueStringPointer()
 	}
-	out.Name = in.Name.ValueString()
+
+	if !in.Name.IsNull() && !in.Name.IsUnknown() {
+		out.Name = in.Name.ValueString()
+	}
+
 	if !in.Type.IsNull() && !in.Type.IsUnknown() {
 		out.SetType(pam.SecurityPolicyType(in.Type.ValueString()))
 	}

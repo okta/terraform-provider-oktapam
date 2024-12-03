@@ -65,7 +65,14 @@ func SecurityPolicyRuleConditionContainerFromModelToSDK(ctx context.Context, in 
 		outType = pam.SecurityPolicyRuleConditionType_GATEWAY
 		outCondition.ConditionsGateway = outVal
 	} else {
-		panic("missing stanza from SecurityPolicyRuleConditionContainerFromModelToSDK")
+		diags.AddError("unknown or missing condition listed in policy rule",
+			"One of the conditions listed in this policy is either incorrect "+
+				"or unknown to this version of the OktaPAM Terraform Provider. Please make "+
+				"sure each of your conditions are correct, and you're using the latest available version of "+
+				"the OktaPAM Terraform provider. If you've done these things, it could be that the "+
+				"privilege you're using is not yet supported and you are encouraged to file an issue in "+
+				"our GitHub repository.")
+		return nil, diags
 	}
 
 	out := pam.NewSecurityPolicyRuleConditionContainer().
@@ -80,7 +87,8 @@ func SecurityPolicyRuleConditionContainerFromSDKToModel(ctx context.Context, in 
 	var diags diag.Diagnostics
 
 	if !in.HasConditionType() {
-		panic("TODO(ja)")
+		diags.AddError("No ConditionType sent from platform", "A ConditionType is required to convert a Condition")
+		return nil, diags
 	}
 
 	switch *in.ConditionType {
@@ -107,7 +115,8 @@ func SecurityPolicyRuleConditionContainerFromSDKToModel(ctx context.Context, in 
 		}
 		out.ConditionsGateway = outModel
 	default:
-		panic("missing condition type stanza in SecurityPolicyRuleConditionContainerFromSDKToModel")
+		diags.AddError("missing stanza in OktaPAM provider", "missing condition type stanza in SecurityPolicyRuleConditionContainerFromSDKToModel")
+		return nil, diags
 	}
 	return &out, diags
 }
@@ -160,6 +169,7 @@ func ConditionsAccessRequestFromModelToSDK(_ context.Context, in *ConditionsAcce
 	var diags diag.Diagnostics
 
 	out.Type = string(pam.SecurityPolicyRuleConditionType_ACCESS_REQUEST)
+
 	if !in.RequestTypeId.IsUnknown() && !in.RequestTypeId.IsNull() {
 		out.SetRequestTypeId(in.RequestTypeId.ValueString())
 	}

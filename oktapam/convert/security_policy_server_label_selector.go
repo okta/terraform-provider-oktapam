@@ -82,7 +82,8 @@ func ServerLabelAccountSelectorFromSDKToModel(ctx context.Context, in *pam.Selec
 		out.Usernames = types.ListNull(types.StringType)
 		// NOTE(ja): We require API callers to provide an empty struct.
 	default:
-		panic("missing stanza in ServerLabelAccountSelectorFromSDKToModel")
+		diags.AddError("missing stanza in OktaPAM provider", "missing stanza in ServerLabelAccountSelectorFromSDKToModel")
+		return nil, diags
 	}
 	return &out, diags
 }
@@ -93,12 +94,14 @@ func SelectorServerLabelFromModelToSDK(ctx context.Context, in *SelectorServerLa
 
 	out.Type = string(pam.SecurityPolicyRuleServerBasedResourceSubSelectorType_SERVER_LABEL)
 
-	outSelector, d := ServerLabelServerSelectorFromModelToSDK(ctx, in.ServerSelector)
-	diags.Append(d...)
-	if diags.HasError() {
-		return nil, diags
+	if in.ServerSelector != nil {
+		outSelector, d := ServerLabelServerSelectorFromModelToSDK(ctx, in.ServerSelector)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		out.ServerSelector = *outSelector
 	}
-	out.ServerSelector = *outSelector
 
 	// NOTE: The way this is done is snowflake. AccountSelector is the only place where we have the type on the outside
 	// but also have extra fields, and do a oneOf for the actual AccountSelector. Please don't follow this model.
@@ -107,12 +110,14 @@ func SelectorServerLabelFromModelToSDK(ctx context.Context, in *SelectorServerLa
 		out.AccountSelectorType = pam.SelectorServerLabelAccountSelectorType(in.AccountSelectorType.ValueString())
 	}
 
-	outAccountSelector, d := ServerLabelAccountSelectorFromModelToSDK(ctx, in.AccountSelector)
-	diags.Append(d...)
-	if diags.HasError() {
-		return nil, diags
+	if in.AccountSelector != nil {
+		outAccountSelector, d := ServerLabelAccountSelectorFromModelToSDK(ctx, in.AccountSelector)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		out.AccountSelector = *outAccountSelector
 	}
-	out.AccountSelector = *outAccountSelector
 
 	return &out, diags
 }
@@ -124,9 +129,11 @@ func ServerLabelAccountSelectorFromModelToSDK(ctx context.Context, in *ServerLab
 		var outUsername pam.SecurityPolicyUsernameAccountSelector
 		outUsername.Type = pam.PtrString(string(pam.SelectorServerLabelAccountSelectorType_USERNAME))
 		usernameModel := make([]types.String, 0, len(in.Usernames.Elements()))
-		if diags := in.Usernames.ElementsAs(ctx, &usernameModel, false); diags.HasError() {
+		diags.Append(in.Usernames.ElementsAs(ctx, &usernameModel, false)...)
+		if diags.HasError() {
 			return nil, diags
 		}
+
 		for _, elem := range usernameModel {
 			if !elem.IsNull() && !elem.IsUnknown() {
 				outUsername.Usernames = append(outUsername.Usernames, elem.ValueString())
