@@ -1,6 +1,6 @@
 # Terraform Provider for Okta's Privileged Access Management (Okta's PAM)
 
-## Requirements 
+## Requirements
 
 - [Terraform](https://www.terraform.io/downloads.html) 1.0 and later.
 - [Go](https://golang.org/doc/install) 1.21+ (to build the provider plugin)

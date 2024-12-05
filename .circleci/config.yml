@@ -38,6 +38,10 @@ jobs:
           command: |
             make build
       - run:
+          name: Auto fail
+          command: |
+            exit 1
+      - run:
           name: Run Reversing Labs Wrapper Scanner
           command: |
             
