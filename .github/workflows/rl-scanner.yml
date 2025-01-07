@@ -1,0 +1,126 @@
+name: Post-Release Scan
+
+on:
+  push:
+    branches:
+      - hjet/add-rl-scan
+  workflow_call:
+    inputs:
+      version_tag:
+        type: string
+        description: "Release version to scan"
+        required: true
+        default: "v0.5.3"
+    secrets:
+      RLSECURE_LICENSE:
+        required: true
+      RLSECURE_SITE_KEY:
+        required: true
+      SIGNAL_HANDLER_TOKEN:
+        required: true
+      PRODSEC_TOOLS_USER:
+        required: true
+      PRODSEC_TOOLS_TOKEN:
+        required: true
+      PRODSEC_TOOLS_ARN:
+        required: true
+
+env:
+  VERSION_TAG: ${{ inputs.version_tag || 'v0.5.3' }}
+
+jobs:
+  verify-release:
+    runs-on: ubuntu-latest
+    outputs:
+      zips: ${{ steps.gather-zips.outputs.zips }}
+
+    steps:
+      - name: Confirm gh CLI is installed
+        run: |
+          which gh
+          gh --version
+
+      - name: Download latest release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release download $VERSION_TAG \
+            --repo "${{ github.repository }}" \
+            --clobber
+
+          echo "Downloaded all release files:"
+          ls -l || echo "No files downloaded."
+
+      - name: Verify checksums
+        run: |
+          CHECKSUM_FILE=$(ls -1 *_SHA256SUMS 2>/dev/null || true)
+          if [ -z "$CHECKSUM_FILE" ]; then
+            echo "No SHA256SUMS file found; failing the job..."
+            exit 1
+          fi
+
+          echo "Verifying checksums with $CHECKSUM_FILE..."
+          sha256sum --check "$CHECKSUM_FILE"
+      
+      - name: Gather zip files
+        id: gather-zips
+        run: |
+          ZIPS=$(ls -1 *.zip 2>/dev/null)
+          if [ -z "$ZIPS" ]; then
+            echo "No ZIP files found to scan; failing..."
+            exit 1
+          fi
+
+          echo "Found ZIP files:"
+          echo "$ZIPS"
+
+          ZIPS_JSON=$(echo "$ZIPS" | jq -R . | jq -s -c .)
+          echo "zips=$ZIPS_JSON" >> $GITHUB_OUTPUT
+      
+      - name: Upload ZIP artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: zips
+          path: "*.zip"
+
+  scan-artifacts:
+    needs: verify-release
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        zip-file: ${{ fromJson(needs.verify-release.outputs.zips) }}
+    steps:
+      - name: Debug scan step
+        run: echo "Now scanning ${{ matrix.zip-file }}"
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Download ZIP artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: zips
+          path: "."
+      
+      - name: List files
+        run: ls -l
+
+      - name: Run RL Scanner
+        id: rl-scan-conclusion
+        uses: ./.github/actions/rl-scanner
+        with:
+          artifact-path: "$(pwd)/${{ matrix.zip-file }}"
+          version: "${{ env.VERSION_TAG }}"
+        env:
+          RLSECURE_LICENSE: ${{ secrets.RLSECURE_LICENSE }}
+          RLSECURE_SITE_KEY: ${{ secrets.RLSECURE_SITE_KEY }}
+          SIGNAL_HANDLER_TOKEN: ${{ secrets.SIGNAL_HANDLER_TOKEN }}
+          PRODSEC_TOOLS_USER: ${{ secrets.PRODSEC_TOOLS_USER }}
+          PRODSEC_TOOLS_TOKEN: ${{ secrets.PRODSEC_TOOLS_TOKEN }}
+          PRODSEC_TOOLS_ARN: ${{ secrets.PRODSEC_TOOLS_ARN }}
+
+      - name: Output scan result
+        run: |
+          # Store the RL Scanner outcome in the GITHUB_ENV with a unique key per zip file
+          echo "scan-status-${{ matrix.zip-file }}=${{ steps.rl-scan-conclusion.outcome }}" >> $GITHUB_ENV
