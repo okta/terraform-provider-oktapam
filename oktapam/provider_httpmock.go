@@ -2,10 +2,14 @@ package oktapam
 
 import (
 	"context"
+	"encoding/json"
 	"log"
+	"net/http"
+	"regexp"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/go-resty/resty/v2"
+	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	diag2 "github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -76,4 +80,129 @@ func httpMockClients() *client.APIClients {
 		},
 		LocalClient: localClient,
 	}
+}
+
+// SetupDefaultMockResponders configures common mock responses for standard resources
+func SetupDefaultMockResponders(groupName string, resourceGroupName string, projectName string) {
+	// Pre-generate UUIDs for consistency
+	groupID := generateUUID(groupName)
+	resourceGroupID := generateUUID(resourceGroupName)
+	projectID := generateUUID(projectName)
+
+	// Group endpoints
+	httpmock.RegisterRegexpResponder("POST",
+		regexp.MustCompile(`/v1/teams/httpmock-test-team/groups`),
+		func(req *http.Request) (*http.Response, error) {
+			var requestBody map[string]interface{}
+			if err := json.NewDecoder(req.Body).Decode(&requestBody); err != nil {
+				return httpmock.NewStringResponse(400, ""), nil
+			}
+			return httpmock.NewJsonResponse(201, map[string]interface{}{
+				"id":   groupID,
+				"name": requestBody["name"].(string),
+			})
+		},
+	)
+
+	httpmock.RegisterRegexpResponder("GET",
+		regexp.MustCompile(`/v1/teams/httpmock-test-team/groups/.*`),
+		func(req *http.Request) (*http.Response, error) {
+			return httpmock.NewJsonResponse(200, map[string]interface{}{
+				"id":   groupID,
+				"name": groupName,
+			})
+		},
+	)
+
+	// Resource Group endpoints
+	httpmock.RegisterRegexpResponder("POST",
+		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups`),
+		func(req *http.Request) (*http.Response, error) {
+			var requestBody map[string]interface{}
+			if err := json.NewDecoder(req.Body).Decode(&requestBody); err != nil {
+				return httpmock.NewStringResponse(400, ""), nil
+			}
+			return httpmock.NewJsonResponse(201, map[string]interface{}{
+				"id":          resourceGroupID,
+				"name":        requestBody["name"].(string),
+				"description": requestBody["description"].(string),
+				"delegated_resource_admin_groups": []map[string]interface{}{
+					{
+						"id":   groupID,
+						"type": "group",
+					},
+				},
+			})
+		},
+	)
+
+	httpmock.RegisterRegexpResponder("GET",
+		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*`),
+		func(req *http.Request) (*http.Response, error) {
+			return httpmock.NewJsonResponse(200, map[string]interface{}{
+				"id":          resourceGroupID,
+				"name":        resourceGroupName,
+				"description": "test resource group",
+				"delegated_resource_admin_groups": []map[string]interface{}{
+					{
+						"id":   groupID,
+						"type": "user_group",
+					},
+				},
+			})
+		},
+	)
+
+	httpmock.RegisterRegexpResponder("POST",
+		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects`),
+		func(req *http.Request) (*http.Response, error) {
+			var requestBody map[string]interface{}
+			if err := json.NewDecoder(req.Body).Decode(&requestBody); err != nil {
+				return httpmock.NewStringResponse(400, ""), nil
+			}
+			return httpmock.NewJsonResponse(201, map[string]interface{}{
+				"id":                   projectID,
+				"name":                 projectName,
+				"resource_group":       resourceGroupID,
+				"team":                 "httpmock-test-team",
+				"ssh_certificate_type": "CERT_TYPE_ED25519_01",
+				"account_discovery":    true,
+			})
+		},
+	)
+
+	httpmock.RegisterRegexpResponder("GET",
+		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects/.*`),
+		func(req *http.Request) (*http.Response, error) {
+			return httpmock.NewJsonResponse(200, map[string]interface{}{
+				"id":                   projectID,
+				"name":                 projectName,
+				"resource_group":       resourceGroupID,
+				"team":                 "httpmock-test-team",
+				"ssh_certificate_type": "CERT_TYPE_ED25519_01",
+				"account_discovery":    true,
+			})
+		},
+	)
+
+	// Add DELETE responders
+	httpmock.RegisterRegexpResponder("DELETE",
+		regexp.MustCompile(`/v1/teams/httpmock-test-team/groups/.*`),
+		httpmock.NewStringResponder(204, ""),
+	)
+
+	httpmock.RegisterRegexpResponder("DELETE",
+		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*`),
+		httpmock.NewStringResponder(204, ""),
+	)
+
+	httpmock.RegisterRegexpResponder("DELETE",
+		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects/.*`),
+		httpmock.NewStringResponder(204, ""),
+	)
+}
+
+func generateUUID(name string) string {
+	id := uuid.NewSHA1(uuid.NameSpaceOID, []byte(name))
+	return id.String()
 }

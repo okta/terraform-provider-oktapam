@@ -122,6 +122,8 @@ func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resou
 		//Add New Resources here
 		NewServerCheckoutSettingsResource,
 		NewSecurityPolicyResource,
+		NewSaasAppCheckoutSettingsResource,
+		NewoktaUniversalDirectoryCheckoutSettingsResource,
 	}
 }
 
