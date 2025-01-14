@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
+	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/jarcoal/httpmock"
@@ -152,7 +153,10 @@ func TestAccSaasAppCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 	// Setup httpmock
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	SetupDefaultMockResponders(delegatedAdminGroupName, resourceGroupName, projectName)
+	groupID, _ := uuid.NewUUID()
+	resourceGroupID, _ := uuid.NewUUID()
+	projectID, _ := uuid.NewUUID()
+	SetupDefaultMockResponders(groupID.String(), resourceGroupID.String(), projectID.String(), delegatedAdminGroupName, resourceGroupName, projectName)
 
 	// Mock the PUT endpoint for update operations
 	httpmock.RegisterResponder("PUT",
