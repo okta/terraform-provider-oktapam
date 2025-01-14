@@ -87,8 +87,7 @@ func httpMockClients() *client.APIClients {
 // SetupDefaultMockResponders configures common mock responses for standard resources
 func SetupDefaultMockResponders(groupID string, resourceGroupID string, projectID string, groupName string, resourceGroupName string, projectName string) {
 	// Group endpoints
-	httpmock.RegisterRegexpResponder("POST",
-		regexp.MustCompile(`/v1/teams/httpmock-test-team/groups`),
+	httpmock.RegisterRegexpResponder("POST", regexp.MustCompile(`/v1/teams/httpmock-test-team/groups`),
 		func(req *http.Request) (*http.Response, error) {
 			var requestBody map[string]interface{}
 			if err := json.NewDecoder(req.Body).Decode(&requestBody); err != nil {
@@ -101,8 +100,7 @@ func SetupDefaultMockResponders(groupID string, resourceGroupID string, projectI
 		},
 	)
 
-	httpmock.RegisterRegexpResponder("GET",
-		regexp.MustCompile(`/v1/teams/httpmock-test-team/groups/.*`),
+	httpmock.RegisterRegexpResponder("GET", regexp.MustCompile(`/v1/teams/httpmock-test-team/groups/.*`),
 		func(req *http.Request) (*http.Response, error) {
 			return httpmock.NewJsonResponse(200, map[string]interface{}{
 				"id":   groupID,
@@ -112,10 +110,8 @@ func SetupDefaultMockResponders(groupID string, resourceGroupID string, projectI
 	)
 
 	// Resource Group endpoints
-	httpmock.RegisterRegexpResponder("POST",
-		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups`),
+	httpmock.RegisterRegexpResponder("POST", regexp.MustCompile(`^/v1/teams/httpmock-test-team/resource_groups$`),
 		func(req *http.Request) (*http.Response, error) {
-
 			bodyBytes, _ := io.ReadAll(req.Body)
 			req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 			var requestBody struct {
@@ -126,7 +122,6 @@ func SetupDefaultMockResponders(groupID string, resourceGroupID string, projectI
 			if err := json.NewDecoder(req.Body).Decode(&requestBody); err != nil {
 				return httpmock.NewStringResponse(400, fmt.Sprintf("Failed to decode: %v", err)), nil
 			}
-			log.Printf("Create resource group for %s", resourceGroupID)
 			return httpmock.NewJsonResponse(201, map[string]interface{}{
 				"id":          resourceGroupID,
 				"name":        requestBody.Name,
@@ -141,8 +136,7 @@ func SetupDefaultMockResponders(groupID string, resourceGroupID string, projectI
 		},
 	)
 
-	httpmock.RegisterRegexpResponder("GET",
-		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*`),
+	httpmock.RegisterRegexpResponder("GET", regexp.MustCompile(`^/v1/teams/httpmock-test-team/resource_groups/[^/]+$`),
 		func(req *http.Request) (*http.Response, error) {
 			return httpmock.NewJsonResponse(200, map[string]interface{}{
 				"id":          resourceGroupID,
@@ -158,18 +152,15 @@ func SetupDefaultMockResponders(groupID string, resourceGroupID string, projectI
 		},
 	)
 
-	// Project endpoints
-	httpmock.RegisterRegexpResponder("POST",
-		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects`),
+	// Resource Group Project endpoints
+	httpmock.RegisterRegexpResponder("POST", regexp.MustCompile(`^/v1/teams/httpmock-test-team/resource_groups/[^/]+/projects$`),
 		func(req *http.Request) (*http.Response, error) {
-			// Extract resource group ID from URL
 			matches := regexp.MustCompile(`/resource_groups/([^/]+)/projects`).FindStringSubmatch(req.URL.Path)
 			if len(matches) != 2 {
 				return httpmock.NewStringResponse(400, "Invalid URL format"), nil
 			}
 			actualResourceGroupID := matches[1]
 
-			// Parse request body
 			var requestBody struct {
 				Name               string `json:"name"`
 				SSHCertificateType string `json:"ssh_certificate_type"`
@@ -179,7 +170,6 @@ func SetupDefaultMockResponders(groupID string, resourceGroupID string, projectI
 			if err := json.NewDecoder(req.Body).Decode(&requestBody); err != nil {
 				return httpmock.NewStringResponse(400, fmt.Sprintf("Failed to decode: %v", err)), nil
 			}
-			log.Printf("Create project for %s", projectID)
 			return httpmock.NewJsonResponse(201, map[string]interface{}{
 				"id":                   projectID,
 				"name":                 requestBody.Name,
@@ -192,10 +182,8 @@ func SetupDefaultMockResponders(groupID string, resourceGroupID string, projectI
 		},
 	)
 
-	httpmock.RegisterRegexpResponder("GET",
-		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects/.*`),
+	httpmock.RegisterRegexpResponder("GET", regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects/.*`),
 		func(req *http.Request) (*http.Response, error) {
-			// Extract both IDs from URL
 			matches := regexp.MustCompile(`/resource_groups/([^/]+)/projects/([^/]+)`).FindStringSubmatch(req.URL.Path)
 			if len(matches) != 3 {
 				return httpmock.NewStringResponse(404, "Project not found"), nil
@@ -203,11 +191,9 @@ func SetupDefaultMockResponders(groupID string, resourceGroupID string, projectI
 			actualResourceGroupID := matches[1]
 			actualProjectID := matches[2]
 
-			// Verify IDs match expected values
 			if actualResourceGroupID != resourceGroupID || actualProjectID != projectID {
 				return httpmock.NewStringResponse(404, "Project not found"), nil
 			}
-			log.Printf("Get project for %s", actualProjectID)
 			return httpmock.NewJsonResponse(200, map[string]interface{}{
 				"id":                   actualProjectID,
 				"name":                 projectName,
@@ -221,18 +207,12 @@ func SetupDefaultMockResponders(groupID string, resourceGroupID string, projectI
 	)
 
 	// DELETE responders
-	httpmock.RegisterRegexpResponder("DELETE",
-		regexp.MustCompile(`/v1/teams/httpmock-test-team/groups/.*`),
-		httpmock.NewStringResponder(204, ""),
-	)
+	httpmock.RegisterRegexpResponder("DELETE", regexp.MustCompile(`/v1/teams/httpmock-test-team/groups/.*`),
+		httpmock.NewStringResponder(204, ""))
 
-	httpmock.RegisterRegexpResponder("DELETE",
-		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*`),
-		httpmock.NewStringResponder(204, ""),
-	)
+	httpmock.RegisterRegexpResponder("DELETE", regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*`),
+		httpmock.NewStringResponder(204, ""))
 
-	httpmock.RegisterRegexpResponder("DELETE",
-		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects/.*`),
-		httpmock.NewStringResponder(204, ""),
-	)
+	httpmock.RegisterRegexpResponder("DELETE", regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects/.*`),
+		httpmock.NewStringResponder(204, ""))
 }
