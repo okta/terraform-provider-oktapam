@@ -130,11 +130,11 @@ func ServiceAccountCheckoutSettingsFromSDKToModel(ctx context.Context, in *pam.A
 	var diags diag.Diagnostics
 
 	if val, ok := in.GetCheckoutRequiredOk(); ok {
-		out.CheckoutRequired = types.BoolValue(*val)
+		out.CheckoutRequired = types.BoolPointerValue(val)
 	}
 
 	if val, ok := in.GetCheckoutDurationInSecondsOk(); ok {
-		out.CheckoutDurationInSeconds = types.Int32Value(*val)
+		out.CheckoutDurationInSeconds = types.Int32PointerValue(val)
 	}
 
 	includeList, d := types.ListValueFrom(ctx, types.ObjectType{
