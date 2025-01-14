@@ -1,15 +1,17 @@
 package oktapam
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"regexp"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/go-resty/resty/v2"
-	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	diag2 "github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -83,19 +85,14 @@ func httpMockClients() *client.APIClients {
 }
 
 // SetupDefaultMockResponders configures common mock responses for standard resources
-func SetupDefaultMockResponders(groupName string, resourceGroupName string, projectName string) {
-	// Pre-generate UUIDs for consistency
-	groupID := generateUUID(groupName)
-	resourceGroupID := generateUUID(resourceGroupName)
-	projectID := generateUUID(projectName)
-
+func SetupDefaultMockResponders(groupID string, resourceGroupID string, projectID string, groupName string, resourceGroupName string, projectName string) {
 	// Group endpoints
 	httpmock.RegisterRegexpResponder("POST",
 		regexp.MustCompile(`/v1/teams/httpmock-test-team/groups`),
 		func(req *http.Request) (*http.Response, error) {
 			var requestBody map[string]interface{}
 			if err := json.NewDecoder(req.Body).Decode(&requestBody); err != nil {
-				return httpmock.NewStringResponse(400, ""), nil
+				return httpmock.NewStringResponse(400, fmt.Sprintf("Failed to decode: %v", err)), nil
 			}
 			return httpmock.NewJsonResponse(201, map[string]interface{}{
 				"id":   groupID,
@@ -118,14 +115,21 @@ func SetupDefaultMockResponders(groupName string, resourceGroupName string, proj
 	httpmock.RegisterRegexpResponder("POST",
 		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups`),
 		func(req *http.Request) (*http.Response, error) {
-			var requestBody map[string]interface{}
+
+			bodyBytes, _ := io.ReadAll(req.Body)
+			req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+			var requestBody struct {
+				Name                         string        `json:"name"`
+				Description                  string        `json:"description"`
+				DelegatedResourceAdminGroups []interface{} `json:"delegated_resource_admin_groups"`
+			}
 			if err := json.NewDecoder(req.Body).Decode(&requestBody); err != nil {
-				return httpmock.NewStringResponse(400, ""), nil
+				return httpmock.NewStringResponse(400, fmt.Sprintf("Failed to decode: %v", err)), nil
 			}
 			return httpmock.NewJsonResponse(201, map[string]interface{}{
 				"id":          resourceGroupID,
-				"name":        requestBody["name"].(string),
-				"description": requestBody["description"].(string),
+				"name":        requestBody.Name,
+				"description": requestBody.Description,
 				"delegated_resource_admin_groups": []map[string]interface{}{
 					{
 						"id":   groupID,
@@ -153,37 +157,45 @@ func SetupDefaultMockResponders(groupName string, resourceGroupName string, proj
 		},
 	)
 
-	httpmock.RegisterRegexpResponder("POST",
-		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects`),
-		func(req *http.Request) (*http.Response, error) {
-			var requestBody map[string]interface{}
-			if err := json.NewDecoder(req.Body).Decode(&requestBody); err != nil {
-				return httpmock.NewStringResponse(400, ""), nil
-			}
-			return httpmock.NewJsonResponse(201, map[string]interface{}{
-				"id":                   projectID,
-				"name":                 projectName,
-				"resource_group":       resourceGroupID,
-				"team":                 "httpmock-test-team",
-				"ssh_certificate_type": "CERT_TYPE_ED25519_01",
-				"account_discovery":    true,
-			})
-		},
-	)
+	// // Project endpoints
+	// httpmock.RegisterRegexpResponder("POST",
+	// 	regexp.MustCompile(fmt.Sprintf(`/v1/teams/httpmock-test-team/resource_groups/%s/projects`, resourceGroupID)),
+	// 	func(req *http.Request) (*http.Response, error) {
+	// 		bodyBytes, _ := io.ReadAll(req.Body)
+	// 		req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
-	httpmock.RegisterRegexpResponder("GET",
-		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects/.*`),
-		func(req *http.Request) (*http.Response, error) {
-			return httpmock.NewJsonResponse(200, map[string]interface{}{
-				"id":                   projectID,
-				"name":                 projectName,
-				"resource_group":       resourceGroupID,
-				"team":                 "httpmock-test-team",
-				"ssh_certificate_type": "CERT_TYPE_ED25519_01",
-				"account_discovery":    true,
-			})
-		},
-	)
+	// 		var requestBody struct {
+	// 			Name               string `json:"name"`
+	// 			ResourceGroup      string `json:"resource_group"`
+	// 			SSHCertificateType string `json:"ssh_certificate_type"`
+	// 			AccountDiscovery   bool   `json:"account_discovery"`
+	// 		}
+	// 		json.NewDecoder(req.Body).Decode(&requestBody)
+
+	// 		resp := map[string]interface{}{
+	// 			"id":                   projectID,
+	// 			"name":                 "sdajklshrfikljaewhtruiahtoigfe",
+	// 			"resource_group":       resourceGroupID,
+	// 			"team":                 "httpmock-test-team",
+	// 			"ssh_certificate_type": requestBody.SSHCertificateType,
+	// 			"account_discovery":    requestBody.AccountDiscovery,
+	// 		}
+	// 		return httpmock.NewJsonResponse(201, resp)
+	// 	},
+	// )
+
+	// httpmock.RegisterRegexpResponder("GET",
+	// 	regexp.MustCompile(fmt.Sprintf(`/v1/teams/httpmock-test-team/resource_groups/%s/projects/%s`, resourceGroupID, projectID)),
+	// 	func(req *http.Request) (*http.Response, error) {
+	// 		return httpmock.NewJsonResponse(200, map[string]interface{}{
+	// 			"id":                   projectID,
+	// 			"name":                 projectName,
+	// 			"resource_group":       resourceGroupID,
+	// 			"team":                 "httpmock-test-team",
+	// 			"ssh_certificate_type": "CERT_TYPE_ED25519_01",
+	// 		})
+	// 	},
+	// )
 
 	// Add DELETE responders
 	httpmock.RegisterRegexpResponder("DELETE",
@@ -202,7 +214,7 @@ func SetupDefaultMockResponders(groupName string, resourceGroupName string, proj
 	)
 }
 
-func generateUUID(name string) string {
-	id := uuid.NewSHA1(uuid.NameSpaceOID, []byte(name))
-	return id.String()
-}
+// func generateUUID(name string) string {
+// 	id := uuid.NewSHA1(uuid.NameSpaceOID, []byte(name))
+// 	return id.String()
+// }
