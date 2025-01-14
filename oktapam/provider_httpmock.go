@@ -126,6 +126,7 @@ func SetupDefaultMockResponders(groupID string, resourceGroupID string, projectI
 			if err := json.NewDecoder(req.Body).Decode(&requestBody); err != nil {
 				return httpmock.NewStringResponse(400, fmt.Sprintf("Failed to decode: %v", err)), nil
 			}
+			log.Printf("Create resource group for %s", resourceGroupID)
 			return httpmock.NewJsonResponse(201, map[string]interface{}{
 				"id":          resourceGroupID,
 				"name":        requestBody.Name,
@@ -157,47 +158,69 @@ func SetupDefaultMockResponders(groupID string, resourceGroupID string, projectI
 		},
 	)
 
-	// // Project endpoints
-	// httpmock.RegisterRegexpResponder("POST",
-	// 	regexp.MustCompile(fmt.Sprintf(`/v1/teams/httpmock-test-team/resource_groups/%s/projects`, resourceGroupID)),
-	// 	func(req *http.Request) (*http.Response, error) {
-	// 		bodyBytes, _ := io.ReadAll(req.Body)
-	// 		req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+	// Project endpoints
+	httpmock.RegisterRegexpResponder("POST",
+		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects`),
+		func(req *http.Request) (*http.Response, error) {
+			// Extract resource group ID from URL
+			matches := regexp.MustCompile(`/resource_groups/([^/]+)/projects`).FindStringSubmatch(req.URL.Path)
+			if len(matches) != 2 {
+				return httpmock.NewStringResponse(400, "Invalid URL format"), nil
+			}
+			actualResourceGroupID := matches[1]
 
-	// 		var requestBody struct {
-	// 			Name               string `json:"name"`
-	// 			ResourceGroup      string `json:"resource_group"`
-	// 			SSHCertificateType string `json:"ssh_certificate_type"`
-	// 			AccountDiscovery   bool   `json:"account_discovery"`
-	// 		}
-	// 		json.NewDecoder(req.Body).Decode(&requestBody)
+			// Parse request body
+			var requestBody struct {
+				Name               string `json:"name"`
+				SSHCertificateType string `json:"ssh_certificate_type"`
+				AccountDiscovery   bool   `json:"account_discovery"`
+				GatewaySelector    string `json:"gateway_selector,omitempty"`
+			}
+			if err := json.NewDecoder(req.Body).Decode(&requestBody); err != nil {
+				return httpmock.NewStringResponse(400, fmt.Sprintf("Failed to decode: %v", err)), nil
+			}
+			log.Printf("Create project for %s", projectID)
+			return httpmock.NewJsonResponse(201, map[string]interface{}{
+				"id":                   projectID,
+				"name":                 requestBody.Name,
+				"resource_group":       actualResourceGroupID,
+				"team":                 "httpmock-test-team",
+				"ssh_certificate_type": requestBody.SSHCertificateType,
+				"account_discovery":    requestBody.AccountDiscovery,
+				"gateway_selector":     requestBody.GatewaySelector,
+			})
+		},
+	)
 
-	// 		resp := map[string]interface{}{
-	// 			"id":                   projectID,
-	// 			"name":                 "sdajklshrfikljaewhtruiahtoigfe",
-	// 			"resource_group":       resourceGroupID,
-	// 			"team":                 "httpmock-test-team",
-	// 			"ssh_certificate_type": requestBody.SSHCertificateType,
-	// 			"account_discovery":    requestBody.AccountDiscovery,
-	// 		}
-	// 		return httpmock.NewJsonResponse(201, resp)
-	// 	},
-	// )
+	httpmock.RegisterRegexpResponder("GET",
+		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects/.*`),
+		func(req *http.Request) (*http.Response, error) {
+			// Extract both IDs from URL
+			matches := regexp.MustCompile(`/resource_groups/([^/]+)/projects/([^/]+)`).FindStringSubmatch(req.URL.Path)
+			if len(matches) != 3 {
+				return httpmock.NewStringResponse(404, "Project not found"), nil
+			}
+			actualResourceGroupID := matches[1]
+			actualProjectID := matches[2]
 
-	// httpmock.RegisterRegexpResponder("GET",
-	// 	regexp.MustCompile(fmt.Sprintf(`/v1/teams/httpmock-test-team/resource_groups/%s/projects/%s`, resourceGroupID, projectID)),
-	// 	func(req *http.Request) (*http.Response, error) {
-	// 		return httpmock.NewJsonResponse(200, map[string]interface{}{
-	// 			"id":                   projectID,
-	// 			"name":                 projectName,
-	// 			"resource_group":       resourceGroupID,
-	// 			"team":                 "httpmock-test-team",
-	// 			"ssh_certificate_type": "CERT_TYPE_ED25519_01",
-	// 		})
-	// 	},
-	// )
+			// Verify IDs match expected values
+			if actualResourceGroupID != resourceGroupID || actualProjectID != projectID {
+				return httpmock.NewStringResponse(404, "Project not found"), nil
+			}
+			log.Printf("Get project for %s", actualProjectID)
+			return httpmock.NewJsonResponse(200, map[string]interface{}{
+				"id":                   actualProjectID,
+				"name":                 projectName,
+				"resource_group":       actualResourceGroupID,
+				"team":                 "httpmock-test-team",
+				"ssh_certificate_type": "CERT_TYPE_ED25519_01",
+				"account_discovery":    true,
+				"deleted_at":           nil,
+			})
+		},
+	)
 
-	// Add DELETE responders
+	// DELETE responders
 	httpmock.RegisterRegexpResponder("DELETE",
 		regexp.MustCompile(`/v1/teams/httpmock-test-team/groups/.*`),
 		httpmock.NewStringResponder(204, ""),
@@ -213,8 +236,3 @@ func SetupDefaultMockResponders(groupID string, resourceGroupID string, projectI
 		httpmock.NewStringResponder(204, ""),
 	)
 }
-
-// func generateUUID(name string) string {
-// 	id := uuid.NewSHA1(uuid.NameSpaceOID, []byte(name))
-// 	return id.String()
-// }

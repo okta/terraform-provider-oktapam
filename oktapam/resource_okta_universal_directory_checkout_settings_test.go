@@ -13,10 +13,27 @@ import (
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/jarcoal/httpmock"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
+
+var _ plancheck.PlanCheck = debugPlan{}
+
+type debugPlan struct{}
+
+func (e debugPlan) CheckPlan(ctx context.Context, req plancheck.CheckPlanRequest, resp *plancheck.CheckPlanResponse) {
+	rd, err := json.Marshal(req.Plan)
+	if err != nil {
+		fmt.Println("error marshalling machine-readable plan output:", err)
+	}
+	fmt.Printf("req.Plan - %s\n", string(rd))
+}
+
+func DebugPlan() plancheck.PlanCheck {
+	return debugPlan{}
+}
 
 const testAccOktaUDCheckoutSettingsBaseConfigFormat = `
 resource "oktapam_group" "test_resource_group_dga_group" {
@@ -145,20 +162,9 @@ resource "oktapam_okta_universal_directory_checkout_settings" "test_acc_okta_uni
 func TestAccOktaUDCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 	// Use fixed names and IDs for consistency
 	resourceName := "oktapam_okta_universal_directory_checkout_settings.test_acc_okta_universal_directory_checkout_settings"
-	resourceGroupName := fmt.Sprintf("test_acc_resource_mock_group_%s", randSeq())
-	projectName := fmt.Sprintf("test_acc_resource_group_mock_project_%s", randSeq())
-	delegatedAdminGroupName := fmt.Sprintf("test_acc_resource_group_mock_dga_%s", randSeq())
-
-	// deleteSettings := &pam.APIServiceAccountCheckoutSettings{
-	// 	CheckoutRequired:          false,
-	// 	CheckoutDurationInSeconds: int32(900),
-	// }
-
-	// Fixed test data
-	// user1 := "user1"
-	// app1 := "app1"
-	// user3 := "user3"
-	// app3 := "app3"
+	resourceGroupName := fmt.Sprintf("test_acc_mock_resource_group_%s", randSeq())
+	projectName := fmt.Sprintf("test_acc_mock_project_%s", randSeq())
+	delegatedAdminGroupName := fmt.Sprintf("test_acc_mock_dga_%s", randSeq())
 
 	// Setup httpmock
 	httpmock.Activate()
@@ -166,49 +172,11 @@ func TestAccOktaUDCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 
 	// Setup mock responders with fixed IDs
 	groupID := uuid.New().String()
-	resourceGroupID := uuid.New().String()
-	projectID := uuid.New().String()
-
-	if resourceGroupID == projectID {
-		log.Printf("[DEBUG] Group ID: %s, Resource Group ID: %s, Project ID: %s", groupID, resourceGroupID, projectID)
-		panic("Resource Group ID and Project ID are the same")
-	}
-
-	// Setup mock responders with consistent IDs and names
-	httpmock.RegisterRegexpResponder("POST",
-		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects`),
-		func(req *http.Request) (*http.Response, error) {
-			var requestBody struct {
-				Name string `json:"name"`
-			}
-			json.NewDecoder(req.Body).Decode(&requestBody)
-
-			// Return consistent project ID and name
-			return httpmock.NewJsonResponse(201, map[string]interface{}{
-				"id":                   projectID,
-				"name":                 projectName, // Use the same name throughout
-				"resource_group":       resourceGroupID,
-				"team":                 "httpmock-test-team",
-				"ssh_certificate_type": "CERT_TYPE_ED25519_01",
-				"account_discovery":    true,
-			})
-		},
-	)
-
-	// Mock GET for project
-	httpmock.RegisterRegexpResponder("GET",
-		regexp.MustCompile(fmt.Sprintf(`/v1/teams/httpmock-test-team/resource_groups/%s/projects/%s`, resourceGroupID, projectID)),
-		func(req *http.Request) (*http.Response, error) {
-			return httpmock.NewJsonResponse(200, map[string]interface{}{
-				"id":                   projectID,
-				"name":                 projectName,
-				"resource_group":       resourceGroupID,
-				"team":                 "httpmock-test-team",
-				"ssh_certificate_type": "CERT_TYPE_ED25519_01",
-				"account_discovery":    true,
-			})
-		},
-	)
+	// resourceGroupID := uuid.New().String()
+	// projectID := uuid.New().String()
+	// Use fixed IDs for consistency
+	resourceGroupID := "0c6194ea-a60f-4a0e-b98b-aabdbae3db8c"
+	projectID := "92a42895-7da4-42f2-b045-2fd531c04d0c" // Different ID for project
 
 	// Create a map to store entities with mutex for thread safety
 	var entitiesLock sync.RWMutex
@@ -249,33 +217,18 @@ func TestAccOktaUDCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 			settings, exists := entities[entityKey]
 			entitiesLock.RUnlock()
 
-			if exists {
-				// Create response with all required fields
-				response := map[string]interface{}{
-					"id":                           entityKey,
-					"resource_group":               resourceGroupID,
-					"project":                      projectID,
-					"checkout_required":            settings.CheckoutRequired,
-					"checkout_duration_in_seconds": settings.CheckoutDurationInSeconds,
-					"include_list":                 settings.IncludeList,
-					"exclude_list":                 settings.ExcludeList,
+			if !exists {
+				// Return default settings if none exist
+				defaultSettings := &pam.APIServiceAccountCheckoutSettings{
+					CheckoutRequired:          false,
+					CheckoutDurationInSeconds: int32(0),
+					IncludeList:               []pam.ServiceAccountSettingNameObject{},
+					ExcludeList:               []pam.ServiceAccountSettingNameObject{},
 				}
-				log.Printf("[DEBUG] Found stored settings for key %s: %+v", entityKey, response)
-				return httpmock.NewJsonResponse(200, response)
+				return httpmock.NewJsonResponse(200, defaultSettings)
 			}
 
-			// If no settings exist yet, return default settings with all fields
-			defaultResponse := map[string]interface{}{
-				"id":                           entityKey,
-				"resource_group":               resourceGroupID,
-				"project":                      projectID,
-				"checkout_required":            true,
-				"checkout_duration_in_seconds": int32(900),
-				"include_list":                 []pam.ServiceAccountSettingNameObject{},
-				"exclude_list":                 []pam.ServiceAccountSettingNameObject{},
-			}
-			log.Printf("[DEBUG] No stored settings found, returning default: %+v", defaultResponse)
-			return httpmock.NewJsonResponse(200, defaultResponse)
+			return httpmock.NewJsonResponse(200, settings)
 		},
 	)
 
@@ -306,43 +259,13 @@ func TestAccOktaUDCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 			entities[entityKey] = &settings
 			entitiesLock.Unlock()
 
-			// Create response with all required fields
-			response := map[string]interface{}{
-				"id":                           entityKey,
-				"resource_group":               resourceGroupID,
-				"project":                      projectID,
-				"checkout_required":            settings.CheckoutRequired,
-				"checkout_duration_in_seconds": settings.CheckoutDurationInSeconds,
-				"include_list":                 settings.IncludeList,
-				"exclude_list":                 settings.ExcludeList,
-			}
-
-			log.Printf("[DEBUG] Stored settings for key %s: %+v", entityKey, response)
-			return httpmock.NewJsonResponse(200, response)
+			log.Printf("[DEBUG] Stored settings for key %s: %+v", entityKey, settings)
+			return httpmock.NewJsonResponse(200, settings)
 		},
 	)
 
-	// // Mock the POST endpoint for create okta_universal_directory_checkout_settings operations
-	// httpmock.RegisterRegexpResponder("POST",
-	// 	regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects/.*/okta_universal_directory_checkout_settings`),
-	// 	func(req *http.Request) (*http.Response, error) {
-	// 		return httpmock.NewJsonResponse(201, map[string]interface{}{
-	// 			"id":             projectID,
-	// 			"name":           projectName,
-	// 			"resource_group": resourceGroupID,
-	// 			"team":           "httpmock-test-team",
-	// 		})
-	// 	},
-	// )
-
 	// Register these responders before SetupDefaultMockResponders
 	SetupDefaultMockResponders(groupID, resourceGroupID, projectID, delegatedAdminGroupName, resourceGroupName, projectName)
-
-	// Add request counter
-	httpmock.RegisterNoResponder(func(req *http.Request) (*http.Response, error) {
-		log.Printf("[ERROR] No responder found for %s %s", req.Method, req.URL.String())
-		return httpmock.NewStringResponse(404, ""), nil
-	})
 
 	// Add cleanup step to print statistics
 	defer func() {
@@ -359,6 +282,13 @@ func TestAccOktaUDCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: createOktaUDCheckoutSettingsCreateConfig(delegatedAdminGroupName, resourceGroupName, projectName),
+				// PlanOnly: true,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPreRefresh: []plancheck.PlanCheck{
+						DebugPlan(),
+					},
+				},
+
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "checkout_required", "true"),
 					resource.TestCheckResourceAttr(resourceName, "checkout_duration_in_seconds", "900"),
@@ -452,7 +382,12 @@ func createOktaUDCheckoutSettingsBaseConfig(delegatedAdminGroupName string, reso
 }
 
 func createOktaUDCheckoutSettingsCreateConfig(delegatedAdminGroupName string, resourceGroupName string, projectName string) string {
-	return createOktaUDCheckoutSettingsBaseConfig(delegatedAdminGroupName, resourceGroupName, projectName) + testAccOktaUDCheckoutSettingsCreateConfigFormat
+	combinedConfig := createOktaUDCheckoutSettingsBaseConfig(delegatedAdminGroupName, resourceGroupName, projectName) + testAccOktaUDCheckoutSettingsCreateConfigFormat
+	log.Printf("[DEBUG] Combined config: %s", func() string {
+		pretty, _ := json.MarshalIndent(combinedConfig, "", "  ")
+		return string(pretty)
+	}())
+	return combinedConfig
 }
 
 func createOktaUDCheckoutSettingsUpdateWithIncludeListConfig(delegatedAdminGroupName string, resourceGroupName string, projectName string) string {
