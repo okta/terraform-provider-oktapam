@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"sync"
 	"testing"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/jarcoal/httpmock"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
@@ -141,84 +143,113 @@ func TestAccSaasAppCheckoutSettings(t *testing.T) {
 // TestAccSaasAppCheckoutSettingsWithMockHTTPClient is a test that uses httpmock to mock the HTTP client
 // and test the SaaS App checkout settings resource marshalling and unmarshalling correctly.
 func TestAccSaasAppCheckoutSettingsWithMockHTTPClient(t *testing.T) {
+	// Use fixed names and IDs for consistency
 	resourceName := "oktapam_saas_app_checkout_settings.test_acc_saas_app_checkout_settings"
-	resourceGroupName := fmt.Sprintf("test_acc_resource_group_%s", randSeq())
-	projectName := fmt.Sprintf("test_acc_resource_group_project_%s", randSeq())
-	delegatedAdminGroupName := fmt.Sprintf("test_acc_resource_group_dga_%s", randSeq())
-	user1 := "user1"
-	app1 := "app1"
-	user3 := "user3"
-	app3 := "app3"
+	resourceGroupName := fmt.Sprintf("test_acc_mock_resource_group_%s", randSeq())
+	projectName := fmt.Sprintf("test_acc_mock_project_%s", randSeq())
+	delegatedAdminGroupName := fmt.Sprintf("test_acc_mock_dga_%s", randSeq())
 
 	// Setup httpmock
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	groupID, _ := uuid.NewUUID()
-	resourceGroupID, _ := uuid.NewUUID()
-	projectID, _ := uuid.NewUUID()
-	SetupDefaultMockResponders(groupID.String(), resourceGroupID.String(), projectID.String(), delegatedAdminGroupName, resourceGroupName, projectName)
 
-	// Mock the PUT endpoint for update operations
-	httpmock.RegisterResponder("PUT",
-		fmt.Sprintf("/v1/teams/httpmock-test-team/resource_groups/%s/projects/%s/saas_app_checkout_settings",
-			resourceGroupName, projectName),
+	// Setup mock responders with fixed IDs
+	groupID := uuid.New().String()
+	resourceGroupID := uuid.New().String()
+	projectID := uuid.New().String()
+
+	// Create a map to store entities with mutex for thread safety
+	var entitiesLock sync.RWMutex
+	entities := make(map[string]*pam.APIServiceAccountCheckoutSettings)
+
+	httpmock.RegisterRegexpResponder("GET",
+		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects/.*/saas_app_checkout_settings`),
 		func(req *http.Request) (*http.Response, error) {
-			var requestBody pam.APIServiceAccountCheckoutSettings
-			if err := json.NewDecoder(req.Body).Decode(&requestBody); err != nil {
+			matches := regexp.MustCompile(`/resource_groups/([^/]+)/projects/([^/]+)/`).FindStringSubmatch(req.URL.Path)
+			if len(matches) != 3 {
+				return httpmock.NewStringResponse(400, "Invalid URL"), nil
+			}
+			resourceGroupID := matches[1]
+			projectID := matches[2]
+
+			entityKey := fmt.Sprintf("%s/%s", resourceGroupID, projectID)
+
+			entitiesLock.RLock()
+			settings, exists := entities[entityKey]
+			entitiesLock.RUnlock()
+
+			if !exists {
+				defaultSettings := &pam.APIServiceAccountCheckoutSettings{
+					CheckoutRequired:          false,
+					CheckoutDurationInSeconds: int32(900),
+					IncludeList:               []pam.ServiceAccountSettingNameObject{},
+					ExcludeList:               []pam.ServiceAccountSettingNameObject{},
+				}
+				return httpmock.NewJsonResponse(200, defaultSettings)
+			}
+
+			return httpmock.NewJsonResponse(200, settings)
+		},
+	)
+
+	httpmock.RegisterRegexpResponder("PUT",
+		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects/.*/saas_app_checkout_settings`),
+		func(req *http.Request) (*http.Response, error) {
+			matches := regexp.MustCompile(`/resource_groups/([^/]+)/projects/([^/]+)/`).FindStringSubmatch(req.URL.Path)
+			if len(matches) != 3 {
+				return httpmock.NewStringResponse(400, "Invalid URL"), nil
+			}
+			resourceGroupID := matches[1]
+			projectID := matches[2]
+
+			var settings pam.APIServiceAccountCheckoutSettings
+			if err := json.NewDecoder(req.Body).Decode(&settings); err != nil {
 				return httpmock.NewStringResponse(400, ""), nil
 			}
-			return httpmock.NewJsonResponse(204, nil)
+
+			entityKey := fmt.Sprintf("%s/%s", resourceGroupID, projectID)
+
+			entitiesLock.Lock()
+			entities[entityKey] = &settings
+			entitiesLock.Unlock()
+
+			return httpmock.NewJsonResponse(200, settings)
 		},
 	)
 
-	// Mock the GET endpoint for read operations
-	httpmock.RegisterResponder("GET",
-		fmt.Sprintf("/v1/teams/httpmock-test-team/resource_groups/%s/projects/%s/saas_app_checkout_settings",
-			resourceGroupName, projectName),
-		func(req *http.Request) (*http.Response, error) {
-			if httpmock.GetCallCountInfo()["GET"]%2 == 0 {
-				// Return include list settings for the first call
-				return httpmock.NewJsonResponse(200, pam.APIServiceAccountCheckoutSettings{
-					CheckoutRequired:          true,
-					CheckoutDurationInSeconds: 3600,
-					IncludeList: []pam.ServiceAccountSettingNameObject{
-						{
-							Id:                     "account1",
-							ServiceAccountUserName: &user1,
-							SaasAppInstanceName:    &app1,
-						},
-					},
-				})
-			} else {
-				// Return exclude list settings for the second call
-				return httpmock.NewJsonResponse(200, pam.APIServiceAccountCheckoutSettings{
-					CheckoutRequired:          true,
-					CheckoutDurationInSeconds: 3600,
-					ExcludeList: []pam.ServiceAccountSettingNameObject{
-						{
-							Id:                     "account3",
-							ServiceAccountUserName: &user3,
-							SaasAppInstanceName:    &app3,
-						},
-					},
-				})
-			}
-		},
-	)
+	// Register default responders for user group, resource group, resource group project
+	SetupDefaultMockResponders(groupID, resourceGroupID, projectID, delegatedAdminGroupName, resourceGroupName, projectName)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
 		ProtoV6ProviderFactories: httpMockTestV6ProviderFactories(),
 		Steps: []resource.TestStep{
+			{
+				Config: createSaasAppCheckoutSettingsCreateConfig(delegatedAdminGroupName, resourceGroupName, projectName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPreRefresh: []plancheck.PlanCheck{
+						DebugPlan(),
+					},
+				},
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "checkout_required", "true"),
+					resource.TestCheckResourceAttr(resourceName, "checkout_duration_in_seconds", "900"),
+				),
+			},
 			{
 				Config: createSaasAppCheckoutSettingsUpdateWithIncludeListConfig(delegatedAdminGroupName, resourceGroupName, projectName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "checkout_required", "true"),
 					resource.TestCheckResourceAttr(resourceName, "checkout_duration_in_seconds", "3600"),
-					resource.TestCheckResourceAttr(resourceName, "include_list.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "include_list.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "include_list.0.id", "account1"),
 					resource.TestCheckResourceAttr(resourceName, "include_list.0.service_account_user_name", "user1"),
 					resource.TestCheckResourceAttr(resourceName, "include_list.0.saas_app_instance_name", "app1"),
+					resource.TestCheckResourceAttr(resourceName, "include_list.1.id", "account2"),
+					resource.TestCheckResourceAttr(resourceName, "include_list.1.service_account_user_name", "user2"),
+					resource.TestCheckResourceAttr(resourceName, "include_list.1.saas_app_instance_name", "app2"),
 				),
 			},
 			{
@@ -226,10 +257,13 @@ func TestAccSaasAppCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "checkout_required", "true"),
 					resource.TestCheckResourceAttr(resourceName, "checkout_duration_in_seconds", "3600"),
-					resource.TestCheckResourceAttr(resourceName, "exclude_list.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "exclude_list.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "exclude_list.0.id", "account3"),
 					resource.TestCheckResourceAttr(resourceName, "exclude_list.0.service_account_user_name", "user3"),
 					resource.TestCheckResourceAttr(resourceName, "exclude_list.0.saas_app_instance_name", "app3"),
+					resource.TestCheckResourceAttr(resourceName, "exclude_list.1.id", "account4"),
+					resource.TestCheckResourceAttr(resourceName, "exclude_list.1.service_account_user_name", "user4"),
+					resource.TestCheckResourceAttr(resourceName, "exclude_list.1.saas_app_instance_name", "app4"),
 				),
 			},
 		},

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"regexp"
 	"sync"
@@ -116,46 +115,41 @@ resource "oktapam_okta_universal_directory_checkout_settings" "test_acc_okta_uni
 }
 `
 
-// func TestAccOktaUDCheckoutSettings(t *testing.T) {
-// 	checkTeamApplicable(t, true)
-// 	resourceName := "oktapam_okta_universal_directory_checkout_settings.test_acc_okta_universal_directory_checkout_settings"
-// 	resourceGroupName := fmt.Sprintf("test_acc_resource_group_%s", randSeq())
-// 	projectName := fmt.Sprintf("test_acc_resource_group_project_%s", randSeq())
-// 	delegatedAdminGroupName := fmt.Sprintf("test_acc_resource_group_dga_%s", randSeq())
-// 	defaultCheckoutDuration := int32(900)
+func TestAccOktaUDCheckoutSettings(t *testing.T) {
+	checkTeamApplicable(t, true)
+	resourceName := "oktapam_okta_universal_directory_checkout_settings.test_acc_okta_universal_directory_checkout_settings"
+	resourceGroupName := fmt.Sprintf("test_acc_resource_group_%s", randSeq())
+	projectName := fmt.Sprintf("test_acc_resource_group_project_%s", randSeq())
+	delegatedAdminGroupName := fmt.Sprintf("test_acc_resource_group_dga_%s", randSeq())
+	defaultCheckoutDuration := int32(900)
 
-// 	initialSettings := &pam.APIServiceAccountCheckoutSettings{
-// 		CheckoutRequired:          true,
-// 		CheckoutDurationInSeconds: defaultCheckoutDuration,
-// 	}
+	initialSettings := &pam.APIServiceAccountCheckoutSettings{
+		CheckoutRequired:          true,
+		CheckoutDurationInSeconds: defaultCheckoutDuration,
+	}
 
-// 	resource.Test(t, resource.TestCase{
-// 		PreCheck:                 func() { testAccPreCheck(t) },
-// 		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
-// 		Steps: []resource.TestStep{
-// 			{
-// 				Config: createOktaUDCheckoutSettingsCreateConfig(delegatedAdminGroupName, resourceGroupName, projectName),
-// 				Check: resource.ComposeAggregateTestCheckFunc(
-// 					testAccOktaUDCheckoutSettingsCheckExists(resourceName, initialSettings),
-// 				),
-// 			},
-// 			{
-// 				Config:      createOktaUDCheckoutSettingsUpdateWithBothListsConfig(delegatedAdminGroupName, resourceGroupName, projectName),
-// 				ExpectError: regexp.MustCompile(`Only one of 'IncludeList' or 'ExcludeList' can be specified`),
-// 			},
-// 			// Delete Okta UD checkout settings resource
-// 			{
-// 				Config: createOktaUDCheckoutSettingsBaseConfig(delegatedAdminGroupName, resourceGroupName, projectName),
-// 				Check:  testAccOktaUDCheckoutSettingsCheckDeleted(resourceName),
-// 			},
-// 			// Destroy all resources
-// 			{
-// 				Config: `{}`,
-// 				Check:  testAccOktaUDCheckoutSettingsCheckDeleted(resourceName),
-// 			},
-// 		},
-// 	})
-// }
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				Config: createOktaUDCheckoutSettingsCreateConfig(delegatedAdminGroupName, resourceGroupName, projectName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccOktaUDCheckoutSettingsCheckExists(resourceName, initialSettings),
+				),
+			},
+			{
+				Config:      createOktaUDCheckoutSettingsUpdateWithBothListsConfig(delegatedAdminGroupName, resourceGroupName, projectName),
+				ExpectError: regexp.MustCompile(`Only one of 'IncludeList' or 'ExcludeList' can be specified`),
+			},
+			// Delete Okta UD checkout settings resource
+			{
+				Config: createOktaUDCheckoutSettingsBaseConfig(delegatedAdminGroupName, resourceGroupName, projectName),
+				Check:  testAccOktaUDCheckoutSettingsCheckDeleted(resourceName),
+			},
+		},
+	})
+}
 
 // TestAccOktaUDCheckoutSettingsWithMockHTTPClient is a test that uses httpmock to mock the HTTP client
 // and test the Okta UD checkout settings resource marshalling and unmarshalling correctly.
@@ -172,56 +166,34 @@ func TestAccOktaUDCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 
 	// Setup mock responders with fixed IDs
 	groupID := uuid.New().String()
-	// resourceGroupID := uuid.New().String()
-	// projectID := uuid.New().String()
-	// Use fixed IDs for consistency
-	resourceGroupID := "0c6194ea-a60f-4a0e-b98b-aabdbae3db8c"
-	projectID := "92a42895-7da4-42f2-b045-2fd531c04d0c" // Different ID for project
+	resourceGroupID := uuid.New().String()
+	projectID := uuid.New().String()
 
 	// Create a map to store entities with mutex for thread safety
 	var entitiesLock sync.RWMutex
 	entities := make(map[string]*pam.APIServiceAccountCheckoutSettings)
 
-	// Initialize with default settings
-	initialSettings := &pam.APIServiceAccountCheckoutSettings{
-		CheckoutRequired:          true,
-		CheckoutDurationInSeconds: int32(900),
-		IncludeList:               []pam.ServiceAccountSettingNameObject{},
-		ExcludeList:               []pam.ServiceAccountSettingNameObject{},
-	}
-
-	// Store initial settings
-	entityKey := fmt.Sprintf("%s/%s", resourceGroupID, projectID)
-	entities[entityKey] = initialSettings
-
-	// Mock the GET endpoint for read operations
 	httpmock.RegisterRegexpResponder("GET",
 		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects/.*/okta_universal_directory_checkout_settings`),
 		func(req *http.Request) (*http.Response, error) {
-			log.Printf("[DEBUG] Mock GET request received: %s", req.URL.String())
-
-			// Extract IDs from URL path
 			matches := regexp.MustCompile(`/resource_groups/([^/]+)/projects/([^/]+)/`).FindStringSubmatch(req.URL.Path)
 			if len(matches) != 3 {
-				log.Printf("[ERROR] Invalid URL format in GET request: %s", req.URL.Path)
+
 				return httpmock.NewStringResponse(400, "Invalid URL"), nil
 			}
 			resourceGroupID := matches[1]
 			projectID := matches[2]
 
 			entityKey := fmt.Sprintf("%s/%s", resourceGroupID, projectID)
-			log.Printf("[DEBUG] Looking up settings for key: %s", entityKey)
 
-			// Return the stored settings if they exist
 			entitiesLock.RLock()
 			settings, exists := entities[entityKey]
 			entitiesLock.RUnlock()
 
 			if !exists {
-				// Return default settings if none exist
 				defaultSettings := &pam.APIServiceAccountCheckoutSettings{
 					CheckoutRequired:          false,
-					CheckoutDurationInSeconds: int32(0),
+					CheckoutDurationInSeconds: int32(900),
 					IncludeList:               []pam.ServiceAccountSettingNameObject{},
 					ExcludeList:               []pam.ServiceAccountSettingNameObject{},
 				}
@@ -232,11 +204,9 @@ func TestAccOktaUDCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 		},
 	)
 
-	// Mock the PUT endpoint for update operations
 	httpmock.RegisterRegexpResponder("PUT",
 		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects/.*/okta_universal_directory_checkout_settings`),
 		func(req *http.Request) (*http.Response, error) {
-			log.Printf("[DEBUG] Mock PUT request received: %s", req.URL.String())
 
 			// Extract IDs from URL path
 			matches := regexp.MustCompile(`/resource_groups/([^/]+)/projects/([^/]+)/`).FindStringSubmatch(req.URL.Path)
@@ -248,7 +218,7 @@ func TestAccOktaUDCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 
 			var settings pam.APIServiceAccountCheckoutSettings
 			if err := json.NewDecoder(req.Body).Decode(&settings); err != nil {
-				log.Printf("[ERROR] Failed to decode request body: %v", err)
+
 				return httpmock.NewStringResponse(400, ""), nil
 			}
 
@@ -259,30 +229,21 @@ func TestAccOktaUDCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 			entities[entityKey] = &settings
 			entitiesLock.Unlock()
 
-			log.Printf("[DEBUG] Stored settings for key %s: %+v", entityKey, settings)
 			return httpmock.NewJsonResponse(200, settings)
 		},
 	)
 
-	// Register these responders before SetupDefaultMockResponders
+	// Register default responders for user group, resource group, resource group project
 	SetupDefaultMockResponders(groupID, resourceGroupID, projectID, delegatedAdminGroupName, resourceGroupName, projectName)
-
-	// Add cleanup step to print statistics
-	defer func() {
-		info := httpmock.GetCallCountInfo()
-		log.Printf("[DEBUG] Mock HTTP call count info: %v", info)
-	}()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			log.Printf("[DEBUG] Starting test with empty entities map")
 		},
 		ProtoV6ProviderFactories: httpMockTestV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
 				Config: createOktaUDCheckoutSettingsCreateConfig(delegatedAdminGroupName, resourceGroupName, projectName),
-				// PlanOnly: true,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PostApplyPreRefresh: []plancheck.PlanCheck{
 						DebugPlan(),
@@ -294,47 +255,32 @@ func TestAccOktaUDCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "checkout_duration_in_seconds", "900"),
 				),
 			},
-			// {
-			// 	PreConfig: func() {
-			// 		log.Printf("[DEBUG] Starting first test step")
-			// 		// Clear the entities map
-			// 		entitiesLock.Lock()
-			// 		for k := range entities {
-			// 			delete(entities, k)
-			// 		}
-			// 		entitiesLock.Unlock()
-			// 	},
-			// 	Config: createOktaUDCheckoutSettingsUpdateWithIncludeListConfig(delegatedAdminGroupName, resourceGroupName, projectName),
-			// 	Check: resource.ComposeAggregateTestCheckFunc(
-			// 		func(s *terraform.State) error {
-			// 			log.Printf("[DEBUG] Running Check function")
-			// 			return nil
-			// 		},
-			// 		resource.TestCheckResourceAttr(resourceName, "checkout_required", "true"),
-			// 		resource.TestCheckResourceAttr(resourceName, "checkout_duration_in_seconds", "3600"),
-			// 		resource.TestCheckResourceAttr(resourceName, "include_list.#", "1"),
-			// 		resource.TestCheckResourceAttr(resourceName, "include_list.0.id", "account1"),
-			// 		resource.TestCheckResourceAttr(resourceName, "include_list.0.service_account_user_name", "user1"),
-			// 		resource.TestCheckResourceAttr(resourceName, "include_list.0.saas_app_instance_name", "app1"),
-			// 	),
-			// },
-			// {
-			// 	PreConfig: func() { currentStep = 1 },
-			// 	Config:    createOktaUDCheckoutSettingsUpdateWithExcludeListConfig(delegatedAdminGroupName, resourceGroupName, projectName),
-			// 	Check: resource.ComposeAggregateTestCheckFunc(
-			// 		resource.TestCheckResourceAttr(resourceName, "checkout_required", "true"),
-			// 		resource.TestCheckResourceAttr(resourceName, "checkout_duration_in_seconds", "3600"),
-			// 		resource.TestCheckResourceAttr(resourceName, "exclude_list.#", "1"),
-			// 		resource.TestCheckResourceAttr(resourceName, "exclude_list.0.id", "account3"),
-			// 		resource.TestCheckResourceAttr(resourceName, "exclude_list.0.service_account_user_name", "user3"),
-			// 		resource.TestCheckResourceAttr(resourceName, "exclude_list.0.saas_app_instance_name", "app3"),
-			// 	),
-			// },
-			// {
-			// 	PreConfig: func() { currentStep = 2 },
-			// 	Config:    createOktaUDCheckoutSettingsBaseConfig(delegatedAdminGroupName, resourceGroupName, projectName),
-			// 	Check:     testAccOktaUDCheckoutSettingsCheckExists(resourceName, deleteSettings),
-			// },
+			{
+				Config: createOktaUDCheckoutSettingsUpdateWithIncludeListConfig(delegatedAdminGroupName, resourceGroupName, projectName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					func(s *terraform.State) error {
+						return nil
+					},
+					resource.TestCheckResourceAttr(resourceName, "checkout_required", "true"),
+					resource.TestCheckResourceAttr(resourceName, "checkout_duration_in_seconds", "3600"),
+					resource.TestCheckResourceAttr(resourceName, "include_list.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "include_list.0.id", "account1"),
+					resource.TestCheckResourceAttr(resourceName, "include_list.0.service_account_user_name", "user1"),
+					resource.TestCheckResourceAttr(resourceName, "include_list.0.saas_app_instance_name", "app1"),
+				),
+			},
+			{
+
+				Config: createOktaUDCheckoutSettingsUpdateWithExcludeListConfig(delegatedAdminGroupName, resourceGroupName, projectName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "checkout_required", "true"),
+					resource.TestCheckResourceAttr(resourceName, "checkout_duration_in_seconds", "3600"),
+					resource.TestCheckResourceAttr(resourceName, "exclude_list.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "exclude_list.0.id", "account3"),
+					resource.TestCheckResourceAttr(resourceName, "exclude_list.0.service_account_user_name", "user3"),
+					resource.TestCheckResourceAttr(resourceName, "exclude_list.0.saas_app_instance_name", "app3"),
+				),
+			},
 		},
 	})
 }
@@ -382,12 +328,7 @@ func createOktaUDCheckoutSettingsBaseConfig(delegatedAdminGroupName string, reso
 }
 
 func createOktaUDCheckoutSettingsCreateConfig(delegatedAdminGroupName string, resourceGroupName string, projectName string) string {
-	combinedConfig := createOktaUDCheckoutSettingsBaseConfig(delegatedAdminGroupName, resourceGroupName, projectName) + testAccOktaUDCheckoutSettingsCreateConfigFormat
-	log.Printf("[DEBUG] Combined config: %s", func() string {
-		pretty, _ := json.MarshalIndent(combinedConfig, "", "  ")
-		return string(pretty)
-	}())
-	return combinedConfig
+	return createOktaUDCheckoutSettingsBaseConfig(delegatedAdminGroupName, resourceGroupName, projectName) + testAccOktaUDCheckoutSettingsCreateConfigFormat
 }
 
 func createOktaUDCheckoutSettingsUpdateWithIncludeListConfig(delegatedAdminGroupName string, resourceGroupName string, projectName string) string {

@@ -137,31 +137,59 @@ func ServiceAccountCheckoutSettingsFromSDKToModel(ctx context.Context, in *pam.A
 		out.CheckoutDurationInSeconds = types.Int32PointerValue(val)
 	}
 
-	includeList, d := types.ListValueFrom(ctx, types.ObjectType{
-		AttrTypes: map[string]attr.Type{
-			"id":                        types.StringType,
-			"service_account_user_name": types.StringType,
-			"saas_app_instance_name":    types.StringType,
-		},
-	}, in.IncludeList)
-	diags.Append(d...)
-	if diags.HasError() {
-		return nil, diags
+	var includeList []ServiceAccountSettingNameObjectModel
+	for _, item := range in.IncludeList {
+		model := ServiceAccountSettingNameObjectModel{
+			Id: item.Id,
+		}
+		if item.ServiceAccountUserName != nil {
+			model.ServiceAccountUserName = *item.ServiceAccountUserName
+		}
+		if item.SaasAppInstanceName != nil {
+			model.SaasAppInstanceName = *item.SaasAppInstanceName
+		}
+		includeList = append(includeList, model)
 	}
-	out.IncludeList = includeList
 
-	excludeList, d := types.ListValueFrom(ctx, types.ObjectType{
+	includeListValue, d := types.ListValueFrom(ctx, types.ObjectType{
 		AttrTypes: map[string]attr.Type{
 			"id":                        types.StringType,
 			"service_account_user_name": types.StringType,
 			"saas_app_instance_name":    types.StringType,
 		},
-	}, in.ExcludeList)
+	}, includeList)
 	diags.Append(d...)
 	if diags.HasError() {
 		return nil, diags
 	}
-	out.ExcludeList = excludeList
+	out.IncludeList = includeListValue
+
+	var excludeList []ServiceAccountSettingNameObjectModel
+	for _, item := range in.ExcludeList {
+		model := ServiceAccountSettingNameObjectModel{
+			Id: item.Id,
+		}
+		if item.ServiceAccountUserName != nil {
+			model.ServiceAccountUserName = *item.ServiceAccountUserName
+		}
+		if item.SaasAppInstanceName != nil {
+			model.SaasAppInstanceName = *item.SaasAppInstanceName
+		}
+		excludeList = append(excludeList, model)
+	}
+
+	excludeListValue, d := types.ListValueFrom(ctx, types.ObjectType{
+		AttrTypes: map[string]attr.Type{
+			"id":                        types.StringType,
+			"service_account_user_name": types.StringType,
+			"saas_app_instance_name":    types.StringType,
+		},
+	}, excludeList)
+	diags.Append(d...)
+	if diags.HasError() {
+		return nil, diags
+	}
+	out.ExcludeList = excludeListValue
 
 	return &out, diags
 }
