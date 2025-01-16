@@ -56,7 +56,3 @@ workflows:
       - reversing-labs:
           context:
             - static-analysis
-          filters:
-            branches:
-              only:
-                - master
