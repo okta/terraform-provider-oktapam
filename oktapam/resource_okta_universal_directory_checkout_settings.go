@@ -3,7 +3,6 @@ package oktapam
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/okta/terraform-provider-oktapam/oktapam/convert"
 
@@ -84,7 +83,6 @@ func (r *oktaUniversalDirectoryCheckoutSettingsResource) Create(ctx context.Cont
 		checkoutSettings = *settings
 	}
 
-	log.Printf("[DEBUG] Create Updating Okta Universal Directory checkout settings for team: %q resource_group: %q project_id: %q", r.teamName, plan.ResourceGroup, plan.Project)
 	if _, err := r.api.UpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings(ctx, r.teamName, plan.ResourceGroup, plan.Project).APIServiceAccountCheckoutSettings(checkoutSettings).Execute(); err != nil {
 		resp.Diagnostics.AddError("Error creating Okta Universal Directory checkout settings", err.Error())
 		return
@@ -105,7 +103,6 @@ func (r *oktaUniversalDirectoryCheckoutSettingsResource) Read(ctx context.Contex
 		return
 	}
 
-	log.Printf("[DEBUG] Read Reading Okta UD checkout settings for team: %q resource_group: %q project_id: %q", r.teamName, state.ResourceGroup, state.Project)
 	if checkoutSettings, _, err := r.api.FetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings(ctx, r.teamName, state.ResourceGroup, state.Project).Execute(); err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Okta Universal Directory checkout settings",
@@ -124,8 +121,6 @@ func (r *oktaUniversalDirectoryCheckoutSettingsResource) Read(ctx context.Contex
 		}
 	}
 
-	log.Printf("[DEBUG] Read Setting state for Okta Universal Directory checkout settings for team: %q resource_group: %q project_id: %q", r.teamName, state.ResourceGroup, state.Project)
-	log.Printf("settingsModel: %+v", state)
 	if diags := resp.State.Set(ctx, state); diags.HasError() {
 		resp.Diagnostics.Append(diags...)
 		return
@@ -147,13 +142,11 @@ func (r *oktaUniversalDirectoryCheckoutSettingsResource) Update(ctx context.Cont
 		checkoutSettings = *settings
 	}
 
-	log.Printf("[DEBUG] Update Updating Okta Universal Directory checkout settings for team: %q resource_group: %q project_id: %q", r.teamName, plan.ResourceGroup, plan.Project)
 	if _, err := r.api.UpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings(ctx, r.teamName, plan.ResourceGroup, plan.Project).APIServiceAccountCheckoutSettings(checkoutSettings).Execute(); err != nil {
 		resp.Diagnostics.AddError("Error updating Okta Universal Directory checkout settings", err.Error())
 		return
 	}
 
-	log.Printf("[DEBUG] Update Reading Okta Universal Directory checkout settings for team: %q resource_group: %q project_id: %q", r.teamName, plan.ResourceGroup, plan.Project)
 	if updatedSettings, _, err := r.api.FetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings(ctx, r.teamName, plan.ResourceGroup, plan.Project).Execute(); err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Okta Universal Directory checkout settings",
@@ -169,7 +162,6 @@ func (r *oktaUniversalDirectoryCheckoutSettingsResource) Update(ctx context.Cont
 			resp.Diagnostics.Append(diags...)
 			return
 		} else {
-			log.Printf("[DEBUG]Update Setting state for Okta Universal Directory checkout settings for team: %q resource_group: %q project_id: %q", r.teamName, plan.ResourceGroup, plan.Project)
 			plan.ServiceAccountCheckoutSettingsModel = *settingsModel
 		}
 	}
