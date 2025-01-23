@@ -20,7 +20,7 @@ Manages checkout settings for SaaS Application resources in a project
 - `checkout_duration_in_seconds` (Number) The duration in seconds for the checkout. If the checkout is enabled, the duration is the maximum time a user can access the resource before the checkout expires.
 - `checkout_required` (Boolean) Indicates whether a checkout is mandatory for accessing resources within the project. If `true`, checkout is enforced for all applicable resources by default. If `false`, checkout is not required, and resources are accessible without it.
 - `project` (String) The UUID of a Project.
-- `resource_group` (String) The UUID of a OktaPA Resource Group.
+- `resource_group` (String) The UUID of a OktaPAM Resource Group.
 
 ### Optional
 

@@ -19,7 +19,7 @@ The secret specified in this resource will be stored *unencrypted* in your Terra
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
 - `parent_folder` (String) The UUID of the directory which contains this Secret/Secret Folder element.
 - `project` (String) The UUID of a Project.
-- `resource_group` (String) The UUID of a OktaPA Resource Group.
+- `resource_group` (String) The UUID of a OktaPAM Resource Group.
 - `secret` (Map of String, Sensitive) Defines the key value pairs that are used to store sensitive information, like usernames, passwords, API tokens, keys, or any string value.
 
 ### Optional

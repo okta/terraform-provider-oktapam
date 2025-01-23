@@ -18,7 +18,7 @@ Returns a list of Server Enrollment Tokens associated with a specific Project. F
 ### Required
 
 - `project` (String) The UUID of a Project.
-- `resource_group` (String) The UUID of a OktaPA Resource Group.
+- `resource_group` (String) The UUID of a OktaPAM Resource Group.
 
 ### Read-Only
 

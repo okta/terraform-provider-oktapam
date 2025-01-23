@@ -18,7 +18,7 @@ The password specified in this resource will be stored *unencrypted* in your Ter
 
 - `management_connection_details` (Block List, Min: 1, Max: 1) A set of fields defining the database to connect to. (see [below for nested schema](#nestedblock--management_connection_details))
 - `project` (String) The UUID of a Project.
-- `resource_group` (String) The UUID of a OktaPA Resource Group.
+- `resource_group` (String) The UUID of a OktaPAM Resource Group.
 
 ### Optional
 
