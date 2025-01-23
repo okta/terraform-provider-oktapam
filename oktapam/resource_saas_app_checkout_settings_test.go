@@ -149,7 +149,6 @@ func TestAccSaasAppCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 	projectName := fmt.Sprintf("test_acc_mock_project_%s", randSeq())
 	delegatedAdminGroupName := fmt.Sprintf("test_acc_mock_dga_%s", randSeq())
 
-	// Setup httpmock
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 

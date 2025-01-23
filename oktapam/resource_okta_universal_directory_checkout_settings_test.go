@@ -208,7 +208,6 @@ func TestAccOktaUDCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 		regexp.MustCompile(`/v1/teams/httpmock-test-team/resource_groups/.*/projects/.*/okta_universal_directory_checkout_settings`),
 		func(req *http.Request) (*http.Response, error) {
 
-			// Extract IDs from URL path
 			matches := regexp.MustCompile(`/resource_groups/([^/]+)/projects/([^/]+)/`).FindStringSubmatch(req.URL.Path)
 			if len(matches) != 3 {
 				return httpmock.NewStringResponse(400, "Invalid URL"), nil
@@ -224,7 +223,6 @@ func TestAccOktaUDCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 
 			entityKey := fmt.Sprintf("%s/%s", resourceGroupID, projectID)
 
-			// Store the settings in our entities map
 			entitiesLock.Lock()
 			entities[entityKey] = &settings
 			entitiesLock.Unlock()
