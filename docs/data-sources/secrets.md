@@ -19,7 +19,7 @@ Returns a list of Secrets, constrained by the given parameters. For details, see
 
 - `path` (String) The path of the Secret or parent Secret Folder
 - `project` (String) The UUID of a Project.
-- `resource_group` (String) The UUID of a OktaPAM Resource Group.
+- `resource_group` (String) The UUID of a OktaPA Resource Group.
 
 ### Read-Only
 

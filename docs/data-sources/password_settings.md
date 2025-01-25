@@ -18,7 +18,7 @@ Returns an existing Server Password Policy for a PAM Project.  For details, see 
 ### Required
 
 - `project` (String) The UUID of a Project.
-- `resource_group` (String) The UUID of a OktaPAM Resource Group.
+- `resource_group` (String) The UUID of a OktaPA Resource Group.
 
 ### Read-Only
 

@@ -18,7 +18,7 @@ Returns an existing PAM Secret. For details, see [Secrets](https://help.okta.com
 ### Required
 
 - `project` (String) The UUID of a Project.
-- `resource_group` (String) The UUID of a OktaPAM Resource Group.
+- `resource_group` (String) The UUID of a OktaPA Resource Group.
 
 ### Read-Only
 
