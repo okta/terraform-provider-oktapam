@@ -18,7 +18,7 @@ Returns an existing Database.
 ### Required
 
 - `project` (String) The UUID of a Project.
-- `resource_group` (String) The UUID of a OktaPAM Resource Group.
+- `resource_group` (String) The UUID of a OktaPA Resource Group.
 
 ### Optional
 

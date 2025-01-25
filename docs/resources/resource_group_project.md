@@ -18,7 +18,7 @@ A PAM construct that contains a collection of resources that share settings. For
 ### Required
 
 - `name` (String) The human-readable name of the resource. Values are case-sensitive.
-- `resource_group` (String) The UUID of a OktaPAM Resource Group.
+- `resource_group` (String) The UUID of a OktaPA Resource Group.
 
 ### Optional
 
