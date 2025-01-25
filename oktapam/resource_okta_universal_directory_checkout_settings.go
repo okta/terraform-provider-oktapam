@@ -20,7 +20,7 @@ var (
 	_ resource.ResourceWithConfigure = &oktaUniversalDirectoryCheckoutSettingsResource{}
 )
 
-func NewoktaUniversalDirectoryCheckoutSettingsResource() resource.Resource {
+func NewOktaUniversalDirectoryCheckoutSettingsResource() resource.Resource {
 	return &oktaUniversalDirectoryCheckoutSettingsResource{}
 }
 
