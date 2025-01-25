@@ -9,7 +9,9 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -38,11 +40,15 @@ func ResourceCheckoutSettingsSchemaAttributes(mergeIntoMap map[string]schema.Att
 			ElementType: types.StringType,
 			Optional:    true,
 			Description: descriptions.ExcludeList,
+			Computed:    true,
+			Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 		},
 		"include_list": schema.ListAttribute{
 			ElementType: types.StringType,
 			Optional:    true,
 			Description: descriptions.IncludeList,
+			Computed:    true,
+			Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 		},
 	}
 
@@ -106,4 +112,44 @@ func ResourceCheckoutSettingsFromSDKToModel(ctx context.Context, in *pam.Resourc
 	out.ExcludeList = excludeList
 
 	return &out, diags
+}
+
+func PamResourceCheckoutSettingsToPamServiceAccountCheckoutSettings(in *pam.ResourceCheckoutSettings) *pam.APIServiceAccountCheckoutSettings {
+	includeList := []pam.ServiceAccountSettingNameObject{}
+	for _, Id := range in.IncludeList {
+		includeList = append(includeList, pam.ServiceAccountSettingNameObject{
+			Id: Id,
+		})
+	}
+	excludeList := []pam.ServiceAccountSettingNameObject{}
+	for _, Id := range in.ExcludeList {
+		excludeList = append(excludeList, pam.ServiceAccountSettingNameObject{
+			Id: Id,
+		})
+	}
+
+	return &pam.APIServiceAccountCheckoutSettings{
+		CheckoutRequired:          in.CheckoutRequired,
+		CheckoutDurationInSeconds: *in.CheckoutDurationInSeconds,
+		IncludeList:               includeList,
+		ExcludeList:               excludeList,
+	}
+}
+
+func PamServiceAccountCheckoutSettingsToPamResourceCheckoutSettings(in *pam.APIServiceAccountCheckoutSettings) *pam.ResourceCheckoutSettings {
+	includeList := []string{}
+	for _, include := range in.IncludeList {
+		includeList = append(includeList, include.Id)
+	}
+	excludeList := []string{}
+	for _, exclude := range in.ExcludeList {
+		excludeList = append(excludeList, exclude.Id)
+	}
+	resourceCheckoutSettings := &pam.ResourceCheckoutSettings{
+		CheckoutRequired:          in.CheckoutRequired,
+		CheckoutDurationInSeconds: &in.CheckoutDurationInSeconds,
+		IncludeList:               includeList,
+		ExcludeList:               excludeList,
+	}
+	return resourceCheckoutSettings
 }
