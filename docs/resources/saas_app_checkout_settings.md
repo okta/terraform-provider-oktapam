@@ -24,28 +24,9 @@ Manages checkout settings for SaaS Application resources in a project
 
 ### Optional
 
-- `exclude_list` (List of Object) If provided, only the account identifiers listed are excluded from the checkout requirement. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive. (see [below for nested schema](#nestedatt--exclude_list))
-- `include_list` (List of Object) If provided, only the account identifiers listed are required to perform a checkout to access the resource. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive. (see [below for nested schema](#nestedatt--include_list))
+- `exclude_list` (List of String) If provided, only the account identifiers listed are excluded from the checkout requirement. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.
+- `include_list` (List of String) If provided, only the account identifiers listed are required to perform a checkout to access the resource. This list is only considered if `checkout_required` is set to `true`. Only one of `include_list` and `exclude_list` can be specified in a request since they are mutually exclusive.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-
-<a id="nestedatt--exclude_list"></a>
-### Nested Schema for `exclude_list`
-
-Optional:
-
-- `id` (String)
-- `saas_app_instance_name` (String)
-- `service_account_user_name` (String)
-
-
-<a id="nestedatt--include_list"></a>
-### Nested Schema for `include_list`
-
-Optional:
-
-- `id` (String)
-- `saas_app_instance_name` (String)
-- `service_account_user_name` (String)
