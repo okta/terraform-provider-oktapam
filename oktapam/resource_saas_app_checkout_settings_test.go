@@ -50,18 +50,7 @@ resource "oktapam_saas_app_checkout_settings" "test_acc_saas_app_checkout_settin
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 	checkout_required = true
 	checkout_duration_in_seconds = 3600
-	include_list = [
-		{
-			id = "account1",
-			service_account_user_name = "user1",
-			saas_app_instance_name = "app1"
-		},
-		{
-			id = "account2",
-			service_account_user_name = "user2",
-			saas_app_instance_name = "app2"
-		}
-	]
+	include_list = [ "service_account_1", "service_account_2" ]
 }
 `
 
@@ -71,18 +60,7 @@ resource "oktapam_saas_app_checkout_settings" "test_acc_saas_app_checkout_settin
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 	checkout_required = true
 	checkout_duration_in_seconds = 3600
-	exclude_list = [
-		{
-			id = "account3",
-			service_account_user_name = "user3",
-			saas_app_instance_name = "app3"
-		},
-		{
-			id = "account4",
-			service_account_user_name = "user4",
-			saas_app_instance_name = "app4"
-		}
-	]
+	exclude_list = [ "service_account_3", "service_account_4" ]
 }
 `
 
@@ -92,20 +70,8 @@ resource "oktapam_saas_app_checkout_settings" "test_acc_saas_app_checkout_settin
 	project = oktapam_resource_group_project.test_acc_resource_group_project.id
 	checkout_required = true
 	checkout_duration_in_seconds = 7200
-	include_list = [
-		{
-			id = "account1",
-			service_account_user_name = "user1",
-			saas_app_instance_name = "app1"
-		}
-	]
-	exclude_list = [
-		{
-			id = "account3",
-			service_account_user_name = "user3",
-			saas_app_instance_name = "app3"
-		}
-	]
+	include_list = [ "service_account_1", "service_account_2" ]
+	exclude_list = [ "service_account_3", "service_account_4" ]
 }
 `
 
@@ -243,12 +209,8 @@ func TestAccSaasAppCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "checkout_required", "true"),
 					resource.TestCheckResourceAttr(resourceName, "checkout_duration_in_seconds", "3600"),
 					resource.TestCheckResourceAttr(resourceName, "include_list.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "include_list.0.id", "account1"),
-					resource.TestCheckResourceAttr(resourceName, "include_list.0.service_account_user_name", "user1"),
-					resource.TestCheckResourceAttr(resourceName, "include_list.0.saas_app_instance_name", "app1"),
-					resource.TestCheckResourceAttr(resourceName, "include_list.1.id", "account2"),
-					resource.TestCheckResourceAttr(resourceName, "include_list.1.service_account_user_name", "user2"),
-					resource.TestCheckResourceAttr(resourceName, "include_list.1.saas_app_instance_name", "app2"),
+					resource.TestCheckResourceAttr(resourceName, "include_list.0", "service_account_1"),
+					resource.TestCheckResourceAttr(resourceName, "include_list.1", "service_account_2"),
 				),
 			},
 			{
@@ -257,12 +219,8 @@ func TestAccSaasAppCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "checkout_required", "true"),
 					resource.TestCheckResourceAttr(resourceName, "checkout_duration_in_seconds", "3600"),
 					resource.TestCheckResourceAttr(resourceName, "exclude_list.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "exclude_list.0.id", "account3"),
-					resource.TestCheckResourceAttr(resourceName, "exclude_list.0.service_account_user_name", "user3"),
-					resource.TestCheckResourceAttr(resourceName, "exclude_list.0.saas_app_instance_name", "app3"),
-					resource.TestCheckResourceAttr(resourceName, "exclude_list.1.id", "account4"),
-					resource.TestCheckResourceAttr(resourceName, "exclude_list.1.service_account_user_name", "user4"),
-					resource.TestCheckResourceAttr(resourceName, "exclude_list.1.saas_app_instance_name", "app4"),
+					resource.TestCheckResourceAttr(resourceName, "exclude_list.0", "service_account_3"),
+					resource.TestCheckResourceAttr(resourceName, "exclude_list.1", "service_account_4"),
 				),
 			},
 		},

@@ -33,7 +33,7 @@ type oktaUniversalDirectoryCheckoutSettingsResourceModel struct {
 	Id            types.String `tfsdk:"id"`
 	ResourceGroup string       `tfsdk:"resource_group"`
 	Project       string       `tfsdk:"project"`
-	convert.ServiceAccountCheckoutSettingsModel
+	convert.ResourceCheckoutSettingsModel
 }
 
 func (r *oktaUniversalDirectoryCheckoutSettingsResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -43,7 +43,7 @@ func (r *oktaUniversalDirectoryCheckoutSettingsResource) Metadata(_ context.Cont
 func (r *oktaUniversalDirectoryCheckoutSettingsResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "Manages checkout settings for Okta Universal Directory resources in a project",
-		Attributes: convert.ServiceAccountCheckoutSettingsSchemaAttributes(map[string]schema.Attribute{
+		Attributes: convert.ResourceCheckoutSettingsSchemaAttributes(map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed: true,
 				PlanModifiers: []planmodifier.String{
@@ -76,11 +76,11 @@ func (r *oktaUniversalDirectoryCheckoutSettingsResource) Create(ctx context.Cont
 	}
 
 	var checkoutSettings pam.APIServiceAccountCheckoutSettings
-	if settings, diags := convert.ServiceAccountCheckoutSettingsFromModelToSDK(ctx, &plan.ServiceAccountCheckoutSettingsModel); diags.HasError() {
+	if settings, diags := convert.ResourceCheckoutSettingsFromModelToSDK(ctx, &plan.ResourceCheckoutSettingsModel); diags.HasError() {
 		resp.Diagnostics.Append(diags...)
 		return
 	} else {
-		checkoutSettings = *settings
+		checkoutSettings = *convert.PamResourceCheckoutSettingsToPamServiceAccountCheckoutSettings(settings)
 	}
 
 	if _, err := r.api.UpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings(ctx, r.teamName, plan.ResourceGroup, plan.Project).APIServiceAccountCheckoutSettings(checkoutSettings).Execute(); err != nil {
@@ -113,11 +113,12 @@ func (r *oktaUniversalDirectoryCheckoutSettingsResource) Read(ctx context.Contex
 				err.Error()))
 		return
 	} else {
-		if settingsModel, diags := convert.ServiceAccountCheckoutSettingsFromSDKToModel(ctx, checkoutSettings); diags.HasError() {
+		resourceCheckoutSettings := convert.PamServiceAccountCheckoutSettingsToPamResourceCheckoutSettings(checkoutSettings)
+		if settingsModel, diags := convert.ResourceCheckoutSettingsFromSDKToModel(ctx, resourceCheckoutSettings); diags.HasError() {
 			resp.Diagnostics.Append(diags...)
 			return
 		} else {
-			state.ServiceAccountCheckoutSettingsModel = *settingsModel
+			state.ResourceCheckoutSettingsModel = *settingsModel
 		}
 	}
 
@@ -135,11 +136,11 @@ func (r *oktaUniversalDirectoryCheckoutSettingsResource) Update(ctx context.Cont
 	}
 
 	var checkoutSettings pam.APIServiceAccountCheckoutSettings
-	if settings, diags := convert.ServiceAccountCheckoutSettingsFromModelToSDK(ctx, &plan.ServiceAccountCheckoutSettingsModel); diags.HasError() {
+	if settings, diags := convert.ResourceCheckoutSettingsFromModelToSDK(ctx, &plan.ResourceCheckoutSettingsModel); diags.HasError() {
 		resp.Diagnostics.Append(diags...)
 		return
 	} else {
-		checkoutSettings = *settings
+		checkoutSettings = *convert.PamResourceCheckoutSettingsToPamServiceAccountCheckoutSettings(settings)
 	}
 
 	if _, err := r.api.UpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings(ctx, r.teamName, plan.ResourceGroup, plan.Project).APIServiceAccountCheckoutSettings(checkoutSettings).Execute(); err != nil {
@@ -157,12 +158,12 @@ func (r *oktaUniversalDirectoryCheckoutSettingsResource) Update(ctx context.Cont
 				err.Error()))
 		return
 	} else {
-
-		if settingsModel, diags := convert.ServiceAccountCheckoutSettingsFromSDKToModel(ctx, updatedSettings); diags.HasError() {
+		resourceCheckoutSettings := convert.PamServiceAccountCheckoutSettingsToPamResourceCheckoutSettings(updatedSettings)
+		if settingsModel, diags := convert.ResourceCheckoutSettingsFromSDKToModel(ctx, resourceCheckoutSettings); diags.HasError() {
 			resp.Diagnostics.Append(diags...)
 			return
 		} else {
-			plan.ServiceAccountCheckoutSettingsModel = *settingsModel
+			plan.ResourceCheckoutSettingsModel = *settingsModel
 		}
 	}
 
