@@ -12,7 +12,6 @@ import (
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/jarcoal/httpmock"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
@@ -193,11 +192,6 @@ func TestAccSaasAppCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: createSaasAppCheckoutSettingsCreateConfig(delegatedAdminGroupName, resourceGroupName, projectName),
-				ConfigPlanChecks: resource.ConfigPlanChecks{
-					PostApplyPreRefresh: []plancheck.PlanCheck{
-						DebugPlan(),
-					},
-				},
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "checkout_required", "true"),
 					resource.TestCheckResourceAttr(resourceName, "checkout_duration_in_seconds", "900"),

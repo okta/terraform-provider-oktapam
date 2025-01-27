@@ -12,27 +12,10 @@ import (
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/jarcoal/httpmock"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 )
-
-var _ plancheck.PlanCheck = debugPlan{}
-
-type debugPlan struct{}
-
-func (e debugPlan) CheckPlan(ctx context.Context, req plancheck.CheckPlanRequest, resp *plancheck.CheckPlanResponse) {
-	rd, err := json.Marshal(req.Plan)
-	if err != nil {
-		fmt.Println("error marshalling machine-readable plan output:", err)
-	}
-	fmt.Printf("req.Plan - %s\n", string(rd))
-}
-
-func DebugPlan() plancheck.PlanCheck {
-	return debugPlan{}
-}
 
 const testAccOktaUDCheckoutSettingsBaseConfigFormat = `
 resource "oktapam_group" "test_resource_group_dga_group" {
@@ -218,12 +201,6 @@ func TestAccOktaUDCheckoutSettingsWithMockHTTPClient(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: createOktaUDCheckoutSettingsCreateConfig(delegatedAdminGroupName, resourceGroupName, projectName),
-				ConfigPlanChecks: resource.ConfigPlanChecks{
-					PostApplyPreRefresh: []plancheck.PlanCheck{
-						DebugPlan(),
-					},
-				},
-
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "checkout_required", "true"),
 					resource.TestCheckResourceAttr(resourceName, "checkout_duration_in_seconds", "900"),
