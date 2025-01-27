@@ -9,9 +9,7 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -40,15 +38,11 @@ func ResourceCheckoutSettingsSchemaAttributes(mergeIntoMap map[string]schema.Att
 			ElementType: types.StringType,
 			Optional:    true,
 			Description: descriptions.ExcludeList,
-			Computed:    true,
-			Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 		},
 		"include_list": schema.ListAttribute{
 			ElementType: types.StringType,
 			Optional:    true,
 			Description: descriptions.IncludeList,
-			Computed:    true,
-			Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 		},
 	}
 
@@ -69,19 +63,32 @@ func ResourceCheckoutSettingsFromModelToSDK(ctx context.Context, in *ResourceChe
 		out.CheckoutDurationInSeconds = in.CheckoutDurationInSeconds.ValueInt32Pointer()
 	}
 
+	// Initialize empty lists
+	out.IncludeList = []string{}
+	out.ExcludeList = []string{}
+
 	if !in.IncludeList.IsNull() && !in.IncludeList.IsUnknown() {
-		diags.Append(in.IncludeList.ElementsAs(ctx, &out.IncludeList, false)...)
+		var includeList []string
+		diags.Append(in.IncludeList.ElementsAs(ctx, &includeList, false)...)
 		if diags.HasError() {
 			return nil, diags
+		}
+		if len(includeList) > 0 {
+			out.IncludeList = includeList
 		}
 	}
 
 	if !in.ExcludeList.IsNull() && !in.ExcludeList.IsUnknown() {
-		diags.Append(in.ExcludeList.ElementsAs(ctx, &out.ExcludeList, false)...)
+		var excludeList []string
+		diags.Append(in.ExcludeList.ElementsAs(ctx, &excludeList, false)...)
 		if diags.HasError() {
 			return nil, diags
 		}
+		if len(excludeList) > 0 {
+			out.ExcludeList = excludeList
+		}
 	}
+
 	return &out, diags
 }
 
@@ -97,19 +104,27 @@ func ResourceCheckoutSettingsFromSDKToModel(ctx context.Context, in *pam.Resourc
 		out.CheckoutDurationInSeconds = types.Int32PointerValue(val)
 	}
 
-	includeList, d := types.ListValueFrom(ctx, types.StringType, in.IncludeList)
-	diags.Append(d...)
-	if diags.HasError() {
-		return nil, diags
+	if len(in.IncludeList) == 0 {
+		out.IncludeList = types.ListNull(types.StringType)
+	} else {
+		includeList, d := types.ListValueFrom(ctx, types.StringType, in.IncludeList)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		out.IncludeList = includeList
 	}
-	out.IncludeList = includeList
 
-	excludeList, d := types.ListValueFrom(ctx, types.StringType, in.ExcludeList)
-	diags.Append(d...)
-	if diags.HasError() {
-		return nil, diags
+	if len(in.ExcludeList) == 0 {
+		out.ExcludeList = types.ListNull(types.StringType)
+	} else {
+		excludeList, d := types.ListValueFrom(ctx, types.StringType, in.ExcludeList)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		out.ExcludeList = excludeList
 	}
-	out.ExcludeList = excludeList
 
 	return &out, diags
 }
