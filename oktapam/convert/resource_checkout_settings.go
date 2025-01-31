@@ -63,19 +63,32 @@ func ResourceCheckoutSettingsFromModelToSDK(ctx context.Context, in *ResourceChe
 		out.CheckoutDurationInSeconds = in.CheckoutDurationInSeconds.ValueInt32Pointer()
 	}
 
+	// Initialize empty lists
+	out.IncludeList = []string{}
+	out.ExcludeList = []string{}
+
 	if !in.IncludeList.IsNull() && !in.IncludeList.IsUnknown() {
-		diags.Append(in.IncludeList.ElementsAs(ctx, &out.IncludeList, false)...)
+		var includeList []string
+		diags.Append(in.IncludeList.ElementsAs(ctx, &includeList, false)...)
 		if diags.HasError() {
 			return nil, diags
+		}
+		if len(includeList) > 0 {
+			out.IncludeList = includeList
 		}
 	}
 
 	if !in.ExcludeList.IsNull() && !in.ExcludeList.IsUnknown() {
-		diags.Append(in.ExcludeList.ElementsAs(ctx, &out.ExcludeList, false)...)
+		var excludeList []string
+		diags.Append(in.ExcludeList.ElementsAs(ctx, &excludeList, false)...)
 		if diags.HasError() {
 			return nil, diags
 		}
+		if len(excludeList) > 0 {
+			out.ExcludeList = excludeList
+		}
 	}
+
 	return &out, diags
 }
 
@@ -91,19 +104,67 @@ func ResourceCheckoutSettingsFromSDKToModel(ctx context.Context, in *pam.Resourc
 		out.CheckoutDurationInSeconds = types.Int32PointerValue(val)
 	}
 
-	includeList, d := types.ListValueFrom(ctx, types.StringType, in.IncludeList)
-	diags.Append(d...)
-	if diags.HasError() {
-		return nil, diags
+	if len(in.IncludeList) == 0 {
+		out.IncludeList = types.ListNull(types.StringType)
+	} else {
+		includeList, d := types.ListValueFrom(ctx, types.StringType, in.IncludeList)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		out.IncludeList = includeList
 	}
-	out.IncludeList = includeList
 
-	excludeList, d := types.ListValueFrom(ctx, types.StringType, in.ExcludeList)
-	diags.Append(d...)
-	if diags.HasError() {
-		return nil, diags
+	if len(in.ExcludeList) == 0 {
+		out.ExcludeList = types.ListNull(types.StringType)
+	} else {
+		excludeList, d := types.ListValueFrom(ctx, types.StringType, in.ExcludeList)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		out.ExcludeList = excludeList
 	}
-	out.ExcludeList = excludeList
 
 	return &out, diags
+}
+
+func PamResourceCheckoutSettingsToPamServiceAccountCheckoutSettings(in *pam.ResourceCheckoutSettings) *pam.APIServiceAccountCheckoutSettings {
+	includeList := []pam.ServiceAccountSettingNameObject{}
+	for _, Id := range in.IncludeList {
+		includeList = append(includeList, pam.ServiceAccountSettingNameObject{
+			Id: Id,
+		})
+	}
+	excludeList := []pam.ServiceAccountSettingNameObject{}
+	for _, Id := range in.ExcludeList {
+		excludeList = append(excludeList, pam.ServiceAccountSettingNameObject{
+			Id: Id,
+		})
+	}
+
+	return &pam.APIServiceAccountCheckoutSettings{
+		CheckoutRequired:          in.CheckoutRequired,
+		CheckoutDurationInSeconds: *in.CheckoutDurationInSeconds,
+		IncludeList:               includeList,
+		ExcludeList:               excludeList,
+	}
+}
+
+func PamServiceAccountCheckoutSettingsToPamResourceCheckoutSettings(in *pam.APIServiceAccountCheckoutSettings) *pam.ResourceCheckoutSettings {
+	includeList := []string{}
+	for _, include := range in.IncludeList {
+		includeList = append(includeList, include.Id)
+	}
+	excludeList := []string{}
+	for _, exclude := range in.ExcludeList {
+		excludeList = append(excludeList, exclude.Id)
+	}
+	resourceCheckoutSettings := &pam.ResourceCheckoutSettings{
+		CheckoutRequired:          in.CheckoutRequired,
+		CheckoutDurationInSeconds: &in.CheckoutDurationInSeconds,
+		IncludeList:               includeList,
+		ExcludeList:               excludeList,
+	}
+	return resourceCheckoutSettings
 }
