@@ -76,14 +76,8 @@ workflows:
             - static-analysis
   snyk:
     jobs:
-      - general-platform-helpers/job-snyk-prepare:
-          name: prepare-snyk
-          context:
-            - static-analysis
       - snyk-scan:
           name: execute-snyk
-          requires:
-            - prepare-snyk
           context:
             - static-analysis
   "Malware Scanner":
