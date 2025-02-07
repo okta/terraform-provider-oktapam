@@ -6,6 +6,11 @@ orbs:
   python: circleci/python@2.0.3
   aws-cli: circleci/aws-cli@5.1
 
+parameters:
+  go-version:
+    type: string
+    default: "1.23"
+
 jobs:
   snyk-scan:
     docker:
