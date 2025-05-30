@@ -43,7 +43,6 @@ func V5Provider(v5ClientCreator V5ClientCreator) *schema.Provider {
 			config.ProviderADConnectionKey:                       resourceADConnection(),
 			config.ProviderADTaskSettingsKey:                     resourceADServerSyncTaskSettings(),
 			config.ProviderADUserSyncTaskSettingsKey:             resourceADUserSyncTaskSettings(),
-			config.ProviderCloudConnectionKey:                    resourceCloudConnection(),
 			config.ProviderSudoCommandBundleKey:                  resourceSudoCommandBundle(),
 			config.ProviderDatabaseKey:                           resourceDatabase(),
 			config.ProviderDatabasePasswordSettings:              resourceDatabasePasswordSettings(),
@@ -71,8 +70,6 @@ func V5Provider(v5ClientCreator V5ClientCreator) *schema.Provider {
 
 		DataSourcesMap: map[string]*schema.Resource{
 			config.ProviderADConnectionsKey:                       dataSourceADConnections(),
-			config.ProviderCloudConnectionKey:                     dataSourceCloudConnection(),
-			config.ProviderCloudConnectionsKey:                    dataSourceCloudConnections(),
 			config.ProviderSudoCommandBundleKey:                   dataSourceSudoCommandBundle(),
 			config.ProviderSudoCommandsBundlesKey:                 dataSourceSudoCommandBundles(),
 			config.ProviderCurrentUser:                            dataSourceCurrentUser(),

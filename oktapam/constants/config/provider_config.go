@@ -21,8 +21,6 @@ const (
 	ProviderADUserSyncTaskSettingsKey              = "oktapam_ad_user_sync_task_settings"
 	ProviderADUserSyncTaskSettingsIDListKey        = "oktapam_ad_user_sync_task_settings_id_list"
 	ProviderCurrentUser                            = "oktapam_current_user"
-	ProviderCloudConnectionKey                     = "oktapam_cloud_connection"
-	ProviderCloudConnectionsKey                    = "oktapam_cloud_connections"
 	ProviderSudoCommandBundleKey                   = "oktapam_sudo_command_bundle"
 	ProviderSudoCommandsBundlesKey                 = "oktapam_sudo_command_bundles"
 	ProviderDatabaseKey                            = "oktapam_database"
