@@ -226,9 +226,8 @@ Note that you'll need to sub `testacc` for `testaccpam` if the tests is an Okta 
 # Releasing the Provider
 
 1. Bump version in `Makefile`.
-2. Add last version to `tag-checks.yml`.
-3. Merge and make tag corresponding to the new version.
-4. Make release corresponding to new tag.
+2. Merge and make tag corresponding to the new version.
+3. Make release corresponding to new tag.
 
 # Warnings
 
