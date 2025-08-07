@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -25,7 +25,7 @@ type NamedObject struct {
 	// The human-readable name of the object
 	Name *string          `json:"name,omitempty"`
 	Type *NamedObjectType `json:"type,omitempty"`
-	// Boolean value determining if the named object with the given id is valid or not.
+	// Boolean value determining if the named object with the given ID is valid
 	Missing *bool `json:"missing,omitempty"`
 }
 

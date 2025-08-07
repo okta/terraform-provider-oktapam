@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -25,7 +25,7 @@ type AuthTokenResponse struct {
 	BearerToken string `json:"bearer_token"`
 	// A timestamp for when the token expires. Formatted in accordance with [RFC 3339](https://tools.ietf.org/html/rfc3339).
 	ExpiresAt time.Time `json:"expires_at"`
-	// The name of the associated Team
+	// The name of the associated team
 	TeamName string `json:"team_name"`
 }
 

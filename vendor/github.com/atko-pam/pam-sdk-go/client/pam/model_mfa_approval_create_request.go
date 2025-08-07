@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,18 +20,18 @@ var _ MappedNullable = &MFAApprovalCreateRequest{}
 
 // MFAApprovalCreateRequest struct for MFAApprovalCreateRequest
 type MFAApprovalCreateRequest struct {
-	ResourceId   string   `json:"resource_id"`
-	Identity     *string  `json:"identity,omitempty"`
-	ResourceType string   `json:"resource_type"`
-	RuleIds      []string `json:"rule_ids"`
-	NextUrl      *string  `json:"next_url,omitempty"`
+	ResourceId   string                  `json:"resource_id"`
+	Identity     *string                 `json:"identity,omitempty"`
+	ResourceType MFAApprovalResourceType `json:"resource_type"`
+	RuleIds      []string                `json:"rule_ids"`
+	NextUrl      *string                 `json:"next_url,omitempty"`
 }
 
 // NewMFAApprovalCreateRequest instantiates a new MFAApprovalCreateRequest object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMFAApprovalCreateRequest(resourceId string, resourceType string, ruleIds []string) *MFAApprovalCreateRequest {
+func NewMFAApprovalCreateRequest(resourceId string, resourceType MFAApprovalResourceType, ruleIds []string) *MFAApprovalCreateRequest {
 	this := MFAApprovalCreateRequest{}
 	this.ResourceId = resourceId
 	this.ResourceType = resourceType
@@ -106,9 +106,9 @@ func (o *MFAApprovalCreateRequest) SetIdentity(v string) *MFAApprovalCreateReque
 }
 
 // GetResourceType returns the ResourceType field value
-func (o *MFAApprovalCreateRequest) GetResourceType() string {
+func (o *MFAApprovalCreateRequest) GetResourceType() MFAApprovalResourceType {
 	if o == nil {
-		var ret string
+		var ret MFAApprovalResourceType
 		return ret
 	}
 
@@ -117,7 +117,7 @@ func (o *MFAApprovalCreateRequest) GetResourceType() string {
 
 // GetResourceTypeOk returns a tuple with the ResourceType field value
 // and a boolean to check if the value has been set.
-func (o *MFAApprovalCreateRequest) GetResourceTypeOk() (*string, bool) {
+func (o *MFAApprovalCreateRequest) GetResourceTypeOk() (*MFAApprovalResourceType, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -125,7 +125,7 @@ func (o *MFAApprovalCreateRequest) GetResourceTypeOk() (*string, bool) {
 }
 
 // SetResourceType sets field value
-func (o *MFAApprovalCreateRequest) SetResourceType(v string) *MFAApprovalCreateRequest {
+func (o *MFAApprovalCreateRequest) SetResourceType(v MFAApprovalResourceType) *MFAApprovalCreateRequest {
 	o.ResourceType = v
 	return o
 }

@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,9 +20,9 @@ var _ MappedNullable = &SecretFolderUpdateRequest{}
 
 // SecretFolderUpdateRequest struct for SecretFolderUpdateRequest
 type SecretFolderUpdateRequest struct {
-	// The name of the Secret Folder
+	// The name of the secret folder
 	Name string `json:"name"`
-	// A description of the Secret Folder
+	// A description of the secret folder
 	Description NullableString `json:"description,omitempty"`
 }
 

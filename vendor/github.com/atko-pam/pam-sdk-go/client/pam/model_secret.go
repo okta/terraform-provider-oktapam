@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -21,20 +21,20 @@ var _ MappedNullable = &Secret{}
 
 // Secret struct for Secret
 type Secret struct {
-	// The UUID of the Secret
+	// The UUID of the secret
 	Id string `json:"id"`
-	// The name of the Secret
+	// The name of the secret
 	Name string `json:"name"`
-	// The description of the Secret
+	// The description of the secret
 	Description NullableString `json:"description,omitempty"`
 	Path        []SecretPath   `json:"path,omitempty"`
-	// A timestamp indicating when the Secret was created
+	// A timestamp indicating when the secret was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
-	// The username of the User who created the Secret
+	// The username of the user who created the secret
 	CreatedBy *string `json:"created_by,omitempty"`
-	// A timestamp indicating when the Secret was last updated
+	// A timestamp indicating when the secret was last updated
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	// The username of the User who last updated the Secret
+	// The username of the user who last updated the secret
 	UpdatedBy *string `json:"updated_by,omitempty"`
 }
 

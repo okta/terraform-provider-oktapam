@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -18,6 +18,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"reflect"
 	"strings"
 )
 
@@ -42,16 +43,16 @@ func (r ApiConfigureActiveDirectoryAccountRuleSettingsRequest) Execute() (*http.
 }
 
 /*
-	ConfigureActiveDirectoryAccountRuleSettings Configure account rule settings
+ConfigureActiveDirectoryAccountRuleSettings Configure the Active Directory account rule settings
 
-	    Account rule settings apply to the entire list of account rules and are required to be configured.
+	Configures the Active Directory account rule settings that apply to the entire list of required account rules
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param adConnectionId The UUID of a Active Directory Connection
-	@return ApiConfigureActiveDirectoryAccountRuleSettingsRequest
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+
+@return ApiConfigureActiveDirectoryAccountRuleSettingsRequest
 */
 func (a *ActiveDirectoryAccountsAPIService) ConfigureActiveDirectoryAccountRuleSettings(ctx context.Context, teamName string, adConnectionId string) ApiConfigureActiveDirectoryAccountRuleSettingsRequest {
 	return ApiConfigureActiveDirectoryAccountRuleSettingsRequest{
@@ -169,16 +170,16 @@ func (r ApiCreateActiveDirectoryAccountRuleRequest) Execute() (*ActiveDirectoryA
 }
 
 /*
-	CreateActiveDirectoryAccountRule Create an Active Directory account rule
+CreateActiveDirectoryAccountRule Create an Active Directory account rule
 
-	    Create an Active Directory account rule
+	Creates an Active Directory account rule
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param adConnectionId The UUID of a Active Directory Connection
-	@return ApiCreateActiveDirectoryAccountRuleRequest
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+
+@return ApiCreateActiveDirectoryAccountRuleRequest
 */
 func (a *ActiveDirectoryAccountsAPIService) CreateActiveDirectoryAccountRule(ctx context.Context, teamName string, adConnectionId string) ApiCreateActiveDirectoryAccountRuleRequest {
 	return ApiCreateActiveDirectoryAccountRuleRequest{
@@ -294,17 +295,17 @@ func (r ApiDeleteActiveDirectoryAccountRuleRequest) Execute() (*http.Response, e
 }
 
 /*
-	DeleteActiveDirectoryAccountRule Delete an Active Directory account rule
+DeleteActiveDirectoryAccountRule Delete an Active Directory account rule
 
-	    Deletes the Active Directory account rule
+	Deletes an Active Directory account rule
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param adConnectionId The UUID of a Active Directory Connection
-	    @param adAccountRuleId The UUID of a Active Directory account rule
-	@return ApiDeleteActiveDirectoryAccountRuleRequest
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+	@param adAccountRuleId The UUID of an Active Directory account rule
+
+@return ApiDeleteActiveDirectoryAccountRuleRequest
 */
 func (a *ActiveDirectoryAccountsAPIService) DeleteActiveDirectoryAccountRule(ctx context.Context, teamName string, adConnectionId string, adAccountRuleId string) ApiDeleteActiveDirectoryAccountRuleRequest {
 	return ApiDeleteActiveDirectoryAccountRuleRequest{
@@ -409,22 +410,22 @@ type ApiGetActiveDirectoryAccountRequest struct {
 	adAccountId    string
 }
 
-func (r ApiGetActiveDirectoryAccountRequest) Execute() (*ActiveDirectoryAccount, *http.Response, error) {
+func (r ApiGetActiveDirectoryAccountRequest) Execute() (*ActiveDirectoryAccountWithPasswordAndCheckoutDetails, *http.Response, error) {
 	return r.ApiService.GetActiveDirectoryAccountExecute(r)
 }
 
 /*
-	GetActiveDirectoryAccount Fetch a particular Active Directory account by ID
+GetActiveDirectoryAccount Retrieve a discovered Active Directory account
 
-	    Fetches a particular Active Directory account by ID.
+	Retrieves a particular discovered Active Directory account by ID
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param adConnectionId The UUID of a Active Directory Connection
-	    @param adAccountId The UUID of an Active Directory Account
-	@return ApiGetActiveDirectoryAccountRequest
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+	@param adAccountId The UUID of an Active Directory account
+
+@return ApiGetActiveDirectoryAccountRequest
 */
 func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccount(ctx context.Context, teamName string, adConnectionId string, adAccountId string) ApiGetActiveDirectoryAccountRequest {
 	return ApiGetActiveDirectoryAccountRequest{
@@ -438,14 +439,14 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccount(ctx contex
 
 // Execute executes the request
 //
-//	@return ActiveDirectoryAccount
-func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountExecute(r ApiGetActiveDirectoryAccountRequest) (*ActiveDirectoryAccount, *http.Response, error) {
+//	@return ActiveDirectoryAccountWithPasswordAndCheckoutDetails
+func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountExecute(r ApiGetActiveDirectoryAccountRequest) (*ActiveDirectoryAccountWithPasswordAndCheckoutDetails, *http.Response, error) {
 	var (
 		traceKey            = "activedirectoryaccountsapi.getActiveDirectoryAccount"
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *ActiveDirectoryAccount
+		localVarReturnValue *ActiveDirectoryAccountWithPasswordAndCheckoutDetails
 	)
 
 	localVarPath := "/v1/teams/{team_name}/resource_assignment/active_directory/{ad_connection_id}/accounts/{ad_account_id}"
@@ -524,6 +525,232 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountExecute(r A
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiGetActiveDirectoryAccountDetailsRequest struct {
+	ctx             context.Context
+	ApiService      *ActiveDirectoryAccountsAPIService
+	teamName        string
+	resourceGroupId string
+	projectId       string
+	adAccountId     string
+}
+
+func (r ApiGetActiveDirectoryAccountDetailsRequest) Execute() (*ActiveDirectoryAccountWithPasswordAndCheckoutDetails, *http.Response, error) {
+	return r.ApiService.GetActiveDirectoryAccountDetailsExecute(r)
+}
+
+/*
+GetActiveDirectoryAccountDetails Retrieve an Active Directory account
+
+	Retrieves an Active Directory account in a resource group project
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param adAccountId The UUID of an Active Directory account
+
+@return ApiGetActiveDirectoryAccountDetailsRequest
+*/
+func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountDetails(ctx context.Context, teamName string, resourceGroupId string, projectId string, adAccountId string) ApiGetActiveDirectoryAccountDetailsRequest {
+	return ApiGetActiveDirectoryAccountDetailsRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+		adAccountId:     adAccountId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ActiveDirectoryAccountWithPasswordAndCheckoutDetails
+func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountDetailsExecute(r ApiGetActiveDirectoryAccountDetailsRequest) (*ActiveDirectoryAccountWithPasswordAndCheckoutDetails, *http.Response, error) {
+	var (
+		traceKey            = "activedirectoryaccountsapi.getActiveDirectoryAccountDetails"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ActiveDirectoryAccountWithPasswordAndCheckoutDetails
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/active_directory_accounts/{ad_account_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"ad_account_id"+"}", url.PathEscape(parameterValueToString(r.adAccountId, "adAccountId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiGetActiveDirectoryAccountEndUserRequest struct {
+	ctx            context.Context
+	ApiService     *ActiveDirectoryAccountsAPIService
+	teamName       string
+	adConnectionId string
+	adAccountId    string
+}
+
+func (r ApiGetActiveDirectoryAccountEndUserRequest) Execute() (*ActiveDirectoryAccountEndUser, *http.Response, error) {
+	return r.ApiService.GetActiveDirectoryAccountEndUserExecute(r)
+}
+
+/*
+GetActiveDirectoryAccountEndUser Retrieve an Active Directory account
+
+	Retrieves an Active Directory account that you (as the request user) can access
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+	@param adAccountId The UUID of an Active Directory account
+
+@return ApiGetActiveDirectoryAccountEndUserRequest
+*/
+func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountEndUser(ctx context.Context, teamName string, adConnectionId string, adAccountId string) ApiGetActiveDirectoryAccountEndUserRequest {
+	return ApiGetActiveDirectoryAccountEndUserRequest{
+		ApiService:     a,
+		ctx:            ctx,
+		teamName:       teamName,
+		adConnectionId: adConnectionId,
+		adAccountId:    adAccountId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ActiveDirectoryAccountEndUser
+func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountEndUserExecute(r ApiGetActiveDirectoryAccountEndUserRequest) (*ActiveDirectoryAccountEndUser, *http.Response, error) {
+	var (
+		traceKey            = "activedirectoryaccountsapi.getActiveDirectoryAccountEndUser"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ActiveDirectoryAccountEndUser
+	)
+
+	localVarPath := "/v1/teams/{team_name}/active_directory/{ad_connection_id}/accounts/{ad_account_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"ad_connection_id"+"}", url.PathEscape(parameterValueToString(r.adConnectionId, "adConnectionId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"ad_account_id"+"}", url.PathEscape(parameterValueToString(r.adAccountId, "adAccountId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
 type ApiGetActiveDirectoryAccountMatchRequest struct {
 	ctx            context.Context
 	ApiService     *ActiveDirectoryAccountsAPIService
@@ -537,18 +764,17 @@ func (r ApiGetActiveDirectoryAccountMatchRequest) Execute() (*ActiveDirectoryAcc
 }
 
 /*
-	GetActiveDirectoryAccountMatch Get information about an Active Directory account's match with an Okta Privileged Access user.
+	GetActiveDirectoryAccountMatch Retrieve an Active Directory account match
 
-	    Returns information about the given Active Directory account's match status. This is only valid for individual
+	    Retrieves information about an Active Directory (AD) account that's matched with an Okta Privileged Access (OPA) user.
 
-Active Directory accounts, not shared accounts. Matches between AD accounts and Okta users are controlled by
-the Active Directory account rules for this connection.
-This endpoint requires the following role: `resource_admin`
+This request is only valid for individual AD accounts, not shared accounts.
+AD account rules for this connection control the match between AD accounts and OPA users.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param adConnectionId The UUID of a Active Directory Connection
-	    @param adAccountId The UUID of an Active Directory Account
+	    @param teamName The name of your team
+	    @param adConnectionId The UUID of an Active Directory connection
+	    @param adAccountId The UUID of an Active Directory account
 	@return ApiGetActiveDirectoryAccountMatchRequest
 */
 func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountMatch(ctx context.Context, teamName string, adConnectionId string, adAccountId string) ApiGetActiveDirectoryAccountMatchRequest {
@@ -662,17 +888,17 @@ func (r ApiGetActiveDirectoryAccountRuleRequest) Execute() (*ActiveDirectoryAcco
 }
 
 /*
-	GetActiveDirectoryAccountRule Retrieve an Active Directory account rule
+GetActiveDirectoryAccountRule Retrieve an Active Directory account rule
 
-	    Retrieves the specified Active Directory account rule
+	Retrieves an Active Directory account rule
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param adConnectionId The UUID of a Active Directory Connection
-	    @param adAccountRuleId The UUID of a Active Directory account rule
-	@return ApiGetActiveDirectoryAccountRuleRequest
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+	@param adAccountRuleId The UUID of an Active Directory account rule
+
+@return ApiGetActiveDirectoryAccountRuleRequest
 */
 func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountRule(ctx context.Context, teamName string, adConnectionId string, adAccountRuleId string) ApiGetActiveDirectoryAccountRuleRequest {
 	return ApiGetActiveDirectoryAccountRuleRequest{
@@ -760,16 +986,16 @@ func (r ApiGetActiveDirectoryAccountRuleSettingsRequest) Execute() (*ActiveDirec
 }
 
 /*
-	GetActiveDirectoryAccountRuleSettings Retrieve Active Directory account rule settings
+GetActiveDirectoryAccountRuleSettings Retrieve the Active Directory account rule settings
 
-	    Retrieves Active Directory account rule settings.
+	Retrieves the Active Directory account rule settings
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param adConnectionId The UUID of a Active Directory Connection
-	@return ApiGetActiveDirectoryAccountRuleSettingsRequest
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+
+@return ApiGetActiveDirectoryAccountRuleSettingsRequest
 */
 func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountRuleSettings(ctx context.Context, teamName string, adConnectionId string) ApiGetActiveDirectoryAccountRuleSettingsRequest {
 	return ApiGetActiveDirectoryAccountRuleSettingsRequest{
@@ -867,6 +1093,220 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountRuleSetting
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiGetActiveDirectoryAccountSyncStatusRequest struct {
+	ctx            context.Context
+	ApiService     *ActiveDirectoryAccountsAPIService
+	teamName       string
+	adConnectionId string
+}
+
+func (r ApiGetActiveDirectoryAccountSyncStatusRequest) Execute() (*ADAccountSyncStatus, *http.Response, error) {
+	return r.ApiService.GetActiveDirectoryAccountSyncStatusExecute(r)
+}
+
+/*
+GetActiveDirectoryAccountSyncStatus Retrieve the Active Directory account sync status
+
+	Retrieves the Active Directory account sync status
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+
+@return ApiGetActiveDirectoryAccountSyncStatusRequest
+*/
+func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountSyncStatus(ctx context.Context, teamName string, adConnectionId string) ApiGetActiveDirectoryAccountSyncStatusRequest {
+	return ApiGetActiveDirectoryAccountSyncStatusRequest{
+		ApiService:     a,
+		ctx:            ctx,
+		teamName:       teamName,
+		adConnectionId: adConnectionId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ADAccountSyncStatus
+func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountSyncStatusExecute(r ApiGetActiveDirectoryAccountSyncStatusRequest) (*ADAccountSyncStatus, *http.Response, error) {
+	var (
+		traceKey            = "activedirectoryaccountsapi.getActiveDirectoryAccountSyncStatus"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ADAccountSyncStatus
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_assignment/active_directory/{ad_connection_id}/sync_status"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"ad_connection_id"+"}", url.PathEscape(parameterValueToString(r.adConnectionId, "adConnectionId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiGetActiveDirectoryDomainEndUserRequest struct {
+	ctx            context.Context
+	ApiService     *ActiveDirectoryAccountsAPIService
+	teamName       string
+	adConnectionId string
+}
+
+func (r ApiGetActiveDirectoryDomainEndUserRequest) Execute() (*ActiveDirectoryDomain, *http.Response, error) {
+	return r.ApiService.GetActiveDirectoryDomainEndUserExecute(r)
+}
+
+/*
+GetActiveDirectoryDomainEndUser Retrieve an Active Directory connection
+
+	Retrieves an Active Directory connection that you (as the request user) can access
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+
+@return ApiGetActiveDirectoryDomainEndUserRequest
+*/
+func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryDomainEndUser(ctx context.Context, teamName string, adConnectionId string) ApiGetActiveDirectoryDomainEndUserRequest {
+	return ApiGetActiveDirectoryDomainEndUserRequest{
+		ApiService:     a,
+		ctx:            ctx,
+		teamName:       teamName,
+		adConnectionId: adConnectionId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ActiveDirectoryDomain
+func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryDomainEndUserExecute(r ApiGetActiveDirectoryDomainEndUserRequest) (*ActiveDirectoryDomain, *http.Response, error) {
+	var (
+		traceKey            = "activedirectoryaccountsapi.getActiveDirectoryDomainEndUser"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ActiveDirectoryDomain
+	)
+
+	localVarPath := "/v1/teams/{team_name}/active_directory/{ad_connection_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"ad_connection_id"+"}", url.PathEscape(parameterValueToString(r.adConnectionId, "adConnectionId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
 type ApiListActiveDirectoryAccountRulesRequest struct {
 	ctx            context.Context
 	ApiService     *ActiveDirectoryAccountsAPIService
@@ -879,16 +1319,16 @@ func (r ApiListActiveDirectoryAccountRulesRequest) Execute() (*ListActiveDirecto
 }
 
 /*
-	ListActiveDirectoryAccountRules List all Active Directory account rules
+ListActiveDirectoryAccountRules List all Active Directory account rules
 
-	    Lists all Active Directory account rules
+	Lists all Active Directory account rules
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param adConnectionId The UUID of a Active Directory Connection
-	@return ApiListActiveDirectoryAccountRulesRequest
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+
+@return ApiListActiveDirectoryAccountRulesRequest
 */
 func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountRules(ctx context.Context, teamName string, adConnectionId string) ApiListActiveDirectoryAccountRulesRequest {
 	return ApiListActiveDirectoryAccountRulesRequest{
@@ -998,16 +1438,16 @@ func (r ApiListActiveDirectoryAccountsRequest) Execute() (*ListActiveDirectoryAc
 }
 
 /*
-	ListActiveDirectoryAccounts List discovered Active Directory accounts
+ListActiveDirectoryAccounts List all discovered Active Directory accounts
 
-	    Lists discovered Active Directory accounts.
+	Lists all discovered Active Directory accounts
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param adConnectionId The UUID of a Active Directory Connection
-	@return ApiListActiveDirectoryAccountsRequest
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+
+@return ApiListActiveDirectoryAccountsRequest
 */
 func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccounts(ctx context.Context, teamName string, adConnectionId string) ApiListActiveDirectoryAccountsRequest {
 	return ApiListActiveDirectoryAccountsRequest{
@@ -1105,6 +1545,601 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountsExecute(r
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiListActiveDirectoryAccountsEndUserRequest struct {
+	ctx            context.Context
+	ApiService     *ActiveDirectoryAccountsAPIService
+	teamName       string
+	adConnectionId string
+}
+
+func (r ApiListActiveDirectoryAccountsEndUserRequest) Execute() (*ListActiveDirectoryAccountsEndUserResponse, *http.Response, error) {
+	return r.ApiService.ListActiveDirectoryAccountsEndUserExecute(r)
+}
+
+/*
+ListActiveDirectoryAccountsEndUser List all Active Directory accounts within a connection
+
+	Lists all Active Directory accounts within a connection that you (as the request user) can access
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+
+@return ApiListActiveDirectoryAccountsEndUserRequest
+*/
+func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountsEndUser(ctx context.Context, teamName string, adConnectionId string) ApiListActiveDirectoryAccountsEndUserRequest {
+	return ApiListActiveDirectoryAccountsEndUserRequest{
+		ApiService:     a,
+		ctx:            ctx,
+		teamName:       teamName,
+		adConnectionId: adConnectionId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListActiveDirectoryAccountsEndUserResponse
+func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountsEndUserExecute(r ApiListActiveDirectoryAccountsEndUserRequest) (*ListActiveDirectoryAccountsEndUserResponse, *http.Response, error) {
+	var (
+		traceKey            = "activedirectoryaccountsapi.listActiveDirectoryAccountsEndUser"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListActiveDirectoryAccountsEndUserResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/active_directory/{ad_connection_id}/accounts"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"ad_connection_id"+"}", url.PathEscape(parameterValueToString(r.adConnectionId, "adConnectionId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiListActiveDirectoryDomainsRequest struct {
+	ctx        context.Context
+	ApiService *ActiveDirectoryAccountsAPIService
+	teamName   string
+}
+
+func (r ApiListActiveDirectoryDomainsRequest) Execute() (*ListActiveDirectoryDomainsResponse, *http.Response, error) {
+	return r.ApiService.ListActiveDirectoryDomainsExecute(r)
+}
+
+/*
+ListActiveDirectoryDomains List all Active Directory domains
+
+	Lists all Active Directory domains that you (as the request user) can access based on the security policies
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+
+@return ApiListActiveDirectoryDomainsRequest
+*/
+func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryDomains(ctx context.Context, teamName string) ApiListActiveDirectoryDomainsRequest {
+	return ApiListActiveDirectoryDomainsRequest{
+		ApiService: a,
+		ctx:        ctx,
+		teamName:   teamName,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListActiveDirectoryDomainsResponse
+func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryDomainsExecute(r ApiListActiveDirectoryDomainsRequest) (*ListActiveDirectoryDomainsResponse, *http.Response, error) {
+	var (
+		traceKey            = "activedirectoryaccountsapi.listActiveDirectoryDomains"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListActiveDirectoryDomainsResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/active_directory"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiListAllActiveDirectoryAccountsForDelegatedSecurityAdminRequest struct {
+	ctx             context.Context
+	ApiService      *ActiveDirectoryAccountsAPIService
+	teamName        string
+	resourceGroupId string
+	contains        *string
+	adAccountType   *string
+	adConnectionId  *[]string
+}
+
+// Only return results that include the specified value
+func (r ApiListAllActiveDirectoryAccountsForDelegatedSecurityAdminRequest) Contains(contains string) ApiListAllActiveDirectoryAccountsForDelegatedSecurityAdminRequest {
+	r.contains = &contains
+	return r
+}
+
+// The type of Active Directory account
+func (r ApiListAllActiveDirectoryAccountsForDelegatedSecurityAdminRequest) AdAccountType(adAccountType string) ApiListAllActiveDirectoryAccountsForDelegatedSecurityAdminRequest {
+	r.adAccountType = &adAccountType
+	return r
+}
+
+// The UUIDs of Active Directory connections
+func (r ApiListAllActiveDirectoryAccountsForDelegatedSecurityAdminRequest) AdConnectionId(adConnectionId []string) ApiListAllActiveDirectoryAccountsForDelegatedSecurityAdminRequest {
+	r.adConnectionId = &adConnectionId
+	return r
+}
+
+func (r ApiListAllActiveDirectoryAccountsForDelegatedSecurityAdminRequest) Execute() (*ListAllActiveDirectoryAccountsForDelegatedSecurityAdminResponse, *http.Response, error) {
+	return r.ApiService.ListAllActiveDirectoryAccountsForDelegatedSecurityAdminExecute(r)
+}
+
+/*
+ListAllActiveDirectoryAccountsForDelegatedSecurityAdmin List all Active Directory accounts in a resource group
+
+	Lists all Active Directory accounts in a resource group
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+
+@return ApiListAllActiveDirectoryAccountsForDelegatedSecurityAdminRequest
+*/
+func (a *ActiveDirectoryAccountsAPIService) ListAllActiveDirectoryAccountsForDelegatedSecurityAdmin(ctx context.Context, teamName string, resourceGroupId string) ApiListAllActiveDirectoryAccountsForDelegatedSecurityAdminRequest {
+	return ApiListAllActiveDirectoryAccountsForDelegatedSecurityAdminRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListAllActiveDirectoryAccountsForDelegatedSecurityAdminResponse
+func (a *ActiveDirectoryAccountsAPIService) ListAllActiveDirectoryAccountsForDelegatedSecurityAdminExecute(r ApiListAllActiveDirectoryAccountsForDelegatedSecurityAdminRequest) (*ListAllActiveDirectoryAccountsForDelegatedSecurityAdminResponse, *http.Response, error) {
+	var (
+		traceKey            = "activedirectoryaccountsapi.listAllActiveDirectoryAccountsForDelegatedSecurityAdmin"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListAllActiveDirectoryAccountsForDelegatedSecurityAdminResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/all_active_directory_accounts"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.contains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
+	}
+	if r.adAccountType != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "ad_account_type", r.adAccountType, "")
+	}
+	if r.adConnectionId != nil {
+		t := *r.adConnectionId
+		if reflect.TypeOf(t).Kind() == reflect.Slice {
+			s := reflect.ValueOf(t)
+			for i := 0; i < s.Len(); i++ {
+				parameterAddToHeaderOrQuery(localVarQueryParams, "ad_connection_id", s.Index(i).Interface(), "multi")
+			}
+		} else {
+			parameterAddToHeaderOrQuery(localVarQueryParams, "ad_connection_id", t, "multi")
+		}
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiListAllActiveDirectoryAccountsForSecurityAdminRequest struct {
+	ctx            context.Context
+	ApiService     *ActiveDirectoryAccountsAPIService
+	teamName       string
+	contains       *string
+	adAccountType  *string
+	adConnectionId *[]string
+}
+
+// Only return results that include the specified value
+func (r ApiListAllActiveDirectoryAccountsForSecurityAdminRequest) Contains(contains string) ApiListAllActiveDirectoryAccountsForSecurityAdminRequest {
+	r.contains = &contains
+	return r
+}
+
+// The type of Active Directory account
+func (r ApiListAllActiveDirectoryAccountsForSecurityAdminRequest) AdAccountType(adAccountType string) ApiListAllActiveDirectoryAccountsForSecurityAdminRequest {
+	r.adAccountType = &adAccountType
+	return r
+}
+
+// The UUIDs of Active Directory connections
+func (r ApiListAllActiveDirectoryAccountsForSecurityAdminRequest) AdConnectionId(adConnectionId []string) ApiListAllActiveDirectoryAccountsForSecurityAdminRequest {
+	r.adConnectionId = &adConnectionId
+	return r
+}
+
+func (r ApiListAllActiveDirectoryAccountsForSecurityAdminRequest) Execute() (*ListAllActiveDirectoryAccountsForSecurityAdminResponse, *http.Response, error) {
+	return r.ApiService.ListAllActiveDirectoryAccountsForSecurityAdminExecute(r)
+}
+
+/*
+ListAllActiveDirectoryAccountsForSecurityAdmin List all Active Directory accounts
+
+	Lists all Active Directory accounts
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+
+@return ApiListAllActiveDirectoryAccountsForSecurityAdminRequest
+*/
+func (a *ActiveDirectoryAccountsAPIService) ListAllActiveDirectoryAccountsForSecurityAdmin(ctx context.Context, teamName string) ApiListAllActiveDirectoryAccountsForSecurityAdminRequest {
+	return ApiListAllActiveDirectoryAccountsForSecurityAdminRequest{
+		ApiService: a,
+		ctx:        ctx,
+		teamName:   teamName,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListAllActiveDirectoryAccountsForSecurityAdminResponse
+func (a *ActiveDirectoryAccountsAPIService) ListAllActiveDirectoryAccountsForSecurityAdminExecute(r ApiListAllActiveDirectoryAccountsForSecurityAdminRequest) (*ListAllActiveDirectoryAccountsForSecurityAdminResponse, *http.Response, error) {
+	var (
+		traceKey            = "activedirectoryaccountsapi.listAllActiveDirectoryAccountsForSecurityAdmin"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListAllActiveDirectoryAccountsForSecurityAdminResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/all_active_directory_accounts"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.contains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
+	}
+	if r.adAccountType != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "ad_account_type", r.adAccountType, "")
+	}
+	if r.adConnectionId != nil {
+		t := *r.adConnectionId
+		if reflect.TypeOf(t).Kind() == reflect.Slice {
+			s := reflect.ValueOf(t)
+			for i := 0; i < s.Len(); i++ {
+				parameterAddToHeaderOrQuery(localVarQueryParams, "ad_connection_id", s.Index(i).Interface(), "multi")
+			}
+		} else {
+			parameterAddToHeaderOrQuery(localVarQueryParams, "ad_connection_id", t, "multi")
+		}
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiListUAMForActiveDirectoryAccountRequest struct {
+	ctx            context.Context
+	ApiService     *ActiveDirectoryAccountsAPIService
+	teamName       string
+	adConnectionId string
+	adAccountId    string
+}
+
+func (r ApiListUAMForActiveDirectoryAccountRequest) Execute() (*ListUAMForActiveDirectoryAccountResponse, *http.Response, error) {
+	return r.ApiService.ListUAMForActiveDirectoryAccountExecute(r)
+}
+
+/*
+ListUAMForActiveDirectoryAccount List all user access methods for an Active Directory account
+
+	Lists all user access methods for an Active Directory (AD) account based on the security policies
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+	@param adAccountId The UUID of an Active Directory account
+
+@return ApiListUAMForActiveDirectoryAccountRequest
+*/
+func (a *ActiveDirectoryAccountsAPIService) ListUAMForActiveDirectoryAccount(ctx context.Context, teamName string, adConnectionId string, adAccountId string) ApiListUAMForActiveDirectoryAccountRequest {
+	return ApiListUAMForActiveDirectoryAccountRequest{
+		ApiService:     a,
+		ctx:            ctx,
+		teamName:       teamName,
+		adConnectionId: adConnectionId,
+		adAccountId:    adAccountId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListUAMForActiveDirectoryAccountResponse
+func (a *ActiveDirectoryAccountsAPIService) ListUAMForActiveDirectoryAccountExecute(r ApiListUAMForActiveDirectoryAccountRequest) (*ListUAMForActiveDirectoryAccountResponse, *http.Response, error) {
+	var (
+		traceKey            = "activedirectoryaccountsapi.listUAMForActiveDirectoryAccount"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListUAMForActiveDirectoryAccountResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/active_directory/{ad_connection_id}/accounts/{ad_account_id}/user_access_methods"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"ad_connection_id"+"}", url.PathEscape(parameterValueToString(r.adConnectionId, "adConnectionId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"ad_account_id"+"}", url.PathEscape(parameterValueToString(r.adAccountId, "adAccountId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
 type ApiReorderActiveDirectoryAccountRulesRequest struct {
 	ctx                                      context.Context
 	ApiService                               *ActiveDirectoryAccountsAPIService
@@ -1123,16 +2158,16 @@ func (r ApiReorderActiveDirectoryAccountRulesRequest) Execute() (*ReorderActiveD
 }
 
 /*
-	ReorderActiveDirectoryAccountRules Reorder priority of Active Directory account rules
+ReorderActiveDirectoryAccountRules Set the priority of Active Directory account rules
 
-	    Reorders the priority of Active Directory account rules
+	Sets the priority of Active Directory account rules
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param adConnectionId The UUID of a Active Directory Connection
-	@return ApiReorderActiveDirectoryAccountRulesRequest
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+
+@return ApiReorderActiveDirectoryAccountRulesRequest
 */
 func (a *ActiveDirectoryAccountsAPIService) ReorderActiveDirectoryAccountRules(ctx context.Context, teamName string, adConnectionId string) ApiReorderActiveDirectoryAccountRulesRequest {
 	return ApiReorderActiveDirectoryAccountRulesRequest{
@@ -1256,6 +2291,271 @@ func (a *ActiveDirectoryAccountsAPIService) ReorderActiveDirectoryAccountRulesEx
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiRevealActiveDirectoryAccountPasswordRequest struct {
+	ctx                                             context.Context
+	ApiService                                      *ActiveDirectoryAccountsAPIService
+	teamName                                        string
+	adConnectionId                                  string
+	adAccountId                                     string
+	activeDirectoryAccountsRevealCredentialsRequest *ActiveDirectoryAccountsRevealCredentialsRequest
+}
+
+func (r ApiRevealActiveDirectoryAccountPasswordRequest) ActiveDirectoryAccountsRevealCredentialsRequest(activeDirectoryAccountsRevealCredentialsRequest ActiveDirectoryAccountsRevealCredentialsRequest) ApiRevealActiveDirectoryAccountPasswordRequest {
+	r.activeDirectoryAccountsRevealCredentialsRequest = &activeDirectoryAccountsRevealCredentialsRequest
+	return r
+}
+
+func (r ApiRevealActiveDirectoryAccountPasswordRequest) Execute() (*ActiveDirectoryAccountsRevealCredentialsResponse, *http.Response, error) {
+	return r.ApiService.RevealActiveDirectoryAccountPasswordExecute(r)
+}
+
+/*
+RevealActiveDirectoryAccountPassword Reveal the password for Active Directory account
+
+	Reveals the password belonging to an Active Directory account that you (as the request user) can access
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+	@param adAccountId The UUID of an Active Directory account
+
+@return ApiRevealActiveDirectoryAccountPasswordRequest
+*/
+func (a *ActiveDirectoryAccountsAPIService) RevealActiveDirectoryAccountPassword(ctx context.Context, teamName string, adConnectionId string, adAccountId string) ApiRevealActiveDirectoryAccountPasswordRequest {
+	return ApiRevealActiveDirectoryAccountPasswordRequest{
+		ApiService:     a,
+		ctx:            ctx,
+		teamName:       teamName,
+		adConnectionId: adConnectionId,
+		adAccountId:    adAccountId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ActiveDirectoryAccountsRevealCredentialsResponse
+func (a *ActiveDirectoryAccountsAPIService) RevealActiveDirectoryAccountPasswordExecute(r ApiRevealActiveDirectoryAccountPasswordRequest) (*ActiveDirectoryAccountsRevealCredentialsResponse, *http.Response, error) {
+	var (
+		traceKey            = "activedirectoryaccountsapi.revealActiveDirectoryAccountPassword"
+		localVarHTTPMethod  = http.MethodPost
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ActiveDirectoryAccountsRevealCredentialsResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/active_directory/{ad_connection_id}/accounts/{ad_account_id}/reveal_credentials"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"ad_connection_id"+"}", url.PathEscape(parameterValueToString(r.adConnectionId, "adConnectionId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"ad_account_id"+"}", url.PathEscape(parameterValueToString(r.adAccountId, "adAccountId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.activeDirectoryAccountsRevealCredentialsRequest == nil {
+		return localVarReturnValue, nil, reportError("activeDirectoryAccountsRevealCredentialsRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.activeDirectoryAccountsRevealCredentialsRequest
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiRotateActiveDirectoryAccountPasswordRequest struct {
+	ctx                                          context.Context
+	ApiService                                   *ActiveDirectoryAccountsAPIService
+	teamName                                     string
+	adConnectionId                               string
+	adAccountId                                  string
+	activeDirectoryAccountsRotatePasswordRequest *ActiveDirectoryAccountsRotatePasswordRequest
+}
+
+func (r ApiRotateActiveDirectoryAccountPasswordRequest) ActiveDirectoryAccountsRotatePasswordRequest(activeDirectoryAccountsRotatePasswordRequest ActiveDirectoryAccountsRotatePasswordRequest) ApiRotateActiveDirectoryAccountPasswordRequest {
+	r.activeDirectoryAccountsRotatePasswordRequest = &activeDirectoryAccountsRotatePasswordRequest
+	return r
+}
+
+func (r ApiRotateActiveDirectoryAccountPasswordRequest) Execute() (*http.Response, error) {
+	return r.ApiService.RotateActiveDirectoryAccountPasswordExecute(r)
+}
+
+/*
+RotateActiveDirectoryAccountPassword Rotate the password for Active Directory account
+
+	Rotates the password belonging to an Active Directory account that you (as the request user) can access
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+	@param adAccountId The UUID of an Active Directory account
+
+@return ApiRotateActiveDirectoryAccountPasswordRequest
+*/
+func (a *ActiveDirectoryAccountsAPIService) RotateActiveDirectoryAccountPassword(ctx context.Context, teamName string, adConnectionId string, adAccountId string) ApiRotateActiveDirectoryAccountPasswordRequest {
+	return ApiRotateActiveDirectoryAccountPasswordRequest{
+		ApiService:     a,
+		ctx:            ctx,
+		teamName:       teamName,
+		adConnectionId: adConnectionId,
+		adAccountId:    adAccountId,
+	}
+}
+
+// Execute executes the request
+func (a *ActiveDirectoryAccountsAPIService) RotateActiveDirectoryAccountPasswordExecute(r ApiRotateActiveDirectoryAccountPasswordRequest) (*http.Response, error) {
+	var (
+		traceKey           = "activedirectoryaccountsapi.rotateActiveDirectoryAccountPassword"
+		localVarHTTPMethod = http.MethodPost
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localVarPath := "/v1/teams/{team_name}/active_directory/{ad_connection_id}/accounts/{ad_account_id}/rotate_password"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"ad_connection_id"+"}", url.PathEscape(parameterValueToString(r.adConnectionId, "adConnectionId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"ad_account_id"+"}", url.PathEscape(parameterValueToString(r.adAccountId, "adAccountId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.activeDirectoryAccountsRotatePasswordRequest == nil {
+		return nil, reportError("activeDirectoryAccountsRotatePasswordRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.activeDirectoryAccountsRotatePasswordRequest
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarHTTPResponse, err
+		}
+		return localVarHTTPResponse, apiError
+	}
+
+	return localVarHTTPResponse, err
+}
+
 type ApiUpdateActiveDirectoryAccountMatchRequest struct {
 	ctx                                context.Context
 	ApiService                         *ActiveDirectoryAccountsAPIService
@@ -1275,18 +2575,17 @@ func (r ApiUpdateActiveDirectoryAccountMatchRequest) Execute() (*ActiveDirectory
 }
 
 /*
-	UpdateActiveDirectoryAccountMatch Update which Okta Privileged Access user an Active Directory account matches
+	UpdateActiveDirectoryAccountMatch Update an Active Directory account match
 
-	    Updates which Okta Privileged Access user an Active Directory account matches, overriding any match configured
+	    Updates the Okta Privileged Access (OPA) user to match an Active Directory (AD) account
 
-as the result of an Active Directory account rule. This match override will persist across any updates
-to the account rules for this connection.
-This endpoint requires the following role: `resource_admin`
+and overrides any match configured from an AD account rule. This match override persists across any updates
+to the connection account rules.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param adConnectionId The UUID of a Active Directory Connection
-	    @param adAccountId The UUID of an Active Directory Account
+	    @param teamName The name of your team
+	    @param adConnectionId The UUID of an Active Directory connection
+	    @param adAccountId The UUID of an Active Directory account
 	@return ApiUpdateActiveDirectoryAccountMatchRequest
 */
 func (a *ActiveDirectoryAccountsAPIService) UpdateActiveDirectoryAccountMatch(ctx context.Context, teamName string, adConnectionId string, adAccountId string) ApiUpdateActiveDirectoryAccountMatchRequest {
@@ -1408,17 +2707,17 @@ func (r ApiUpdateActiveDirectoryAccountRuleRequest) Execute() (*http.Response, e
 }
 
 /*
-	UpdateActiveDirectoryAccountRule Update an Active Directory account rule
+UpdateActiveDirectoryAccountRule Update an Active Directory account rule
 
-	    Updates the Active Directory account rule
+	Updates an Active Directory account rule
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param adConnectionId The UUID of a Active Directory Connection
-	    @param adAccountRuleId The UUID of a Active Directory account rule
-	@return ApiUpdateActiveDirectoryAccountRuleRequest
+	@param teamName The name of your team
+	@param adConnectionId The UUID of an Active Directory connection
+	@param adAccountRuleId The UUID of an Active Directory account rule
+
+@return ApiUpdateActiveDirectoryAccountRuleRequest
 */
 func (a *ActiveDirectoryAccountsAPIService) UpdateActiveDirectoryAccountRule(ctx context.Context, teamName string, adConnectionId string, adAccountRuleId string) ApiUpdateActiveDirectoryAccountRuleRequest {
 	return ApiUpdateActiveDirectoryAccountRuleRequest{

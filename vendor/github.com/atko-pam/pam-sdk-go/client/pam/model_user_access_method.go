@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -13,6 +13,7 @@ package pam
 
 import (
 	"encoding/json"
+	"time"
 )
 
 // checks if the UserAccessMethod type satisfies the MappedNullable interface at compile time
@@ -20,37 +21,53 @@ var _ MappedNullable = &UserAccessMethod{}
 
 // UserAccessMethod struct for UserAccessMethod
 type UserAccessMethod struct {
-	// The user account that will be used to access the resource
-	Identity *string `json:"identity,omitempty"`
-	// The user credential used to access the resource
-	AccessCredential *string `json:"access_credential,omitempty"`
+	// The user account that's used to access the resource
+	Identity string `json:"identity"`
+	// The user credential that's used to access the resource
+	AccessCredential string `json:"access_credential"`
 	// If `true`, the connection is brokered by the server agent
-	Brokered *bool `json:"brokered,omitempty"`
-	// A short description used to identify the access method to users interface to help the user pick this access method vs other ones
+	Brokered bool `json:"brokered"`
+	// A short description that's used to identify the access method to the users interface
 	ShortText *string `json:"short_text,omitempty"`
+	// This text displays in the user interface (CLI) to show resource availability status with checkout requirements and checkout expiry time. The availability status displays only for the CLI user who previously checked out the resource.
+	AvailabilityDetailsText *string `json:"availability_details_text,omitempty"`
 	// The ID of the resource
-	ServerId *string `json:"server_id,omitempty"`
-	// A list of required conditions. Each condition must be met to use this access method
+	ServerId string `json:"server_id"`
+	// Server host name
+	ServerHostName string `json:"server_host_name"`
+	// A list of required conditions to use the user access method
 	Conditionals []UserAccessConditional `json:"conditionals,omitempty"`
-	// The ID of an existing Security Policy Rule used to filter user access methods
-	SecurityPolicyRuleId *string `json:"security_policy_rule_id,omitempty"`
-	// A list of rule IDs that result in identical user access methods
-	RuleIds []string `json:"rule_ids,omitempty"`
+	// The IDs of the security policy rules that generated this user access method
+	RuleIds          []string                        `json:"rule_ids,omitempty"`
+	RuleResourceType *SecurityPolicyRuleResourceType `json:"rule_resource_type,omitempty"`
 	// The type of access method
-	UserAccessType *string                  `json:"user_access_type,omitempty"`
-	Details        *UserAccessMethodDetails `json:"details,omitempty"`
-	// Collection of all the sudo-related commands a User can access in a single string format
-	SudoCommandBundles *string `json:"sudo_command_bundles,omitempty"`
-	// This is a nickname set on the policy rule that contains one or more sudo command bundles. This helps Users choose the appropriate user access method based on the sudo permissions it grants.
-	SudoDisplayName *string `json:"sudo_display_name,omitempty"`
+	UserAccessType       string                   `json:"user_access_type"`
+	Details              *UserAccessMethodDetails `json:"details,omitempty"`
+	CheckoutRequirements *CheckoutRequirements    `json:"checkout_requirements,omitempty"`
+	// Resource availability status that's displayed to end users
+	ResourceStatus string `json:"resource_status"`
+	// The checkout expiry time for the current user
+	CurrentUserCheckoutExpiresAt *time.Time `json:"current_user_checkout_expires_at,omitempty"`
+	// Collection of all the sudo-related commands a user can access in a single string format
+	SudoCommandBundles []SudoCommandBundleForConnectionInfo `json:"sudo_command_bundles,omitempty"`
+	// This is a nickname set on the policy rule that contains one or more sudo command bundles. This helps users choose the appropriate user access method based on the sudo permissions it grants.
+	SudoDisplayName string `json:"sudo_display_name"`
 }
 
 // NewUserAccessMethod instantiates a new UserAccessMethod object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewUserAccessMethod() *UserAccessMethod {
+func NewUserAccessMethod(identity string, accessCredential string, brokered bool, serverId string, serverHostName string, userAccessType string, resourceStatus string, sudoDisplayName string) *UserAccessMethod {
 	this := UserAccessMethod{}
+	this.Identity = identity
+	this.AccessCredential = accessCredential
+	this.Brokered = brokered
+	this.ServerId = serverId
+	this.ServerHostName = serverHostName
+	this.UserAccessType = userAccessType
+	this.ResourceStatus = resourceStatus
+	this.SudoDisplayName = sudoDisplayName
 	return &this
 }
 
@@ -62,102 +79,78 @@ func NewUserAccessMethodWithDefaults() *UserAccessMethod {
 	return &this
 }
 
-// GetIdentity returns the Identity field value if set, zero value otherwise.
+// GetIdentity returns the Identity field value
 func (o *UserAccessMethod) GetIdentity() string {
-	if o == nil || IsNil(o.Identity) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Identity
+
+	return o.Identity
 }
 
-// GetIdentityOk returns a tuple with the Identity field value if set, nil otherwise
+// GetIdentityOk returns a tuple with the Identity field value
 // and a boolean to check if the value has been set.
 func (o *UserAccessMethod) GetIdentityOk() (*string, bool) {
-	if o == nil || IsNil(o.Identity) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Identity, true
+	return &o.Identity, true
 }
 
-// HasIdentity returns a boolean if a field has been set.
-func (o *UserAccessMethod) HasIdentity() bool {
-	if o != nil && !IsNil(o.Identity) {
-		return true
-	}
-
-	return false
-}
-
-// SetIdentity gets a reference to the given string and assigns it to the Identity field.
+// SetIdentity sets field value
 func (o *UserAccessMethod) SetIdentity(v string) *UserAccessMethod {
-	o.Identity = &v
+	o.Identity = v
 	return o
 }
 
-// GetAccessCredential returns the AccessCredential field value if set, zero value otherwise.
+// GetAccessCredential returns the AccessCredential field value
 func (o *UserAccessMethod) GetAccessCredential() string {
-	if o == nil || IsNil(o.AccessCredential) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.AccessCredential
+
+	return o.AccessCredential
 }
 
-// GetAccessCredentialOk returns a tuple with the AccessCredential field value if set, nil otherwise
+// GetAccessCredentialOk returns a tuple with the AccessCredential field value
 // and a boolean to check if the value has been set.
 func (o *UserAccessMethod) GetAccessCredentialOk() (*string, bool) {
-	if o == nil || IsNil(o.AccessCredential) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AccessCredential, true
+	return &o.AccessCredential, true
 }
 
-// HasAccessCredential returns a boolean if a field has been set.
-func (o *UserAccessMethod) HasAccessCredential() bool {
-	if o != nil && !IsNil(o.AccessCredential) {
-		return true
-	}
-
-	return false
-}
-
-// SetAccessCredential gets a reference to the given string and assigns it to the AccessCredential field.
+// SetAccessCredential sets field value
 func (o *UserAccessMethod) SetAccessCredential(v string) *UserAccessMethod {
-	o.AccessCredential = &v
+	o.AccessCredential = v
 	return o
 }
 
-// GetBrokered returns the Brokered field value if set, zero value otherwise.
+// GetBrokered returns the Brokered field value
 func (o *UserAccessMethod) GetBrokered() bool {
-	if o == nil || IsNil(o.Brokered) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.Brokered
+
+	return o.Brokered
 }
 
-// GetBrokeredOk returns a tuple with the Brokered field value if set, nil otherwise
+// GetBrokeredOk returns a tuple with the Brokered field value
 // and a boolean to check if the value has been set.
 func (o *UserAccessMethod) GetBrokeredOk() (*bool, bool) {
-	if o == nil || IsNil(o.Brokered) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Brokered, true
+	return &o.Brokered, true
 }
 
-// HasBrokered returns a boolean if a field has been set.
-func (o *UserAccessMethod) HasBrokered() bool {
-	if o != nil && !IsNil(o.Brokered) {
-		return true
-	}
-
-	return false
-}
-
-// SetBrokered gets a reference to the given bool and assigns it to the Brokered field.
+// SetBrokered sets field value
 func (o *UserAccessMethod) SetBrokered(v bool) *UserAccessMethod {
-	o.Brokered = &v
+	o.Brokered = v
 	return o
 }
 
@@ -194,36 +187,86 @@ func (o *UserAccessMethod) SetShortText(v string) *UserAccessMethod {
 	return o
 }
 
-// GetServerId returns the ServerId field value if set, zero value otherwise.
-func (o *UserAccessMethod) GetServerId() string {
-	if o == nil || IsNil(o.ServerId) {
+// GetAvailabilityDetailsText returns the AvailabilityDetailsText field value if set, zero value otherwise.
+func (o *UserAccessMethod) GetAvailabilityDetailsText() string {
+	if o == nil || IsNil(o.AvailabilityDetailsText) {
 		var ret string
 		return ret
 	}
-	return *o.ServerId
+	return *o.AvailabilityDetailsText
 }
 
-// GetServerIdOk returns a tuple with the ServerId field value if set, nil otherwise
+// GetAvailabilityDetailsTextOk returns a tuple with the AvailabilityDetailsText field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UserAccessMethod) GetServerIdOk() (*string, bool) {
-	if o == nil || IsNil(o.ServerId) {
+func (o *UserAccessMethod) GetAvailabilityDetailsTextOk() (*string, bool) {
+	if o == nil || IsNil(o.AvailabilityDetailsText) {
 		return nil, false
 	}
-	return o.ServerId, true
+	return o.AvailabilityDetailsText, true
 }
 
-// HasServerId returns a boolean if a field has been set.
-func (o *UserAccessMethod) HasServerId() bool {
-	if o != nil && !IsNil(o.ServerId) {
+// HasAvailabilityDetailsText returns a boolean if a field has been set.
+func (o *UserAccessMethod) HasAvailabilityDetailsText() bool {
+	if o != nil && !IsNil(o.AvailabilityDetailsText) {
 		return true
 	}
 
 	return false
 }
 
-// SetServerId gets a reference to the given string and assigns it to the ServerId field.
+// SetAvailabilityDetailsText gets a reference to the given string and assigns it to the AvailabilityDetailsText field.
+func (o *UserAccessMethod) SetAvailabilityDetailsText(v string) *UserAccessMethod {
+	o.AvailabilityDetailsText = &v
+	return o
+}
+
+// GetServerId returns the ServerId field value
+func (o *UserAccessMethod) GetServerId() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.ServerId
+}
+
+// GetServerIdOk returns a tuple with the ServerId field value
+// and a boolean to check if the value has been set.
+func (o *UserAccessMethod) GetServerIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.ServerId, true
+}
+
+// SetServerId sets field value
 func (o *UserAccessMethod) SetServerId(v string) *UserAccessMethod {
-	o.ServerId = &v
+	o.ServerId = v
+	return o
+}
+
+// GetServerHostName returns the ServerHostName field value
+func (o *UserAccessMethod) GetServerHostName() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.ServerHostName
+}
+
+// GetServerHostNameOk returns a tuple with the ServerHostName field value
+// and a boolean to check if the value has been set.
+func (o *UserAccessMethod) GetServerHostNameOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.ServerHostName, true
+}
+
+// SetServerHostName sets field value
+func (o *UserAccessMethod) SetServerHostName(v string) *UserAccessMethod {
+	o.ServerHostName = v
 	return o
 }
 
@@ -260,39 +303,6 @@ func (o *UserAccessMethod) SetConditionals(v []UserAccessConditional) *UserAcces
 	return o
 }
 
-// GetSecurityPolicyRuleId returns the SecurityPolicyRuleId field value if set, zero value otherwise.
-func (o *UserAccessMethod) GetSecurityPolicyRuleId() string {
-	if o == nil || IsNil(o.SecurityPolicyRuleId) {
-		var ret string
-		return ret
-	}
-	return *o.SecurityPolicyRuleId
-}
-
-// GetSecurityPolicyRuleIdOk returns a tuple with the SecurityPolicyRuleId field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *UserAccessMethod) GetSecurityPolicyRuleIdOk() (*string, bool) {
-	if o == nil || IsNil(o.SecurityPolicyRuleId) {
-		return nil, false
-	}
-	return o.SecurityPolicyRuleId, true
-}
-
-// HasSecurityPolicyRuleId returns a boolean if a field has been set.
-func (o *UserAccessMethod) HasSecurityPolicyRuleId() bool {
-	if o != nil && !IsNil(o.SecurityPolicyRuleId) {
-		return true
-	}
-
-	return false
-}
-
-// SetSecurityPolicyRuleId gets a reference to the given string and assigns it to the SecurityPolicyRuleId field.
-func (o *UserAccessMethod) SetSecurityPolicyRuleId(v string) *UserAccessMethod {
-	o.SecurityPolicyRuleId = &v
-	return o
-}
-
 // GetRuleIds returns the RuleIds field value if set, zero value otherwise.
 func (o *UserAccessMethod) GetRuleIds() []string {
 	if o == nil || IsNil(o.RuleIds) {
@@ -326,36 +336,61 @@ func (o *UserAccessMethod) SetRuleIds(v []string) *UserAccessMethod {
 	return o
 }
 
-// GetUserAccessType returns the UserAccessType field value if set, zero value otherwise.
-func (o *UserAccessMethod) GetUserAccessType() string {
-	if o == nil || IsNil(o.UserAccessType) {
-		var ret string
+// GetRuleResourceType returns the RuleResourceType field value if set, zero value otherwise.
+func (o *UserAccessMethod) GetRuleResourceType() SecurityPolicyRuleResourceType {
+	if o == nil || IsNil(o.RuleResourceType) {
+		var ret SecurityPolicyRuleResourceType
 		return ret
 	}
-	return *o.UserAccessType
+	return *o.RuleResourceType
 }
 
-// GetUserAccessTypeOk returns a tuple with the UserAccessType field value if set, nil otherwise
+// GetRuleResourceTypeOk returns a tuple with the RuleResourceType field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UserAccessMethod) GetUserAccessTypeOk() (*string, bool) {
-	if o == nil || IsNil(o.UserAccessType) {
+func (o *UserAccessMethod) GetRuleResourceTypeOk() (*SecurityPolicyRuleResourceType, bool) {
+	if o == nil || IsNil(o.RuleResourceType) {
 		return nil, false
 	}
-	return o.UserAccessType, true
+	return o.RuleResourceType, true
 }
 
-// HasUserAccessType returns a boolean if a field has been set.
-func (o *UserAccessMethod) HasUserAccessType() bool {
-	if o != nil && !IsNil(o.UserAccessType) {
+// HasRuleResourceType returns a boolean if a field has been set.
+func (o *UserAccessMethod) HasRuleResourceType() bool {
+	if o != nil && !IsNil(o.RuleResourceType) {
 		return true
 	}
 
 	return false
 }
 
-// SetUserAccessType gets a reference to the given string and assigns it to the UserAccessType field.
+// SetRuleResourceType gets a reference to the given SecurityPolicyRuleResourceType and assigns it to the RuleResourceType field.
+func (o *UserAccessMethod) SetRuleResourceType(v SecurityPolicyRuleResourceType) *UserAccessMethod {
+	o.RuleResourceType = &v
+	return o
+}
+
+// GetUserAccessType returns the UserAccessType field value
+func (o *UserAccessMethod) GetUserAccessType() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.UserAccessType
+}
+
+// GetUserAccessTypeOk returns a tuple with the UserAccessType field value
+// and a boolean to check if the value has been set.
+func (o *UserAccessMethod) GetUserAccessTypeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.UserAccessType, true
+}
+
+// SetUserAccessType sets field value
 func (o *UserAccessMethod) SetUserAccessType(v string) *UserAccessMethod {
-	o.UserAccessType = &v
+	o.UserAccessType = v
 	return o
 }
 
@@ -392,18 +427,109 @@ func (o *UserAccessMethod) SetDetails(v UserAccessMethodDetails) *UserAccessMeth
 	return o
 }
 
-// GetSudoCommandBundles returns the SudoCommandBundles field value if set, zero value otherwise.
-func (o *UserAccessMethod) GetSudoCommandBundles() string {
-	if o == nil || IsNil(o.SudoCommandBundles) {
+// GetCheckoutRequirements returns the CheckoutRequirements field value if set, zero value otherwise.
+func (o *UserAccessMethod) GetCheckoutRequirements() CheckoutRequirements {
+	if o == nil || IsNil(o.CheckoutRequirements) {
+		var ret CheckoutRequirements
+		return ret
+	}
+	return *o.CheckoutRequirements
+}
+
+// GetCheckoutRequirementsOk returns a tuple with the CheckoutRequirements field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserAccessMethod) GetCheckoutRequirementsOk() (*CheckoutRequirements, bool) {
+	if o == nil || IsNil(o.CheckoutRequirements) {
+		return nil, false
+	}
+	return o.CheckoutRequirements, true
+}
+
+// HasCheckoutRequirements returns a boolean if a field has been set.
+func (o *UserAccessMethod) HasCheckoutRequirements() bool {
+	if o != nil && !IsNil(o.CheckoutRequirements) {
+		return true
+	}
+
+	return false
+}
+
+// SetCheckoutRequirements gets a reference to the given CheckoutRequirements and assigns it to the CheckoutRequirements field.
+func (o *UserAccessMethod) SetCheckoutRequirements(v CheckoutRequirements) *UserAccessMethod {
+	o.CheckoutRequirements = &v
+	return o
+}
+
+// GetResourceStatus returns the ResourceStatus field value
+func (o *UserAccessMethod) GetResourceStatus() string {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.SudoCommandBundles
+
+	return o.ResourceStatus
+}
+
+// GetResourceStatusOk returns a tuple with the ResourceStatus field value
+// and a boolean to check if the value has been set.
+func (o *UserAccessMethod) GetResourceStatusOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.ResourceStatus, true
+}
+
+// SetResourceStatus sets field value
+func (o *UserAccessMethod) SetResourceStatus(v string) *UserAccessMethod {
+	o.ResourceStatus = v
+	return o
+}
+
+// GetCurrentUserCheckoutExpiresAt returns the CurrentUserCheckoutExpiresAt field value if set, zero value otherwise.
+func (o *UserAccessMethod) GetCurrentUserCheckoutExpiresAt() time.Time {
+	if o == nil || IsNil(o.CurrentUserCheckoutExpiresAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.CurrentUserCheckoutExpiresAt
+}
+
+// GetCurrentUserCheckoutExpiresAtOk returns a tuple with the CurrentUserCheckoutExpiresAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserAccessMethod) GetCurrentUserCheckoutExpiresAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.CurrentUserCheckoutExpiresAt) {
+		return nil, false
+	}
+	return o.CurrentUserCheckoutExpiresAt, true
+}
+
+// HasCurrentUserCheckoutExpiresAt returns a boolean if a field has been set.
+func (o *UserAccessMethod) HasCurrentUserCheckoutExpiresAt() bool {
+	if o != nil && !IsNil(o.CurrentUserCheckoutExpiresAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetCurrentUserCheckoutExpiresAt gets a reference to the given time.Time and assigns it to the CurrentUserCheckoutExpiresAt field.
+func (o *UserAccessMethod) SetCurrentUserCheckoutExpiresAt(v time.Time) *UserAccessMethod {
+	o.CurrentUserCheckoutExpiresAt = &v
+	return o
+}
+
+// GetSudoCommandBundles returns the SudoCommandBundles field value if set, zero value otherwise.
+func (o *UserAccessMethod) GetSudoCommandBundles() []SudoCommandBundleForConnectionInfo {
+	if o == nil || IsNil(o.SudoCommandBundles) {
+		var ret []SudoCommandBundleForConnectionInfo
+		return ret
+	}
+	return o.SudoCommandBundles
 }
 
 // GetSudoCommandBundlesOk returns a tuple with the SudoCommandBundles field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UserAccessMethod) GetSudoCommandBundlesOk() (*string, bool) {
+func (o *UserAccessMethod) GetSudoCommandBundlesOk() ([]SudoCommandBundleForConnectionInfo, bool) {
 	if o == nil || IsNil(o.SudoCommandBundles) {
 		return nil, false
 	}
@@ -419,42 +545,34 @@ func (o *UserAccessMethod) HasSudoCommandBundles() bool {
 	return false
 }
 
-// SetSudoCommandBundles gets a reference to the given string and assigns it to the SudoCommandBundles field.
-func (o *UserAccessMethod) SetSudoCommandBundles(v string) *UserAccessMethod {
-	o.SudoCommandBundles = &v
+// SetSudoCommandBundles gets a reference to the given []SudoCommandBundleForConnectionInfo and assigns it to the SudoCommandBundles field.
+func (o *UserAccessMethod) SetSudoCommandBundles(v []SudoCommandBundleForConnectionInfo) *UserAccessMethod {
+	o.SudoCommandBundles = v
 	return o
 }
 
-// GetSudoDisplayName returns the SudoDisplayName field value if set, zero value otherwise.
+// GetSudoDisplayName returns the SudoDisplayName field value
 func (o *UserAccessMethod) GetSudoDisplayName() string {
-	if o == nil || IsNil(o.SudoDisplayName) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.SudoDisplayName
+
+	return o.SudoDisplayName
 }
 
-// GetSudoDisplayNameOk returns a tuple with the SudoDisplayName field value if set, nil otherwise
+// GetSudoDisplayNameOk returns a tuple with the SudoDisplayName field value
 // and a boolean to check if the value has been set.
 func (o *UserAccessMethod) GetSudoDisplayNameOk() (*string, bool) {
-	if o == nil || IsNil(o.SudoDisplayName) {
+	if o == nil {
 		return nil, false
 	}
-	return o.SudoDisplayName, true
+	return &o.SudoDisplayName, true
 }
 
-// HasSudoDisplayName returns a boolean if a field has been set.
-func (o *UserAccessMethod) HasSudoDisplayName() bool {
-	if o != nil && !IsNil(o.SudoDisplayName) {
-		return true
-	}
-
-	return false
-}
-
-// SetSudoDisplayName gets a reference to the given string and assigns it to the SudoDisplayName field.
+// SetSudoDisplayName sets field value
 func (o *UserAccessMethod) SetSudoDisplayName(v string) *UserAccessMethod {
-	o.SudoDisplayName = &v
+	o.SudoDisplayName = v
 	return o
 }
 
@@ -468,42 +586,41 @@ func (o UserAccessMethod) MarshalJSON() ([]byte, error) {
 
 func (o UserAccessMethod) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Identity) {
-		toSerialize["identity"] = o.Identity
-	}
-	if !IsNil(o.AccessCredential) {
-		toSerialize["access_credential"] = o.AccessCredential
-	}
-	if !IsNil(o.Brokered) {
-		toSerialize["brokered"] = o.Brokered
-	}
+	toSerialize["identity"] = o.Identity
+	toSerialize["access_credential"] = o.AccessCredential
+	toSerialize["brokered"] = o.Brokered
 	if !IsNil(o.ShortText) {
 		toSerialize["short_text"] = o.ShortText
 	}
-	if !IsNil(o.ServerId) {
-		toSerialize["server_id"] = o.ServerId
+	if !IsNil(o.AvailabilityDetailsText) {
+		toSerialize["availability_details_text"] = o.AvailabilityDetailsText
 	}
+	toSerialize["server_id"] = o.ServerId
+	toSerialize["server_host_name"] = o.ServerHostName
 	if !IsNil(o.Conditionals) {
 		toSerialize["conditionals"] = o.Conditionals
-	}
-	if !IsNil(o.SecurityPolicyRuleId) {
-		toSerialize["security_policy_rule_id"] = o.SecurityPolicyRuleId
 	}
 	if !IsNil(o.RuleIds) {
 		toSerialize["rule_ids"] = o.RuleIds
 	}
-	if !IsNil(o.UserAccessType) {
-		toSerialize["user_access_type"] = o.UserAccessType
+	if !IsNil(o.RuleResourceType) {
+		toSerialize["rule_resource_type"] = o.RuleResourceType
 	}
+	toSerialize["user_access_type"] = o.UserAccessType
 	if !IsNil(o.Details) {
 		toSerialize["details"] = o.Details
+	}
+	if !IsNil(o.CheckoutRequirements) {
+		toSerialize["checkout_requirements"] = o.CheckoutRequirements
+	}
+	toSerialize["resource_status"] = o.ResourceStatus
+	if !IsNil(o.CurrentUserCheckoutExpiresAt) {
+		toSerialize["current_user_checkout_expires_at"] = o.CurrentUserCheckoutExpiresAt
 	}
 	if !IsNil(o.SudoCommandBundles) {
 		toSerialize["sudo_command_bundles"] = o.SudoCommandBundles
 	}
-	if !IsNil(o.SudoDisplayName) {
-		toSerialize["sudo_display_name"] = o.SudoDisplayName
-	}
+	toSerialize["sudo_display_name"] = o.SudoDisplayName
 	return toSerialize, nil
 }
 

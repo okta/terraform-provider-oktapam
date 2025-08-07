@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,7 +20,7 @@ var _ MappedNullable = &ResolveResourceNamesResponse{}
 
 // ResolveResourceNamesResponse struct for ResolveResourceNamesResponse
 type ResolveResourceNamesResponse struct {
-	// A list of resolved resource responses
+	// A list of resolved resources
 	Results []NameResolutionResult `json:"results,omitempty"`
 }
 

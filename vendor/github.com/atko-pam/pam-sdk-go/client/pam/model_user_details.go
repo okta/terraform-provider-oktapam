@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -18,15 +18,15 @@ import (
 // checks if the UserDetails type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &UserDetails{}
 
-// UserDetails The details of the User synced from Okta
+// UserDetails The details of the user synced from Okta
 type UserDetails struct {
-	// The email associated with the User
+	// The email associated with the user
 	Email NullableString `json:"email,omitempty"`
-	// The first name of the User
+	// The first name of the user
 	FirstName NullableString `json:"first_name,omitempty"`
-	// The last name of the User
+	// The last name of the user
 	LastName NullableString `json:"last_name,omitempty"`
-	// The full name of the User
+	// The full name of the user
 	FullName NullableString `json:"full_name,omitempty"`
 }
 

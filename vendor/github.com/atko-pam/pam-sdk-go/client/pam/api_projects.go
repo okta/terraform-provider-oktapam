@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -43,17 +43,17 @@ func (r ApiAdminCheckinResourceRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	AdminCheckinResource Check in a Resource by an Admin
+AdminCheckinResource Check in a resource
 
-	    Enables admins to forcefully check in a resource. This is used when a resource is checked out but needs to be returned or made available regardless of the user who checked it out.
+	Checks in a resource (forcefully). As an admin, use this request to return a resource that any user has checked out.
 
-This endpoint requires one of the following roles: `resource_admin`, `security_admin`, `delegated_security_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiAdminCheckinResourceRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiAdminCheckinResourceRequest
 */
 func (a *ProjectsAPIService) AdminCheckinResource(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiAdminCheckinResourceRequest {
 	return ApiAdminCheckinResourceRequest{
@@ -147,17 +147,17 @@ func (r ApiAdminRotateResourceRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	AdminRotateResource Rotate the password for a given resource in a project
+AdminRotateResource Rotate the password for a given resource in a project
 
-	    Rotates the password for a resource within a specified resource group and project.
+	Rotates the password for a resource within a specified resource group and project.
 
-This endpoint requires one of the following roles: `resource_admin`, `security_admin`, `delegated_security_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiAdminRotateResourceRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiAdminRotateResourceRequest
 */
 func (a *ProjectsAPIService) AdminRotateResource(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiAdminRotateResourceRequest {
 	return ApiAdminRotateResourceRequest{
@@ -250,16 +250,16 @@ func (r ApiCreateResourceGroupProjectRequest) Execute() (*Project, *http.Respons
 }
 
 /*
-	CreateResourceGroupProject Create a Project in a Resource Group
+CreateResourceGroupProject Create a project in a resource group
 
-	    Creates a Project in the specified Resource Group
+	Creates a project in the specified resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	@return ApiCreateResourceGroupProjectRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+
+@return ApiCreateResourceGroupProjectRequest
 */
 func (a *ProjectsAPIService) CreateResourceGroupProject(ctx context.Context, teamName string, resourceGroupId string) ApiCreateResourceGroupProjectRequest {
 	return ApiCreateResourceGroupProjectRequest{
@@ -354,17 +354,17 @@ func (r ApiCreateResourceGroupProjectServerEnrollmentTokenRequest) Execute() (*S
 }
 
 /*
-	CreateResourceGroupProjectServerEnrollmentToken Create a Server Enrollment Token
+CreateResourceGroupProjectServerEnrollmentToken Create a server enrollment token
 
-	    Creates a Server Enrollment Token for a Project in a Resource Group
+	Creates a server enrollment token for a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiCreateResourceGroupProjectServerEnrollmentTokenRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiCreateResourceGroupProjectServerEnrollmentTokenRequest
 */
 func (a *ProjectsAPIService) CreateResourceGroupProjectServerEnrollmentToken(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiCreateResourceGroupProjectServerEnrollmentTokenRequest {
 	return ApiCreateResourceGroupProjectServerEnrollmentTokenRequest{
@@ -442,6 +442,105 @@ func (a *ProjectsAPIService) CreateResourceGroupProjectServerEnrollmentTokenExec
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiFetchResourceGroupActiveDirectoryBasedProjectCheckoutSettingsRequest struct {
+	ctx             context.Context
+	ApiService      *ProjectsAPIService
+	teamName        string
+	resourceGroupId string
+	projectId       string
+}
+
+func (r ApiFetchResourceGroupActiveDirectoryBasedProjectCheckoutSettingsRequest) Execute() (*ActiveDirectoryCheckoutSettings, *http.Response, error) {
+	return r.ApiService.FetchResourceGroupActiveDirectoryBasedProjectCheckoutSettingsExecute(r)
+}
+
+/*
+FetchResourceGroupActiveDirectoryBasedProjectCheckoutSettings Retrieve the checkout settings for an Active Directory account resource group project
+
+	Retrieves the checkout settings configured for a resource group project that's specific to the Active Directory account
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiFetchResourceGroupActiveDirectoryBasedProjectCheckoutSettingsRequest
+*/
+func (a *ProjectsAPIService) FetchResourceGroupActiveDirectoryBasedProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiFetchResourceGroupActiveDirectoryBasedProjectCheckoutSettingsRequest {
+	return ApiFetchResourceGroupActiveDirectoryBasedProjectCheckoutSettingsRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ActiveDirectoryCheckoutSettings
+func (a *ProjectsAPIService) FetchResourceGroupActiveDirectoryBasedProjectCheckoutSettingsExecute(r ApiFetchResourceGroupActiveDirectoryBasedProjectCheckoutSettingsRequest) (*ActiveDirectoryCheckoutSettings, *http.Response, error) {
+	var (
+		traceKey            = "projectsapi.fetchResourceGroupActiveDirectoryBasedProjectCheckoutSettings"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ActiveDirectoryCheckoutSettings
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/active_directory_checkout_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
 type ApiFetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
@@ -455,17 +554,17 @@ func (r ApiFetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsR
 }
 
 /*
-	FetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings Retrieves the checkout settings configured for a project, specific to the Okta Universal Directory resource type
+FetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings Retrieve the checkout settings for a Universal Directory resource group project
 
-	    Retrieves the checkout settings configured for a project, specific to the Okta Universal Directory resource type.
+	Retrieves the checkout settings configured for a resource group project that's specific to the Universal Directory
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`, `security_admin`, `delegated_security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiFetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiFetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest
 */
 func (a *ProjectsAPIService) FetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiFetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest {
 	return ApiFetchResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest{
@@ -554,17 +653,17 @@ func (r ApiFetchResourceGroupProjectRequest) Execute() (*Project, *http.Response
 }
 
 /*
-	FetchResourceGroupProject Retrieve a Project from a Resource Group
+FetchResourceGroupProject Retrieve a project from a resource group
 
-	    Retrieves a Project from a Resource Group
+	Retrieves a project from a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiFetchResourceGroupProjectRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiFetchResourceGroupProjectRequest
 */
 func (a *ProjectsAPIService) FetchResourceGroupProject(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiFetchResourceGroupProjectRequest {
 	return ApiFetchResourceGroupProjectRequest{
@@ -653,17 +752,17 @@ func (r ApiFetchResourceGroupSaasAppBasedProjectCheckoutSettingsRequest) Execute
 }
 
 /*
-	FetchResourceGroupSaasAppBasedProjectCheckoutSettings Retrieves the checkout settings configured for a project, specific to the SaaS Application resource type
+FetchResourceGroupSaasAppBasedProjectCheckoutSettings Retrieve the checkout settings for a SaaS app resource group project
 
-	    Retrieves the checkout settings configured for a project, specific to the SaaS Application resource type.
+	Retrieves the checkout settings configured for a resource group project that's specific to the SaaS app
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`, `security_admin`, `delegated_security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiFetchResourceGroupSaasAppBasedProjectCheckoutSettingsRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiFetchResourceGroupSaasAppBasedProjectCheckoutSettingsRequest
 */
 func (a *ProjectsAPIService) FetchResourceGroupSaasAppBasedProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiFetchResourceGroupSaasAppBasedProjectCheckoutSettingsRequest {
 	return ApiFetchResourceGroupSaasAppBasedProjectCheckoutSettingsRequest{
@@ -752,17 +851,17 @@ func (r ApiFetchResourceGroupServerBasedProjectCheckoutSettingsRequest) Execute(
 }
 
 /*
-	FetchResourceGroupServerBasedProjectCheckoutSettings Retrieves the checkout settings configured for a project, specific to the server resource type.
+FetchResourceGroupServerBasedProjectCheckoutSettings Retrieve the checkout settings for a server resource group project
 
-	    Retrieves the checkout settings configured for a project, specific to the server resource type.
+	Retrieves the checkout settings configured for a resource group project that's specific to the server
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`, `security_admin`, `delegated_security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiFetchResourceGroupServerBasedProjectCheckoutSettingsRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiFetchResourceGroupServerBasedProjectCheckoutSettingsRequest
 */
 func (a *ProjectsAPIService) FetchResourceGroupServerBasedProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiFetchResourceGroupServerBasedProjectCheckoutSettingsRequest {
 	return ApiFetchResourceGroupServerBasedProjectCheckoutSettingsRequest{
@@ -851,17 +950,17 @@ func (r ApiGetPasswordPolicyForProjectRequest) Execute() (*PasswordPolicy, *http
 }
 
 /*
-	GetPasswordPolicyForProject Retrieve Project Password Policy for Server Accounts
+GetPasswordPolicyForProject Retrieve project password policy for server accounts
 
-	    Retrieves a Password Policy for a Project in a Resource Group
+	Retrieves a password policy for a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiGetPasswordPolicyForProjectRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiGetPasswordPolicyForProjectRequest
 */
 func (a *ProjectsAPIService) GetPasswordPolicyForProject(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiGetPasswordPolicyForProjectRequest {
 	return ApiGetPasswordPolicyForProjectRequest{
@@ -937,6 +1036,105 @@ func (a *ProjectsAPIService) GetPasswordPolicyForProjectExecute(r ApiGetPassword
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiGetProjectPasswordPolicyForActiveDirectoryResourcesRequest struct {
+	ctx             context.Context
+	ApiService      *ProjectsAPIService
+	teamName        string
+	resourceGroupId string
+	projectId       string
+}
+
+func (r ApiGetProjectPasswordPolicyForActiveDirectoryResourcesRequest) Execute() (*ActiveDirectoryPasswordPolicy, *http.Response, error) {
+	return r.ApiService.GetProjectPasswordPolicyForActiveDirectoryResourcesExecute(r)
+}
+
+/*
+GetProjectPasswordPolicyForActiveDirectoryResources Retrieve a project password policy for Active Directory resources
+
+	Retrieves a project password policy for Active Directory resources in a resource group
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiGetProjectPasswordPolicyForActiveDirectoryResourcesRequest
+*/
+func (a *ProjectsAPIService) GetProjectPasswordPolicyForActiveDirectoryResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiGetProjectPasswordPolicyForActiveDirectoryResourcesRequest {
+	return ApiGetProjectPasswordPolicyForActiveDirectoryResourcesRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ActiveDirectoryPasswordPolicy
+func (a *ProjectsAPIService) GetProjectPasswordPolicyForActiveDirectoryResourcesExecute(r ApiGetProjectPasswordPolicyForActiveDirectoryResourcesRequest) (*ActiveDirectoryPasswordPolicy, *http.Response, error) {
+	var (
+		traceKey            = "projectsapi.getProjectPasswordPolicyForActiveDirectoryResources"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ActiveDirectoryPasswordPolicy
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/active_directory_password_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
 type ApiGetProjectPasswordPolicyForDatabaseResourcesRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
@@ -950,17 +1148,17 @@ func (r ApiGetProjectPasswordPolicyForDatabaseResourcesRequest) Execute() (*Pass
 }
 
 /*
-	GetProjectPasswordPolicyForDatabaseResources Retrieve a Project Password Policy for Database Resources
+GetProjectPasswordPolicyForDatabaseResources Retrieve a project password policy for database resources
 
-	    Retrieves a Project Password Policy for Database Resources in a Resource Group
+	Retrieves a project password policy for database resources in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiGetProjectPasswordPolicyForDatabaseResourcesRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiGetProjectPasswordPolicyForDatabaseResourcesRequest
 */
 func (a *ProjectsAPIService) GetProjectPasswordPolicyForDatabaseResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiGetProjectPasswordPolicyForDatabaseResourcesRequest {
 	return ApiGetProjectPasswordPolicyForDatabaseResourcesRequest{
@@ -1049,17 +1247,17 @@ func (r ApiGetProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest) Ex
 }
 
 /*
-	GetProjectPasswordPolicyForOktaUniversalDirectoryResources Retrieve a Project Password Policy for Okta Universal Directory Resources
+GetProjectPasswordPolicyForOktaUniversalDirectoryResources Retrieve a project password policy for Universal Directory resources
 
-	    Retrieves a Project Password Policy for Okta Universal Directory Resources in a Resource Group
+	Retrieves a project password policy for Universal Directory resources in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiGetProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiGetProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest
 */
 func (a *ProjectsAPIService) GetProjectPasswordPolicyForOktaUniversalDirectoryResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiGetProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest {
 	return ApiGetProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest{
@@ -1148,17 +1346,17 @@ func (r ApiGetProjectPasswordPolicyForSaasAppResourcesRequest) Execute() (*Passw
 }
 
 /*
-	GetProjectPasswordPolicyForSaasAppResources Retrieve a Project Password Policy for SaaS Application Resources
+GetProjectPasswordPolicyForSaasAppResources Retrieve a project password policy for SaaS app resources
 
-	    Retrieves a Project Password Policy for SaaS Application Resources in a Resource Group
+	Retrieves a project password policy for SaaS app resources in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiGetProjectPasswordPolicyForSaasAppResourcesRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiGetProjectPasswordPolicyForSaasAppResourcesRequest
 */
 func (a *ProjectsAPIService) GetProjectPasswordPolicyForSaasAppResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiGetProjectPasswordPolicyForSaasAppResourcesRequest {
 	return ApiGetProjectPasswordPolicyForSaasAppResourcesRequest{
@@ -1248,18 +1446,18 @@ func (r ApiGetResourceGroupProjectServerEnrollmentTokenRequest) Execute() (*Serv
 }
 
 /*
-	GetResourceGroupProjectServerEnrollmentToken Retrieve a Server Enrollment Token
+GetResourceGroupProjectServerEnrollmentToken Retrieve a server enrollment token
 
-	    Retrieves a Server Enrollment Token from a Project in a Resource Group
+	Retrieves a server enrollment token from a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param serverEnrollmentTokenId The UUID of a Server Enrollment Token
-	@return ApiGetResourceGroupProjectServerEnrollmentTokenRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param serverEnrollmentTokenId The UUID of a server enrollment token
+
+@return ApiGetResourceGroupProjectServerEnrollmentTokenRequest
 */
 func (a *ProjectsAPIService) GetResourceGroupProjectServerEnrollmentToken(ctx context.Context, teamName string, resourceGroupId string, projectId string, serverEnrollmentTokenId string) ApiGetResourceGroupProjectServerEnrollmentTokenRequest {
 	return ApiGetResourceGroupProjectServerEnrollmentTokenRequest{
@@ -1351,18 +1549,18 @@ func (r ApiGetServerAccountDetailsRequest) Execute() (*GetServerAccountDetailsRe
 }
 
 /*
-	GetServerAccountDetails Retrieve a Server Account
+GetServerAccountDetails Retrieve a server account
 
-	    Retrieves a Server Account from a Project in a Resource Group
+	Retrieves a server account from a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param serverAccountId The UUID of a Server Account
-	@return ApiGetServerAccountDetailsRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param serverAccountId The UUID of a server account
+
+@return ApiGetServerAccountDetailsRequest
 */
 func (a *ProjectsAPIService) GetServerAccountDetails(ctx context.Context, teamName string, resourceGroupId string, projectId string, serverAccountId string) ApiGetServerAccountDetailsRequest {
 	return ApiGetServerAccountDetailsRequest{
@@ -1495,17 +1693,17 @@ func (r ApiListAllCheckedOutResourcesByAdminRequest) Execute() (*ListAllCheckedO
 }
 
 /*
-	ListAllCheckedOutResourcesByAdmin List all Resources Checked Out in a Project By an Admin
+ListAllCheckedOutResourcesByAdmin List all resources checked out in a project
 
-	    Lists all the resources that are currently checked out within a specified resource group project.
+	Lists all the resources that are currently checked out within a specified resource group project
 
-This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiListAllCheckedOutResourcesByAdminRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiListAllCheckedOutResourcesByAdminRequest
 */
 func (a *ProjectsAPIService) ListAllCheckedOutResourcesByAdmin(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiListAllCheckedOutResourcesByAdminRequest {
 	return ApiListAllCheckedOutResourcesByAdminRequest{
@@ -1599,6 +1797,115 @@ func (a *ProjectsAPIService) ListAllCheckedOutResourcesByAdminExecute(r ApiListA
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiListResourceGroupProjectActiveDirectoryAccountsRequest struct {
+	ctx             context.Context
+	ApiService      *ProjectsAPIService
+	teamName        string
+	resourceGroupId string
+	projectId       string
+	contains        *string
+}
+
+// Only return results that include the specified value
+func (r ApiListResourceGroupProjectActiveDirectoryAccountsRequest) Contains(contains string) ApiListResourceGroupProjectActiveDirectoryAccountsRequest {
+	r.contains = &contains
+	return r
+}
+
+func (r ApiListResourceGroupProjectActiveDirectoryAccountsRequest) Execute() (*ListResourceGroupProjectActiveDirectoryAccountsResponse, *http.Response, error) {
+	return r.ApiService.ListResourceGroupProjectActiveDirectoryAccountsExecute(r)
+}
+
+/*
+	ListResourceGroupProjectActiveDirectoryAccounts List all Active Directory accounts in a project
+
+	    Lists all Active Directory accounts in a project in a resource group. The `contains` URL parameter
+
+filters by UPN.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your team
+	    @param resourceGroupId The UUID of a resource group
+	    @param projectId The UUID of a project
+	@return ApiListResourceGroupProjectActiveDirectoryAccountsRequest
+*/
+func (a *ProjectsAPIService) ListResourceGroupProjectActiveDirectoryAccounts(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiListResourceGroupProjectActiveDirectoryAccountsRequest {
+	return ApiListResourceGroupProjectActiveDirectoryAccountsRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListResourceGroupProjectActiveDirectoryAccountsResponse
+func (a *ProjectsAPIService) ListResourceGroupProjectActiveDirectoryAccountsExecute(r ApiListResourceGroupProjectActiveDirectoryAccountsRequest) (*ListResourceGroupProjectActiveDirectoryAccountsResponse, *http.Response, error) {
+	var (
+		traceKey            = "projectsapi.listResourceGroupProjectActiveDirectoryAccounts"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListResourceGroupProjectActiveDirectoryAccountsResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/active_directory_accounts"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.contains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
 type ApiListResourceGroupProjectServerEnrollmentTokensRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
@@ -1612,17 +1919,17 @@ func (r ApiListResourceGroupProjectServerEnrollmentTokensRequest) Execute() (*Li
 }
 
 /*
-	ListResourceGroupProjectServerEnrollmentTokens List all Server Enrollment Tokens in a Project
+ListResourceGroupProjectServerEnrollmentTokens List all server enrollment tokens in a project
 
-	    Lists all Server Enrollment Tokens in a Resource Group Project
+	Lists all server enrollment tokens in a resource group project
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiListResourceGroupProjectServerEnrollmentTokensRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiListResourceGroupProjectServerEnrollmentTokensRequest
 */
 func (a *ProjectsAPIService) ListResourceGroupProjectServerEnrollmentTokens(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiListResourceGroupProjectServerEnrollmentTokensRequest {
 	return ApiListResourceGroupProjectServerEnrollmentTokensRequest{
@@ -1710,16 +2017,16 @@ func (r ApiListResourceGroupProjectsRequest) Execute() (*ListResourceGroupProjec
 }
 
 /*
-	ListResourceGroupProjects List all Projects in a Resource Group
+ListResourceGroupProjects List all projects in a resource group
 
-	    Lists all Projects in the specified Resource Group
+	Lists all projects in the specified resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	@return ApiListResourceGroupProjectsRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+
+@return ApiListResourceGroupProjectsRequest
 */
 func (a *ProjectsAPIService) ListResourceGroupProjects(ctx context.Context, teamName string, resourceGroupId string) ApiListResourceGroupProjectsRequest {
 	return ApiListResourceGroupProjectsRequest{
@@ -1806,17 +2113,17 @@ func (r ApiListServerAccountsForProjectRequest) Execute() (*ListServerAccountsFo
 }
 
 /*
-	ListServerAccountsForProject List all Server Accounts in a Project
+ListServerAccountsForProject List all server accounts in a project
 
-	    Lists all Server Accounts in a Resource Group Project
+	Lists all server accounts in a resource group project
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiListServerAccountsForProjectRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiListServerAccountsForProjectRequest
 */
 func (a *ProjectsAPIService) ListServerAccountsForProject(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiListServerAccountsForProjectRequest {
 	return ApiListServerAccountsForProjectRequest{
@@ -1906,18 +2213,18 @@ func (r ApiListServerAccountsForServerRequest) Execute() (*ListServerAccountsFor
 }
 
 /*
-	ListServerAccountsForServer List all Server Accounts for a Server
+ListServerAccountsForServer List all server accounts for a server
 
-	    Lists all Server Accounts for a Server in a Project
+	Lists all server accounts for a server in a project
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param serverId The UUID of an enrolled Server
-	@return ApiListServerAccountsForServerRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param serverId The UUID of an enrolled server
+
+@return ApiListServerAccountsForServerRequest
 */
 func (a *ProjectsAPIService) ListServerAccountsForServer(ctx context.Context, teamName string, resourceGroupId string, projectId string, serverId string) ApiListServerAccountsForServerRequest {
 	return ApiListServerAccountsForServerRequest{
@@ -2008,17 +2315,17 @@ func (r ApiRemoveResourceGroupProjectRequest) Execute() (*http.Response, error) 
 }
 
 /*
-	RemoveResourceGroupProject Delete a Project from a Resource Group
+RemoveResourceGroupProject Delete a project from a resource group
 
-	    Deletes a Project from a Resource Group
+	Deletes a project from a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiRemoveResourceGroupProjectRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiRemoveResourceGroupProjectRequest
 */
 func (a *ProjectsAPIService) RemoveResourceGroupProject(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiRemoveResourceGroupProjectRequest {
 	return ApiRemoveResourceGroupProjectRequest{
@@ -2105,18 +2412,18 @@ func (r ApiRemoveResourceGroupProjectServerEnrollmentTokenRequest) Execute() (*h
 }
 
 /*
-	RemoveResourceGroupProjectServerEnrollmentToken Delete a Server Enrollment Token
+RemoveResourceGroupProjectServerEnrollmentToken Delete a server enrollment token
 
-	    Deletes a Server Enrollment Token from a Project in a Resource Group
+	Deletes a server enrollment token from a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param serverEnrollmentTokenId The UUID of a Server Enrollment Token
-	@return ApiRemoveResourceGroupProjectServerEnrollmentTokenRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param serverEnrollmentTokenId The UUID of a server enrollment token
+
+@return ApiRemoveResourceGroupProjectServerEnrollmentTokenRequest
 */
 func (a *ProjectsAPIService) RemoveResourceGroupProjectServerEnrollmentToken(ctx context.Context, teamName string, resourceGroupId string, projectId string, serverEnrollmentTokenId string) ApiRemoveResourceGroupProjectServerEnrollmentTokenRequest {
 	return ApiRemoveResourceGroupProjectServerEnrollmentTokenRequest{
@@ -2210,17 +2517,17 @@ func (r ApiUpdatePasswordPolicyForProjectRequest) Execute() (*PasswordPolicy, *h
 }
 
 /*
-	UpdatePasswordPolicyForProject Update Project Password Policy for Server Accounts
+UpdatePasswordPolicyForProject Update project password policy for server accounts
 
-	    Updates a Password Policy for a Project in a Resource Group
+	Updates a password policy for a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiUpdatePasswordPolicyForProjectRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiUpdatePasswordPolicyForProjectRequest
 */
 func (a *ProjectsAPIService) UpdatePasswordPolicyForProject(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdatePasswordPolicyForProjectRequest {
 	return ApiUpdatePasswordPolicyForProjectRequest{
@@ -2298,6 +2605,113 @@ func (a *ProjectsAPIService) UpdatePasswordPolicyForProjectExecute(r ApiUpdatePa
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiUpdateProjectPasswordPolicyForActiveDirectoryResourcesRequest struct {
+	ctx                           context.Context
+	ApiService                    *ProjectsAPIService
+	teamName                      string
+	resourceGroupId               string
+	projectId                     string
+	activeDirectoryPasswordPolicy *ActiveDirectoryPasswordPolicy
+}
+
+func (r ApiUpdateProjectPasswordPolicyForActiveDirectoryResourcesRequest) ActiveDirectoryPasswordPolicy(activeDirectoryPasswordPolicy ActiveDirectoryPasswordPolicy) ApiUpdateProjectPasswordPolicyForActiveDirectoryResourcesRequest {
+	r.activeDirectoryPasswordPolicy = &activeDirectoryPasswordPolicy
+	return r
+}
+
+func (r ApiUpdateProjectPasswordPolicyForActiveDirectoryResourcesRequest) Execute() (*ActiveDirectoryPasswordPolicy, *http.Response, error) {
+	return r.ApiService.UpdateProjectPasswordPolicyForActiveDirectoryResourcesExecute(r)
+}
+
+/*
+UpdateProjectPasswordPolicyForActiveDirectoryResources Update a project password policy for Active Directory resources
+
+	Updates a project password policy for Active Directory resources in a resource group
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiUpdateProjectPasswordPolicyForActiveDirectoryResourcesRequest
+*/
+func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForActiveDirectoryResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateProjectPasswordPolicyForActiveDirectoryResourcesRequest {
+	return ApiUpdateProjectPasswordPolicyForActiveDirectoryResourcesRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ActiveDirectoryPasswordPolicy
+func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForActiveDirectoryResourcesExecute(r ApiUpdateProjectPasswordPolicyForActiveDirectoryResourcesRequest) (*ActiveDirectoryPasswordPolicy, *http.Response, error) {
+	var (
+		traceKey            = "projectsapi.updateProjectPasswordPolicyForActiveDirectoryResources"
+		localVarHTTPMethod  = http.MethodPut
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ActiveDirectoryPasswordPolicy
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/active_directory_password_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.activeDirectoryPasswordPolicy
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
 type ApiUpdateProjectPasswordPolicyForDatabaseResourcesRequest struct {
 	ctx             context.Context
 	ApiService      *ProjectsAPIService
@@ -2317,17 +2731,17 @@ func (r ApiUpdateProjectPasswordPolicyForDatabaseResourcesRequest) Execute() (*P
 }
 
 /*
-	UpdateProjectPasswordPolicyForDatabaseResources Update a Project Password Policy for Database Resources
+UpdateProjectPasswordPolicyForDatabaseResources Update a project password policy for database resources
 
-	    Updates a Project Password Policy for Database Resources in a Resource Group
+	Updates a project password policy for database resources in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiUpdateProjectPasswordPolicyForDatabaseResourcesRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiUpdateProjectPasswordPolicyForDatabaseResourcesRequest
 */
 func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForDatabaseResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateProjectPasswordPolicyForDatabaseResourcesRequest {
 	return ApiUpdateProjectPasswordPolicyForDatabaseResourcesRequest{
@@ -2424,17 +2838,17 @@ func (r ApiUpdateProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest)
 }
 
 /*
-	UpdateProjectPasswordPolicyForOktaUniversalDirectoryResources Update a Project Password Policy for Okta Universal Directory Resources
+UpdateProjectPasswordPolicyForOktaUniversalDirectoryResources Update a project password policy for Universal Directory resources
 
-	    Updates a Project Password Policy for Okta Universal Directory Resources in a Resource Group
+	Updates a project password policy for Universal Directory resources in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiUpdateProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiUpdateProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest
 */
 func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForOktaUniversalDirectoryResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest {
 	return ApiUpdateProjectPasswordPolicyForOktaUniversalDirectoryResourcesRequest{
@@ -2531,17 +2945,17 @@ func (r ApiUpdateProjectPasswordPolicyForSaasAppResourcesRequest) Execute() (*Pa
 }
 
 /*
-	UpdateProjectPasswordPolicyForSaasAppResources Update a Project Password Policy for SaaS Application Resources
+UpdateProjectPasswordPolicyForSaasAppResources Update a project password policy for SaaS app resources
 
-	    Updates a Project Password Policy for SaaS Application Resources in a Resource Group
+	Updates a project password policy for SaaS app resources in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiUpdateProjectPasswordPolicyForSaasAppResourcesRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiUpdateProjectPasswordPolicyForSaasAppResourcesRequest
 */
 func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForSaasAppResources(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateProjectPasswordPolicyForSaasAppResourcesRequest {
 	return ApiUpdateProjectPasswordPolicyForSaasAppResourcesRequest{
@@ -2619,6 +3033,110 @@ func (a *ProjectsAPIService) UpdateProjectPasswordPolicyForSaasAppResourcesExecu
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiUpdateResourceGroupActiveDirectoryBasedProjectCheckoutSettingsRequest struct {
+	ctx                             context.Context
+	ApiService                      *ProjectsAPIService
+	teamName                        string
+	resourceGroupId                 string
+	projectId                       string
+	activeDirectoryCheckoutSettings *ActiveDirectoryCheckoutSettings
+}
+
+func (r ApiUpdateResourceGroupActiveDirectoryBasedProjectCheckoutSettingsRequest) ActiveDirectoryCheckoutSettings(activeDirectoryCheckoutSettings ActiveDirectoryCheckoutSettings) ApiUpdateResourceGroupActiveDirectoryBasedProjectCheckoutSettingsRequest {
+	r.activeDirectoryCheckoutSettings = &activeDirectoryCheckoutSettings
+	return r
+}
+
+func (r ApiUpdateResourceGroupActiveDirectoryBasedProjectCheckoutSettingsRequest) Execute() (*http.Response, error) {
+	return r.ApiService.UpdateResourceGroupActiveDirectoryBasedProjectCheckoutSettingsExecute(r)
+}
+
+/*
+UpdateResourceGroupActiveDirectoryBasedProjectCheckoutSettings Update the checkout settings for an Active Directory account resource group project
+
+	Updates the checkout settings configured for a resource group project that's specific to the Active Directory account
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiUpdateResourceGroupActiveDirectoryBasedProjectCheckoutSettingsRequest
+*/
+func (a *ProjectsAPIService) UpdateResourceGroupActiveDirectoryBasedProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateResourceGroupActiveDirectoryBasedProjectCheckoutSettingsRequest {
+	return ApiUpdateResourceGroupActiveDirectoryBasedProjectCheckoutSettingsRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+		projectId:       projectId,
+	}
+}
+
+// Execute executes the request
+func (a *ProjectsAPIService) UpdateResourceGroupActiveDirectoryBasedProjectCheckoutSettingsExecute(r ApiUpdateResourceGroupActiveDirectoryBasedProjectCheckoutSettingsRequest) (*http.Response, error) {
+	var (
+		traceKey           = "projectsapi.updateResourceGroupActiveDirectoryBasedProjectCheckoutSettings"
+		localVarHTTPMethod = http.MethodPut
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/active_directory_checkout_settings"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.activeDirectoryCheckoutSettings
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarHTTPResponse, err
+		}
+		return localVarHTTPResponse, apiError
+	}
+
+	return localVarHTTPResponse, err
+}
+
 type ApiUpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest struct {
 	ctx                               context.Context
 	ApiService                        *ProjectsAPIService
@@ -2638,17 +3156,17 @@ func (r ApiUpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings
 }
 
 /*
-	UpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings Update the checkout settings configured for a project, specific to to the Okta Universal Directory resource type
+UpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings Update the checkout settings for a Universal Directory resource group project
 
-	    Update the checkout settings configured for a project, specific to the Okta Universal Directory resource type.
+	Updates the checkout settings configured for a resource group project that's specific to the Universal Directory
 
-This endpoint requires one of the following roles: `security_admin`, `delegated_security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiUpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiUpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest
 */
 func (a *ProjectsAPIService) UpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest {
 	return ApiUpdateResourceGroupOktaUniversalDirectoryBasedProjectCheckoutSettingsRequest{
@@ -2742,17 +3260,17 @@ func (r ApiUpdateResourceGroupProjectRequest) Execute() (*Project, *http.Respons
 }
 
 /*
-	UpdateResourceGroupProject Update a Project in a Resource Group
+UpdateResourceGroupProject Update a project in a resource group
 
-	    Updates a Project in a Resource Group
+	Updates a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiUpdateResourceGroupProjectRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiUpdateResourceGroupProjectRequest
 */
 func (a *ProjectsAPIService) UpdateResourceGroupProject(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateResourceGroupProjectRequest {
 	return ApiUpdateResourceGroupProjectRequest{
@@ -2849,17 +3367,17 @@ func (r ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest) Execut
 }
 
 /*
-	UpdateResourceGroupSaasAppBasedProjectCheckoutSettings Update the checkout settings configured for a project, specific to to the SaaS Application resource type
+UpdateResourceGroupSaasAppBasedProjectCheckoutSettings Update the checkout settings for a SaaS app resource group project
 
-	    Update the checkout settings configured for a project, specific to the SaaS Application resource type.
+	Updates the checkout settings configured for a resource group project that's specific to the SaaS app
 
-This endpoint requires one of the following roles: `security_admin`, `delegated_security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest
 */
 func (a *ProjectsAPIService) UpdateResourceGroupSaasAppBasedProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest {
 	return ApiUpdateResourceGroupSaasAppBasedProjectCheckoutSettingsRequest{
@@ -2953,17 +3471,17 @@ func (r ApiUpdateResourceGroupServerBasedProjectCheckoutSettingsRequest) Execute
 }
 
 /*
-	UpdateResourceGroupServerBasedProjectCheckoutSettings Update the checkout settings configured for a project, specific to the server resource type
+UpdateResourceGroupServerBasedProjectCheckoutSettings Update the checkout settings for a server resource group project
 
-	    Update the checkout settings configured for a project, specific to the server resource type
+	Updates the checkout settings configured for a resource group project that's specific to the server
 
-This endpoint requires one of the following roles: `security_admin`, `delegated_security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiUpdateResourceGroupServerBasedProjectCheckoutSettingsRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiUpdateResourceGroupServerBasedProjectCheckoutSettingsRequest
 */
 func (a *ProjectsAPIService) UpdateResourceGroupServerBasedProjectCheckoutSettings(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiUpdateResourceGroupServerBasedProjectCheckoutSettingsRequest {
 	return ApiUpdateResourceGroupServerBasedProjectCheckoutSettingsRequest{

@@ -19,8 +19,8 @@ import (
 
 	"github.com/opentracing/opentracing-go"
 
+	"github.com/go-jose/go-jose/v4"
 	"github.com/go-resty/resty/v2"
-	"gopkg.in/square/go-jose.v2"
 )
 
 // clientFeaturesHeader is used by clients to set their supported client features
@@ -73,17 +73,17 @@ type APIClient struct {
 
 	AccessReportsAPI *ReportsAPIService
 
-	CloudEntiltlementsAPI *CloudEntitlementsAPIService
-
 	SudoCommandsAPI *SudoCommandsAPIService
 
-	ActiveDirectoryConnectionAPI *ActiveDirectoryConnectionAPIService
+	ActiveDirectoryConnectionAPI *ActiveDirectoryConnectionsAPIService
 
 	ActiveDirectoryAccountAPI *ActiveDirectoryAccountsAPIService
 
 	SaaSAppAccountsAPI *SaasAppAccountsAPIService
 
 	OktaUDAccountsAPI *OktaUniversalDirectoryAccountsAPIService
+
+	*MfaApprovalsAPIService
 }
 
 type service struct {
@@ -125,12 +125,12 @@ func NewAPIClient(opts ...ConfigOption) (*APIClient, error) {
 	apiClient.SecretsAPI = (*SecretsAPIService)(&apiClient.common)
 	apiClient.DatabaseResourcesAPI = (*DatabaseResourcesAPIService)(&apiClient.common)
 	apiClient.AccessReportsAPI = (*ReportsAPIService)(&apiClient.common)
-	apiClient.CloudEntiltlementsAPI = (*CloudEntitlementsAPIService)(&apiClient.common)
 	apiClient.SudoCommandsAPI = (*SudoCommandsAPIService)(&apiClient.common)
-	apiClient.ActiveDirectoryConnectionAPI = (*ActiveDirectoryConnectionAPIService)(&apiClient.common)
+	apiClient.ActiveDirectoryConnectionAPI = (*ActiveDirectoryConnectionsAPIService)(&apiClient.common)
 	apiClient.ActiveDirectoryAccountAPI = (*ActiveDirectoryAccountsAPIService)(&apiClient.common)
 	apiClient.SaaSAppAccountsAPI = (*SaasAppAccountsAPIService)(&apiClient.common)
 	apiClient.OktaUDAccountsAPI = (*OktaUniversalDirectoryAccountsAPIService)(&apiClient.common)
+	apiClient.MfaApprovalsAPIService = (*MfaApprovalsAPIService)(&apiClient.common)
 	return apiClient, nil
 }
 

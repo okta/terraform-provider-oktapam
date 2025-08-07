@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -18,10 +18,10 @@ import (
 // checks if the ServiceAccountEndUser type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &ServiceAccountEndUser{}
 
-// ServiceAccountEndUser Service account info with account checkout details for end-user. Service account can either be a `SaaS app account` or `Okta Universal Directory account`.
+// ServiceAccountEndUser Service account info with account checkout details for end-user. Service account can either be a SaaS app account or Universal Directory account.
 type ServiceAccountEndUser struct {
-	Account         ServiceAccountEndUserAccount `json:"account"`
-	CheckoutDetails *ResourceCheckoutDetails     `json:"checkout_details,omitempty"`
+	Account         ServiceAccountEndUserAccount   `json:"account"`
+	CheckoutDetails *ServiceAccountCheckoutDetails `json:"checkout_details,omitempty"`
 }
 
 // NewServiceAccountEndUser instantiates a new ServiceAccountEndUser object
@@ -68,9 +68,9 @@ func (o *ServiceAccountEndUser) SetAccount(v ServiceAccountEndUserAccount) *Serv
 }
 
 // GetCheckoutDetails returns the CheckoutDetails field value if set, zero value otherwise.
-func (o *ServiceAccountEndUser) GetCheckoutDetails() ResourceCheckoutDetails {
+func (o *ServiceAccountEndUser) GetCheckoutDetails() ServiceAccountCheckoutDetails {
 	if o == nil || IsNil(o.CheckoutDetails) {
-		var ret ResourceCheckoutDetails
+		var ret ServiceAccountCheckoutDetails
 		return ret
 	}
 	return *o.CheckoutDetails
@@ -78,7 +78,7 @@ func (o *ServiceAccountEndUser) GetCheckoutDetails() ResourceCheckoutDetails {
 
 // GetCheckoutDetailsOk returns a tuple with the CheckoutDetails field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ServiceAccountEndUser) GetCheckoutDetailsOk() (*ResourceCheckoutDetails, bool) {
+func (o *ServiceAccountEndUser) GetCheckoutDetailsOk() (*ServiceAccountCheckoutDetails, bool) {
 	if o == nil || IsNil(o.CheckoutDetails) {
 		return nil, false
 	}
@@ -94,8 +94,8 @@ func (o *ServiceAccountEndUser) HasCheckoutDetails() bool {
 	return false
 }
 
-// SetCheckoutDetails gets a reference to the given ResourceCheckoutDetails and assigns it to the CheckoutDetails field.
-func (o *ServiceAccountEndUser) SetCheckoutDetails(v ResourceCheckoutDetails) *ServiceAccountEndUser {
+// SetCheckoutDetails gets a reference to the given ServiceAccountCheckoutDetails and assigns it to the CheckoutDetails field.
+func (o *ServiceAccountEndUser) SetCheckoutDetails(v ServiceAccountCheckoutDetails) *ServiceAccountEndUser {
 	o.CheckoutDetails = &v
 	return o
 }

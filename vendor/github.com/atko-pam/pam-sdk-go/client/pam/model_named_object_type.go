@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,15 +20,16 @@ type NamedObjectType string
 
 // List of NamedObjectType
 const (
-	NamedObjectType_USER                     NamedObjectType = "user"
-	NamedObjectType_USER_GROUP               NamedObjectType = "user_group"
-	NamedObjectType_SERVER                   NamedObjectType = "server"
-	NamedObjectType_PROJECT                  NamedObjectType = "project"
-	NamedObjectType_SUDO_ENTITLEMENT         NamedObjectType = "sudo_entitlement"
-	NamedObjectType_RESOURCE_GROUP           NamedObjectType = "resource_group"
-	NamedObjectType_SECRET_FOLDER            NamedObjectType = "secret_folder"
-	NamedObjectType_SECRET                   NamedObjectType = "secret"
-	NamedObjectType_ACTIVE_DIRECTORY_ACCOUNT NamedObjectType = "active_directory_account"
+	NamedObjectType_USER                            NamedObjectType = "user"
+	NamedObjectType_USER_GROUP                      NamedObjectType = "user_group"
+	NamedObjectType_SERVER                          NamedObjectType = "server"
+	NamedObjectType_PROJECT                         NamedObjectType = "project"
+	NamedObjectType_SUDO_ENTITLEMENT                NamedObjectType = "sudo_entitlement"
+	NamedObjectType_RESOURCE_GROUP                  NamedObjectType = "resource_group"
+	NamedObjectType_SECRET_FOLDER                   NamedObjectType = "secret_folder"
+	NamedObjectType_SECRET                          NamedObjectType = "secret"
+	NamedObjectType_ACTIVE_DIRECTORY_SHARED_ACCOUNT NamedObjectType = "active_directory_shared_account"
+	NamedObjectType_ACTIVE_DIRECTORY_CONNECTION     NamedObjectType = "active_directory_connection"
 )
 
 // All allowed values of NamedObjectType enum
@@ -41,7 +42,8 @@ var AllowedNamedObjectTypeEnumValues = []NamedObjectType{
 	"resource_group",
 	"secret_folder",
 	"secret",
-	"active_directory_account",
+	"active_directory_shared_account",
+	"active_directory_connection",
 }
 
 func (v *NamedObjectType) UnmarshalJSON(src []byte) error {

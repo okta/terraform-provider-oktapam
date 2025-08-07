@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -41,15 +41,15 @@ func (r ApiCreateSudoCommandBundleRequest) Execute() (*SudoCommandBundle, *http.
 }
 
 /*
-	CreateSudoCommandBundle Create a Sudo Command bundle
+CreateSudoCommandBundle Create a sudo command bundle
 
-	    Creates a Sudo Command bundle
+	Creates a sudo command bundle
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiCreateSudoCommandBundleRequest
+	@param teamName The name of your team
+
+@return ApiCreateSudoCommandBundleRequest
 */
 func (a *SudoCommandsAPIService) CreateSudoCommandBundle(ctx context.Context, teamName string) ApiCreateSudoCommandBundleRequest {
 	return ApiCreateSudoCommandBundleRequest{
@@ -135,16 +135,16 @@ func (r ApiDeleteSudoCommandBundleRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	DeleteSudoCommandBundle Delete a Sudo Command bundle
+DeleteSudoCommandBundle Delete a sudo command bundle
 
-	    Deletes the specified Sudo Command bundle. You cannot delete a Sudo Command bundle that is referenced by an OPA Security Policy.
+	Deletes the specified sudo command bundle. You can't delete a sudo command bundle that's referenced by an Okta Privileged Access security policy.
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param sudoCommandBundleId The UUID of a Sudo Command bundle
-	@return ApiDeleteSudoCommandBundleRequest
+	@param teamName The name of your team
+	@param sudoCommandBundleId The UUID of a sudo command bundle
+
+@return ApiDeleteSudoCommandBundleRequest
 */
 func (a *SudoCommandsAPIService) DeleteSudoCommandBundle(ctx context.Context, teamName string, sudoCommandBundleId string) ApiDeleteSudoCommandBundleRequest {
 	return ApiDeleteSudoCommandBundleRequest{
@@ -227,16 +227,16 @@ func (r ApiGetSudoCommandBundleRequest) Execute() (*SudoCommandBundle, *http.Res
 }
 
 /*
-	GetSudoCommandBundle Retrieve a Sudo Command bundle
+GetSudoCommandBundle Retrieve a sudo command bundle
 
-	    Retrieves a specified Sudo Command bundle
+	Retrieves a specified sudo command bundle
 
-This endpoint requires one of the following roles: `resource_admin`, `security_admin`, `delegated_security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param sudoCommandBundleId The UUID of a Sudo Command bundle
-	@return ApiGetSudoCommandBundleRequest
+	@param teamName The name of your team
+	@param sudoCommandBundleId The UUID of a sudo command bundle
+
+@return ApiGetSudoCommandBundleRequest
 */
 func (a *SudoCommandsAPIService) GetSudoCommandBundle(ctx context.Context, teamName string, sudoCommandBundleId string) ApiGetSudoCommandBundleRequest {
 	return ApiGetSudoCommandBundleRequest{
@@ -349,15 +349,15 @@ func (r ApiListSudoCommandBundlesRequest) Execute() (*ListSudoCommandBundleRespo
 }
 
 /*
-	ListSudoCommandBundles List all Sudo Command bundles
+ListSudoCommandBundles List all sudo command bundles
 
-	    Lists all Sudo Command bundles for your Team
+	Lists all sudo command bundles for your team
 
-This endpoint requires one of the following roles: `resource_admin`, `security_admin`, `delegated_security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListSudoCommandBundlesRequest
+	@param teamName The name of your team
+
+@return ApiListSudoCommandBundlesRequest
 */
 func (a *SudoCommandsAPIService) ListSudoCommandBundles(ctx context.Context, teamName string) ApiListSudoCommandBundlesRequest {
 	return ApiListSudoCommandBundlesRequest{
@@ -459,16 +459,16 @@ func (r ApiUpdateSudoCommandBundleRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	UpdateSudoCommandBundle Update a Sudo Command bundle
+UpdateSudoCommandBundle Update a sudo command bundle
 
-	    Updates a specified Sudo Command bundle. You cannot modify a Sudo Command bundle that is referenced by an OPA Security Policy.
+	Updates a specified sudo command bundle. You cannot modify a sudo command bundle that's referenced by an Okta Privileged Access security policy.
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param sudoCommandBundleId The UUID of a Sudo Command bundle
-	@return ApiUpdateSudoCommandBundleRequest
+	@param teamName The name of your team
+	@param sudoCommandBundleId The UUID of a sudo command bundle
+
+@return ApiUpdateSudoCommandBundleRequest
 */
 func (a *SudoCommandsAPIService) UpdateSudoCommandBundle(ctx context.Context, teamName string, sudoCommandBundleId string) ApiUpdateSudoCommandBundleRequest {
 	return ApiUpdateSudoCommandBundleRequest{

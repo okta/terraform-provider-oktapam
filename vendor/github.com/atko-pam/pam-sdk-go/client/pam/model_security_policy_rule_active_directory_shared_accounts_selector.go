@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -24,7 +24,7 @@ type SecurityPolicyRuleActiveDirectorySharedAccountsSelector struct {
 	// Allow access to a subset of the matched individual accounts they matched to
 	ByDomain []string `json:"by_domain,omitempty"`
 	// The specific accounts to apply the policy rule to
-	SpecificAccounts []NamedObject `json:"specific_accounts,omitempty"`
+	SpecificAccounts []SecurityPolicyActiveDirectorySpecificAccountSubSelector `json:"specific_accounts,omitempty"`
 }
 
 // NewSecurityPolicyRuleActiveDirectorySharedAccountsSelector instantiates a new SecurityPolicyRuleActiveDirectorySharedAccountsSelector object
@@ -111,9 +111,9 @@ func (o *SecurityPolicyRuleActiveDirectorySharedAccountsSelector) SetByDomain(v 
 }
 
 // GetSpecificAccounts returns the SpecificAccounts field value if set, zero value otherwise.
-func (o *SecurityPolicyRuleActiveDirectorySharedAccountsSelector) GetSpecificAccounts() []NamedObject {
+func (o *SecurityPolicyRuleActiveDirectorySharedAccountsSelector) GetSpecificAccounts() []SecurityPolicyActiveDirectorySpecificAccountSubSelector {
 	if o == nil || IsNil(o.SpecificAccounts) {
-		var ret []NamedObject
+		var ret []SecurityPolicyActiveDirectorySpecificAccountSubSelector
 		return ret
 	}
 	return o.SpecificAccounts
@@ -121,7 +121,7 @@ func (o *SecurityPolicyRuleActiveDirectorySharedAccountsSelector) GetSpecificAcc
 
 // GetSpecificAccountsOk returns a tuple with the SpecificAccounts field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *SecurityPolicyRuleActiveDirectorySharedAccountsSelector) GetSpecificAccountsOk() ([]NamedObject, bool) {
+func (o *SecurityPolicyRuleActiveDirectorySharedAccountsSelector) GetSpecificAccountsOk() ([]SecurityPolicyActiveDirectorySpecificAccountSubSelector, bool) {
 	if o == nil || IsNil(o.SpecificAccounts) {
 		return nil, false
 	}
@@ -137,8 +137,8 @@ func (o *SecurityPolicyRuleActiveDirectorySharedAccountsSelector) HasSpecificAcc
 	return false
 }
 
-// SetSpecificAccounts gets a reference to the given []NamedObject and assigns it to the SpecificAccounts field.
-func (o *SecurityPolicyRuleActiveDirectorySharedAccountsSelector) SetSpecificAccounts(v []NamedObject) *SecurityPolicyRuleActiveDirectorySharedAccountsSelector {
+// SetSpecificAccounts gets a reference to the given []SecurityPolicyActiveDirectorySpecificAccountSubSelector and assigns it to the SpecificAccounts field.
+func (o *SecurityPolicyRuleActiveDirectorySharedAccountsSelector) SetSpecificAccounts(v []SecurityPolicyActiveDirectorySpecificAccountSubSelector) *SecurityPolicyRuleActiveDirectorySharedAccountsSelector {
 	o.SpecificAccounts = v
 	return o
 }

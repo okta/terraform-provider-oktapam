@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -23,7 +23,7 @@ type ActiveDirectoryConnection struct {
 	Id string `json:"id"`
 	// The name of the Active Directory connection
 	Name string `json:"name"`
-	// The human-readable name for the domain
+	// The name of the domain
 	Domain string `json:"domain"`
 	// The instance ID of the Active Directory app in your Okta org. This is a unique identifier assigned to each app in your Okta org.
 	AppInstanceId string             `json:"app_instance_id"`

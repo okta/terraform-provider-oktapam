@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -25,7 +25,8 @@ type UserAccessMethodSecretDetails struct {
 	// The name of the secret used to access the resource
 	SecretName *string `json:"secret_name,omitempty"`
 	// The ID of the secret used to access the resource
-	SecretId   *string                        `json:"secret_id,omitempty"`
+	SecretId *string `json:"secret_id,omitempty"`
+	// List of secrets
 	Path       []SecretPath                   `json:"path,omitempty"`
 	Privileges *SecurityPolicySecretPrivilege `json:"privileges,omitempty"`
 }

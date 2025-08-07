@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -23,16 +23,16 @@ var _ MappedNullable = &PasswordPolicy{}
 type PasswordPolicy struct {
 	// An array of managed accounts for password rotation
 	ManagedPrivilegedAccountsConfig []string `json:"managed_privileged_accounts_config,omitempty"`
-	// If `true`, rotates account passwords after a period of time has passed. You must also set the `periodic_rotation_duration_in_seconds` param.
+	// If `true`, rotates account passwords after a period of time has passed. You must also set the `periodic_rotation_duration_in_seconds` parameter.
 	EnablePeriodicRotation bool `json:"enable_periodic_rotation"`
-	// If `enable_periodic_rotation` is enabled, specifies how often the OPA platform rotates account passwords.
+	// If `enable_periodic_rotation` is enabled, specifies how often the Okta Privileged Access platform rotates account passwords.
 	PeriodicRotationDurationInSeconds *int32                         `json:"periodic_rotation_duration_in_seconds,omitempty"`
 	CharacterOptions                  PasswordPolicyCharacterOptions `json:"character_options"`
 	// The minimum length allowed for the password
 	MinLengthInBytes int32 `json:"min_length_in_bytes"`
 	// The maximum length allowed for the password
 	MaxLengthInBytes int32 `json:"max_length_in_bytes"`
-	// A timestamp indicating when the Password Policy was last modified
+	// A timestamp indicating when the password policy was last modified
 	ModifiedAt *time.Time `json:"modified_at,omitempty"`
 }
 

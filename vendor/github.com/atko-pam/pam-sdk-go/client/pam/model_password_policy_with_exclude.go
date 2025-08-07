@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -28,14 +28,14 @@ type PasswordPolicyWithExclude struct {
 	PeriodicRotationAccountIncludeList []ServiceAccountSettingNameObject `json:"periodic_rotation_account_include_list,omitempty"`
 	// If `periodic_rotation_account_selector_mode` is set to `EXCLUDE`, all of the actively managed accounts in the project except those listed will have their password periodically rotated
 	PeriodicRotationAccountExcludeList []ServiceAccountSettingNameObject `json:"periodic_rotation_account_exclude_list,omitempty"`
-	// Specifies how often the OPA platform rotates account passwords
+	// Specifies how often the Okta Privileged Access platform rotates account passwords
 	PeriodicRotationDurationInSeconds *int32                         `json:"periodic_rotation_duration_in_seconds,omitempty"`
 	CharacterOptions                  PasswordPolicyCharacterOptions `json:"character_options"`
 	// The minimum length allowed for the password
 	MinLengthInBytes int32 `json:"min_length_in_bytes"`
 	// The maximum length allowed for the password
 	MaxLengthInBytes int32 `json:"max_length_in_bytes"`
-	// A timestamp indicating when the Password Policy was last modified
+	// A timestamp indicating when the password policy was last modified
 	ModifiedAt *time.Time `json:"modified_at,omitempty"`
 }
 

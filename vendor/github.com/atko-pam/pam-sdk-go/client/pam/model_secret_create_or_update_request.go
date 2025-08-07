@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,13 +20,13 @@ var _ MappedNullable = &SecretCreateOrUpdateRequest{}
 
 // SecretCreateOrUpdateRequest struct for SecretCreateOrUpdateRequest
 type SecretCreateOrUpdateRequest struct {
-	// The name of the Secret
+	// The name of the secret
 	Name string `json:"name"`
-	// The encrypted Secret as a fully serialized JWE. The secret is encrypted using a public key provided by Okta Privileged Access at /v1/teams/:team_name/vault/jwks.json. The data is encrypted client-side. Generally, it's intended for the secret encryption to be performed by the sft client or Terraform provider.
+	// The encrypted secret is a fully serialized JWE. The secret is encrypted using a public key provided by the [Retrieve the vault JWKS](https://developer.okta.com/docs/api/openapi/opa/opa/tag/teams/#tag/teams/operation/GetVaultJWKS) resource on the client side. Typically, the secret encryption is performed by the Okta Privileged Access (OPA) client or the Terraform provider.
 	SecretJwe EncryptedString `json:"secret_jwe"`
-	// The description of the Secret
+	// The description of the secret
 	Description NullableString `json:"description,omitempty"`
-	// The UUID of the Secret's parent folder
+	// The UUID of the secret's parent folder
 	ParentFolderId string `json:"parent_folder_id"`
 }
 

@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -19,7 +19,7 @@ import (
 // checks if the ResourceCheckoutDetails type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &ResourceCheckoutDetails{}
 
-// ResourceCheckoutDetails Service account info with account checkout details for end-user. Service account can either be a `SaaS app account` or `Okta Universal Directory account`.
+// ResourceCheckoutDetails Resource checkout details for end-user
 type ResourceCheckoutDetails struct {
 	// If `true`, account will be checked out and no other users will be able to reveal/update credentials until it's checked in back
 	CheckoutRequired bool `json:"checkout_required"`

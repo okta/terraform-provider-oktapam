@@ -3,7 +3,7 @@ package pam
 import (
 	"fmt"
 
-	"gopkg.in/square/go-jose.v2"
+	"github.com/go-jose/go-jose/v4"
 )
 
 type JWKEncryptor struct {
@@ -40,27 +40,28 @@ func (jwke *JWKEncryptor) Encrypt(data []byte, contentAlgo jose.ContentEncryptio
 	return jwe.FullSerialize(), nil
 }
 
-// add more key algorithms and their priorities here
-var keyAlgorithmPriority = map[string]int{
-	"ECDH-ES+A256KW": 1,
-	"ECDH-ES+A192KW": 2,
-	"ECDH-ES+A128KW": 3,
-	"RSA-OAEP-256":   4,
+// add more key algorithms and their rank here
+var keyAlgorithmRank = map[string]int{
+	"ECDH-ES+A256KW": 1, // 1st choice
+	"ECDH-ES+A192KW": 2, // 2nd choice
+	"ECDH-ES+A128KW": 3, // 3rd choice
+	"ECDH-ES":        4, // etc..
+	"RSA-OAEP-256":   5,
 }
 
-// getPreferredKey returns the preferred key from the slice of keys based on the priority
+// getPreferredKey returns the preferred key from the slice of keys based on the rank
 func getPreferredKey(keys []jose.JSONWebKey) (*jose.JSONWebKey, error) {
-	var preferredKey *jose.JSONWebKey
-	var preferredPriority int
+	var selectedKey *jose.JSONWebKey
+	var selectedRank int
 
 	for _, key := range keys {
-		if priority, ok := keyAlgorithmPriority[key.Algorithm]; ok && (preferredKey == nil || priority < preferredPriority) {
-			preferredKey = &key
-			preferredPriority = priority
+		if rank, ok := keyAlgorithmRank[key.Algorithm]; ok && (selectedKey == nil || rank < selectedRank) {
+			selectedKey = &key
+			selectedRank = rank
 		}
 	}
-	if preferredKey == nil {
+	if selectedKey == nil {
 		return nil, fmt.Errorf("can't find the preferred key from the JWKS")
 	}
-	return preferredKey, nil
+	return selectedKey, nil
 }

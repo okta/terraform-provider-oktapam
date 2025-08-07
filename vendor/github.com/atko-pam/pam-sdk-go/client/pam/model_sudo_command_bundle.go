@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -23,15 +23,15 @@ var _ MappedNullable = &SudoCommandBundle{}
 type SudoCommandBundle struct {
 	// A list of environment variables to include when running sudo commands. See the [sudo documentation](https://www.sudo.ws/man/1.8.13/sudoers.man.html#Command_environment).
 	AddEnv []string `json:"add_env,omitempty"`
-	// A description of the Sudo Command bundle
+	// A description of the sudo command bundle
 	Description *string `json:"description,omitempty"`
-	// The UUID of the Sudo Command bundle
+	// The UUID of the sudo command bundle
 	Id *string `json:"id,omitempty"`
-	// The name of the Sudo Command bundle. This controls the ordering of all bundles within your Team. See [Sudo Command Bundle](https://help.okta.com/oie/en-us/okta_help.htm#cshid=csh-pam-sudo-commands).
+	// The name of the sudo command bundle. This controls the ordering of all bundles within your team. See [Sudo Command Bundle](https://help.okta.com/oie/en-us/okta_help.htm#cshid=csh-pam-sudo-commands).
 	Name string `json:"name"`
 	// Whether to allow commands to execute child processes
 	NoExec NullableBool `json:"no_exec,omitempty"`
-	// Whether to require a password when sudo is run. This should generally not be used as Users don't require a password.
+	// Whether to require a password when sudo is run. This should generally not be used as users don't require a password.
 	NoPasswd NullableBool `json:"no_passwd,omitempty"`
 	// A non-root user account used to run the command
 	RunAs NullableString `json:"run_as,omitempty"`
@@ -41,13 +41,13 @@ type SudoCommandBundle struct {
 	StructuredCommands []SudoCommandBundleStructuredCommandsInner `json:"structured_commands,omitempty"`
 	// A list of environment variables to ignore when running the commands. See the [sudo documentation](https://www.sudo.ws/man/1.8.13/sudoers.man.html#Command_environment).
 	SubEnv []string `json:"sub_env,omitempty"`
-	// A timestamp indicating when the Sudo Command bundle was created
+	// A timestamp indicating when the sudo command bundle was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
-	// The username of the User who created the Sudo Command bundle
+	// The username of the user who created the sudo command bundle
 	CreatedBy *string `json:"created_by,omitempty"`
-	// A timestamp indicating when the Sudo Command bundle was last updated
+	// A timestamp indicating when the sudo command bundle was last updated
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	// The username of the User who last updated the Sudo Command bundle
+	// The username of the user who last updated the sudo command bundle
 	UpdatedBy *string `json:"updated_by,omitempty"`
 }
 

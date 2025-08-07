@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -24,7 +24,7 @@ type OktaUniversalDirectoryAccountCheckedOutResourceDetails struct {
 	Type *string `json:"_type,omitempty"`
 	// The name of the Okta Application associated with the resource
 	AppName *string `json:"app_name,omitempty"`
-	// The name of the Okta Universal Directory Account associated with the resource
+	// The name of the Universal Directory account associated with the resource
 	AccountName *string `json:"account_name,omitempty"`
 }
 

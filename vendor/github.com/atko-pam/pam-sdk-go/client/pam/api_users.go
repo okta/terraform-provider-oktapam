@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -35,13 +35,13 @@ func (r ApiGetCurrentUserInfoRequest) Execute() (*CurrentUserInfo, *http.Respons
 }
 
 /*
-GetCurrentUserInfo Retrieve User details
+GetCurrentUserInfo Retrieve user details
 
-	Retrieves details about the current User
+	Retrieves details about the current user
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param teamName The name of your Team
+	@param teamName The name of your team
 
 @return ApiGetCurrentUserInfoRequest
 */
@@ -127,16 +127,16 @@ func (r ApiGetUserRequest) Execute() (*User, *http.Response, error) {
 }
 
 /*
-	GetUser Retrieve a User
+GetUser Retrieve a user
 
-	    Retrieves a User from your Team
+	Retrieves a user from your team
 
-This endpoint requires one of the following roles: `pam_admin`, `resource_admin`, `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param userName The username for an existing User
-	@return ApiGetUserRequest
+	@param teamName The name of your team
+	@param userName The username for an existing user
+
+@return ApiGetUserRequest
 */
 func (a *UsersAPIService) GetUser(ctx context.Context, teamName string, userName string) ApiGetUserRequest {
 	return ApiGetUserRequest{
@@ -222,16 +222,16 @@ func (r ApiGetUserByIDRequest) Execute() (*User, *http.Response, error) {
 }
 
 /*
-	GetUserByID Retrieve a User by ID
+GetUserByID Retrieve a user by ID
 
-	    Retrieves a User from your Team by ID
+	Retrieves a user from your team by ID
 
-This endpoint requires one of the following roles: `pam_admin`, `resource_admin`, `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param userId The UUID for an existing User
-	@return ApiGetUserByIDRequest
+	@param teamName The name of your team
+	@param userId The UUID for an existing user
+
+@return ApiGetUserByIDRequest
 */
 func (a *UsersAPIService) GetUserByID(ctx context.Context, teamName string, userId string) ApiGetUserByIDRequest {
 	return ApiGetUserByIDRequest{
@@ -345,13 +345,13 @@ func (r ApiListUserGroupsRequest) Id(id string) ApiListUserGroupsRequest {
 	return r
 }
 
-// Ignore Groups with the specified names. This is case sensitive.
+// Ignore groups with the specified names. This is case sensitive.
 func (r ApiListUserGroupsRequest) Ignore(ignore string) ApiListUserGroupsRequest {
 	r.ignore = &ignore
 	return r
 }
 
-// If &#x60;true&#x60;, include deleted Groups in the results
+// If &#x60;true&#x60;, include deleted groups in the results
 func (r ApiListUserGroupsRequest) IncludeDeleted(includeDeleted bool) ApiListUserGroupsRequest {
 	r.includeDeleted = &includeDeleted
 	return r
@@ -363,7 +363,7 @@ func (r ApiListUserGroupsRequest) Offset(offset string) ApiListUserGroupsRequest
 	return r
 }
 
-// If &#x60;true&#x60;, only return deleted Groups in the results
+// If &#x60;true&#x60;, only return deleted groups in the results
 func (r ApiListUserGroupsRequest) OnlyIncludeDeleted(onlyIncludeDeleted bool) ApiListUserGroupsRequest {
 	r.onlyIncludeDeleted = &onlyIncludeDeleted
 	return r
@@ -380,16 +380,16 @@ func (r ApiListUserGroupsRequest) Execute() (*ListUserGroupsResponse, *http.Resp
 }
 
 /*
-	ListUserGroups List all Groups for a User
+ListUserGroups List all groups for a user
 
-	    Lists all Groups for a specified User
+	Lists all groups for a specified user
 
-This endpoint requires one of the following roles: `pam_admin`, `resource_admin`, `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param userName The username for an existing User
-	@return ApiListUserGroupsRequest
+	@param teamName The name of your team
+	@param userName The username for an existing user
+
+@return ApiListUserGroupsRequest
 */
 func (a *UsersAPIService) ListUserGroups(ctx context.Context, teamName string, userName string) ApiListUserGroupsRequest {
 	return ApiListUserGroupsRequest{
@@ -529,7 +529,7 @@ func (r ApiListUsersRequest) Id(id string) ApiListUsersRequest {
 	return r
 }
 
-// Only return Service Users in the results
+// Only return service users in the results
 func (r ApiListUsersRequest) IncludeServiceUsers(includeServiceUsers string) ApiListUsersRequest {
 	r.includeServiceUsers = &includeServiceUsers
 	return r
@@ -547,13 +547,13 @@ func (r ApiListUsersRequest) Prev(prev bool) ApiListUsersRequest {
 	return r
 }
 
-// Only return Users with a name that begins with the specified value
+// Only return users with a name that begins with the specified value
 func (r ApiListUsersRequest) StartsWith(startsWith string) ApiListUsersRequest {
 	r.startsWith = &startsWith
 	return r
 }
 
-// Only return Users with the specified status. Valid statuses: &#x60;ACTIVE&#x60;, &#x60;DISABLED&#x60;, and &#x60;DELETED&#x60;.
+// Only return users with the specified status. Valid statuses: &#x60;ACTIVE&#x60;, &#x60;DISABLED&#x60;, and &#x60;DELETED&#x60;.
 func (r ApiListUsersRequest) Status(status string) ApiListUsersRequest {
 	r.status = &status
 	return r
@@ -564,15 +564,15 @@ func (r ApiListUsersRequest) Execute() (*ListUsersResponse, *http.Response, erro
 }
 
 /*
-	ListUsers List all Users for a Team
+ListUsers List all users for a team
 
-	    Lists all Users for your Team
+	Lists all users for your team
 
-This endpoint requires one of the following roles: `pam_admin`, `resource_admin`, `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListUsersRequest
+	@param teamName The name of your team
+
+@return ApiListUsersRequest
 */
 func (a *UsersAPIService) ListUsers(ctx context.Context, teamName string) ApiListUsersRequest {
 	return ApiListUsersRequest{

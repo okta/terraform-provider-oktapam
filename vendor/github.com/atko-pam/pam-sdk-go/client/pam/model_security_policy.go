@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -31,7 +31,8 @@ type SecurityPolicy struct {
 	Active     bool                     `json:"active"`
 	Principals SecurityPolicyPrincipals `json:"principals"`
 	// The rules associated with the Security Policy. A Security Policy can set multiple rules that define privileges available for matching resources.
-	Rules []SecurityPolicyRule `json:"rules"`
+	Rules         []SecurityPolicyRule `json:"rules"`
+	ResourceGroup *NamedObject         `json:"resource_group,omitempty"`
 }
 
 // NewSecurityPolicy instantiates a new SecurityPolicy object
@@ -254,6 +255,39 @@ func (o *SecurityPolicy) SetRules(v []SecurityPolicyRule) *SecurityPolicy {
 	return o
 }
 
+// GetResourceGroup returns the ResourceGroup field value if set, zero value otherwise.
+func (o *SecurityPolicy) GetResourceGroup() NamedObject {
+	if o == nil || IsNil(o.ResourceGroup) {
+		var ret NamedObject
+		return ret
+	}
+	return *o.ResourceGroup
+}
+
+// GetResourceGroupOk returns a tuple with the ResourceGroup field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecurityPolicy) GetResourceGroupOk() (*NamedObject, bool) {
+	if o == nil || IsNil(o.ResourceGroup) {
+		return nil, false
+	}
+	return o.ResourceGroup, true
+}
+
+// HasResourceGroup returns a boolean if a field has been set.
+func (o *SecurityPolicy) HasResourceGroup() bool {
+	if o != nil && !IsNil(o.ResourceGroup) {
+		return true
+	}
+
+	return false
+}
+
+// SetResourceGroup gets a reference to the given NamedObject and assigns it to the ResourceGroup field.
+func (o *SecurityPolicy) SetResourceGroup(v NamedObject) *SecurityPolicy {
+	o.ResourceGroup = &v
+	return o
+}
+
 func (o SecurityPolicy) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -277,6 +311,9 @@ func (o SecurityPolicy) ToMap() (map[string]interface{}, error) {
 	toSerialize["active"] = o.Active
 	toSerialize["principals"] = o.Principals
 	toSerialize["rules"] = o.Rules
+	if !IsNil(o.ResourceGroup) {
+		toSerialize["resource_group"] = o.ResourceGroup
+	}
 	return toSerialize, nil
 }
 

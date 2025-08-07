@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -23,24 +23,26 @@ var _ MappedNullable = &OktaUniversalDirectoryAccountWithSettings{}
 type OktaUniversalDirectoryAccountWithSettings struct {
 	// The project level account settings that are enabled for this account
 	AccountSettingsEnabled []AccountSetting `json:"account_settings_enabled,omitempty"`
-	// The UUID of the Okta Universal Directory Account
+	// A timestamp indicating when Okta Privileged Access last reported a change to the Universal Directory account password
+	LastPasswordChangeSystemTimestamp *time.Time `json:"last_password_change_system_timestamp,omitempty"`
+	// The UUID of the Universal Directory account
 	Id *string `json:"id,omitempty"`
-	// A human-readable name for the Okta Universal Directory Account
+	// A human-readable name for the Universal Directory account
 	Name *string `json:"name,omitempty"`
 	// The username used to log into Okta
 	Username *string `json:"username,omitempty"`
-	// A brief description of the Okta Universal Directory Account
+	// A brief description of the Universal Directory account
 	Description  *string                     `json:"description,omitempty"`
 	Status       *ServiceAccountStatus       `json:"status,omitempty"`
 	StatusDetail *ServiceAccountStatusDetail `json:"status_detail,omitempty"`
 	SyncStatus   *ServiceAccountSyncStatus   `json:"sync_status,omitempty"`
-	// Whether the password for the Okta Universal Directory Account can be rotated using Okta Lifecycle Management
+	// Whether the password for the Universal Directory account can be rotated using Okta Lifecycle Management
 	LcmSyncPossible *bool `json:"lcm_sync_possible,omitempty"`
-	// The Okta user ID for the Okta Universal Directory Account
+	// The Okta user ID for the Universal Directory account
 	OktaUserId *string `json:"okta_user_id,omitempty"`
-	// A timestamp that indicates when the OPA managed Okta Universal Directory Account was created
+	// A timestamp that indicates when the Okta Privileged Access-managed Universal Directory account was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
-	// A timestamp that indicates when the OPA managed Okta Universal Directory Account was updated
+	// A timestamp that indicates when the Okta Privileged Access-managed Universal Directory account was updated
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 }
 
@@ -91,6 +93,39 @@ func (o *OktaUniversalDirectoryAccountWithSettings) HasAccountSettingsEnabled() 
 // SetAccountSettingsEnabled gets a reference to the given []AccountSetting and assigns it to the AccountSettingsEnabled field.
 func (o *OktaUniversalDirectoryAccountWithSettings) SetAccountSettingsEnabled(v []AccountSetting) *OktaUniversalDirectoryAccountWithSettings {
 	o.AccountSettingsEnabled = v
+	return o
+}
+
+// GetLastPasswordChangeSystemTimestamp returns the LastPasswordChangeSystemTimestamp field value if set, zero value otherwise.
+func (o *OktaUniversalDirectoryAccountWithSettings) GetLastPasswordChangeSystemTimestamp() time.Time {
+	if o == nil || IsNil(o.LastPasswordChangeSystemTimestamp) {
+		var ret time.Time
+		return ret
+	}
+	return *o.LastPasswordChangeSystemTimestamp
+}
+
+// GetLastPasswordChangeSystemTimestampOk returns a tuple with the LastPasswordChangeSystemTimestamp field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *OktaUniversalDirectoryAccountWithSettings) GetLastPasswordChangeSystemTimestampOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.LastPasswordChangeSystemTimestamp) {
+		return nil, false
+	}
+	return o.LastPasswordChangeSystemTimestamp, true
+}
+
+// HasLastPasswordChangeSystemTimestamp returns a boolean if a field has been set.
+func (o *OktaUniversalDirectoryAccountWithSettings) HasLastPasswordChangeSystemTimestamp() bool {
+	if o != nil && !IsNil(o.LastPasswordChangeSystemTimestamp) {
+		return true
+	}
+
+	return false
+}
+
+// SetLastPasswordChangeSystemTimestamp gets a reference to the given time.Time and assigns it to the LastPasswordChangeSystemTimestamp field.
+func (o *OktaUniversalDirectoryAccountWithSettings) SetLastPasswordChangeSystemTimestamp(v time.Time) *OktaUniversalDirectoryAccountWithSettings {
+	o.LastPasswordChangeSystemTimestamp = &v
 	return o
 }
 
@@ -469,6 +504,9 @@ func (o OktaUniversalDirectoryAccountWithSettings) ToMap() (map[string]interface
 	toSerialize := map[string]interface{}{}
 	if !IsNil(o.AccountSettingsEnabled) {
 		toSerialize["account_settings_enabled"] = o.AccountSettingsEnabled
+	}
+	if !IsNil(o.LastPasswordChangeSystemTimestamp) {
+		toSerialize["last_password_change_system_timestamp"] = o.LastPasswordChangeSystemTimestamp
 	}
 	if !IsNil(o.Id) {
 		toSerialize["id"] = o.Id

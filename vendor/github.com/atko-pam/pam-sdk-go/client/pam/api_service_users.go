@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -41,15 +41,15 @@ func (r ApiCreateServiceUserRequest) Execute() (*User, *http.Response, error) {
 }
 
 /*
-	CreateServiceUser Create a Service User
+CreateServiceUser Create a service user
 
-	    Creates a Service User that can be used to automate interactions with the OPA API
+	Creates a service user that can be used to automate interactions with the Okta Privileged Access API
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiCreateServiceUserRequest
+	@param teamName The name of your team
+
+@return ApiCreateServiceUserRequest
 */
 func (a *ServiceUsersAPIService) CreateServiceUser(ctx context.Context, teamName string) ApiCreateServiceUserRequest {
 	return ApiCreateServiceUserRequest{
@@ -139,17 +139,17 @@ func (r ApiDeleteServiceUserKeyRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	DeleteServiceUserKey Delete an API key
+DeleteServiceUserKey Delete an API key
 
-	    Deletes an API key for a Service User. The Service User can no longer authenticate with this API key.
+	Deletes an API key for a service user. The service user can no longer authenticate with this API key.
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param userName The username for an existing User
-	    @param keyId The UUID of a Service User key
-	@return ApiDeleteServiceUserKeyRequest
+	@param teamName The name of your team
+	@param userName The username for an existing user
+	@param keyId The UUID of a service user key
+
+@return ApiDeleteServiceUserKeyRequest
 */
 func (a *ServiceUsersAPIService) DeleteServiceUserKey(ctx context.Context, teamName string, userName string, keyId string) ApiDeleteServiceUserKeyRequest {
 	return ApiDeleteServiceUserKeyRequest{
@@ -234,16 +234,16 @@ func (r ApiGetServiceUserRequest) Execute() (*User, *http.Response, error) {
 }
 
 /*
-	GetServiceUser Retrieve a Service User
+GetServiceUser Retrieve a service user
 
-	    Retrieve a specified Service User
+	Retrieve a specified service user
 
-This endpoint requires one of the following roles: `pam_admin`, `security_admin`, `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param userName The username for an existing User
-	@return ApiGetServiceUserRequest
+	@param teamName The name of your team
+	@param userName The username for an existing user
+
+@return ApiGetServiceUserRequest
 */
 func (a *ServiceUsersAPIService) GetServiceUser(ctx context.Context, teamName string, userName string) ApiGetServiceUserRequest {
 	return ApiGetServiceUserRequest{
@@ -334,17 +334,15 @@ func (r ApiIssueServiceTokenRequest) Execute() (*AuthTokenResponse, *http.Respon
 }
 
 /*
-	IssueServiceToken Issue a Service User token
+	IssueServiceToken Issue a service user token
 
-	    Most calls to the OPA API require an HTTP `Authorization` header with a value of `Bearer ${AUTH_TOKEN}`.
+	    Most calls to the Okta Privileged Access API require an HTTP `Authorization` header with a value of `Bearer ${AUTH_TOKEN}`.
 
-To retrieve an auth token, you need to create an API key for a Service User and pass the API key information to this endpoint.
+To retrieve an auth token, you need to create an API key for a service user and pass the API key information to this endpoint.
 Auth tokens may expire at any time, so code that uses them should be prepared to handle a 401 response code by creating a new auth token.
 
-This endpoint requires the following role: `resource_admin`.
-
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
+	    @param teamName The name of your team
 	@return ApiIssueServiceTokenRequest
 */
 func (a *ServiceUsersAPIService) IssueServiceToken(ctx context.Context, teamName string) ApiIssueServiceTokenRequest {
@@ -434,16 +432,16 @@ func (r ApiListServiceUserKeysRequest) Execute() (*ListServiceUserKeysResponse, 
 }
 
 /*
-	ListServiceUserKeys List all API keys
+ListServiceUserKeys List all API keys
 
-	    Lists all API keys for a specified Service User. This doesn't return the corresponding secret for each API key.
+	Lists all API keys for a specified service user. This doesn't return the corresponding secret for each API key.
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param userName The username for an existing User
-	@return ApiListServiceUserKeysRequest
+	@param teamName The name of your team
+	@param userName The username for an existing user
+
+@return ApiListServiceUserKeysRequest
 */
 func (a *ServiceUsersAPIService) ListServiceUserKeys(ctx context.Context, teamName string, userName string) ApiListServiceUserKeysRequest {
 	return ApiListServiceUserKeysRequest{
@@ -556,7 +554,7 @@ func (r ApiListServiceUsersRequest) Id(id string) ApiListServiceUsersRequest {
 	return r
 }
 
-// Only return Service Users in the results
+// Only return service users in the results
 func (r ApiListServiceUsersRequest) IncludeServiceUsers(includeServiceUsers string) ApiListServiceUsersRequest {
 	r.includeServiceUsers = &includeServiceUsers
 	return r
@@ -574,13 +572,13 @@ func (r ApiListServiceUsersRequest) Prev(prev bool) ApiListServiceUsersRequest {
 	return r
 }
 
-// Only return Users with a name that begins with the specified value
+// Only return users with a name that begins with the specified value
 func (r ApiListServiceUsersRequest) StartsWith(startsWith string) ApiListServiceUsersRequest {
 	r.startsWith = &startsWith
 	return r
 }
 
-// Only return Users with the specified status. Valid statuses: &#x60;ACTIVE&#x60;, &#x60;DISABLED&#x60;, and &#x60;DELETED&#x60;.
+// Only return users with the specified status. Valid statuses: &#x60;ACTIVE&#x60;, &#x60;DISABLED&#x60;, and &#x60;DELETED&#x60;.
 func (r ApiListServiceUsersRequest) Status(status string) ApiListServiceUsersRequest {
 	r.status = &status
 	return r
@@ -591,15 +589,15 @@ func (r ApiListServiceUsersRequest) Execute() (*ListServiceUsersResponse, *http.
 }
 
 /*
-	ListServiceUsers List all Service Users for a Team
+ListServiceUsers List all service users for a team
 
-	    Lists all Service Users for your Team
+	Lists all service users for your team
 
-This endpoint requires one of the following roles: `pam_admin`, `security_admin`, `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListServiceUsersRequest
+	@param teamName The name of your team
+
+@return ApiListServiceUsersRequest
 */
 func (a *ServiceUsersAPIService) ListServiceUsers(ctx context.Context, teamName string) ApiListServiceUsersRequest {
 	return ApiListServiceUsersRequest{
@@ -710,16 +708,16 @@ func (r ApiRotateServiceUserKeyRequest) Execute() (*ServiceUserKeyWithSecret, *h
 }
 
 /*
-	RotateServiceUserKey Rotate all API keys
+RotateServiceUserKey Rotate all API keys
 
-	    Rotates all API keys for a specified Service User. This also sets an expiration date for the existing API keys.
+	Rotates all API keys for a specified service user. This also sets an expiration date for the existing API keys.
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param userName The username for an existing User
-	@return ApiRotateServiceUserKeyRequest
+	@param teamName The name of your team
+	@param userName The username for an existing user
+
+@return ApiRotateServiceUserKeyRequest
 */
 func (a *ServiceUsersAPIService) RotateServiceUserKey(ctx context.Context, teamName string, userName string) ApiRotateServiceUserKeyRequest {
 	return ApiRotateServiceUserKeyRequest{
@@ -811,16 +809,16 @@ func (r ApiServiceUserUpdateRequest) Execute() (*User, *http.Response, error) {
 }
 
 /*
-	ServiceUserUpdate Update a Service User
+ServiceUserUpdate Update a service user
 
-	    Updates a specified Service User
+	Updates a specified service user
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param userName The username for an existing User
-	@return ApiServiceUserUpdateRequest
+	@param teamName The name of your team
+	@param userName The username for an existing user
+
+@return ApiServiceUserUpdateRequest
 */
 func (a *ServiceUsersAPIService) ServiceUserUpdate(ctx context.Context, teamName string, userName string) ApiServiceUserUpdateRequest {
 	return ApiServiceUserUpdateRequest{

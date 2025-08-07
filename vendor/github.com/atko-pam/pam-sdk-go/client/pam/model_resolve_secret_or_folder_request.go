@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -24,11 +24,11 @@ type ResolveSecretOrFolderRequest struct {
 	Project       SecretResolveParent `json:"project"`
 	// The path to the parent directory. Don't use this parameter if the request also includes an `id`.
 	ParentFolderPath NullableString `json:"parent_folder_path,omitempty"`
-	// The ID of the Secret or Secret Folder. Don't use this parameter if the request also includes a `parent_folder_path`, `secret_folder_name`, and `secret_name`.
+	// The ID of the secret or secret folder. Don't use this parameter if the request also includes a `parent_folder_path`, `secret_folder_name`, and `secret_name`.
 	Id NullableString `json:"id,omitempty"`
-	// The name of the Secret Folder. Don't use this parameter if the request also includes an `id` or `secret_name`.
+	// The name of the secret folder. Don't use this parameter if the request also includes an `id` or `secret_name`.
 	SecretFolderName *string `json:"secret_folder_name,omitempty"`
-	// The name of the Secret. Don't use this parameter if the request also includes an `id` or `secret_folder_name`.
+	// The name of the secret. Don't use this parameter if the request also includes an `id` or `secret_folder_name`.
 	SecretName *string `json:"secret_name,omitempty"`
 }
 

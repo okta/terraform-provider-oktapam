@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -21,35 +21,35 @@ var _ MappedNullable = &ServerAccounts{}
 
 // ServerAccounts struct for ServerAccounts
 type ServerAccounts struct {
-	// The UUID of the Server Account
+	// The UUID of the server account
 	Id *string `json:"id,omitempty"`
-	// The UUID of the Team associated with this Server Account
+	// The UUID of the team associated with this server account
 	TeamId *string `json:"team_id,omitempty"`
-	// The UUID of the Project associated with this Server Account
+	// The UUID of the project associated with this server account
 	ProjectId *string `json:"project_id,omitempty"`
-	// The UUID of the Server associated with this Server Account
+	// The UUID of the server associated with this server account
 	ServerId *string `json:"server_id,omitempty"`
-	// The user account name on the Server
+	// The user account name on the server
 	Login *string `json:"login,omitempty"`
-	// The hostname of the Server
+	// The host name of the server
 	Hostname *string `json:"hostname,omitempty"`
-	// A timestamp indicating when the Server Account was created
+	// A timestamp indicating when the server account was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
-	// A timestamp indicating when the Server Account was deleted
+	// A timestamp indicating when the server account was deleted
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
-	// A timestamp indicating when the Server last reported a change to the Server Account password
+	// A timestamp indicating when the server last reported a change to the server account password
 	LastPasswordChangeSuccessReportTimestamp *time.Time `json:"last_password_change_success_report_timestamp,omitempty"`
-	// A timestamp reported from the Server system clock indicating when the Server last changed the Server Account password
+	// A timestamp reported from the server system clock indicating when the server last changed the server account password
 	LastPasswordChangeSystemTimestamp *time.Time `json:"last_password_change_system_timestamp,omitempty"`
-	// A timestamp indicating when the Server last reported a failure to change to the Server Account password
+	// A timestamp indicating when the server last reported a failure to change to the server account password
 	LastPasswordChangeErrorReportTimestamp *time.Time `json:"last_password_change_error_report_timestamp,omitempty"`
-	// A timestamp reported from the Server system clock indicating when the Server last failed to change the Server Account password
+	// A timestamp reported from the server system clock indicating when the server last failed to change the server account password
 	LastPasswordChangeErrorSystemTimestamp *time.Time `json:"last_password_change_error_system_timestamp,omitempty"`
-	// The type of error message reported during the most recent failure to change the Server Account password
+	// The type of error message reported during the most recent failure to change the server account password
 	LastPasswordChangeErrorType *string `json:"last_password_change_error_type,omitempty"`
-	// The error message metadata reported during the most recent failure to change the Server Account password
+	// The error message metadata reported during the most recent failure to change the server account password
 	LastPasswordChangeErrorMetadata *string `json:"last_password_change_error_metadata,omitempty"`
-	// If `true`, indicates that the Server Account password is managed by OPA. If `false`, this account was discovered on the Server, but the password is not managed by OPA.
+	// If `true`, indicates that the server account password is managed by Okta Privileged Access. If `false`, this account was discovered on the server, but the password is not managed by Okta Privileged Access.
 	Managed *bool `json:"managed,omitempty"`
 }
 

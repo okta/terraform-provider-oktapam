@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,9 +20,9 @@ var _ MappedNullable = &ActiveDirectoryAccountMatchRequest{}
 
 // ActiveDirectoryAccountMatchRequest Details about how the resource administrator would like to update the match between an Active Directory account and an Okta Privileged Access user
 type ActiveDirectoryAccountMatchRequest struct {
-	// -| The Okta Privileged Access user ID of the resource administrator would like the specified Active Directory account to match. If null or empty, any existing override on the AD account is removed. Only one of match_override_user_id or force_no_match may be set
+	// The resource admin OPA user ID that you want to match to the specified AD account. If this property is null, empty, or unset, any existing override on the AD account is removed. You can only set one of `match_override_user_id` or `force_no_match`.
 	MatchOverrideUserId *string `json:"match_override_user_id,omitempty"`
-	// -| If true, this Active Directory account will be unmatched from Okta Privileged Access user. Only one of match_override_user_id or force_no_match may be set
+	// If true, don't match an OPA user to this Active Directory account. If `match_override_user_id` is set, this property must be unset or false.
 	ForceNoMatch *bool `json:"force_no_match,omitempty"`
 }
 

@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -38,18 +38,18 @@ func (r ApiDeleteResourceGroupProjectServerRequest) Execute() (*http.Response, e
 }
 
 /*
-	DeleteResourceGroupProjectServer Delete a Server from a Project
+DeleteResourceGroupProjectServer Delete a server from a project
 
-	    Deletes a Server from a Project in a Resource Group
+	Deletes a server from a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param serverId The UUID of an enrolled Server
-	@return ApiDeleteResourceGroupProjectServerRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param serverId The UUID of an enrolled server
+
+@return ApiDeleteResourceGroupProjectServerRequest
 */
 func (a *ServersAPIService) DeleteResourceGroupProjectServer(ctx context.Context, teamName string, resourceGroupId string, projectId string, serverId string) ApiDeleteResourceGroupProjectServerRequest {
 	return ApiDeleteResourceGroupProjectServerRequest{
@@ -138,18 +138,18 @@ func (r ApiGetResourceGroupProjectServerRequest) Execute() (*Server, *http.Respo
 }
 
 /*
-	GetResourceGroupProjectServer Retrieve a Server from a Project
+GetResourceGroupProjectServer Retrieve a server from a project
 
-	    Retrieves a Server from a Project in a Resource Group
+	Retrieves a server from a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param serverId The UUID of an enrolled Server
-	@return ApiGetResourceGroupProjectServerRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param serverId The UUID of an enrolled server
+
+@return ApiGetResourceGroupProjectServerRequest
 */
 func (a *ServersAPIService) GetResourceGroupProjectServer(ctx context.Context, teamName string, resourceGroupId string, projectId string, serverId string) ApiGetResourceGroupProjectServerRequest {
 	return ApiGetResourceGroupProjectServerRequest{
@@ -239,16 +239,16 @@ func (r ApiListAllServerAccountResourcesForDelegatedSecurityAdminRequest) Execut
 }
 
 /*
-	ListAllServerAccountResourcesForDelegatedSecurityAdmin List all Server Account Resources in a Resource group
+ListAllServerAccountResourcesForDelegatedSecurityAdmin List all server account Resources in a Resource group
 
-	    Lists all Server Account Resources for the current Security Admin or Delegated Security Admin for the Resource Group
+	Lists all server account Resources in a resource group
 
-This endpoint requires one of the following roles: `security_admin`, `delegated_security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	@return ApiListAllServerAccountResourcesForDelegatedSecurityAdminRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+
+@return ApiListAllServerAccountResourcesForDelegatedSecurityAdminRequest
 */
 func (a *ServersAPIService) ListAllServerAccountResourcesForDelegatedSecurityAdmin(ctx context.Context, teamName string, resourceGroupId string) ApiListAllServerAccountResourcesForDelegatedSecurityAdminRequest {
 	return ApiListAllServerAccountResourcesForDelegatedSecurityAdminRequest{
@@ -333,15 +333,15 @@ func (r ApiListAllServerAccountResourcesForSecurityAdminRequest) Execute() (*Lis
 }
 
 /*
-	ListAllServerAccountResourcesForSecurityAdmin List all Server Account Resources
+ListAllServerAccountResourcesForSecurityAdmin List all server account resources
 
-	    Lists all Server Account Resources for the current Security Admin
+	Lists all server account resources
 
-This endpoint requires the following role: `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListAllServerAccountResourcesForSecurityAdminRequest
+	@param teamName The name of your team
+
+@return ApiListAllServerAccountResourcesForSecurityAdminRequest
 */
 func (a *ServersAPIService) ListAllServerAccountResourcesForSecurityAdmin(ctx context.Context, teamName string) ApiListAllServerAccountResourcesForSecurityAdminRequest {
 	return ApiListAllServerAccountResourcesForSecurityAdminRequest{
@@ -414,9 +414,23 @@ func (a *ServersAPIService) ListAllServerAccountResourcesForSecurityAdminExecute
 }
 
 type ApiListAllServersForAdminRequest struct {
-	ctx        context.Context
-	ApiService *ServersAPIService
-	teamName   string
+	ctx              context.Context
+	ApiService       *ServersAPIService
+	teamName         string
+	hostnameContains *string
+	osType           *string
+}
+
+// Only return servers whose hostname contains the specified string (case-insensitive)
+func (r ApiListAllServersForAdminRequest) HostnameContains(hostnameContains string) ApiListAllServersForAdminRequest {
+	r.hostnameContains = &hostnameContains
+	return r
+}
+
+// Only return servers with the specified OS type. Possible values: &#x60;linux&#x60; or &#x60;windows&#x60;.
+func (r ApiListAllServersForAdminRequest) OsType(osType string) ApiListAllServersForAdminRequest {
+	r.osType = &osType
+	return r
 }
 
 func (r ApiListAllServersForAdminRequest) Execute() (*ListAllServersForAdminResponse, *http.Response, error) {
@@ -424,15 +438,15 @@ func (r ApiListAllServersForAdminRequest) Execute() (*ListAllServersForAdminResp
 }
 
 /*
-	ListAllServersForAdmin List all Servers
+ListAllServersForAdmin List all servers
 
-	    Lists all Servers for your Team
+	Lists all servers for your team
 
-This endpoint requires the following role: `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListAllServersForAdminRequest
+	@param teamName The name of your team
+
+@return ApiListAllServersForAdminRequest
 */
 func (a *ServersAPIService) ListAllServersForAdmin(ctx context.Context, teamName string) ApiListAllServersForAdminRequest {
 	return ApiListAllServersForAdminRequest{
@@ -461,6 +475,127 @@ func (a *ServersAPIService) ListAllServersForAdminExecute(r ApiListAllServersFor
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.hostnameContains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "hostname_contains", r.hostnameContains, "")
+	}
+	if r.osType != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "os_type", r.osType, "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiListAllServersForResourceGroupRequest struct {
+	ctx              context.Context
+	ApiService       *ServersAPIService
+	teamName         string
+	resourceGroupId  string
+	hostnameContains *string
+	osType           *string
+}
+
+// Only return servers whose hostname contains the specified string (case-insensitive)
+func (r ApiListAllServersForResourceGroupRequest) HostnameContains(hostnameContains string) ApiListAllServersForResourceGroupRequest {
+	r.hostnameContains = &hostnameContains
+	return r
+}
+
+// Only return servers with the specified OS type. Possible values: &#x60;linux&#x60; or &#x60;windows&#x60;.
+func (r ApiListAllServersForResourceGroupRequest) OsType(osType string) ApiListAllServersForResourceGroupRequest {
+	r.osType = &osType
+	return r
+}
+
+func (r ApiListAllServersForResourceGroupRequest) Execute() (*ListResourceGroupServersResponse, *http.Response, error) {
+	return r.ApiService.ListAllServersForResourceGroupExecute(r)
+}
+
+/*
+ListAllServersForResourceGroup List all servers in a resource group
+
+	Lists all servers in a resource group
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+
+@return ApiListAllServersForResourceGroupRequest
+*/
+func (a *ServersAPIService) ListAllServersForResourceGroup(ctx context.Context, teamName string, resourceGroupId string) ApiListAllServersForResourceGroupRequest {
+	return ApiListAllServersForResourceGroupRequest{
+		ApiService:      a,
+		ctx:             ctx,
+		teamName:        teamName,
+		resourceGroupId: resourceGroupId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListResourceGroupServersResponse
+func (a *ServersAPIService) ListAllServersForResourceGroupExecute(r ApiListAllServersForResourceGroupRequest) (*ListResourceGroupServersResponse, *http.Response, error) {
+	var (
+		traceKey            = "serversapi.listAllServersForResourceGroup"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListResourceGroupServersResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/all_servers"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.hostnameContains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "hostname_contains", r.hostnameContains, "")
+	}
+	if r.osType != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "os_type", r.osType, "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -517,17 +652,17 @@ func (r ApiListResourceGroupProjectServersRequest) Execute() (*ListResourceGroup
 }
 
 /*
-	ListResourceGroupProjectServers List all Servers in a Project
+ListResourceGroupProjectServers List all servers in a project
 
-	    Lists all Servers in a Project in a Resource Group
+	Lists all servers in a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiListResourceGroupProjectServersRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiListResourceGroupProjectServersRequest
 */
 func (a *ServersAPIService) ListResourceGroupProjectServers(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiListResourceGroupProjectServersRequest {
 	return ApiListResourceGroupProjectServersRequest{

@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -28,6 +28,7 @@ const (
 	SecurityPolicyRulePrivilegeType_REVEAL_PASSWORD            SecurityPolicyRulePrivilegeType = "reveal_password"
 	SecurityPolicyRulePrivilegeType_UPDATE_PASSWORD            SecurityPolicyRulePrivilegeType = "update_password"
 	SecurityPolicyRulePrivilegeType_SECRET                     SecurityPolicyRulePrivilegeType = "secret"
+	SecurityPolicyRulePrivilegeType_ROTATE_PASSWORD            SecurityPolicyRulePrivilegeType = "rotate_password"
 )
 
 // All allowed values of SecurityPolicyRulePrivilegeType enum
@@ -40,6 +41,7 @@ var AllowedSecurityPolicyRulePrivilegeTypeEnumValues = []SecurityPolicyRulePrivi
 	"reveal_password",
 	"update_password",
 	"secret",
+	"rotate_password",
 }
 
 func (v *SecurityPolicyRulePrivilegeType) UnmarshalJSON(src []byte) error {

@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -43,17 +43,17 @@ func (r ApiCreateSecretRequest) Execute() (*Secret, *http.Response, error) {
 }
 
 /*
-	CreateSecret Create a Secret
+CreateSecret Create a secret
 
-	    Creates a Secret. Users must be authorized to perform this action by an existing Security Policy.
+	Creates a secret. Users must be authorized to perform this action by an existing security policy.
 
-This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiCreateSecretRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiCreateSecretRequest
 */
 func (a *SecretsAPIService) CreateSecret(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiCreateSecretRequest {
 	return ApiCreateSecretRequest{
@@ -162,17 +162,17 @@ func (r ApiCreateSecretFolderRequest) Execute() (*SecretFolderResponse, *http.Re
 }
 
 /*
-	CreateSecretFolder Create a Secret Folder
+CreateSecretFolder Create a secret folder
 
-	    Creates a Secret Folder. Users must be authorized to perform this action by an existing Security Policy.
+	Creates a secret folder. Users must be authorized to perform this action by an existing security policy.
 
-This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiCreateSecretFolderRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiCreateSecretFolderRequest
 */
 func (a *SecretsAPIService) CreateSecretFolder(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiCreateSecretFolderRequest {
 	return ApiCreateSecretFolderRequest{
@@ -276,18 +276,18 @@ func (r ApiDeleteSecretRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	DeleteSecret Delete a Secret
+DeleteSecret Delete a Secret
 
-	    Deletes the specified Secret. Users must be authorized to perform this action by an existing Security Policy.
+	Deletes the specified secret. Users must be authorized to perform this action by an existing security policy.
 
-This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param secretId The UUID of a Secret
-	@return ApiDeleteSecretRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param secretId The UUID of a Secret
+
+@return ApiDeleteSecretRequest
 */
 func (a *SecretsAPIService) DeleteSecret(ctx context.Context, teamName string, resourceGroupId string, projectId string, secretId string) ApiDeleteSecretRequest {
 	return ApiDeleteSecretRequest{
@@ -388,18 +388,18 @@ func (r ApiDeleteSecretFolderRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	DeleteSecretFolder Delete a Secret Folder
+DeleteSecretFolder Delete a secret folder
 
-	    Deletes the specified Secret Folder. Users must be authorized to perform this action by an existing Security Policy.
+	Deletes the specified secret folder. Users must be authorized to perform this action by an existing security policy.
 
-This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param secretFolderId The UUID of a Secret Folder
-	@return ApiDeleteSecretFolderRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param secretFolderId The UUID of a secret folder
+
+@return ApiDeleteSecretFolderRequest
 */
 func (a *SecretsAPIService) DeleteSecretFolder(ctx context.Context, teamName string, resourceGroupId string, projectId string, secretFolderId string) ApiDeleteSecretFolderRequest {
 	return ApiDeleteSecretFolderRequest{
@@ -500,18 +500,18 @@ func (r ApiGetSecretRequest) Execute() (*Secret, *http.Response, error) {
 }
 
 /*
-	GetSecret Retrieve a Secret
+GetSecret Retrieve a Secret
 
-	    Retrieves the specified Secret. Users must be authorized to perform this action by an existing Security Policy.
+	Retrieves the specified secret. Users must be authorized to perform this action by an existing security policy.
 
-This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param secretId The UUID of a Secret
-	@return ApiGetSecretRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param secretId The UUID of a Secret
+
+@return ApiGetSecretRequest
 */
 func (a *SecretsAPIService) GetSecret(ctx context.Context, teamName string, resourceGroupId string, projectId string, secretId string) ApiGetSecretRequest {
 	return ApiGetSecretRequest{
@@ -615,18 +615,18 @@ func (r ApiGetSecretFolderRequest) Execute() (*SecretFolderResponse, *http.Respo
 }
 
 /*
-	GetSecretFolder Retrieve a Secret Folder
+GetSecretFolder Retrieve a secret folder
 
-	    Retrieves the specified Secret Folder. Users must be authorized to perform this action by an existing Security Policy.
+	Retrieves the specified secret folder. Users must be authorized to perform this action by an existing security policy.
 
-This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param secretFolderId The UUID of a Secret Folder
-	@return ApiGetSecretFolderRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param secretFolderId The UUID of a secret folder
+
+@return ApiGetSecretFolderRequest
 */
 func (a *SecretsAPIService) GetSecretFolder(ctx context.Context, teamName string, resourceGroupId string, projectId string, secretFolderId string) ApiGetSecretFolderRequest {
 	return ApiGetSecretFolderRequest{
@@ -758,18 +758,18 @@ func (r ApiListSecretFolderItemsRequest) Execute() (*ListSecretFolderItemsRespon
 }
 
 /*
-	ListSecretFolderItems List all items in a Secret Folder
+ListSecretFolderItems List all items in a secret folder
 
-	    Lists all items in a Secret Folder. Users must be authorized to perform this action by an existing Security Policy.
+	Lists all items in a secret folder. Users must be authorized to perform this action by an existing security policy.
 
-This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param secretFolderId The UUID of a Secret Folder
-	@return ApiListSecretFolderItemsRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param secretFolderId The UUID of a secret folder
+
+@return ApiListSecretFolderItemsRequest
 */
 func (a *SecretsAPIService) ListSecretFolderItems(ctx context.Context, teamName string, resourceGroupId string, projectId string, secretFolderId string) ApiListSecretFolderItemsRequest {
 	return ApiListSecretFolderItemsRequest{
@@ -884,17 +884,17 @@ func (r ApiListTopLevelSecretFoldersForProjectRequest) Execute() (*ListTopLevelS
 }
 
 /*
-	ListTopLevelSecretFoldersForProject List top-level Secret Folders for a Project
+ListTopLevelSecretFoldersForProject List top-level secret folders for a project
 
-	    Lists all top-level Secret Folders for a Project. Users must be authorized to perform this action by an existing Security Policy.
+	Lists all top-level secret folders for a project. Users must be authorized to perform this action by an existing security policy.
 
-This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiListTopLevelSecretFoldersForProjectRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiListTopLevelSecretFoldersForProjectRequest
 */
 func (a *SecretsAPIService) ListTopLevelSecretFoldersForProject(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiListTopLevelSecretFoldersForProjectRequest {
 	return ApiListTopLevelSecretFoldersForProjectRequest{
@@ -993,15 +993,15 @@ func (r ApiListTopLevelSecretFoldersForTeamRequest) Execute() (*ListTopLevelSecr
 }
 
 /*
-	ListTopLevelSecretFoldersForTeam List top-level Secret Folders for Team
+ListTopLevelSecretFoldersForTeam List top-level secret folders for team
 
-	    Lists all top-level Secret Folders for a Team
+	Lists all top-level secret folders for a team
 
-This endpoint requires the following roles: `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListTopLevelSecretFoldersForTeamRequest
+	@param teamName The name of your team
+
+@return ApiListTopLevelSecretFoldersForTeamRequest
 */
 func (a *SecretsAPIService) ListTopLevelSecretFoldersForTeam(ctx context.Context, teamName string) ApiListTopLevelSecretFoldersForTeamRequest {
 	return ApiListTopLevelSecretFoldersForTeamRequest{
@@ -1081,6 +1081,7 @@ type ApiListTopLevelSecretFoldersForUserRequest struct {
 	descending *bool
 	offset     *string
 	prev       *bool
+	search     *string
 }
 
 // The number of objects per page
@@ -1107,20 +1108,26 @@ func (r ApiListTopLevelSecretFoldersForUserRequest) Prev(prev bool) ApiListTopLe
 	return r
 }
 
+// Search term to search for secrets and folders by name or description.
+func (r ApiListTopLevelSecretFoldersForUserRequest) Search(search string) ApiListTopLevelSecretFoldersForUserRequest {
+	r.search = &search
+	return r
+}
+
 func (r ApiListTopLevelSecretFoldersForUserRequest) Execute() (*ListTopLevelSecretFoldersForUserResponse, *http.Response, error) {
 	return r.ApiService.ListTopLevelSecretFoldersForUserExecute(r)
 }
 
 /*
-	ListTopLevelSecretFoldersForUser List top-level Secret Folders for User
+ListTopLevelSecretFoldersForUser List top-level secret folders for user
 
-	    Lists all top-level Secret Folders for a User. Users must be authorized to perform this action by an existing Security Policy.
+	Lists all top-level secret folders for a user. Users must be authorized to perform this action by an existing security policy.
 
-This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListTopLevelSecretFoldersForUserRequest
+	@param teamName The name of your team
+
+@return ApiListTopLevelSecretFoldersForUserRequest
 */
 func (a *SecretsAPIService) ListTopLevelSecretFoldersForUser(ctx context.Context, teamName string) ApiListTopLevelSecretFoldersForUserRequest {
 	return ApiListTopLevelSecretFoldersForUserRequest{
@@ -1160,6 +1167,9 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForUserExecute(r ApiListTop
 	}
 	if r.prev != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
+	}
+	if r.search != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "search", r.search, "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -1223,14 +1233,12 @@ func (r ApiResolveSecretOrFolderRequest) Execute() (*ResolveSecretOrFolderRespon
 /*
 	ResolveSecretOrFolder Resolve Secret or Folder
 
-	    Resolves the ID or path for a Secret or Secret Folder. Users must be authorized to perform this action by an existing Security Policy.
+	    Resolves the ID or path for a secret or secret folder. Users must be authorized to perform this action by an existing security policy.
 
 To resolve the ID, the request must include the named path. To resolve the path, the request must include the ID.
 
-This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `security_admin`, `delegated_security_admin`.
-
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
+	    @param teamName The name of your team
 	@return ApiResolveSecretOrFolderRequest
 */
 func (a *SecretsAPIService) ResolveSecretOrFolder(ctx context.Context, teamName string) ApiResolveSecretOrFolderRequest {
@@ -1327,14 +1335,12 @@ func (r ApiRevealSecretRequest) Execute() (*SecretRevealResponse, *http.Response
 /*
 	RevealSecret Reveal a Secret
 
-	    Reveals the specified Secret. Users must be authorized to perform this action by an existing Security Policy.
-
-This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
+Reveals the specified secret. Users must be authorized to perform this action by an existing security policy.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
+	    @param teamName The name of your team
+	    @param resourceGroupId The UUID of a resource group
+	    @param projectId The UUID of a project
 	    @param secretId The UUID of a Secret
 	@return ApiRevealSecretRequest
 */
@@ -1448,18 +1454,18 @@ func (r ApiUpdateSecretRequest) Execute() (*Secret, *http.Response, error) {
 }
 
 /*
-	UpdateSecret Update a Secret
+UpdateSecret Update a Secret
 
-	    Updates the specified Secret. Users must be authorized to perform this action by an existing Security Policy.
+	Updates the specified secret. Users must be authorized to perform this action by an existing security policy.
 
-This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param secretId The UUID of a Secret
-	@return ApiUpdateSecretRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param secretId The UUID of a Secret
+
+@return ApiUpdateSecretRequest
 */
 func (a *SecretsAPIService) UpdateSecret(ctx context.Context, teamName string, resourceGroupId string, projectId string, secretId string) ApiUpdateSecretRequest {
 	return ApiUpdateSecretRequest{
@@ -1571,18 +1577,18 @@ func (r ApiUpdateSecretFolderRequest) Execute() (*SecretFolderResponse, *http.Re
 }
 
 /*
-	UpdateSecretFolder Update a Secret Folder
+UpdateSecretFolder Update a secret folder
 
-	    Updates the specified Secret Folder. Users must be authorized to perform this action by an existing Security Policy.
+	Updates the specified secret folder. Users must be authorized to perform this action by an existing security policy.
 
-This endpoint requires the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param secretFolderId The UUID of a Secret Folder
-	@return ApiUpdateSecretFolderRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param secretFolderId The UUID of a secret folder
+
+@return ApiUpdateSecretFolderRequest
 */
 func (a *SecretsAPIService) UpdateSecretFolder(ctx context.Context, teamName string, resourceGroupId string, projectId string, secretFolderId string) ApiUpdateSecretFolderRequest {
 	return ApiUpdateSecretFolderRequest{

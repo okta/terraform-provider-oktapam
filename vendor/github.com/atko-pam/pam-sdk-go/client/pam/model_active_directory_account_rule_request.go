@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -25,9 +25,15 @@ type ActiveDirectoryAccountRuleRequest struct {
 	// The type of the Active Directory account rule
 	RuleType *string `json:"rule_type,omitempty"`
 	// The list of organizational units to discover individual accounts from
-	OrganizationalUnits []string     `json:"organizational_units,omitempty"`
-	ResourceGroup       *NamedObject `json:"resource_group,omitempty"`
-	Project             *NamedObject `json:"project,omitempty"`
+	OrganizationalUnits []string `json:"organizational_units,omitempty"`
+	// If `true`, the initial password rotation is enabled for discovered Active Directory accounts
+	EnableInitialPasswordRotation *bool `json:"enable_initial_password_rotation,omitempty"`
+	// If `false`, the Active Directory accounts in the OU targeted by this rule are no longer active Okta users. If `true` and Okta Active Directory integration is configured, then the accounts can become active Okta users. See [Import Active Directory users on demand](https://help.okta.com/okta_help.htm?type=oie&id=ext-ad-agent-import-users).
+	EnableImportOktaUsers *bool `json:"enable_import_okta_users,omitempty"`
+	// List of enhanced filters for the Active Directory account rule
+	EnhancedFilters []ActiveDirectoryAccountRuleEnhancedFilter `json:"enhanced_filters,omitempty"`
+	ResourceGroup   *NamedObject                               `json:"resource_group,omitempty"`
+	Project         *NamedObject                               `json:"project,omitempty"`
 }
 
 // NewActiveDirectoryAccountRuleRequest instantiates a new ActiveDirectoryAccountRuleRequest object
@@ -36,6 +42,10 @@ type ActiveDirectoryAccountRuleRequest struct {
 // will change when the set of required properties is changed
 func NewActiveDirectoryAccountRuleRequest() *ActiveDirectoryAccountRuleRequest {
 	this := ActiveDirectoryAccountRuleRequest{}
+	var enableInitialPasswordRotation bool = true
+	this.EnableInitialPasswordRotation = &enableInitialPasswordRotation
+	var enableImportOktaUsers bool = false
+	this.EnableImportOktaUsers = &enableImportOktaUsers
 	return &this
 }
 
@@ -44,6 +54,10 @@ func NewActiveDirectoryAccountRuleRequest() *ActiveDirectoryAccountRuleRequest {
 // but it doesn't guarantee that properties required by API are set
 func NewActiveDirectoryAccountRuleRequestWithDefaults() *ActiveDirectoryAccountRuleRequest {
 	this := ActiveDirectoryAccountRuleRequest{}
+	var enableInitialPasswordRotation bool = true
+	this.EnableInitialPasswordRotation = &enableInitialPasswordRotation
+	var enableImportOktaUsers bool = false
+	this.EnableImportOktaUsers = &enableImportOktaUsers
 	return &this
 }
 
@@ -146,6 +160,105 @@ func (o *ActiveDirectoryAccountRuleRequest) SetOrganizationalUnits(v []string) *
 	return o
 }
 
+// GetEnableInitialPasswordRotation returns the EnableInitialPasswordRotation field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountRuleRequest) GetEnableInitialPasswordRotation() bool {
+	if o == nil || IsNil(o.EnableInitialPasswordRotation) {
+		var ret bool
+		return ret
+	}
+	return *o.EnableInitialPasswordRotation
+}
+
+// GetEnableInitialPasswordRotationOk returns a tuple with the EnableInitialPasswordRotation field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountRuleRequest) GetEnableInitialPasswordRotationOk() (*bool, bool) {
+	if o == nil || IsNil(o.EnableInitialPasswordRotation) {
+		return nil, false
+	}
+	return o.EnableInitialPasswordRotation, true
+}
+
+// HasEnableInitialPasswordRotation returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountRuleRequest) HasEnableInitialPasswordRotation() bool {
+	if o != nil && !IsNil(o.EnableInitialPasswordRotation) {
+		return true
+	}
+
+	return false
+}
+
+// SetEnableInitialPasswordRotation gets a reference to the given bool and assigns it to the EnableInitialPasswordRotation field.
+func (o *ActiveDirectoryAccountRuleRequest) SetEnableInitialPasswordRotation(v bool) *ActiveDirectoryAccountRuleRequest {
+	o.EnableInitialPasswordRotation = &v
+	return o
+}
+
+// GetEnableImportOktaUsers returns the EnableImportOktaUsers field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountRuleRequest) GetEnableImportOktaUsers() bool {
+	if o == nil || IsNil(o.EnableImportOktaUsers) {
+		var ret bool
+		return ret
+	}
+	return *o.EnableImportOktaUsers
+}
+
+// GetEnableImportOktaUsersOk returns a tuple with the EnableImportOktaUsers field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountRuleRequest) GetEnableImportOktaUsersOk() (*bool, bool) {
+	if o == nil || IsNil(o.EnableImportOktaUsers) {
+		return nil, false
+	}
+	return o.EnableImportOktaUsers, true
+}
+
+// HasEnableImportOktaUsers returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountRuleRequest) HasEnableImportOktaUsers() bool {
+	if o != nil && !IsNil(o.EnableImportOktaUsers) {
+		return true
+	}
+
+	return false
+}
+
+// SetEnableImportOktaUsers gets a reference to the given bool and assigns it to the EnableImportOktaUsers field.
+func (o *ActiveDirectoryAccountRuleRequest) SetEnableImportOktaUsers(v bool) *ActiveDirectoryAccountRuleRequest {
+	o.EnableImportOktaUsers = &v
+	return o
+}
+
+// GetEnhancedFilters returns the EnhancedFilters field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountRuleRequest) GetEnhancedFilters() []ActiveDirectoryAccountRuleEnhancedFilter {
+	if o == nil || IsNil(o.EnhancedFilters) {
+		var ret []ActiveDirectoryAccountRuleEnhancedFilter
+		return ret
+	}
+	return o.EnhancedFilters
+}
+
+// GetEnhancedFiltersOk returns a tuple with the EnhancedFilters field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountRuleRequest) GetEnhancedFiltersOk() ([]ActiveDirectoryAccountRuleEnhancedFilter, bool) {
+	if o == nil || IsNil(o.EnhancedFilters) {
+		return nil, false
+	}
+	return o.EnhancedFilters, true
+}
+
+// HasEnhancedFilters returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountRuleRequest) HasEnhancedFilters() bool {
+	if o != nil && !IsNil(o.EnhancedFilters) {
+		return true
+	}
+
+	return false
+}
+
+// SetEnhancedFilters gets a reference to the given []ActiveDirectoryAccountRuleEnhancedFilter and assigns it to the EnhancedFilters field.
+func (o *ActiveDirectoryAccountRuleRequest) SetEnhancedFilters(v []ActiveDirectoryAccountRuleEnhancedFilter) *ActiveDirectoryAccountRuleRequest {
+	o.EnhancedFilters = v
+	return o
+}
+
 // GetResourceGroup returns the ResourceGroup field value if set, zero value otherwise.
 func (o *ActiveDirectoryAccountRuleRequest) GetResourceGroup() NamedObject {
 	if o == nil || IsNil(o.ResourceGroup) {
@@ -230,6 +343,15 @@ func (o ActiveDirectoryAccountRuleRequest) ToMap() (map[string]interface{}, erro
 	}
 	if !IsNil(o.OrganizationalUnits) {
 		toSerialize["organizational_units"] = o.OrganizationalUnits
+	}
+	if !IsNil(o.EnableInitialPasswordRotation) {
+		toSerialize["enable_initial_password_rotation"] = o.EnableInitialPasswordRotation
+	}
+	if !IsNil(o.EnableImportOktaUsers) {
+		toSerialize["enable_import_okta_users"] = o.EnableImportOktaUsers
+	}
+	if !IsNil(o.EnhancedFilters) {
+		toSerialize["enhanced_filters"] = o.EnhancedFilters
 	}
 	if !IsNil(o.ResourceGroup) {
 		toSerialize["resource_group"] = o.ResourceGroup

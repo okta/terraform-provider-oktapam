@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -24,10 +24,13 @@ type UserAccessMethodServerDetails struct {
 	Type *string `json:"_type,omitempty"`
 	// The ID of the server resource
 	ServerId *string `json:"server_id,omitempty"`
-	// The hostname of the server resource
+	// The host name of the server resource
 	ServerHostName *string `json:"server_host_name,omitempty"`
 	// The username that will be used to access the server resource
 	Identity *string `json:"identity,omitempty"`
+	// The ID of the identity used to access the server resource
+	IdentityId             *string                         `json:"identity_id,omitempty"`
+	IdentityAssignmentType *UserAccessMethodAssignmentType `json:"identity_assignment_type,omitempty"`
 	// If `true`, the connection is brokered by the server agent
 	Brokered         *bool                 `json:"brokered,omitempty"`
 	AccessCredential *AccessCredentialType `json:"access_credential,omitempty"`
@@ -182,6 +185,72 @@ func (o *UserAccessMethodServerDetails) SetIdentity(v string) *UserAccessMethodS
 	return o
 }
 
+// GetIdentityId returns the IdentityId field value if set, zero value otherwise.
+func (o *UserAccessMethodServerDetails) GetIdentityId() string {
+	if o == nil || IsNil(o.IdentityId) {
+		var ret string
+		return ret
+	}
+	return *o.IdentityId
+}
+
+// GetIdentityIdOk returns a tuple with the IdentityId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserAccessMethodServerDetails) GetIdentityIdOk() (*string, bool) {
+	if o == nil || IsNil(o.IdentityId) {
+		return nil, false
+	}
+	return o.IdentityId, true
+}
+
+// HasIdentityId returns a boolean if a field has been set.
+func (o *UserAccessMethodServerDetails) HasIdentityId() bool {
+	if o != nil && !IsNil(o.IdentityId) {
+		return true
+	}
+
+	return false
+}
+
+// SetIdentityId gets a reference to the given string and assigns it to the IdentityId field.
+func (o *UserAccessMethodServerDetails) SetIdentityId(v string) *UserAccessMethodServerDetails {
+	o.IdentityId = &v
+	return o
+}
+
+// GetIdentityAssignmentType returns the IdentityAssignmentType field value if set, zero value otherwise.
+func (o *UserAccessMethodServerDetails) GetIdentityAssignmentType() UserAccessMethodAssignmentType {
+	if o == nil || IsNil(o.IdentityAssignmentType) {
+		var ret UserAccessMethodAssignmentType
+		return ret
+	}
+	return *o.IdentityAssignmentType
+}
+
+// GetIdentityAssignmentTypeOk returns a tuple with the IdentityAssignmentType field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserAccessMethodServerDetails) GetIdentityAssignmentTypeOk() (*UserAccessMethodAssignmentType, bool) {
+	if o == nil || IsNil(o.IdentityAssignmentType) {
+		return nil, false
+	}
+	return o.IdentityAssignmentType, true
+}
+
+// HasIdentityAssignmentType returns a boolean if a field has been set.
+func (o *UserAccessMethodServerDetails) HasIdentityAssignmentType() bool {
+	if o != nil && !IsNil(o.IdentityAssignmentType) {
+		return true
+	}
+
+	return false
+}
+
+// SetIdentityAssignmentType gets a reference to the given UserAccessMethodAssignmentType and assigns it to the IdentityAssignmentType field.
+func (o *UserAccessMethodServerDetails) SetIdentityAssignmentType(v UserAccessMethodAssignmentType) *UserAccessMethodServerDetails {
+	o.IdentityAssignmentType = &v
+	return o
+}
+
 // GetBrokered returns the Brokered field value if set, zero value otherwise.
 func (o *UserAccessMethodServerDetails) GetBrokered() bool {
 	if o == nil || IsNil(o.Brokered) {
@@ -269,6 +338,12 @@ func (o UserAccessMethodServerDetails) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.Identity) {
 		toSerialize["identity"] = o.Identity
+	}
+	if !IsNil(o.IdentityId) {
+		toSerialize["identity_id"] = o.IdentityId
+	}
+	if !IsNil(o.IdentityAssignmentType) {
+		toSerialize["identity_assignment_type"] = o.IdentityAssignmentType
 	}
 	if !IsNil(o.Brokered) {
 		toSerialize["brokered"] = o.Brokered

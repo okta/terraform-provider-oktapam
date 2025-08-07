@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -27,9 +27,8 @@ type ServiceAccountEndUserAccount struct {
 	// The username associated with the service account
 	Username *string `json:"username,omitempty"`
 	// Whether the password for the service account can be rotated using Okta Lifecycle Management
-	LcmSyncPossible *bool `json:"lcm_sync_possible,omitempty"`
-	// Current availability status of the account
-	AvailabilityStatus  *string                     `json:"availability_status,omitempty"`
+	LcmSyncPossible     *bool                       `json:"lcm_sync_possible,omitempty"`
+	AvailabilityStatus  *ResourceAvailabilityStatus `json:"availability_status,omitempty"`
 	AccountStatus       *ServiceAccountStatus       `json:"account_status,omitempty"`
 	AccountStatusDetail *ServiceAccountStatusDetail `json:"account_status_detail,omitempty"`
 }
@@ -184,9 +183,9 @@ func (o *ServiceAccountEndUserAccount) SetLcmSyncPossible(v bool) *ServiceAccoun
 }
 
 // GetAvailabilityStatus returns the AvailabilityStatus field value if set, zero value otherwise.
-func (o *ServiceAccountEndUserAccount) GetAvailabilityStatus() string {
+func (o *ServiceAccountEndUserAccount) GetAvailabilityStatus() ResourceAvailabilityStatus {
 	if o == nil || IsNil(o.AvailabilityStatus) {
-		var ret string
+		var ret ResourceAvailabilityStatus
 		return ret
 	}
 	return *o.AvailabilityStatus
@@ -194,7 +193,7 @@ func (o *ServiceAccountEndUserAccount) GetAvailabilityStatus() string {
 
 // GetAvailabilityStatusOk returns a tuple with the AvailabilityStatus field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ServiceAccountEndUserAccount) GetAvailabilityStatusOk() (*string, bool) {
+func (o *ServiceAccountEndUserAccount) GetAvailabilityStatusOk() (*ResourceAvailabilityStatus, bool) {
 	if o == nil || IsNil(o.AvailabilityStatus) {
 		return nil, false
 	}
@@ -210,8 +209,8 @@ func (o *ServiceAccountEndUserAccount) HasAvailabilityStatus() bool {
 	return false
 }
 
-// SetAvailabilityStatus gets a reference to the given string and assigns it to the AvailabilityStatus field.
-func (o *ServiceAccountEndUserAccount) SetAvailabilityStatus(v string) *ServiceAccountEndUserAccount {
+// SetAvailabilityStatus gets a reference to the given ResourceAvailabilityStatus and assigns it to the AvailabilityStatus field.
+func (o *ServiceAccountEndUserAccount) SetAvailabilityStatus(v ResourceAvailabilityStatus) *ServiceAccountEndUserAccount {
 	o.AvailabilityStatus = &v
 	return o
 }

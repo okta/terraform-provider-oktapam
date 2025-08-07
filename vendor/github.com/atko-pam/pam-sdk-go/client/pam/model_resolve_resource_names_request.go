@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -25,8 +25,9 @@ type ResolveResourceNamesRequest struct {
 	// A list of features supported by the current sft client
 	ClientFeatures []string `json:"client_features,omitempty"`
 	// If `true`, the response includes the user access methods for the resource
-	IncludeUserAccessMethods *bool                `json:"include_user_access_methods,omitempty"`
-	ResourceType             *ResolveResourceType `json:"resource_type,omitempty"`
+	IncludeUserAccessMethods *bool `json:"include_user_access_methods,omitempty"`
+	// Optional map of filters to apply per name. Keys must exactly match one of the names provided in the `names` array. If a key is provided, the corresponding filters are used to restrict user access methods for that name. For names without a corresponding key, no filters are applied and all user access methods are returned.
+	UserAccessMethodFilters *map[string]UserAccessMethodFilters `json:"user_access_method_filters,omitempty"`
 }
 
 // NewResolveResourceNamesRequest instantiates a new ResolveResourceNamesRequest object
@@ -138,36 +139,36 @@ func (o *ResolveResourceNamesRequest) SetIncludeUserAccessMethods(v bool) *Resol
 	return o
 }
 
-// GetResourceType returns the ResourceType field value if set, zero value otherwise.
-func (o *ResolveResourceNamesRequest) GetResourceType() ResolveResourceType {
-	if o == nil || IsNil(o.ResourceType) {
-		var ret ResolveResourceType
+// GetUserAccessMethodFilters returns the UserAccessMethodFilters field value if set, zero value otherwise.
+func (o *ResolveResourceNamesRequest) GetUserAccessMethodFilters() map[string]UserAccessMethodFilters {
+	if o == nil || IsNil(o.UserAccessMethodFilters) {
+		var ret map[string]UserAccessMethodFilters
 		return ret
 	}
-	return *o.ResourceType
+	return *o.UserAccessMethodFilters
 }
 
-// GetResourceTypeOk returns a tuple with the ResourceType field value if set, nil otherwise
+// GetUserAccessMethodFiltersOk returns a tuple with the UserAccessMethodFilters field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ResolveResourceNamesRequest) GetResourceTypeOk() (*ResolveResourceType, bool) {
-	if o == nil || IsNil(o.ResourceType) {
+func (o *ResolveResourceNamesRequest) GetUserAccessMethodFiltersOk() (*map[string]UserAccessMethodFilters, bool) {
+	if o == nil || IsNil(o.UserAccessMethodFilters) {
 		return nil, false
 	}
-	return o.ResourceType, true
+	return o.UserAccessMethodFilters, true
 }
 
-// HasResourceType returns a boolean if a field has been set.
-func (o *ResolveResourceNamesRequest) HasResourceType() bool {
-	if o != nil && !IsNil(o.ResourceType) {
+// HasUserAccessMethodFilters returns a boolean if a field has been set.
+func (o *ResolveResourceNamesRequest) HasUserAccessMethodFilters() bool {
+	if o != nil && !IsNil(o.UserAccessMethodFilters) {
 		return true
 	}
 
 	return false
 }
 
-// SetResourceType gets a reference to the given ResolveResourceType and assigns it to the ResourceType field.
-func (o *ResolveResourceNamesRequest) SetResourceType(v ResolveResourceType) *ResolveResourceNamesRequest {
-	o.ResourceType = &v
+// SetUserAccessMethodFilters gets a reference to the given map[string]UserAccessMethodFilters and assigns it to the UserAccessMethodFilters field.
+func (o *ResolveResourceNamesRequest) SetUserAccessMethodFilters(v map[string]UserAccessMethodFilters) *ResolveResourceNamesRequest {
+	o.UserAccessMethodFilters = &v
 	return o
 }
 
@@ -188,8 +189,8 @@ func (o ResolveResourceNamesRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.IncludeUserAccessMethods) {
 		toSerialize["include_user_access_methods"] = o.IncludeUserAccessMethods
 	}
-	if !IsNil(o.ResourceType) {
-		toSerialize["resource_type"] = o.ResourceType
+	if !IsNil(o.UserAccessMethodFilters) {
+		toSerialize["user_access_method_filters"] = o.UserAccessMethodFilters
 	}
 	return toSerialize, nil
 }

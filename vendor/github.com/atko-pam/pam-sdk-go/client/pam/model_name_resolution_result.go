@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -21,7 +21,7 @@ var _ MappedNullable = &NameResolutionResult{}
 // NameResolutionResult struct for NameResolutionResult
 type NameResolutionResult struct {
 	// Name of the resource
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// A list of servers and bastions used to reach the target resource
 	Servers []Server `json:"servers,omitempty"`
 	// A list of user access methods used to access the resource
@@ -32,8 +32,9 @@ type NameResolutionResult struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewNameResolutionResult() *NameResolutionResult {
+func NewNameResolutionResult(name string) *NameResolutionResult {
 	this := NameResolutionResult{}
+	this.Name = name
 	return &this
 }
 
@@ -45,36 +46,28 @@ func NewNameResolutionResultWithDefaults() *NameResolutionResult {
 	return &this
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *NameResolutionResult) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *NameResolutionResult) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *NameResolutionResult) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *NameResolutionResult) SetName(v string) *NameResolutionResult {
-	o.Name = &v
+	o.Name = v
 	return o
 }
 
@@ -154,9 +147,7 @@ func (o NameResolutionResult) MarshalJSON() ([]byte, error) {
 
 func (o NameResolutionResult) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
+	toSerialize["name"] = o.Name
 	if !IsNil(o.Servers) {
 		toSerialize["servers"] = o.Servers
 	}

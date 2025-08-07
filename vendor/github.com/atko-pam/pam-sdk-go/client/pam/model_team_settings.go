@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,21 +20,22 @@ var _ MappedNullable = &TeamSettings{}
 
 // TeamSettings struct for TeamSettings
 type TeamSettings struct {
-	// If `true`, devices are automatically approved for authenticated Users
+	// If `true`, devices are automatically approved for authenticated users
 	ApproveDeviceWithoutInteraction NullableBool `json:"approve_device_without_interaction,omitempty"`
-	// The maximum time before a Client session expires. The duration can be from 3600 – 90000 seconds.
+	// The maximum time before a client session expires. The duration can be from 3600 – 90000 seconds.
 	ClientSessionDuration NullableInt32 `json:"client_session_duration,omitempty"`
-	// If specified, redirects a User to the URL after they enroll a device
+	// If specified, redirects a user to the URL after they enroll a device
 	PostDeviceEnrollmentUrl NullableString `json:"post_device_enrollment_url,omitempty"`
-	// If specified, redirects a User to the URL after they authenticate through the IdP
+	// If specified, redirects a user to the URL after they authenticate through the IdP
 	PostLoginUrl NullableString `json:"post_login_url,omitempty"`
-	// If specified, redirects a User to the URL after they sign out
+	// If specified, redirects a user to the URL after they sign out
 	PostLogoutUrl NullableString `json:"post_logout_url,omitempty"`
-	// If `true`, previously deleted or disabled Users are reenabled if they authenticate through the IdP
+	// If `true`, previously deleted or disabled users are re-enabled if they authenticate through the IdP
 	ReactivateUsersViaIdp NullableBool `json:"reactivate_users_via_idp,omitempty"`
-	// The name of the Team
+	// The name of the team
 	Team string `json:"team"`
-	// If `true`, Users maintain the exact username specified via SCIM
+	// DEPRECATED.  This setting has no effect.
+	// Deprecated
 	UserProvisioningExactUsername NullableBool `json:"user_provisioning_exact_username,omitempty"`
 	// The maximum time before a web session expires. The duration can be from 1800 – 90000 seconds.
 	WebSessionDuration NullableInt32 `json:"web_session_duration,omitempty"`
@@ -360,6 +361,7 @@ func (o *TeamSettings) SetTeam(v string) *TeamSettings {
 }
 
 // GetUserProvisioningExactUsername returns the UserProvisioningExactUsername field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *TeamSettings) GetUserProvisioningExactUsername() bool {
 	if o == nil || IsNil(o.UserProvisioningExactUsername.Get()) {
 		var ret bool
@@ -371,6 +373,7 @@ func (o *TeamSettings) GetUserProvisioningExactUsername() bool {
 // GetUserProvisioningExactUsernameOk returns a tuple with the UserProvisioningExactUsername field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *TeamSettings) GetUserProvisioningExactUsernameOk() (*bool, bool) {
 	if o == nil {
 		return nil, false
@@ -388,6 +391,7 @@ func (o *TeamSettings) HasUserProvisioningExactUsername() bool {
 }
 
 // SetUserProvisioningExactUsername gets a reference to the given NullableBool and assigns it to the UserProvisioningExactUsername field.
+// Deprecated
 func (o *TeamSettings) SetUserProvisioningExactUsername(v bool) *TeamSettings {
 	o.UserProvisioningExactUsername.Set(&v)
 	return o

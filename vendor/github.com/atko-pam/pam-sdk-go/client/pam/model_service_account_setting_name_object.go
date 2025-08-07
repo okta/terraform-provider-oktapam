@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -26,6 +26,8 @@ type ServiceAccountSettingNameObject struct {
 	ServiceAccountUserName *string `json:"service_account_user_name,omitempty"`
 	// The name of the SaaS application instance
 	SaasAppInstanceName *string `json:"saas_app_instance_name,omitempty"`
+	// Indicates if the selected service account could not be found
+	Missing *bool `json:"missing,omitempty"`
 }
 
 // NewServiceAccountSettingNameObject instantiates a new ServiceAccountSettingNameObject object
@@ -137,6 +139,39 @@ func (o *ServiceAccountSettingNameObject) SetSaasAppInstanceName(v string) *Serv
 	return o
 }
 
+// GetMissing returns the Missing field value if set, zero value otherwise.
+func (o *ServiceAccountSettingNameObject) GetMissing() bool {
+	if o == nil || IsNil(o.Missing) {
+		var ret bool
+		return ret
+	}
+	return *o.Missing
+}
+
+// GetMissingOk returns a tuple with the Missing field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ServiceAccountSettingNameObject) GetMissingOk() (*bool, bool) {
+	if o == nil || IsNil(o.Missing) {
+		return nil, false
+	}
+	return o.Missing, true
+}
+
+// HasMissing returns a boolean if a field has been set.
+func (o *ServiceAccountSettingNameObject) HasMissing() bool {
+	if o != nil && !IsNil(o.Missing) {
+		return true
+	}
+
+	return false
+}
+
+// SetMissing gets a reference to the given bool and assigns it to the Missing field.
+func (o *ServiceAccountSettingNameObject) SetMissing(v bool) *ServiceAccountSettingNameObject {
+	o.Missing = &v
+	return o
+}
+
 func (o ServiceAccountSettingNameObject) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -153,6 +188,9 @@ func (o ServiceAccountSettingNameObject) ToMap() (map[string]interface{}, error)
 	}
 	if !IsNil(o.SaasAppInstanceName) {
 		toSerialize["saas_app_instance_name"] = o.SaasAppInstanceName
+	}
+	if !IsNil(o.Missing) {
+		toSerialize["missing"] = o.Missing
 	}
 	return toSerialize, nil
 }

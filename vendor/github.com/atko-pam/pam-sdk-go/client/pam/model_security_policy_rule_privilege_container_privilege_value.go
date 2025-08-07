@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -24,6 +24,7 @@ type SecurityPolicyRulePrivilegeContainerPrivilegeValue struct {
 	SecurityPolicyPrincipalAccountRDPPrivilege      *SecurityPolicyPrincipalAccountRDPPrivilege
 	SecurityPolicyPrincipalAccountSSHPrivilege      *SecurityPolicyPrincipalAccountSSHPrivilege
 	SecurityPolicyRevealPasswordPrivilege           *SecurityPolicyRevealPasswordPrivilege
+	SecurityPolicyRotatePasswordPrivilege           *SecurityPolicyRotatePasswordPrivilege
 	SecurityPolicySecretPrivilege                   *SecurityPolicySecretPrivilege
 	SecurityPolicyUpdatePasswordPrivilege           *SecurityPolicyUpdatePasswordPrivilege
 }
@@ -67,6 +68,13 @@ func SecurityPolicyPrincipalAccountSSHPrivilegeAsSecurityPolicyRulePrivilegeCont
 func SecurityPolicyRevealPasswordPrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(v *SecurityPolicyRevealPasswordPrivilege) SecurityPolicyRulePrivilegeContainerPrivilegeValue {
 	return SecurityPolicyRulePrivilegeContainerPrivilegeValue{
 		SecurityPolicyRevealPasswordPrivilege: v,
+	}
+}
+
+// SecurityPolicyRotatePasswordPrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue is a convenience function that returns SecurityPolicyRotatePasswordPrivilege wrapped in SecurityPolicyRulePrivilegeContainerPrivilegeValue
+func SecurityPolicyRotatePasswordPrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(v *SecurityPolicyRotatePasswordPrivilege) SecurityPolicyRulePrivilegeContainerPrivilegeValue {
+	return SecurityPolicyRulePrivilegeContainerPrivilegeValue{
+		SecurityPolicyRotatePasswordPrivilege: v,
 	}
 }
 
@@ -166,6 +174,18 @@ func (dst *SecurityPolicyRulePrivilegeContainerPrivilegeValue) UnmarshalJSON(dat
 		}
 	}
 
+	// check if the discriminator value is 'SecurityPolicyRotatePasswordPrivilege'
+	if jsonDict["_type"] == "SecurityPolicyRotatePasswordPrivilege" {
+		// try to unmarshal JSON data into SecurityPolicyRotatePasswordPrivilege
+		err = json.Unmarshal(data, &dst.SecurityPolicyRotatePasswordPrivilege)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyRotatePasswordPrivilege, return on the first match
+		} else {
+			dst.SecurityPolicyRotatePasswordPrivilege = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRulePrivilegeContainerPrivilegeValue as SecurityPolicyRotatePasswordPrivilege: %s", err.Error())
+		}
+	}
+
 	// check if the discriminator value is 'SecurityPolicySecretPrivilege'
 	if jsonDict["_type"] == "SecurityPolicySecretPrivilege" {
 		// try to unmarshal JSON data into SecurityPolicySecretPrivilege
@@ -262,6 +282,18 @@ func (dst *SecurityPolicyRulePrivilegeContainerPrivilegeValue) UnmarshalJSON(dat
 		}
 	}
 
+	// check if the discriminator value is 'rotate_password'
+	if jsonDict["_type"] == "rotate_password" {
+		// try to unmarshal JSON data into SecurityPolicyRotatePasswordPrivilege
+		err = json.Unmarshal(data, &dst.SecurityPolicyRotatePasswordPrivilege)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyRotatePasswordPrivilege, return on the first match
+		} else {
+			dst.SecurityPolicyRotatePasswordPrivilege = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRulePrivilegeContainerPrivilegeValue as SecurityPolicyRotatePasswordPrivilege: %s", err.Error())
+		}
+	}
+
 	// check if the discriminator value is 'secret'
 	if jsonDict["_type"] == "secret" {
 		// try to unmarshal JSON data into SecurityPolicySecretPrivilege
@@ -315,6 +347,10 @@ func (src SecurityPolicyRulePrivilegeContainerPrivilegeValue) MarshalJSON() ([]b
 		return json.Marshal(&src.SecurityPolicyRevealPasswordPrivilege)
 	}
 
+	if src.SecurityPolicyRotatePasswordPrivilege != nil {
+		return json.Marshal(&src.SecurityPolicyRotatePasswordPrivilege)
+	}
+
 	if src.SecurityPolicySecretPrivilege != nil {
 		return json.Marshal(&src.SecurityPolicySecretPrivilege)
 	}
@@ -353,6 +389,10 @@ func (obj *SecurityPolicyRulePrivilegeContainerPrivilegeValue) GetActualInstance
 
 	if obj.SecurityPolicyRevealPasswordPrivilege != nil {
 		return obj.SecurityPolicyRevealPasswordPrivilege
+	}
+
+	if obj.SecurityPolicyRotatePasswordPrivilege != nil {
+		return obj.SecurityPolicyRotatePasswordPrivilege
 	}
 
 	if obj.SecurityPolicySecretPrivilege != nil {

@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,13 +20,13 @@ var _ MappedNullable = &ListResourceGroup{}
 
 // ListResourceGroup struct for ListResourceGroup
 type ListResourceGroup struct {
-	// The UUID of the Resource Group
+	// The UUID of the resource group
 	Id *string `json:"id,omitempty"`
-	// The name of the Resource Group
+	// The name of the resource group
 	Name *string `json:"name,omitempty"`
-	// The UUID of the Team associated with the Resource Group
+	// The UUID of the team associated with the resource group
 	TeamId *string `json:"team_id,omitempty"`
-	// A description of the Resource Group
+	// A description of the resource group
 	Description *string `json:"description,omitempty"`
 }
 
