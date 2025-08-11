@@ -4,7 +4,10 @@ resource "oktapam_security_policy_v2" "devenv_security_policy" {
   description = "An example security policy for dev environment"
   active      = true
   principals = {
-    user_groups = ["user_group_id_1", "user_group_id_2"]
+    user_groups = [
+      { id = "user_group_id_1" },
+      { id = "user_group_id_2" }
+    ]
   }
   # rule with vaulted account and user level access
   rules = [

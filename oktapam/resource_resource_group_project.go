@@ -2,6 +2,7 @@ package oktapam
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -184,7 +185,7 @@ func resourceResourceGroupProjectReadImport(ctx context.Context, d *schema.Resou
 	projectResource, diags := resourceResourceGroupProjectReadWithIgnorable(ctx, d, m, false)
 	for _, d := range diags {
 		if d.Severity == diag.Error {
-			return nil, fmt.Errorf(d.Summary)
+			return nil, errors.New(d.Summary)
 		}
 	}
 	return []*schema.ResourceData{projectResource}, nil

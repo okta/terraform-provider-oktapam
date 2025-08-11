@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -14,6 +15,7 @@ import (
 )
 
 var _ resource.Resource = &SecurityPolicyResource{}
+var _ resource.ResourceWithImportState = &SecurityPolicyResource{}
 
 type SecurityPolicyResource struct {
 	teamName string
@@ -150,6 +152,21 @@ func (s *SecurityPolicyResource) Delete(ctx context.Context, request resource.De
 	if _, err := s.api.DeleteSecurityPolicy(ctx, s.teamName, state.ID.ValueString()).Execute(); err != nil {
 		response.Diagnostics.AddError("Error deleting security policy", err.Error())
 	}
+}
+
+func (s *SecurityPolicyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	// Validate that the import ID is a valid UUID
+	if !MatchesUUID(req.ID) {
+		resp.Diagnostics.AddError(
+			"Invalid Import ID",
+			"Security policy import requires a valid UUID. "+
+				"Please check the ID and try again.",
+		)
+		return
+	}
+
+	// Use the helper function to set the import identifier to the "id" attribute
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
 func (s *SecurityPolicyResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

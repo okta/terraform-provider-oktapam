@@ -1,7 +1,12 @@
 resource "oktapam_security_policy_v2" "individual_server_policy" {
   name       = "test individual server selector"
   active     = true
-  principals = { user_groups = ["user_group_1", "user_group_2"] }
+  principals = { 
+    user_groups = [
+      { id = "user_group_1" },
+      { id = "user_group_2" }
+    ]
+  }
   rules = [
     {
       name          = "test"

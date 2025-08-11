@@ -19,7 +19,7 @@ type SecurityPolicyResourceModel struct {
 	Type        types.String                  `tfsdk:"type"`
 	Description types.String                  `tfsdk:"description"`
 	Active      types.Bool                    `tfsdk:"active"`
-	Principals  SecurityPolicyPrincipalsModel `tfsdk:"principals"`
+	Principals  *SecurityPolicyPrincipalsModel `tfsdk:"principals"`
 	Rules       types.List/*SecurityPolicyRuleModel*/ `tfsdk:"rules"`
 }
 
@@ -75,8 +75,15 @@ func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourc
 		out.Active = in.Active.ValueBool()
 	}
 
-	principals, d := SecurityPolicyPrincipalFromModelToSDK(ctx, &in.Principals)
-	diags.Append(d...)
+	var principals *pam.SecurityPolicyPrincipals
+	var d diag.Diagnostics
+	if in.Principals != nil {
+		principals, d = SecurityPolicyPrincipalFromModelToSDK(ctx, in.Principals)
+		diags.Append(d...)
+	} else {
+		// Create empty principals if nil
+		principals = &pam.SecurityPolicyPrincipals{}
+	}
 
 	if diags.HasError() {
 		return nil, diags
@@ -131,7 +138,7 @@ func SecurityPolicyFromSDKToModel(ctx context.Context, in *pam.SecurityPolicy) (
 	if diags.HasError() {
 		return nil, diags
 	}
-	out.Principals = *principals
+	out.Principals = principals
 
 	if len(in.Rules) > 0 {
 		var outRules []SecurityPolicyRuleModel
