@@ -36,7 +36,20 @@ A policy which defines how users can gain access to resources. For details, see 
 
 Optional:
 
-- `user_groups` (List of String)
+- `user_groups` (Attributes List) (see [below for nested schema](#nestedatt--principals--user_groups))
+
+<a id="nestedatt--principals--user_groups"></a>
+### Nested Schema for `principals.user_groups`
+
+Required:
+
+- `id` (String)
+
+Optional:
+
+- `name` (String)
+- `type` (String)
+
 
 
 <a id="nestedatt--rules"></a>
@@ -62,6 +75,7 @@ Optional:
 - `password_checkout_database` (Attributes) (see [below for nested schema](#nestedatt--rules--privileges--password_checkout_database))
 - `password_checkout_ssh` (Attributes) (see [below for nested schema](#nestedatt--rules--privileges--password_checkout_ssh))
 - `principal_account_ssh` (Attributes) (see [below for nested schema](#nestedatt--rules--privileges--principal_account_ssh))
+- `reveal_password` (Attributes) (see [below for nested schema](#nestedatt--rules--privileges--reveal_password))
 
 <a id="nestedatt--rules--privileges--password_checkout_database"></a>
 ### Nested Schema for `rules.privileges.password_checkout_database`
@@ -91,6 +105,14 @@ Optional:
 - `admin_level_permissions` (Boolean) Provides coarse grain (full admin) access to the user.
 - `sudo_command_bundles` (List of String) UUIDs of the existing sudo command bundles. These commands have been created by the resource administrator
 - `sudo_display_name` (String) The name for sudo commands that will be visible to end users
+
+
+<a id="nestedatt--rules--privileges--reveal_password"></a>
+### Nested Schema for `rules.privileges.reveal_password`
+
+Required:
+
+- `reveal_password` (Boolean)
 
 
 
