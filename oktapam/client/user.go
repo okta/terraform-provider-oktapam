@@ -230,7 +230,7 @@ func (c OktaPAMClient) GetHumanUser(ctx context.Context, userName string) (*User
 }
 
 func (c OktaPAMClient) CreateHumanUser(ctx context.Context, userName string) error {
-	return fmt.Errorf(errors.HumanUserCreationError)
+	return fmt.Errorf("%s", errors.HumanUserCreationError)
 }
 
 func (c OktaPAMClient) UpdateHumanUser(ctx context.Context, userName string, humanUser *User) error {
