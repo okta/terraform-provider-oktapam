@@ -76,6 +76,10 @@ jobs:
           command: |
             make test
 workflows:
+  tests:
+    jobs:
+      - unit-tests:
+          name: run-unit-tests
   semgrep:
     jobs:
       - platform-helpers/job-semgrep-scan:
@@ -93,7 +97,3 @@ workflows:
       - reversing-labs:
           context:
             - static-analysis
-    tests:
-      jobs:
-        - unit-tests
-          name: run-unit-tests
