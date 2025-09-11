@@ -3,12 +3,7 @@ resource "oktapam_security_policy_v2" "test" {
   name        = "minimal test policy"
   description = "Minimal policy for testing import functionality"
   active      = true
-  principals = {
-    user_groups = [
-      { id = "user_group_1" }
-    ]
-  }
-
+  principals = { user_groups = ["user_group_1"] }
   rules = [
     {
       name          = "minimal rule"
