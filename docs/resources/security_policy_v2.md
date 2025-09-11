@@ -36,20 +36,7 @@ A policy which defines how users can gain access to resources. For details, see 
 
 Optional:
 
-- `user_groups` (Attributes List) (see [below for nested schema](#nestedatt--principals--user_groups))
-
-<a id="nestedatt--principals--user_groups"></a>
-### Nested Schema for `principals.user_groups`
-
-Required:
-
-- `id` (String)
-
-Optional:
-
-- `name` (String)
-- `type` (String)
-
+- `user_groups` (List of String)
 
 
 <a id="nestedatt--rules"></a>
