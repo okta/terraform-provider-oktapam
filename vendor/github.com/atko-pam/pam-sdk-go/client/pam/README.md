@@ -75,7 +75,6 @@ Class | Method | HTTP request | Description
 *DatabaseResourcesAPI* | [**ListDatabaseStaticAccounts**](docs/DatabaseResourcesAPI.md#listdatabasestaticaccounts) | **Get** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/database_resources/{database_resource_id}/static_accounts | List all database static accounts
 *DatabaseResourcesAPI* | [**UpdateDatabaseResource**](docs/DatabaseResourcesAPI.md#updatedatabaseresource) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/database_resources/{database_resource_id} | Update a database resource
 *DatabaseResourcesAPI* | [**UpdateDatabaseStaticAccount**](docs/DatabaseResourcesAPI.md#updatedatabasestaticaccount) | **Put** /v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/database_resources/{database_resource_id}/static_accounts/{static_account_id} | Update a database static account
-*DefaultAPI* | [**ListWorkloadConnections**](docs/DefaultAPI.md#listworkloadconnections) | **Get** /v1/teams/{team_name}/workload_connections | List all workload connections
 *GatewaysAPI* | [**CreateGatewaySetupToken**](docs/GatewaysAPI.md#creategatewaysetuptoken) | **Post** /v1/teams/{team_name}/gateway_setup_tokens | Create a gateway setup token
 *GatewaysAPI* | [**DeleteGatewayInstance**](docs/GatewaysAPI.md#deletegatewayinstance) | **Delete** /v1/teams/{team_name}/gateways/{gateway_id} | Delete a gateway
 *GatewaysAPI* | [**DeleteGatewaySetupToken**](docs/GatewaysAPI.md#deletegatewaysetuptoken) | **Delete** /v1/teams/{team_name}/gateway_setup_tokens/{gateway_setup_token_id} | Delete a gateway setup token
@@ -230,6 +229,12 @@ Class | Method | HTTP request | Description
 *UsersAPI* | [**GetUserByID**](docs/UsersAPI.md#getuserbyid) | **Get** /v1/teams/{team_name}/users_by_id/{user_id} | Retrieve a user by ID
 *UsersAPI* | [**ListUserGroups**](docs/UsersAPI.md#listusergroups) | **Get** /v1/teams/{team_name}/users/{user_name}/groups | List all groups for a user
 *UsersAPI* | [**ListUsers**](docs/UsersAPI.md#listusers) | **Get** /v1/teams/{team_name}/users | List all users for a team
+*WorkloadConnectionsAPI* | [**CreateWorkloadConnection**](docs/WorkloadConnectionsAPI.md#createworkloadconnection) | **Post** /v1/teams/{team_name}/workload_connections | Create a new workload connection
+*WorkloadConnectionsAPI* | [**DeleteWorkloadConnection**](docs/WorkloadConnectionsAPI.md#deleteworkloadconnection) | **Delete** /v1/teams/{team_name}/workload_connections/{workload_connection_id} | Delete a workload connection
+*WorkloadConnectionsAPI* | [**GetWorkloadConnection**](docs/WorkloadConnectionsAPI.md#getworkloadconnection) | **Get** /v1/teams/{team_name}/workload_connections/{workload_connection_id} | Retrieve a workload connection
+*WorkloadConnectionsAPI* | [**GetWorkloadConnectionAuthzDetails**](docs/WorkloadConnectionsAPI.md#getworkloadconnectionauthzdetails) | **Get** /v1/internal/teams/{team_name}/workload_connections/{workload_connection_name}/authz_details | Retrieve workload connection authorization details
+*WorkloadConnectionsAPI* | [**ListWorkloadConnections**](docs/WorkloadConnectionsAPI.md#listworkloadconnections) | **Get** /v1/teams/{team_name}/workload_connections | List all workload connections
+*WorkloadConnectionsAPI* | [**UpdateWorkloadConnection**](docs/WorkloadConnectionsAPI.md#updateworkloadconnection) | **Put** /v1/teams/{team_name}/workload_connections/{workload_connection_id} | Update a workload connection
 
 
 ## Documentation For Models
@@ -263,7 +268,6 @@ Class | Method | HTTP request | Description
  - [ActiveDirectoryAccountMatchResponse](docs/ActiveDirectoryAccountMatchResponse.md)
  - [ActiveDirectoryAccountPrivilegeContainer](docs/ActiveDirectoryAccountPrivilegeContainer.md)
  - [ActiveDirectoryAccountPrivilegeContainerPrivilegeValue](docs/ActiveDirectoryAccountPrivilegeContainerPrivilegeValue.md)
- - [ActiveDirectoryAccountRuleEnhancedFilter](docs/ActiveDirectoryAccountRuleEnhancedFilter.md)
  - [ActiveDirectoryAccountRuleRequest](docs/ActiveDirectoryAccountRuleRequest.md)
  - [ActiveDirectoryAccountRuleResponse](docs/ActiveDirectoryAccountRuleResponse.md)
  - [ActiveDirectoryAccountRuleSettings](docs/ActiveDirectoryAccountRuleSettings.md)
@@ -422,6 +426,7 @@ Class | Method | HTTP request | Description
  - [NamedObject](docs/NamedObject.md)
  - [NamedObjectType](docs/NamedObjectType.md)
  - [NotFoundResponse](docs/NotFoundResponse.md)
+ - [NotModifiedResponse](docs/NotModifiedResponse.md)
  - [OktaUniversalDirectoryAccount](docs/OktaUniversalDirectoryAccount.md)
  - [OktaUniversalDirectoryAccountCheckedOutResourceDetails](docs/OktaUniversalDirectoryAccountCheckedOutResourceDetails.md)
  - [OktaUniversalDirectoryAccountDetails](docs/OktaUniversalDirectoryAccountDetails.md)
@@ -430,6 +435,7 @@ Class | Method | HTTP request | Description
  - [PasswordPolicy](docs/PasswordPolicy.md)
  - [PasswordPolicyCharacterOptions](docs/PasswordPolicyCharacterOptions.md)
  - [PasswordPolicyWithExclude](docs/PasswordPolicyWithExclude.md)
+ - [PasswordPolicyWithExcludeCharacterOptions](docs/PasswordPolicyWithExcludeCharacterOptions.md)
  - [Project](docs/Project.md)
  - [RandomPasswordCharacterOptions](docs/RandomPasswordCharacterOptions.md)
  - [RandomPasswordCreateRequest](docs/RandomPasswordCreateRequest.md)
@@ -601,7 +607,12 @@ Class | Method | HTTP request | Description
  - [UserAccessMethodServiceAccountDetails](docs/UserAccessMethodServiceAccountDetails.md)
  - [UserDetails](docs/UserDetails.md)
  - [WorkloadConnection](docs/WorkloadConnection.md)
+ - [WorkloadConnectionAttributeMatcher](docs/WorkloadConnectionAttributeMatcher.md)
+ - [WorkloadConnectionAttributeRequirement](docs/WorkloadConnectionAttributeRequirement.md)
+ - [WorkloadConnectionAuthzDetails](docs/WorkloadConnectionAuthzDetails.md)
+ - [WorkloadConnectionJwtConfig](docs/WorkloadConnectionJwtConfig.md)
  - [WorkloadConnectionStatus](docs/WorkloadConnectionStatus.md)
+ - [WorkloadConnectionType](docs/WorkloadConnectionType.md)
 
 
 ## Documentation for Utility Methods

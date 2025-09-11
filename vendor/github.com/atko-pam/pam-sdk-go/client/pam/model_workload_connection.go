@@ -13,6 +13,7 @@ package pam
 
 import (
 	"encoding/json"
+	"time"
 )
 
 // checks if the WorkloadConnection type satisfies the MappedNullable interface at compile time
@@ -20,24 +21,44 @@ var _ MappedNullable = &WorkloadConnection{}
 
 // WorkloadConnection struct for WorkloadConnection
 type WorkloadConnection struct {
-	Id string `json:"id"`
+	Id   string                  `json:"id"`
+	Type *WorkloadConnectionType `json:"type,omitempty"`
 	// The name of the workload connection
 	Name string `json:"name"`
 	// A brief description of the workload connection
 	Description string                   `json:"description"`
 	Status      WorkloadConnectionStatus `json:"status"`
+	// The time-to-live (TTL) in seconds for the OPA Access Token to grant to the workload
+	TokenTtlInSeconds int64 `json:"token_ttl_in_seconds"`
+	// A timestamp indicating when the workload connection was created
+	CreatedAt time.Time   `json:"created_at"`
+	CreatedBy NamedObject `json:"created_by"`
+	// A timestamp indicating when the workload connection was last updated
+	UpdatedAt time.Time   `json:"updated_at"`
+	UpdatedBy NamedObject `json:"updated_by"`
+	// A timestamp indicating when the workload connection was last activated
+	LastActivatedAt       *time.Time                               `json:"last_activated_at,omitempty"`
+	LastActivatedBy       *NamedObject                             `json:"last_activated_by,omitempty"`
+	AttributeRequirements []WorkloadConnectionAttributeRequirement `json:"attribute_requirements"`
+	JwtConfig             *WorkloadConnectionJwtConfig             `json:"jwt_config,omitempty"`
 }
 
 // NewWorkloadConnection instantiates a new WorkloadConnection object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewWorkloadConnection(id string, name string, description string, status WorkloadConnectionStatus) *WorkloadConnection {
+func NewWorkloadConnection(id string, name string, description string, status WorkloadConnectionStatus, tokenTtlInSeconds int64, createdAt time.Time, createdBy NamedObject, updatedAt time.Time, updatedBy NamedObject, attributeRequirements []WorkloadConnectionAttributeRequirement) *WorkloadConnection {
 	this := WorkloadConnection{}
 	this.Id = id
 	this.Name = name
 	this.Description = description
 	this.Status = status
+	this.TokenTtlInSeconds = tokenTtlInSeconds
+	this.CreatedAt = createdAt
+	this.CreatedBy = createdBy
+	this.UpdatedAt = updatedAt
+	this.UpdatedBy = updatedBy
+	this.AttributeRequirements = attributeRequirements
 	return &this
 }
 
@@ -71,6 +92,39 @@ func (o *WorkloadConnection) GetIdOk() (*string, bool) {
 // SetId sets field value
 func (o *WorkloadConnection) SetId(v string) *WorkloadConnection {
 	o.Id = v
+	return o
+}
+
+// GetType returns the Type field value if set, zero value otherwise.
+func (o *WorkloadConnection) GetType() WorkloadConnectionType {
+	if o == nil || IsNil(o.Type) {
+		var ret WorkloadConnectionType
+		return ret
+	}
+	return *o.Type
+}
+
+// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *WorkloadConnection) GetTypeOk() (*WorkloadConnectionType, bool) {
+	if o == nil || IsNil(o.Type) {
+		return nil, false
+	}
+	return o.Type, true
+}
+
+// HasType returns a boolean if a field has been set.
+func (o *WorkloadConnection) HasType() bool {
+	if o != nil && !IsNil(o.Type) {
+		return true
+	}
+
+	return false
+}
+
+// SetType gets a reference to the given WorkloadConnectionType and assigns it to the Type field.
+func (o *WorkloadConnection) SetType(v WorkloadConnectionType) *WorkloadConnection {
+	o.Type = &v
 	return o
 }
 
@@ -149,6 +203,255 @@ func (o *WorkloadConnection) SetStatus(v WorkloadConnectionStatus) *WorkloadConn
 	return o
 }
 
+// GetTokenTtlInSeconds returns the TokenTtlInSeconds field value
+func (o *WorkloadConnection) GetTokenTtlInSeconds() int64 {
+	if o == nil {
+		var ret int64
+		return ret
+	}
+
+	return o.TokenTtlInSeconds
+}
+
+// GetTokenTtlInSecondsOk returns a tuple with the TokenTtlInSeconds field value
+// and a boolean to check if the value has been set.
+func (o *WorkloadConnection) GetTokenTtlInSecondsOk() (*int64, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.TokenTtlInSeconds, true
+}
+
+// SetTokenTtlInSeconds sets field value
+func (o *WorkloadConnection) SetTokenTtlInSeconds(v int64) *WorkloadConnection {
+	o.TokenTtlInSeconds = v
+	return o
+}
+
+// GetCreatedAt returns the CreatedAt field value
+func (o *WorkloadConnection) GetCreatedAt() time.Time {
+	if o == nil {
+		var ret time.Time
+		return ret
+	}
+
+	return o.CreatedAt
+}
+
+// GetCreatedAtOk returns a tuple with the CreatedAt field value
+// and a boolean to check if the value has been set.
+func (o *WorkloadConnection) GetCreatedAtOk() (*time.Time, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.CreatedAt, true
+}
+
+// SetCreatedAt sets field value
+func (o *WorkloadConnection) SetCreatedAt(v time.Time) *WorkloadConnection {
+	o.CreatedAt = v
+	return o
+}
+
+// GetCreatedBy returns the CreatedBy field value
+func (o *WorkloadConnection) GetCreatedBy() NamedObject {
+	if o == nil {
+		var ret NamedObject
+		return ret
+	}
+
+	return o.CreatedBy
+}
+
+// GetCreatedByOk returns a tuple with the CreatedBy field value
+// and a boolean to check if the value has been set.
+func (o *WorkloadConnection) GetCreatedByOk() (*NamedObject, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.CreatedBy, true
+}
+
+// SetCreatedBy sets field value
+func (o *WorkloadConnection) SetCreatedBy(v NamedObject) *WorkloadConnection {
+	o.CreatedBy = v
+	return o
+}
+
+// GetUpdatedAt returns the UpdatedAt field value
+func (o *WorkloadConnection) GetUpdatedAt() time.Time {
+	if o == nil {
+		var ret time.Time
+		return ret
+	}
+
+	return o.UpdatedAt
+}
+
+// GetUpdatedAtOk returns a tuple with the UpdatedAt field value
+// and a boolean to check if the value has been set.
+func (o *WorkloadConnection) GetUpdatedAtOk() (*time.Time, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.UpdatedAt, true
+}
+
+// SetUpdatedAt sets field value
+func (o *WorkloadConnection) SetUpdatedAt(v time.Time) *WorkloadConnection {
+	o.UpdatedAt = v
+	return o
+}
+
+// GetUpdatedBy returns the UpdatedBy field value
+func (o *WorkloadConnection) GetUpdatedBy() NamedObject {
+	if o == nil {
+		var ret NamedObject
+		return ret
+	}
+
+	return o.UpdatedBy
+}
+
+// GetUpdatedByOk returns a tuple with the UpdatedBy field value
+// and a boolean to check if the value has been set.
+func (o *WorkloadConnection) GetUpdatedByOk() (*NamedObject, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.UpdatedBy, true
+}
+
+// SetUpdatedBy sets field value
+func (o *WorkloadConnection) SetUpdatedBy(v NamedObject) *WorkloadConnection {
+	o.UpdatedBy = v
+	return o
+}
+
+// GetLastActivatedAt returns the LastActivatedAt field value if set, zero value otherwise.
+func (o *WorkloadConnection) GetLastActivatedAt() time.Time {
+	if o == nil || IsNil(o.LastActivatedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.LastActivatedAt
+}
+
+// GetLastActivatedAtOk returns a tuple with the LastActivatedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *WorkloadConnection) GetLastActivatedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.LastActivatedAt) {
+		return nil, false
+	}
+	return o.LastActivatedAt, true
+}
+
+// HasLastActivatedAt returns a boolean if a field has been set.
+func (o *WorkloadConnection) HasLastActivatedAt() bool {
+	if o != nil && !IsNil(o.LastActivatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetLastActivatedAt gets a reference to the given time.Time and assigns it to the LastActivatedAt field.
+func (o *WorkloadConnection) SetLastActivatedAt(v time.Time) *WorkloadConnection {
+	o.LastActivatedAt = &v
+	return o
+}
+
+// GetLastActivatedBy returns the LastActivatedBy field value if set, zero value otherwise.
+func (o *WorkloadConnection) GetLastActivatedBy() NamedObject {
+	if o == nil || IsNil(o.LastActivatedBy) {
+		var ret NamedObject
+		return ret
+	}
+	return *o.LastActivatedBy
+}
+
+// GetLastActivatedByOk returns a tuple with the LastActivatedBy field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *WorkloadConnection) GetLastActivatedByOk() (*NamedObject, bool) {
+	if o == nil || IsNil(o.LastActivatedBy) {
+		return nil, false
+	}
+	return o.LastActivatedBy, true
+}
+
+// HasLastActivatedBy returns a boolean if a field has been set.
+func (o *WorkloadConnection) HasLastActivatedBy() bool {
+	if o != nil && !IsNil(o.LastActivatedBy) {
+		return true
+	}
+
+	return false
+}
+
+// SetLastActivatedBy gets a reference to the given NamedObject and assigns it to the LastActivatedBy field.
+func (o *WorkloadConnection) SetLastActivatedBy(v NamedObject) *WorkloadConnection {
+	o.LastActivatedBy = &v
+	return o
+}
+
+// GetAttributeRequirements returns the AttributeRequirements field value
+func (o *WorkloadConnection) GetAttributeRequirements() []WorkloadConnectionAttributeRequirement {
+	if o == nil {
+		var ret []WorkloadConnectionAttributeRequirement
+		return ret
+	}
+
+	return o.AttributeRequirements
+}
+
+// GetAttributeRequirementsOk returns a tuple with the AttributeRequirements field value
+// and a boolean to check if the value has been set.
+func (o *WorkloadConnection) GetAttributeRequirementsOk() ([]WorkloadConnectionAttributeRequirement, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.AttributeRequirements, true
+}
+
+// SetAttributeRequirements sets field value
+func (o *WorkloadConnection) SetAttributeRequirements(v []WorkloadConnectionAttributeRequirement) *WorkloadConnection {
+	o.AttributeRequirements = v
+	return o
+}
+
+// GetJwtConfig returns the JwtConfig field value if set, zero value otherwise.
+func (o *WorkloadConnection) GetJwtConfig() WorkloadConnectionJwtConfig {
+	if o == nil || IsNil(o.JwtConfig) {
+		var ret WorkloadConnectionJwtConfig
+		return ret
+	}
+	return *o.JwtConfig
+}
+
+// GetJwtConfigOk returns a tuple with the JwtConfig field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *WorkloadConnection) GetJwtConfigOk() (*WorkloadConnectionJwtConfig, bool) {
+	if o == nil || IsNil(o.JwtConfig) {
+		return nil, false
+	}
+	return o.JwtConfig, true
+}
+
+// HasJwtConfig returns a boolean if a field has been set.
+func (o *WorkloadConnection) HasJwtConfig() bool {
+	if o != nil && !IsNil(o.JwtConfig) {
+		return true
+	}
+
+	return false
+}
+
+// SetJwtConfig gets a reference to the given WorkloadConnectionJwtConfig and assigns it to the JwtConfig field.
+func (o *WorkloadConnection) SetJwtConfig(v WorkloadConnectionJwtConfig) *WorkloadConnection {
+	o.JwtConfig = &v
+	return o
+}
+
 func (o WorkloadConnection) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -160,9 +463,27 @@ func (o WorkloadConnection) MarshalJSON() ([]byte, error) {
 func (o WorkloadConnection) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["id"] = o.Id
+	if !IsNil(o.Type) {
+		toSerialize["type"] = o.Type
+	}
 	toSerialize["name"] = o.Name
 	toSerialize["description"] = o.Description
 	toSerialize["status"] = o.Status
+	toSerialize["token_ttl_in_seconds"] = o.TokenTtlInSeconds
+	toSerialize["created_at"] = o.CreatedAt
+	toSerialize["created_by"] = o.CreatedBy
+	toSerialize["updated_at"] = o.UpdatedAt
+	toSerialize["updated_by"] = o.UpdatedBy
+	if !IsNil(o.LastActivatedAt) {
+		toSerialize["last_activated_at"] = o.LastActivatedAt
+	}
+	if !IsNil(o.LastActivatedBy) {
+		toSerialize["last_activated_by"] = o.LastActivatedBy
+	}
+	toSerialize["attribute_requirements"] = o.AttributeRequirements
+	if !IsNil(o.JwtConfig) {
+		toSerialize["jwt_config"] = o.JwtConfig
+	}
 	return toSerialize, nil
 }
 

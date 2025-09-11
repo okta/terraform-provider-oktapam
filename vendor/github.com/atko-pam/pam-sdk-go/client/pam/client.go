@@ -478,7 +478,7 @@ func parameterValueToString(obj interface{}, key string) string {
 // supporting deep object syntax
 func parameterAddToHeaderOrQuery(headerOrQueryParams interface{}, keyPrefix string, obj interface{}, collectionType string) {
 	var v = reflect.ValueOf(obj)
-	var value = ""
+	var value string
 	if v == reflect.ValueOf(nil) {
 		value = "null"
 	} else {
@@ -557,15 +557,6 @@ func parameterAddToHeaderOrQuery(headerOrQueryParams interface{}, keyPrefix stri
 	case map[string]string:
 		valuesMap[keyPrefix] = value
 	}
-}
-
-// helper for converting interface{} parameters to json strings
-func parameterToJson(obj interface{}) (string, error) {
-	jsonBuf, err := json.Marshal(obj)
-	if err != nil {
-		return "", err
-	}
-	return string(jsonBuf), err
 }
 
 // Prevent trying to import "fmt"

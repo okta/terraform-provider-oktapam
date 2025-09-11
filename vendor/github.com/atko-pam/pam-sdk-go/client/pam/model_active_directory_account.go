@@ -52,6 +52,8 @@ type ActiveDirectoryAccount struct {
 	// The email of this Active Directory user, if set
 	Email               *string                     `json:"email,omitempty"`
 	AccountStatusDetail *ServiceAccountStatusDetail `json:"account_status_detail,omitempty"`
+	// Additional information about this account's status, if set
+	AccountStatusDetailMessage *string `json:"account_status_detail_message,omitempty"`
 }
 
 // NewActiveDirectoryAccount instantiates a new ActiveDirectoryAccount object
@@ -665,6 +667,39 @@ func (o *ActiveDirectoryAccount) SetAccountStatusDetail(v ServiceAccountStatusDe
 	return o
 }
 
+// GetAccountStatusDetailMessage returns the AccountStatusDetailMessage field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccount) GetAccountStatusDetailMessage() string {
+	if o == nil || IsNil(o.AccountStatusDetailMessage) {
+		var ret string
+		return ret
+	}
+	return *o.AccountStatusDetailMessage
+}
+
+// GetAccountStatusDetailMessageOk returns a tuple with the AccountStatusDetailMessage field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccount) GetAccountStatusDetailMessageOk() (*string, bool) {
+	if o == nil || IsNil(o.AccountStatusDetailMessage) {
+		return nil, false
+	}
+	return o.AccountStatusDetailMessage, true
+}
+
+// HasAccountStatusDetailMessage returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccount) HasAccountStatusDetailMessage() bool {
+	if o != nil && !IsNil(o.AccountStatusDetailMessage) {
+		return true
+	}
+
+	return false
+}
+
+// SetAccountStatusDetailMessage gets a reference to the given string and assigns it to the AccountStatusDetailMessage field.
+func (o *ActiveDirectoryAccount) SetAccountStatusDetailMessage(v string) *ActiveDirectoryAccount {
+	o.AccountStatusDetailMessage = &v
+	return o
+}
+
 func (o ActiveDirectoryAccount) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -728,6 +763,9 @@ func (o ActiveDirectoryAccount) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.AccountStatusDetail) {
 		toSerialize["account_status_detail"] = o.AccountStatusDetail
+	}
+	if !IsNil(o.AccountStatusDetailMessage) {
+		toSerialize["account_status_detail_message"] = o.AccountStatusDetailMessage
 	}
 	return toSerialize, nil
 }

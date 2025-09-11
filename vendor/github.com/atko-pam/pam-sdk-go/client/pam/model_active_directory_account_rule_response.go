@@ -31,8 +31,8 @@ type ActiveDirectoryAccountRuleResponse struct {
 	EnableInitialPasswordRotation *bool `json:"enable_initial_password_rotation,omitempty"`
 	// If `false`, the Active Directory accounts in the OU targeted by this rule are no longer active Okta users. If `true` and Okta Active Directory integration is configured, then the accounts can become active Okta users. See [Import Active Directory users on demand](https://help.okta.com/okta_help.htm?type=oie&id=ext-ad-agent-import-users).
 	EnableImportOktaUsers *bool `json:"enable_import_okta_users,omitempty"`
-	// List of enhanced filters for the Active Directory account rule
-	EnhancedFilters []ActiveDirectoryAccountRuleEnhancedFilter `json:"enhanced_filters,omitempty"`
+	// One list per OU. Index aligns with 'organizational_units'. Each inner list contains field-based filter expressions. If omitted or empty, no per-OU conditions are applied.
+	EnhancedFilters [][]ActiveDirectoryAccountFieldNameFilter `json:"enhanced_filters,omitempty"`
 	// The priority of the Active Directory account rule
 	Priority      *int32       `json:"priority,omitempty"`
 	ResourceGroup *NamedObject `json:"resource_group,omitempty"`
@@ -255,9 +255,9 @@ func (o *ActiveDirectoryAccountRuleResponse) SetEnableImportOktaUsers(v bool) *A
 }
 
 // GetEnhancedFilters returns the EnhancedFilters field value if set, zero value otherwise.
-func (o *ActiveDirectoryAccountRuleResponse) GetEnhancedFilters() []ActiveDirectoryAccountRuleEnhancedFilter {
+func (o *ActiveDirectoryAccountRuleResponse) GetEnhancedFilters() [][]ActiveDirectoryAccountFieldNameFilter {
 	if o == nil || IsNil(o.EnhancedFilters) {
-		var ret []ActiveDirectoryAccountRuleEnhancedFilter
+		var ret [][]ActiveDirectoryAccountFieldNameFilter
 		return ret
 	}
 	return o.EnhancedFilters
@@ -265,7 +265,7 @@ func (o *ActiveDirectoryAccountRuleResponse) GetEnhancedFilters() []ActiveDirect
 
 // GetEnhancedFiltersOk returns a tuple with the EnhancedFilters field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ActiveDirectoryAccountRuleResponse) GetEnhancedFiltersOk() ([]ActiveDirectoryAccountRuleEnhancedFilter, bool) {
+func (o *ActiveDirectoryAccountRuleResponse) GetEnhancedFiltersOk() ([][]ActiveDirectoryAccountFieldNameFilter, bool) {
 	if o == nil || IsNil(o.EnhancedFilters) {
 		return nil, false
 	}
@@ -281,8 +281,8 @@ func (o *ActiveDirectoryAccountRuleResponse) HasEnhancedFilters() bool {
 	return false
 }
 
-// SetEnhancedFilters gets a reference to the given []ActiveDirectoryAccountRuleEnhancedFilter and assigns it to the EnhancedFilters field.
-func (o *ActiveDirectoryAccountRuleResponse) SetEnhancedFilters(v []ActiveDirectoryAccountRuleEnhancedFilter) *ActiveDirectoryAccountRuleResponse {
+// SetEnhancedFilters gets a reference to the given [][]ActiveDirectoryAccountFieldNameFilter and assigns it to the EnhancedFilters field.
+func (o *ActiveDirectoryAccountRuleResponse) SetEnhancedFilters(v [][]ActiveDirectoryAccountFieldNameFilter) *ActiveDirectoryAccountRuleResponse {
 	o.EnhancedFilters = v
 	return o
 }

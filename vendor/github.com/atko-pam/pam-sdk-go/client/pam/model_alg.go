@@ -21,11 +21,13 @@ type Alg string
 // List of alg
 const (
 	Alg_RSA_OAEP_256 Alg = "RSA-OAEP-256"
+	Alg_ED_DSA       Alg = "EdDSA"
 )
 
 // All allowed values of Alg enum
 var AllowedAlgEnumValues = []Alg{
 	"RSA-OAEP-256",
+	"EdDSA",
 }
 
 func (v *Alg) UnmarshalJSON(src []byte) error {

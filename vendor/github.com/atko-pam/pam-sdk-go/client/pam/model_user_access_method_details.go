@@ -22,6 +22,7 @@ type UserAccessMethodDetails struct {
 	UserAccessMethodSecretDetails                 *UserAccessMethodSecretDetails
 	UserAccessMethodServerDetails                 *UserAccessMethodServerDetails
 	UserAccessMethodServiceAccountDetails         *UserAccessMethodServiceAccountDetails
+	Unknown                                       map[string]interface{} // holds unknown types for round-tripping
 }
 
 // UserAccessMethodActiveDirectoryAccountDetailsAsUserAccessMethodDetails is a convenience function that returns UserAccessMethodActiveDirectoryAccountDetails wrapped in UserAccessMethodDetails
@@ -206,8 +207,44 @@ func (dst *UserAccessMethodDetails) UnmarshalJSON(data []byte) error {
 		}
 	}
 
+	// check if the discriminator value is 'principal_account_rdp_with_admin'
+	if jsonDict["_type"] == "principal_account_rdp_with_admin" {
+		// try to unmarshal JSON data into UserAccessMethodServerDetails
+		err = json.Unmarshal(data, &dst.UserAccessMethodServerDetails)
+		if err == nil {
+			return nil // data stored in dst.UserAccessMethodServerDetails, return on the first match
+		} else {
+			dst.UserAccessMethodServerDetails = nil
+			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodServerDetails: %s", err.Error())
+		}
+	}
+
 	// check if the discriminator value is 'principal_account_ssh'
 	if jsonDict["_type"] == "principal_account_ssh" {
+		// try to unmarshal JSON data into UserAccessMethodServerDetails
+		err = json.Unmarshal(data, &dst.UserAccessMethodServerDetails)
+		if err == nil {
+			return nil // data stored in dst.UserAccessMethodServerDetails, return on the first match
+		} else {
+			dst.UserAccessMethodServerDetails = nil
+			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodServerDetails: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'principal_account_ssh_with_admin'
+	if jsonDict["_type"] == "principal_account_ssh_with_admin" {
+		// try to unmarshal JSON data into UserAccessMethodServerDetails
+		err = json.Unmarshal(data, &dst.UserAccessMethodServerDetails)
+		if err == nil {
+			return nil // data stored in dst.UserAccessMethodServerDetails, return on the first match
+		} else {
+			dst.UserAccessMethodServerDetails = nil
+			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodServerDetails: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'principal_account_ssh_with_sudo'
+	if jsonDict["_type"] == "principal_account_ssh_with_sudo" {
 		// try to unmarshal JSON data into UserAccessMethodServerDetails
 		err = json.Unmarshal(data, &dst.UserAccessMethodServerDetails)
 		if err == nil {
@@ -266,7 +303,14 @@ func (dst *UserAccessMethodDetails) UnmarshalJSON(data []byte) error {
 		}
 	}
 
-	return nil
+	// If discriminator is unknown, unmarshal into Unknown
+	var unknown map[string]interface{}
+	err = json.Unmarshal(data, &unknown)
+	if err == nil {
+		dst.Unknown = unknown
+		return nil
+	}
+	return err
 }
 
 // Marshal data from the first non-nil pointers in the struct to JSON
@@ -287,7 +331,11 @@ func (src UserAccessMethodDetails) MarshalJSON() ([]byte, error) {
 		return json.Marshal(&src.UserAccessMethodServiceAccountDetails)
 	}
 
-	return nil, nil // no data in oneOf schemas
+	if src.Unknown != nil {
+		return json.Marshal(src.Unknown)
+	}
+
+	return nil, fmt.Errorf("no data present in any oneOf schemas or Unknown; this should be unreachable") // unreachable: no data matched, should be handled by Unknown
 }
 
 // Get the actual instance

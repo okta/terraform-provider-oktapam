@@ -20,6 +20,7 @@ import (
 type AccessReportDetails struct {
 	AccessReportTargetResource *AccessReportTargetResource
 	AccessReportTargetUser     *AccessReportTargetUser
+	Unknown                    map[string]interface{} // holds unknown types for round-tripping
 }
 
 // AccessReportTargetResourceAsAccessReportDetails is a convenience function that returns AccessReportTargetResource wrapped in AccessReportDetails
@@ -75,6 +76,13 @@ func (dst *AccessReportDetails) UnmarshalJSON(data []byte) error {
 	} else if match == 1 {
 		return nil // exactly one match
 	} else { // no match
+		// Unmarshal into Unknown for round-tripping
+		var unknown map[string]interface{}
+		err = json.Unmarshal(data, &unknown)
+		if err == nil {
+			dst.Unknown = unknown
+			return nil
+		}
 		return fmt.Errorf("data failed to match schemas in oneOf(AccessReportDetails)")
 	}
 }
@@ -89,7 +97,11 @@ func (src AccessReportDetails) MarshalJSON() ([]byte, error) {
 		return json.Marshal(&src.AccessReportTargetUser)
 	}
 
-	return nil, nil // no data in oneOf schemas
+	if src.Unknown != nil {
+		return json.Marshal(src.Unknown)
+	}
+
+	return nil, fmt.Errorf("no data present in any oneOf schemas or Unknown; this should be unreachable") // unreachable: no data matched, should be handled by Unknown
 }
 
 // Get the actual instance

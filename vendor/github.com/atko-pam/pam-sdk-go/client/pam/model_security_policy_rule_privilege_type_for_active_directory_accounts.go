@@ -15,7 +15,7 @@ import (
 	"encoding/json"
 )
 
-// SecurityPolicyRulePrivilegeTypeForActiveDirectoryAccounts The type of privilege granted to a user for an Active Directory account.
+// SecurityPolicyRulePrivilegeTypeForActiveDirectoryAccounts The type of privilege granted to a user for an Active Directory account
 type SecurityPolicyRulePrivilegeTypeForActiveDirectoryAccounts string
 
 // List of SecurityPolicyRulePrivilegeTypeForActiveDirectoryAccounts

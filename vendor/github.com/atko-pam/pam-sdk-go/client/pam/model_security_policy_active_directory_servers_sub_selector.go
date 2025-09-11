@@ -20,6 +20,7 @@ import (
 type SecurityPolicyActiveDirectoryServersSubSelector struct {
 	SelectorActiveDirectoryServerLabel *SelectorActiveDirectoryServerLabel
 	SelectorIndividualServer           *SelectorIndividualServer
+	Unknown                            map[string]interface{} // holds unknown types for round-tripping
 }
 
 // SelectorActiveDirectoryServerLabelAsSecurityPolicyActiveDirectoryServersSubSelector is a convenience function that returns SelectorActiveDirectoryServerLabel wrapped in SecurityPolicyActiveDirectoryServersSubSelector
@@ -94,7 +95,14 @@ func (dst *SecurityPolicyActiveDirectoryServersSubSelector) UnmarshalJSON(data [
 		}
 	}
 
-	return nil
+	// If discriminator is unknown, unmarshal into Unknown
+	var unknown map[string]interface{}
+	err = json.Unmarshal(data, &unknown)
+	if err == nil {
+		dst.Unknown = unknown
+		return nil
+	}
+	return err
 }
 
 // Marshal data from the first non-nil pointers in the struct to JSON
@@ -107,7 +115,11 @@ func (src SecurityPolicyActiveDirectoryServersSubSelector) MarshalJSON() ([]byte
 		return json.Marshal(&src.SelectorIndividualServer)
 	}
 
-	return nil, nil // no data in oneOf schemas
+	if src.Unknown != nil {
+		return json.Marshal(src.Unknown)
+	}
+
+	return nil, fmt.Errorf("no data present in any oneOf schemas or Unknown; this should be unreachable") // unreachable: no data matched, should be handled by Unknown
 }
 
 // Get the actual instance

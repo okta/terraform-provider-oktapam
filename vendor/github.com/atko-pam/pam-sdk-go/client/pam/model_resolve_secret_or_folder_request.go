@@ -20,11 +20,11 @@ var _ MappedNullable = &ResolveSecretOrFolderRequest{}
 
 // ResolveSecretOrFolderRequest struct for ResolveSecretOrFolderRequest
 type ResolveSecretOrFolderRequest struct {
-	ResourceGroup SecretResolveParent `json:"resource_group"`
-	Project       SecretResolveParent `json:"project"`
+	ResourceGroup NullableSecretResolveParent `json:"resource_group"`
+	Project       NullableSecretResolveParent `json:"project"`
 	// The path to the parent directory. Don't use this parameter if the request also includes an `id`.
 	ParentFolderPath NullableString `json:"parent_folder_path,omitempty"`
-	// The ID of the secret or secret folder. Don't use this parameter if the request also includes a `parent_folder_path`, `secret_folder_name`, and `secret_name`.
+	// The ID of the secret or secret folder. Don't use this parameter if the request also includes a `parent_folder_path`, `secret_folder_name`, and `secret_name`. If the ID isn't provided, you must include both `resource_group` and `project`.
 	Id NullableString `json:"id,omitempty"`
 	// The name of the secret folder. Don't use this parameter if the request also includes an `id` or `secret_name`.
 	SecretFolderName *string `json:"secret_folder_name,omitempty"`
@@ -36,7 +36,7 @@ type ResolveSecretOrFolderRequest struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewResolveSecretOrFolderRequest(resourceGroup SecretResolveParent, project SecretResolveParent) *ResolveSecretOrFolderRequest {
+func NewResolveSecretOrFolderRequest(resourceGroup NullableSecretResolveParent, project NullableSecretResolveParent) *ResolveSecretOrFolderRequest {
 	this := ResolveSecretOrFolderRequest{}
 	this.ResourceGroup = resourceGroup
 	this.Project = project
@@ -52,52 +52,56 @@ func NewResolveSecretOrFolderRequestWithDefaults() *ResolveSecretOrFolderRequest
 }
 
 // GetResourceGroup returns the ResourceGroup field value
+// If the value is explicit nil, the zero value for SecretResolveParent will be returned
 func (o *ResolveSecretOrFolderRequest) GetResourceGroup() SecretResolveParent {
-	if o == nil {
+	if o == nil || o.ResourceGroup.Get() == nil {
 		var ret SecretResolveParent
 		return ret
 	}
 
-	return o.ResourceGroup
+	return *o.ResourceGroup.Get()
 }
 
 // GetResourceGroupOk returns a tuple with the ResourceGroup field value
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *ResolveSecretOrFolderRequest) GetResourceGroupOk() (*SecretResolveParent, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.ResourceGroup, true
+	return o.ResourceGroup.Get(), o.ResourceGroup.IsSet()
 }
 
 // SetResourceGroup sets field value
 func (o *ResolveSecretOrFolderRequest) SetResourceGroup(v SecretResolveParent) *ResolveSecretOrFolderRequest {
-	o.ResourceGroup = v
+	o.ResourceGroup.Set(&v)
 	return o
 }
 
 // GetProject returns the Project field value
+// If the value is explicit nil, the zero value for SecretResolveParent will be returned
 func (o *ResolveSecretOrFolderRequest) GetProject() SecretResolveParent {
-	if o == nil {
+	if o == nil || o.Project.Get() == nil {
 		var ret SecretResolveParent
 		return ret
 	}
 
-	return o.Project
+	return *o.Project.Get()
 }
 
 // GetProjectOk returns a tuple with the Project field value
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *ResolveSecretOrFolderRequest) GetProjectOk() (*SecretResolveParent, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.Project, true
+	return o.Project.Get(), o.Project.IsSet()
 }
 
 // SetProject sets field value
 func (o *ResolveSecretOrFolderRequest) SetProject(v SecretResolveParent) *ResolveSecretOrFolderRequest {
-	o.Project = v
+	o.Project.Set(&v)
 	return o
 }
 
@@ -269,8 +273,8 @@ func (o ResolveSecretOrFolderRequest) MarshalJSON() ([]byte, error) {
 
 func (o ResolveSecretOrFolderRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["resource_group"] = o.ResourceGroup
-	toSerialize["project"] = o.Project
+	toSerialize["resource_group"] = o.ResourceGroup.Get()
+	toSerialize["project"] = o.Project.Get()
 	if o.ParentFolderPath.IsSet() {
 		toSerialize["parent_folder_path"] = o.ParentFolderPath.Get()
 	}

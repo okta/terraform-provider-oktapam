@@ -61,6 +61,8 @@ type ActiveDirectoryAccountWithPasswordAndCheckoutDetails struct {
 	// The email of this Active Directory user, if set
 	Email               *string                     `json:"email,omitempty"`
 	AccountStatusDetail *ServiceAccountStatusDetail `json:"account_status_detail,omitempty"`
+	// Additional information about this account's status, if set
+	AccountStatusDetailMessage *string `json:"account_status_detail_message,omitempty"`
 	// The number of times an account's password was successfully changed
 	PasswordChangeSuccessCount *int32 `json:"password_change_success_count,omitempty"`
 	// The number of times an account's password change resulted in failure
@@ -857,6 +859,39 @@ func (o *ActiveDirectoryAccountWithPasswordAndCheckoutDetails) SetAccountStatusD
 	return o
 }
 
+// GetAccountStatusDetailMessage returns the AccountStatusDetailMessage field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountWithPasswordAndCheckoutDetails) GetAccountStatusDetailMessage() string {
+	if o == nil || IsNil(o.AccountStatusDetailMessage) {
+		var ret string
+		return ret
+	}
+	return *o.AccountStatusDetailMessage
+}
+
+// GetAccountStatusDetailMessageOk returns a tuple with the AccountStatusDetailMessage field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountWithPasswordAndCheckoutDetails) GetAccountStatusDetailMessageOk() (*string, bool) {
+	if o == nil || IsNil(o.AccountStatusDetailMessage) {
+		return nil, false
+	}
+	return o.AccountStatusDetailMessage, true
+}
+
+// HasAccountStatusDetailMessage returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountWithPasswordAndCheckoutDetails) HasAccountStatusDetailMessage() bool {
+	if o != nil && !IsNil(o.AccountStatusDetailMessage) {
+		return true
+	}
+
+	return false
+}
+
+// SetAccountStatusDetailMessage gets a reference to the given string and assigns it to the AccountStatusDetailMessage field.
+func (o *ActiveDirectoryAccountWithPasswordAndCheckoutDetails) SetAccountStatusDetailMessage(v string) *ActiveDirectoryAccountWithPasswordAndCheckoutDetails {
+	o.AccountStatusDetailMessage = &v
+	return o
+}
+
 // GetPasswordChangeSuccessCount returns the PasswordChangeSuccessCount field value if set, zero value otherwise.
 func (o *ActiveDirectoryAccountWithPasswordAndCheckoutDetails) GetPasswordChangeSuccessCount() int32 {
 	if o == nil || IsNil(o.PasswordChangeSuccessCount) {
@@ -1232,6 +1267,9 @@ func (o ActiveDirectoryAccountWithPasswordAndCheckoutDetails) ToMap() (map[strin
 	}
 	if !IsNil(o.AccountStatusDetail) {
 		toSerialize["account_status_detail"] = o.AccountStatusDetail
+	}
+	if !IsNil(o.AccountStatusDetailMessage) {
+		toSerialize["account_status_detail_message"] = o.AccountStatusDetailMessage
 	}
 	if !IsNil(o.PasswordChangeSuccessCount) {
 		toSerialize["password_change_success_count"] = o.PasswordChangeSuccessCount

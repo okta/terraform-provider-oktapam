@@ -20,17 +20,24 @@ var _ MappedNullable = &ActiveDirectoryDomain{}
 
 // ActiveDirectoryDomain Information for an Active Directory domain that the current user has some level of access to
 type ActiveDirectoryDomain struct {
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 	// The name of the Active Directory domain
-	Name *string `json:"name,omitempty"`
+	Domain string `json:"domain"`
+	// The instance ID of the Active Directory app in your Okta org.
+	OktaAppInstanceId string             `json:"okta_app_instance_id"`
+	Status            ADConnectionStatus `json:"status"`
 }
 
 // NewActiveDirectoryDomain instantiates a new ActiveDirectoryDomain object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewActiveDirectoryDomain() *ActiveDirectoryDomain {
+func NewActiveDirectoryDomain(id string, domain string, oktaAppInstanceId string, status ADConnectionStatus) *ActiveDirectoryDomain {
 	this := ActiveDirectoryDomain{}
+	this.Id = id
+	this.Domain = domain
+	this.OktaAppInstanceId = oktaAppInstanceId
+	this.Status = status
 	return &this
 }
 
@@ -42,69 +49,103 @@ func NewActiveDirectoryDomainWithDefaults() *ActiveDirectoryDomain {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *ActiveDirectoryDomain) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *ActiveDirectoryDomain) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *ActiveDirectoryDomain) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *ActiveDirectoryDomain) SetId(v string) *ActiveDirectoryDomain {
-	o.Id = &v
+	o.Id = v
 	return o
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
-func (o *ActiveDirectoryDomain) GetName() string {
-	if o == nil || IsNil(o.Name) {
+// GetDomain returns the Domain field value
+func (o *ActiveDirectoryDomain) GetDomain() string {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Domain
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetDomainOk returns a tuple with the Domain field value
 // and a boolean to check if the value has been set.
-func (o *ActiveDirectoryDomain) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+func (o *ActiveDirectoryDomain) GetDomainOk() (*string, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Domain, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *ActiveDirectoryDomain) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
+// SetDomain sets field value
+func (o *ActiveDirectoryDomain) SetDomain(v string) *ActiveDirectoryDomain {
+	o.Domain = v
+	return o
+}
+
+// GetOktaAppInstanceId returns the OktaAppInstanceId field value
+func (o *ActiveDirectoryDomain) GetOktaAppInstanceId() string {
+	if o == nil {
+		var ret string
+		return ret
 	}
 
-	return false
+	return o.OktaAppInstanceId
 }
 
-// SetName gets a reference to the given string and assigns it to the Name field.
-func (o *ActiveDirectoryDomain) SetName(v string) *ActiveDirectoryDomain {
-	o.Name = &v
+// GetOktaAppInstanceIdOk returns a tuple with the OktaAppInstanceId field value
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryDomain) GetOktaAppInstanceIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.OktaAppInstanceId, true
+}
+
+// SetOktaAppInstanceId sets field value
+func (o *ActiveDirectoryDomain) SetOktaAppInstanceId(v string) *ActiveDirectoryDomain {
+	o.OktaAppInstanceId = v
+	return o
+}
+
+// GetStatus returns the Status field value
+func (o *ActiveDirectoryDomain) GetStatus() ADConnectionStatus {
+	if o == nil {
+		var ret ADConnectionStatus
+		return ret
+	}
+
+	return o.Status
+}
+
+// GetStatusOk returns a tuple with the Status field value
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryDomain) GetStatusOk() (*ADConnectionStatus, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Status, true
+}
+
+// SetStatus sets field value
+func (o *ActiveDirectoryDomain) SetStatus(v ADConnectionStatus) *ActiveDirectoryDomain {
+	o.Status = v
 	return o
 }
 
@@ -118,12 +159,10 @@ func (o ActiveDirectoryDomain) MarshalJSON() ([]byte, error) {
 
 func (o ActiveDirectoryDomain) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
+	toSerialize["id"] = o.Id
+	toSerialize["domain"] = o.Domain
+	toSerialize["okta_app_instance_id"] = o.OktaAppInstanceId
+	toSerialize["status"] = o.Status
 	return toSerialize, nil
 }
 

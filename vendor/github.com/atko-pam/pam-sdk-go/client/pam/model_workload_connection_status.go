@@ -23,7 +23,6 @@ const (
 	WorkloadConnectionStatus_DRAFT    WorkloadConnectionStatus = "DRAFT"
 	WorkloadConnectionStatus_ACTIVE   WorkloadConnectionStatus = "ACTIVE"
 	WorkloadConnectionStatus_INACTIVE WorkloadConnectionStatus = "INACTIVE"
-	WorkloadConnectionStatus_DELETED  WorkloadConnectionStatus = "DELETED"
 )
 
 // All allowed values of WorkloadConnectionStatus enum
@@ -31,7 +30,6 @@ var AllowedWorkloadConnectionStatusEnumValues = []WorkloadConnectionStatus{
 	"DRAFT",
 	"ACTIVE",
 	"INACTIVE",
-	"DELETED",
 }
 
 func (v *WorkloadConnectionStatus) UnmarshalJSON(src []byte) error {

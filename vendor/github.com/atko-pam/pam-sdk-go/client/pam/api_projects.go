@@ -149,7 +149,7 @@ func (r ApiAdminRotateResourceRequest) Execute() (*http.Response, error) {
 /*
 AdminRotateResource Rotate the password for a given resource in a project
 
-	Rotates the password for a resource within a specified resource group and project.
+	Rotates the password for a resource within a specified resource group and project
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 

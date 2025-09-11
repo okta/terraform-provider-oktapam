@@ -21,6 +21,7 @@ type ActiveDirectoryAccountPrivilegeContainerPrivilegeValue struct {
 	SecurityPolicyPasswordCheckoutRDPPrivilege *SecurityPolicyPasswordCheckoutRDPPrivilege
 	SecurityPolicyRevealPasswordPrivilege      *SecurityPolicyRevealPasswordPrivilege
 	SecurityPolicyRotatePasswordPrivilege      *SecurityPolicyRotatePasswordPrivilege
+	Unknown                                    map[string]interface{} // holds unknown types for round-tripping
 }
 
 // SecurityPolicyPasswordCheckoutRDPPrivilegeAsActiveDirectoryAccountPrivilegeContainerPrivilegeValue is a convenience function that returns SecurityPolicyPasswordCheckoutRDPPrivilege wrapped in ActiveDirectoryAccountPrivilegeContainerPrivilegeValue
@@ -114,7 +115,26 @@ func (dst *ActiveDirectoryAccountPrivilegeContainerPrivilegeValue) UnmarshalJSON
 		}
 	}
 
-	return nil
+	// check if the discriminator value is 'rotate_password'
+	if jsonDict["_type"] == "rotate_password" {
+		// try to unmarshal JSON data into SecurityPolicyRotatePasswordPrivilege
+		err = json.Unmarshal(data, &dst.SecurityPolicyRotatePasswordPrivilege)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyRotatePasswordPrivilege, return on the first match
+		} else {
+			dst.SecurityPolicyRotatePasswordPrivilege = nil
+			return fmt.Errorf("failed to unmarshal ActiveDirectoryAccountPrivilegeContainerPrivilegeValue as SecurityPolicyRotatePasswordPrivilege: %s", err.Error())
+		}
+	}
+
+	// If discriminator is unknown, unmarshal into Unknown
+	var unknown map[string]interface{}
+	err = json.Unmarshal(data, &unknown)
+	if err == nil {
+		dst.Unknown = unknown
+		return nil
+	}
+	return err
 }
 
 // Marshal data from the first non-nil pointers in the struct to JSON
@@ -131,7 +151,11 @@ func (src ActiveDirectoryAccountPrivilegeContainerPrivilegeValue) MarshalJSON() 
 		return json.Marshal(&src.SecurityPolicyRotatePasswordPrivilege)
 	}
 
-	return nil, nil // no data in oneOf schemas
+	if src.Unknown != nil {
+		return json.Marshal(src.Unknown)
+	}
+
+	return nil, fmt.Errorf("no data present in any oneOf schemas or Unknown; this should be unreachable") // unreachable: no data matched, should be handled by Unknown
 }
 
 // Get the actual instance

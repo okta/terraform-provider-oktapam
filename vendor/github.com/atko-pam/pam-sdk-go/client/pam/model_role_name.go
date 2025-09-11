@@ -25,6 +25,7 @@ const (
 	RoleName_PAM_ADMIN                RoleName = "pam_admin"
 	RoleName_RESOURCE_ADMIN           RoleName = "resource_admin"
 	RoleName_SECURITY_ADMIN           RoleName = "security_admin"
+	RoleName_DEVOPS_ADMIN             RoleName = "devops_admin"
 )
 
 // All allowed values of RoleName enum
@@ -34,6 +35,7 @@ var AllowedRoleNameEnumValues = []RoleName{
 	"pam_admin",
 	"resource_admin",
 	"security_admin",
+	"devops_admin",
 }
 
 func (v *RoleName) UnmarshalJSON(src []byte) error {

@@ -1074,14 +1074,15 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForTeamExecute(r ApiListTop
 }
 
 type ApiListTopLevelSecretFoldersForUserRequest struct {
-	ctx        context.Context
-	ApiService *SecretsAPIService
-	teamName   string
-	count      *int32
-	descending *bool
-	offset     *string
-	prev       *bool
-	search     *string
+	ctx            context.Context
+	ApiService     *SecretsAPIService
+	teamName       string
+	count          *int32
+	descending     *bool
+	offset         *string
+	prev           *bool
+	search         *string
+	parentFolderId *string
 }
 
 // The number of objects per page
@@ -1108,9 +1109,15 @@ func (r ApiListTopLevelSecretFoldersForUserRequest) Prev(prev bool) ApiListTopLe
 	return r
 }
 
-// Search term to search for secrets and folders by name or description.
+// Search term to search for secrets and folders by name or description
 func (r ApiListTopLevelSecretFoldersForUserRequest) Search(search string) ApiListTopLevelSecretFoldersForUserRequest {
 	r.search = &search
+	return r
+}
+
+// The UUID of the parent folder to search secrets and folders within
+func (r ApiListTopLevelSecretFoldersForUserRequest) ParentFolderId(parentFolderId string) ApiListTopLevelSecretFoldersForUserRequest {
+	r.parentFolderId = &parentFolderId
 	return r
 }
 
@@ -1170,6 +1177,9 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForUserExecute(r ApiListTop
 	}
 	if r.search != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "search", r.search, "")
+	}
+	if r.parentFolderId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "parent_folder_id", r.parentFolderId, "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}

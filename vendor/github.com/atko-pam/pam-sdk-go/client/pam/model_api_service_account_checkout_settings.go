@@ -20,7 +20,7 @@ var _ MappedNullable = &APIServiceAccountCheckoutSettings{}
 
 // APIServiceAccountCheckoutSettings struct for APIServiceAccountCheckoutSettings
 type APIServiceAccountCheckoutSettings struct {
-	// Indicates whether a checkout is mandatory for accessing resources within the project. If `true`, checkout is enforced for all applicable resources by default. If `false`, checkout is not required, and resources are accessible without it.
+	// Indicates whether a checkout is mandatory for accessing resources within the project. If `true`, checkout is enforced by default for all applicable resources. If `false`, checkout isn't required, and resources are accessible without it.
 	CheckoutRequired bool `json:"checkout_required"`
 	// The duration in seconds for the checkout. If the checkout is enabled, the duration is the maximum time a user can access the resource before the checkout expires.
 	CheckoutDurationInSeconds int32 `json:"checkout_duration_in_seconds"`

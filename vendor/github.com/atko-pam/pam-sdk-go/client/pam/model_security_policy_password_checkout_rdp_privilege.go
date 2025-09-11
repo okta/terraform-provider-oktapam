@@ -22,6 +22,10 @@ var _ MappedNullable = &SecurityPolicyPasswordCheckoutRDPPrivilege{}
 type SecurityPolicyPasswordCheckoutRDPPrivilege struct {
 	SecurityPolicyPrivilege
 	PasswordCheckoutRdp bool `json:"password_checkout_rdp"`
+	// If enabled, AD accounts are added to the local administrators group when RDPing to the target server
+	AdminLevelPermissions *bool `json:"admin_level_permissions,omitempty"`
+	// If enabled, AD accounts are added to the remote desktop group when RDPing to the target server
+	RemoteAccessPermissions *bool `json:"remote_access_permissions,omitempty"`
 }
 
 // NewSecurityPolicyPasswordCheckoutRDPPrivilege instantiates a new SecurityPolicyPasswordCheckoutRDPPrivilege object
@@ -68,6 +72,72 @@ func (o *SecurityPolicyPasswordCheckoutRDPPrivilege) SetPasswordCheckoutRdp(v bo
 	return o
 }
 
+// GetAdminLevelPermissions returns the AdminLevelPermissions field value if set, zero value otherwise.
+func (o *SecurityPolicyPasswordCheckoutRDPPrivilege) GetAdminLevelPermissions() bool {
+	if o == nil || IsNil(o.AdminLevelPermissions) {
+		var ret bool
+		return ret
+	}
+	return *o.AdminLevelPermissions
+}
+
+// GetAdminLevelPermissionsOk returns a tuple with the AdminLevelPermissions field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecurityPolicyPasswordCheckoutRDPPrivilege) GetAdminLevelPermissionsOk() (*bool, bool) {
+	if o == nil || IsNil(o.AdminLevelPermissions) {
+		return nil, false
+	}
+	return o.AdminLevelPermissions, true
+}
+
+// HasAdminLevelPermissions returns a boolean if a field has been set.
+func (o *SecurityPolicyPasswordCheckoutRDPPrivilege) HasAdminLevelPermissions() bool {
+	if o != nil && !IsNil(o.AdminLevelPermissions) {
+		return true
+	}
+
+	return false
+}
+
+// SetAdminLevelPermissions gets a reference to the given bool and assigns it to the AdminLevelPermissions field.
+func (o *SecurityPolicyPasswordCheckoutRDPPrivilege) SetAdminLevelPermissions(v bool) *SecurityPolicyPasswordCheckoutRDPPrivilege {
+	o.AdminLevelPermissions = &v
+	return o
+}
+
+// GetRemoteAccessPermissions returns the RemoteAccessPermissions field value if set, zero value otherwise.
+func (o *SecurityPolicyPasswordCheckoutRDPPrivilege) GetRemoteAccessPermissions() bool {
+	if o == nil || IsNil(o.RemoteAccessPermissions) {
+		var ret bool
+		return ret
+	}
+	return *o.RemoteAccessPermissions
+}
+
+// GetRemoteAccessPermissionsOk returns a tuple with the RemoteAccessPermissions field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecurityPolicyPasswordCheckoutRDPPrivilege) GetRemoteAccessPermissionsOk() (*bool, bool) {
+	if o == nil || IsNil(o.RemoteAccessPermissions) {
+		return nil, false
+	}
+	return o.RemoteAccessPermissions, true
+}
+
+// HasRemoteAccessPermissions returns a boolean if a field has been set.
+func (o *SecurityPolicyPasswordCheckoutRDPPrivilege) HasRemoteAccessPermissions() bool {
+	if o != nil && !IsNil(o.RemoteAccessPermissions) {
+		return true
+	}
+
+	return false
+}
+
+// SetRemoteAccessPermissions gets a reference to the given bool and assigns it to the RemoteAccessPermissions field.
+func (o *SecurityPolicyPasswordCheckoutRDPPrivilege) SetRemoteAccessPermissions(v bool) *SecurityPolicyPasswordCheckoutRDPPrivilege {
+	o.RemoteAccessPermissions = &v
+	return o
+}
+
 func (o SecurityPolicyPasswordCheckoutRDPPrivilege) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -87,6 +157,12 @@ func (o SecurityPolicyPasswordCheckoutRDPPrivilege) ToMap() (map[string]interfac
 		return map[string]interface{}{}, errSecurityPolicyPrivilege
 	}
 	toSerialize["password_checkout_rdp"] = o.PasswordCheckoutRdp
+	if !IsNil(o.AdminLevelPermissions) {
+		toSerialize["admin_level_permissions"] = o.AdminLevelPermissions
+	}
+	if !IsNil(o.RemoteAccessPermissions) {
+		toSerialize["remote_access_permissions"] = o.RemoteAccessPermissions
+	}
 	return toSerialize, nil
 }
 

@@ -26,11 +26,11 @@ type PasswordPolicyWithExclude struct {
 	PeriodicRotationAccountSelectorMode *AccountSelectorMode `json:"periodic_rotation_account_selector_mode,omitempty"`
 	// If `periodic_rotation_account_selector_mode` is set to `INCLUDE`, only the actively managed accounts listed will have their password periodically rotated
 	PeriodicRotationAccountIncludeList []ServiceAccountSettingNameObject `json:"periodic_rotation_account_include_list,omitempty"`
-	// If `periodic_rotation_account_selector_mode` is set to `EXCLUDE`, all of the actively managed accounts in the project except those listed will have their password periodically rotated
+	// If `periodic_rotation_account_selector_mode` is set to `EXCLUDE`, all of the actively managed accounts in the project, except those listed, will have their password periodically rotated
 	PeriodicRotationAccountExcludeList []ServiceAccountSettingNameObject `json:"periodic_rotation_account_exclude_list,omitempty"`
 	// Specifies how often the Okta Privileged Access platform rotates account passwords
-	PeriodicRotationDurationInSeconds *int32                         `json:"periodic_rotation_duration_in_seconds,omitempty"`
-	CharacterOptions                  PasswordPolicyCharacterOptions `json:"character_options"`
+	PeriodicRotationDurationInSeconds *int32                                    `json:"periodic_rotation_duration_in_seconds,omitempty"`
+	CharacterOptions                  PasswordPolicyWithExcludeCharacterOptions `json:"character_options"`
 	// The minimum length allowed for the password
 	MinLengthInBytes int32 `json:"min_length_in_bytes"`
 	// The maximum length allowed for the password
@@ -43,7 +43,7 @@ type PasswordPolicyWithExclude struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPasswordPolicyWithExclude(enablePeriodicRotation bool, characterOptions PasswordPolicyCharacterOptions, minLengthInBytes int32, maxLengthInBytes int32) *PasswordPolicyWithExclude {
+func NewPasswordPolicyWithExclude(enablePeriodicRotation bool, characterOptions PasswordPolicyWithExcludeCharacterOptions, minLengthInBytes int32, maxLengthInBytes int32) *PasswordPolicyWithExclude {
 	this := PasswordPolicyWithExclude{}
 	this.EnablePeriodicRotation = enablePeriodicRotation
 	this.CharacterOptions = characterOptions
@@ -218,9 +218,9 @@ func (o *PasswordPolicyWithExclude) SetPeriodicRotationDurationInSeconds(v int32
 }
 
 // GetCharacterOptions returns the CharacterOptions field value
-func (o *PasswordPolicyWithExclude) GetCharacterOptions() PasswordPolicyCharacterOptions {
+func (o *PasswordPolicyWithExclude) GetCharacterOptions() PasswordPolicyWithExcludeCharacterOptions {
 	if o == nil {
-		var ret PasswordPolicyCharacterOptions
+		var ret PasswordPolicyWithExcludeCharacterOptions
 		return ret
 	}
 
@@ -229,7 +229,7 @@ func (o *PasswordPolicyWithExclude) GetCharacterOptions() PasswordPolicyCharacte
 
 // GetCharacterOptionsOk returns a tuple with the CharacterOptions field value
 // and a boolean to check if the value has been set.
-func (o *PasswordPolicyWithExclude) GetCharacterOptionsOk() (*PasswordPolicyCharacterOptions, bool) {
+func (o *PasswordPolicyWithExclude) GetCharacterOptionsOk() (*PasswordPolicyWithExcludeCharacterOptions, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -237,7 +237,7 @@ func (o *PasswordPolicyWithExclude) GetCharacterOptionsOk() (*PasswordPolicyChar
 }
 
 // SetCharacterOptions sets field value
-func (o *PasswordPolicyWithExclude) SetCharacterOptions(v PasswordPolicyCharacterOptions) *PasswordPolicyWithExclude {
+func (o *PasswordPolicyWithExclude) SetCharacterOptions(v PasswordPolicyWithExcludeCharacterOptions) *PasswordPolicyWithExclude {
 	o.CharacterOptions = v
 	return o
 }
