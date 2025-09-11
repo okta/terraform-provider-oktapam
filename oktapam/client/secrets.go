@@ -203,8 +203,8 @@ func resolveSecret(ctx context.Context, sdkClient SDKClientWrapper, resourceGrou
 	parentFolder, name := getParentFolderPathAndNameFromPath(path)
 
 	resolveSecretOrFolderRequest := pam.NewResolveSecretOrFolderRequest(
-		pam.SecretResolveParent{Id: &resourceGroupID, Type: pam.NamedObjectType_RESOURCE_GROUP.Ptr()},
-		pam.SecretResolveParent{Id: &projectID, Type: pam.NamedObjectType_PROJECT.Ptr()},
+		*pam.NewNullableSecretResolveParent(&pam.SecretResolveParent{Id: &resourceGroupID, Type: pam.NamedObjectType_RESOURCE_GROUP.Ptr()}),
+		*pam.NewNullableSecretResolveParent(&pam.SecretResolveParent{Id: &projectID, Type: pam.NamedObjectType_PROJECT.Ptr()}),
 	)
 
 	resolveSecretOrFolderRequest.SetParentFolderPath(parentFolder)

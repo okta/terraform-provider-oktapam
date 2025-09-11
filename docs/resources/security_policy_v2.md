@@ -60,7 +60,9 @@ Optional:
 Optional:
 
 - `password_checkout_database` (Attributes) (see [below for nested schema](#nestedatt--rules--privileges--password_checkout_database))
+- `password_checkout_rdp` (Attributes) (see [below for nested schema](#nestedatt--rules--privileges--password_checkout_rdp))
 - `password_checkout_ssh` (Attributes) (see [below for nested schema](#nestedatt--rules--privileges--password_checkout_ssh))
+- `principal_account_rdp` (Attributes) (see [below for nested schema](#nestedatt--rules--privileges--principal_account_rdp))
 - `principal_account_ssh` (Attributes) (see [below for nested schema](#nestedatt--rules--privileges--principal_account_ssh))
 - `reveal_password` (Attributes) (see [below for nested schema](#nestedatt--rules--privileges--reveal_password))
 
@@ -72,12 +74,28 @@ Required:
 - `password_checkout_database` (Boolean)
 
 
+<a id="nestedatt--rules--privileges--password_checkout_rdp"></a>
+### Nested Schema for `rules.privileges.password_checkout_rdp`
+
+Required:
+
+- `password_checkout_rdp` (Boolean)
+
+
 <a id="nestedatt--rules--privileges--password_checkout_ssh"></a>
 ### Nested Schema for `rules.privileges.password_checkout_ssh`
 
 Required:
 
 - `password_checkout_ssh` (Boolean)
+
+
+<a id="nestedatt--rules--privileges--principal_account_rdp"></a>
+### Nested Schema for `rules.privileges.principal_account_rdp`
+
+Required:
+
+- `principal_account_rdp` (Boolean)
 
 
 <a id="nestedatt--rules--privileges--principal_account_ssh"></a>

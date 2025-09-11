@@ -187,8 +187,8 @@ func TestSecurityPolicyImport_DevEnv(t *testing.T) {
 			},
 			{
 				ResourceName:      "oktapam_security_policy_v2.devenv_security_policy",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ImportState:       true, // runs `terraform import` using the state's ID by default
+				ImportStateVerify: true, // refreshes and verify attributes match after import
 			},
 		},
 	})
@@ -232,7 +232,7 @@ func TestSecurityPolicyImport_InvalidID(t *testing.T) {
 			{
 				ResourceName:  "oktapam_security_policy_v2.test",
 				ImportState:   true,
-				ImportStateId: "invalid-id",
+				ImportStateId: "invalid-id", // explicitly set to an invalid ID instead of using the state's ID
 				ExpectError:   regexp.MustCompile("Security policy import requires a valid UUID"),
 			},
 		},
