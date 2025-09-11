@@ -66,7 +66,15 @@ jobs:
               --commit $CIRCLE_SHA1 \
               --build-env "circleci" \
               --suppress_output
-
+  unit-tests:
+    docker:
+      - image: cimg/go:<< pipeline.parameters.go-version >>
+    steps:
+      - checkout
+      - run:
+          name: Run Unit Tests
+          command: |
+            make test
 workflows:
   semgrep:
     jobs:
@@ -85,3 +93,7 @@ workflows:
       - reversing-labs:
           context:
             - static-analysis
+    tests:
+      jobs:
+        - unit-tests
+          name: run-unit-tests
