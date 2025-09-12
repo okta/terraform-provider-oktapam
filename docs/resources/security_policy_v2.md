@@ -95,7 +95,11 @@ Required:
 
 Required:
 
-- `principal_account_rdp` (Boolean)
+- `principal_account_rdp` (Boolean) Defines the privilege to make RDP connections to a server with the user's principal account.
+
+Optional:
+
+- `admin_level_permissions` (Boolean) Provides coarse grain (full admin) access to the user.
 
 
 <a id="nestedatt--rules--privileges--principal_account_ssh"></a>
