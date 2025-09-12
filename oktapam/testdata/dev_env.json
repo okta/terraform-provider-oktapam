@@ -1,7 +1,7 @@
 {
   "active": true,
   "description": "An example security policy for dev environment",
-  "id": "b8dcd85b-82de-475e-8a97-75d946a05d80",
+  "id": "c48ed468-64c8-4983-83c8-d5e2490981d3",
   "name": "development environment policy",
   "principals": {
     "user_groups": [
@@ -148,6 +148,51 @@
               "server_selector": {
                 "labels": {
                   "system.os_type": "linux"
+                }
+              }
+            },
+            "selector_type": "server_label"
+          }
+        ]
+      },
+      "resource_type": "server_based_resource"
+    },
+    {
+      "name": "windows server account and admin level access",
+      "privileges": [
+        {
+          "privilege_type": "password_checkout_rdp",
+          "privilege_value": {
+            "_type": "password_checkout_rdp",
+            "password_checkout_rdp": true
+          }
+        },
+        {
+          "privilege_type": "principal_account_rdp",
+          "privilege_value": {
+            "_type": "principal_account_rdp",
+            "admin_level_permissions": true,
+            "principal_account_rdp": true
+          }
+        }
+      ],
+      "resource_selector": {
+        "_type": "server_based_resource",
+        "selectors": [
+          {
+            "selector": {
+              "_type": "server_label",
+              "account_selector": {
+                "_type": "username",
+                "usernames": [
+                  "foo",
+                  "bar"
+                ]
+              },
+              "account_selector_type": "username",
+              "server_selector": {
+                "labels": {
+                  "system.os_type": "windows"
                 }
               }
             },
