@@ -409,20 +409,32 @@ func checkSecurityPolicyJSON(t *testing.T, entities map[string]any, jsonFilename
 }
 
 func TestSecurityPolicyV2IntegrationTest(t *testing.T) {
+	checkTeamApplicable(t, true)
 	securityPolicyName := fmt.Sprintf("test_acc_security_policy_%s", randSeq())
-	group1Name := fmt.Sprintf("test_acc_security_policy_group1_%s", randSeq())
-	group2Name := fmt.Sprintf("test_acc_security_policy_group2_%s", randSeq())
-	sudoCommandBundle1Name := fmt.Sprintf("test_acc_sudo_command_bundle1_%s", randSeq())
+	groupName := fmt.Sprintf("test_acc_security_policy_group_%s", randSeq())
 	validServerID := getValidServerID()
+	policyResourceName := "oktapam_security_policy_v2.test_acc_security_policy_v2"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config: createTestAccSecurityPolicyV2CreateConfig(group1Name, group2Name, sudoCommandBundle1Name, securityPolicyName, validServerID),
+				Config: createTestAccSecurityPolicyV2CreateConfig(groupName, securityPolicyName, validServerID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("oktapam_security_policy_v2.test_acc_security_policy_v2", "name", securityPolicyName),
+					resource.TestCheckResourceAttr(policyResourceName, "name", securityPolicyName),
+					resource.TestCheckResourceAttr(policyResourceName, "description", "test description"),
+					resource.TestCheckResourceAttr(policyResourceName, "active", "true"),
+					resource.TestCheckResourceAttrPair(policyResourceName, "principals.user_groups.0", "oktapam_group.test_security_policy_group", "id"),
+					resource.TestCheckResourceAttr(policyResourceName, "rules.0.name", "linux server account and user level access"),
+					resource.TestCheckResourceAttr(policyResourceName, "rules.0.resource_type", "server_based_resource"),
+					resource.TestCheckResourceAttr(policyResourceName, "rules.0.resource_selector.server_based_resource.selectors.0.server_label.account_selector_type", "username"),
+					resource.TestCheckResourceAttr(policyResourceName, "rules.0.resource_selector.server_based_resource.selectors.0.server_label.account_selector.usernames.0", "pamadmin"),
+					resource.TestCheckResourceAttr(policyResourceName, "rules.0.resource_selector.server_based_resource.selectors.0.server_label.server_selector.labels.system.os_type", "linux"),
+					resource.TestCheckResourceAttr(policyResourceName, "rules.0.resource_selector.server_based_resource.selectors.1.individual_server.server", validServerID),
+					resource.TestCheckResourceAttr(policyResourceName, "rules.0.privileges.0.password_checkout_ssh.password_checkout_ssh", "true"),
+					resource.TestCheckResourceAttr(policyResourceName, "rules.0.privileges.1.principal_account_ssh.principal_account_ssh", "true"),
+					resource.TestCheckResourceAttr(policyResourceName, "rules.0.privileges.1.principal_account_ssh.admin_level_permissions", "false"),
 				),
 			},
 		},
@@ -430,10 +442,7 @@ func TestSecurityPolicyV2IntegrationTest(t *testing.T) {
 }
 
 const testAccSecurityPolicyV2CreateConfigFormat = `
-resource "oktapam_group" "test_security_policy_group1" {
-	name = "%s"
-}
-resource "oktapam_group" "test_security_policy_group2" {
+resource "oktapam_group" "test_security_policy_group" {
 	name = "%s"
 }
 
@@ -443,7 +452,7 @@ resource "oktapam_security_policy_v2" "test_acc_security_policy_v2" {
 	description = "test description"
 	active = true
 	principals = {
-		user_groups = [oktapam_group.test_security_policy_group1.id, oktapam_group.test_security_policy_group2.id]
+		user_groups = [oktapam_group.test_security_policy_group.id], 
 	}
     rules = [
     {
@@ -456,7 +465,7 @@ resource "oktapam_security_policy_v2" "test_acc_security_policy_v2" {
               server_label = {
                 account_selector_type = "username"
                 account_selector = {
-                  usernames = ["root", "pamadmin"]
+                  usernames = ["pamadmin"]
                 }
                 server_selector = {
                   labels = {
@@ -492,6 +501,6 @@ resource "oktapam_security_policy_v2" "test_acc_security_policy_v2" {
 }
 `
 
-func createTestAccSecurityPolicyV2CreateConfig(groupName1, groupName2, sudoCommandBundleName, securityPolicyName string, serverID string) string {
-	return fmt.Sprintf(testAccSecurityPolicyV2CreateConfigFormat, groupName1, groupName2, securityPolicyName, serverID)
+func createTestAccSecurityPolicyV2CreateConfig(groupName, securityPolicyName string, serverID string) string {
+	return fmt.Sprintf(testAccSecurityPolicyV2CreateConfigFormat, groupName, securityPolicyName, serverID)
 }
