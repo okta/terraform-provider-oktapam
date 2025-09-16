@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -38,17 +38,16 @@ func (r ApiAssignStagedServiceAccountRequest) Execute() (*http.Response, error) 
 }
 
 /*
-	AssignStagedServiceAccount Assign a SaaS or Okta Service Account to a Resource Group and Project
+	AssignStagedServiceAccount Assign a SaaS or Okta service account to a resource group and project
 
-	    Assigns a SaaS or Okta Service Account to a Resource Group and Project.
+	    Assigns a SaaS or Okta service account to a resource group and project.
 
 If the account can be actively managed, rotates the password for the account immediately.
-This endpoint requires the `resource_admin` role.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param stagedServiceAccountId The UUID of a `STAGED` Service Account
-	    @param projectId The UUID of a Project
+	    @param teamName The name of your team
+	    @param stagedServiceAccountId The UUID of a `STAGED` service account
+	    @param projectId The UUID of a project
 	@return ApiAssignStagedServiceAccountRequest
 */
 func (a *StagedServiceAccountsAPIService) AssignStagedServiceAccount(ctx context.Context, teamName string, stagedServiceAccountId string, projectId string) ApiAssignStagedServiceAccountRequest {
@@ -136,7 +135,7 @@ func (r ApiListStagedServiceAccountsRequest) Managed(managed bool) ApiListStaged
 	return r
 }
 
-// Only return staged accounts with the specified application instance ids.
+// Only return staged accounts with the specified app instance IDs
 func (r ApiListStagedServiceAccountsRequest) AppInstanceId(appInstanceId []string) ApiListStagedServiceAccountsRequest {
 	r.appInstanceId = &appInstanceId
 	return r
@@ -147,15 +146,15 @@ func (r ApiListStagedServiceAccountsRequest) Execute() (*ListStagedServiceAccoun
 }
 
 /*
-	ListStagedServiceAccounts List all staged service accounts from Okta Universal Directory
+ListStagedServiceAccounts List all staged service accounts from Okta Universal Directory
 
-	    Lists all SaaS and Okta service accounts from Okta Universal Directory that have not been assigned to a Project or Resource Group.
+	Lists all SaaS and Okta service accounts from Okta Universal Directory that have not been assigned to a project or resource group
 
-This endpoint requires the `resource_admin` role.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListStagedServiceAccountsRequest
+	@param teamName The name of your team
+
+@return ApiListStagedServiceAccountsRequest
 */
 func (a *StagedServiceAccountsAPIService) ListStagedServiceAccounts(ctx context.Context, teamName string) ApiListStagedServiceAccountsRequest {
 	return ApiListStagedServiceAccountsRequest{

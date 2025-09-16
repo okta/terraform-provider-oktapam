@@ -3,9 +3,7 @@ resource "oktapam_security_policy_v2" "devenv_security_policy" {
   name        = "development environment policy"
   description = "An example security policy for dev environment"
   active      = true
-  principals = {
-    user_groups = ["user_group_id_1", "user_group_id_2"]
-  }
+  principals = { user_groups = ["user_group_id_1", "user_group_id_2"] }
   # rule with vaulted account and user level access
   rules = [
     {
@@ -126,7 +124,45 @@ resource "oktapam_security_policy_v2" "devenv_security_policy" {
           }
         }
       ]
-    }
+    },
+    # rule with rdp privilege
+    {
+      name          = "windows server account and admin level access"
+      resource_type = "server_based_resource"
+      resource_selector = {
+        server_based_resource = {
+          selectors = [
+            {
+              server_label = {
+                account_selector_type = "username"
+                account_selector = {
+                  usernames = ["foo", "bar"]
+                }
+                server_selector = {
+                  labels = {
+                    "system.os_type" = "windows"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+
+      privileges = [
+        {
+          password_checkout_rdp = {
+            password_checkout_rdp = true
+          }
+        },
+        {
+          principal_account_rdp = {
+            principal_account_rdp   = true
+            admin_level_permissions = true
+          }
+        }
+      ]
+    },
   ]
 }
 

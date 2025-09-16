@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -24,6 +24,109 @@ import (
 // OktaUniversalDirectoryAccountsAPIService OktaUniversalDirectoryAccountsAPI service
 type OktaUniversalDirectoryAccountsAPIService service
 
+type ApiGetOktaUniversalDirectoryAccountDetailsRequest struct {
+	ctx                             context.Context
+	ApiService                      *OktaUniversalDirectoryAccountsAPIService
+	teamName                        string
+	resourceGroupId                 string
+	projectId                       string
+	oktaUniversalDirectoryAccountId string
+}
+
+func (r ApiGetOktaUniversalDirectoryAccountDetailsRequest) Execute() (*OktaUniversalDirectoryAccountDetails, *http.Response, error) {
+	return r.ApiService.GetOktaUniversalDirectoryAccountDetailsExecute(r)
+}
+
+/*
+GetOktaUniversalDirectoryAccountDetails Retrieve a Universal Directory account
+
+	Retrieves a Universal Directory account from a resource group project
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param oktaUniversalDirectoryAccountId The UUID of a Universal Directory account
+
+@return ApiGetOktaUniversalDirectoryAccountDetailsRequest
+*/
+func (a *OktaUniversalDirectoryAccountsAPIService) GetOktaUniversalDirectoryAccountDetails(ctx context.Context, teamName string, resourceGroupId string, projectId string, oktaUniversalDirectoryAccountId string) ApiGetOktaUniversalDirectoryAccountDetailsRequest {
+	return ApiGetOktaUniversalDirectoryAccountDetailsRequest{
+		ApiService:                      a,
+		ctx:                             ctx,
+		teamName:                        teamName,
+		resourceGroupId:                 resourceGroupId,
+		projectId:                       projectId,
+		oktaUniversalDirectoryAccountId: oktaUniversalDirectoryAccountId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return OktaUniversalDirectoryAccountDetails
+func (a *OktaUniversalDirectoryAccountsAPIService) GetOktaUniversalDirectoryAccountDetailsExecute(r ApiGetOktaUniversalDirectoryAccountDetailsRequest) (*OktaUniversalDirectoryAccountDetails, *http.Response, error) {
+	var (
+		traceKey            = "oktauniversaldirectoryaccountsapi.getOktaUniversalDirectoryAccountDetails"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *OktaUniversalDirectoryAccountDetails
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/okta_universal_directory_accounts/{okta_universal_directory_account_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"okta_universal_directory_account_id"+"}", url.PathEscape(parameterValueToString(r.oktaUniversalDirectoryAccountId, "oktaUniversalDirectoryAccountId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
 type ApiListAllOktaUniversalDirectoryAccountsForDelegatedSecurityAdminRequest struct {
 	ctx             context.Context
 	ApiService      *OktaUniversalDirectoryAccountsAPIService
@@ -43,16 +146,16 @@ func (r ApiListAllOktaUniversalDirectoryAccountsForDelegatedSecurityAdminRequest
 }
 
 /*
-	ListAllOktaUniversalDirectoryAccountsForDelegatedSecurityAdmin List all Okta Universal Directory Account in a Resource Group
+ListAllOktaUniversalDirectoryAccountsForDelegatedSecurityAdmin List all Universal Directory account in a resource group
 
-	    Lists all Okta Universal Directory Accounts for the current Security Admin or Delegated Security Admin for the Resource Group
+	Lists all Universal Directory accounts in a resource group
 
-This endpoint requires one of the following roles: `security_admin`, `delegated_security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	@return ApiListAllOktaUniversalDirectoryAccountsForDelegatedSecurityAdminRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+
+@return ApiListAllOktaUniversalDirectoryAccountsForDelegatedSecurityAdminRequest
 */
 func (a *OktaUniversalDirectoryAccountsAPIService) ListAllOktaUniversalDirectoryAccountsForDelegatedSecurityAdmin(ctx context.Context, teamName string, resourceGroupId string) ApiListAllOktaUniversalDirectoryAccountsForDelegatedSecurityAdminRequest {
 	return ApiListAllOktaUniversalDirectoryAccountsForDelegatedSecurityAdminRequest{
@@ -147,15 +250,15 @@ func (r ApiListAllOktaUniversalDirectoryAccountsForSecurityAdminRequest) Execute
 }
 
 /*
-	ListAllOktaUniversalDirectoryAccountsForSecurityAdmin List all Okta Universal Directory Accounts
+ListAllOktaUniversalDirectoryAccountsForSecurityAdmin List all Universal Directory accounts
 
-	    Lists all Okta Universal Directory Accounts for the current Security Admin
+	Lists all Universal Directory accounts
 
-This endpoint requires the following role: `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListAllOktaUniversalDirectoryAccountsForSecurityAdminRequest
+	@param teamName The name of your team
+
+@return ApiListAllOktaUniversalDirectoryAccountsForSecurityAdminRequest
 */
 func (a *OktaUniversalDirectoryAccountsAPIService) ListAllOktaUniversalDirectoryAccountsForSecurityAdmin(ctx context.Context, teamName string) ApiListAllOktaUniversalDirectoryAccountsForSecurityAdminRequest {
 	return ApiListAllOktaUniversalDirectoryAccountsForSecurityAdminRequest{
@@ -230,6 +333,137 @@ func (a *OktaUniversalDirectoryAccountsAPIService) ListAllOktaUniversalDirectory
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiListOktaUDServiceAccountsEndUserRequest struct {
+	ctx        context.Context
+	ApiService *OktaUniversalDirectoryAccountsAPIService
+	teamName   string
+	count      *int32
+	prev       *bool
+	offset     *string
+	descending *bool
+}
+
+// The number of objects per page
+func (r ApiListOktaUDServiceAccountsEndUserRequest) Count(count int32) ApiListOktaUDServiceAccountsEndUserRequest {
+	r.count = &count
+	return r
+}
+
+// The direction of paging
+func (r ApiListOktaUDServiceAccountsEndUserRequest) Prev(prev bool) ApiListOktaUDServiceAccountsEndUserRequest {
+	r.prev = &prev
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListOktaUDServiceAccountsEndUserRequest) Offset(offset string) ApiListOktaUDServiceAccountsEndUserRequest {
+	r.offset = &offset
+	return r
+}
+
+// The object order
+func (r ApiListOktaUDServiceAccountsEndUserRequest) Descending(descending bool) ApiListOktaUDServiceAccountsEndUserRequest {
+	r.descending = &descending
+	return r
+}
+
+func (r ApiListOktaUDServiceAccountsEndUserRequest) Execute() (*ListServiceAccountsEndUserResponse, *http.Response, error) {
+	return r.ApiService.ListOktaUDServiceAccountsEndUserExecute(r)
+}
+
+/*
+ListOktaUDServiceAccountsEndUser List all accessible Universal Directory service accounts
+
+	Lists all Universal Directory service accounts that you (as the request user) can access based on the security policies
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+
+@return ApiListOktaUDServiceAccountsEndUserRequest
+*/
+func (a *OktaUniversalDirectoryAccountsAPIService) ListOktaUDServiceAccountsEndUser(ctx context.Context, teamName string) ApiListOktaUDServiceAccountsEndUserRequest {
+	return ApiListOktaUDServiceAccountsEndUserRequest{
+		ApiService: a,
+		ctx:        ctx,
+		teamName:   teamName,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListServiceAccountsEndUserResponse
+func (a *OktaUniversalDirectoryAccountsAPIService) ListOktaUDServiceAccountsEndUserExecute(r ApiListOktaUDServiceAccountsEndUserRequest) (*ListServiceAccountsEndUserResponse, *http.Response, error) {
+	var (
+		traceKey            = "oktauniversaldirectoryaccountsapi.listOktaUDServiceAccountsEndUser"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListServiceAccountsEndUserResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/okta_universal_directory_accounts"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.count != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
+	}
+	if r.prev != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
+	if r.descending != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
 type ApiListResourceGroupProjectOktaUniversalDirectoryAccountsRequest struct {
 	ctx             context.Context
 	ApiService      *OktaUniversalDirectoryAccountsAPIService
@@ -250,17 +484,17 @@ func (r ApiListResourceGroupProjectOktaUniversalDirectoryAccountsRequest) Execut
 }
 
 /*
-	ListResourceGroupProjectOktaUniversalDirectoryAccounts List all Okta Universal Directory Accounts in a Project
+ListResourceGroupProjectOktaUniversalDirectoryAccounts List all Universal Directory accounts in a resource group project
 
-	    Lists all Okta Universal Directory Accounts in a Project in a Resource Group.
+	Lists all Universal Directory accounts in a resource group project
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiListResourceGroupProjectOktaUniversalDirectoryAccountsRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiListResourceGroupProjectOktaUniversalDirectoryAccountsRequest
 */
 func (a *OktaUniversalDirectoryAccountsAPIService) ListResourceGroupProjectOktaUniversalDirectoryAccounts(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiListResourceGroupProjectOktaUniversalDirectoryAccountsRequest {
 	return ApiListResourceGroupProjectOktaUniversalDirectoryAccountsRequest{
@@ -351,16 +585,16 @@ func (r ApiListUAMForOktaUDAccountRequest) Execute() (*ListUAMForServiceAccountR
 }
 
 /*
-	ListUAMForOktaUDAccount List user access methods for Okta Universal Directory account
+ListUAMForOktaUDAccount List the Universal Directory account user access methods
 
-	    List user access methods for Okta Universal Directory account based on the security policies
+	Lists the user access methods for a Universal Directory account based on the security policies
 
-This endpoint requires the following role: `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param oktaUniversalDirectoryAccountId The UUID of an Okta Universal Directory Account
-	@return ApiListUAMForOktaUDAccountRequest
+	@param teamName The name of your team
+	@param oktaUniversalDirectoryAccountId The UUID of a Universal Directory account
+
+@return ApiListUAMForOktaUDAccountRequest
 */
 func (a *OktaUniversalDirectoryAccountsAPIService) ListUAMForOktaUDAccount(ctx context.Context, teamName string, oktaUniversalDirectoryAccountId string) ApiListUAMForOktaUDAccountRequest {
 	return ApiListUAMForOktaUDAccountRequest{
@@ -452,16 +686,16 @@ func (r ApiRevealOktaUniversalDirectoryAccountPasswordRequest) Execute() (*Servi
 }
 
 /*
-	RevealOktaUniversalDirectoryAccountPassword Reveal the password for Okta Universal Directory Account.
+RevealOktaUniversalDirectoryAccountPassword Reveal the password for Universal Directory account
 
-	    Reveals the password belonging to a Okta Universal Directory Account (managed & unmanaged) that the end user has access to.
+	Reveals the password for a Universal Directory account (managed and unmanaged) that you (as the request user) can access
 
-This endpoint requires one of the following roles: `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param oktaUniversalDirectoryAccountId The UUID of an Okta Universal Directory Account
-	@return ApiRevealOktaUniversalDirectoryAccountPasswordRequest
+	@param teamName The name of your team
+	@param oktaUniversalDirectoryAccountId The UUID of a Universal Directory account
+
+@return ApiRevealOktaUniversalDirectoryAccountPasswordRequest
 */
 func (a *OktaUniversalDirectoryAccountsAPIService) RevealOktaUniversalDirectoryAccountPassword(ctx context.Context, teamName string, oktaUniversalDirectoryAccountId string) ApiRevealOktaUniversalDirectoryAccountPasswordRequest {
 	return ApiRevealOktaUniversalDirectoryAccountPasswordRequest{
@@ -534,6 +768,18 @@ func (a *OktaUniversalDirectoryAccountsAPIService) RevealOktaUniversalDirectoryA
 
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v ForbiddenUAMResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
 				return nil, localVarHTTPResponse, err
 			}

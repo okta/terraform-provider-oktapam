@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,8 +20,9 @@ var _ MappedNullable = &ReorderActiveDirectoryAccountRuleRequest{}
 
 // ReorderActiveDirectoryAccountRuleRequest struct for ReorderActiveDirectoryAccountRuleRequest
 type ReorderActiveDirectoryAccountRuleRequest struct {
+	// The UUID of the Active Directory account rule
 	RuleId *string `json:"rule_id,omitempty"`
-	// The update priority of the Active Directory account rule. Lower numbers have higher priority.
+	// Specify the new priority of the Active Directory account rule. Lower numbers have higher priority.
 	Priority *int32 `json:"priority,omitempty"`
 }
 

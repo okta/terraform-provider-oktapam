@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,9 +20,10 @@ type Curve string
 
 // List of curve
 const (
-	Curve__256 Curve = "P-256"
-	Curve__384 Curve = "P-384"
-	Curve__521 Curve = "P-521"
+	Curve_P_256   Curve = "P-256"
+	Curve_P_384   Curve = "P-384"
+	Curve_P_521   Curve = "P-521"
+	Curve_ED25519 Curve = "Ed25519"
 )
 
 // All allowed values of Curve enum
@@ -30,6 +31,7 @@ var AllowedCurveEnumValues = []Curve{
 	"P-256",
 	"P-384",
 	"P-521",
+	"Ed25519",
 }
 
 func (v *Curve) UnmarshalJSON(src []byte) error {

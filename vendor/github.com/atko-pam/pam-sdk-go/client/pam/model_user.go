@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -21,22 +21,22 @@ var _ MappedNullable = &User{}
 
 // User struct for User
 type User struct {
-	// The name of the Team
+	// The name of the team
 	TeamName string `json:"team_name"`
-	// The UUID of the User
+	// The UUID of the user
 	Id string `json:"id"`
-	// The username for the User
+	// The username for the user
 	Name string `json:"name"`
-	// The status of the User: `ACTIVE`, `DISABLED`, or `DELETED`. Users can't disable or delete their own account.
+	// The status of the user: `ACTIVE`, `DISABLED`, or `DELETED`. Users can't disable or delete their own account.
 	Status  string              `json:"status"`
 	Details NullableUserDetails `json:"details"`
-	// The type of User. Possible values: `service` or `human`.
+	// The type of user. Possible values: `service` or `human`.
 	UserType string `json:"user_type"`
-	// If defined, indicates the OAuth Client Application ID tied to a Service User. Only available when the user was created as part of an OAuth approval flow.
+	// If defined, indicates the OAuth client application ID tied to a service user. Only available when the user was created as part of an OAuth approval flow.
 	OauthClientApplicationId NullableString `json:"oauth_client_application_id,omitempty"`
-	// The permission roles available to the User
+	// The permission roles available to the user
 	RoleGrants []string `json:"role_grants,omitempty"`
-	// A timestamp indicating when the User was deleted
+	// A timestamp indicating when the user was deleted
 	DeletedAt NullableTime `json:"deleted_at"`
 }
 

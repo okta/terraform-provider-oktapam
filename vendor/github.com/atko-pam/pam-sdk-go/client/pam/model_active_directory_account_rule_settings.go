@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,9 +20,11 @@ var _ MappedNullable = &ActiveDirectoryAccountRuleSettings{}
 
 // ActiveDirectoryAccountRuleSettings struct for ActiveDirectoryAccountRuleSettings
 type ActiveDirectoryAccountRuleSettings struct {
-	// If false, the account matching settings have not been configured yet.
+	// If false, the account matching settings haven't been configured
 	IsConfigured     *bool                            `json:"is_configured,omitempty"`
 	MatchingCriteria *ActiveDirectoryMatchingCriteria `json:"matching_criteria,omitempty"`
+	// Conditions for partial matching on Active Directory account and Okta user names
+	PartialMatchingCriteria []ActiveDirectoryPartialMatchingCondition `json:"partial_matching_criteria,omitempty"`
 	// Allow partial matches for the defined criteria
 	AllowPartialMatches *bool `json:"allow_partial_matches,omitempty"`
 }
@@ -110,6 +112,39 @@ func (o *ActiveDirectoryAccountRuleSettings) SetMatchingCriteria(v ActiveDirecto
 	return o
 }
 
+// GetPartialMatchingCriteria returns the PartialMatchingCriteria field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountRuleSettings) GetPartialMatchingCriteria() []ActiveDirectoryPartialMatchingCondition {
+	if o == nil || IsNil(o.PartialMatchingCriteria) {
+		var ret []ActiveDirectoryPartialMatchingCondition
+		return ret
+	}
+	return o.PartialMatchingCriteria
+}
+
+// GetPartialMatchingCriteriaOk returns a tuple with the PartialMatchingCriteria field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountRuleSettings) GetPartialMatchingCriteriaOk() ([]ActiveDirectoryPartialMatchingCondition, bool) {
+	if o == nil || IsNil(o.PartialMatchingCriteria) {
+		return nil, false
+	}
+	return o.PartialMatchingCriteria, true
+}
+
+// HasPartialMatchingCriteria returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountRuleSettings) HasPartialMatchingCriteria() bool {
+	if o != nil && !IsNil(o.PartialMatchingCriteria) {
+		return true
+	}
+
+	return false
+}
+
+// SetPartialMatchingCriteria gets a reference to the given []ActiveDirectoryPartialMatchingCondition and assigns it to the PartialMatchingCriteria field.
+func (o *ActiveDirectoryAccountRuleSettings) SetPartialMatchingCriteria(v []ActiveDirectoryPartialMatchingCondition) *ActiveDirectoryAccountRuleSettings {
+	o.PartialMatchingCriteria = v
+	return o
+}
+
 // GetAllowPartialMatches returns the AllowPartialMatches field value if set, zero value otherwise.
 func (o *ActiveDirectoryAccountRuleSettings) GetAllowPartialMatches() bool {
 	if o == nil || IsNil(o.AllowPartialMatches) {
@@ -158,6 +193,9 @@ func (o ActiveDirectoryAccountRuleSettings) ToMap() (map[string]interface{}, err
 	}
 	if !IsNil(o.MatchingCriteria) {
 		toSerialize["matching_criteria"] = o.MatchingCriteria
+	}
+	if !IsNil(o.PartialMatchingCriteria) {
+		toSerialize["partial_matching_criteria"] = o.PartialMatchingCriteria
 	}
 	if !IsNil(o.AllowPartialMatches) {
 		toSerialize["allow_partial_matches"] = o.AllowPartialMatches

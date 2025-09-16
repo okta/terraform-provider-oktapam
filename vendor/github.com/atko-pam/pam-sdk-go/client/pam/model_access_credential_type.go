@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -28,6 +28,7 @@ const (
 	AccessCredentialType_RDP_BROKER_CERTIFICATE_ADMIN AccessCredentialType = "rdp-broker-certificate-admin"
 	AccessCredentialType_ENCRYPTED_SSH_PASSWORD       AccessCredentialType = "encrypted-ssh-password"
 	AccessCredentialType_ENCRYPTED_RDP_PASSWORD       AccessCredentialType = "encrypted-rdp-password"
+	AccessCredentialType_ENCRYPTED_AD_RDP_PASSWORD    AccessCredentialType = "encrypted-ad-rdp-password"
 )
 
 // All allowed values of AccessCredentialType enum
@@ -40,6 +41,7 @@ var AllowedAccessCredentialTypeEnumValues = []AccessCredentialType{
 	"rdp-broker-certificate-admin",
 	"encrypted-ssh-password",
 	"encrypted-rdp-password",
+	"encrypted-ad-rdp-password",
 }
 
 func (v *AccessCredentialType) UnmarshalJSON(src []byte) error {

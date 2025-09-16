@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -41,15 +41,15 @@ func (r ApiCreateResourceGroupRequest) Execute() (*ResourceGroup, *http.Response
 }
 
 /*
-	CreateResourceGroup Create a Resource Group
+CreateResourceGroup Create a resource group
 
-	    Creates a Resource Group for your Team. To assign the `delegated_resource_admin` role, specify an existing Group in the `delegated_resource_admin_groups` param.
+	Creates a resource group for your team. To assign the `delegated_resource_admin` role, specify an existing group in the `delegated_resource_admin_groups` parameter.
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiCreateResourceGroupRequest
+	@param teamName The name of your team
+
+@return ApiCreateResourceGroupRequest
 */
 func (a *ResourceGroupsAPIService) CreateResourceGroup(ctx context.Context, teamName string) ApiCreateResourceGroupRequest {
 	return ApiCreateResourceGroupRequest{
@@ -135,16 +135,16 @@ func (r ApiDeleteResourceGroupRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	DeleteResourceGroup Delete a Resource Group
+DeleteResourceGroup Delete a resource group
 
-	    Deletes the specified Resource Group
+	Deletes the specified resource group
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	@return ApiDeleteResourceGroupRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+
+@return ApiDeleteResourceGroupRequest
 */
 func (a *ResourceGroupsAPIService) DeleteResourceGroup(ctx context.Context, teamName string, resourceGroupId string) ApiDeleteResourceGroupRequest {
 	return ApiDeleteResourceGroupRequest{
@@ -227,16 +227,16 @@ func (r ApiGetResourceGroupRequest) Execute() (*ResourceGroup, *http.Response, e
 }
 
 /*
-	GetResourceGroup Retrieve a Resource Group
+GetResourceGroup Retrieve a resource group
 
-	    Retrieves the specified Resource Group
+	Retrieves the specified resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	@return ApiGetResourceGroupRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+
+@return ApiGetResourceGroupRequest
 */
 func (a *ResourceGroupsAPIService) GetResourceGroup(ctx context.Context, teamName string, resourceGroupId string) ApiGetResourceGroupRequest {
 	return ApiGetResourceGroupRequest{
@@ -311,9 +311,30 @@ func (a *ResourceGroupsAPIService) GetResourceGroupExecute(r ApiGetResourceGroup
 }
 
 type ApiListResourceGroupsRequest struct {
-	ctx        context.Context
-	ApiService *ResourceGroupsAPIService
-	teamName   string
+	ctx           context.Context
+	ApiService    *ResourceGroupsAPIService
+	teamName      string
+	orderBy       *string
+	forPolicyOnly *bool
+	contains      *string
+}
+
+// The field to sort the resource groups. Supported values: &#x60;name&#x60; or &#x60;id&#x60;
+func (r ApiListResourceGroupsRequest) OrderBy(orderBy string) ApiListResourceGroupsRequest {
+	r.orderBy = &orderBy
+	return r
+}
+
+// Only list resource groups that this user may assign policies to
+func (r ApiListResourceGroupsRequest) ForPolicyOnly(forPolicyOnly bool) ApiListResourceGroupsRequest {
+	r.forPolicyOnly = &forPolicyOnly
+	return r
+}
+
+// Only list resource groups whose name contains this substring
+func (r ApiListResourceGroupsRequest) Contains(contains string) ApiListResourceGroupsRequest {
+	r.contains = &contains
+	return r
 }
 
 func (r ApiListResourceGroupsRequest) Execute() (*ListResourceGroupsResponse, *http.Response, error) {
@@ -321,15 +342,15 @@ func (r ApiListResourceGroupsRequest) Execute() (*ListResourceGroupsResponse, *h
 }
 
 /*
-	ListResourceGroups List all Resource Groups
+ListResourceGroups List all resource groups
 
-	    Lists all Resource Groups available to the requesting User
+	Lists all resource groups available to the requesting user
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListResourceGroupsRequest
+	@param teamName The name of your team
+
+@return ApiListResourceGroupsRequest
 */
 func (a *ResourceGroupsAPIService) ListResourceGroups(ctx context.Context, teamName string) ApiListResourceGroupsRequest {
 	return ApiListResourceGroupsRequest{
@@ -358,6 +379,15 @@ func (a *ResourceGroupsAPIService) ListResourceGroupsExecute(r ApiListResourceGr
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.orderBy != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "order_by", r.orderBy, "")
+	}
+	if r.forPolicyOnly != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "for_policy_only", r.forPolicyOnly, "")
+	}
+	if r.contains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -419,16 +449,16 @@ func (r ApiUpdateResourceGroupRequest) Execute() (*ResourceGroup, *http.Response
 }
 
 /*
-	UpdateResourceGroup Update a Resource Group
+UpdateResourceGroup Update a resource group
 
-	    Updates the specified Resource Group. To assign the `delegated_resource_admin` role, specify an existing Group in the `delegated_resource_admin_groups` param.
+	Updates the specified resource group. To assign the `delegated_resource_admin` role, specify an existing group in the `delegated_resource_admin_groups` parameter.
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	@return ApiUpdateResourceGroupRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+
+@return ApiUpdateResourceGroupRequest
 */
 func (a *ResourceGroupsAPIService) UpdateResourceGroup(ctx context.Context, teamName string, resourceGroupId string) ApiUpdateResourceGroupRequest {
 	return ApiUpdateResourceGroupRequest{

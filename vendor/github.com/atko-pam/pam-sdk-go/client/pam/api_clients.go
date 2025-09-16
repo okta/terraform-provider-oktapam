@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -36,16 +36,16 @@ func (r ApiFetchClientRequest) Execute() (*Client, *http.Response, error) {
 }
 
 /*
-	FetchClient Retrieve a Client
+FetchClient Retrieve a client
 
-	    Retrieves the properties of a specified Client
+	Retrieves the properties of a specified client
 
-This endpoint requires one of the following roles: `end_user`, `security_admin`, `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param clientId The UUID of a Client
-	@return ApiFetchClientRequest
+	@param teamName The name of your team
+	@param clientId The UUID of a client
+
+@return ApiFetchClientRequest
 */
 func (a *ClientsAPIService) FetchClient(ctx context.Context, teamName string, clientId string) ApiFetchClientRequest {
 	return ApiFetchClientRequest{
@@ -132,7 +132,7 @@ type ApiListClientsRequest struct {
 	username   *string
 }
 
-// When &#x60;true&#x60;, returns all Clients for the Team
+// When &#x60;true&#x60;, returns all clients for the team
 func (r ApiListClientsRequest) All(all bool) ApiListClientsRequest {
 	r.all = &all
 	return r
@@ -162,13 +162,13 @@ func (r ApiListClientsRequest) Prev(prev bool) ApiListClientsRequest {
 	return r
 }
 
-// Only return Clients with the specified state. Valid statuses: &#x60;ACTIVE&#x60;, &#x60;PENDING&#x60;, or &#x60;DELETED&#x60;.
+// Only return clients with the specified state. Valid statuses: &#x60;ACTIVE&#x60;, &#x60;PENDING&#x60;, or &#x60;DELETED&#x60;.
 func (r ApiListClientsRequest) State(state string) ApiListClientsRequest {
 	r.state = &state
 	return r
 }
 
-// Only return Clients assigned to the specified User. An empty string returns unassigned Clients.
+// Only return clients assigned to the specified user. An empty string returns unassigned clients.
 func (r ApiListClientsRequest) Username(username string) ApiListClientsRequest {
 	r.username = &username
 	return r
@@ -179,15 +179,15 @@ func (r ApiListClientsRequest) Execute() (*ListClientsResponse, *http.Response, 
 }
 
 /*
-	ListClients List all Clients
+ListClients List all clients
 
-	    Returns a list of Clients for your Team. By default, this only returns Clients associated with the requesting User. Use query parameters to adjust the list of returned Clients.
+	Returns a list of clients for your team. By default, this only returns clients associated with the requesting user. Use query parameters to adjust the list of returned clients.
 
-This endpoint requires one of the following roles: `end_user`, `security_admin`, `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListClientsRequest
+	@param teamName The name of your team
+
+@return ApiListClientsRequest
 */
 func (a *ClientsAPIService) ListClients(ctx context.Context, teamName string) ApiListClientsRequest {
 	return ApiListClientsRequest{
@@ -292,16 +292,16 @@ func (r ApiRemoveClientRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	RemoveClient Revoke access to a Client
+RemoveClient Revoke access to a client
 
-	    Revokes access to a specified Client from your Team
+	Revokes access to a specified client from your team
 
-This endpoint requires one of the following roles: `end_user`, `security_admin`, `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param clientId The UUID of a Client
-	@return ApiRemoveClientRequest
+	@param teamName The name of your team
+	@param clientId The UUID of a client
+
+@return ApiRemoveClientRequest
 */
 func (a *ClientsAPIService) RemoveClient(ctx context.Context, teamName string, clientId string) ApiRemoveClientRequest {
 	return ApiRemoveClientRequest{
@@ -390,16 +390,16 @@ func (r ApiUpdateClientRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	UpdateClient Update a Client
+UpdateClient Update a client
 
-	    Updates the state or assigned user for a specified Client. This is required for some enrollment policies. See [Silently enroll the Client](https://help.okta.com/okta_help.htm?type=asa&id=ext-asa-enroll-sft-silent).
+	Updates the state or assigned user for a specified client. This is required for some enrollment policies. See [Silently enroll the Client](https://help.okta.com/okta_help.htm?type=asa&id=ext-asa-enroll-sft-silent).
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param clientId The UUID of a Client
-	@return ApiUpdateClientRequest
+	@param teamName The name of your team
+	@param clientId The UUID of a client
+
+@return ApiUpdateClientRequest
 */
 func (a *ClientsAPIService) UpdateClient(ctx context.Context, teamName string, clientId string) ApiUpdateClientRequest {
 	return ApiUpdateClientRequest{

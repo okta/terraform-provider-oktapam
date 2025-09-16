@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -42,16 +42,16 @@ func (r ApiAddUserToGroupRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	AddUserToGroup Add a User to a Group
+AddUserToGroup Add a user to a group
 
-	    Adds a User to a Group
+	Adds a user to a group
 
-This endpoint requires the following role: `pam_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param groupName The name of a Group
-	@return ApiAddUserToGroupRequest
+	@param teamName The name of your team
+	@param groupName The name of a group
+
+@return ApiAddUserToGroupRequest
 */
 func (a *GroupsAPIService) AddUserToGroup(ctx context.Context, teamName string, groupName string) ApiAddUserToGroupRequest {
 	return ApiAddUserToGroupRequest{
@@ -144,15 +144,15 @@ func (r ApiCreateGroupRequest) Execute() (*Group, *http.Response, error) {
 }
 
 /*
-	CreateGroup Create a Group
+CreateGroup Create a group
 
-	    Creates a Group for your Team. Groups allow you to assign RBAC roles to users and manage user access to Resource Groups and Projects. To assign the `delegated_resource_admin` role, you need to add the Group to the `delegated_resource_admin_groups` list for a specific Resource Group. See [Resource Groups](/openapi/opa/opa/tag/resource-groups).
+	Creates a group for your team. Groups allow you to assign RBAC roles to users and manage user access to resource groups and projects. To assign the `delegated_resource_admin` role, you need to add the group to the `delegated_resource_admin_groups` list for a specific resource group. See [Resource Groups](/openapi/opa/opa/tag/resource-groups).
 
-This endpoint requires the following role: `pam_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiCreateGroupRequest
+	@param teamName The name of your team
+
+@return ApiCreateGroupRequest
 */
 func (a *GroupsAPIService) CreateGroup(ctx context.Context, teamName string) ApiCreateGroupRequest {
 	return ApiCreateGroupRequest{
@@ -238,16 +238,16 @@ func (r ApiGetGroupRequest) Execute() (*Group, *http.Response, error) {
 }
 
 /*
-	GetGroup Retrieve a Group
+GetGroup Retrieve a group
 
-	    Retrieves a specified Group
+	Retrieves a specified group
 
-This endpoint requires one of the following roles: `pam_admin`, `resource_admin`, `delegated_resource_admin`, `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param groupName The name of a Group
-	@return ApiGetGroupRequest
+	@param teamName The name of your team
+	@param groupName The name of a group
+
+@return ApiGetGroupRequest
 */
 func (a *GroupsAPIService) GetGroup(ctx context.Context, teamName string, groupName string) ApiGetGroupRequest {
 	return ApiGetGroupRequest{
@@ -360,13 +360,13 @@ func (r ApiListGroupsRequest) Id(id string) ApiListGroupsRequest {
 	return r
 }
 
-// Ignore Groups with the specified names. This is case sensitive.
+// Ignore groups with the specified names. This is case sensitive.
 func (r ApiListGroupsRequest) Ignore(ignore string) ApiListGroupsRequest {
 	r.ignore = &ignore
 	return r
 }
 
-// If &#x60;true&#x60;, include deleted Groups in the results
+// If &#x60;true&#x60;, include deleted groups in the results
 func (r ApiListGroupsRequest) IncludeDeleted(includeDeleted bool) ApiListGroupsRequest {
 	r.includeDeleted = &includeDeleted
 	return r
@@ -378,7 +378,7 @@ func (r ApiListGroupsRequest) Offset(offset string) ApiListGroupsRequest {
 	return r
 }
 
-// If &#x60;true&#x60;, only return deleted Groups in the results
+// If &#x60;true&#x60;, only return deleted groups in the results
 func (r ApiListGroupsRequest) OnlyIncludeDeleted(onlyIncludeDeleted bool) ApiListGroupsRequest {
 	r.onlyIncludeDeleted = &onlyIncludeDeleted
 	return r
@@ -395,15 +395,15 @@ func (r ApiListGroupsRequest) Execute() (*ListGroupsResponse, *http.Response, er
 }
 
 /*
-	ListGroups List all Groups for a Team
+ListGroups List all groups for a team
 
-	    Lists all Groups for your Team
+	Lists all groups for your team
 
-This endpoint requires one of the following roles: `pam_admin`, `resource_admin`, `delegated_resource_admin`, `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListGroupsRequest
+	@param teamName The name of your team
+
+@return ApiListGroupsRequest
 */
 func (a *GroupsAPIService) ListGroups(ctx context.Context, teamName string) ApiListGroupsRequest {
 	return ApiListGroupsRequest{
@@ -547,19 +547,19 @@ func (r ApiListUsersInGroupRequest) Prev(prev bool) ApiListUsersInGroupRequest {
 	return r
 }
 
-// Only return Users with a name that begins with the specified value
+// Only return users with a name that begins with the specified value
 func (r ApiListUsersInGroupRequest) StartsWith(startsWith string) ApiListUsersInGroupRequest {
 	r.startsWith = &startsWith
 	return r
 }
 
-// Only return Users with the specified status. Valid statuses: &#x60;ACTIVE&#x60;, &#x60;DISABLED&#x60;, and &#x60;DELETED&#x60;.
+// Only return users with the specified status. Valid statuses: &#x60;ACTIVE&#x60;, &#x60;DISABLED&#x60;, and &#x60;DELETED&#x60;.
 func (r ApiListUsersInGroupRequest) Status(status string) ApiListUsersInGroupRequest {
 	r.status = &status
 	return r
 }
 
-// Only return Users of the specified type. Valid types: &#x60;human&#x60; and &#x60;service&#x60;.
+// Only return users of the specified type. Valid types: &#x60;human&#x60; and &#x60;service&#x60;.
 func (r ApiListUsersInGroupRequest) UserType(userType string) ApiListUsersInGroupRequest {
 	r.userType = &userType
 	return r
@@ -570,16 +570,16 @@ func (r ApiListUsersInGroupRequest) Execute() (*ListUsersInGroupResponse, *http.
 }
 
 /*
-	ListUsersInGroup List all Users for a Group
+ListUsersInGroup List all users for a group
 
-	    Lists all Users in a specified Group
+	Lists all users in a specified group
 
-This endpoint requires one of the following roles: `pam_admin`, `resource_admin`, `delegated_resource_admin`, `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param groupName The name of a Group
-	@return ApiListUsersInGroupRequest
+	@param teamName The name of your team
+	@param groupName The name of a group
+
+@return ApiListUsersInGroupRequest
 */
 func (a *GroupsAPIService) ListUsersInGroup(ctx context.Context, teamName string, groupName string) ApiListUsersInGroupRequest {
 	return ApiListUsersInGroupRequest{
@@ -689,16 +689,16 @@ func (r ApiRemoveGroupRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	RemoveGroup Delete a Group from a Team
+RemoveGroup Delete a group from a team
 
-	    Removes a Group from your Team. This also removes the Group from any associated Projects.
+	Removes a group from your team. This also removes the group from any associated projects.
 
-This endpoint requires the following role: `pam_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param groupName The name of a Group
-	@return ApiRemoveGroupRequest
+	@param teamName The name of your team
+	@param groupName The name of a group
+
+@return ApiRemoveGroupRequest
 */
 func (a *GroupsAPIService) RemoveGroup(ctx context.Context, teamName string, groupName string) ApiRemoveGroupRequest {
 	return ApiRemoveGroupRequest{
@@ -782,17 +782,17 @@ func (r ApiRemoveUserFromGroupRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	RemoveUserFromGroup Remove a User from a Group
+RemoveUserFromGroup Remove a user from a group
 
-	    Removes a User from a Group
+	Removes a user from a group
 
-This endpoint requires the following role: `pam_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param groupName The name of a Group
-	    @param userName The username for an existing User
-	@return ApiRemoveUserFromGroupRequest
+	@param teamName The name of your team
+	@param groupName The name of a group
+	@param userName The username for an existing user
+
+@return ApiRemoveUserFromGroupRequest
 */
 func (a *GroupsAPIService) RemoveUserFromGroup(ctx context.Context, teamName string, groupName string, userName string) ApiRemoveUserFromGroupRequest {
 	return ApiRemoveUserFromGroupRequest{
@@ -883,16 +883,16 @@ func (r ApiUpdateGroupRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	UpdateGroup Update a Group
+UpdateGroup Update a group
 
-	    Updates the access privileges of the specified Group. To assign the `delegated_resource_admin` role, you need to add the Group to the `delegated_resource_admin_groups` list for a specific Resource Group. See [Resource Groups](/openapi/opa/opa/tag/resource-groups).
+	Updates the access privileges of the specified group. To assign the `delegated_resource_admin` role, you need to add the group to the `delegated_resource_admin_groups` list for a specific resource group. See [Resource Groups](/openapi/opa/opa/tag/resource-groups).
 
-This endpoint requires the following role: `pam_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param groupName The name of a Group
-	@return ApiUpdateGroupRequest
+	@param teamName The name of your team
+	@param groupName The name of a group
+
+@return ApiUpdateGroupRequest
 */
 func (a *GroupsAPIService) UpdateGroup(ctx context.Context, teamName string, groupName string) ApiUpdateGroupRequest {
 	return ApiUpdateGroupRequest{

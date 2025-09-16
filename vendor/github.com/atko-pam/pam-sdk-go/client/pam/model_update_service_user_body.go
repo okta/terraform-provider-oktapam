@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,7 +20,7 @@ var _ MappedNullable = &UpdateServiceUserBody{}
 
 // UpdateServiceUserBody struct for UpdateServiceUserBody
 type UpdateServiceUserBody struct {
-	// The status of the User: `ACTIVE`, `DISABLED`, or `DELETED`. Users can't disable or delete their own account.
+	// The status of the user: `ACTIVE`, `DISABLED`, or `DELETED`. Users can't disable or delete their own account.
 	Status string `json:"status"`
 }
 

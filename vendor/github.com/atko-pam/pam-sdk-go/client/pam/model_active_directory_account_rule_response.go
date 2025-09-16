@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -27,6 +27,12 @@ type ActiveDirectoryAccountRuleResponse struct {
 	RuleType *string `json:"rule_type,omitempty"`
 	// The list of organizational units to discover individual accounts from
 	OrganizationalUnits []string `json:"organizational_units,omitempty"`
+	// If `true`, the initial password rotation is enabled for discovered Active Directory accounts
+	EnableInitialPasswordRotation *bool `json:"enable_initial_password_rotation,omitempty"`
+	// If `false`, the Active Directory accounts in the OU targeted by this rule are no longer active Okta users. If `true` and Okta Active Directory integration is configured, then the accounts can become active Okta users. See [Import Active Directory users on demand](https://help.okta.com/okta_help.htm?type=oie&id=ext-ad-agent-import-users).
+	EnableImportOktaUsers *bool `json:"enable_import_okta_users,omitempty"`
+	// One list per OU. Index aligns with 'organizational_units'. Each inner list contains field-based filter expressions. If omitted or empty, no per-OU conditions are applied.
+	EnhancedFilters [][]ActiveDirectoryAccountFieldNameFilter `json:"enhanced_filters,omitempty"`
 	// The priority of the Active Directory account rule
 	Priority      *int32       `json:"priority,omitempty"`
 	ResourceGroup *NamedObject `json:"resource_group,omitempty"`
@@ -182,6 +188,105 @@ func (o *ActiveDirectoryAccountRuleResponse) SetOrganizationalUnits(v []string) 
 	return o
 }
 
+// GetEnableInitialPasswordRotation returns the EnableInitialPasswordRotation field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountRuleResponse) GetEnableInitialPasswordRotation() bool {
+	if o == nil || IsNil(o.EnableInitialPasswordRotation) {
+		var ret bool
+		return ret
+	}
+	return *o.EnableInitialPasswordRotation
+}
+
+// GetEnableInitialPasswordRotationOk returns a tuple with the EnableInitialPasswordRotation field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountRuleResponse) GetEnableInitialPasswordRotationOk() (*bool, bool) {
+	if o == nil || IsNil(o.EnableInitialPasswordRotation) {
+		return nil, false
+	}
+	return o.EnableInitialPasswordRotation, true
+}
+
+// HasEnableInitialPasswordRotation returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountRuleResponse) HasEnableInitialPasswordRotation() bool {
+	if o != nil && !IsNil(o.EnableInitialPasswordRotation) {
+		return true
+	}
+
+	return false
+}
+
+// SetEnableInitialPasswordRotation gets a reference to the given bool and assigns it to the EnableInitialPasswordRotation field.
+func (o *ActiveDirectoryAccountRuleResponse) SetEnableInitialPasswordRotation(v bool) *ActiveDirectoryAccountRuleResponse {
+	o.EnableInitialPasswordRotation = &v
+	return o
+}
+
+// GetEnableImportOktaUsers returns the EnableImportOktaUsers field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountRuleResponse) GetEnableImportOktaUsers() bool {
+	if o == nil || IsNil(o.EnableImportOktaUsers) {
+		var ret bool
+		return ret
+	}
+	return *o.EnableImportOktaUsers
+}
+
+// GetEnableImportOktaUsersOk returns a tuple with the EnableImportOktaUsers field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountRuleResponse) GetEnableImportOktaUsersOk() (*bool, bool) {
+	if o == nil || IsNil(o.EnableImportOktaUsers) {
+		return nil, false
+	}
+	return o.EnableImportOktaUsers, true
+}
+
+// HasEnableImportOktaUsers returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountRuleResponse) HasEnableImportOktaUsers() bool {
+	if o != nil && !IsNil(o.EnableImportOktaUsers) {
+		return true
+	}
+
+	return false
+}
+
+// SetEnableImportOktaUsers gets a reference to the given bool and assigns it to the EnableImportOktaUsers field.
+func (o *ActiveDirectoryAccountRuleResponse) SetEnableImportOktaUsers(v bool) *ActiveDirectoryAccountRuleResponse {
+	o.EnableImportOktaUsers = &v
+	return o
+}
+
+// GetEnhancedFilters returns the EnhancedFilters field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountRuleResponse) GetEnhancedFilters() [][]ActiveDirectoryAccountFieldNameFilter {
+	if o == nil || IsNil(o.EnhancedFilters) {
+		var ret [][]ActiveDirectoryAccountFieldNameFilter
+		return ret
+	}
+	return o.EnhancedFilters
+}
+
+// GetEnhancedFiltersOk returns a tuple with the EnhancedFilters field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountRuleResponse) GetEnhancedFiltersOk() ([][]ActiveDirectoryAccountFieldNameFilter, bool) {
+	if o == nil || IsNil(o.EnhancedFilters) {
+		return nil, false
+	}
+	return o.EnhancedFilters, true
+}
+
+// HasEnhancedFilters returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountRuleResponse) HasEnhancedFilters() bool {
+	if o != nil && !IsNil(o.EnhancedFilters) {
+		return true
+	}
+
+	return false
+}
+
+// SetEnhancedFilters gets a reference to the given [][]ActiveDirectoryAccountFieldNameFilter and assigns it to the EnhancedFilters field.
+func (o *ActiveDirectoryAccountRuleResponse) SetEnhancedFilters(v [][]ActiveDirectoryAccountFieldNameFilter) *ActiveDirectoryAccountRuleResponse {
+	o.EnhancedFilters = v
+	return o
+}
+
 // GetPriority returns the Priority field value if set, zero value otherwise.
 func (o *ActiveDirectoryAccountRuleResponse) GetPriority() int32 {
 	if o == nil || IsNil(o.Priority) {
@@ -302,6 +407,15 @@ func (o ActiveDirectoryAccountRuleResponse) ToMap() (map[string]interface{}, err
 	}
 	if !IsNil(o.OrganizationalUnits) {
 		toSerialize["organizational_units"] = o.OrganizationalUnits
+	}
+	if !IsNil(o.EnableInitialPasswordRotation) {
+		toSerialize["enable_initial_password_rotation"] = o.EnableInitialPasswordRotation
+	}
+	if !IsNil(o.EnableImportOktaUsers) {
+		toSerialize["enable_import_okta_users"] = o.EnableImportOktaUsers
+	}
+	if !IsNil(o.EnhancedFilters) {
+		toSerialize["enhanced_filters"] = o.EnhancedFilters
 	}
 	if !IsNil(o.Priority) {
 		toSerialize["priority"] = o.Priority

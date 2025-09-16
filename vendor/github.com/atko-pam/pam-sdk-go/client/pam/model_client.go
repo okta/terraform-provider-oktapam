@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -21,21 +21,21 @@ var _ MappedNullable = &Client{}
 
 // Client struct for Client
 type Client struct {
-	// The date the Client was deleted
+	// The date the client was deleted
 	DeletedAt time.Time `json:"deleted_at"`
-	// A description of the Client
+	// A description of the client
 	Description string `json:"description"`
-	// If `true`, the Client has detected that the local device is encrypted
+	// If `true`, the client has detected that the local device is encrypted
 	Encrypted bool `json:"encrypted"`
-	// The hostname of the local device running the Client
+	// The hostname of the local device running the client
 	Hostname string `json:"hostname"`
-	// The UUID of the Client
+	// The UUID of the client
 	Id string `json:"id"`
-	// The OS of the local device running the Client
+	// The OS of the local device running the client
 	Os string `json:"os"`
-	// The state of the Client: `ACTIVE`, `PENDING`, or `DELETED`
+	// The state of the client: `ACTIVE`, `PENDING`, or `DELETED`
 	State NullableString `json:"state"`
-	// The User associated with the Client
+	// The user associated with the client
 	UserName NullableString `json:"user_name"`
 }
 

@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -41,15 +41,15 @@ func (r ApiCreateAccessReportRequest) Execute() (*AccessReport, *http.Response, 
 }
 
 /*
-	CreateAccessReport Create an Access Report
+CreateAccessReport Create an access report
 
-	    Create an Access Report. Each report must be connected to a specific User or Resource.
+	Create an access report. Each report must be connected to a specific user or resource.
 
-This endpoint requires the following role: `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiCreateAccessReportRequest
+	@param teamName The name of your team
+
+@return ApiCreateAccessReportRequest
 */
 func (a *ReportsAPIService) CreateAccessReport(ctx context.Context, teamName string) ApiCreateAccessReportRequest {
 	return ApiCreateAccessReportRequest{
@@ -135,16 +135,16 @@ func (r ApiDownloadAccessReportRequest) Execute() (string, *http.Response, error
 }
 
 /*
-	DownloadAccessReport Download an Access Report
+DownloadAccessReport Download an access report
 
-	    Downloads the specific Access Report for review. The CSV formatted report is included in the response.
+	Downloads the specific access report for review. The CSV formatted report is included in the response.
 
-This endpoint requires the following role: `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param accessReportId The UUID of an Access Report
-	@return ApiDownloadAccessReportRequest
+	@param teamName The name of your team
+	@param accessReportId The UUID of an access report
+
+@return ApiDownloadAccessReportRequest
 */
 func (a *ReportsAPIService) DownloadAccessReport(ctx context.Context, teamName string, accessReportId string) ApiDownloadAccessReportRequest {
 	return ApiDownloadAccessReportRequest{
@@ -230,16 +230,16 @@ func (r ApiGetAccessReportRequest) Execute() (*AccessReport, *http.Response, err
 }
 
 /*
-	GetAccessReport Retrieve an Access Report
+GetAccessReport Retrieve an access report
 
-	    Retrieve the metadata of the specified Access Report
+	Retrieve the metadata of the specified access report
 
-This endpoint requires the following role: `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param accessReportId The UUID of an Access Report
-	@return ApiGetAccessReportRequest
+	@param teamName The name of your team
+	@param accessReportId The UUID of an access report
+
+@return ApiGetAccessReportRequest
 */
 func (a *ReportsAPIService) GetAccessReport(ctx context.Context, teamName string, accessReportId string) ApiGetAccessReportRequest {
 	return ApiGetAccessReportRequest{
@@ -324,15 +324,15 @@ func (r ApiListAccessReportsRequest) Execute() (*ListAccessReportsResponse, *htt
 }
 
 /*
-	ListAccessReports List all Access Reports
+ListAccessReports List all access reports
 
-	    Lists all Access Reports
+	Lists all access reports
 
-This endpoint requires the following role: `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListAccessReportsRequest
+	@param teamName The name of your team
+
+@return ApiListAccessReportsRequest
 */
 func (a *ReportsAPIService) ListAccessReports(ctx context.Context, teamName string) ApiListAccessReportsRequest {
 	return ApiListAccessReportsRequest{

@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -24,6 +24,105 @@ import (
 // TeamsAPIService TeamsAPI service
 type TeamsAPIService service
 
+type ApiAccessRequestCreateRequest struct {
+	ctx                        context.Context
+	ApiService                 *TeamsAPIService
+	teamName                   string
+	accessRequestCreateRequest *AccessRequestCreateRequest
+}
+
+func (r ApiAccessRequestCreateRequest) AccessRequestCreateRequest(accessRequestCreateRequest AccessRequestCreateRequest) ApiAccessRequestCreateRequest {
+	r.accessRequestCreateRequest = &accessRequestCreateRequest
+	return r
+}
+
+func (r ApiAccessRequestCreateRequest) Execute() (*AccessRequestCreateResponse, *http.Response, error) {
+	return r.ApiService.AccessRequestCreateExecute(r)
+}
+
+/*
+AccessRequestCreate Create an access request for resource
+
+	Creates a request to access a specific resource
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+
+@return ApiAccessRequestCreateRequest
+*/
+func (a *TeamsAPIService) AccessRequestCreate(ctx context.Context, teamName string) ApiAccessRequestCreateRequest {
+	return ApiAccessRequestCreateRequest{
+		ApiService: a,
+		ctx:        ctx,
+		teamName:   teamName,
+	}
+}
+
+// Execute executes the request
+//
+//	@return AccessRequestCreateResponse
+func (a *TeamsAPIService) AccessRequestCreateExecute(r ApiAccessRequestCreateRequest) (*AccessRequestCreateResponse, *http.Response, error) {
+	var (
+		traceKey            = "teamsapi.accessRequestCreate"
+		localVarHTTPMethod  = http.MethodPost
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *AccessRequestCreateResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/access_requests"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.accessRequestCreateRequest
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
 type ApiFetchStatsForTeamRequest struct {
 	ctx        context.Context
 	ApiService *TeamsAPIService
@@ -35,15 +134,15 @@ func (r ApiFetchStatsForTeamRequest) Execute() (*TeamStats, *http.Response, erro
 }
 
 /*
-	FetchStatsForTeam Retrieve statistics for a Team
+FetchStatsForTeam Retrieve statistics for a team
 
-	    Retrieves statistics about your Team
+	Retrieves statistics about your team
 
-This endpoint requires one of the following roles: `resource_admin`, `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiFetchStatsForTeamRequest
+	@param teamName The name of your team
+
+@return ApiFetchStatsForTeamRequest
 */
 func (a *TeamsAPIService) FetchStatsForTeam(ctx context.Context, teamName string) ApiFetchStatsForTeamRequest {
 	return ApiFetchStatsForTeamRequest{
@@ -126,15 +225,15 @@ func (r ApiGetTeamSettingsRequest) Execute() (*TeamSettings, *http.Response, err
 }
 
 /*
-	GetTeamSettings Retrieve settings for a Team
+GetTeamSettings Retrieve settings for a team
 
-	    Retrieves Team-level settings for your Team
+	Retrieves team-level settings for your team
 
-This endpoint requires one of the following roles: `end_user`, `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiGetTeamSettingsRequest
+	@param teamName The name of your team
+
+@return ApiGetTeamSettingsRequest
 */
 func (a *TeamsAPIService) GetTeamSettings(ctx context.Context, teamName string) ApiGetTeamSettingsRequest {
 	return ApiGetTeamSettingsRequest{
@@ -223,7 +322,7 @@ GetVaultJWKS Retrieve the Vault JWKS
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param teamName The name of your Team
+	@param teamName The name of your team
 
 @return ApiGetVaultJWKSRequest
 */
@@ -350,15 +449,15 @@ func (r ApiListAllCheckedOutResourcesByUserRequest) Execute() (*ListAllCheckedOu
 }
 
 /*
-	ListAllCheckedOutResourcesByUser List all Resources Checked Out by a User
+ListAllCheckedOutResourcesByUser List all resources Checked Out by a user
 
-	    Lists all resources checked out by the current user
+	Lists all resources checked out by the current user
 
-This endpoint requires one of the following roles: `authenticated_client`, `authenticated_service_user`, `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListAllCheckedOutResourcesByUserRequest
+	@param teamName The name of your team
+
+@return ApiListAllCheckedOutResourcesByUserRequest
 */
 func (a *TeamsAPIService) ListAllCheckedOutResourcesByUser(ctx context.Context, teamName string) ApiListAllCheckedOutResourcesByUserRequest {
 	return ApiListAllCheckedOutResourcesByUserRequest{
@@ -459,15 +558,15 @@ func (r ApiListRolesRequest) Execute() (*ListRolesResponse, *http.Response, erro
 }
 
 /*
-	ListRoles List all roles
+ListRoles List all roles
 
-	    Lists all roles available to your Team
+	Lists all roles available to your team
 
-This endpoint requires one of the following roles: `pam_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListRolesRequest
+	@param teamName The name of your team
+
+@return ApiListRolesRequest
 */
 func (a *TeamsAPIService) ListRoles(ctx context.Context, teamName string) ApiListRolesRequest {
 	return ApiListRolesRequest{
@@ -540,44 +639,43 @@ func (a *TeamsAPIService) ListRolesExecute(r ApiListRolesRequest) (*ListRolesRes
 }
 
 type ApiListServersRequest struct {
-	ctx                       context.Context
-	ApiService                *TeamsAPIService
-	teamName                  string
-	adServers                 *bool
-	altNamesContains          *string
-	bastion                   *string
-	canonicalName             *string
-	cloudAccount              *string
-	cloudProvider             *string
-	count                     *int32
-	credentialed              *bool
-	descending                *bool
-	hasAccountUnderManagement *bool
-	hostname                  *string
-	id                        *string
-	instanceId                *string
-	managed                   *bool
-	offset                    *string
-	prev                      *bool
-	projectName               *string
-	state                     *string
-	selector                  *string
-	includeLabels             *bool
+	ctx              context.Context
+	ApiService       *TeamsAPIService
+	teamName         string
+	adServers        *bool
+	altNamesContains *string
+	bastion          *string
+	canonicalName    *string
+	cloudAccount     *string
+	cloudProvider    *string
+	count            *int32
+	credentialed     *bool
+	descending       *bool
+	hostname         *string
+	id               *string
+	instanceId       *string
+	managed          *bool
+	offset           *string
+	prev             *bool
+	projectName      *string
+	state            *string
+	selector         *string
+	includeLabels    *bool
 }
 
-// If &#x60;true&#x60;, only return AD servers. If &#x60;false&#x60;, only return Non-AD servers
+// If &#x60;true&#x60;, only return Active Directory servers. If &#x60;false&#x60;, only return Non-Active Directory servers.
 func (r ApiListServersRequest) AdServers(adServers bool) ApiListServersRequest {
 	r.adServers = &adServers
 	return r
 }
 
-// Only return Servers that contain the specified alternate name
+// Only return servers that contain the specified alternate name
 func (r ApiListServersRequest) AltNamesContains(altNamesContains string) ApiListServersRequest {
 	r.altNamesContains = &altNamesContains
 	return r
 }
 
-// Only return Servers associated with the specified bastion
+// Only return servers associated with the specified bastion
 func (r ApiListServersRequest) Bastion(bastion string) ApiListServersRequest {
 	r.bastion = &bastion
 	return r
@@ -589,13 +687,13 @@ func (r ApiListServersRequest) CanonicalName(canonicalName string) ApiListServer
 	return r
 }
 
-// Only return Servers associated with the specified cloud account
+// Only return servers associated with the specified cloud account
 func (r ApiListServersRequest) CloudAccount(cloudAccount string) ApiListServersRequest {
 	r.cloudAccount = &cloudAccount
 	return r
 }
 
-// Only return Servers associated with the specified cloud provider. Possible values: &#x60;aws&#x60; or &#x60;gce&#x60;
+// Only return servers associated with the specified cloud provider. Possible values: &#x60;aws&#x60; or &#x60;gce&#x60;.
 func (r ApiListServersRequest) CloudProvider(cloudProvider string) ApiListServersRequest {
 	r.cloudProvider = &cloudProvider
 	return r
@@ -607,7 +705,7 @@ func (r ApiListServersRequest) Count(count int32) ApiListServersRequest {
 	return r
 }
 
-// If &#x60;true&#x60;, only return unmanaged Servers with credential issuance enabled. If &#x60;false&#x60;, only return unmanaged Servers with credential issuance disabled.
+// If &#x60;true&#x60;, only return unmanaged servers with credential issuance enabled. If &#x60;false&#x60;, only return unmanaged servers with credential issuance disabled.
 func (r ApiListServersRequest) Credentialed(credentialed bool) ApiListServersRequest {
 	r.credentialed = &credentialed
 	return r
@@ -619,25 +717,19 @@ func (r ApiListServersRequest) Descending(descending bool) ApiListServersRequest
 	return r
 }
 
-// If &#x60;true&#x60;, only return Servers that currently have at least one account&#39;s password under management&#39;.  If &#x60;false&#x60;, only return servers that do not currently have an account whose password is under management.
-func (r ApiListServersRequest) HasAccountUnderManagement(hasAccountUnderManagement bool) ApiListServersRequest {
-	r.hasAccountUnderManagement = &hasAccountUnderManagement
-	return r
-}
-
-// Only return Servers that contain the specified hostname
+// Only return servers that contain the specified hostname
 func (r ApiListServersRequest) Hostname(hostname string) ApiListServersRequest {
 	r.hostname = &hostname
 	return r
 }
 
-// Only return Servers with the specified IDs. Only usable for PAM administrative views of servers, not end-user Server views.
+// Only return servers with the specified IDs. Only usable for PAM administrative views of servers, not end-user server views.
 func (r ApiListServersRequest) Id(id string) ApiListServersRequest {
 	r.id = &id
 	return r
 }
 
-// Only return Servers that contain the specified instance ID
+// Only return servers that contain the specified instance ID
 func (r ApiListServersRequest) InstanceId(instanceId string) ApiListServersRequest {
 	r.instanceId = &instanceId
 	return r
@@ -661,19 +753,19 @@ func (r ApiListServersRequest) Prev(prev bool) ApiListServersRequest {
 	return r
 }
 
-// Only return Servers that belong to the specified Project
+// Only return servers that belong to the specified project
 func (r ApiListServersRequest) ProjectName(projectName string) ApiListServersRequest {
 	r.projectName = &projectName
 	return r
 }
 
-// Include Servers with the specified state. Valid statuses: &#x60;ACTIVE&#x60; or &#x60;INACTIVE&#x60;.
+// Include servers with the specified state. Valid statuses: &#x60;ACTIVE&#x60; or &#x60;INACTIVE&#x60;.
 func (r ApiListServersRequest) State(state string) ApiListServersRequest {
 	r.state = &state
 	return r
 }
 
-// Only return Servers that contain the specified Server selectors.
+// Only return servers that contain the specified server selectors.
 func (r ApiListServersRequest) Selector(selector string) ApiListServersRequest {
 	r.selector = &selector
 	return r
@@ -690,15 +782,15 @@ func (r ApiListServersRequest) Execute() (*ListServersResponse, *http.Response, 
 }
 
 /*
-	ListServers List all Servers for a Team
+ListServers List all servers for a team
 
-	    Lists all Servers in your Team. This only returns Servers available to the requesting User.
+	Lists all servers in your team. This only returns servers available to the requesting user.
 
-This endpoint requires the following role: `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListServersRequest
+	@param teamName The name of your team
+
+@return ApiListServersRequest
 */
 func (a *TeamsAPIService) ListServers(ctx context.Context, teamName string) ApiListServersRequest {
 	return ApiListServersRequest{
@@ -753,9 +845,6 @@ func (a *TeamsAPIService) ListServersExecute(r ApiListServersRequest) (*ListServ
 	}
 	if r.descending != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
-	}
-	if r.hasAccountUnderManagement != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "has_account_under_management", r.hasAccountUnderManagement, "")
 	}
 	if r.hostname != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "hostname", r.hostname, "")
@@ -847,15 +936,15 @@ func (r ApiSelfCheckinResourceRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	SelfCheckinResource Checks in a Resource previously checked out by the user
+SelfCheckinResource Checks in a Resource previously checked out by the user
 
-	    Checks in a Resource previously checked out by the user
+	Checks in a Resource previously checked out by the user
 
-This endpoint requires one of the following roles: `resource_admin`, `security_admin`, `authenticated_client`, `authenticated_service_user`, `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiSelfCheckinResourceRequest
+	@param teamName The name of your team
+
+@return ApiSelfCheckinResourceRequest
 */
 func (a *TeamsAPIService) SelfCheckinResource(ctx context.Context, teamName string) ApiSelfCheckinResourceRequest {
 	return ApiSelfCheckinResourceRequest{
@@ -943,15 +1032,15 @@ func (r ApiUpdateTeamSettingsRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	UpdateTeamSettings Update settings for a Team
+UpdateTeamSettings Update settings for a team
 
-	    Updates Team-level settings for your Team. Partial updates are permitted. To disable a setting, set the value to `null`.
+	Updates team-level settings for your team. Partial updates are permitted. To disable a setting, set the value to `null`.
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiUpdateTeamSettingsRequest
+	@param teamName The name of your team
+
+@return ApiUpdateTeamSettingsRequest
 */
 func (a *TeamsAPIService) UpdateTeamSettings(ctx context.Context, teamName string) ApiUpdateTeamSettingsRequest {
 	return ApiUpdateTeamSettingsRequest{

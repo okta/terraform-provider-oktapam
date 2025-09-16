@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -21,44 +21,48 @@ var _ MappedNullable = &Server{}
 
 // Server struct for Server
 type Server struct {
-	// The access address of the Server
+	// The access address of the server
 	AccessAddress string `json:"access_address"`
-	// Alternative names for the Server
+	// (Optional) Alternative names for the server
 	AltNames []string `json:"alt_names"`
-	// The bastion host that Clients automatically use when connecting to this host
+	// The bastion host that clients automatically use when connecting to this host
 	Bastion string `json:"bastion"`
-	// The name that Clients should use when connecting to this Server. Overrides the name found with hostname.
+	// The broker host certificates list
+	BrokerHostCerts []string `json:"broker_host_certs,omitempty"`
+	// The name that clients should use when connecting to this server. Overrides the name found with hostname.
 	CanonicalName string                    `json:"canonical_name"`
 	CloudProvider NullableCloudProviderType `json:"cloud_provider,omitempty"`
-	// A timestamp indicating when the Server was deleted from the Project
+	// A timestamp indicating when the server was deleted from the project
 	DeletedAt time.Time `json:"deleted_at"`
-	// The hostname of the Server
+	// The hostname of the server
 	Hostname string `json:"hostname"`
-	// The UUID of the Server
+	// The UUID of the server
 	Id string `json:"id"`
-	// The labels for this Server. Used by the PolicySync feature, see [PolicySync: Attribute-Based Access Control](https://help.okta.com/okta_help.htm?type=asa&id=ext-asa-policysync).
+	// The UUID of the instance
+	InstanceId *string `json:"instance_id,omitempty"`
+	// The labels for this server. Used by the PolicySync feature, see [PolicySync: Attribute-Based Access Control](https://help.okta.com/okta_help.htm?type=asa&id=ext-asa-policysync).
 	Labels map[string]string `json:"labels"`
-	// A timestamp indicating when the Server was last seen
+	// A timestamp indicating when the server was last seen
 	LastSeen time.Time `json:"last_seen"`
-	// If `true`, the Server is managed by 'sftd'.
+	// If `true`, the server is managed by the OPA server agent (`sftd`)
 	Managed bool `json:"managed"`
-	// The OS version of the Server, such as CentOS 6 or Debian 9.13
+	// The OS version of the server, such as CentOS 6 or Debian 9.13
 	Os string `json:"os"`
-	// The OS family of the Server. Possible values: `linux` or `windows`.
+	// The OS family of the server. Possible values: `linux` or `windows`.
 	OsType string `json:"os_type"`
-	// The name of the Project where the Server is enrolled
+	// The name of the project where the server is enrolled
 	ProjectName string `json:"project_name"`
-	// A timestamp indicating when the Server was enrolled in the Project
+	// The timestamp when the server was enrolled in the project
 	RegisteredAt time.Time `json:"registered_at"`
-	// The service that Clients use to connect to the Server. Possible values: `ssh` or `rdp`.
+	// The service that clients use to connect to the server. Possible values: `ssh` or `rdp`.
 	Services []string `json:"services"`
-	// The version of 'sftd' running on the Server
+	// The OPA server agent (`sftd`) version on the server
 	SftdVersion string `json:"sftd_version"`
-	// The host keys used to authenticate the Server
+	// The host keys used to authenticate the server
 	SshHostKeys []string `json:"ssh_host_keys"`
-	// The state of the Server. Possible values: `ACTIVE` or `INACTIVE`.
+	// The state of the server. Possible values: `ACTIVE` or `INACTIVE`.
 	State string `json:"state"`
-	// The name of the associated Team
+	// The name of the associated team
 	TeamName        string                 `json:"team_name"`
 	InstanceDetails *ServerInstanceDetails `json:"instance_details,omitempty"`
 }
@@ -171,6 +175,39 @@ func (o *Server) GetBastionOk() (*string, bool) {
 // SetBastion sets field value
 func (o *Server) SetBastion(v string) *Server {
 	o.Bastion = v
+	return o
+}
+
+// GetBrokerHostCerts returns the BrokerHostCerts field value if set, zero value otherwise.
+func (o *Server) GetBrokerHostCerts() []string {
+	if o == nil || IsNil(o.BrokerHostCerts) {
+		var ret []string
+		return ret
+	}
+	return o.BrokerHostCerts
+}
+
+// GetBrokerHostCertsOk returns a tuple with the BrokerHostCerts field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Server) GetBrokerHostCertsOk() ([]string, bool) {
+	if o == nil || IsNil(o.BrokerHostCerts) {
+		return nil, false
+	}
+	return o.BrokerHostCerts, true
+}
+
+// HasBrokerHostCerts returns a boolean if a field has been set.
+func (o *Server) HasBrokerHostCerts() bool {
+	if o != nil && !IsNil(o.BrokerHostCerts) {
+		return true
+	}
+
+	return false
+}
+
+// SetBrokerHostCerts gets a reference to the given []string and assigns it to the BrokerHostCerts field.
+func (o *Server) SetBrokerHostCerts(v []string) *Server {
+	o.BrokerHostCerts = v
 	return o
 }
 
@@ -317,6 +354,39 @@ func (o *Server) GetIdOk() (*string, bool) {
 // SetId sets field value
 func (o *Server) SetId(v string) *Server {
 	o.Id = v
+	return o
+}
+
+// GetInstanceId returns the InstanceId field value if set, zero value otherwise.
+func (o *Server) GetInstanceId() string {
+	if o == nil || IsNil(o.InstanceId) {
+		var ret string
+		return ret
+	}
+	return *o.InstanceId
+}
+
+// GetInstanceIdOk returns a tuple with the InstanceId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Server) GetInstanceIdOk() (*string, bool) {
+	if o == nil || IsNil(o.InstanceId) {
+		return nil, false
+	}
+	return o.InstanceId, true
+}
+
+// HasInstanceId returns a boolean if a field has been set.
+func (o *Server) HasInstanceId() bool {
+	if o != nil && !IsNil(o.InstanceId) {
+		return true
+	}
+
+	return false
+}
+
+// SetInstanceId gets a reference to the given string and assigns it to the InstanceId field.
+func (o *Server) SetInstanceId(v string) *Server {
+	o.InstanceId = &v
 	return o
 }
 
@@ -666,6 +736,9 @@ func (o Server) ToMap() (map[string]interface{}, error) {
 	toSerialize["access_address"] = o.AccessAddress
 	toSerialize["alt_names"] = o.AltNames
 	toSerialize["bastion"] = o.Bastion
+	if !IsNil(o.BrokerHostCerts) {
+		toSerialize["broker_host_certs"] = o.BrokerHostCerts
+	}
 	toSerialize["canonical_name"] = o.CanonicalName
 	if o.CloudProvider.IsSet() {
 		toSerialize["cloud_provider"] = o.CloudProvider.Get()
@@ -673,6 +746,9 @@ func (o Server) ToMap() (map[string]interface{}, error) {
 	toSerialize["deleted_at"] = o.DeletedAt
 	toSerialize["hostname"] = o.Hostname
 	toSerialize["id"] = o.Id
+	if !IsNil(o.InstanceId) {
+		toSerialize["instance_id"] = o.InstanceId
+	}
 	toSerialize["labels"] = o.Labels
 	toSerialize["last_seen"] = o.LastSeen
 	toSerialize["managed"] = o.Managed

@@ -107,7 +107,7 @@ type configuration struct {
 	UserAgentHook func() string `ignored:"true"`
 
 	// ClientFeatures should be set using the WithClientFeatures fn
-	ClientFeatures map[string]bool `ignored:"true""`
+	ClientFeatures map[string]bool `ignored:"true"`
 }
 
 type TestEnv struct {

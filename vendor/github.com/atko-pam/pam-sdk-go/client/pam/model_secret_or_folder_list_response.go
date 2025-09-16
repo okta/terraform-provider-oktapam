@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,15 +20,17 @@ var _ MappedNullable = &SecretOrFolderListResponse{}
 
 // SecretOrFolderListResponse struct for SecretOrFolderListResponse
 type SecretOrFolderListResponse struct {
-	// The UUID of the Secret Folder
+	// The UUID of the secret folder
 	Id string `json:"id"`
-	// The name of the Secret Folder
+	// The name of the secret folder
 	Name string `json:"name"`
-	// A description of the Secret Folder
-	Description   NullableString `json:"description,omitempty"`
-	Type          SecretType     `json:"type"`
-	ResourceGroup NamedObject    `json:"resource_group"`
-	Project       NamedObject    `json:"project"`
+	// A description of the secret folder
+	Description NullableString `json:"description,omitempty"`
+	// The names and IDs of the parent folders for this secret or folder. The first entry is the root folder.
+	Path          []SecretPath `json:"path,omitempty"`
+	Type          SecretType   `json:"type"`
+	ResourceGroup NamedObject  `json:"resource_group"`
+	Project       NamedObject  `json:"project"`
 }
 
 // NewSecretOrFolderListResponse instantiates a new SecretOrFolderListResponse object
@@ -149,6 +151,39 @@ func (o *SecretOrFolderListResponse) UnsetDescription() *SecretOrFolderListRespo
 	return o
 }
 
+// GetPath returns the Path field value if set, zero value otherwise.
+func (o *SecretOrFolderListResponse) GetPath() []SecretPath {
+	if o == nil || IsNil(o.Path) {
+		var ret []SecretPath
+		return ret
+	}
+	return o.Path
+}
+
+// GetPathOk returns a tuple with the Path field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecretOrFolderListResponse) GetPathOk() ([]SecretPath, bool) {
+	if o == nil || IsNil(o.Path) {
+		return nil, false
+	}
+	return o.Path, true
+}
+
+// HasPath returns a boolean if a field has been set.
+func (o *SecretOrFolderListResponse) HasPath() bool {
+	if o != nil && !IsNil(o.Path) {
+		return true
+	}
+
+	return false
+}
+
+// SetPath gets a reference to the given []SecretPath and assigns it to the Path field.
+func (o *SecretOrFolderListResponse) SetPath(v []SecretPath) *SecretOrFolderListResponse {
+	o.Path = v
+	return o
+}
+
 // GetType returns the Type field value
 func (o *SecretOrFolderListResponse) GetType() SecretType {
 	if o == nil {
@@ -238,6 +273,9 @@ func (o SecretOrFolderListResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize["name"] = o.Name
 	if o.Description.IsSet() {
 		toSerialize["description"] = o.Description.Get()
+	}
+	if !IsNil(o.Path) {
+		toSerialize["path"] = o.Path
 	}
 	toSerialize["type"] = o.Type
 	toSerialize["resource_group"] = o.ResourceGroup

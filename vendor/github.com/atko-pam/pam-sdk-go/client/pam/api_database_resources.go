@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -43,17 +43,17 @@ func (r ApiCreateDatabaseResourceRequest) Execute() (*DatabaseResourceResponse, 
 }
 
 /*
-	CreateDatabaseResource Create a Database Resource
+CreateDatabaseResource Create a database resource
 
-	    Creates a Database Resource in a Project in a Resource Group
+	Creates a database resource in a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiCreateDatabaseResourceRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiCreateDatabaseResourceRequest
 */
 func (a *DatabaseResourcesAPIService) CreateDatabaseResource(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiCreateDatabaseResourceRequest {
 	return ApiCreateDatabaseResourceRequest{
@@ -151,18 +151,18 @@ func (r ApiCreateDatabaseStaticAccountRequest) Execute() (*DatabaseResourceStati
 }
 
 /*
-	CreateDatabaseStaticAccount Create a Database Static Account
+CreateDatabaseStaticAccount Create a database static account
 
-	    Creates a Database Static Account for a Database Resource in a Project in a Resource Group
+	Creates a database static account for a database resource in a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param databaseResourceId The UUID of a Database Resource
-	@return ApiCreateDatabaseStaticAccountRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param databaseResourceId The UUID of a database resource
+
+@return ApiCreateDatabaseStaticAccountRequest
 */
 func (a *DatabaseResourcesAPIService) CreateDatabaseStaticAccount(ctx context.Context, teamName string, resourceGroupId string, projectId string, databaseResourceId string) ApiCreateDatabaseStaticAccountRequest {
 	return ApiCreateDatabaseStaticAccountRequest{
@@ -256,18 +256,18 @@ func (r ApiDeleteDatabaseResourceRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	DeleteDatabaseResource Delete a Database Resource
+DeleteDatabaseResource Delete a database resource
 
-	    Deletes a Database Resource from a Project in a Resource Group
+	Deletes a database resource from a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param databaseResourceId The UUID of a Database Resource
-	@return ApiDeleteDatabaseResourceRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param databaseResourceId The UUID of a database resource
+
+@return ApiDeleteDatabaseResourceRequest
 */
 func (a *DatabaseResourcesAPIService) DeleteDatabaseResource(ctx context.Context, teamName string, resourceGroupId string, projectId string, databaseResourceId string) ApiDeleteDatabaseResourceRequest {
 	return ApiDeleteDatabaseResourceRequest{
@@ -357,19 +357,19 @@ func (r ApiDeleteDatabaseStaticAccountRequest) Execute() (*http.Response, error)
 }
 
 /*
-	DeleteDatabaseStaticAccount Delete a Database Static Account
+DeleteDatabaseStaticAccount Delete a database static account
 
-	    Deletes a Database Static Account for a Database Resource in a Project in a Resource Group
+	Deletes a database static account for a database resource in a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param databaseResourceId The UUID of a Database Resource
-	    @param staticAccountId The UUID of a Database Static Account
-	@return ApiDeleteDatabaseStaticAccountRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param databaseResourceId The UUID of a database resource
+	@param staticAccountId The UUID of a database static account
+
+@return ApiDeleteDatabaseStaticAccountRequest
 */
 func (a *DatabaseResourcesAPIService) DeleteDatabaseStaticAccount(ctx context.Context, teamName string, resourceGroupId string, projectId string, databaseResourceId string, staticAccountId string) ApiDeleteDatabaseStaticAccountRequest {
 	return ApiDeleteDatabaseStaticAccountRequest{
@@ -460,18 +460,18 @@ func (r ApiGetDatabaseResourceRequest) Execute() (*DatabaseResourceResponse, *ht
 }
 
 /*
-	GetDatabaseResource Retrieve a Database Resource
+GetDatabaseResource Retrieve a database resource
 
-	    Retrieves a Database Resource from a Project in a Resource Group
+	Retrieves a database resource from a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param databaseResourceId The UUID of a Database Resource
-	@return ApiGetDatabaseResourceRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param databaseResourceId The UUID of a database resource
+
+@return ApiGetDatabaseResourceRequest
 */
 func (a *DatabaseResourcesAPIService) GetDatabaseResource(ctx context.Context, teamName string, resourceGroupId string, projectId string, databaseResourceId string) ApiGetDatabaseResourceRequest {
 	return ApiGetDatabaseResourceRequest{
@@ -564,19 +564,19 @@ func (r ApiGetDatabaseStaticAccountRequest) Execute() (*DatabaseResourceStaticAc
 }
 
 /*
-	GetDatabaseStaticAccount Retrieve a Database Static Account
+GetDatabaseStaticAccount Retrieve a database static account
 
-	    Retrieves a Database Static Account for a Database Resource in a Project in a Resource Group
+	Retrieves a database static account for a database resource in a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param databaseResourceId The UUID of a Database Resource
-	    @param staticAccountId The UUID of a Database Static Account
-	@return ApiGetDatabaseStaticAccountRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param databaseResourceId The UUID of a database resource
+	@param staticAccountId The UUID of a database static account
+
+@return ApiGetDatabaseStaticAccountRequest
 */
 func (a *DatabaseResourcesAPIService) GetDatabaseStaticAccount(ctx context.Context, teamName string, resourceGroupId string, projectId string, databaseResourceId string, staticAccountId string) ApiGetDatabaseStaticAccountRequest {
 	return ApiGetDatabaseStaticAccountRequest{
@@ -670,18 +670,18 @@ func (r ApiListDatabaseStaticAccountsRequest) Execute() (*ListDatabaseStaticAcco
 }
 
 /*
-	ListDatabaseStaticAccounts List all Database Static Accounts
+ListDatabaseStaticAccounts List all database static accounts
 
-	    Lists all Database Static Accounts for a Database Resource in a Project in a Resource Group
+	Lists all database static accounts for a database resource in a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param databaseResourceId The UUID of a Database Resource
-	@return ApiListDatabaseStaticAccountsRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param databaseResourceId The UUID of a database resource
+
+@return ApiListDatabaseStaticAccountsRequest
 */
 func (a *DatabaseResourcesAPIService) ListDatabaseStaticAccounts(ctx context.Context, teamName string, resourceGroupId string, projectId string, databaseResourceId string) ApiListDatabaseStaticAccountsRequest {
 	return ApiListDatabaseStaticAccountsRequest{
@@ -779,18 +779,18 @@ func (r ApiUpdateDatabaseResourceRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	UpdateDatabaseResource Update a Database Resource
+UpdateDatabaseResource Update a database resource
 
-	    Updates a Database Resource from a Project in a Resource Group
+	Updates a database resource from a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param databaseResourceId The UUID of a Database Resource
-	@return ApiUpdateDatabaseResourceRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param databaseResourceId The UUID of a database resource
+
+@return ApiUpdateDatabaseResourceRequest
 */
 func (a *DatabaseResourcesAPIService) UpdateDatabaseResource(ctx context.Context, teamName string, resourceGroupId string, projectId string, databaseResourceId string) ApiUpdateDatabaseResourceRequest {
 	return ApiUpdateDatabaseResourceRequest{
@@ -888,19 +888,19 @@ func (r ApiUpdateDatabaseStaticAccountRequest) Execute() (*http.Response, error)
 }
 
 /*
-	UpdateDatabaseStaticAccount Update a Database Static Account
+UpdateDatabaseStaticAccount Update a database static account
 
-	    Updates a Database Static Account for a Database Resource in a Project in a Resource Group
+	Updates a database static account for a database resource in a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	    @param databaseResourceId The UUID of a Database Resource
-	    @param staticAccountId The UUID of a Database Static Account
-	@return ApiUpdateDatabaseStaticAccountRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param databaseResourceId The UUID of a database resource
+	@param staticAccountId The UUID of a database static account
+
+@return ApiUpdateDatabaseStaticAccountRequest
 */
 func (a *DatabaseResourcesAPIService) UpdateDatabaseStaticAccount(ctx context.Context, teamName string, resourceGroupId string, projectId string, databaseResourceId string, staticAccountId string) ApiUpdateDatabaseStaticAccountRequest {
 	return ApiUpdateDatabaseStaticAccountRequest{

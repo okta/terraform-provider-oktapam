@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	goerrors "errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -230,7 +231,7 @@ func (c OktaPAMClient) GetHumanUser(ctx context.Context, userName string) (*User
 }
 
 func (c OktaPAMClient) CreateHumanUser(ctx context.Context, userName string) error {
-	return fmt.Errorf(errors.HumanUserCreationError)
+	return goerrors.New(errors.HumanUserCreationError)
 }
 
 func (c OktaPAMClient) UpdateHumanUser(ctx context.Context, userName string, humanUser *User) error {
@@ -245,8 +246,8 @@ func (c OktaPAMClient) UpdateHumanUser(ctx context.Context, userName string, hum
 	return err
 }
 
-func (c OktaPAMClient) DeleteHumanUser(ctx context.Context, userName string) error {
-	return fmt.Errorf(errors.HumanUserDeletionError)
+func (c OktaPAMClient) DeleteHumanUser(_ context.Context, _ string) error {
+	return goerrors.New(errors.HumanUserCreationError)
 }
 
 // Commands used by only `service` users:

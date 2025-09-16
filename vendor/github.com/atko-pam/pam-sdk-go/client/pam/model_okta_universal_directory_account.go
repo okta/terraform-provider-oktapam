@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -21,24 +21,24 @@ var _ MappedNullable = &OktaUniversalDirectoryAccount{}
 
 // OktaUniversalDirectoryAccount struct for OktaUniversalDirectoryAccount
 type OktaUniversalDirectoryAccount struct {
-	// The UUID of the Okta Universal Directory Account
+	// The UUID of the Universal Directory account
 	Id *string `json:"id,omitempty"`
-	// A human-readable name for the Okta Universal Directory Account
+	// A human-readable name for the Universal Directory account
 	Name *string `json:"name,omitempty"`
 	// The username used to log into Okta
 	Username *string `json:"username,omitempty"`
-	// A brief description of the Okta Universal Directory Account
+	// A brief description of the Universal Directory account
 	Description  *string                     `json:"description,omitempty"`
 	Status       *ServiceAccountStatus       `json:"status,omitempty"`
 	StatusDetail *ServiceAccountStatusDetail `json:"status_detail,omitempty"`
 	SyncStatus   *ServiceAccountSyncStatus   `json:"sync_status,omitempty"`
-	// Whether the password for the Okta Universal Directory Account can be rotated using Okta Lifecycle Management
+	// Whether the password for the Universal Directory account can be rotated using Okta Lifecycle Management
 	LcmSyncPossible *bool `json:"lcm_sync_possible,omitempty"`
-	// The Okta user ID for the Okta Universal Directory Account
+	// The Okta user ID for the Universal Directory account
 	OktaUserId *string `json:"okta_user_id,omitempty"`
-	// A timestamp that indicates when the OPA managed Okta Universal Directory Account was created
+	// A timestamp that indicates when the Okta Privileged Access-managed Universal Directory account was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
-	// A timestamp that indicates when the OPA managed Okta Universal Directory Account was updated
+	// A timestamp that indicates when the Okta Privileged Access-managed Universal Directory account was updated
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 }
 

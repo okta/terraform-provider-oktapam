@@ -118,8 +118,8 @@ func executeResolveSecretOrFolderRequest(ctx context.Context, sdkClient SDKClien
 func resolveSecretFolder(ctx context.Context, sdkClient SDKClientWrapper, resourceGroupID string, projectID string, path string) (*pam.ResolveSecretOrFolderResponse, bool, error) {
 	parentFolder, name := getParentFolderPathAndNameFromPath(path)
 	resolveSecretOrFolderRequest := pam.NewResolveSecretOrFolderRequest(
-		pam.SecretResolveParent{Id: &resourceGroupID, Type: pam.NamedObjectType_RESOURCE_GROUP.Ptr()},
-		pam.SecretResolveParent{Id: &projectID, Type: pam.NamedObjectType_PROJECT.Ptr()},
+		*pam.NewNullableSecretResolveParent(&pam.SecretResolveParent{Id: &resourceGroupID, Type: pam.NamedObjectType_RESOURCE_GROUP.Ptr()}),
+		*pam.NewNullableSecretResolveParent(&pam.SecretResolveParent{Id: &projectID, Type: pam.NamedObjectType_PROJECT.Ptr()}),
 	)
 
 	resolveSecretOrFolderRequest.SetParentFolderPath(parentFolder)

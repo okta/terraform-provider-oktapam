@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -24,9 +24,9 @@ type TeamUserAttributeConflict struct {
 	AttributeValue TeamUserAttributeAttributeValue `json:"attribute_value"`
 	// The unique identifier for the attribute
 	Id string `json:"id"`
-	// Indicates the OPA username related to the conflict
+	// Indicates the Okta Privileged Access username related to the conflict
 	UserName *string `json:"user_name,omitempty"`
-	// Indicates if the attribute is related to a Service User
+	// Indicates if the attribute is related to a service user
 	IsServiceUser *bool `json:"is_service_user,omitempty"`
 }
 

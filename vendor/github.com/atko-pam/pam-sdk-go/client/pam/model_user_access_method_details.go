@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -16,11 +16,20 @@ import (
 	"fmt"
 )
 
-// UserAccessMethodDetails - struct for UserAccessMethodDetails
+// UserAccessMethodDetails - User access method details
 type UserAccessMethodDetails struct {
-	UserAccessMethodSecretDetails         *UserAccessMethodSecretDetails
-	UserAccessMethodServerDetails         *UserAccessMethodServerDetails
-	UserAccessMethodServiceAccountDetails *UserAccessMethodServiceAccountDetails
+	UserAccessMethodActiveDirectoryAccountDetails *UserAccessMethodActiveDirectoryAccountDetails
+	UserAccessMethodSecretDetails                 *UserAccessMethodSecretDetails
+	UserAccessMethodServerDetails                 *UserAccessMethodServerDetails
+	UserAccessMethodServiceAccountDetails         *UserAccessMethodServiceAccountDetails
+	Unknown                                       map[string]interface{} // holds unknown types for round-tripping
+}
+
+// UserAccessMethodActiveDirectoryAccountDetailsAsUserAccessMethodDetails is a convenience function that returns UserAccessMethodActiveDirectoryAccountDetails wrapped in UserAccessMethodDetails
+func UserAccessMethodActiveDirectoryAccountDetailsAsUserAccessMethodDetails(v *UserAccessMethodActiveDirectoryAccountDetails) UserAccessMethodDetails {
+	return UserAccessMethodDetails{
+		UserAccessMethodActiveDirectoryAccountDetails: v,
+	}
 }
 
 // UserAccessMethodSecretDetailsAsUserAccessMethodDetails is a convenience function that returns UserAccessMethodSecretDetails wrapped in UserAccessMethodDetails
@@ -52,6 +61,18 @@ func (dst *UserAccessMethodDetails) UnmarshalJSON(data []byte) error {
 	err = newStrictDecoder(data).Decode(&jsonDict)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal JSON into map for the discriminator lookup")
+	}
+
+	// check if the discriminator value is 'UserAccessMethodActiveDirectoryAccountDetails'
+	if jsonDict["_type"] == "UserAccessMethodActiveDirectoryAccountDetails" {
+		// try to unmarshal JSON data into UserAccessMethodActiveDirectoryAccountDetails
+		err = json.Unmarshal(data, &dst.UserAccessMethodActiveDirectoryAccountDetails)
+		if err == nil {
+			return nil // data stored in dst.UserAccessMethodActiveDirectoryAccountDetails, return on the first match
+		} else {
+			dst.UserAccessMethodActiveDirectoryAccountDetails = nil
+			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodActiveDirectoryAccountDetails: %s", err.Error())
+		}
 	}
 
 	// check if the discriminator value is 'UserAccessMethodSecretDetails'
@@ -90,6 +111,18 @@ func (dst *UserAccessMethodDetails) UnmarshalJSON(data []byte) error {
 		}
 	}
 
+	// check if the discriminator value is 'active_directory_account'
+	if jsonDict["_type"] == "active_directory_account" {
+		// try to unmarshal JSON data into UserAccessMethodActiveDirectoryAccountDetails
+		err = json.Unmarshal(data, &dst.UserAccessMethodActiveDirectoryAccountDetails)
+		if err == nil {
+			return nil // data stored in dst.UserAccessMethodActiveDirectoryAccountDetails, return on the first match
+		} else {
+			dst.UserAccessMethodActiveDirectoryAccountDetails = nil
+			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodActiveDirectoryAccountDetails: %s", err.Error())
+		}
+	}
+
 	// check if the discriminator value is 'ad_password'
 	if jsonDict["_type"] == "ad_password" {
 		// try to unmarshal JSON data into UserAccessMethodServerDetails
@@ -116,6 +149,18 @@ func (dst *UserAccessMethodDetails) UnmarshalJSON(data []byte) error {
 
 	// check if the discriminator value is 'brokered_rdp'
 	if jsonDict["_type"] == "brokered_rdp" {
+		// try to unmarshal JSON data into UserAccessMethodServerDetails
+		err = json.Unmarshal(data, &dst.UserAccessMethodServerDetails)
+		if err == nil {
+			return nil // data stored in dst.UserAccessMethodServerDetails, return on the first match
+		} else {
+			dst.UserAccessMethodServerDetails = nil
+			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodServerDetails: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'encrypted_ad_rdp_password'
+	if jsonDict["_type"] == "encrypted_ad_rdp_password" {
 		// try to unmarshal JSON data into UserAccessMethodServerDetails
 		err = json.Unmarshal(data, &dst.UserAccessMethodServerDetails)
 		if err == nil {
@@ -162,8 +207,44 @@ func (dst *UserAccessMethodDetails) UnmarshalJSON(data []byte) error {
 		}
 	}
 
+	// check if the discriminator value is 'principal_account_rdp_with_admin'
+	if jsonDict["_type"] == "principal_account_rdp_with_admin" {
+		// try to unmarshal JSON data into UserAccessMethodServerDetails
+		err = json.Unmarshal(data, &dst.UserAccessMethodServerDetails)
+		if err == nil {
+			return nil // data stored in dst.UserAccessMethodServerDetails, return on the first match
+		} else {
+			dst.UserAccessMethodServerDetails = nil
+			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodServerDetails: %s", err.Error())
+		}
+	}
+
 	// check if the discriminator value is 'principal_account_ssh'
 	if jsonDict["_type"] == "principal_account_ssh" {
+		// try to unmarshal JSON data into UserAccessMethodServerDetails
+		err = json.Unmarshal(data, &dst.UserAccessMethodServerDetails)
+		if err == nil {
+			return nil // data stored in dst.UserAccessMethodServerDetails, return on the first match
+		} else {
+			dst.UserAccessMethodServerDetails = nil
+			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodServerDetails: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'principal_account_ssh_with_admin'
+	if jsonDict["_type"] == "principal_account_ssh_with_admin" {
+		// try to unmarshal JSON data into UserAccessMethodServerDetails
+		err = json.Unmarshal(data, &dst.UserAccessMethodServerDetails)
+		if err == nil {
+			return nil // data stored in dst.UserAccessMethodServerDetails, return on the first match
+		} else {
+			dst.UserAccessMethodServerDetails = nil
+			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodServerDetails: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'principal_account_ssh_with_sudo'
+	if jsonDict["_type"] == "principal_account_ssh_with_sudo" {
 		// try to unmarshal JSON data into UserAccessMethodServerDetails
 		err = json.Unmarshal(data, &dst.UserAccessMethodServerDetails)
 		if err == nil {
@@ -222,11 +303,22 @@ func (dst *UserAccessMethodDetails) UnmarshalJSON(data []byte) error {
 		}
 	}
 
-	return nil
+	// If discriminator is unknown, unmarshal into Unknown
+	var unknown map[string]interface{}
+	err = json.Unmarshal(data, &unknown)
+	if err == nil {
+		dst.Unknown = unknown
+		return nil
+	}
+	return err
 }
 
 // Marshal data from the first non-nil pointers in the struct to JSON
 func (src UserAccessMethodDetails) MarshalJSON() ([]byte, error) {
+	if src.UserAccessMethodActiveDirectoryAccountDetails != nil {
+		return json.Marshal(&src.UserAccessMethodActiveDirectoryAccountDetails)
+	}
+
 	if src.UserAccessMethodSecretDetails != nil {
 		return json.Marshal(&src.UserAccessMethodSecretDetails)
 	}
@@ -239,7 +331,11 @@ func (src UserAccessMethodDetails) MarshalJSON() ([]byte, error) {
 		return json.Marshal(&src.UserAccessMethodServiceAccountDetails)
 	}
 
-	return nil, nil // no data in oneOf schemas
+	if src.Unknown != nil {
+		return json.Marshal(src.Unknown)
+	}
+
+	return nil, fmt.Errorf("no data present in any oneOf schemas or Unknown; this should be unreachable") // unreachable: no data matched, should be handled by Unknown
 }
 
 // Get the actual instance
@@ -247,6 +343,10 @@ func (obj *UserAccessMethodDetails) GetActualInstance() interface{} {
 	if obj == nil {
 		return nil
 	}
+	if obj.UserAccessMethodActiveDirectoryAccountDetails != nil {
+		return obj.UserAccessMethodActiveDirectoryAccountDetails
+	}
+
 	if obj.UserAccessMethodSecretDetails != nil {
 		return obj.UserAccessMethodSecretDetails
 	}

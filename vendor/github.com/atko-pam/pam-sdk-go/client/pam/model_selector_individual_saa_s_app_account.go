@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,9 +20,9 @@ var _ MappedNullable = &SelectorIndividualSaaSAppAccount{}
 
 // SelectorIndividualSaaSAppAccount This resource selector identifies a Service Account that exists on a specific SaaS Application
 type SelectorIndividualSaaSAppAccount struct {
-	Type           string                                   `json:"_type"`
-	ServiceAccount NamedObject                              `json:"service_account"`
-	SaasApp        *SelectorIndividualSaaSAppAccountSaasApp `json:"saas_app,omitempty"`
+	Type            string                                           `json:"_type"`
+	ServiceAccount  NamedObject                                      `json:"service_account"`
+	SaasAppInstance *SelectorIndividualSaaSAppAccountSaasAppInstance `json:"saas_app_instance,omitempty"`
 }
 
 // NewSelectorIndividualSaaSAppAccount instantiates a new SelectorIndividualSaaSAppAccount object
@@ -94,36 +94,36 @@ func (o *SelectorIndividualSaaSAppAccount) SetServiceAccount(v NamedObject) *Sel
 	return o
 }
 
-// GetSaasApp returns the SaasApp field value if set, zero value otherwise.
-func (o *SelectorIndividualSaaSAppAccount) GetSaasApp() SelectorIndividualSaaSAppAccountSaasApp {
-	if o == nil || IsNil(o.SaasApp) {
-		var ret SelectorIndividualSaaSAppAccountSaasApp
+// GetSaasAppInstance returns the SaasAppInstance field value if set, zero value otherwise.
+func (o *SelectorIndividualSaaSAppAccount) GetSaasAppInstance() SelectorIndividualSaaSAppAccountSaasAppInstance {
+	if o == nil || IsNil(o.SaasAppInstance) {
+		var ret SelectorIndividualSaaSAppAccountSaasAppInstance
 		return ret
 	}
-	return *o.SaasApp
+	return *o.SaasAppInstance
 }
 
-// GetSaasAppOk returns a tuple with the SaasApp field value if set, nil otherwise
+// GetSaasAppInstanceOk returns a tuple with the SaasAppInstance field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *SelectorIndividualSaaSAppAccount) GetSaasAppOk() (*SelectorIndividualSaaSAppAccountSaasApp, bool) {
-	if o == nil || IsNil(o.SaasApp) {
+func (o *SelectorIndividualSaaSAppAccount) GetSaasAppInstanceOk() (*SelectorIndividualSaaSAppAccountSaasAppInstance, bool) {
+	if o == nil || IsNil(o.SaasAppInstance) {
 		return nil, false
 	}
-	return o.SaasApp, true
+	return o.SaasAppInstance, true
 }
 
-// HasSaasApp returns a boolean if a field has been set.
-func (o *SelectorIndividualSaaSAppAccount) HasSaasApp() bool {
-	if o != nil && !IsNil(o.SaasApp) {
+// HasSaasAppInstance returns a boolean if a field has been set.
+func (o *SelectorIndividualSaaSAppAccount) HasSaasAppInstance() bool {
+	if o != nil && !IsNil(o.SaasAppInstance) {
 		return true
 	}
 
 	return false
 }
 
-// SetSaasApp gets a reference to the given SelectorIndividualSaaSAppAccountSaasApp and assigns it to the SaasApp field.
-func (o *SelectorIndividualSaaSAppAccount) SetSaasApp(v SelectorIndividualSaaSAppAccountSaasApp) *SelectorIndividualSaaSAppAccount {
-	o.SaasApp = &v
+// SetSaasAppInstance gets a reference to the given SelectorIndividualSaaSAppAccountSaasAppInstance and assigns it to the SaasAppInstance field.
+func (o *SelectorIndividualSaaSAppAccount) SetSaasAppInstance(v SelectorIndividualSaaSAppAccountSaasAppInstance) *SelectorIndividualSaaSAppAccount {
+	o.SaasAppInstance = &v
 	return o
 }
 
@@ -139,8 +139,8 @@ func (o SelectorIndividualSaaSAppAccount) ToMap() (map[string]interface{}, error
 	toSerialize := map[string]interface{}{}
 	toSerialize["_type"] = o.Type
 	toSerialize["service_account"] = o.ServiceAccount
-	if !IsNil(o.SaasApp) {
-		toSerialize["saas_app"] = o.SaasApp
+	if !IsNil(o.SaasAppInstance) {
+		toSerialize["saas_app_instance"] = o.SaasAppInstance
 	}
 	return toSerialize, nil
 }

@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,19 +20,19 @@ var _ MappedNullable = &TeamStats{}
 
 // TeamStats struct for TeamStats
 type TeamStats struct {
-	// The number of Clients in a Team
+	// The number of clients in a team
 	NumClients int32 `json:"num_clients"`
-	// The number of Gateways in a Team
+	// The number of gateways in a team
 	NumGateways int32 `json:"num_gateways"`
-	// The number of Groups in a Team
+	// The number of groups in a team
 	NumGroups int32 `json:"num_groups"`
-	// The number of Users in a Team
+	// The number of users in a team
 	NumHumanUsers int32 `json:"num_human_users"`
-	// The number of Projects in a Team
+	// The number of projects in a team
 	NumProjects int32 `json:"num_projects"`
-	// The number of Servers in a Team
+	// The number of servers in a team
 	NumServers int32 `json:"num_servers"`
-	// The number of Service Users in a Team
+	// The number of service users in a team
 	NumServiceUsers int32 `json:"num_service_users"`
 }
 

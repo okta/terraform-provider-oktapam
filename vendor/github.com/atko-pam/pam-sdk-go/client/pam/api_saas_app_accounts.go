@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -36,16 +36,16 @@ func (r ApiGetOktaUDServiceAccountEndUserRequest) Execute() (*ServiceAccountEndU
 }
 
 /*
-	GetOktaUDServiceAccountEndUser Get a Okta Universal Directory service account user has access to
+GetOktaUDServiceAccountEndUser Get a Okta Universal Directory service account user has access to
 
-	    Gets a Okta Universal Directory service account user has access to based on the security policies
+	Gets a Okta Universal Directory service account user has access to based on the security policies
 
-This endpoint requires the following role: `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param oktaUniversalDirectoryAccountId The UUID of an Okta Universal Directory Account
-	@return ApiGetOktaUDServiceAccountEndUserRequest
+	@param teamName The name of your team
+	@param oktaUniversalDirectoryAccountId The UUID of a Universal Directory account
+
+@return ApiGetOktaUDServiceAccountEndUserRequest
 */
 func (a *SaasAppAccountsAPIService) GetOktaUDServiceAccountEndUser(ctx context.Context, teamName string, oktaUniversalDirectoryAccountId string) ApiGetOktaUDServiceAccountEndUserRequest {
 	return ApiGetOktaUDServiceAccountEndUserRequest{
@@ -132,17 +132,17 @@ func (r ApiGetSaaSApplicationServiceAccountEndUserRequest) Execute() (*ServiceAc
 }
 
 /*
-	GetSaaSApplicationServiceAccountEndUser Get a SaaS application service account that the user has access to
+GetSaaSApplicationServiceAccountEndUser Get a SaaS application service account that the user has access to
 
-	    Gets a SaaS application service account that the user has access to based on the security policies
+	Gets a SaaS application service account that the user has access to based on the security policies
 
-This endpoint requires the following role: `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
-	    @param saasAppAccountId The UUID of a SaaS Application Account
-	@return ApiGetSaaSApplicationServiceAccountEndUserRequest
+	@param teamName The name of your team
+	@param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+	@param saasAppAccountId The UUID of a SaaS app account
+
+@return ApiGetSaaSApplicationServiceAccountEndUserRequest
 */
 func (a *SaasAppAccountsAPIService) GetSaaSApplicationServiceAccountEndUser(ctx context.Context, teamName string, saasAppInstanceId string, saasAppAccountId string) ApiGetSaaSApplicationServiceAccountEndUserRequest {
 	return ApiGetSaaSApplicationServiceAccountEndUserRequest{
@@ -218,6 +218,109 @@ func (a *SaasAppAccountsAPIService) GetSaaSApplicationServiceAccountEndUserExecu
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
+type ApiGetSaasAppAccountDetailsRequest struct {
+	ctx              context.Context
+	ApiService       *SaasAppAccountsAPIService
+	teamName         string
+	resourceGroupId  string
+	projectId        string
+	saasAppAccountId string
+}
+
+func (r ApiGetSaasAppAccountDetailsRequest) Execute() (*SaasAppAccountDetails, *http.Response, error) {
+	return r.ApiService.GetSaasAppAccountDetailsExecute(r)
+}
+
+/*
+GetSaasAppAccountDetails Retrieve a SaaS app account
+
+	Retrieves a SaaS app account from a project in a resource group.
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+	@param saasAppAccountId The UUID of a SaaS app account
+
+@return ApiGetSaasAppAccountDetailsRequest
+*/
+func (a *SaasAppAccountsAPIService) GetSaasAppAccountDetails(ctx context.Context, teamName string, resourceGroupId string, projectId string, saasAppAccountId string) ApiGetSaasAppAccountDetailsRequest {
+	return ApiGetSaasAppAccountDetailsRequest{
+		ApiService:       a,
+		ctx:              ctx,
+		teamName:         teamName,
+		resourceGroupId:  resourceGroupId,
+		projectId:        projectId,
+		saasAppAccountId: saasAppAccountId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return SaasAppAccountDetails
+func (a *SaasAppAccountsAPIService) GetSaasAppAccountDetailsExecute(r ApiGetSaasAppAccountDetailsRequest) (*SaasAppAccountDetails, *http.Response, error) {
+	var (
+		traceKey            = "saasappaccountsapi.getSaasAppAccountDetails"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *SaasAppAccountDetails
+	)
+
+	localVarPath := "/v1/teams/{team_name}/resource_groups/{resource_group_id}/projects/{project_id}/saas_app_accounts/{saas_app_account_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"resource_group_id"+"}", url.PathEscape(parameterValueToString(r.resourceGroupId, "resourceGroupId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"saas_app_account_id"+"}", url.PathEscape(parameterValueToString(r.saasAppAccountId, "saasAppAccountId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, err
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, err
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
 type ApiGetSaasApplicationAccessibleByUserRequest struct {
 	ctx               context.Context
 	ApiService        *SaasAppAccountsAPIService
@@ -230,16 +333,16 @@ func (r ApiGetSaasApplicationAccessibleByUserRequest) Execute() (*SaasApplicatio
 }
 
 /*
-	GetSaasApplicationAccessibleByUser Get a SaaS Application instance accessible to the end user
+GetSaasApplicationAccessibleByUser Get a SaaS Application instance accessible to the end user
 
-	    Gets a SaaS Application instance that an end user has access to through at least one account based on the security policies
+	Gets a SaaS app instance that an end user has access to through at least one account based on the security policies
 
-This endpoint requires the following role: `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
-	@return ApiGetSaasApplicationAccessibleByUserRequest
+	@param teamName The name of your team
+	@param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+
+@return ApiGetSaasApplicationAccessibleByUserRequest
 */
 func (a *SaasAppAccountsAPIService) GetSaasApplicationAccessibleByUser(ctx context.Context, teamName string, saasAppInstanceId string) ApiGetSaasApplicationAccessibleByUserRequest {
 	return ApiGetSaasApplicationAccessibleByUserRequest{
@@ -328,7 +431,7 @@ func (r ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest) Contains(cont
 	return r
 }
 
-// If &#x60;true&#x60;, only return SaaS Application Accounts that support password rotation. If &#x60;false&#x60;, only return SaaS Application Accounts that do not support password rotation.
+// If &#x60;true&#x60;, only return SaaS app accounts that support password rotation. If &#x60;false&#x60;, only return SaaS app accounts that do not support password rotation.
 func (r ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest) Managed(managed bool) ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest {
 	r.managed = &managed
 	return r
@@ -339,16 +442,16 @@ func (r ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest) Execute() (*L
 }
 
 /*
-	ListAllSaasAppAccountsForDelegatedSecurityAdmin List all SaaS Application Accounts in a Resource Group
+ListAllSaasAppAccountsForDelegatedSecurityAdmin List all SaaS app accounts in a resource group
 
-	    Lists all SaaS Application Accounts for the current Security Admin or Delegated Security Admin for the Resource Group
+	Lists all SaaS app accounts in a resource group
 
-This endpoint requires one of the following roles: `security_admin`, `delegated_security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	@return ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+
+@return ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest
 */
 func (a *SaasAppAccountsAPIService) ListAllSaasAppAccountsForDelegatedSecurityAdmin(ctx context.Context, teamName string, resourceGroupId string) ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest {
 	return ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest{
@@ -442,7 +545,7 @@ func (r ApiListAllSaasAppAccountsForSecurityAdminRequest) Contains(contains stri
 	return r
 }
 
-// If &#x60;true&#x60;, only return SaaS Application Accounts that support password rotation. If &#x60;false&#x60;, only return SaaS Application Accounts that do not support password rotation.
+// If &#x60;true&#x60;, only return SaaS app accounts that support password rotation. If &#x60;false&#x60;, only return SaaS app accounts that do not support password rotation.
 func (r ApiListAllSaasAppAccountsForSecurityAdminRequest) Managed(managed bool) ApiListAllSaasAppAccountsForSecurityAdminRequest {
 	r.managed = &managed
 	return r
@@ -453,15 +556,15 @@ func (r ApiListAllSaasAppAccountsForSecurityAdminRequest) Execute() (*ListAllSaa
 }
 
 /*
-	ListAllSaasAppAccountsForSecurityAdmin List all SaaS Application Accounts
+ListAllSaasAppAccountsForSecurityAdmin List all SaaS app accounts
 
-	    Lists all SaaS Application Accounts for the current Security Admin
+	Lists all SaaS app accounts
 
-This endpoint requires the following role: `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListAllSaasAppAccountsForSecurityAdminRequest
+	@param teamName The name of your team
+
+@return ApiListAllSaasAppAccountsForSecurityAdminRequest
 */
 func (a *SaasAppAccountsAPIService) ListAllSaasAppAccountsForSecurityAdmin(ctx context.Context, teamName string) ApiListAllSaasAppAccountsForSecurityAdminRequest {
 	return ApiListAllSaasAppAccountsForSecurityAdminRequest{
@@ -539,137 +642,6 @@ func (a *SaasAppAccountsAPIService) ListAllSaasAppAccountsForSecurityAdminExecut
 	return localVarReturnValue, localVarHTTPResponse, err
 }
 
-type ApiListOktaUDServiceAccountsEndUserRequest struct {
-	ctx        context.Context
-	ApiService *SaasAppAccountsAPIService
-	teamName   string
-	count      *int32
-	prev       *bool
-	offset     *string
-	descending *bool
-}
-
-// The number of objects per page
-func (r ApiListOktaUDServiceAccountsEndUserRequest) Count(count int32) ApiListOktaUDServiceAccountsEndUserRequest {
-	r.count = &count
-	return r
-}
-
-// The direction of paging
-func (r ApiListOktaUDServiceAccountsEndUserRequest) Prev(prev bool) ApiListOktaUDServiceAccountsEndUserRequest {
-	r.prev = &prev
-	return r
-}
-
-// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
-func (r ApiListOktaUDServiceAccountsEndUserRequest) Offset(offset string) ApiListOktaUDServiceAccountsEndUserRequest {
-	r.offset = &offset
-	return r
-}
-
-// The object order
-func (r ApiListOktaUDServiceAccountsEndUserRequest) Descending(descending bool) ApiListOktaUDServiceAccountsEndUserRequest {
-	r.descending = &descending
-	return r
-}
-
-func (r ApiListOktaUDServiceAccountsEndUserRequest) Execute() (*ListServiceAccountsEndUserResponse, *http.Response, error) {
-	return r.ApiService.ListOktaUDServiceAccountsEndUserExecute(r)
-}
-
-/*
-	ListOktaUDServiceAccountsEndUser List Okta Universal Directory service accounts user has access to
-
-	    List Okta Universal Directory service accounts user has access to based on the security policies
-
-This endpoint requires the following role: `end_user`.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListOktaUDServiceAccountsEndUserRequest
-*/
-func (a *SaasAppAccountsAPIService) ListOktaUDServiceAccountsEndUser(ctx context.Context, teamName string) ApiListOktaUDServiceAccountsEndUserRequest {
-	return ApiListOktaUDServiceAccountsEndUserRequest{
-		ApiService: a,
-		ctx:        ctx,
-		teamName:   teamName,
-	}
-}
-
-// Execute executes the request
-//
-//	@return ListServiceAccountsEndUserResponse
-func (a *SaasAppAccountsAPIService) ListOktaUDServiceAccountsEndUserExecute(r ApiListOktaUDServiceAccountsEndUserRequest) (*ListServiceAccountsEndUserResponse, *http.Response, error) {
-	var (
-		traceKey            = "saasappaccountsapi.listOktaUDServiceAccountsEndUser"
-		localVarHTTPMethod  = http.MethodGet
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *ListServiceAccountsEndUserResponse
-	)
-
-	localVarPath := "/v1/teams/{team_name}/okta_universal_directory_accounts"
-	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if r.count != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
-	}
-	if r.prev != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
-	}
-	if r.offset != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
-	}
-	if r.descending != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
-	}
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
-
-	if err != nil {
-		if localVarHTTPResponse == nil {
-			return localVarReturnValue, nil, err
-		}
-
-		// read and unmarshal error response into right struct
-		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
-		if err != nil {
-			return localVarReturnValue, nil, err
-		}
-		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
-		}
-		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
-		var apiError APIError
-		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
-		}
-		return localVarReturnValue, localVarHTTPResponse, apiError
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, err
-}
-
 type ApiListResourceGroupProjectSaasAppAccountsRequest struct {
 	ctx             context.Context
 	ApiService      *SaasAppAccountsAPIService
@@ -686,7 +658,7 @@ func (r ApiListResourceGroupProjectSaasAppAccountsRequest) Contains(contains str
 	return r
 }
 
-// If &#x60;true&#x60;, only return SaaS Application Accounts that support password rotation. If &#x60;false&#x60;, only return SaaS Application Accounts that do not support password rotation.
+// If &#x60;true&#x60;, only return SaaS app accounts that support password rotation. If &#x60;false&#x60;, only return SaaS app accounts that do not support password rotation.
 func (r ApiListResourceGroupProjectSaasAppAccountsRequest) Managed(managed bool) ApiListResourceGroupProjectSaasAppAccountsRequest {
 	r.managed = &managed
 	return r
@@ -697,17 +669,17 @@ func (r ApiListResourceGroupProjectSaasAppAccountsRequest) Execute() (*ListResou
 }
 
 /*
-	ListResourceGroupProjectSaasAppAccounts List all SaaS Application Accounts in a Project
+ListResourceGroupProjectSaasAppAccounts List all SaaS app accounts in a project
 
-	    Lists all SaaS Application Accounts in a Project in a Resource Group.
+	Lists all SaaS app accounts in a project in a resource group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param resourceGroupId The UUID of a Resource Group
-	    @param projectId The UUID of a Project
-	@return ApiListResourceGroupProjectSaasAppAccountsRequest
+	@param teamName The name of your team
+	@param resourceGroupId The UUID of a resource group
+	@param projectId The UUID of a project
+
+@return ApiListResourceGroupProjectSaasAppAccountsRequest
 */
 func (a *SaasAppAccountsAPIService) ListResourceGroupProjectSaasAppAccounts(ctx context.Context, teamName string, resourceGroupId string, projectId string) ApiListResourceGroupProjectSaasAppAccountsRequest {
 	return ApiListResourceGroupProjectSaasAppAccountsRequest{
@@ -829,16 +801,16 @@ func (r ApiListSaaSApplicationServiceAccountsEndUserRequest) Execute() (*ListSer
 }
 
 /*
-	ListSaaSApplicationServiceAccountsEndUser List SaaS application service accounts user has access to
+ListSaaSApplicationServiceAccountsEndUser List SaaS application service accounts the user has access to
 
-	    List SaaS application service accounts user has access to based on the security policies
+	List SaaS application service accounts the user has access to based on the security policies.
 
-This endpoint requires the following role: `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
-	@return ApiListSaaSApplicationServiceAccountsEndUserRequest
+	@param teamName The name of your team
+	@param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+
+@return ApiListSaaSApplicationServiceAccountsEndUserRequest
 */
 func (a *SaasAppAccountsAPIService) ListSaaSApplicationServiceAccountsEndUser(ctx context.Context, teamName string, saasAppInstanceId string) ApiListSaaSApplicationServiceAccountsEndUserRequest {
 	return ApiListSaaSApplicationServiceAccountsEndUserRequest{
@@ -963,15 +935,15 @@ func (r ApiListSaasApplicationsAccessibleByUserRequest) Execute() (*ListSaasAppl
 }
 
 /*
-	ListSaasApplicationsAccessibleByUser List SaaS Application instances accessible to the end user
+ListSaasApplicationsAccessibleByUser List SaaS Application instances accessible to the end user
 
-	    List SaaS Application instances that an end user has access to through at least one account based on the security policies
+	List SaaS Application instances that an end user has access to through at least one account based on the security policies.
 
-This endpoint requires the following role: `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListSaasApplicationsAccessibleByUserRequest
+	@param teamName The name of your team
+
+@return ApiListSaasApplicationsAccessibleByUserRequest
 */
 func (a *SaasAppAccountsAPIService) ListSaasApplicationsAccessibleByUser(ctx context.Context, teamName string) ApiListSaasApplicationsAccessibleByUserRequest {
 	return ApiListSaasApplicationsAccessibleByUserRequest{
@@ -1068,17 +1040,17 @@ func (r ApiListUAMForSaaSApplicationAccountRequest) Execute() (*ListUAMForServic
 }
 
 /*
-	ListUAMForSaaSApplicationAccount List SaaS application account user access methods
+ListUAMForSaaSApplicationAccount List SaaS application account user access methods
 
-	    List SaaS application account user access methods based on the security policies
+	List SaaS application account user access methods based on the security policies.
 
-This endpoint requires the following role: `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
-	    @param saasAppAccountId The UUID of a SaaS Application Account
-	@return ApiListUAMForSaaSApplicationAccountRequest
+	@param teamName The name of your team
+	@param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+	@param saasAppAccountId The UUID of a SaaS app account
+
+@return ApiListUAMForSaaSApplicationAccountRequest
 */
 func (a *SaasAppAccountsAPIService) ListUAMForSaaSApplicationAccount(ctx context.Context, teamName string, saasAppInstanceId string, saasAppAccountId string) ApiListUAMForSaaSApplicationAccountRequest {
 	return ApiListUAMForSaaSApplicationAccountRequest{
@@ -1173,17 +1145,17 @@ func (r ApiRevealSaasAppAccountPasswordRequest) Execute() (*ServiceAccountsRevea
 }
 
 /*
-	RevealSaasAppAccountPassword Reveal the password for SaaS App Account.
+RevealSaasAppAccountPassword Reveal the password for SaaS app account.
 
-	    Reveals the password belonging to a SaaS App Account (managed & unmanaged) that the end user has access to.
+	Reveals the password belonging to a SaaS app account (managed and unmanaged) that the end user has access to.
 
-This endpoint requires one of the following roles: `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
-	    @param saasAppAccountId The UUID of a SaaS Application Account
-	@return ApiRevealSaasAppAccountPasswordRequest
+	@param teamName The name of your team
+	@param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+	@param saasAppAccountId The UUID of a SaaS app account
+
+@return ApiRevealSaasAppAccountPasswordRequest
 */
 func (a *SaasAppAccountsAPIService) RevealSaasAppAccountPassword(ctx context.Context, teamName string, saasAppInstanceId string, saasAppAccountId string) ApiRevealSaasAppAccountPasswordRequest {
 	return ApiRevealSaasAppAccountPasswordRequest{
@@ -1266,6 +1238,18 @@ func (a *SaasAppAccountsAPIService) RevealSaasAppAccountPasswordExecute(r ApiRev
 			return nil, localVarHTTPResponse, nonDefaultResponse
 
 		}
+		if localVarHTTPResponse.StatusCode == 403 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v ForbiddenUAMResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
 		if localVarHTTPResponse.StatusCode == 404 {
 
 			var nonDefaultResponse ErrNonDefaultResponse
@@ -1307,17 +1291,17 @@ func (r ApiUpdateSaasAppAccountPasswordRequest) Execute() (*http.Response, error
 }
 
 /*
-	UpdateSaasAppAccountPassword Update the password for SaaS App Account.
+UpdateSaasAppAccountPassword Update the password for SaaS app account.
 
-	    Updates the password belonging to a SaaS App Account (managed & unmanaged) that the end user has access to.
+	Updates the password belonging to a SaaS app account (managed and unmanaged) that the end user has access to.
 
-This endpoint requires one of the following roles: `end_user`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
-	    @param saasAppAccountId The UUID of a SaaS Application Account
-	@return ApiUpdateSaasAppAccountPasswordRequest
+	@param teamName The name of your team
+	@param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+	@param saasAppAccountId The UUID of a SaaS app account
+
+@return ApiUpdateSaasAppAccountPasswordRequest
 */
 func (a *SaasAppAccountsAPIService) UpdateSaasAppAccountPassword(ctx context.Context, teamName string, saasAppInstanceId string, saasAppAccountId string) ApiUpdateSaasAppAccountPasswordRequest {
 	return ApiUpdateSaasAppAccountPasswordRequest{
@@ -1389,6 +1373,18 @@ func (a *SaasAppAccountsAPIService) UpdateSaasAppAccountPasswordExecute(r ApiUpd
 
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return localVarHTTPResponse, err
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v ForbiddenUAMResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
 				return localVarHTTPResponse, err
 			}

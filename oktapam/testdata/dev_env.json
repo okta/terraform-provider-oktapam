@@ -1,7 +1,7 @@
 {
   "active": true,
   "description": "An example security policy for dev environment",
-  "id": "c1c33e8759696ee0b08bfb011f1ff83ede24ddab4ce6ac1e04de236c6921bb20",
+  "id": "c48ed468-64c8-4983-83c8-d5e2490981d3",
   "name": "development environment policy",
   "principals": {
     "user_groups": [
@@ -70,10 +70,10 @@
             "principal_account_ssh": true,
             "sudo_command_bundles": [
               {
-                "id": "8f0a4078dac524edb5cab129869aadc027596fae7ff75a30b0e7e02176078648"
+                "id": "8f0a4078-dac5-44ed-85ca-b129869aadc0"
               },
               {
-                "id": "e83ea5c23e0aba26201fbf096b94d7b0d58fc618bfd033ea5e61dc769bd308a1"
+                "id": "e83ea5c2-3e0a-4a26-801f-bf096b94d7b0"
               }
             ],
             "sudo_display_name": "sudo-display-name for end user"
@@ -148,6 +148,51 @@
               "server_selector": {
                 "labels": {
                   "system.os_type": "linux"
+                }
+              }
+            },
+            "selector_type": "server_label"
+          }
+        ]
+      },
+      "resource_type": "server_based_resource"
+    },
+    {
+      "name": "windows server account and admin level access",
+      "privileges": [
+        {
+          "privilege_type": "password_checkout_rdp",
+          "privilege_value": {
+            "_type": "password_checkout_rdp",
+            "password_checkout_rdp": true
+          }
+        },
+        {
+          "privilege_type": "principal_account_rdp",
+          "privilege_value": {
+            "_type": "principal_account_rdp",
+            "admin_level_permissions": true,
+            "principal_account_rdp": true
+          }
+        }
+      ],
+      "resource_selector": {
+        "_type": "server_based_resource",
+        "selectors": [
+          {
+            "selector": {
+              "_type": "server_label",
+              "account_selector": {
+                "_type": "username",
+                "usernames": [
+                  "foo",
+                  "bar"
+                ]
+              },
+              "account_selector_type": "username",
+              "server_selector": {
+                "labels": {
+                  "system.os_type": "windows"
                 }
               }
             },

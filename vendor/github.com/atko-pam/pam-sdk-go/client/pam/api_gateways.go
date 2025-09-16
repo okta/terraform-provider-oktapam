@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -41,15 +41,15 @@ func (r ApiCreateGatewaySetupTokenRequest) Execute() (*GatewaySetupToken, *http.
 }
 
 /*
-	CreateGatewaySetupToken Create a Gateway Setup Token
+CreateGatewaySetupToken Create a gateway setup token
 
-	    Creates a Gateway Setup Token for your Team
+	Creates a gateway setup token for your team
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiCreateGatewaySetupTokenRequest
+	@param teamName The name of your team
+
+@return ApiCreateGatewaySetupTokenRequest
 */
 func (a *GatewaysAPIService) CreateGatewaySetupToken(ctx context.Context, teamName string) ApiCreateGatewaySetupTokenRequest {
 	return ApiCreateGatewaySetupTokenRequest{
@@ -138,16 +138,16 @@ func (r ApiDeleteGatewayInstanceRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	DeleteGatewayInstance Delete a Gateway
+DeleteGatewayInstance Delete a gateway
 
-	    Deletes the specified Gateway from your Team
+	Deletes the specified gateway from your team
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param gatewayId The UUID of a Gateway
-	@return ApiDeleteGatewayInstanceRequest
+	@param teamName The name of your team
+	@param gatewayId The UUID of a gateway
+
+@return ApiDeleteGatewayInstanceRequest
 */
 func (a *GatewaysAPIService) DeleteGatewayInstance(ctx context.Context, teamName string, gatewayId string) ApiDeleteGatewayInstanceRequest {
 	return ApiDeleteGatewayInstanceRequest{
@@ -230,16 +230,16 @@ func (r ApiDeleteGatewaySetupTokenRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	DeleteGatewaySetupToken Delete a Gateway Setup Token
+DeleteGatewaySetupToken Delete a gateway setup token
 
-	    Deletes the specified Gateway Setup Token
+	Deletes the specified gateway setup token
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param gatewaySetupTokenId The UUID of a Gateway Setup Token
-	@return ApiDeleteGatewaySetupTokenRequest
+	@param teamName The name of your team
+	@param gatewaySetupTokenId The UUID of a gateway setup token
+
+@return ApiDeleteGatewaySetupTokenRequest
 */
 func (a *GatewaysAPIService) DeleteGatewaySetupToken(ctx context.Context, teamName string, gatewaySetupTokenId string) ApiDeleteGatewaySetupTokenRequest {
 	return ApiDeleteGatewaySetupTokenRequest{
@@ -322,16 +322,16 @@ func (r ApiFetchGatewaySetupTokenRequest) Execute() (*GatewaySetupToken, *http.R
 }
 
 /*
-	FetchGatewaySetupToken Retrieve a Gateway Setup Token
+FetchGatewaySetupToken Retrieve a gateway setup token
 
-	    Retrieves the specified Gateway Setup Token
+	Retrieves the specified gateway setup token
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param gatewaySetupTokenId The UUID of a Gateway Setup Token
-	@return ApiFetchGatewaySetupTokenRequest
+	@param teamName The name of your team
+	@param gatewaySetupTokenId The UUID of a gateway setup token
+
+@return ApiFetchGatewaySetupTokenRequest
 */
 func (a *GatewaysAPIService) FetchGatewaySetupToken(ctx context.Context, teamName string, gatewaySetupTokenId string) ApiFetchGatewaySetupTokenRequest {
 	return ApiFetchGatewaySetupTokenRequest{
@@ -417,16 +417,16 @@ func (r ApiFetchGatewaySetupTokenAsAgentTokenRequest) Execute() (*GatewaySetupTo
 }
 
 /*
-	FetchGatewaySetupTokenAsAgentToken Retrieve a Gateway Setup Token
+FetchGatewaySetupTokenAsAgentToken Retrieve a gateway setup token
 
-	    Retrieves the specified Gateway Setup Token
+	Retrieves the specified gateway setup token
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param gatewaySetupTokenId The UUID of a Gateway Setup Token
-	@return ApiFetchGatewaySetupTokenAsAgentTokenRequest
+	@param teamName The name of your team
+	@param gatewaySetupTokenId The UUID of a gateway setup token
+
+@return ApiFetchGatewaySetupTokenAsAgentTokenRequest
 */
 func (a *GatewaysAPIService) FetchGatewaySetupTokenAsAgentToken(ctx context.Context, teamName string, gatewaySetupTokenId string) ApiFetchGatewaySetupTokenAsAgentTokenRequest {
 	return ApiFetchGatewaySetupTokenAsAgentTokenRequest{
@@ -512,16 +512,16 @@ func (r ApiGetGatewayInstanceRequest) Execute() (*GatewayAgent, *http.Response, 
 }
 
 /*
-	GetGatewayInstance Retrieve a Gateway
+GetGatewayInstance Retrieve a gateway
 
-	    Retrieves the properties of a specified Gateway
+	Retrieves the properties of a specified gateway
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param gatewayId The UUID of a Gateway
-	@return ApiGetGatewayInstanceRequest
+	@param teamName The name of your team
+	@param gatewayId The UUID of a gateway
+
+@return ApiGetGatewayInstanceRequest
 */
 func (a *GatewaysAPIService) GetGatewayInstance(ctx context.Context, teamName string, gatewayId string) ApiGetGatewayInstanceRequest {
 	return ApiGetGatewayInstanceRequest{
@@ -607,16 +607,16 @@ func (r ApiGetGatewayStatusReportRequest) Execute() (*GatewayStatusReport, *http
 }
 
 /*
-	GetGatewayStatusReport Retrieve a status report for a Gateway
+GetGatewayStatusReport Retrieve a status report for a gateway
 
-	    Retrieve a status report for the specified Gateway
+	Retrieve a status report for the specified gateway
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param gatewayId The UUID of a Gateway
-	@return ApiGetGatewayStatusReportRequest
+	@param teamName The name of your team
+	@param gatewayId The UUID of a gateway
+
+@return ApiGetGatewayStatusReportRequest
 */
 func (a *GatewaysAPIService) GetGatewayStatusReport(ctx context.Context, teamName string, gatewayId string) ApiGetGatewayStatusReportRequest {
 	return ApiGetGatewayStatusReportRequest{
@@ -729,15 +729,15 @@ func (r ApiListGatewaySetupTokensRequest) Execute() (*ListGatewaySetupTokensResp
 }
 
 /*
-	ListGatewaySetupTokens List all Gateway Setup Tokens
+ListGatewaySetupTokens List all gateway setup tokens
 
-	    Lists all Gateway Setup Tokens for your Team
+	Lists all gateway setup tokens for your team
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListGatewaySetupTokensRequest
+	@param teamName The name of your team
+
+@return ApiListGatewaySetupTokensRequest
 */
 func (a *GatewaysAPIService) ListGatewaySetupTokens(ctx context.Context, teamName string) ApiListGatewaySetupTokensRequest {
 	return ApiListGatewaySetupTokensRequest{
@@ -867,15 +867,15 @@ func (r ApiListGatewaysRequest) Execute() (*ListGatewaysResponse, *http.Response
 }
 
 /*
-	ListGateways List all Gateways
+ListGateways List all gateways
 
-	    Lists all Gateways for your Team
+	Lists all gateways for your team
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListGatewaysRequest
+	@param teamName The name of your team
+
+@return ApiListGatewaysRequest
 */
 func (a *GatewaysAPIService) ListGateways(ctx context.Context, teamName string) ApiListGatewaysRequest {
 	return ApiListGatewaysRequest{
@@ -980,16 +980,16 @@ func (r ApiUpdateGatewayInstanceRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	UpdateGatewayInstance Update a Gateway
+UpdateGatewayInstance Update a gateway
 
-	    Updates a specified Gateway
+	Updates a specified gateway
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param gatewayId The UUID of a Gateway
-	@return ApiUpdateGatewayInstanceRequest
+	@param teamName The name of your team
+	@param gatewayId The UUID of a gateway
+
+@return ApiUpdateGatewayInstanceRequest
 */
 func (a *GatewaysAPIService) UpdateGatewayInstance(ctx context.Context, teamName string, gatewayId string) ApiUpdateGatewayInstanceRequest {
 	return ApiUpdateGatewayInstanceRequest{

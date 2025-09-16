@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -41,15 +41,15 @@ func (r ApiCreateSecurityPolicyRequest) Execute() (*SecurityPolicy, *http.Respon
 }
 
 /*
-	CreateSecurityPolicy Create a Security Policy
+CreateSecurityPolicy Create a security policy
 
-	    Creates a Security Policy
+	Creates a security policy
 
-This endpoint requires the following role: `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiCreateSecurityPolicyRequest
+	@param teamName The name of your team
+
+@return ApiCreateSecurityPolicyRequest
 */
 func (a *SecurityPolicyAPIService) CreateSecurityPolicy(ctx context.Context, teamName string) ApiCreateSecurityPolicyRequest {
 	return ApiCreateSecurityPolicyRequest{
@@ -135,16 +135,16 @@ func (r ApiDeleteSecurityPolicyRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	DeleteSecurityPolicy Delete a Security Policy
+DeleteSecurityPolicy Delete a security policy
 
-	    Deletes the specified Security Policy
+	Deletes the specified security policy
 
-This endpoint requires the following role: `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param securityPolicyId The UUID of a Security Policy
-	@return ApiDeleteSecurityPolicyRequest
+	@param teamName The name of your team
+	@param securityPolicyId The UUID of a security policy
+
+@return ApiDeleteSecurityPolicyRequest
 */
 func (a *SecurityPolicyAPIService) DeleteSecurityPolicy(ctx context.Context, teamName string, securityPolicyId string) ApiDeleteSecurityPolicyRequest {
 	return ApiDeleteSecurityPolicyRequest{
@@ -227,16 +227,16 @@ func (r ApiGetSecurityPolicyRequest) Execute() (*SecurityPolicy, *http.Response,
 }
 
 /*
-	GetSecurityPolicy Retrieve a Security Policy
+GetSecurityPolicy Retrieve a security policy
 
-	    Retrieves the specified Security Policy
+	Retrieves the specified security policy.
 
-This endpoint requires the following role: `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param securityPolicyId The UUID of a Security Policy
-	@return ApiGetSecurityPolicyRequest
+	@param teamName The name of your team
+	@param securityPolicyId The UUID of a security policy
+
+@return ApiGetSecurityPolicyRequest
 */
 func (a *SecurityPolicyAPIService) GetSecurityPolicy(ctx context.Context, teamName string, securityPolicyId string) ApiGetSecurityPolicyRequest {
 	return ApiGetSecurityPolicyRequest{
@@ -321,15 +321,15 @@ func (r ApiListSecurityPoliciesRequest) Execute() (*ListSecurityPoliciesResponse
 }
 
 /*
-	ListSecurityPolicies List all Security Policies
+ListSecurityPolicies List all security policies
 
-	    Lists all Security Policies for the current Security Admin
+	Lists all security policies
 
-This endpoint requires the following role: `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListSecurityPoliciesRequest
+	@param teamName The name of your team
+
+@return ApiListSecurityPoliciesRequest
 */
 func (a *SecurityPolicyAPIService) ListSecurityPolicies(ctx context.Context, teamName string) ApiListSecurityPoliciesRequest {
 	return ApiListSecurityPoliciesRequest{
@@ -419,16 +419,16 @@ func (r ApiUpdateSecurityPolicyRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	UpdateSecurityPolicy Update a Security Policy
+UpdateSecurityPolicy Update a security policy
 
-	    Updates the specified Security Policy
+	Updates the specified security policy
 
-This endpoint requires the following role: `security_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param securityPolicyId The UUID of a Security Policy
-	@return ApiUpdateSecurityPolicyRequest
+	@param teamName The name of your team
+	@param securityPolicyId The UUID of a security policy
+
+@return ApiUpdateSecurityPolicyRequest
 */
 func (a *SecurityPolicyAPIService) UpdateSecurityPolicy(ctx context.Context, teamName string, securityPolicyId string) ApiUpdateSecurityPolicyRequest {
 	return ApiUpdateSecurityPolicyRequest{

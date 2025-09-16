@@ -9,7 +9,7 @@ orbs:
 parameters:
   go-version:
     type: string
-    default: "1.23"
+    default: "1.24"
 
 jobs:
   snyk-scan:
@@ -66,8 +66,20 @@ jobs:
               --commit $CIRCLE_SHA1 \
               --build-env "circleci" \
               --suppress_output
-
+  unit-tests:
+    docker:
+      - image: cimg/go:<< pipeline.parameters.go-version >>
+    steps:
+      - checkout
+      - run:
+          name: Run Unit Tests
+          command: |
+            make test
 workflows:
+  tests:
+    jobs:
+      - unit-tests:
+          name: run-unit-tests
   semgrep:
     jobs:
       - platform-helpers/job-semgrep-scan:

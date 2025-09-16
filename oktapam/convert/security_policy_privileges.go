@@ -16,9 +16,9 @@ type SecurityPolicyRulePrivilegeContainerModel struct {
 	PasswordCheckoutDatabasePrivilege *PasswordCheckoutDatabasePrivilegeModel `tfsdk:"password_checkout_database"`
 	PrincipalAccountSSHPrivilege      *PrincipalAccountSSHPrivilegeModel      `tfsdk:"principal_account_ssh"`
 	PasswordCheckoutSSHPrivilege      *PasswordCheckoutSSHPrivilegeModel      `tfsdk:"password_checkout_ssh"`
-	//SecurityPolicyPasswordCheckoutRDPPrivilege      *SecurityPolicyPasswordCheckoutRDPPrivilegeModel      `tfsdk:"password_checkout_rdp"`
-	//SecurityPolicyPrincipalAccountRDPPrivilege      *SecurityPolicyPrincipalAccountRDPPrivilegeModel      `tfsdk:"principal_account_rdp"`
-	//SecurityPolicyRevealPasswordPrivilege           *SecurityPolicyRevealPasswordPrivilegeModel           `tfsdk:"reveal_password"`
+	RevealPasswordPrivilege           *RevealPasswordPrivilegeModel           `tfsdk:"reveal_password"`
+	PasswordCheckoutRDPPrivilege      *PasswordCheckoutRDPPrivilegeModel      `tfsdk:"password_checkout_rdp"`
+	PrincipalAccountRDPPrivilege      *PrincipalAccountRDPPrivilegeModel      `tfsdk:"principal_account_rdp"`
 	//SecurityPolicySecretPrivilege                   *SecurityPolicySecretPrivilegeModel                   `tfsdk:"secret"`
 	//SecurityPolicyUpdatePasswordPrivilege           *SecurityPolicyUpdatePasswordPrivilegeModel           `tfsdk:"update_password"`
 }
@@ -29,12 +29,12 @@ func SecurityPolicyRulePrivilegeContainerSchema() schema.NestedAttributeObject {
 			"password_checkout_database": PasswordCheckoutDatabasePrivilegeSchema(),
 			"principal_account_ssh":      PrincipalAccountSSHPrivilegeSchema(),
 			"password_checkout_ssh":      PasswordCheckoutSSHPrivilegeSchema(),
-			// "password_checkout_rdp":
-			// "password_checkout_ssh":
-			// "principal_account_rdp":
-			// "reveal_password":
+			"reveal_password":            RevealPasswordPrivilegeSchema(),
+			"password_checkout_rdp":      PasswordCheckoutRDPPrivilegeSchema(),
+			"principal_account_rdp":      PrincipalAccountRDPPrivilegeSchema(),
 			// "secret":
 			// "update_password":
+			// "rotate_password":
 		},
 	}
 }
@@ -44,6 +44,9 @@ func SecurityPolicyRulePrivilegeContainerAttrTypes() map[string]attr.Type {
 		"password_checkout_database": types.ObjectType{AttrTypes: PasswordCheckoutDatabasePrivilegeAttrTypes()},
 		"principal_account_ssh":      types.ObjectType{AttrTypes: PrincipalAccountSSHPrivilegeAttrTypes()},
 		"password_checkout_ssh":      types.ObjectType{AttrTypes: PasswordCheckoutSSHPrivilegeAttrTypes()},
+		"reveal_password":            types.ObjectType{AttrTypes: RevealPasswordPrivilegeAttrTypes()},
+		"password_checkout_rdp":      types.ObjectType{AttrTypes: PasswordCheckoutRDPPrivilegeAttrTypes()},
+		"principal_account_rdp":      types.ObjectType{AttrTypes: PrincipalAccountRDPPrivilegeAttrTypes()},
 	}
 }
 
@@ -74,6 +77,30 @@ func SecurityPolicyRulePrivilegeContainerFromSDKToModel(ctx context.Context, in 
 			return nil, diags
 		}
 		out.PasswordCheckoutSSHPrivilege = privilege
+
+	} else if in.PrivilegeValue.SecurityPolicyRevealPasswordPrivilege != nil {
+		privilege, d := RevealPasswordPrivilegeFromSDKToModel(ctx, in.PrivilegeValue.SecurityPolicyRevealPasswordPrivilege)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		out.RevealPasswordPrivilege = privilege
+
+	} else if in.PrivilegeValue.SecurityPolicyPrincipalAccountRDPPrivilege != nil {
+		privilege, d := PrincipalAccountRDPPrivilegeFromSDKToModel(ctx, in.PrivilegeValue.SecurityPolicyPrincipalAccountRDPPrivilege)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		out.PrincipalAccountRDPPrivilege = privilege
+
+	} else if in.PrivilegeValue.SecurityPolicyPasswordCheckoutRDPPrivilege != nil {
+		privilege, d := PasswordCheckoutRDPPrivilegeFromSDKToModel(ctx, in.PrivilegeValue.SecurityPolicyPasswordCheckoutRDPPrivilege)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		out.PasswordCheckoutRDPPrivilege = privilege
 
 	} else {
 		diags.AddError("missing stanza in OktaPAM provider", "missing stanza in SecurityPolicyRulePrivilegeContainerFromSDKToModel")
@@ -115,6 +142,33 @@ func SecurityPolicyRulePrivilegeContainerFromModelToSDK(ctx context.Context, in 
 		}
 		privilegeValue = pam.SecurityPolicyPasswordCheckoutSSHPrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(outVal)
 		privilegeType = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_SSH
+
+	} else if in.RevealPasswordPrivilege != nil {
+		outVal, d := RevealPasswordPrivilegeFromModelToSDK(ctx, in.RevealPasswordPrivilege)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		privilegeValue = pam.SecurityPolicyRevealPasswordPrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(outVal)
+		privilegeType = pam.SecurityPolicyRulePrivilegeType_REVEAL_PASSWORD
+
+	} else if in.PrincipalAccountRDPPrivilege != nil {
+		outVal, d := PrincipalAccountRDPPrivilegeFromModelToSDK(ctx, in.PrincipalAccountRDPPrivilege)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		privilegeValue = pam.SecurityPolicyPrincipalAccountRDPPrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(outVal)
+		privilegeType = pam.SecurityPolicyRulePrivilegeType_PRINCIPAL_ACCOUNT_RDP
+
+	} else if in.PasswordCheckoutRDPPrivilege != nil {
+		outVal, d := PasswordCheckoutRDPPrivilegeFromModelToSDK(ctx, in.PasswordCheckoutRDPPrivilege)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		privilegeValue = pam.SecurityPolicyPasswordCheckoutRDPPrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(outVal)
+		privilegeType = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_RDP
 
 	} else {
 		diags.AddError("unknown or missing privilege listed in policy rule",

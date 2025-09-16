@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -16,9 +16,10 @@ import (
 	"fmt"
 )
 
-// GatewaySetupTokenDetails - An object that defines the labels applied to associated Gateways
+// GatewaySetupTokenDetails - An object that defines the labels applied to associated gateways
 type GatewaySetupTokenDetails struct {
 	GatewayAgent *GatewayAgent
+	Unknown      map[string]interface{} // holds unknown types for round-tripping
 }
 
 // GatewayAgentAsGatewaySetupTokenDetails is a convenience function that returns GatewayAgent wrapped in GatewaySetupTokenDetails
@@ -50,7 +51,14 @@ func (dst *GatewaySetupTokenDetails) UnmarshalJSON(data []byte) error {
 		}
 	}
 
-	return nil
+	// If discriminator is unknown, unmarshal into Unknown
+	var unknown map[string]interface{}
+	err = json.Unmarshal(data, &unknown)
+	if err == nil {
+		dst.Unknown = unknown
+		return nil
+	}
+	return err
 }
 
 // Marshal data from the first non-nil pointers in the struct to JSON
@@ -59,7 +67,11 @@ func (src GatewaySetupTokenDetails) MarshalJSON() ([]byte, error) {
 		return json.Marshal(&src.GatewayAgent)
 	}
 
-	return nil, nil // no data in oneOf schemas
+	if src.Unknown != nil {
+		return json.Marshal(src.Unknown)
+	}
+
+	return nil, fmt.Errorf("no data present in any oneOf schemas or Unknown; this should be unreachable") // unreachable: no data matched, should be handled by Unknown
 }
 
 // Get the actual instance

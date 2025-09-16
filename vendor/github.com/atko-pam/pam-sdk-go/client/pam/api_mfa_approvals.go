@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -47,7 +47,7 @@ CreateMFAApproval Create an MFA approval
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param teamName The name of your Team
+	@param teamName The name of your team
 
 @return ApiCreateMFAApprovalRequest
 */
@@ -141,7 +141,7 @@ GetMFAApprovalState Retrieve the state of an MFA approval
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param teamName The name of your Team
+	@param teamName The name of your team
 	@param mfaApprovalId The UUID for a MFA approval
 
 @return ApiGetMFAApprovalStateRequest

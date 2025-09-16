@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -21,13 +21,13 @@ var _ MappedNullable = &AccessReport{}
 
 // AccessReport struct for AccessReport
 type AccessReport struct {
-	// The UUID of an Access Report
+	// The UUID of an access report
 	Id      *string                `json:"id,omitempty"`
 	Details *AccessReportDetails   `json:"details,omitempty"`
 	Status  *AccessReportJobStatus `json:"status,omitempty"`
-	// A timestamp indicating when the Access Report was created
+	// A timestamp indicating when the access report was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
-	// A timestamp indicating when the Access Report was last updated
+	// A timestamp indicating when the access report was last updated
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 }
 

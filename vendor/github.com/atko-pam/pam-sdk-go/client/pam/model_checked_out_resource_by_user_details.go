@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -28,7 +28,7 @@ type CheckedOutResourceByUserDetails struct {
 	CheckoutAt time.Time `json:"checkout_at"`
 	// The timestamp when the resource lease expires
 	CheckoutExpiryAt time.Time `json:"checkout_expiry_at"`
-	// The UUID of the User or system responsible for the last checkin
+	// The UUID of the user or system responsible for the last checkin
 	CheckinBy *string `json:"checkin_by,omitempty"`
 	// The timestamp when the resource checkin process started
 	CheckinStartAt *time.Time   `json:"checkin_start_at,omitempty"`

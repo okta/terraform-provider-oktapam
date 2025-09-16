@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -23,6 +23,7 @@ type SecurityPolicyRuleActiveDirectoryResourceSelector struct {
 	Type               string                                                       `json:"_type"`
 	IndividualAccounts *SecurityPolicyRuleActiveDirectoryIndividualAccountsSelector `json:"individual_accounts,omitempty"`
 	SharedAccounts     *SecurityPolicyRuleActiveDirectorySharedAccountsSelector     `json:"shared_accounts,omitempty"`
+	Servers            *SecurityPolicyRuleActiveDirectoryServersSelector            `json:"servers,omitempty"`
 }
 
 // NewSecurityPolicyRuleActiveDirectoryResourceSelector instantiates a new SecurityPolicyRuleActiveDirectoryResourceSelector object
@@ -134,6 +135,39 @@ func (o *SecurityPolicyRuleActiveDirectoryResourceSelector) SetSharedAccounts(v 
 	return o
 }
 
+// GetServers returns the Servers field value if set, zero value otherwise.
+func (o *SecurityPolicyRuleActiveDirectoryResourceSelector) GetServers() SecurityPolicyRuleActiveDirectoryServersSelector {
+	if o == nil || IsNil(o.Servers) {
+		var ret SecurityPolicyRuleActiveDirectoryServersSelector
+		return ret
+	}
+	return *o.Servers
+}
+
+// GetServersOk returns a tuple with the Servers field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecurityPolicyRuleActiveDirectoryResourceSelector) GetServersOk() (*SecurityPolicyRuleActiveDirectoryServersSelector, bool) {
+	if o == nil || IsNil(o.Servers) {
+		return nil, false
+	}
+	return o.Servers, true
+}
+
+// HasServers returns a boolean if a field has been set.
+func (o *SecurityPolicyRuleActiveDirectoryResourceSelector) HasServers() bool {
+	if o != nil && !IsNil(o.Servers) {
+		return true
+	}
+
+	return false
+}
+
+// SetServers gets a reference to the given SecurityPolicyRuleActiveDirectoryServersSelector and assigns it to the Servers field.
+func (o *SecurityPolicyRuleActiveDirectoryResourceSelector) SetServers(v SecurityPolicyRuleActiveDirectoryServersSelector) *SecurityPolicyRuleActiveDirectoryResourceSelector {
+	o.Servers = &v
+	return o
+}
+
 func (o SecurityPolicyRuleActiveDirectoryResourceSelector) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -150,6 +184,9 @@ func (o SecurityPolicyRuleActiveDirectoryResourceSelector) ToMap() (map[string]i
 	}
 	if !IsNil(o.SharedAccounts) {
 		toSerialize["shared_accounts"] = o.SharedAccounts
+	}
+	if !IsNil(o.Servers) {
+		toSerialize["servers"] = o.Servers
 	}
 	return toSerialize, nil
 }

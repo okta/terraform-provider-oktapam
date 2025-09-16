@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -25,6 +25,7 @@ const (
 	RoleName_PAM_ADMIN                RoleName = "pam_admin"
 	RoleName_RESOURCE_ADMIN           RoleName = "resource_admin"
 	RoleName_SECURITY_ADMIN           RoleName = "security_admin"
+	RoleName_DEVOPS_ADMIN             RoleName = "devops_admin"
 )
 
 // All allowed values of RoleName enum
@@ -34,6 +35,7 @@ var AllowedRoleNameEnumValues = []RoleName{
 	"pam_admin",
 	"resource_admin",
 	"security_admin",
+	"devops_admin",
 }
 
 func (v *RoleName) UnmarshalJSON(src []byte) error {

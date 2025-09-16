@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -21,23 +21,27 @@ var _ MappedNullable = &ActiveDirectoryAccount{}
 
 // ActiveDirectoryAccount struct for ActiveDirectoryAccount
 type ActiveDirectoryAccount struct {
-	// The name of the Active Directory Account
+	// The name of the Active Directory account
 	AccountName *string `json:"account_name,omitempty"`
-	// The type of Active Directory Account
+	// The type of Active Directory account
 	AccountType *string `json:"account_type,omitempty"`
 	// The match status of the Active Directory Account
 	MatchStatus *string `json:"match_status,omitempty"`
 	// A timestamp indicating the last password rotation for the Active Directory Account
-	LastRotationAt *time.Time   `json:"last_rotation_at,omitempty"`
-	ResourceGroup  *NamedObject `json:"resource_group,omitempty"`
-	Project        *NamedObject `json:"project,omitempty"`
-	// The Distinguished Name (DN) referencing the Active Directory Account
+	LastRotationAt *time.Time `json:"last_rotation_at,omitempty"`
+	// Timestamp indicating when the Active Directory account was managed by Okta Privileged Access
+	BroughtUnderManagementAt *time.Time   `json:"brought_under_management_at,omitempty"`
+	ResourceGroup            *NamedObject `json:"resource_group,omitempty"`
+	Project                  *NamedObject `json:"project,omitempty"`
+	MatchedUser              *NamedObject `json:"matched_user,omitempty"`
+	Domain                   *NamedObject `json:"domain,omitempty"`
+	// The Distinguished Name (DN) referencing the Active Directory account
 	DistinguishedName *string `json:"distinguished_name,omitempty"`
-	// The User Principal Name (UPN) for the Active Directory Account
+	// The User Principal Name (UPN) for the Active Directory account
 	Upn *string `json:"upn,omitempty"`
-	// The Security Identifier (SID) for the Active Directory Account
+	// The Security Identifier (SID) for the Active Directory account
 	Sid *string `json:"sid,omitempty"`
-	// The sAMAccountName field for this Active Directory Account
+	// The `sAMAccountName` field for this Active Directory account
 	SamAccountName *string `json:"sam_account_name,omitempty"`
 	// The first name of this Active Directory user, if set
 	FirstName *string `json:"first_name,omitempty"`
@@ -46,7 +50,10 @@ type ActiveDirectoryAccount struct {
 	// The display name of this Active Directory user, if set
 	DisplayName *string `json:"display_name,omitempty"`
 	// The email of this Active Directory user, if set
-	Email *string `json:"email,omitempty"`
+	Email               *string                     `json:"email,omitempty"`
+	AccountStatusDetail *ServiceAccountStatusDetail `json:"account_status_detail,omitempty"`
+	// Additional information about this account's status, if set
+	AccountStatusDetailMessage *string `json:"account_status_detail_message,omitempty"`
 }
 
 // NewActiveDirectoryAccount instantiates a new ActiveDirectoryAccount object
@@ -198,6 +205,39 @@ func (o *ActiveDirectoryAccount) SetLastRotationAt(v time.Time) *ActiveDirectory
 	return o
 }
 
+// GetBroughtUnderManagementAt returns the BroughtUnderManagementAt field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccount) GetBroughtUnderManagementAt() time.Time {
+	if o == nil || IsNil(o.BroughtUnderManagementAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.BroughtUnderManagementAt
+}
+
+// GetBroughtUnderManagementAtOk returns a tuple with the BroughtUnderManagementAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccount) GetBroughtUnderManagementAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.BroughtUnderManagementAt) {
+		return nil, false
+	}
+	return o.BroughtUnderManagementAt, true
+}
+
+// HasBroughtUnderManagementAt returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccount) HasBroughtUnderManagementAt() bool {
+	if o != nil && !IsNil(o.BroughtUnderManagementAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetBroughtUnderManagementAt gets a reference to the given time.Time and assigns it to the BroughtUnderManagementAt field.
+func (o *ActiveDirectoryAccount) SetBroughtUnderManagementAt(v time.Time) *ActiveDirectoryAccount {
+	o.BroughtUnderManagementAt = &v
+	return o
+}
+
 // GetResourceGroup returns the ResourceGroup field value if set, zero value otherwise.
 func (o *ActiveDirectoryAccount) GetResourceGroup() NamedObject {
 	if o == nil || IsNil(o.ResourceGroup) {
@@ -261,6 +301,72 @@ func (o *ActiveDirectoryAccount) HasProject() bool {
 // SetProject gets a reference to the given NamedObject and assigns it to the Project field.
 func (o *ActiveDirectoryAccount) SetProject(v NamedObject) *ActiveDirectoryAccount {
 	o.Project = &v
+	return o
+}
+
+// GetMatchedUser returns the MatchedUser field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccount) GetMatchedUser() NamedObject {
+	if o == nil || IsNil(o.MatchedUser) {
+		var ret NamedObject
+		return ret
+	}
+	return *o.MatchedUser
+}
+
+// GetMatchedUserOk returns a tuple with the MatchedUser field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccount) GetMatchedUserOk() (*NamedObject, bool) {
+	if o == nil || IsNil(o.MatchedUser) {
+		return nil, false
+	}
+	return o.MatchedUser, true
+}
+
+// HasMatchedUser returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccount) HasMatchedUser() bool {
+	if o != nil && !IsNil(o.MatchedUser) {
+		return true
+	}
+
+	return false
+}
+
+// SetMatchedUser gets a reference to the given NamedObject and assigns it to the MatchedUser field.
+func (o *ActiveDirectoryAccount) SetMatchedUser(v NamedObject) *ActiveDirectoryAccount {
+	o.MatchedUser = &v
+	return o
+}
+
+// GetDomain returns the Domain field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccount) GetDomain() NamedObject {
+	if o == nil || IsNil(o.Domain) {
+		var ret NamedObject
+		return ret
+	}
+	return *o.Domain
+}
+
+// GetDomainOk returns a tuple with the Domain field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccount) GetDomainOk() (*NamedObject, bool) {
+	if o == nil || IsNil(o.Domain) {
+		return nil, false
+	}
+	return o.Domain, true
+}
+
+// HasDomain returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccount) HasDomain() bool {
+	if o != nil && !IsNil(o.Domain) {
+		return true
+	}
+
+	return false
+}
+
+// SetDomain gets a reference to the given NamedObject and assigns it to the Domain field.
+func (o *ActiveDirectoryAccount) SetDomain(v NamedObject) *ActiveDirectoryAccount {
+	o.Domain = &v
 	return o
 }
 
@@ -528,6 +634,72 @@ func (o *ActiveDirectoryAccount) SetEmail(v string) *ActiveDirectoryAccount {
 	return o
 }
 
+// GetAccountStatusDetail returns the AccountStatusDetail field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccount) GetAccountStatusDetail() ServiceAccountStatusDetail {
+	if o == nil || IsNil(o.AccountStatusDetail) {
+		var ret ServiceAccountStatusDetail
+		return ret
+	}
+	return *o.AccountStatusDetail
+}
+
+// GetAccountStatusDetailOk returns a tuple with the AccountStatusDetail field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccount) GetAccountStatusDetailOk() (*ServiceAccountStatusDetail, bool) {
+	if o == nil || IsNil(o.AccountStatusDetail) {
+		return nil, false
+	}
+	return o.AccountStatusDetail, true
+}
+
+// HasAccountStatusDetail returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccount) HasAccountStatusDetail() bool {
+	if o != nil && !IsNil(o.AccountStatusDetail) {
+		return true
+	}
+
+	return false
+}
+
+// SetAccountStatusDetail gets a reference to the given ServiceAccountStatusDetail and assigns it to the AccountStatusDetail field.
+func (o *ActiveDirectoryAccount) SetAccountStatusDetail(v ServiceAccountStatusDetail) *ActiveDirectoryAccount {
+	o.AccountStatusDetail = &v
+	return o
+}
+
+// GetAccountStatusDetailMessage returns the AccountStatusDetailMessage field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccount) GetAccountStatusDetailMessage() string {
+	if o == nil || IsNil(o.AccountStatusDetailMessage) {
+		var ret string
+		return ret
+	}
+	return *o.AccountStatusDetailMessage
+}
+
+// GetAccountStatusDetailMessageOk returns a tuple with the AccountStatusDetailMessage field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccount) GetAccountStatusDetailMessageOk() (*string, bool) {
+	if o == nil || IsNil(o.AccountStatusDetailMessage) {
+		return nil, false
+	}
+	return o.AccountStatusDetailMessage, true
+}
+
+// HasAccountStatusDetailMessage returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccount) HasAccountStatusDetailMessage() bool {
+	if o != nil && !IsNil(o.AccountStatusDetailMessage) {
+		return true
+	}
+
+	return false
+}
+
+// SetAccountStatusDetailMessage gets a reference to the given string and assigns it to the AccountStatusDetailMessage field.
+func (o *ActiveDirectoryAccount) SetAccountStatusDetailMessage(v string) *ActiveDirectoryAccount {
+	o.AccountStatusDetailMessage = &v
+	return o
+}
+
 func (o ActiveDirectoryAccount) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -550,11 +722,20 @@ func (o ActiveDirectoryAccount) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.LastRotationAt) {
 		toSerialize["last_rotation_at"] = o.LastRotationAt
 	}
+	if !IsNil(o.BroughtUnderManagementAt) {
+		toSerialize["brought_under_management_at"] = o.BroughtUnderManagementAt
+	}
 	if !IsNil(o.ResourceGroup) {
 		toSerialize["resource_group"] = o.ResourceGroup
 	}
 	if !IsNil(o.Project) {
 		toSerialize["project"] = o.Project
+	}
+	if !IsNil(o.MatchedUser) {
+		toSerialize["matched_user"] = o.MatchedUser
+	}
+	if !IsNil(o.Domain) {
+		toSerialize["domain"] = o.Domain
 	}
 	if !IsNil(o.DistinguishedName) {
 		toSerialize["distinguished_name"] = o.DistinguishedName
@@ -579,6 +760,12 @@ func (o ActiveDirectoryAccount) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.Email) {
 		toSerialize["email"] = o.Email
+	}
+	if !IsNil(o.AccountStatusDetail) {
+		toSerialize["account_status_detail"] = o.AccountStatusDetail
+	}
+	if !IsNil(o.AccountStatusDetailMessage) {
+		toSerialize["account_status_detail_message"] = o.AccountStatusDetailMessage
 	}
 	return toSerialize, nil
 }

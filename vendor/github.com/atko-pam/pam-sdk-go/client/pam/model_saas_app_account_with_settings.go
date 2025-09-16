@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -23,18 +23,20 @@ var _ MappedNullable = &SaasAppAccountWithSettings{}
 type SaasAppAccountWithSettings struct {
 	// The project level account settings that are enabled for this account
 	AccountSettingsEnabled []AccountSetting `json:"account_settings_enabled,omitempty"`
-	// The UUID of the SaaS Application Account
+	// A timestamp indicating when Okta Privileged Access last reported a change to the SaaS app account password
+	LastPasswordChangeSystemTimestamp *time.Time `json:"last_password_change_system_timestamp,omitempty"`
+	// The UUID of the SaaS app account
 	Id *string `json:"id,omitempty"`
-	// A human-readable name for the SaaS Application Account
+	// A human-readable name for the SaaS app account
 	Name *string `json:"name,omitempty"`
 	// The username used to log into the SaaS Application
 	Username *string `json:"username,omitempty"`
-	// A brief description of the SaaS Application Account
+	// A brief description of the SaaS app account
 	Description  *string                     `json:"description,omitempty"`
 	Status       *ServiceAccountStatus       `json:"status,omitempty"`
 	StatusDetail *ServiceAccountStatusDetail `json:"status_detail,omitempty"`
 	SyncStatus   *ServiceAccountSyncStatus   `json:"sync_status,omitempty"`
-	// Whether the password for the SaaS Application Account can be rotated using Okta Lifecycle Management
+	// Whether the password for the SaaS app account can be rotated using Okta Lifecycle Management
 	LcmSyncPossible *bool `json:"lcm_sync_possible,omitempty"`
 	// A URL pointing to the logo of the SaaS Application
 	LogoUrl *string `json:"logo_url,omitempty"`
@@ -44,9 +46,9 @@ type SaasAppAccountWithSettings struct {
 	LoginUrl *string `json:"login_url,omitempty"`
 	// The Okta app instance ID of the SaaS Application
 	ApplicationInstanceId *string `json:"application_instance_id,omitempty"`
-	// A timestamp that indicates when the OPA managed SaaS Application Account was created
+	// A timestamp that indicates when the Okta Privileged Access managed SaaS app account was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
-	// A timestamp that indicates when the OPA managed SaaS Application Account was updated
+	// A timestamp that indicates when the Okta Privileged Access managed SaaS app account was updated
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 }
 
@@ -97,6 +99,39 @@ func (o *SaasAppAccountWithSettings) HasAccountSettingsEnabled() bool {
 // SetAccountSettingsEnabled gets a reference to the given []AccountSetting and assigns it to the AccountSettingsEnabled field.
 func (o *SaasAppAccountWithSettings) SetAccountSettingsEnabled(v []AccountSetting) *SaasAppAccountWithSettings {
 	o.AccountSettingsEnabled = v
+	return o
+}
+
+// GetLastPasswordChangeSystemTimestamp returns the LastPasswordChangeSystemTimestamp field value if set, zero value otherwise.
+func (o *SaasAppAccountWithSettings) GetLastPasswordChangeSystemTimestamp() time.Time {
+	if o == nil || IsNil(o.LastPasswordChangeSystemTimestamp) {
+		var ret time.Time
+		return ret
+	}
+	return *o.LastPasswordChangeSystemTimestamp
+}
+
+// GetLastPasswordChangeSystemTimestampOk returns a tuple with the LastPasswordChangeSystemTimestamp field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SaasAppAccountWithSettings) GetLastPasswordChangeSystemTimestampOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.LastPasswordChangeSystemTimestamp) {
+		return nil, false
+	}
+	return o.LastPasswordChangeSystemTimestamp, true
+}
+
+// HasLastPasswordChangeSystemTimestamp returns a boolean if a field has been set.
+func (o *SaasAppAccountWithSettings) HasLastPasswordChangeSystemTimestamp() bool {
+	if o != nil && !IsNil(o.LastPasswordChangeSystemTimestamp) {
+		return true
+	}
+
+	return false
+}
+
+// SetLastPasswordChangeSystemTimestamp gets a reference to the given time.Time and assigns it to the LastPasswordChangeSystemTimestamp field.
+func (o *SaasAppAccountWithSettings) SetLastPasswordChangeSystemTimestamp(v time.Time) *SaasAppAccountWithSettings {
+	o.LastPasswordChangeSystemTimestamp = &v
 	return o
 }
 
@@ -574,6 +609,9 @@ func (o SaasAppAccountWithSettings) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if !IsNil(o.AccountSettingsEnabled) {
 		toSerialize["account_settings_enabled"] = o.AccountSettingsEnabled
+	}
+	if !IsNil(o.LastPasswordChangeSystemTimestamp) {
+		toSerialize["last_password_change_system_timestamp"] = o.LastPasswordChangeSystemTimestamp
 	}
 	if !IsNil(o.Id) {
 		toSerialize["id"] = o.Id

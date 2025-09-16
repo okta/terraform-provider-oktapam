@@ -60,8 +60,11 @@ Optional:
 Optional:
 
 - `password_checkout_database` (Attributes) (see [below for nested schema](#nestedatt--rules--privileges--password_checkout_database))
+- `password_checkout_rdp` (Attributes) (see [below for nested schema](#nestedatt--rules--privileges--password_checkout_rdp))
 - `password_checkout_ssh` (Attributes) (see [below for nested schema](#nestedatt--rules--privileges--password_checkout_ssh))
+- `principal_account_rdp` (Attributes) (see [below for nested schema](#nestedatt--rules--privileges--principal_account_rdp))
 - `principal_account_ssh` (Attributes) (see [below for nested schema](#nestedatt--rules--privileges--principal_account_ssh))
+- `reveal_password` (Attributes) (see [below for nested schema](#nestedatt--rules--privileges--reveal_password))
 
 <a id="nestedatt--rules--privileges--password_checkout_database"></a>
 ### Nested Schema for `rules.privileges.password_checkout_database`
@@ -71,12 +74,32 @@ Required:
 - `password_checkout_database` (Boolean)
 
 
+<a id="nestedatt--rules--privileges--password_checkout_rdp"></a>
+### Nested Schema for `rules.privileges.password_checkout_rdp`
+
+Required:
+
+- `password_checkout_rdp` (Boolean)
+
+
 <a id="nestedatt--rules--privileges--password_checkout_ssh"></a>
 ### Nested Schema for `rules.privileges.password_checkout_ssh`
 
 Required:
 
 - `password_checkout_ssh` (Boolean)
+
+
+<a id="nestedatt--rules--privileges--principal_account_rdp"></a>
+### Nested Schema for `rules.privileges.principal_account_rdp`
+
+Required:
+
+- `principal_account_rdp` (Boolean) Defines the privilege to make RDP connections to a server with the user's principal account.
+
+Optional:
+
+- `admin_level_permissions` (Boolean) Provides coarse grain (full admin) access to the user.
 
 
 <a id="nestedatt--rules--privileges--principal_account_ssh"></a>
@@ -91,6 +114,14 @@ Optional:
 - `admin_level_permissions` (Boolean) Provides coarse grain (full admin) access to the user.
 - `sudo_command_bundles` (List of String) UUIDs of the existing sudo command bundles. These commands have been created by the resource administrator
 - `sudo_display_name` (String) The name for sudo commands that will be visible to end users
+
+
+<a id="nestedatt--rules--privileges--reveal_password"></a>
+### Nested Schema for `rules.privileges.reveal_password`
+
+Required:
+
+- `reveal_password` (Boolean)
 
 
 

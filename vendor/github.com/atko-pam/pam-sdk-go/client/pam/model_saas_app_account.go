@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -21,18 +21,18 @@ var _ MappedNullable = &SaasAppAccount{}
 
 // SaasAppAccount struct for SaasAppAccount
 type SaasAppAccount struct {
-	// The UUID of the SaaS Application Account
+	// The UUID of the SaaS app account
 	Id *string `json:"id,omitempty"`
-	// A human-readable name for the SaaS Application Account
+	// A human-readable name for the SaaS app account
 	Name *string `json:"name,omitempty"`
 	// The username used to log into the SaaS Application
 	Username *string `json:"username,omitempty"`
-	// A brief description of the SaaS Application Account
+	// A brief description of the SaaS app account
 	Description  *string                     `json:"description,omitempty"`
 	Status       *ServiceAccountStatus       `json:"status,omitempty"`
 	StatusDetail *ServiceAccountStatusDetail `json:"status_detail,omitempty"`
 	SyncStatus   *ServiceAccountSyncStatus   `json:"sync_status,omitempty"`
-	// Whether the password for the SaaS Application Account can be rotated using Okta Lifecycle Management
+	// Whether the password for the SaaS app account can be rotated using Okta Lifecycle Management
 	LcmSyncPossible *bool `json:"lcm_sync_possible,omitempty"`
 	// A URL pointing to the logo of the SaaS Application
 	LogoUrl *string `json:"logo_url,omitempty"`
@@ -42,9 +42,9 @@ type SaasAppAccount struct {
 	LoginUrl *string `json:"login_url,omitempty"`
 	// The Okta app instance ID of the SaaS Application
 	ApplicationInstanceId *string `json:"application_instance_id,omitempty"`
-	// A timestamp that indicates when the OPA managed SaaS Application Account was created
+	// A timestamp that indicates when the Okta Privileged Access managed SaaS app account was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
-	// A timestamp that indicates when the OPA managed SaaS Application Account was updated
+	// A timestamp that indicates when the Okta Privileged Access managed SaaS app account was updated
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 }
 

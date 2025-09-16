@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -15,22 +15,26 @@ import (
 	"encoding/json"
 )
 
-// SecurityPolicyRuleResourceType The type of resource that Principals are granted privileges to access. Currently only accepts `server_based_resource`.
+// SecurityPolicyRuleResourceType The type of resource that Principals are granted privileges to access.
 type SecurityPolicyRuleResourceType string
 
 // List of SecurityPolicyRuleResourceType
 const (
 	SecurityPolicyRuleResourceType_SERVER_BASED_RESOURCE             SecurityPolicyRuleResourceType = "server_based_resource"
+	SecurityPolicyRuleResourceType_SECRET_BASED_RESOURCE             SecurityPolicyRuleResourceType = "secret_based_resource"
 	SecurityPolicyRuleResourceType_MANAGED_SAAS_APP_BASED_RESOURCE   SecurityPolicyRuleResourceType = "managed_saas_app_based_resource"
 	SecurityPolicyRuleResourceType_UNMANAGED_SAAS_APP_BASED_RESOURCE SecurityPolicyRuleResourceType = "unmanaged_saas_app_based_resource"
+	SecurityPolicyRuleResourceType_OKTA_APP_BASED_RESOURCE           SecurityPolicyRuleResourceType = "okta_app_based_resource"
 	SecurityPolicyRuleResourceType_ACTIVE_DIRECTORY_BASED_RESOURCE   SecurityPolicyRuleResourceType = "active_directory_based_resource"
 )
 
 // All allowed values of SecurityPolicyRuleResourceType enum
 var AllowedSecurityPolicyRuleResourceTypeEnumValues = []SecurityPolicyRuleResourceType{
 	"server_based_resource",
+	"secret_based_resource",
 	"managed_saas_app_based_resource",
 	"unmanaged_saas_app_based_resource",
+	"okta_app_based_resource",
 	"active_directory_based_resource",
 }
 

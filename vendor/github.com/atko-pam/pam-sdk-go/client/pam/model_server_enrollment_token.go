@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -21,15 +21,15 @@ var _ MappedNullable = &ServerEnrollmentToken{}
 
 // ServerEnrollmentToken struct for ServerEnrollmentToken
 type ServerEnrollmentToken struct {
-	// The User that created this Server Enrollment Token
+	// The user that created this server enrollment token
 	CreatedByUser string `json:"created_by_user"`
-	// A human-readable description of the purpose of this Server Enrollment Token
+	// A human-readable description of the purpose of this server enrollment token
 	Description string `json:"description"`
-	// The UUID of a Server Enrollment Token
+	// The UUID of a server enrollment token
 	Id string `json:"id"`
-	// A timestamp indicating when the Server Enrollment Token was created
+	// A timestamp indicating when the server enrollment token was created
 	IssuedAt time.Time `json:"issued_at"`
-	// A token used to enroll a Server
+	// A token used to enroll a server
 	Token map[string]string `json:"token"`
 }
 

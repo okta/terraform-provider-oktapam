@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -21,20 +21,20 @@ var _ MappedNullable = &SecretFolderResponse{}
 
 // SecretFolderResponse struct for SecretFolderResponse
 type SecretFolderResponse struct {
-	// The UUID of the Secret Folder
+	// The UUID of the secret folder
 	Id string `json:"id"`
-	// The name of the Secret Folder
+	// The name of the secret folder
 	Name string `json:"name"`
-	// A description of the Secret Folder
+	// A description of the secret folder
 	Description NullableString `json:"description,omitempty"`
 	Path        []SecretPath   `json:"path,omitempty"`
-	// A timestamp indicating when the Secret Folder was created
+	// A timestamp indicating when the secret folder was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
-	// The username of the User who created the Secret Folder
+	// The username of the user who created the secret folder
 	CreatedBy *string `json:"created_by,omitempty"`
-	// A timestamp indicating when the Secret Folder was last updated
+	// A timestamp indicating when the secret folder was last updated
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	// The username of the User who last updated the Secret Folder
+	// The username of the user who last updated the secret folder
 	UpdatedBy *string `json:"updated_by,omitempty"`
 }
 

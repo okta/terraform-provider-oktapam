@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -37,17 +37,17 @@ func (r ApiFetchGroupAttributeRequest) Execute() (*TeamGroupAttribute, *http.Res
 }
 
 /*
-	FetchGroupAttribute Retrieve a Group Attribute
+FetchGroupAttribute Retrieve a group attribute
 
-	    Retrieves an Attribute for a Group
+	Retrieves an attribute for a group.
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param groupName The name of a Group
-	    @param attributeId The UUID of an Attribute
-	@return ApiFetchGroupAttributeRequest
+	@param teamName The name of your team
+	@param groupName The name of a group
+	@param attributeId The UUID of an attribute
+
+@return ApiFetchGroupAttributeRequest
 */
 func (a *AttributesAPIService) FetchGroupAttribute(ctx context.Context, teamName string, groupName string, attributeId string) ApiFetchGroupAttributeRequest {
 	return ApiFetchGroupAttributeRequest{
@@ -136,17 +136,17 @@ func (r ApiFetchUserAttributeRequest) Execute() (*TeamUserAttribute, *http.Respo
 }
 
 /*
-	FetchUserAttribute Retrieve a User Attribute
+FetchUserAttribute Retrieve a user attribute
 
-	    Retrieves an Attribute for a User
+	Retrieves an attribute for a user
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param userName The username for an existing User
-	    @param attributeId The UUID of an Attribute
-	@return ApiFetchUserAttributeRequest
+	@param teamName The name of your team
+	@param userName The username for an existing user
+	@param attributeId The UUID of an attribute
+
+@return ApiFetchUserAttributeRequest
 */
 func (a *AttributesAPIService) FetchUserAttribute(ctx context.Context, teamName string, userName string, attributeId string) ApiFetchUserAttributeRequest {
 	return ApiFetchUserAttributeRequest{
@@ -258,7 +258,7 @@ func (r ApiListGroupAttributesRequest) Prev(prev bool) ApiListGroupAttributesReq
 	return r
 }
 
-// When &#x60;true&#x60;, only return attributes that conflict with other attributes on your Team
+// When &#x60;true&#x60;, only return attributes that conflict with other attributes on your team
 func (r ApiListGroupAttributesRequest) Conflicting(conflicting bool) ApiListGroupAttributesRequest {
 	r.conflicting = &conflicting
 	return r
@@ -269,16 +269,16 @@ func (r ApiListGroupAttributesRequest) Execute() (*ListGroupAttributesResponse, 
 }
 
 /*
-	ListGroupAttributes List all Attributes for a Group
+ListGroupAttributes List all attributes for a group
 
-	    Lists all Attributes for a specified Group
+	Lists all attributes for a specified group
 
-This endpoint requires one of the following roles: `resource_admin`, `delegated_resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param groupName The name of a Group
-	@return ApiListGroupAttributesRequest
+	@param teamName The name of your team
+	@param groupName The name of a group
+
+@return ApiListGroupAttributesRequest
 */
 func (a *AttributesAPIService) ListGroupAttributes(ctx context.Context, teamName string, groupName string) ApiListGroupAttributesRequest {
 	return ApiListGroupAttributesRequest{
@@ -406,15 +406,15 @@ func (r ApiListTeamUserAttributeConflictsRequest) Execute() (*ListTeamUserAttrib
 }
 
 /*
-	ListTeamUserAttributeConflicts List all Attribute Conflicts for a Team
+ListTeamUserAttributeConflicts List all attribute Conflicts for a team
 
-	    Lists all attribute conflicts for your Team
+	Lists all attribute conflicts for your team
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	@return ApiListTeamUserAttributeConflictsRequest
+	@param teamName The name of your team
+
+@return ApiListTeamUserAttributeConflictsRequest
 */
 func (a *AttributesAPIService) ListTeamUserAttributeConflicts(ctx context.Context, teamName string) ApiListTeamUserAttributeConflictsRequest {
 	return ApiListTeamUserAttributeConflictsRequest{
@@ -534,7 +534,7 @@ func (r ApiListUserAttributesRequest) Prev(prev bool) ApiListUserAttributesReque
 	return r
 }
 
-// When &#x60;true&#x60;, only return attributes that conflict with other attributes on your Team
+// When &#x60;true&#x60;, only return attributes that conflict with other attributes on your team
 func (r ApiListUserAttributesRequest) Conflicting(conflicting bool) ApiListUserAttributesRequest {
 	r.conflicting = &conflicting
 	return r
@@ -545,16 +545,16 @@ func (r ApiListUserAttributesRequest) Execute() (*ListUserAttributesResponse, *h
 }
 
 /*
-	ListUserAttributes List all Attributes for a User
+ListUserAttributes List all attributes for a user
 
-	    Lists all Attributes for a specified user
+	Lists all attributes for a specified user
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param userName The username for an existing User
-	@return ApiListUserAttributesRequest
+	@param teamName The name of your team
+	@param userName The username for an existing user
+
+@return ApiListUserAttributesRequest
 */
 func (a *AttributesAPIService) ListUserAttributes(ctx context.Context, teamName string, userName string) ApiListUserAttributesRequest {
 	return ApiListUserAttributesRequest{
@@ -662,17 +662,17 @@ func (r ApiUpdateGroupAttributeRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	UpdateGroupAttribute Update a Group Attribute
+UpdateGroupAttribute Update a group attribute
 
-	    Updates an Attribute for a Group
+	Updates an attribute for a group
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param groupName The name of a Group
-	    @param attributeId The UUID of an Attribute
-	@return ApiUpdateGroupAttributeRequest
+	@param teamName The name of your team
+	@param groupName The name of a group
+	@param attributeId The UUID of an attribute
+
+@return ApiUpdateGroupAttributeRequest
 */
 func (a *AttributesAPIService) UpdateGroupAttribute(ctx context.Context, teamName string, groupName string, attributeId string) ApiUpdateGroupAttributeRequest {
 	return ApiUpdateGroupAttributeRequest{
@@ -769,17 +769,17 @@ func (r ApiUpdateUserAttributeRequest) Execute() (*http.Response, error) {
 }
 
 /*
-	UpdateUserAttribute Update a User Attribute
+UpdateUserAttribute Update a user attribute
 
-	    Updates an Attribute for a User
+	Updates an attribute for a user
 
-This endpoint requires the following role: `resource_admin`.
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	    @param teamName The name of your Team
-	    @param userName The username for an existing User
-	    @param attributeId The UUID of an Attribute
-	@return ApiUpdateUserAttributeRequest
+	@param teamName The name of your team
+	@param userName The username for an existing user
+	@param attributeId The UUID of an attribute
+
+@return ApiUpdateUserAttributeRequest
 */
 func (a *AttributesAPIService) UpdateUserAttribute(ctx context.Context, teamName string, userName string, attributeId string) ApiUpdateUserAttributeRequest {
 	return ApiUpdateUserAttributeRequest{

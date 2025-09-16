@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -21,31 +21,31 @@ var _ MappedNullable = &Project{}
 
 // Project struct for Project
 type Project struct {
-	// Whether to create Server Users for Users in this Project. Defaults to `false`. If `false`, you must ensure that accounts exist on the Server for each User.
+	// Whether to create server users for users in this project. Defaults to `false`. If `false`, you must ensure that accounts exist on the server for each user.
 	CreateServerUsers NullableBool `json:"create_server_users,omitempty"`
-	// A timestamp indicating when the Project was deleted
+	// A timestamp indicating when the project was deleted
 	DeletedAt NullableTime `json:"deleted_at,omitempty"`
 	// Whether to force the project to use a shared SSH account
 	ForceSharedSshUsers *bool `json:"force_shared_ssh_users,omitempty"`
-	// A comma separated list of labels used to match to enrolled Gateways. Labels should use the following format: `key=value`
+	// A comma separated list of labels used to match to enrolled gateways. Labels should use the following format: `key=value`
 	GatewaySelector *string `json:"gateway_selector,omitempty"`
-	// The UUID of the Project
+	// The UUID of the project
 	Id string `json:"id"`
-	// The UUID of the Resource Group where the Project is located
+	// The UUID of the resource group where the project is located
 	ResourceGroupId *string `json:"resource_group_id,omitempty"`
 	// The number of active resources within this project
 	ActiveResourceCount *int32 `json:"active_resource_count,omitempty"`
 	// The number of stale resources within this project
 	StaleResourceCount *int32 `json:"stale_resource_count,omitempty"`
-	// The name of the Project
+	// The name of the project
 	Name string `json:"name"`
-	// The GID used when creating a Server User
+	// The GID used when creating a server user
 	NextUnixGid NullableInt32 `json:"next_unix_gid,omitempty"`
-	// The UID used when creating a Server User
+	// The UID used when creating a server user
 	NextUnixUid NullableInt32 `json:"next_unix_uid,omitempty"`
-	// If `true`, the Project requires preauthorization before a User can access a Server. Default is `false`.
+	// If `true`, the project requires preauthorization before a user can access a server. Default is `false`.
 	RequirePreauthForCreds NullableBool `json:"require_preauth_for_creds,omitempty"`
-	// If `true`, creates persistent user accounts and home folders on Servers in this Project for every user on your Team. By default, on-demand accounts are only created when a user accesses a Server.
+	// If `true`, creates persistent user accounts and home folders on servers in this project for every user on your team. By default, on-demand accounts are only created when a user accesses a server.
 	PersistentServerUserAccounts NullableBool `json:"persistent_server_user_accounts,omitempty"`
 	// Whether to manage existing local accounts on the server
 	ServerAccountManagement *bool `json:"server_account_management,omitempty"`
@@ -54,9 +54,9 @@ type Project struct {
 	// The shared username to use for non-root accounts
 	SharedStandardUserName *string                    `json:"shared_standard_user_name,omitempty"`
 	SshCertificateType     NullableSSHCertificateType `json:"ssh_certificate_type,omitempty"`
-	// The Team associated with the Project
+	// The team associated with the project
 	Team string `json:"team"`
-	// The time period in seconds before an on-demand user account expires and is removed from a Server. `0` if disabled. This is the default,
+	// The time period in seconds before an on-demand user account expires and is removed from a server. `0` if disabled. This is the default,
 	UserOnDemandPeriod NullableInt64 `json:"user_on_demand_period,omitempty"`
 }
 

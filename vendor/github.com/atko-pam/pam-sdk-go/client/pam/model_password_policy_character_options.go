@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -18,7 +18,7 @@ import (
 // checks if the PasswordPolicyCharacterOptions type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &PasswordPolicyCharacterOptions{}
 
-// PasswordPolicyCharacterOptions The specific characters rules required by the Password Policy
+// PasswordPolicyCharacterOptions The specific characters rules required by the password policy
 type PasswordPolicyCharacterOptions struct {
 	// If `true`, passwords can include one or more uppercase characters
 	UpperCase *bool `json:"upper_case,omitempty"`
@@ -30,6 +30,8 @@ type PasswordPolicyCharacterOptions struct {
 	Punctuation *bool `json:"punctuation,omitempty"`
 	// If `true`, passwords must contain at least one character from each set selected above.
 	RequireFromEachSet *bool `json:"require_from_each_set,omitempty"`
+	// A string of symbols to exclude from the set of allowed punctuation. This field is only applicable if `punctuation` is set to `true`.
+	ExcludeCertainSymbols []string `json:"exclude_certain_symbols,omitempty"`
 }
 
 // NewPasswordPolicyCharacterOptions instantiates a new PasswordPolicyCharacterOptions object
@@ -214,6 +216,39 @@ func (o *PasswordPolicyCharacterOptions) SetRequireFromEachSet(v bool) *Password
 	return o
 }
 
+// GetExcludeCertainSymbols returns the ExcludeCertainSymbols field value if set, zero value otherwise.
+func (o *PasswordPolicyCharacterOptions) GetExcludeCertainSymbols() []string {
+	if o == nil || IsNil(o.ExcludeCertainSymbols) {
+		var ret []string
+		return ret
+	}
+	return o.ExcludeCertainSymbols
+}
+
+// GetExcludeCertainSymbolsOk returns a tuple with the ExcludeCertainSymbols field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PasswordPolicyCharacterOptions) GetExcludeCertainSymbolsOk() ([]string, bool) {
+	if o == nil || IsNil(o.ExcludeCertainSymbols) {
+		return nil, false
+	}
+	return o.ExcludeCertainSymbols, true
+}
+
+// HasExcludeCertainSymbols returns a boolean if a field has been set.
+func (o *PasswordPolicyCharacterOptions) HasExcludeCertainSymbols() bool {
+	if o != nil && !IsNil(o.ExcludeCertainSymbols) {
+		return true
+	}
+
+	return false
+}
+
+// SetExcludeCertainSymbols gets a reference to the given []string and assigns it to the ExcludeCertainSymbols field.
+func (o *PasswordPolicyCharacterOptions) SetExcludeCertainSymbols(v []string) *PasswordPolicyCharacterOptions {
+	o.ExcludeCertainSymbols = v
+	return o
+}
+
 func (o PasswordPolicyCharacterOptions) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -238,6 +273,9 @@ func (o PasswordPolicyCharacterOptions) ToMap() (map[string]interface{}, error) 
 	}
 	if !IsNil(o.RequireFromEachSet) {
 		toSerialize["require_from_each_set"] = o.RequireFromEachSet
+	}
+	if !IsNil(o.ExcludeCertainSymbols) {
+		toSerialize["exclude_certain_symbols"] = o.ExcludeCertainSymbols
 	}
 	return toSerialize, nil
 }

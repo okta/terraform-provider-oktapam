@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,7 +20,7 @@ var _ MappedNullable = &APIServiceAccountCheckoutSettings{}
 
 // APIServiceAccountCheckoutSettings struct for APIServiceAccountCheckoutSettings
 type APIServiceAccountCheckoutSettings struct {
-	// Indicates whether a checkout is mandatory for accessing resources within the project. If `true`, checkout is enforced for all applicable resources by default. If `false`, checkout is not required, and resources are accessible without it.
+	// Indicates whether a checkout is mandatory for accessing resources within the project. If `true`, checkout is enforced by default for all applicable resources. If `false`, checkout isn't required, and resources are accessible without it.
 	CheckoutRequired bool `json:"checkout_required"`
 	// The duration in seconds for the checkout. If the checkout is enabled, the duration is the maximum time a user can access the resource before the checkout expires.
 	CheckoutDurationInSeconds int32 `json:"checkout_duration_in_seconds"`

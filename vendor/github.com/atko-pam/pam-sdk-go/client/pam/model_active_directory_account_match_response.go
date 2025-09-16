@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -21,11 +21,11 @@ var _ MappedNullable = &ActiveDirectoryAccountMatchResponse{}
 // ActiveDirectoryAccountMatchResponse Details about the mapping between an Active Directory account and an Okta Privileged Access user
 type ActiveDirectoryAccountMatchResponse struct {
 	AdAccountId *string `json:"ad_account_id,omitempty"`
-	// -| The Okta Privileged Access user ID of the Okta Privileged Access user automatically matched to this AD account based on the Active Directory account rules configured on the connection. If null, the AD user did not match any Okta user based on the rule configuration the last time the rules were evaluated
+	// The OPA user ID that's automatically matched to this AD account based on the AD account rules configured on the connection. If unset, the AD user didn't match any OPA user based on the rule configuration that was last evaluated.
 	RuleMatchUserId *string `json:"rule_match_user_id,omitempty"`
-	// -| The Okta Privileged Access user ID of the Okta Privileged Access user specified as matching this AD account by a Resource Administrator, overriding the automatic match. If set, this takes precedence over the rule_match_user_name. Only one of match_override_user_id or force_no_match may be set
+	// The OPA user ID to match this AD account that's specified by a resource admin, overriding the automatic match. If set, this takes precedence over the `rule_match_user_id`. You can only set one of `match_override_user_id` or `force_no_match`.
 	MatchOverrideUserId *string `json:"match_override_user_id,omitempty"`
-	// -| If true, a resource administrator has configured this Active Directory account to not be matched with any Okta Privileged Access user. This overrides any automatic match from an Active Directory account rule. Only one of match_override_user_id or force_no_match may be set
+	// If true, a resource admin has configured this AD account to not match with any OPA user. This overrides any automatic match from an AD account rule. Only one of `match_override_user_id` or `force_no_match` can be set.
 	ForceNoMatch *bool `json:"force_no_match,omitempty"`
 }
 

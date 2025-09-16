@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -20,15 +20,15 @@ var _ MappedNullable = &GatewayStatusReport{}
 
 // GatewayStatusReport struct for GatewayStatusReport
 type GatewayStatusReport struct {
-	// The number of Clients actively connected to the Gateway
+	// The number of clients actively connected to the gateway
 	ActiveConnections int32 `json:"active_connections"`
-	// The ID of the Gateway ID
+	// The ID of the gateway ID
 	GatewayId NullableString `json:"gateway_id,omitempty"`
-	// The status of the Gateway
+	// The status of the gateway
 	Status NullableString `json:"status,omitempty"`
-	// The total amount in bytes of storage space available for use by the Gateway
+	// The total amount in bytes of storage space available for use by the gateway
 	TotalStorageBytes int64 `json:"total_storage_bytes"`
-	// The amount in bytes of storage space used by the Gateway
+	// The amount in bytes of storage space used by the gateway
 	UsedStorageBytes int64 `json:"used_storage_bytes"`
 }
 

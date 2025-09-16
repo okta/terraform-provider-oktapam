@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -21,17 +21,17 @@ var _ MappedNullable = &GatewaySetupToken{}
 
 // GatewaySetupToken struct for GatewaySetupToken
 type GatewaySetupToken struct {
-	// The ID of the Gateway Setup Token
+	// The ID of the gateway setup token
 	Id string `json:"id"`
-	// The name for the Gateway Setup Token
+	// The name for the gateway setup token
 	Name *string `json:"name,omitempty"`
-	// The description for the Gateway Setup Token
+	// The description for the gateway setup token
 	Description      NullableString                    `json:"description,omitempty"`
 	Details          GatewaySetupTokenDetails          `json:"details"`
 	RegistrationType GatewaySetupTokenRegistrationType `json:"registration_type"`
-	// A timestamp indicating when the Gateway Setup Token was created
+	// A timestamp indicating when the gateway setup token was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
-	// The token used to enroll the Gateway
+	// The token used to enroll the gateway
 	Token *string `json:"token,omitempty"`
 }
 

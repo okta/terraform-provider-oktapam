@@ -1,7 +1,7 @@
 /*
 Okta Privileged Access
 
-The OPA API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
+The Okta Privileged Access API is a control plane used to request operations in Okta Privileged Access (formerly ScaleFT/Advanced Server Access)
 
 API version: 1.0.0
 Contact: support@okta.com
@@ -23,11 +23,11 @@ type UserAccessConditional struct {
 	Type *UserAccessConditionalType `json:"type,omitempty"`
 	// If `true`, the condition is currently met
 	ConditionIsMet *bool `json:"condition_is_met,omitempty"`
-	// A human-readable description of the condition
+	// A description of the condition
 	Description *string `json:"description,omitempty"`
-	// Used by `access_request` conditionals to define the ID of a specific Request Type
+	// Used by `access_request` conditionals to define the ID of a specific request type
 	AccessRequestTypeId *string `json:"access_request_type_id,omitempty"`
-	// Used by `access_request` conditionals to define the name of a specific Request Type
+	// Used by `access_request` conditionals to define the name of a specific request type
 	AccessRequestTypeName *string `json:"access_request_type_name,omitempty"`
 	// Used by `access_request` conditionals to define the number of seconds the approval remains valid
 	ExpiresAfterSeconds *int64                  `json:"expires_after_seconds,omitempty"`
