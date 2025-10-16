@@ -8,6 +8,7 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
+	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 )
 
 func resourceSecret() *schema.Resource {
@@ -101,6 +102,12 @@ func resourceSecretRead(ctx context.Context, d *schema.ResourceData, m any) diag
 	secretWrapper, err := client.RevealSecret(ctx, c, resourceGroupID, projectID, secretID)
 	if err != nil {
 		return diag.FromErr(err)
+	}
+
+	if secretWrapper == nil {
+		d.SetId("")
+		logging.Infof("Secret %s does not exist", secretID)
+		return nil
 	}
 
 	attrs := secretWrapper.ToResourceMap()
