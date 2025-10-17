@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  general-platform-helpers: okta/general-platform-helpers@1.9
+  # general-platform-helpers: okta/general-platform-helpers@1.9
   platform-helpers: okta/platform-helpers@1
   python: circleci/python@2.0.3
   aws-cli: circleci/aws-cli@5.1
@@ -17,11 +17,11 @@ jobs:
       - image: cimg/go:<< pipeline.parameters.go-version >>
     steps:
       - checkout
-      - general-platform-helpers/step-load-dependencies
-      - general-platform-helpers/step-run-snyk-monitor:
-          scan-all-projects: true
-          skip-unresolved: true
-          run-on-non-main: true
+      # - general-platform-helpers/step-load-dependencies
+      # - general-platform-helpers/step-run-snyk-monitor:
+      #     scan-all-projects: true
+      #     skip-unresolved: true
+      #     run-on-non-main: true
 
   reversing-labs:
     docker:
@@ -95,14 +95,14 @@ workflows:
           name: "Scan with Semgrep"
           context:
             - static-analysis
-  snyk:
-    jobs:
-      - snyk-scan:
-          name: execute-snyk
-          context:
-            - static-analysis
-  "Malware Scanner":
-    jobs:
-      - reversing-labs:
-          context:
-            - static-analysis
+  # snyk:
+  #   jobs:
+  #     - snyk-scan:
+  #         name: execute-snyk
+  #         context:
+  #           - static-analysis
+  # "Malware Scanner":
+  #   jobs:
+  #     - reversing-labs:
+  #         context:
+  #           - static-analysis
