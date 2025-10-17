@@ -105,6 +105,7 @@ func resourceSecretRead(ctx context.Context, d *schema.ResourceData, m any) diag
 	}
 
 	if secretWrapper == nil {
+		// this can happen if we get a 404 from the API
 		d.SetId("")
 		logging.Infof("Secret %s does not exist", secretID)
 		return nil
