@@ -10,6 +10,7 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
+	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 )
 
 func resourceResourceGroup() *schema.Resource {
@@ -62,6 +63,12 @@ func resourceResourceGroupRead(ctx context.Context, d *schema.ResourceData, m an
 	resourceGroup, err := c.GetResourceGroup(ctx, id)
 	if err != nil {
 		return diag.FromErr(err)
+	}
+	if resourceGroup == nil {
+		// this can happen if we get a 404 from the API
+		d.SetId("")
+		logging.Infof("ResourceGroup %s does not exist", id)
+		return nil
 	}
 
 	resourceMap := resourceGroup.ToResourceMap()
