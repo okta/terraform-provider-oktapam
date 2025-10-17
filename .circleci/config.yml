@@ -29,10 +29,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install Python
+          name: Install Python venv
           command: |
             sudo apt-get update
             sudo apt-get install -y python3-venv
+            
+      - run:
+          name: Setup Python venv
+          command: |
             python3 -m venv venv
             source venv/bin/activate
             ./venv/bin/pip install --upgrade pip
@@ -43,6 +47,7 @@ jobs:
             curl https://dso-resources.oktasecurity.com/scanner \
               -H "x-api-key: $DSO_RLSECURE_TOKEN" \
               --output rl_wrapper-0.0.2+35ababa-py3-none-any.whl
+              ./venv/bin/pip install ./rl_wrapper-0.0.2+35ababa-py3-none-any.whl
       - run:
           name: Install RL Wrapper
           command: |
