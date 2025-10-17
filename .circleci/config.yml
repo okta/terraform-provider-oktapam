@@ -23,7 +23,6 @@ jobs:
           skip-unresolved: true
           run-on-non-main: true
 
-jobs:
   reversing-labs:
     docker:
       - image: cimg/go:1.23.2
