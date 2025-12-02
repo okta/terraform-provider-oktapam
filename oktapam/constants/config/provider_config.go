@@ -23,8 +23,6 @@ const (
 	ProviderCurrentUser                            = "oktapam_current_user"
 	ProviderSudoCommandBundleKey                   = "oktapam_sudo_command_bundle"
 	ProviderSudoCommandsBundlesKey                 = "oktapam_sudo_command_bundles"
-	ProviderDatabaseKey                            = "oktapam_database"
-	ProviderDatabasePasswordSettings               = "oktapam_database_password_settings"
 	ProviderGatewaysKey                            = "oktapam_gateways"
 	ProviderGatewaySetupTokenKey                   = "oktapam_gateway_setup_token"
 	ProviderGatewaySetupTokensKey                  = "oktapam_gateway_setup_tokens"

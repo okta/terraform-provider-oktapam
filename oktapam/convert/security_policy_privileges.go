@@ -13,12 +13,11 @@ import (
 //type SecurityPolicyRulePrivilegeTypeModel types.String
 
 type SecurityPolicyRulePrivilegeContainerModel struct {
-	PasswordCheckoutDatabasePrivilege *PasswordCheckoutDatabasePrivilegeModel `tfsdk:"password_checkout_database"`
-	PrincipalAccountSSHPrivilege      *PrincipalAccountSSHPrivilegeModel      `tfsdk:"principal_account_ssh"`
-	PasswordCheckoutSSHPrivilege      *PasswordCheckoutSSHPrivilegeModel      `tfsdk:"password_checkout_ssh"`
-	RevealPasswordPrivilege           *RevealPasswordPrivilegeModel           `tfsdk:"reveal_password"`
-	PasswordCheckoutRDPPrivilege      *PasswordCheckoutRDPPrivilegeModel      `tfsdk:"password_checkout_rdp"`
-	PrincipalAccountRDPPrivilege      *PrincipalAccountRDPPrivilegeModel      `tfsdk:"principal_account_rdp"`
+	PrincipalAccountSSHPrivilege *PrincipalAccountSSHPrivilegeModel `tfsdk:"principal_account_ssh"`
+	PasswordCheckoutSSHPrivilege *PasswordCheckoutSSHPrivilegeModel `tfsdk:"password_checkout_ssh"`
+	RevealPasswordPrivilege      *RevealPasswordPrivilegeModel      `tfsdk:"reveal_password"`
+	PasswordCheckoutRDPPrivilege *PasswordCheckoutRDPPrivilegeModel `tfsdk:"password_checkout_rdp"`
+	PrincipalAccountRDPPrivilege *PrincipalAccountRDPPrivilegeModel `tfsdk:"principal_account_rdp"`
 	//SecurityPolicySecretPrivilege                   *SecurityPolicySecretPrivilegeModel                   `tfsdk:"secret"`
 	//SecurityPolicyUpdatePasswordPrivilege           *SecurityPolicyUpdatePasswordPrivilegeModel           `tfsdk:"update_password"`
 }
@@ -26,12 +25,11 @@ type SecurityPolicyRulePrivilegeContainerModel struct {
 func SecurityPolicyRulePrivilegeContainerSchema() schema.NestedAttributeObject {
 	return schema.NestedAttributeObject{
 		Attributes: map[string]schema.Attribute{
-			"password_checkout_database": PasswordCheckoutDatabasePrivilegeSchema(),
-			"principal_account_ssh":      PrincipalAccountSSHPrivilegeSchema(),
-			"password_checkout_ssh":      PasswordCheckoutSSHPrivilegeSchema(),
-			"reveal_password":            RevealPasswordPrivilegeSchema(),
-			"password_checkout_rdp":      PasswordCheckoutRDPPrivilegeSchema(),
-			"principal_account_rdp":      PrincipalAccountRDPPrivilegeSchema(),
+			"principal_account_ssh": PrincipalAccountSSHPrivilegeSchema(),
+			"password_checkout_ssh": PasswordCheckoutSSHPrivilegeSchema(),
+			"reveal_password":       RevealPasswordPrivilegeSchema(),
+			"password_checkout_rdp": PasswordCheckoutRDPPrivilegeSchema(),
+			"principal_account_rdp": PrincipalAccountRDPPrivilegeSchema(),
 			// "secret":
 			// "update_password":
 			// "rotate_password":
@@ -41,12 +39,11 @@ func SecurityPolicyRulePrivilegeContainerSchema() schema.NestedAttributeObject {
 
 func SecurityPolicyRulePrivilegeContainerAttrTypes() map[string]attr.Type {
 	return map[string]attr.Type{
-		"password_checkout_database": types.ObjectType{AttrTypes: PasswordCheckoutDatabasePrivilegeAttrTypes()},
-		"principal_account_ssh":      types.ObjectType{AttrTypes: PrincipalAccountSSHPrivilegeAttrTypes()},
-		"password_checkout_ssh":      types.ObjectType{AttrTypes: PasswordCheckoutSSHPrivilegeAttrTypes()},
-		"reveal_password":            types.ObjectType{AttrTypes: RevealPasswordPrivilegeAttrTypes()},
-		"password_checkout_rdp":      types.ObjectType{AttrTypes: PasswordCheckoutRDPPrivilegeAttrTypes()},
-		"principal_account_rdp":      types.ObjectType{AttrTypes: PrincipalAccountRDPPrivilegeAttrTypes()},
+		"principal_account_ssh": types.ObjectType{AttrTypes: PrincipalAccountSSHPrivilegeAttrTypes()},
+		"password_checkout_ssh": types.ObjectType{AttrTypes: PasswordCheckoutSSHPrivilegeAttrTypes()},
+		"reveal_password":       types.ObjectType{AttrTypes: RevealPasswordPrivilegeAttrTypes()},
+		"password_checkout_rdp": types.ObjectType{AttrTypes: PasswordCheckoutRDPPrivilegeAttrTypes()},
+		"principal_account_rdp": types.ObjectType{AttrTypes: PrincipalAccountRDPPrivilegeAttrTypes()},
 	}
 }
 
@@ -54,15 +51,7 @@ func SecurityPolicyRulePrivilegeContainerFromSDKToModel(ctx context.Context, in 
 	var out SecurityPolicyRulePrivilegeContainerModel
 	var diags diag.Diagnostics
 
-	if in.PrivilegeValue.SecurityPolicyPasswordCheckoutDatabasePrivilege != nil {
-		privilege, d := PasswordCheckoutDatabasePrivilegeFromSDKToModel(ctx, in.PrivilegeValue.SecurityPolicyPasswordCheckoutDatabasePrivilege)
-		diags.Append(d...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		out.PasswordCheckoutDatabasePrivilege = privilege
-
-	} else if in.PrivilegeValue.SecurityPolicyPrincipalAccountSSHPrivilege != nil {
+	if in.PrivilegeValue.SecurityPolicyPrincipalAccountSSHPrivilege != nil {
 		privilege, d := PrincipalAccountSSHPrivilegeFromSDKToModel(ctx, in.PrivilegeValue.SecurityPolicyPrincipalAccountSSHPrivilege)
 		diags.Append(d...)
 		if diags.HasError() {
@@ -116,16 +105,7 @@ func SecurityPolicyRulePrivilegeContainerFromModelToSDK(ctx context.Context, in 
 	var privilegeValue pam.SecurityPolicyRulePrivilegeContainerPrivilegeValue
 	var privilegeType pam.SecurityPolicyRulePrivilegeType
 
-	if in.PasswordCheckoutDatabasePrivilege != nil {
-		outVal, d := PasswordCheckoutDatabasePrivilegeFromModelToSDK(ctx, in.PasswordCheckoutDatabasePrivilege)
-		diags.Append(d...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		privilegeValue = pam.SecurityPolicyPasswordCheckoutDatabasePrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(outVal)
-		privilegeType = pam.SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_DATABASE
-
-	} else if in.PrincipalAccountSSHPrivilege != nil {
+	if in.PrincipalAccountSSHPrivilege != nil {
 		outVal, d := PrincipalAccountSSHPrivilegeFromModelToSDK(ctx, in.PrincipalAccountSSHPrivilege)
 		diags.Append(d...)
 		if diags.HasError() {

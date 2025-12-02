@@ -18,8 +18,6 @@ var (
 	// Fetch
 	SourceADConnections                      = "A list of AD Connections associated with your Team."
 	SourceCurrentUser                        = "Returns the username of the user used to invoke the terraform."
-	SourceDatabase                           = "Returns an existing Database."
-	SourceDatabasePasswordSettings           = "Returns an existing Database Password Policy for a PAM Project."
 	SourceGateways                           = fmt.Sprintf("Returns a list of all Gateways connected to the Team specified in the OKTAPAM_TEAM environment variable. %s", LinkGateway)
 	SourceGroup                              = fmt.Sprintf("Returns an existing Group. %s", LinkGroup)
 	SourceProject                            = fmt.Sprintf("Returns an existing Project. %s", LinkProject)
@@ -35,7 +33,6 @@ var (
 	SourceSudoCommandsBundle                 = fmt.Sprintf("Returns an existing PAM Sudo Commands Bundle. %s", LinkSudoCommandsBundle)
 	// List
 	SourceADUserSyncTaskSettingsIDList        = fmt.Sprintf("Returns a list of all AD user sync jobs a specified AD Connection. %s", LinkADUserDiscovery)
-	SourceDatabases                           = "Returns a list of Databases, constrained by the given parameters."
 	SourceGroups                              = fmt.Sprintf("Returns a list of all Groups associated with the Team specified by the OKTAPAM_TEAM environment variable. %s", LinkGroup)
 	SourceProjects                            = fmt.Sprintf("Returns a list of all Projects associated with the Team specified by the OKTAPAM_TEAM environment variable. %s", LinkProject)
 	SourceProjectGroups                       = fmt.Sprintf("Returns a list of Project Groups associated with a Project. %s", LinkProjectGroup)
