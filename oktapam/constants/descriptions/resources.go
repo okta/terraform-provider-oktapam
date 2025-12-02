@@ -27,8 +27,6 @@ var (
 	ResourceKubernetesCluster                  = fmt.Sprintf("%s Represents a Kubernetes cluster that has been registered with your Team. This resource creates configuration items used to define how the cluster can authenticate user access with ASA. %s", PrefixBeta, WarningBetaK8s)
 	ResourceKubernetesClusterConnection        = fmt.Sprintf("%s A set of details describing how to connect to an existing Kubernetes cluster. %s", PrefixBeta, WarningBetaK8s)
 	ResourceKubernetesClusterGroup             = fmt.Sprintf("%s A mapping of Kubernetes cluster to a Group. Members of the specified Group are granted access to clusters which match the specified cluster_selectors. %s", PrefixBeta, WarningBetaK8s)
-	ResourceDatabase                           = "Represents a datastore that has been registered with your Team."
-	ResourceDatabasePasswordSettings           = "The settings for passwords set on databases within the project."
 	ResourceResourceGroup                      = fmt.Sprintf("A PAM construct that contains a group of projects. %s", LinkResourceGroup)
 	ResourceResourceGroupProject               = fmt.Sprintf("A PAM construct that contains a collection of resources that share settings. %s", LinkResourceGroupProject)
 	ResourceResourceGroupServerEnrollmentToken = fmt.Sprintf("A token used to enroll servers in a PAM Project. %s", LinkResourceGroupServerEnrollmentToken)
