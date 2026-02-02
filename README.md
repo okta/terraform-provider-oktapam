@@ -73,7 +73,7 @@ $ make build
 ```
 
 To install the provider on your local machine, run `make install`. This will build the provider and install it within
-the `~/.terraform.d/plugins/hashicorp.com/okta/oktapam/[VERSION]/[OS_ARCH]/terraform-provider-oktapam` directory.
+the `~/.terraform.d/plugins/okta/oktapam/[VERSION]/[OS_ARCH]/terraform-provider-oktapam` directory.
 
 ```sh
 $ make install
