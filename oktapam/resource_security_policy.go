@@ -45,6 +45,7 @@ func resourceSecurityPolicy() *schema.Resource {
 			},
 			attributes.ResourceGroup: {
 				Type:        schema.TypeString,
+				ForceNew:    true,
 				Optional:    true,
 				Description: descriptions.SecurityPolicyResouceGroup,
 			},

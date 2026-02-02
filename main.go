@@ -34,7 +34,7 @@ func main() {
 	}
 
 	_ = tf6server.Serve(
-		"registry.terraform.io/okta.com/pam/oktapam",
+		"registry.terraform.io/okta/oktapam",
 		muxServer,
 		serveOpts...,
 	)

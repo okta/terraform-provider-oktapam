@@ -14,11 +14,11 @@ import (
 //type SecurityPolicyTypeModel types.String
 
 type SecurityPolicyResourceModel struct {
-	ID          types.String                  `tfsdk:"id"`
-	Name        types.String                  `tfsdk:"name"`
-	Type        types.String                  `tfsdk:"type"`
-	Description types.String                  `tfsdk:"description"`
-	Active      types.Bool                    `tfsdk:"active"`
+	ID          types.String                   `tfsdk:"id"`
+	Name        types.String                   `tfsdk:"name"`
+	Type        types.String                   `tfsdk:"type"`
+	Description types.String                   `tfsdk:"description"`
+	Active      types.Bool                     `tfsdk:"active"`
 	Principals  *SecurityPolicyPrincipalsModel `tfsdk:"principals"`
 	Rules       types.List/*SecurityPolicyRuleModel*/ `tfsdk:"rules"`
 }

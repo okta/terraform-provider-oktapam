@@ -51,7 +51,7 @@ type SecurityPolicy struct {
 	Name          *string                   `json:"name"`
 	Description   *string                   `json:"description,omitempty"`
 	Active        *bool                     `json:"active"`
-	ResourceGroup *NamedObject              `json:"resource_group_id,omitempty"`
+	ResourceGroup *NamedObject              `json:"resource_group,omitempty"`
 	Principals    *SecurityPolicyPrincipals `json:"principals"`
 	Rules         []*SecurityPolicyRule     `json:"rules"`
 }
@@ -74,6 +74,8 @@ func (p SecurityPolicy) ToResourceMap() map[string]any {
 	}
 	if p.ResourceGroup != nil {
 		m[attributes.ResourceGroup] = *p.ResourceGroup.Id
+	} else {
+		m[attributes.ResourceGroup] = ""
 	}
 	if p.Principals != nil {
 		principals := make([]any, 1)
