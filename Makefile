@@ -1,9 +1,8 @@
-HOSTNAME=okta.com
-NAMESPACE=pam
+NAMESPACE=okta
 NAME=oktapam
 BINARY=terraform-provider-${NAME}
 
-VERSION=0.6.2
+VERSION=0.6.3
 
 OS_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
 PLUGIN_DIR=~/.terraform.d/plugins
@@ -38,12 +37,12 @@ release:
 	GOOS=windows GOARCH=amd64 go build ${SET_VERSION} -o ./bin/${BINARY}_${VERSION}_windows_amd64
 
 install: build
-	mkdir -p ${PLUGIN_DIR}/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
-	cp ${BINARY} ${PLUGIN_DIR}/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
+	mkdir -p ${PLUGIN_DIR}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
+	cp ${BINARY} ${PLUGIN_DIR}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
 
 link_legacy:
 	mkdir -p ${PLUGIN_DIR}
-	ln -s ${PLUGIN_DIR}/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}/${BINARY} ${PLUGIN_DIR}/${BINARY}
+	ln -s ${PLUGIN_DIR}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}/${BINARY} ${PLUGIN_DIR}/${BINARY}
 
 test: 
 # TESTARGS here can be used to pass arbitrary flags to go test, e.g. '-run TestMyTest'
