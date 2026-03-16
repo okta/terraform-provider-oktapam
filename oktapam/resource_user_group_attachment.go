@@ -10,6 +10,7 @@ import (
 	"github.com/okta/terraform-provider-oktapam/oktapam/client"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/attributes"
 	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
+	"github.com/okta/terraform-provider-oktapam/oktapam/logging"
 )
 
 func resourceUserGroupAttachment() *schema.Resource {
@@ -73,12 +74,11 @@ func resourceUserGroupAttachmentRead(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(err)
 	}
 	if !present {
-		return diag.Diagnostics{
-			diag.Diagnostic{
-				Severity: diag.Error,
-				Summary:  fmt.Sprintf("user %q is not present within group %q", username, groupName),
-			},
-		}
+		// User was removed out of band (e.g. deprovisioned in Okta).
+		// Clear the ID so Terraform treats this as drift and plans re-creation.
+		logging.Infof("user %q is not present within group %q, removing from state", username, groupName)
+		d.SetId("")
+		return nil
 	}
 	d.Set(attributes.Group, groupName)
 	d.Set(attributes.Username, username)
