@@ -15,10 +15,10 @@ import (
 //type SecurityPolicyTypeModel types.String
 
 type SecurityPolicyResourceModel struct {
-	ID          types.String                   `tfsdk:"id"`
-	Name        types.String                   `tfsdk:"name"`
-	Type        types.String                   `tfsdk:"type"`
-	Description types.String                   `tfsdk:"description"`
+	ID            types.String                   `tfsdk:"id"`
+	Name          types.String                   `tfsdk:"name"`
+	Type          types.String                   `tfsdk:"type"`
+	Description   types.String                   `tfsdk:"description"`
 	Active        types.Bool                     `tfsdk:"active"`
 	ResourceGroup types.String                   `tfsdk:"resource_group"`
 	Principals    *SecurityPolicyPrincipalsModel `tfsdk:"principals"`
@@ -45,7 +45,6 @@ func SecurityPolicySchema() map[string]schema.Attribute {
 		},
 		"resource_group": schema.StringAttribute{
 			Optional:      true,
-			Computed:      true,
 			Description:   descriptions.SecurityPolicyResouceGroup,
 			PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 		},
