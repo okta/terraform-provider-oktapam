@@ -55,6 +55,17 @@ func (s *SecurityPolicyResource) Create(ctx context.Context, request resource.Cr
 		return
 	} else {
 		plan.ID = types.StringValue(*policyResponse.Id) //TODO(ja) can this be nil?
+		if plan.ResourceGroup.IsUnknown() {
+			if rg, ok := policyResponse.GetResourceGroupOk(); ok {
+				if id, idOk := rg.GetIdOk(); idOk {
+					plan.ResourceGroup = types.StringPointerValue(id)
+				} else {
+					plan.ResourceGroup = types.StringNull()
+				}
+			} else {
+				plan.ResourceGroup = types.StringNull()
+			}
+		}
 		if diags := response.State.Set(ctx, plan); diags.HasError() {
 			response.Diagnostics.Append(diags...)
 			return
