@@ -20,21 +20,16 @@ var _ MappedNullable = &WorkloadConnectionAuthzDetails{}
 
 // WorkloadConnectionAuthzDetails struct for WorkloadConnectionAuthzDetails
 type WorkloadConnectionAuthzDetails struct {
-	// The list of public keys that the workload connection trusts
-	Keys []RawJSONWebKey `json:"keys"`
-	// Indicates if DPoP is required for the workload connection. This is a process where a Workload has a private key,  and a token it is using has a flag baked into it indicating users  of this token must “demonstrate” ownership  of this specific private key on a per-request basis.
-	RequireDpop *bool `json:"require_dpop,omitempty"`
-	// Indicates if the OAT is trusted on first use
-	EnforceTofu *bool `json:"enforce_tofu,omitempty"`
+	Jwks WorkloadConnectionAuthzDetailsJwks `json:"jwks"`
 }
 
 // NewWorkloadConnectionAuthzDetails instantiates a new WorkloadConnectionAuthzDetails object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewWorkloadConnectionAuthzDetails(keys []RawJSONWebKey) *WorkloadConnectionAuthzDetails {
+func NewWorkloadConnectionAuthzDetails(jwks WorkloadConnectionAuthzDetailsJwks) *WorkloadConnectionAuthzDetails {
 	this := WorkloadConnectionAuthzDetails{}
-	this.Keys = keys
+	this.Jwks = jwks
 	return &this
 }
 
@@ -46,94 +41,28 @@ func NewWorkloadConnectionAuthzDetailsWithDefaults() *WorkloadConnectionAuthzDet
 	return &this
 }
 
-// GetKeys returns the Keys field value
-func (o *WorkloadConnectionAuthzDetails) GetKeys() []RawJSONWebKey {
+// GetJwks returns the Jwks field value
+func (o *WorkloadConnectionAuthzDetails) GetJwks() WorkloadConnectionAuthzDetailsJwks {
 	if o == nil {
-		var ret []RawJSONWebKey
+		var ret WorkloadConnectionAuthzDetailsJwks
 		return ret
 	}
 
-	return o.Keys
+	return o.Jwks
 }
 
-// GetKeysOk returns a tuple with the Keys field value
+// GetJwksOk returns a tuple with the Jwks field value
 // and a boolean to check if the value has been set.
-func (o *WorkloadConnectionAuthzDetails) GetKeysOk() ([]RawJSONWebKey, bool) {
+func (o *WorkloadConnectionAuthzDetails) GetJwksOk() (*WorkloadConnectionAuthzDetailsJwks, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.Keys, true
+	return &o.Jwks, true
 }
 
-// SetKeys sets field value
-func (o *WorkloadConnectionAuthzDetails) SetKeys(v []RawJSONWebKey) *WorkloadConnectionAuthzDetails {
-	o.Keys = v
-	return o
-}
-
-// GetRequireDpop returns the RequireDpop field value if set, zero value otherwise.
-func (o *WorkloadConnectionAuthzDetails) GetRequireDpop() bool {
-	if o == nil || IsNil(o.RequireDpop) {
-		var ret bool
-		return ret
-	}
-	return *o.RequireDpop
-}
-
-// GetRequireDpopOk returns a tuple with the RequireDpop field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *WorkloadConnectionAuthzDetails) GetRequireDpopOk() (*bool, bool) {
-	if o == nil || IsNil(o.RequireDpop) {
-		return nil, false
-	}
-	return o.RequireDpop, true
-}
-
-// HasRequireDpop returns a boolean if a field has been set.
-func (o *WorkloadConnectionAuthzDetails) HasRequireDpop() bool {
-	if o != nil && !IsNil(o.RequireDpop) {
-		return true
-	}
-
-	return false
-}
-
-// SetRequireDpop gets a reference to the given bool and assigns it to the RequireDpop field.
-func (o *WorkloadConnectionAuthzDetails) SetRequireDpop(v bool) *WorkloadConnectionAuthzDetails {
-	o.RequireDpop = &v
-	return o
-}
-
-// GetEnforceTofu returns the EnforceTofu field value if set, zero value otherwise.
-func (o *WorkloadConnectionAuthzDetails) GetEnforceTofu() bool {
-	if o == nil || IsNil(o.EnforceTofu) {
-		var ret bool
-		return ret
-	}
-	return *o.EnforceTofu
-}
-
-// GetEnforceTofuOk returns a tuple with the EnforceTofu field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *WorkloadConnectionAuthzDetails) GetEnforceTofuOk() (*bool, bool) {
-	if o == nil || IsNil(o.EnforceTofu) {
-		return nil, false
-	}
-	return o.EnforceTofu, true
-}
-
-// HasEnforceTofu returns a boolean if a field has been set.
-func (o *WorkloadConnectionAuthzDetails) HasEnforceTofu() bool {
-	if o != nil && !IsNil(o.EnforceTofu) {
-		return true
-	}
-
-	return false
-}
-
-// SetEnforceTofu gets a reference to the given bool and assigns it to the EnforceTofu field.
-func (o *WorkloadConnectionAuthzDetails) SetEnforceTofu(v bool) *WorkloadConnectionAuthzDetails {
-	o.EnforceTofu = &v
+// SetJwks sets field value
+func (o *WorkloadConnectionAuthzDetails) SetJwks(v WorkloadConnectionAuthzDetailsJwks) *WorkloadConnectionAuthzDetails {
+	o.Jwks = v
 	return o
 }
 
@@ -147,13 +76,7 @@ func (o WorkloadConnectionAuthzDetails) MarshalJSON() ([]byte, error) {
 
 func (o WorkloadConnectionAuthzDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["keys"] = o.Keys
-	if !IsNil(o.RequireDpop) {
-		toSerialize["require_dpop"] = o.RequireDpop
-	}
-	if !IsNil(o.EnforceTofu) {
-		toSerialize["enforce_tofu"] = o.EnforceTofu
-	}
+	toSerialize["jwks"] = o.Jwks
 	return toSerialize, nil
 }
 

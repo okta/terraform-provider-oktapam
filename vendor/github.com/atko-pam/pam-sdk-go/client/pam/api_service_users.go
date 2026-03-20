@@ -15,9 +15,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+	"reflect"
 	"strings"
 )
 
@@ -107,18 +109,23 @@ func (a *ServiceUsersAPIService) CreateServiceUserExecute(r ApiCreateServiceUser
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -203,18 +210,23 @@ func (a *ServiceUsersAPIService) DeleteServiceUserKeyExecute(r ApiDeleteServiceU
 			return nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarHTTPResponse, err
+			return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarHTTPResponse, apiError
 	}
@@ -298,18 +310,23 @@ func (a *ServiceUsersAPIService) GetServiceUserExecute(r ApiGetServiceUserReques
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -401,18 +418,23 @@ func (a *ServiceUsersAPIService) IssueServiceTokenExecute(r ApiIssueServiceToken
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -496,18 +518,23 @@ func (a *ServiceUsersAPIService) ListServiceUserKeysExecute(r ApiListServiceUser
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -522,7 +549,7 @@ type ApiListServiceUsersRequest struct {
 	contains            *string
 	count               *int32
 	descending          *bool
-	id                  *string
+	id                  *[]string
 	includeServiceUsers *string
 	offset              *string
 	prev                *bool
@@ -530,7 +557,7 @@ type ApiListServiceUsersRequest struct {
 	status              *string
 }
 
-// Only return results that include the specified value
+// Only returns results that include the specified value
 func (r ApiListServiceUsersRequest) Contains(contains string) ApiListServiceUsersRequest {
 	r.contains = &contains
 	return r
@@ -548,8 +575,8 @@ func (r ApiListServiceUsersRequest) Descending(descending bool) ApiListServiceUs
 	return r
 }
 
-// Only return results with the specified IDs
-func (r ApiListServiceUsersRequest) Id(id string) ApiListServiceUsersRequest {
+// Only returns results with the specified IDs
+func (r ApiListServiceUsersRequest) Id(id []string) ApiListServiceUsersRequest {
 	r.id = &id
 	return r
 }
@@ -636,7 +663,15 @@ func (a *ServiceUsersAPIService) ListServiceUsersExecute(r ApiListServiceUsersRe
 		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
 	}
 	if r.id != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "id", r.id, "")
+		t := *r.id
+		if reflect.TypeOf(t).Kind() == reflect.Slice {
+			s := reflect.ValueOf(t)
+			for i := 0; i < s.Len(); i++ {
+				parameterAddToHeaderOrQuery(localVarQueryParams, "id", s.Index(i).Interface(), "multi")
+			}
+		} else {
+			parameterAddToHeaderOrQuery(localVarQueryParams, "id", t, "multi")
+		}
 	}
 	if r.includeServiceUsers != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_service_users", r.includeServiceUsers, "")
@@ -677,18 +712,23 @@ func (a *ServiceUsersAPIService) ListServiceUsersExecute(r ApiListServiceUsersRe
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -772,18 +812,23 @@ func (a *ServiceUsersAPIService) RotateServiceUserKeyExecute(r ApiRotateServiceU
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -878,18 +923,23 @@ func (a *ServiceUsersAPIService) ServiceUserUpdateExecute(r ApiServiceUserUpdate
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}

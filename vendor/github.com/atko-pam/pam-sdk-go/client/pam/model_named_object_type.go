@@ -30,6 +30,9 @@ const (
 	NamedObjectType_SECRET                          NamedObjectType = "secret"
 	NamedObjectType_ACTIVE_DIRECTORY_SHARED_ACCOUNT NamedObjectType = "active_directory_shared_account"
 	NamedObjectType_ACTIVE_DIRECTORY_CONNECTION     NamedObjectType = "active_directory_connection"
+	NamedObjectType_WORKLOAD_ROLE                   NamedObjectType = "workload_role"
+	NamedObjectType_DATABASE_CONNECTION             NamedObjectType = "database_connection"
+	NamedObjectType_INFRASTRUCTURE_ORCHESTRATOR     NamedObjectType = "infrastructure_orchestrator"
 )
 
 // All allowed values of NamedObjectType enum
@@ -44,6 +47,9 @@ var AllowedNamedObjectTypeEnumValues = []NamedObjectType{
 	"secret",
 	"active_directory_shared_account",
 	"active_directory_connection",
+	"workload_role",
+	"database_connection",
+	"infrastructure_orchestrator",
 }
 
 func (v *NamedObjectType) UnmarshalJSON(src []byte) error {

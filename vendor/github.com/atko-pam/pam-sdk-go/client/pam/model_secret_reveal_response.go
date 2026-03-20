@@ -28,7 +28,9 @@ type SecretRevealResponse struct {
 	// The description of the secret
 	Description NullableString `json:"description,omitempty"`
 	Path        []SecretPath   `json:"path,omitempty"`
-	// A timestamp indicating when the secret was created
+	// The template used to create the secret
+	Template map[string]interface{} `json:"template,omitempty"`
+	// Timestamp of when the secret was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// The username of the user who created the secret
 	CreatedBy *string `json:"created_by,omitempty"`
@@ -186,6 +188,39 @@ func (o *SecretRevealResponse) HasPath() bool {
 // SetPath gets a reference to the given []SecretPath and assigns it to the Path field.
 func (o *SecretRevealResponse) SetPath(v []SecretPath) *SecretRevealResponse {
 	o.Path = v
+	return o
+}
+
+// GetTemplate returns the Template field value if set, zero value otherwise.
+func (o *SecretRevealResponse) GetTemplate() map[string]interface{} {
+	if o == nil || IsNil(o.Template) {
+		var ret map[string]interface{}
+		return ret
+	}
+	return o.Template
+}
+
+// GetTemplateOk returns a tuple with the Template field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecretRevealResponse) GetTemplateOk() (map[string]interface{}, bool) {
+	if o == nil || IsNil(o.Template) {
+		return map[string]interface{}{}, false
+	}
+	return o.Template, true
+}
+
+// HasTemplate returns a boolean if a field has been set.
+func (o *SecretRevealResponse) HasTemplate() bool {
+	if o != nil && !IsNil(o.Template) {
+		return true
+	}
+
+	return false
+}
+
+// SetTemplate gets a reference to the given map[string]interface{} and assigns it to the Template field.
+func (o *SecretRevealResponse) SetTemplate(v map[string]interface{}) *SecretRevealResponse {
+	o.Template = v
 	return o
 }
 
@@ -363,6 +398,9 @@ func (o SecretRevealResponse) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.Path) {
 		toSerialize["path"] = o.Path
+	}
+	if !IsNil(o.Template) {
+		toSerialize["template"] = o.Template
 	}
 	if !IsNil(o.CreatedAt) {
 		toSerialize["created_at"] = o.CreatedAt

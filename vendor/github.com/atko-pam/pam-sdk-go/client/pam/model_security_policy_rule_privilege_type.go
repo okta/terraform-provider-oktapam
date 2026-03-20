@@ -20,20 +20,18 @@ type SecurityPolicyRulePrivilegeType string
 
 // List of SecurityPolicyRulePrivilegeType
 const (
-	SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_DATABASE SecurityPolicyRulePrivilegeType = "password_checkout_database"
-	SecurityPolicyRulePrivilegeType_PRINCIPAL_ACCOUNT_SSH      SecurityPolicyRulePrivilegeType = "principal_account_ssh"
-	SecurityPolicyRulePrivilegeType_PRINCIPAL_ACCOUNT_RDP      SecurityPolicyRulePrivilegeType = "principal_account_rdp"
-	SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_SSH      SecurityPolicyRulePrivilegeType = "password_checkout_ssh"
-	SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_RDP      SecurityPolicyRulePrivilegeType = "password_checkout_rdp"
-	SecurityPolicyRulePrivilegeType_REVEAL_PASSWORD            SecurityPolicyRulePrivilegeType = "reveal_password"
-	SecurityPolicyRulePrivilegeType_UPDATE_PASSWORD            SecurityPolicyRulePrivilegeType = "update_password"
-	SecurityPolicyRulePrivilegeType_SECRET                     SecurityPolicyRulePrivilegeType = "secret"
-	SecurityPolicyRulePrivilegeType_ROTATE_PASSWORD            SecurityPolicyRulePrivilegeType = "rotate_password"
+	SecurityPolicyRulePrivilegeType_PRINCIPAL_ACCOUNT_SSH SecurityPolicyRulePrivilegeType = "principal_account_ssh"
+	SecurityPolicyRulePrivilegeType_PRINCIPAL_ACCOUNT_RDP SecurityPolicyRulePrivilegeType = "principal_account_rdp"
+	SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_SSH SecurityPolicyRulePrivilegeType = "password_checkout_ssh"
+	SecurityPolicyRulePrivilegeType_PASSWORD_CHECKOUT_RDP SecurityPolicyRulePrivilegeType = "password_checkout_rdp"
+	SecurityPolicyRulePrivilegeType_REVEAL_PASSWORD       SecurityPolicyRulePrivilegeType = "reveal_password"
+	SecurityPolicyRulePrivilegeType_UPDATE_PASSWORD       SecurityPolicyRulePrivilegeType = "update_password"
+	SecurityPolicyRulePrivilegeType_SECRET                SecurityPolicyRulePrivilegeType = "secret"
+	SecurityPolicyRulePrivilegeType_ROTATE_PASSWORD       SecurityPolicyRulePrivilegeType = "rotate_password"
 )
 
 // All allowed values of SecurityPolicyRulePrivilegeType enum
 var AllowedSecurityPolicyRulePrivilegeTypeEnumValues = []SecurityPolicyRulePrivilegeType{
-	"password_checkout_database",
 	"principal_account_ssh",
 	"principal_account_rdp",
 	"password_checkout_ssh",

@@ -171,6 +171,42 @@ func (dst *UserAccessMethodDetails) UnmarshalJSON(data []byte) error {
 		}
 	}
 
+	// check if the discriminator value is 'encrypted_ad_rdp_password_with_admin'
+	if jsonDict["_type"] == "encrypted_ad_rdp_password_with_admin" {
+		// try to unmarshal JSON data into UserAccessMethodServerDetails
+		err = json.Unmarshal(data, &dst.UserAccessMethodServerDetails)
+		if err == nil {
+			return nil // data stored in dst.UserAccessMethodServerDetails, return on the first match
+		} else {
+			dst.UserAccessMethodServerDetails = nil
+			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodServerDetails: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'encrypted_ad_rdp_password_with_remote_access'
+	if jsonDict["_type"] == "encrypted_ad_rdp_password_with_remote_access" {
+		// try to unmarshal JSON data into UserAccessMethodServerDetails
+		err = json.Unmarshal(data, &dst.UserAccessMethodServerDetails)
+		if err == nil {
+			return nil // data stored in dst.UserAccessMethodServerDetails, return on the first match
+		} else {
+			dst.UserAccessMethodServerDetails = nil
+			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodServerDetails: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'encrypted_ad_ssh_password'
+	if jsonDict["_type"] == "encrypted_ad_ssh_password" {
+		// try to unmarshal JSON data into UserAccessMethodServerDetails
+		err = json.Unmarshal(data, &dst.UserAccessMethodServerDetails)
+		if err == nil {
+			return nil // data stored in dst.UserAccessMethodServerDetails, return on the first match
+		} else {
+			dst.UserAccessMethodServerDetails = nil
+			return fmt.Errorf("failed to unmarshal UserAccessMethodDetails as UserAccessMethodServerDetails: %s", err.Error())
+		}
+	}
+
 	// check if the discriminator value is 'encrypted_rdp_password'
 	if jsonDict["_type"] == "encrypted_rdp_password" {
 		// try to unmarshal JSON data into UserAccessMethodServerDetails

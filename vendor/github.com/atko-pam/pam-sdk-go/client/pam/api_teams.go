@@ -15,6 +15,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -104,18 +105,23 @@ func (a *TeamsAPIService) AccessRequestCreateExecute(r ApiAccessRequestCreateReq
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -195,18 +201,23 @@ func (a *TeamsAPIService) FetchStatsForTeamExecute(r ApiFetchStatsForTeamRequest
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -286,18 +297,23 @@ func (a *TeamsAPIService) GetTeamSettingsExecute(r ApiGetTeamSettingsRequest) (*
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -316,9 +332,9 @@ func (r ApiGetVaultJWKSRequest) Execute() (*GetVaultJWKSResponse, *http.Response
 }
 
 /*
-GetVaultJWKS Retrieve the Vault JWKS
+GetVaultJWKS Retrieve the vault JWKS
 
-	Retrieves the Vault JWKS. Data sent to the vault must be encrypted to this key.
+	Retrieves the vault JWKS. Data sent to the vault must be encrypted to this key.
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
@@ -377,18 +393,23 @@ func (a *TeamsAPIService) GetVaultJWKSExecute(r ApiGetVaultJWKSRequest) (*GetVau
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -449,7 +470,7 @@ func (r ApiListAllCheckedOutResourcesByUserRequest) Execute() (*ListAllCheckedOu
 }
 
 /*
-ListAllCheckedOutResourcesByUser List all resources Checked Out by a user
+ListAllCheckedOutResourcesByUser List all resources checked out by a user
 
 	Lists all resources checked out by the current user
 
@@ -528,18 +549,23 @@ func (a *TeamsAPIService) ListAllCheckedOutResourcesByUserExecute(r ApiListAllCh
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -619,18 +645,23 @@ func (a *TeamsAPIService) ListRolesExecute(r ApiListRolesRequest) (*ListRolesRes
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -900,18 +931,23 @@ func (a *TeamsAPIService) ListServersExecute(r ApiListServersRequest) (*ListServ
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -936,9 +972,9 @@ func (r ApiSelfCheckinResourceRequest) Execute() (*http.Response, error) {
 }
 
 /*
-SelfCheckinResource Checks in a Resource previously checked out by the user
+SelfCheckinResource Check in a resource
 
-	Checks in a Resource previously checked out by the user
+	Checks in a resource that was previously checked out by a user
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
@@ -996,18 +1032,23 @@ func (a *TeamsAPIService) SelfCheckinResourceExecute(r ApiSelfCheckinResourceReq
 			return nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarHTTPResponse, err
+			return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarHTTPResponse, apiError
 	}
@@ -1095,18 +1136,23 @@ func (a *TeamsAPIService) UpdateTeamSettingsExecute(r ApiUpdateTeamSettingsReque
 			return nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarHTTPResponse, err
+			return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarHTTPResponse, apiError
 	}

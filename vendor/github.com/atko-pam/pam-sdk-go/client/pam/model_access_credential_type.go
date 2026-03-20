@@ -20,15 +20,19 @@ type AccessCredentialType string
 
 // List of AccessCredentialType
 const (
-	AccessCredentialType_MANAGED                      AccessCredentialType = "managed"
-	AccessCredentialType_PASSWORD                     AccessCredentialType = "password"
-	AccessCredentialType_SSH_CERTIFICATE              AccessCredentialType = "ssh-certificate"
-	AccessCredentialType_SSH_CERTIFICATE_ADMIN        AccessCredentialType = "ssh-certificate-admin"
-	AccessCredentialType_RDP_BROKER_CERTIFICATE       AccessCredentialType = "rdp-broker-certificate"
-	AccessCredentialType_RDP_BROKER_CERTIFICATE_ADMIN AccessCredentialType = "rdp-broker-certificate-admin"
-	AccessCredentialType_ENCRYPTED_SSH_PASSWORD       AccessCredentialType = "encrypted-ssh-password"
-	AccessCredentialType_ENCRYPTED_RDP_PASSWORD       AccessCredentialType = "encrypted-rdp-password"
-	AccessCredentialType_ENCRYPTED_AD_RDP_PASSWORD    AccessCredentialType = "encrypted-ad-rdp-password"
+	AccessCredentialType_MANAGED                                      AccessCredentialType = "managed"
+	AccessCredentialType_PASSWORD                                     AccessCredentialType = "password"
+	AccessCredentialType_SSH_CERTIFICATE                              AccessCredentialType = "ssh-certificate"
+	AccessCredentialType_SSH_CERTIFICATE_ADMIN                        AccessCredentialType = "ssh-certificate-admin"
+	AccessCredentialType_SSH_CERTIFICATE_SUDO                         AccessCredentialType = "ssh-certificate-sudo"
+	AccessCredentialType_RDP_BROKER_CERTIFICATE                       AccessCredentialType = "rdp-broker-certificate"
+	AccessCredentialType_RDP_BROKER_CERTIFICATE_ADMIN                 AccessCredentialType = "rdp-broker-certificate-admin"
+	AccessCredentialType_ENCRYPTED_SSH_PASSWORD                       AccessCredentialType = "encrypted-ssh-password"
+	AccessCredentialType_ENCRYPTED_RDP_PASSWORD                       AccessCredentialType = "encrypted-rdp-password"
+	AccessCredentialType_ENCRYPTED_AD_RDP_PASSWORD                    AccessCredentialType = "encrypted-ad-rdp-password"
+	AccessCredentialType_ENCRYPTED_AD_RDP_PASSWORD_WITH_REMOTE_ACCESS AccessCredentialType = "encrypted-ad-rdp-password-with-remote-access"
+	AccessCredentialType_ENCRYPTED_AD_RDP_PASSWORD_WITH_ADMIN         AccessCredentialType = "encrypted-ad-rdp-password-with-admin"
+	AccessCredentialType_ENCRYPTED_AD_SSH_PASSWORD                    AccessCredentialType = "encrypted-ad-ssh-password"
 )
 
 // All allowed values of AccessCredentialType enum
@@ -37,11 +41,15 @@ var AllowedAccessCredentialTypeEnumValues = []AccessCredentialType{
 	"password",
 	"ssh-certificate",
 	"ssh-certificate-admin",
+	"ssh-certificate-sudo",
 	"rdp-broker-certificate",
 	"rdp-broker-certificate-admin",
 	"encrypted-ssh-password",
 	"encrypted-rdp-password",
 	"encrypted-ad-rdp-password",
+	"encrypted-ad-rdp-password-with-remote-access",
+	"encrypted-ad-rdp-password-with-admin",
+	"encrypted-ad-ssh-password",
 }
 
 func (v *AccessCredentialType) UnmarshalJSON(src []byte) error {

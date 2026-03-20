@@ -15,6 +15,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -23,6 +24,233 @@ import (
 
 // AttributesAPIService AttributesAPI service
 type AttributesAPIService service
+
+type ApiDeleteAttributeOptionRequest struct {
+	ctx           context.Context
+	ApiService    *AttributesAPIService
+	teamName      string
+	namespace     string
+	attributeName string
+}
+
+func (r ApiDeleteAttributeOptionRequest) Execute() (*http.Response, error) {
+	return r.ApiService.DeleteAttributeOptionExecute(r)
+}
+
+/*
+DeleteAttributeOption Delete an attribute option
+
+	Deletes the attribute option for the specified namespace and attribute
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param namespace Namespace for the attribute option. Valid values are `user` or `group`.
+	@param attributeName Attribute name. Valid values: * `unix_uid`, `unix_gid` (for `user` namespace) * `unix_gid` (for `group` namespace)
+
+@return ApiDeleteAttributeOptionRequest
+*/
+func (a *AttributesAPIService) DeleteAttributeOption(ctx context.Context, teamName string, namespace string, attributeName string) ApiDeleteAttributeOptionRequest {
+	return ApiDeleteAttributeOptionRequest{
+		ApiService:    a,
+		ctx:           ctx,
+		teamName:      teamName,
+		namespace:     namespace,
+		attributeName: attributeName,
+	}
+}
+
+// Execute executes the request
+func (a *AttributesAPIService) DeleteAttributeOptionExecute(r ApiDeleteAttributeOptionRequest) (*http.Response, error) {
+	var (
+		traceKey           = "attributesapi.deleteAttributeOption"
+		localVarHTTPMethod = http.MethodDelete
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localVarPath := "/v1/teams/{team_name}/attributes/options/{namespace}/{attribute_name}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"namespace"+"}", url.PathEscape(parameterValueToString(r.namespace, "namespace")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"attribute_name"+"}", url.PathEscape(parameterValueToString(r.attributeName, "attributeName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return nil, err
+		}
+
+		originalErr := err
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarHTTPResponse, originalErr
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
+		}
+		return localVarHTTPResponse, apiError
+	}
+
+	return localVarHTTPResponse, err
+}
+
+type ApiFetchAttributeOptionRequest struct {
+	ctx             context.Context
+	ApiService      *AttributesAPIService
+	teamName        string
+	namespace       string
+	attributeName   string
+	excludeDefaults *bool
+}
+
+// Specify &#x60;true&#x60; to return the non-default option. If only the default option exists, an HTTP 404 error is returned. Specify &#x60;false&#x60; to return any option available, including the default option.
+func (r ApiFetchAttributeOptionRequest) ExcludeDefaults(excludeDefaults bool) ApiFetchAttributeOptionRequest {
+	r.excludeDefaults = &excludeDefaults
+	return r
+}
+
+func (r ApiFetchAttributeOptionRequest) Execute() (*AttributeOption, *http.Response, error) {
+	return r.ApiService.FetchAttributeOptionExecute(r)
+}
+
+/*
+FetchAttributeOption Retrieve an attribute option
+
+	Retrieves the attribute range option for the specified namespace and attribute
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param namespace Namespace for the attribute option. Valid values are `user` or `group`.
+	@param attributeName Attribute name. Valid values: * `unix_uid`, `unix_gid` (for `user` namespace) * `unix_gid` (for `group` namespace)
+
+@return ApiFetchAttributeOptionRequest
+*/
+func (a *AttributesAPIService) FetchAttributeOption(ctx context.Context, teamName string, namespace string, attributeName string) ApiFetchAttributeOptionRequest {
+	return ApiFetchAttributeOptionRequest{
+		ApiService:    a,
+		ctx:           ctx,
+		teamName:      teamName,
+		namespace:     namespace,
+		attributeName: attributeName,
+	}
+}
+
+// Execute executes the request
+//
+//	@return AttributeOption
+func (a *AttributesAPIService) FetchAttributeOptionExecute(r ApiFetchAttributeOptionRequest) (*AttributeOption, *http.Response, error) {
+	var (
+		traceKey            = "attributesapi.fetchAttributeOption"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *AttributeOption
+	)
+
+	localVarPath := "/v1/teams/{team_name}/attributes/options/{namespace}/{attribute_name}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"namespace"+"}", url.PathEscape(parameterValueToString(r.namespace, "namespace")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"attribute_name"+"}", url.PathEscape(parameterValueToString(r.attributeName, "attributeName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.excludeDefaults != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "exclude_defaults", r.excludeDefaults, "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		originalErr := err
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 400 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v BadRequestResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into BadRequestResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
 
 type ApiFetchGroupAttributeRequest struct {
 	ctx         context.Context
@@ -104,18 +332,23 @@ func (a *AttributesAPIService) FetchGroupAttributeExecute(r ApiFetchGroupAttribu
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -203,18 +436,171 @@ func (a *AttributesAPIService) FetchUserAttributeExecute(r ApiFetchUserAttribute
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiListAttributeOptionsRequest struct {
+	ctx        context.Context
+	ApiService *AttributesAPIService
+	teamName   string
+	count      *int32
+	descending *bool
+	offset     *string
+	prev       *bool
+}
+
+// The number of objects per page
+func (r ApiListAttributeOptionsRequest) Count(count int32) ApiListAttributeOptionsRequest {
+	r.count = &count
+	return r
+}
+
+// The object order
+func (r ApiListAttributeOptionsRequest) Descending(descending bool) ApiListAttributeOptionsRequest {
+	r.descending = &descending
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListAttributeOptionsRequest) Offset(offset string) ApiListAttributeOptionsRequest {
+	r.offset = &offset
+	return r
+}
+
+// The direction of paging
+func (r ApiListAttributeOptionsRequest) Prev(prev bool) ApiListAttributeOptionsRequest {
+	r.prev = &prev
+	return r
+}
+
+func (r ApiListAttributeOptionsRequest) Execute() (*ListAttributeOptionsResponse, *http.Response, error) {
+	return r.ApiService.ListAttributeOptionsExecute(r)
+}
+
+/*
+ListAttributeOptions List all attribute options
+
+	Lists all attribute options configured for the team, such as `unix_uid` or `unix_gid` ranges
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+
+@return ApiListAttributeOptionsRequest
+*/
+func (a *AttributesAPIService) ListAttributeOptions(ctx context.Context, teamName string) ApiListAttributeOptionsRequest {
+	return ApiListAttributeOptionsRequest{
+		ApiService: a,
+		ctx:        ctx,
+		teamName:   teamName,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListAttributeOptionsResponse
+func (a *AttributesAPIService) ListAttributeOptionsExecute(r ApiListAttributeOptionsRequest) (*ListAttributeOptionsResponse, *http.Response, error) {
+	var (
+		traceKey            = "attributesapi.listAttributeOptions"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListAttributeOptionsResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/attributes/options"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.count != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
+	}
+	if r.descending != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
+	if r.prev != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		originalErr := err
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 400 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v BadRequestResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into BadRequestResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -258,7 +644,7 @@ func (r ApiListGroupAttributesRequest) Prev(prev bool) ApiListGroupAttributesReq
 	return r
 }
 
-// When &#x60;true&#x60;, only return attributes that conflict with other attributes on your team
+// When &#x60;true&#x60;, only returns attributes that conflict with other attributes on your team
 func (r ApiListGroupAttributesRequest) Conflicting(conflicting bool) ApiListGroupAttributesRequest {
 	r.conflicting = &conflicting
 	return r
@@ -348,18 +734,23 @@ func (a *AttributesAPIService) ListGroupAttributesExecute(r ApiListGroupAttribut
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -406,9 +797,9 @@ func (r ApiListTeamUserAttributeConflictsRequest) Execute() (*ListTeamUserAttrib
 }
 
 /*
-ListTeamUserAttributeConflicts List all attribute Conflicts for a team
+ListTeamUserAttributeConflicts List all attribute conflicts for a team
 
-	Lists all attribute conflicts for your team
+	Lists all attribute conflicts for a team
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
@@ -479,18 +870,23 @@ func (a *AttributesAPIService) ListTeamUserAttributeConflictsExecute(r ApiListTe
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -534,7 +930,7 @@ func (r ApiListUserAttributesRequest) Prev(prev bool) ApiListUserAttributesReque
 	return r
 }
 
-// When &#x60;true&#x60;, only return attributes that conflict with other attributes on your team
+// When &#x60;true&#x60;, only returns attributes that conflict with other attributes on your team
 func (r ApiListUserAttributesRequest) Conflicting(conflicting bool) ApiListUserAttributesRequest {
 	r.conflicting = &conflicting
 	return r
@@ -624,18 +1020,23 @@ func (a *AttributesAPIService) ListUserAttributesExecute(r ApiListUserAttributes
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -731,18 +1132,23 @@ func (a *AttributesAPIService) UpdateGroupAttributeExecute(r ApiUpdateGroupAttri
 			return nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarHTTPResponse, err
+			return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarHTTPResponse, apiError
 	}
@@ -838,21 +1244,153 @@ func (a *AttributesAPIService) UpdateUserAttributeExecute(r ApiUpdateUserAttribu
 			return nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarHTTPResponse, err
+			return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarHTTPResponse, apiError
 	}
 
 	return localVarHTTPResponse, err
+}
+
+type ApiUpsertAttributeOptionRequest struct {
+	ctx             context.Context
+	ApiService      *AttributesAPIService
+	teamName        string
+	namespace       string
+	attributeName   string
+	attributeOption *AttributeOption
+}
+
+func (r ApiUpsertAttributeOptionRequest) AttributeOption(attributeOption AttributeOption) ApiUpsertAttributeOptionRequest {
+	r.attributeOption = &attributeOption
+	return r
+}
+
+func (r ApiUpsertAttributeOptionRequest) Execute() (*AttributeOption, *http.Response, error) {
+	return r.ApiService.UpsertAttributeOptionExecute(r)
+}
+
+/*
+UpsertAttributeOption Upsert an attribute option
+
+	Creates or updates the attribute option (the minimum and maximum range) for the specified namespace and attribute
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param namespace Namespace for the attribute option. Valid values are `user` or `group`.
+	@param attributeName Attribute name. Valid values: * `unix_uid`, `unix_gid` (for `user` namespace) * `unix_gid` (for `group` namespace)
+
+@return ApiUpsertAttributeOptionRequest
+*/
+func (a *AttributesAPIService) UpsertAttributeOption(ctx context.Context, teamName string, namespace string, attributeName string) ApiUpsertAttributeOptionRequest {
+	return ApiUpsertAttributeOptionRequest{
+		ApiService:    a,
+		ctx:           ctx,
+		teamName:      teamName,
+		namespace:     namespace,
+		attributeName: attributeName,
+	}
+}
+
+// Execute executes the request
+//
+//	@return AttributeOption
+func (a *AttributesAPIService) UpsertAttributeOptionExecute(r ApiUpsertAttributeOptionRequest) (*AttributeOption, *http.Response, error) {
+	var (
+		traceKey            = "attributesapi.upsertAttributeOption"
+		localVarHTTPMethod  = http.MethodPut
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *AttributeOption
+	)
+
+	localVarPath := "/v1/teams/{team_name}/attributes/options/{namespace}/{attribute_name}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"namespace"+"}", url.PathEscape(parameterValueToString(r.namespace, "namespace")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"attribute_name"+"}", url.PathEscape(parameterValueToString(r.attributeName, "attributeName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.attributeOption == nil {
+		return localVarReturnValue, nil, reportError("attributeOption is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.attributeOption
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		originalErr := err
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 400 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v BadRequestResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into BadRequestResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
 }

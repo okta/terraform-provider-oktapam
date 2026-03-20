@@ -18,7 +18,7 @@ import (
 // checks if the ListUAMForServiceAccountResponse type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &ListUAMForServiceAccountResponse{}
 
-// ListUAMForServiceAccountResponse List of `User Access Methods` for a service account
+// ListUAMForServiceAccountResponse List of user access methods for a service account
 type ListUAMForServiceAccountResponse struct {
 	List []UserAccessMethod `json:"list"`
 }

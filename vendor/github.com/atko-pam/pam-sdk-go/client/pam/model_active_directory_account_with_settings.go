@@ -23,6 +23,8 @@ var _ MappedNullable = &ActiveDirectoryAccountWithSettings{}
 type ActiveDirectoryAccountWithSettings struct {
 	// The project level account settings that are enabled for this account
 	AccountSettingsEnabled []AccountSetting `json:"account_settings_enabled,omitempty"`
+	// The UUID of the Active Directory account
+	Id *string `json:"id,omitempty"`
 	// The name of the Active Directory account
 	AccountName *string `json:"account_name,omitempty"`
 	// The type of Active Directory account
@@ -54,7 +56,7 @@ type ActiveDirectoryAccountWithSettings struct {
 	// The email of this Active Directory user, if set
 	Email               *string                     `json:"email,omitempty"`
 	AccountStatusDetail *ServiceAccountStatusDetail `json:"account_status_detail,omitempty"`
-	// Additional information about this account's status, if set
+	// Optional additional information about the account status
 	AccountStatusDetailMessage *string `json:"account_status_detail_message,omitempty"`
 }
 
@@ -105,6 +107,39 @@ func (o *ActiveDirectoryAccountWithSettings) HasAccountSettingsEnabled() bool {
 // SetAccountSettingsEnabled gets a reference to the given []AccountSetting and assigns it to the AccountSettingsEnabled field.
 func (o *ActiveDirectoryAccountWithSettings) SetAccountSettingsEnabled(v []AccountSetting) *ActiveDirectoryAccountWithSettings {
 	o.AccountSettingsEnabled = v
+	return o
+}
+
+// GetId returns the Id field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountWithSettings) GetId() string {
+	if o == nil || IsNil(o.Id) {
+		var ret string
+		return ret
+	}
+	return *o.Id
+}
+
+// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountWithSettings) GetIdOk() (*string, bool) {
+	if o == nil || IsNil(o.Id) {
+		return nil, false
+	}
+	return o.Id, true
+}
+
+// HasId returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountWithSettings) HasId() bool {
+	if o != nil && !IsNil(o.Id) {
+		return true
+	}
+
+	return false
+}
+
+// SetId gets a reference to the given string and assigns it to the Id field.
+func (o *ActiveDirectoryAccountWithSettings) SetId(v string) *ActiveDirectoryAccountWithSettings {
+	o.Id = &v
 	return o
 }
 
@@ -747,6 +782,9 @@ func (o ActiveDirectoryAccountWithSettings) ToMap() (map[string]interface{}, err
 	toSerialize := map[string]interface{}{}
 	if !IsNil(o.AccountSettingsEnabled) {
 		toSerialize["account_settings_enabled"] = o.AccountSettingsEnabled
+	}
+	if !IsNil(o.Id) {
+		toSerialize["id"] = o.Id
 	}
 	if !IsNil(o.AccountName) {
 		toSerialize["account_name"] = o.AccountName

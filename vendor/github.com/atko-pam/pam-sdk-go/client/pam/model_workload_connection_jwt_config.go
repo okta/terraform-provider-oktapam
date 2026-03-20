@@ -15,35 +15,35 @@ import (
 	"encoding/json"
 )
 
-// checks if the WorkloadConnectionJwtConfig type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &WorkloadConnectionJwtConfig{}
+// checks if the WorkloadConnectionJWTConfig type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &WorkloadConnectionJWTConfig{}
 
-// WorkloadConnectionJwtConfig Configuration for JWT type workload connections. Omitted for other types.
-type WorkloadConnectionJwtConfig struct {
+// WorkloadConnectionJWTConfig Configuration for JWT type workload connections. Omitted for other types.
+type WorkloadConnectionJWTConfig struct {
 	// The URL to verify the JSON Web Key Set (JWKS) for the workload connection
 	JwksUrl string `json:"jwks_url"`
 }
 
-// NewWorkloadConnectionJwtConfig instantiates a new WorkloadConnectionJwtConfig object
+// NewWorkloadConnectionJWTConfig instantiates a new WorkloadConnectionJWTConfig object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewWorkloadConnectionJwtConfig(jwksUrl string) *WorkloadConnectionJwtConfig {
-	this := WorkloadConnectionJwtConfig{}
+func NewWorkloadConnectionJWTConfig(jwksUrl string) *WorkloadConnectionJWTConfig {
+	this := WorkloadConnectionJWTConfig{}
 	this.JwksUrl = jwksUrl
 	return &this
 }
 
-// NewWorkloadConnectionJwtConfigWithDefaults instantiates a new WorkloadConnectionJwtConfig object
+// NewWorkloadConnectionJWTConfigWithDefaults instantiates a new WorkloadConnectionJWTConfig object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewWorkloadConnectionJwtConfigWithDefaults() *WorkloadConnectionJwtConfig {
-	this := WorkloadConnectionJwtConfig{}
+func NewWorkloadConnectionJWTConfigWithDefaults() *WorkloadConnectionJWTConfig {
+	this := WorkloadConnectionJWTConfig{}
 	return &this
 }
 
 // GetJwksUrl returns the JwksUrl field value
-func (o *WorkloadConnectionJwtConfig) GetJwksUrl() string {
+func (o *WorkloadConnectionJWTConfig) GetJwksUrl() string {
 	if o == nil {
 		var ret string
 		return ret
@@ -54,7 +54,7 @@ func (o *WorkloadConnectionJwtConfig) GetJwksUrl() string {
 
 // GetJwksUrlOk returns a tuple with the JwksUrl field value
 // and a boolean to check if the value has been set.
-func (o *WorkloadConnectionJwtConfig) GetJwksUrlOk() (*string, bool) {
+func (o *WorkloadConnectionJWTConfig) GetJwksUrlOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -62,12 +62,12 @@ func (o *WorkloadConnectionJwtConfig) GetJwksUrlOk() (*string, bool) {
 }
 
 // SetJwksUrl sets field value
-func (o *WorkloadConnectionJwtConfig) SetJwksUrl(v string) *WorkloadConnectionJwtConfig {
+func (o *WorkloadConnectionJWTConfig) SetJwksUrl(v string) *WorkloadConnectionJWTConfig {
 	o.JwksUrl = v
 	return o
 }
 
-func (o WorkloadConnectionJwtConfig) MarshalJSON() ([]byte, error) {
+func (o WorkloadConnectionJWTConfig) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -75,44 +75,44 @@ func (o WorkloadConnectionJwtConfig) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o WorkloadConnectionJwtConfig) ToMap() (map[string]interface{}, error) {
+func (o WorkloadConnectionJWTConfig) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["jwks_url"] = o.JwksUrl
 	return toSerialize, nil
 }
 
-type NullableWorkloadConnectionJwtConfig struct {
-	value *WorkloadConnectionJwtConfig
+type NullableWorkloadConnectionJWTConfig struct {
+	value *WorkloadConnectionJWTConfig
 	isSet bool
 }
 
-func (v NullableWorkloadConnectionJwtConfig) Get() *WorkloadConnectionJwtConfig {
+func (v NullableWorkloadConnectionJWTConfig) Get() *WorkloadConnectionJWTConfig {
 	return v.value
 }
 
-func (v *NullableWorkloadConnectionJwtConfig) Set(val *WorkloadConnectionJwtConfig) {
+func (v *NullableWorkloadConnectionJWTConfig) Set(val *WorkloadConnectionJWTConfig) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullableWorkloadConnectionJwtConfig) IsSet() bool {
+func (v NullableWorkloadConnectionJWTConfig) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullableWorkloadConnectionJwtConfig) Unset() {
+func (v *NullableWorkloadConnectionJWTConfig) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullableWorkloadConnectionJwtConfig(val *WorkloadConnectionJwtConfig) *NullableWorkloadConnectionJwtConfig {
-	return &NullableWorkloadConnectionJwtConfig{value: val, isSet: true}
+func NewNullableWorkloadConnectionJWTConfig(val *WorkloadConnectionJWTConfig) *NullableWorkloadConnectionJWTConfig {
+	return &NullableWorkloadConnectionJWTConfig{value: val, isSet: true}
 }
 
-func (v NullableWorkloadConnectionJwtConfig) MarshalJSON() ([]byte, error) {
+func (v NullableWorkloadConnectionJWTConfig) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullableWorkloadConnectionJwtConfig) UnmarshalJSON(src []byte) error {
+func (v *NullableWorkloadConnectionJWTConfig) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

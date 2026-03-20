@@ -22,7 +22,7 @@ var _ MappedNullable = &UserAccessMethodFilters{}
 type UserAccessMethodFilters struct {
 	// If provided, only return user access methods that use this account to access the server
 	Identity *string `json:"identity,omitempty"`
-	// If provided, only return user access methods associated with this sudo command bundle.  The command bundle is a grouping of sudo command sets defined in policies, identified by its display name.
+	// If provided, only return user access methods associated with this sudo command bundle. The command bundle is a grouping of sudo command sets defined in policies, identified by its display name.
 	SudoDisplayName *string `json:"sudo_display_name,omitempty"`
 }
 

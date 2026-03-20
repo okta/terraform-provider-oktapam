@@ -15,6 +15,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -23,6 +24,130 @@ import (
 
 // SaasAppAccountsAPIService SaasAppAccountsAPI service
 type SaasAppAccountsAPIService service
+
+type ApiGetAppInstanceForTeamRequest struct {
+	ctx               context.Context
+	ApiService        *SaasAppAccountsAPIService
+	teamName          string
+	saasAppInstanceId string
+}
+
+func (r ApiGetAppInstanceForTeamRequest) Execute() (*SaasApplicationInstance, *http.Response, error) {
+	return r.ApiService.GetAppInstanceForTeamExecute(r)
+}
+
+/*
+GetAppInstanceForTeam Retrieve a single app instance
+
+	Retrieves a single app instance connected to OPA for a team based on the app instance ID
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param saasAppInstanceId The app instance ID of a SaaS app provisioned to an Okta org
+
+@return ApiGetAppInstanceForTeamRequest
+*/
+func (a *SaasAppAccountsAPIService) GetAppInstanceForTeam(ctx context.Context, teamName string, saasAppInstanceId string) ApiGetAppInstanceForTeamRequest {
+	return ApiGetAppInstanceForTeamRequest{
+		ApiService:        a,
+		ctx:               ctx,
+		teamName:          teamName,
+		saasAppInstanceId: saasAppInstanceId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return SaasApplicationInstance
+func (a *SaasAppAccountsAPIService) GetAppInstanceForTeamExecute(r ApiGetAppInstanceForTeamRequest) (*SaasApplicationInstance, *http.Response, error) {
+	var (
+		traceKey            = "saasappaccountsapi.getAppInstanceForTeam"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *SaasApplicationInstance
+	)
+
+	localVarPath := "/v1/teams/{team_name}/connections/saas_apps/{saas_app_instance_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"saas_app_instance_id"+"}", url.PathEscape(parameterValueToString(r.saasAppInstanceId, "saasAppInstanceId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		originalErr := err
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
 
 type ApiGetOktaUDServiceAccountEndUserRequest struct {
 	ctx                             context.Context
@@ -36,9 +161,9 @@ func (r ApiGetOktaUDServiceAccountEndUserRequest) Execute() (*ServiceAccountEndU
 }
 
 /*
-GetOktaUDServiceAccountEndUser Get a Okta Universal Directory service account user has access to
+GetOktaUDServiceAccountEndUser Retrieve an Okta Universal Directory service account
 
-	Gets a Okta Universal Directory service account user has access to based on the security policies
+	Retrieves an Okta Universal Directory service account that the user has access to based on the security policies
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
@@ -100,18 +225,23 @@ func (a *SaasAppAccountsAPIService) GetOktaUDServiceAccountEndUserExecute(r ApiG
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -132,14 +262,14 @@ func (r ApiGetSaaSApplicationServiceAccountEndUserRequest) Execute() (*ServiceAc
 }
 
 /*
-GetSaaSApplicationServiceAccountEndUser Get a SaaS application service account that the user has access to
+GetSaaSApplicationServiceAccountEndUser Retrieve an end-user SaaS app service account
 
-	Gets a SaaS application service account that the user has access to based on the security policies
+	Retrieves a SaaS app service account that the end user has access to based on the security policies
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
 	@param teamName The name of your team
-	@param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+	@param saasAppInstanceId The app instance ID of a SaaS app provisioned to an Okta org
 	@param saasAppAccountId The UUID of a SaaS app account
 
 @return ApiGetSaaSApplicationServiceAccountEndUserRequest
@@ -199,18 +329,23 @@ func (a *SaasAppAccountsAPIService) GetSaaSApplicationServiceAccountEndUserExecu
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -302,18 +437,23 @@ func (a *SaasAppAccountsAPIService) GetSaasAppAccountDetailsExecute(r ApiGetSaas
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -333,14 +473,14 @@ func (r ApiGetSaasApplicationAccessibleByUserRequest) Execute() (*SaasApplicatio
 }
 
 /*
-GetSaasApplicationAccessibleByUser Get a SaaS Application instance accessible to the end user
+GetSaasApplicationAccessibleByUser Retrieve an end-user SaaS app instance
 
-	Gets a SaaS app instance that an end user has access to through at least one account based on the security policies
+	Retrieves a SaaS app instance that an end user has access to through at least one account based on the security policies
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
 	@param teamName The name of your team
-	@param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+	@param saasAppInstanceId The app instance ID of a SaaS app provisioned to an Okta org
 
 @return ApiGetSaasApplicationAccessibleByUserRequest
 */
@@ -397,18 +537,23 @@ func (a *SaasAppAccountsAPIService) GetSaasApplicationAccessibleByUserExecute(r 
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -425,7 +570,7 @@ type ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest struct {
 	managed         *bool
 }
 
-// Only return results that include the specified value
+// Only returns results that include the specified value
 func (r ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest) Contains(contains string) ApiListAllSaasAppAccountsForDelegatedSecurityAdminRequest {
 	r.contains = &contains
 	return r
@@ -512,18 +657,23 @@ func (a *SaasAppAccountsAPIService) ListAllSaasAppAccountsForDelegatedSecurityAd
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -539,7 +689,7 @@ type ApiListAllSaasAppAccountsForSecurityAdminRequest struct {
 	managed    *bool
 }
 
-// Only return results that include the specified value
+// Only returns results that include the specified value
 func (r ApiListAllSaasAppAccountsForSecurityAdminRequest) Contains(contains string) ApiListAllSaasAppAccountsForSecurityAdminRequest {
 	r.contains = &contains
 	return r
@@ -623,18 +773,181 @@ func (a *SaasAppAccountsAPIService) ListAllSaasAppAccountsForSecurityAdminExecut
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiListAppInstancesForTeamRequest struct {
+	ctx        context.Context
+	ApiService *SaasAppAccountsAPIService
+	teamName   string
+	count      *int32
+	prev       *bool
+	offset     *string
+	descending *bool
+	contains   *string
+}
+
+// The number of objects per page
+func (r ApiListAppInstancesForTeamRequest) Count(count int32) ApiListAppInstancesForTeamRequest {
+	r.count = &count
+	return r
+}
+
+// The direction of paging
+func (r ApiListAppInstancesForTeamRequest) Prev(prev bool) ApiListAppInstancesForTeamRequest {
+	r.prev = &prev
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListAppInstancesForTeamRequest) Offset(offset string) ApiListAppInstancesForTeamRequest {
+	r.offset = &offset
+	return r
+}
+
+// The object order
+func (r ApiListAppInstancesForTeamRequest) Descending(descending bool) ApiListAppInstancesForTeamRequest {
+	r.descending = &descending
+	return r
+}
+
+// Only returns results that include the specified value
+func (r ApiListAppInstancesForTeamRequest) Contains(contains string) ApiListAppInstancesForTeamRequest {
+	r.contains = &contains
+	return r
+}
+
+func (r ApiListAppInstancesForTeamRequest) Execute() (*ListAppInstancesForTeamResponse, *http.Response, error) {
+	return r.ApiService.ListAppInstancesForTeamExecute(r)
+}
+
+/*
+ListAppInstancesForTeam List all connected app instances for a team
+
+	List all connected app instances for a team
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+
+@return ApiListAppInstancesForTeamRequest
+*/
+func (a *SaasAppAccountsAPIService) ListAppInstancesForTeam(ctx context.Context, teamName string) ApiListAppInstancesForTeamRequest {
+	return ApiListAppInstancesForTeamRequest{
+		ApiService: a,
+		ctx:        ctx,
+		teamName:   teamName,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListAppInstancesForTeamResponse
+func (a *SaasAppAccountsAPIService) ListAppInstancesForTeamExecute(r ApiListAppInstancesForTeamRequest) (*ListAppInstancesForTeamResponse, *http.Response, error) {
+	var (
+		traceKey            = "saasappaccountsapi.listAppInstancesForTeam"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListAppInstancesForTeamResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/connections/saas_apps"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.count != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
+	}
+	if r.prev != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
+	if r.descending != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.contains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		originalErr := err
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -652,7 +965,7 @@ type ApiListResourceGroupProjectSaasAppAccountsRequest struct {
 	managed         *bool
 }
 
-// Only return results that include the specified value
+// Only returns results that include the specified value
 func (r ApiListResourceGroupProjectSaasAppAccountsRequest) Contains(contains string) ApiListResourceGroupProjectSaasAppAccountsRequest {
 	r.contains = &contains
 	return r
@@ -742,18 +1055,23 @@ func (a *SaasAppAccountsAPIService) ListResourceGroupProjectSaasAppAccountsExecu
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -770,6 +1088,7 @@ type ApiListSaaSApplicationServiceAccountsEndUserRequest struct {
 	prev              *bool
 	offset            *string
 	descending        *bool
+	contains          *string
 }
 
 // The number of objects per page
@@ -796,19 +1115,25 @@ func (r ApiListSaaSApplicationServiceAccountsEndUserRequest) Descending(descendi
 	return r
 }
 
+// Filters for service accounts where the name contains the search string
+func (r ApiListSaaSApplicationServiceAccountsEndUserRequest) Contains(contains string) ApiListSaaSApplicationServiceAccountsEndUserRequest {
+	r.contains = &contains
+	return r
+}
+
 func (r ApiListSaaSApplicationServiceAccountsEndUserRequest) Execute() (*ListServiceAccountsEndUserResponse, *http.Response, error) {
 	return r.ApiService.ListSaaSApplicationServiceAccountsEndUserExecute(r)
 }
 
 /*
-ListSaaSApplicationServiceAccountsEndUser List SaaS application service accounts the user has access to
+ListSaaSApplicationServiceAccountsEndUser Lists all end-user SaaS app service accounts
 
-	List SaaS application service accounts the user has access to based on the security policies.
+	Lists all SaaS app service accounts that the end user has access to based on the security policies
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
 	@param teamName The name of your team
-	@param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+	@param saasAppInstanceId The app instance ID of a SaaS app provisioned to an Okta org
 
 @return ApiListSaaSApplicationServiceAccountsEndUserRequest
 */
@@ -853,6 +1178,9 @@ func (a *SaasAppAccountsAPIService) ListSaaSApplicationServiceAccountsEndUserExe
 	if r.descending != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
 	}
+	if r.contains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -877,18 +1205,23 @@ func (a *SaasAppAccountsAPIService) ListSaaSApplicationServiceAccountsEndUserExe
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -904,6 +1237,7 @@ type ApiListSaasApplicationsAccessibleByUserRequest struct {
 	prev       *bool
 	offset     *string
 	descending *bool
+	contains   *string
 }
 
 // The number of objects per page
@@ -930,14 +1264,20 @@ func (r ApiListSaasApplicationsAccessibleByUserRequest) Descending(descending bo
 	return r
 }
 
+// Filters for SaaS app instances where the name contains the search string
+func (r ApiListSaasApplicationsAccessibleByUserRequest) Contains(contains string) ApiListSaasApplicationsAccessibleByUserRequest {
+	r.contains = &contains
+	return r
+}
+
 func (r ApiListSaasApplicationsAccessibleByUserRequest) Execute() (*ListSaasApplicationsAccessibleByUserResponse, *http.Response, error) {
 	return r.ApiService.ListSaasApplicationsAccessibleByUserExecute(r)
 }
 
 /*
-ListSaasApplicationsAccessibleByUser List SaaS Application instances accessible to the end user
+ListSaasApplicationsAccessibleByUser List the end-user SaaS app instances
 
-	List SaaS Application instances that an end user has access to through at least one account based on the security policies.
+	Lists the SaaS app instances that an end user has access to through at least one account based on the security policies
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
@@ -984,6 +1324,9 @@ func (a *SaasAppAccountsAPIService) ListSaasApplicationsAccessibleByUserExecute(
 	if r.descending != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
 	}
+	if r.contains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -1008,18 +1351,23 @@ func (a *SaasAppAccountsAPIService) ListSaasApplicationsAccessibleByUserExecute(
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1040,14 +1388,14 @@ func (r ApiListUAMForSaaSApplicationAccountRequest) Execute() (*ListUAMForServic
 }
 
 /*
-ListUAMForSaaSApplicationAccount List SaaS application account user access methods
+ListUAMForSaaSApplicationAccount List all SaaS app account user access methods
 
-	List SaaS application account user access methods based on the security policies.
+	Lists all user access methods for a SaaS app account based on the security policies
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
 	@param teamName The name of your team
-	@param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+	@param saasAppInstanceId The app instance ID of a SaaS app provisioned to an Okta org
 	@param saasAppAccountId The UUID of a SaaS app account
 
 @return ApiListUAMForSaaSApplicationAccountRequest
@@ -1107,18 +1455,157 @@ func (a *SaasAppAccountsAPIService) ListUAMForSaaSApplicationAccountExecute(r Ap
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiPatchAppInstanceRequest struct {
+	ctx                              context.Context
+	ApiService                       *SaasAppAccountsAPIService
+	teamName                         string
+	saasAppInstanceId                string
+	appPasswordRotationStrategyPatch *AppPasswordRotationStrategyPatch
+}
+
+func (r ApiPatchAppInstanceRequest) AppPasswordRotationStrategyPatch(appPasswordRotationStrategyPatch AppPasswordRotationStrategyPatch) ApiPatchAppInstanceRequest {
+	r.appPasswordRotationStrategyPatch = &appPasswordRotationStrategyPatch
+	return r
+}
+
+func (r ApiPatchAppInstanceRequest) Execute() (*SaasApplicationInstance, *http.Response, error) {
+	return r.ApiService.PatchAppInstanceExecute(r)
+}
+
+/*
+	PatchAppInstance Update an app instance's password rotation strategy
+
+	    Updates the password rotation strategy for the app instance. Returns the updated app instance.
+
+> **Notes**:
+> Each app instance supports only one password rotation strategy. Don't change this strategy unless you fully understand the consequences. If you misconfigure it, you make accounts inaccessible and require manual recovery.
+> For most deployments, `USING_ADMIN` is the recommended default. Use `USING_EXISTING_PASSWORD` only for on-premise apps managed by the Okta Provisioning Agent that explicitly require the previous password to set a new one.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your team
+	    @param saasAppInstanceId The app instance ID of a SaaS app provisioned to an Okta org
+	@return ApiPatchAppInstanceRequest
+*/
+func (a *SaasAppAccountsAPIService) PatchAppInstance(ctx context.Context, teamName string, saasAppInstanceId string) ApiPatchAppInstanceRequest {
+	return ApiPatchAppInstanceRequest{
+		ApiService:        a,
+		ctx:               ctx,
+		teamName:          teamName,
+		saasAppInstanceId: saasAppInstanceId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return SaasApplicationInstance
+func (a *SaasAppAccountsAPIService) PatchAppInstanceExecute(r ApiPatchAppInstanceRequest) (*SaasApplicationInstance, *http.Response, error) {
+	var (
+		traceKey            = "saasappaccountsapi.patchAppInstance"
+		localVarHTTPMethod  = http.MethodPatch
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *SaasApplicationInstance
+	)
+
+	localVarPath := "/v1/teams/{team_name}/connections/saas_apps/{saas_app_instance_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"saas_app_instance_id"+"}", url.PathEscape(parameterValueToString(r.saasAppInstanceId, "saasAppInstanceId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.appPasswordRotationStrategyPatch
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		originalErr := err
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1145,14 +1632,14 @@ func (r ApiRevealSaasAppAccountPasswordRequest) Execute() (*ServiceAccountsRevea
 }
 
 /*
-RevealSaasAppAccountPassword Reveal the password for SaaS app account.
+RevealSaasAppAccountPassword Reveal the SaaS app account password
 
-	Reveals the password belonging to a SaaS app account (managed and unmanaged) that the end user has access to.
+	Reveals the password belonging to a SaaS app account (managed and unmanaged) that the end user has access to
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
 	@param teamName The name of your team
-	@param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+	@param saasAppInstanceId The app instance ID of a SaaS app provisioned to an Okta org
 	@param saasAppAccountId The UUID of a SaaS app account
 
 @return ApiRevealSaasAppAccountPasswordRequest
@@ -1217,13 +1704,18 @@ func (a *SaasAppAccountsAPIService) RevealSaasAppAccountPasswordExecute(r ApiRev
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -1231,7 +1723,7 @@ func (a *SaasAppAccountsAPIService) RevealSaasAppAccountPasswordExecute(r ApiRev
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1243,7 +1735,7 @@ func (a *SaasAppAccountsAPIService) RevealSaasAppAccountPasswordExecute(r ApiRev
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v ForbiddenUAMResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into ForbiddenUAMResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1255,7 +1747,7 @@ func (a *SaasAppAccountsAPIService) RevealSaasAppAccountPasswordExecute(r ApiRev
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1264,12 +1756,160 @@ func (a *SaasAppAccountsAPIService) RevealSaasAppAccountPasswordExecute(r ApiRev
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiSaasAppAccountRotatePasswordRequest struct {
+	ctx               context.Context
+	ApiService        *SaasAppAccountsAPIService
+	teamName          string
+	saasAppInstanceId string
+	saasAppAccountId  string
+	body              *ServiceAccountsRotateCredentialsRequest
+}
+
+func (r ApiSaasAppAccountRotatePasswordRequest) Body(body ServiceAccountsRotateCredentialsRequest) ApiSaasAppAccountRotatePasswordRequest {
+	r.body = &body
+	return r
+}
+
+func (r ApiSaasAppAccountRotatePasswordRequest) Execute() (*http.Response, error) {
+	return r.ApiService.SaasAppAccountRotatePasswordExecute(r)
+}
+
+/*
+SaasAppAccountRotatePassword Rotate a managed SaaS app account password
+
+	Rotates the password for a managed SaaS app account that the end user has access to
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param saasAppInstanceId The app instance ID of a SaaS app provisioned to an Okta org
+	@param saasAppAccountId The UUID of a SaaS app account
+
+@return ApiSaasAppAccountRotatePasswordRequest
+*/
+func (a *SaasAppAccountsAPIService) SaasAppAccountRotatePassword(ctx context.Context, teamName string, saasAppInstanceId string, saasAppAccountId string) ApiSaasAppAccountRotatePasswordRequest {
+	return ApiSaasAppAccountRotatePasswordRequest{
+		ApiService:        a,
+		ctx:               ctx,
+		teamName:          teamName,
+		saasAppInstanceId: saasAppInstanceId,
+		saasAppAccountId:  saasAppAccountId,
+	}
+}
+
+// Execute executes the request
+func (a *SaasAppAccountsAPIService) SaasAppAccountRotatePasswordExecute(r ApiSaasAppAccountRotatePasswordRequest) (*http.Response, error) {
+	var (
+		traceKey           = "saasappaccountsapi.saasAppAccountRotatePassword"
+		localVarHTTPMethod = http.MethodPost
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localVarPath := "/v1/teams/{team_name}/saas_apps/{saas_app_instance_id}/accounts/{saas_app_account_id}/rotate_password"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"saas_app_instance_id"+"}", url.PathEscape(parameterValueToString(r.saasAppInstanceId, "saasAppInstanceId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"saas_app_account_id"+"}", url.PathEscape(parameterValueToString(r.saasAppAccountId, "saasAppAccountId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.body == nil {
+		return nil, reportError("body is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.body
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return nil, err
+		}
+
+		originalErr := err
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarHTTPResponse, originalErr
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v ForbiddenUAMResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into ForbiddenUAMResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
+		}
+		return localVarHTTPResponse, apiError
+	}
+
+	return localVarHTTPResponse, err
 }
 
 type ApiUpdateSaasAppAccountPasswordRequest struct {
@@ -1291,14 +1931,14 @@ func (r ApiUpdateSaasAppAccountPasswordRequest) Execute() (*http.Response, error
 }
 
 /*
-UpdateSaasAppAccountPassword Update the password for SaaS app account.
+UpdateSaasAppAccountPassword Update the SaaS app account password
 
-	Updates the password belonging to a SaaS app account (managed and unmanaged) that the end user has access to.
+	Updates the password belonging to a SaaS app account (managed and unmanaged) that the end user has access to
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
 	@param teamName The name of your team
-	@param saasAppInstanceId The App Instance ID of SaaS App provisioned to an Okta org
+	@param saasAppInstanceId The app instance ID of a SaaS app provisioned to an Okta org
 	@param saasAppAccountId The UUID of a SaaS app account
 
 @return ApiUpdateSaasAppAccountPasswordRequest
@@ -1360,13 +2000,18 @@ func (a *SaasAppAccountsAPIService) UpdateSaasAppAccountPasswordExecute(r ApiUpd
 			return nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -1374,7 +2019,7 @@ func (a *SaasAppAccountsAPIService) UpdateSaasAppAccountPasswordExecute(r ApiUpd
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return localVarHTTPResponse, err
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1386,7 +2031,7 @@ func (a *SaasAppAccountsAPIService) UpdateSaasAppAccountPasswordExecute(r ApiUpd
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v ForbiddenUAMResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return localVarHTTPResponse, err
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into ForbiddenUAMResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1398,7 +2043,7 @@ func (a *SaasAppAccountsAPIService) UpdateSaasAppAccountPasswordExecute(r ApiUpd
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return localVarHTTPResponse, err
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1407,7 +2052,7 @@ func (a *SaasAppAccountsAPIService) UpdateSaasAppAccountPasswordExecute(r ApiUpd
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarHTTPResponse, err
+			return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarHTTPResponse, apiError
 	}

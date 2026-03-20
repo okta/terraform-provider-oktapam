@@ -15,6 +15,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -104,13 +105,18 @@ func (a *RandomPasswordGenerationAPIService) CreateRandomPasswordExecute(r ApiCr
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 400 {
@@ -118,7 +124,7 @@ func (a *RandomPasswordGenerationAPIService) CreateRandomPasswordExecute(r ApiCr
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v BadRequestResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into BadRequestResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -130,7 +136,7 @@ func (a *RandomPasswordGenerationAPIService) CreateRandomPasswordExecute(r ApiCr
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -139,7 +145,7 @@ func (a *RandomPasswordGenerationAPIService) CreateRandomPasswordExecute(r ApiCr
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}

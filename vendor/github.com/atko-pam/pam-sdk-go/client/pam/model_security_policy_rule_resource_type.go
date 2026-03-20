@@ -26,6 +26,7 @@ const (
 	SecurityPolicyRuleResourceType_UNMANAGED_SAAS_APP_BASED_RESOURCE SecurityPolicyRuleResourceType = "unmanaged_saas_app_based_resource"
 	SecurityPolicyRuleResourceType_OKTA_APP_BASED_RESOURCE           SecurityPolicyRuleResourceType = "okta_app_based_resource"
 	SecurityPolicyRuleResourceType_ACTIVE_DIRECTORY_BASED_RESOURCE   SecurityPolicyRuleResourceType = "active_directory_based_resource"
+	SecurityPolicyRuleResourceType_DATABASE_BASED_RESOURCE           SecurityPolicyRuleResourceType = "database_based_resource"
 )
 
 // All allowed values of SecurityPolicyRuleResourceType enum
@@ -36,6 +37,7 @@ var AllowedSecurityPolicyRuleResourceTypeEnumValues = []SecurityPolicyRuleResour
 	"unmanaged_saas_app_based_resource",
 	"okta_app_based_resource",
 	"active_directory_based_resource",
+	"database_based_resource",
 }
 
 func (v *SecurityPolicyRuleResourceType) UnmarshalJSON(src []byte) error {

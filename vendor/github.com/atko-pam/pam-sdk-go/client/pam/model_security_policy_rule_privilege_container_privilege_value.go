@@ -18,23 +18,15 @@ import (
 
 // SecurityPolicyRulePrivilegeContainerPrivilegeValue - An object that indicates whether the privilege type is allowed. The key must match the specified privilege type and the value must be set to `true`.
 type SecurityPolicyRulePrivilegeContainerPrivilegeValue struct {
-	SecurityPolicyPasswordCheckoutDatabasePrivilege *SecurityPolicyPasswordCheckoutDatabasePrivilege
-	SecurityPolicyPasswordCheckoutRDPPrivilege      *SecurityPolicyPasswordCheckoutRDPPrivilege
-	SecurityPolicyPasswordCheckoutSSHPrivilege      *SecurityPolicyPasswordCheckoutSSHPrivilege
-	SecurityPolicyPrincipalAccountRDPPrivilege      *SecurityPolicyPrincipalAccountRDPPrivilege
-	SecurityPolicyPrincipalAccountSSHPrivilege      *SecurityPolicyPrincipalAccountSSHPrivilege
-	SecurityPolicyRevealPasswordPrivilege           *SecurityPolicyRevealPasswordPrivilege
-	SecurityPolicyRotatePasswordPrivilege           *SecurityPolicyRotatePasswordPrivilege
-	SecurityPolicySecretPrivilege                   *SecurityPolicySecretPrivilege
-	SecurityPolicyUpdatePasswordPrivilege           *SecurityPolicyUpdatePasswordPrivilege
-	Unknown                                         map[string]interface{} // holds unknown types for round-tripping
-}
-
-// SecurityPolicyPasswordCheckoutDatabasePrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue is a convenience function that returns SecurityPolicyPasswordCheckoutDatabasePrivilege wrapped in SecurityPolicyRulePrivilegeContainerPrivilegeValue
-func SecurityPolicyPasswordCheckoutDatabasePrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue(v *SecurityPolicyPasswordCheckoutDatabasePrivilege) SecurityPolicyRulePrivilegeContainerPrivilegeValue {
-	return SecurityPolicyRulePrivilegeContainerPrivilegeValue{
-		SecurityPolicyPasswordCheckoutDatabasePrivilege: v,
-	}
+	SecurityPolicyPasswordCheckoutRDPPrivilege *SecurityPolicyPasswordCheckoutRDPPrivilege
+	SecurityPolicyPasswordCheckoutSSHPrivilege *SecurityPolicyPasswordCheckoutSSHPrivilege
+	SecurityPolicyPrincipalAccountRDPPrivilege *SecurityPolicyPrincipalAccountRDPPrivilege
+	SecurityPolicyPrincipalAccountSSHPrivilege *SecurityPolicyPrincipalAccountSSHPrivilege
+	SecurityPolicyRevealPasswordPrivilege      *SecurityPolicyRevealPasswordPrivilege
+	SecurityPolicyRotatePasswordPrivilege      *SecurityPolicyRotatePasswordPrivilege
+	SecurityPolicySecretPrivilege              *SecurityPolicySecretPrivilege
+	SecurityPolicyUpdatePasswordPrivilege      *SecurityPolicyUpdatePasswordPrivilege
+	Unknown                                    map[string]interface{} // holds unknown types for round-tripping
 }
 
 // SecurityPolicyPasswordCheckoutRDPPrivilegeAsSecurityPolicyRulePrivilegeContainerPrivilegeValue is a convenience function that returns SecurityPolicyPasswordCheckoutRDPPrivilege wrapped in SecurityPolicyRulePrivilegeContainerPrivilegeValue
@@ -101,18 +93,6 @@ func (dst *SecurityPolicyRulePrivilegeContainerPrivilegeValue) UnmarshalJSON(dat
 	err = newStrictDecoder(data).Decode(&jsonDict)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal JSON into map for the discriminator lookup")
-	}
-
-	// check if the discriminator value is 'SecurityPolicyPasswordCheckoutDatabasePrivilege'
-	if jsonDict["_type"] == "SecurityPolicyPasswordCheckoutDatabasePrivilege" {
-		// try to unmarshal JSON data into SecurityPolicyPasswordCheckoutDatabasePrivilege
-		err = json.Unmarshal(data, &dst.SecurityPolicyPasswordCheckoutDatabasePrivilege)
-		if err == nil {
-			return nil // data stored in dst.SecurityPolicyPasswordCheckoutDatabasePrivilege, return on the first match
-		} else {
-			dst.SecurityPolicyPasswordCheckoutDatabasePrivilege = nil
-			return fmt.Errorf("failed to unmarshal SecurityPolicyRulePrivilegeContainerPrivilegeValue as SecurityPolicyPasswordCheckoutDatabasePrivilege: %s", err.Error())
-		}
 	}
 
 	// check if the discriminator value is 'SecurityPolicyPasswordCheckoutRDPPrivilege'
@@ -208,18 +188,6 @@ func (dst *SecurityPolicyRulePrivilegeContainerPrivilegeValue) UnmarshalJSON(dat
 		} else {
 			dst.SecurityPolicyUpdatePasswordPrivilege = nil
 			return fmt.Errorf("failed to unmarshal SecurityPolicyRulePrivilegeContainerPrivilegeValue as SecurityPolicyUpdatePasswordPrivilege: %s", err.Error())
-		}
-	}
-
-	// check if the discriminator value is 'password_checkout_database'
-	if jsonDict["_type"] == "password_checkout_database" {
-		// try to unmarshal JSON data into SecurityPolicyPasswordCheckoutDatabasePrivilege
-		err = json.Unmarshal(data, &dst.SecurityPolicyPasswordCheckoutDatabasePrivilege)
-		if err == nil {
-			return nil // data stored in dst.SecurityPolicyPasswordCheckoutDatabasePrivilege, return on the first match
-		} else {
-			dst.SecurityPolicyPasswordCheckoutDatabasePrivilege = nil
-			return fmt.Errorf("failed to unmarshal SecurityPolicyRulePrivilegeContainerPrivilegeValue as SecurityPolicyPasswordCheckoutDatabasePrivilege: %s", err.Error())
 		}
 	}
 
@@ -331,10 +299,6 @@ func (dst *SecurityPolicyRulePrivilegeContainerPrivilegeValue) UnmarshalJSON(dat
 
 // Marshal data from the first non-nil pointers in the struct to JSON
 func (src SecurityPolicyRulePrivilegeContainerPrivilegeValue) MarshalJSON() ([]byte, error) {
-	if src.SecurityPolicyPasswordCheckoutDatabasePrivilege != nil {
-		return json.Marshal(&src.SecurityPolicyPasswordCheckoutDatabasePrivilege)
-	}
-
 	if src.SecurityPolicyPasswordCheckoutRDPPrivilege != nil {
 		return json.Marshal(&src.SecurityPolicyPasswordCheckoutRDPPrivilege)
 	}
@@ -379,10 +343,6 @@ func (obj *SecurityPolicyRulePrivilegeContainerPrivilegeValue) GetActualInstance
 	if obj == nil {
 		return nil
 	}
-	if obj.SecurityPolicyPasswordCheckoutDatabasePrivilege != nil {
-		return obj.SecurityPolicyPasswordCheckoutDatabasePrivilege
-	}
-
 	if obj.SecurityPolicyPasswordCheckoutRDPPrivilege != nil {
 		return obj.SecurityPolicyPasswordCheckoutRDPPrivilege
 	}

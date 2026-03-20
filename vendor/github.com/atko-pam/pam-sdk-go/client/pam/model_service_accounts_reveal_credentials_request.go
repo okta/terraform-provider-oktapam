@@ -20,15 +20,15 @@ var _ MappedNullable = &ServiceAccountsRevealCredentialsRequest{}
 
 // ServiceAccountsRevealCredentialsRequest struct for ServiceAccountsRevealCredentialsRequest
 type ServiceAccountsRevealCredentialsRequest struct {
-	PublicKey        RawJSONWebKey    `json:"public_key"`
-	UserAccessMethod UserAccessMethod `json:"user_access_method"`
+	PublicKey        RawJSONWebKey               `json:"public_key"`
+	UserAccessMethod UserAccessMethodWithRuleIds `json:"user_access_method"`
 }
 
 // NewServiceAccountsRevealCredentialsRequest instantiates a new ServiceAccountsRevealCredentialsRequest object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewServiceAccountsRevealCredentialsRequest(publicKey RawJSONWebKey, userAccessMethod UserAccessMethod) *ServiceAccountsRevealCredentialsRequest {
+func NewServiceAccountsRevealCredentialsRequest(publicKey RawJSONWebKey, userAccessMethod UserAccessMethodWithRuleIds) *ServiceAccountsRevealCredentialsRequest {
 	this := ServiceAccountsRevealCredentialsRequest{}
 	this.PublicKey = publicKey
 	this.UserAccessMethod = userAccessMethod
@@ -69,9 +69,9 @@ func (o *ServiceAccountsRevealCredentialsRequest) SetPublicKey(v RawJSONWebKey) 
 }
 
 // GetUserAccessMethod returns the UserAccessMethod field value
-func (o *ServiceAccountsRevealCredentialsRequest) GetUserAccessMethod() UserAccessMethod {
+func (o *ServiceAccountsRevealCredentialsRequest) GetUserAccessMethod() UserAccessMethodWithRuleIds {
 	if o == nil {
-		var ret UserAccessMethod
+		var ret UserAccessMethodWithRuleIds
 		return ret
 	}
 
@@ -80,7 +80,7 @@ func (o *ServiceAccountsRevealCredentialsRequest) GetUserAccessMethod() UserAcce
 
 // GetUserAccessMethodOk returns a tuple with the UserAccessMethod field value
 // and a boolean to check if the value has been set.
-func (o *ServiceAccountsRevealCredentialsRequest) GetUserAccessMethodOk() (*UserAccessMethod, bool) {
+func (o *ServiceAccountsRevealCredentialsRequest) GetUserAccessMethodOk() (*UserAccessMethodWithRuleIds, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -88,7 +88,7 @@ func (o *ServiceAccountsRevealCredentialsRequest) GetUserAccessMethodOk() (*User
 }
 
 // SetUserAccessMethod sets field value
-func (o *ServiceAccountsRevealCredentialsRequest) SetUserAccessMethod(v UserAccessMethod) *ServiceAccountsRevealCredentialsRequest {
+func (o *ServiceAccountsRevealCredentialsRequest) SetUserAccessMethod(v UserAccessMethodWithRuleIds) *ServiceAccountsRevealCredentialsRequest {
 	o.UserAccessMethod = v
 	return o
 }

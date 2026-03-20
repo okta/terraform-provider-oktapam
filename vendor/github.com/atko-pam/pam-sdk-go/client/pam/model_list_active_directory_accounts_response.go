@@ -18,9 +18,10 @@ import (
 // checks if the ListActiveDirectoryAccountsResponse type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &ListActiveDirectoryAccountsResponse{}
 
-// ListActiveDirectoryAccountsResponse struct for ListActiveDirectoryAccountsResponse
+// ListActiveDirectoryAccountsResponse Response schema for listing Active Directory accounts
 type ListActiveDirectoryAccountsResponse struct {
-	List []ActiveDirectoryAccount `json:"list,omitempty"`
+	// List of Active Directory accounts with user access methods. User access methods are returned when the `include_user_access_methods` query parameter is set to `true` in the request.
+	List []ActiveDirectoryAccountWithUAMs `json:"list,omitempty"`
 }
 
 // NewListActiveDirectoryAccountsResponse instantiates a new ListActiveDirectoryAccountsResponse object
@@ -41,9 +42,9 @@ func NewListActiveDirectoryAccountsResponseWithDefaults() *ListActiveDirectoryAc
 }
 
 // GetList returns the List field value if set, zero value otherwise.
-func (o *ListActiveDirectoryAccountsResponse) GetList() []ActiveDirectoryAccount {
+func (o *ListActiveDirectoryAccountsResponse) GetList() []ActiveDirectoryAccountWithUAMs {
 	if o == nil || IsNil(o.List) {
-		var ret []ActiveDirectoryAccount
+		var ret []ActiveDirectoryAccountWithUAMs
 		return ret
 	}
 	return o.List
@@ -51,7 +52,7 @@ func (o *ListActiveDirectoryAccountsResponse) GetList() []ActiveDirectoryAccount
 
 // GetListOk returns a tuple with the List field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ListActiveDirectoryAccountsResponse) GetListOk() ([]ActiveDirectoryAccount, bool) {
+func (o *ListActiveDirectoryAccountsResponse) GetListOk() ([]ActiveDirectoryAccountWithUAMs, bool) {
 	if o == nil || IsNil(o.List) {
 		return nil, false
 	}
@@ -67,8 +68,8 @@ func (o *ListActiveDirectoryAccountsResponse) HasList() bool {
 	return false
 }
 
-// SetList gets a reference to the given []ActiveDirectoryAccount and assigns it to the List field.
-func (o *ListActiveDirectoryAccountsResponse) SetList(v []ActiveDirectoryAccount) *ListActiveDirectoryAccountsResponse {
+// SetList gets a reference to the given []ActiveDirectoryAccountWithUAMs and assigns it to the List field.
+func (o *ListActiveDirectoryAccountsResponse) SetList(v []ActiveDirectoryAccountWithUAMs) *ListActiveDirectoryAccountsResponse {
 	o.List = v
 	return o
 }

@@ -16,6 +16,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/opentracing/opentracing-go"
 
@@ -25,6 +26,8 @@ import (
 
 // clientFeaturesHeader is used by clients to set their supported client features
 const clientFeaturesHeader = "X-Okta-OPA-Client-Features"
+
+type ctxHeadersKey struct{}
 
 type ErrNonDefaultResponse struct {
 	StatusCode int
@@ -69,8 +72,6 @@ type APIClient struct {
 
 	SecretsAPI *SecretsAPIService
 
-	DatabaseResourcesAPI *DatabaseResourcesAPIService
-
 	AccessReportsAPI *ReportsAPIService
 
 	SudoCommandsAPI *SudoCommandsAPIService
@@ -83,7 +84,23 @@ type APIClient struct {
 
 	OktaUDAccountsAPI *OktaUniversalDirectoryAccountsAPIService
 
+	WorkloadConnectionsAPI *WorkloadConnectionsAPIService
+
+	WorkloadRolesAPI *WorkloadRolesAPIService
+
+	WorkloadsAPI *WorkloadsAPIService
+
 	*MfaApprovalsAPIService
+
+	OktaInternalAPI *OktaInternalAPIService
+
+	DatabaseConnectionsAPI *DatabaseConnectionsAPIService
+
+	DatabaseAccountsAPI *DatabaseAccountsAPIService
+
+	ServerAcccountsAPI *ServerAccountsAPIService
+
+	InfrastructureOrchestratorsAPI *InfrastructureOrchestratorsAPIService
 }
 
 type service struct {
@@ -93,9 +110,8 @@ type service struct {
 // NewAPIClient creates a new API client. Requires a userAgent string describing your application.
 // optionally a custom http.Client to allow for advanced features such as caching.
 func NewAPIClient(opts ...ConfigOption) (*APIClient, error) {
-	//Create configuration
+	// Create configuration
 	config, err := newConfiguration(opts...)
-
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +120,7 @@ func NewAPIClient(opts ...ConfigOption) (*APIClient, error) {
 		cfg: config,
 	}
 
-	//Setup http client
+	// Setup http client
 	apiClient.restyClient = newRestyClient(apiClient)
 	apiClient.tokenCache = NewAuthTokenCache(apiClient.cfg)
 
@@ -123,26 +139,33 @@ func NewAPIClient(opts ...ConfigOption) (*APIClient, error) {
 	apiClient.TeamsAPI = (*TeamsAPIService)(&apiClient.common)
 	apiClient.UsersAPI = (*UsersAPIService)(&apiClient.common)
 	apiClient.SecretsAPI = (*SecretsAPIService)(&apiClient.common)
-	apiClient.DatabaseResourcesAPI = (*DatabaseResourcesAPIService)(&apiClient.common)
 	apiClient.AccessReportsAPI = (*ReportsAPIService)(&apiClient.common)
 	apiClient.SudoCommandsAPI = (*SudoCommandsAPIService)(&apiClient.common)
 	apiClient.ActiveDirectoryConnectionAPI = (*ActiveDirectoryConnectionsAPIService)(&apiClient.common)
 	apiClient.ActiveDirectoryAccountAPI = (*ActiveDirectoryAccountsAPIService)(&apiClient.common)
 	apiClient.SaaSAppAccountsAPI = (*SaasAppAccountsAPIService)(&apiClient.common)
 	apiClient.OktaUDAccountsAPI = (*OktaUniversalDirectoryAccountsAPIService)(&apiClient.common)
+	apiClient.WorkloadConnectionsAPI = (*WorkloadConnectionsAPIService)(&apiClient.common)
 	apiClient.MfaApprovalsAPIService = (*MfaApprovalsAPIService)(&apiClient.common)
+	apiClient.OktaInternalAPI = (*OktaInternalAPIService)(&apiClient.common)
+	apiClient.WorkloadRolesAPI = (*WorkloadRolesAPIService)(&apiClient.common)
+	apiClient.WorkloadsAPI = (*WorkloadsAPIService)(&apiClient.common)
+	apiClient.DatabaseConnectionsAPI = (*DatabaseConnectionsAPIService)(&apiClient.common)
+	apiClient.DatabaseAccountsAPI = (*DatabaseAccountsAPIService)(&apiClient.common)
+	apiClient.ServerAcccountsAPI = (*ServerAccountsAPIService)(&apiClient.common)
+	apiClient.InfrastructureOrchestratorsAPI = (*InfrastructureOrchestratorsAPIService)(&apiClient.common)
 	return apiClient, nil
 }
 
 func newRestyClient(apiClient *APIClient) *resty.Client {
 	restyClient := resty.New()
 
-	//Set Base Settings
+	// Set Base Settings
 	restyClient.SetBaseURL(apiClient.cfg.Host).
 		SetHeader("User-Agent", apiClient.cfg.UserAgent).
 		SetTimeout(time.Duration(apiClient.cfg.RequestTimeout)).
 		SetDebug(apiClient.cfg.EnableHTTPDebug).
-		SetError(&APIError{}) //Automatic unmarshalling if response status code is greater than 399
+		SetError(&APIError{}) // Automatic unmarshalling if response status code is greater than 399
 
 	if apiClient.cfg.EnableHTTPTrace {
 		restyClient.EnableTrace()
@@ -170,12 +193,12 @@ func newRestyClient(apiClient *APIClient) *resty.Client {
 		}
 	}
 
-	//Set Rate Limit and retry condition
+	// Set Rate Limit and retry condition
 	restyClient.
 		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
 			// authentication logic
 			switch authMode := apiClient.cfg.AuthorizationMode; authMode {
-			case APIKey:
+			case AuthorizationModeAPIKey:
 				// Get the token from the cache
 				token, err := apiClient.tokenCache.GetToken()
 				if err != nil {
@@ -183,14 +206,21 @@ func newRestyClient(apiClient *APIClient) *resty.Client {
 				}
 				// Add the token to the request header
 				request.SetHeader("Authorization", "Bearer "+token)
-			case BearerToken:
+			case AuthorizationModeBearerToken:
 				request.SetHeader("Authorization", "Bearer "+apiClient.cfg.BearerToken)
-			case OAuth2TokenSource:
+			case AuthorizationModeOAuth2TokenSource:
 				t, err := apiClient.cfg.OAuth2TokenSource.Token()
 				if err != nil {
 					return err
 				}
 				request.SetHeader("Authorization", t.TokenType+" "+t.AccessToken)
+			case AuthorizationModeOPAToken:
+				request.SetHeader("X-OPA-Token", apiClient.cfg.OPAToken)
+				if apiClient.cfg.WorkloadRole != "" {
+					request.SetHeader("X-OPA-Workload-Role", apiClient.cfg.WorkloadRole)
+				}
+			case AuthorizationModeNone:
+				// No authorization required
 			default:
 				return ErrAuthzModeInvalid
 			}
@@ -292,7 +322,6 @@ func createServiceToken(config *configuration) (*AuthTokenResponse, error) {
 		SetHeaders(map[string]string{"Accept": "application/json", "Content-Type": "application/json"}).
 		SetResult(&AuthTokenResponse{}).
 		Post(authorizationURL)
-
 	if err != nil {
 		return nil, err
 	}
@@ -366,7 +395,6 @@ func (apiClient *APIClient) callAPI(
 	formFiles []formFile,
 	result interface{},
 ) (apiResponse *http.Response, err error) {
-
 	if apiClient.cfg.EnableTelemetry && traceKey != "" {
 		var sp opentracing.Span
 		sp, ctx = opentracing.StartSpanFromContext(ctx, traceKey)
@@ -388,12 +416,16 @@ func (apiClient *APIClient) callAPI(
 		req.SetFileReader(ff.fileName, ff.formFileName, fileReader)
 	}
 
+	// set additional headers
+	for k, v := range HeadersFromCtx(ctx) {
+		req.SetHeader(k, v)
+	}
+
 	if method == http.MethodPost || method == http.MethodPut || method == http.MethodPatch {
 		req.SetBody(postBody)
 	}
 
 	response, err := req.Execute(method, path)
-
 	// network error or Resty-level error
 	if err != nil {
 		return nil, fmt.Errorf("error executing the API request: %w", err)
@@ -401,6 +433,12 @@ func (apiClient *APIClient) callAPI(
 
 	// If the response has no content, return the response and nil error directly
 	if response.RawResponse.StatusCode == http.StatusNoContent {
+		return response.RawResponse, nil
+	}
+
+	// Handle 304 Not Modified: return successfully without trying to unmarshal the empty body
+	// Per RFC 7232, 304 responses must not contain a message body
+	if response.RawResponse.StatusCode == http.StatusNotModified {
 		return response.RawResponse, nil
 	}
 
@@ -463,7 +501,7 @@ func parameterValueToString(obj interface{}, key string) string {
 	if reflect.TypeOf(obj).Kind() != reflect.Ptr {
 		return fmt.Sprintf("%v", obj)
 	}
-	var param, ok = obj.(MappedNullable)
+	param, ok := obj.(MappedNullable)
 	if !ok {
 		return ""
 	}
@@ -477,7 +515,7 @@ func parameterValueToString(obj interface{}, key string) string {
 // parameterAddToHeaderOrQuery adds the provided object to the request header or url query
 // supporting deep object syntax
 func parameterAddToHeaderOrQuery(headerOrQueryParams interface{}, keyPrefix string, obj interface{}, collectionType string) {
-	var v = reflect.ValueOf(obj)
+	v := reflect.ValueOf(obj)
 	var value string
 	if v == reflect.ValueOf(nil) {
 		value = "null"
@@ -501,19 +539,19 @@ func parameterAddToHeaderOrQuery(headerOrQueryParams interface{}, keyPrefix stri
 			}
 			value = v.Type().String() + " value"
 		case reflect.Slice:
-			var indValue = reflect.ValueOf(obj)
+			indValue := reflect.ValueOf(obj)
 			if indValue == reflect.ValueOf(nil) {
 				return
 			}
-			var lenIndValue = indValue.Len()
+			lenIndValue := indValue.Len()
 			for i := 0; i < lenIndValue; i++ {
-				var arrayValue = indValue.Index(i)
+				arrayValue := indValue.Index(i)
 				parameterAddToHeaderOrQuery(headerOrQueryParams, keyPrefix, arrayValue.Interface(), collectionType)
 			}
 			return
 
 		case reflect.Map:
-			var indValue = reflect.ValueOf(obj)
+			indValue := reflect.ValueOf(obj)
 			if indValue == reflect.ValueOf(nil) {
 				return
 			}
@@ -569,6 +607,11 @@ func newStrictDecoder(data []byte) *json.Decoder {
 	dec := json.NewDecoder(bytes.NewBuffer(data))
 	dec.DisallowUnknownFields()
 	return dec
+}
+
+// strlen returns the length of the string.
+func strlen(s string) int {
+	return utf8.RuneCountInString(s)
 }
 
 // Ripped from https://github.com/gregjones/httpcache/blob/master/httpcache.go
@@ -660,4 +703,31 @@ func (apiClient *APIClient) Encrypt(data string) (*EncryptedString, error) {
 		return &EncryptedString{Payload: encryptedData}, nil
 	}
 	return nil, nil
+}
+
+// WithHeaders returns a new context with the provided headers attached.
+// These headers will be added to the HTTP request when callAPI is invoked.
+func WithHeaders(ctx context.Context, headers map[string]string) context.Context {
+	h := make(map[string]string)
+	if existing, ok := ctx.Value(ctxHeadersKey{}).(map[string]string); ok {
+		for k, v := range existing {
+			h[k] = v
+		}
+	}
+	for k, v := range headers {
+		h[k] = v
+	}
+
+	return context.WithValue(ctx, ctxHeadersKey{}, h)
+}
+
+// HeadersFromCtx returns the headers in the context.
+func HeadersFromCtx(ctx context.Context) map[string]string {
+	headers := make(map[string]string)
+	if h, ok := ctx.Value(ctxHeadersKey{}).(map[string]string); ok {
+		for k, v := range h {
+			headers[k] = v
+		}
+	}
+	return headers
 }

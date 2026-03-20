@@ -20,17 +20,24 @@ var _ MappedNullable = &SecurityPolicyActiveDirectorySpecificAccountSubSelector{
 
 // SecurityPolicyActiveDirectorySpecificAccountSubSelector The specific account to apply the policy rule to
 type SecurityPolicyActiveDirectorySpecificAccountSubSelector struct {
-	SharedAccount NamedObject                                                          `json:"shared_account"`
-	AdConnection  *SecurityPolicyActiveDirectorySpecificAccountSubSelectorAdConnection `json:"ad_connection,omitempty"`
+	// The name of the Active Directory domain the account belongs to
+	Domain string `json:"domain"`
+	// The Security Identifier (SID) for the Active Directory account
+	AccountSid string `json:"account_sid"`
+	// The name of the Active Directory account
+	AccountName *string `json:"account_name,omitempty"`
+	// If true, this selector refers to an AD account that is no longer managed by OPA
+	Missing *bool `json:"missing,omitempty"`
 }
 
 // NewSecurityPolicyActiveDirectorySpecificAccountSubSelector instantiates a new SecurityPolicyActiveDirectorySpecificAccountSubSelector object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSecurityPolicyActiveDirectorySpecificAccountSubSelector(sharedAccount NamedObject) *SecurityPolicyActiveDirectorySpecificAccountSubSelector {
+func NewSecurityPolicyActiveDirectorySpecificAccountSubSelector(domain string, accountSid string) *SecurityPolicyActiveDirectorySpecificAccountSubSelector {
 	this := SecurityPolicyActiveDirectorySpecificAccountSubSelector{}
-	this.SharedAccount = sharedAccount
+	this.Domain = domain
+	this.AccountSid = accountSid
 	return &this
 }
 
@@ -42,61 +49,119 @@ func NewSecurityPolicyActiveDirectorySpecificAccountSubSelectorWithDefaults() *S
 	return &this
 }
 
-// GetSharedAccount returns the SharedAccount field value
-func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) GetSharedAccount() NamedObject {
+// GetDomain returns the Domain field value
+func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) GetDomain() string {
 	if o == nil {
-		var ret NamedObject
+		var ret string
 		return ret
 	}
 
-	return o.SharedAccount
+	return o.Domain
 }
 
-// GetSharedAccountOk returns a tuple with the SharedAccount field value
+// GetDomainOk returns a tuple with the Domain field value
 // and a boolean to check if the value has been set.
-func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) GetSharedAccountOk() (*NamedObject, bool) {
+func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) GetDomainOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.SharedAccount, true
+	return &o.Domain, true
 }
 
-// SetSharedAccount sets field value
-func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) SetSharedAccount(v NamedObject) *SecurityPolicyActiveDirectorySpecificAccountSubSelector {
-	o.SharedAccount = v
+// SetDomain sets field value
+func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) SetDomain(v string) *SecurityPolicyActiveDirectorySpecificAccountSubSelector {
+	o.Domain = v
 	return o
 }
 
-// GetAdConnection returns the AdConnection field value if set, zero value otherwise.
-func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) GetAdConnection() SecurityPolicyActiveDirectorySpecificAccountSubSelectorAdConnection {
-	if o == nil || IsNil(o.AdConnection) {
-		var ret SecurityPolicyActiveDirectorySpecificAccountSubSelectorAdConnection
+// GetAccountSid returns the AccountSid field value
+func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) GetAccountSid() string {
+	if o == nil {
+		var ret string
 		return ret
 	}
-	return *o.AdConnection
+
+	return o.AccountSid
 }
 
-// GetAdConnectionOk returns a tuple with the AdConnection field value if set, nil otherwise
+// GetAccountSidOk returns a tuple with the AccountSid field value
 // and a boolean to check if the value has been set.
-func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) GetAdConnectionOk() (*SecurityPolicyActiveDirectorySpecificAccountSubSelectorAdConnection, bool) {
-	if o == nil || IsNil(o.AdConnection) {
+func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) GetAccountSidOk() (*string, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AdConnection, true
+	return &o.AccountSid, true
 }
 
-// HasAdConnection returns a boolean if a field has been set.
-func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) HasAdConnection() bool {
-	if o != nil && !IsNil(o.AdConnection) {
+// SetAccountSid sets field value
+func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) SetAccountSid(v string) *SecurityPolicyActiveDirectorySpecificAccountSubSelector {
+	o.AccountSid = v
+	return o
+}
+
+// GetAccountName returns the AccountName field value if set, zero value otherwise.
+func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) GetAccountName() string {
+	if o == nil || IsNil(o.AccountName) {
+		var ret string
+		return ret
+	}
+	return *o.AccountName
+}
+
+// GetAccountNameOk returns a tuple with the AccountName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) GetAccountNameOk() (*string, bool) {
+	if o == nil || IsNil(o.AccountName) {
+		return nil, false
+	}
+	return o.AccountName, true
+}
+
+// HasAccountName returns a boolean if a field has been set.
+func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) HasAccountName() bool {
+	if o != nil && !IsNil(o.AccountName) {
 		return true
 	}
 
 	return false
 }
 
-// SetAdConnection gets a reference to the given SecurityPolicyActiveDirectorySpecificAccountSubSelectorAdConnection and assigns it to the AdConnection field.
-func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) SetAdConnection(v SecurityPolicyActiveDirectorySpecificAccountSubSelectorAdConnection) *SecurityPolicyActiveDirectorySpecificAccountSubSelector {
-	o.AdConnection = &v
+// SetAccountName gets a reference to the given string and assigns it to the AccountName field.
+func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) SetAccountName(v string) *SecurityPolicyActiveDirectorySpecificAccountSubSelector {
+	o.AccountName = &v
+	return o
+}
+
+// GetMissing returns the Missing field value if set, zero value otherwise.
+func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) GetMissing() bool {
+	if o == nil || IsNil(o.Missing) {
+		var ret bool
+		return ret
+	}
+	return *o.Missing
+}
+
+// GetMissingOk returns a tuple with the Missing field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) GetMissingOk() (*bool, bool) {
+	if o == nil || IsNil(o.Missing) {
+		return nil, false
+	}
+	return o.Missing, true
+}
+
+// HasMissing returns a boolean if a field has been set.
+func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) HasMissing() bool {
+	if o != nil && !IsNil(o.Missing) {
+		return true
+	}
+
+	return false
+}
+
+// SetMissing gets a reference to the given bool and assigns it to the Missing field.
+func (o *SecurityPolicyActiveDirectorySpecificAccountSubSelector) SetMissing(v bool) *SecurityPolicyActiveDirectorySpecificAccountSubSelector {
+	o.Missing = &v
 	return o
 }
 
@@ -110,9 +175,13 @@ func (o SecurityPolicyActiveDirectorySpecificAccountSubSelector) MarshalJSON() (
 
 func (o SecurityPolicyActiveDirectorySpecificAccountSubSelector) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["shared_account"] = o.SharedAccount
-	if !IsNil(o.AdConnection) {
-		toSerialize["ad_connection"] = o.AdConnection
+	toSerialize["domain"] = o.Domain
+	toSerialize["account_sid"] = o.AccountSid
+	if !IsNil(o.AccountName) {
+		toSerialize["account_name"] = o.AccountName
+	}
+	if !IsNil(o.Missing) {
+		toSerialize["missing"] = o.Missing
 	}
 	return toSerialize, nil
 }

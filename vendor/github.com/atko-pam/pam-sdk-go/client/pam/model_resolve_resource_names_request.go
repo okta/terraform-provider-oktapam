@@ -28,6 +28,8 @@ type ResolveResourceNamesRequest struct {
 	IncludeUserAccessMethods *bool `json:"include_user_access_methods,omitempty"`
 	// Optional map of filters to apply per name. Keys must exactly match one of the names provided in the `names` array. If a key is provided, the corresponding filters are used to restrict user access methods for that name. For names without a corresponding key, no filters are applied and all user access methods are returned.
 	UserAccessMethodFilters *map[string]UserAccessMethodFilters `json:"user_access_method_filters,omitempty"`
+	// If `true`, includes additional user access methods for managed server accounts with allowed privilege list. Requires `include_user_access_methods` to be `true`.
+	IncludePrivilegedUserAccessMethods *bool `json:"include_privileged_user_access_methods,omitempty"`
 }
 
 // NewResolveResourceNamesRequest instantiates a new ResolveResourceNamesRequest object
@@ -172,6 +174,39 @@ func (o *ResolveResourceNamesRequest) SetUserAccessMethodFilters(v map[string]Us
 	return o
 }
 
+// GetIncludePrivilegedUserAccessMethods returns the IncludePrivilegedUserAccessMethods field value if set, zero value otherwise.
+func (o *ResolveResourceNamesRequest) GetIncludePrivilegedUserAccessMethods() bool {
+	if o == nil || IsNil(o.IncludePrivilegedUserAccessMethods) {
+		var ret bool
+		return ret
+	}
+	return *o.IncludePrivilegedUserAccessMethods
+}
+
+// GetIncludePrivilegedUserAccessMethodsOk returns a tuple with the IncludePrivilegedUserAccessMethods field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ResolveResourceNamesRequest) GetIncludePrivilegedUserAccessMethodsOk() (*bool, bool) {
+	if o == nil || IsNil(o.IncludePrivilegedUserAccessMethods) {
+		return nil, false
+	}
+	return o.IncludePrivilegedUserAccessMethods, true
+}
+
+// HasIncludePrivilegedUserAccessMethods returns a boolean if a field has been set.
+func (o *ResolveResourceNamesRequest) HasIncludePrivilegedUserAccessMethods() bool {
+	if o != nil && !IsNil(o.IncludePrivilegedUserAccessMethods) {
+		return true
+	}
+
+	return false
+}
+
+// SetIncludePrivilegedUserAccessMethods gets a reference to the given bool and assigns it to the IncludePrivilegedUserAccessMethods field.
+func (o *ResolveResourceNamesRequest) SetIncludePrivilegedUserAccessMethods(v bool) *ResolveResourceNamesRequest {
+	o.IncludePrivilegedUserAccessMethods = &v
+	return o
+}
+
 func (o ResolveResourceNamesRequest) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -191,6 +226,9 @@ func (o ResolveResourceNamesRequest) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.UserAccessMethodFilters) {
 		toSerialize["user_access_method_filters"] = o.UserAccessMethodFilters
+	}
+	if !IsNil(o.IncludePrivilegedUserAccessMethods) {
+		toSerialize["include_privileged_user_access_methods"] = o.IncludePrivilegedUserAccessMethods
 	}
 	return toSerialize, nil
 }

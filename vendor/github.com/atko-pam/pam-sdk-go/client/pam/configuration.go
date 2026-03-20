@@ -24,6 +24,7 @@ var (
 	ErrAuthzModeInvalid               = errors.New("authorization mode config option must be set to one of [APIKey, BearerToken]")
 	ErrTLSRootCAsConflict             = errors.New("TLSRootCAs and TLSInsecureSkipVerify cannot be set at the same time")
 	ErrOauth2TokenSourceMissing       = errors.New("oauth2 token source missing")
+	ErrAuthzModeOPATokenMissing       = errors.New("when authorization Mode is set to 'OPAToken', 'OPAToken' must be provided")
 )
 
 const OktaPAMTrustedDomains = "scaleft.com,scaleft.io,okta.com,oktapreview.com,okta-emea.com"
@@ -45,19 +46,22 @@ func (d *RequestTimeoutDuration) Decode(value string) error {
 type AuthorizationMode string
 
 const (
-	BearerToken       AuthorizationMode = "BearerToken"
-	APIKey            AuthorizationMode = "APIKey"
-	OAuth2TokenSource AuthorizationMode = "OAuth2TokenSource"
+	AuthorizationModeNone              AuthorizationMode = "None"
+	AuthorizationModeBearerToken       AuthorizationMode = "BearerToken"
+	AuthorizationModeAPIKey            AuthorizationMode = "APIKey"
+	AuthorizationModeOAuth2TokenSource AuthorizationMode = "OAuth2TokenSource"
+	AuthorizationModeOPAToken          AuthorizationMode = "OPAToken"
+
+	// backwards compatibility so old mode names still work
+	BearerToken       = AuthorizationModeBearerToken
+	APIKey            = AuthorizationModeAPIKey
+	Oauth2TokenSource = AuthorizationModeOAuth2TokenSource
 )
 
 func (a *AuthorizationMode) Decode(value string) error {
-	switch value {
-	case string(BearerToken):
-		*a = BearerToken
-	case string(APIKey):
-		*a = APIKey
-	case string(OAuth2TokenSource):
-		*a = OAuth2TokenSource
+	switch AuthorizationMode(value) {
+	case AuthorizationModeBearerToken, AuthorizationModeAPIKey, AuthorizationModeOAuth2TokenSource, AuthorizationModeNone, AuthorizationModeOPAToken:
+		*a = AuthorizationMode(value)
 	default:
 		return fmt.Errorf("unsupported auth mode: %s", value)
 	}
@@ -80,12 +84,14 @@ type configuration struct {
 		MaxBackoff int `envconfig:"MAX_BACKOFF"`
 	} `envconfig:"RATE_LIMIT"`
 
-	//Authentication Config
+	// Authentication Config
 	AuthorizationMode AuthorizationMode  `envconfig:"AUTHORIZATION_MODE"`
 	BearerToken       string             `envconfig:"BEARER_TOKEN"`
 	APIKey            string             `envconfig:"API_KEY"`
 	APISecret         string             `envconfig:"API_SECRET"`
 	OAuth2TokenSource oauth2.TokenSource `ignored:"true"`
+	OPAToken          string             `ignored:"true"`
+	WorkloadRole      string             `ignored:"true"`
 
 	// HTTP Transport Config
 	TLSUseBundledCAs      bool           `envconfig:"TLS_USE_BUNDLED_CA"`
@@ -96,8 +102,8 @@ type configuration struct {
 	ProxyURL     string            `envconfig:"PROXY_URL"`
 	RoundTripper http.RoundTripper `ignored:"true"`
 
-	//Logging and debugging
-	//TODO Provide logger for configuration if needed
+	// Logging and debugging
+	// TODO Provide logger for configuration if needed
 	EnableHTTPDebug bool `envconfig:"DEBUG"`
 	EnableHTTPTrace bool `envconfig:"ENABLE_HTTP_TRACE"`
 	EnablePrintCurl bool `envconfig:"ENABLE_PRINT_CURL"`
@@ -163,14 +169,27 @@ func WithUserAgent(userAgent string) ConfigOption {
 func WithAPIKey(key string) ConfigOption {
 	return func(c *configuration) {
 		c.APIKey = key
-		c.AuthorizationMode = APIKey
+		c.AuthorizationMode = AuthorizationModeAPIKey
 	}
 }
 
 func WithAPISecret(secret string) ConfigOption {
 	return func(c *configuration) {
 		c.APISecret = secret
-		c.AuthorizationMode = APIKey
+		c.AuthorizationMode = AuthorizationModeAPIKey
+	}
+}
+
+func WithNoAuthorization() ConfigOption {
+	return func(c *configuration) {
+		c.AuthorizationMode = AuthorizationModeNone
+	}
+}
+
+func WithOPAToken(opaToken string) ConfigOption {
+	return func(c *configuration) {
+		c.OPAToken = opaToken
+		c.AuthorizationMode = AuthorizationModeOPAToken
 	}
 }
 
@@ -207,7 +226,7 @@ func WithTrustedDomainOverride(trustedDomainOverride string) ConfigOption {
 func WithBearerToken(bearerToken string) ConfigOption {
 	return func(c *configuration) {
 		c.BearerToken = bearerToken
-		c.AuthorizationMode = BearerToken
+		c.AuthorizationMode = AuthorizationModeBearerToken
 	}
 }
 
@@ -243,7 +262,7 @@ func WithProxyURL(proxyURL string) ConfigOption {
 func WithOAuth2TokenSource(tokenSource oauth2.TokenSource) ConfigOption {
 	return func(c *configuration) {
 		c.OAuth2TokenSource = tokenSource
-		c.AuthorizationMode = OAuth2TokenSource
+		c.AuthorizationMode = AuthorizationModeOAuth2TokenSource
 	}
 }
 
@@ -251,6 +270,13 @@ func WithOAuth2TokenSource(tokenSource oauth2.TokenSource) ConfigOption {
 func WithUserAgentHook(userAgentFn func() string) ConfigOption {
 	return func(c *configuration) {
 		c.UserAgentHook = userAgentFn
+	}
+}
+
+// WithWorkloadRole sets the workload role and sends it as an HTTP header on requests.
+func WithWorkloadRole(workloadRole string) ConfigOption {
+	return func(c *configuration) {
+		c.WorkloadRole = workloadRole
 	}
 }
 
@@ -333,18 +359,24 @@ func checkTrustedDomain(c *configuration) error {
 
 func checkAuthorization(c *configuration) error {
 	switch authMode := c.AuthorizationMode; authMode {
-	case APIKey:
+	case AuthorizationModeAPIKey:
 		if c.APIKey == "" || c.APISecret == "" {
 			return ErrAuthzModeAPIKeyOrSecretMissing
 		}
-	case BearerToken:
+	case AuthorizationModeBearerToken:
 		if c.BearerToken == "" {
 			return ErrAuthzModeBearerToken
 		}
-	case OAuth2TokenSource:
+	case AuthorizationModeOAuth2TokenSource:
 		if c.OAuth2TokenSource == nil {
 			return ErrOauth2TokenSourceMissing
 		}
+	case AuthorizationModeOPAToken:
+		if c.OPAToken == "" {
+			return ErrAuthzModeOPATokenMissing
+		}
+	case AuthorizationModeNone:
+		// No authorization required
 	default:
 		return ErrAuthzModeInvalid
 	}
@@ -382,9 +414,9 @@ func readConfigFromEnvironment(c configuration) (*configuration, error) {
 	}
 	// automatically set authorization mode
 	if c.APIKey != "" || c.APISecret != "" {
-		c.AuthorizationMode = APIKey
+		c.AuthorizationMode = AuthorizationModeAPIKey
 	} else if c.BearerToken != "" {
-		c.AuthorizationMode = BearerToken
+		c.AuthorizationMode = AuthorizationModeBearerToken
 	}
 
 	return &c, nil

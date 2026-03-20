@@ -19,6 +19,7 @@ import (
 // SecurityPolicyRuleResourceSelector - struct for SecurityPolicyRuleResourceSelector
 type SecurityPolicyRuleResourceSelector struct {
 	SecurityPolicyRuleActiveDirectoryBasedResourceSelector  *SecurityPolicyRuleActiveDirectoryBasedResourceSelector
+	SecurityPolicyRuleDatabaseBasedResourceSelector         *SecurityPolicyRuleDatabaseBasedResourceSelector
 	SecurityPolicyRuleManagedSaaSAppBasedResourceSelector   *SecurityPolicyRuleManagedSaaSAppBasedResourceSelector
 	SecurityPolicyRuleOktaAppBasedResourceSelector          *SecurityPolicyRuleOktaAppBasedResourceSelector
 	SecurityPolicyRuleServerBasedResourceSelector           *SecurityPolicyRuleServerBasedResourceSelector
@@ -31,6 +32,13 @@ type SecurityPolicyRuleResourceSelector struct {
 func SecurityPolicyRuleActiveDirectoryBasedResourceSelectorAsSecurityPolicyRuleResourceSelector(v *SecurityPolicyRuleActiveDirectoryBasedResourceSelector) SecurityPolicyRuleResourceSelector {
 	return SecurityPolicyRuleResourceSelector{
 		SecurityPolicyRuleActiveDirectoryBasedResourceSelector: v,
+	}
+}
+
+// SecurityPolicyRuleDatabaseBasedResourceSelectorAsSecurityPolicyRuleResourceSelector is a convenience function that returns SecurityPolicyRuleDatabaseBasedResourceSelector wrapped in SecurityPolicyRuleResourceSelector
+func SecurityPolicyRuleDatabaseBasedResourceSelectorAsSecurityPolicyRuleResourceSelector(v *SecurityPolicyRuleDatabaseBasedResourceSelector) SecurityPolicyRuleResourceSelector {
+	return SecurityPolicyRuleResourceSelector{
+		SecurityPolicyRuleDatabaseBasedResourceSelector: v,
 	}
 }
 
@@ -88,6 +96,18 @@ func (dst *SecurityPolicyRuleResourceSelector) UnmarshalJSON(data []byte) error 
 		} else {
 			dst.SecurityPolicyRuleActiveDirectoryBasedResourceSelector = nil
 			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleResourceSelector as SecurityPolicyRuleActiveDirectoryBasedResourceSelector: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'SecurityPolicyRuleDatabaseBasedResourceSelector'
+	if jsonDict["_type"] == "SecurityPolicyRuleDatabaseBasedResourceSelector" {
+		// try to unmarshal JSON data into SecurityPolicyRuleDatabaseBasedResourceSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicyRuleDatabaseBasedResourceSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyRuleDatabaseBasedResourceSelector, return on the first match
+		} else {
+			dst.SecurityPolicyRuleDatabaseBasedResourceSelector = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleResourceSelector as SecurityPolicyRuleDatabaseBasedResourceSelector: %s", err.Error())
 		}
 	}
 
@@ -160,6 +180,18 @@ func (dst *SecurityPolicyRuleResourceSelector) UnmarshalJSON(data []byte) error 
 		} else {
 			dst.SecurityPolicyRuleActiveDirectoryBasedResourceSelector = nil
 			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleResourceSelector as SecurityPolicyRuleActiveDirectoryBasedResourceSelector: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'database_based_resource'
+	if jsonDict["_type"] == "database_based_resource" {
+		// try to unmarshal JSON data into SecurityPolicyRuleDatabaseBasedResourceSelector
+		err = json.Unmarshal(data, &dst.SecurityPolicyRuleDatabaseBasedResourceSelector)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyRuleDatabaseBasedResourceSelector, return on the first match
+		} else {
+			dst.SecurityPolicyRuleDatabaseBasedResourceSelector = nil
+			return fmt.Errorf("failed to unmarshal SecurityPolicyRuleResourceSelector as SecurityPolicyRuleDatabaseBasedResourceSelector: %s", err.Error())
 		}
 	}
 
@@ -239,6 +271,10 @@ func (src SecurityPolicyRuleResourceSelector) MarshalJSON() ([]byte, error) {
 		return json.Marshal(&src.SecurityPolicyRuleActiveDirectoryBasedResourceSelector)
 	}
 
+	if src.SecurityPolicyRuleDatabaseBasedResourceSelector != nil {
+		return json.Marshal(&src.SecurityPolicyRuleDatabaseBasedResourceSelector)
+	}
+
 	if src.SecurityPolicyRuleManagedSaaSAppBasedResourceSelector != nil {
 		return json.Marshal(&src.SecurityPolicyRuleManagedSaaSAppBasedResourceSelector)
 	}
@@ -273,6 +309,10 @@ func (obj *SecurityPolicyRuleResourceSelector) GetActualInstance() interface{} {
 	}
 	if obj.SecurityPolicyRuleActiveDirectoryBasedResourceSelector != nil {
 		return obj.SecurityPolicyRuleActiveDirectoryBasedResourceSelector
+	}
+
+	if obj.SecurityPolicyRuleDatabaseBasedResourceSelector != nil {
+		return obj.SecurityPolicyRuleDatabaseBasedResourceSelector
 	}
 
 	if obj.SecurityPolicyRuleManagedSaaSAppBasedResourceSelector != nil {

@@ -34,6 +34,8 @@ type UserAccessMethodServerDetails struct {
 	// If `true`, the connection is brokered by the server agent
 	Brokered         *bool                 `json:"brokered,omitempty"`
 	AccessCredential *AccessCredentialType `json:"access_credential,omitempty"`
+	// A list of privileges granted to a user based on security policies. This field is only present when: - The `include_privileged_user_access_methods` parameter is set to `true` in the `/v1/resolve` API request - The account is a managed server account (access_credential is `encrypted-ssh-password` or `encrypted-rdp-password`)
+	Privileges []ManagedServerAccountPrivilegeContainer `json:"privileges,omitempty"`
 }
 
 // NewUserAccessMethodServerDetails instantiates a new UserAccessMethodServerDetails object
@@ -317,6 +319,39 @@ func (o *UserAccessMethodServerDetails) SetAccessCredential(v AccessCredentialTy
 	return o
 }
 
+// GetPrivileges returns the Privileges field value if set, zero value otherwise.
+func (o *UserAccessMethodServerDetails) GetPrivileges() []ManagedServerAccountPrivilegeContainer {
+	if o == nil || IsNil(o.Privileges) {
+		var ret []ManagedServerAccountPrivilegeContainer
+		return ret
+	}
+	return o.Privileges
+}
+
+// GetPrivilegesOk returns a tuple with the Privileges field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserAccessMethodServerDetails) GetPrivilegesOk() ([]ManagedServerAccountPrivilegeContainer, bool) {
+	if o == nil || IsNil(o.Privileges) {
+		return nil, false
+	}
+	return o.Privileges, true
+}
+
+// HasPrivileges returns a boolean if a field has been set.
+func (o *UserAccessMethodServerDetails) HasPrivileges() bool {
+	if o != nil && !IsNil(o.Privileges) {
+		return true
+	}
+
+	return false
+}
+
+// SetPrivileges gets a reference to the given []ManagedServerAccountPrivilegeContainer and assigns it to the Privileges field.
+func (o *UserAccessMethodServerDetails) SetPrivileges(v []ManagedServerAccountPrivilegeContainer) *UserAccessMethodServerDetails {
+	o.Privileges = v
+	return o
+}
+
 func (o UserAccessMethodServerDetails) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -350,6 +385,9 @@ func (o UserAccessMethodServerDetails) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.AccessCredential) {
 		toSerialize["access_credential"] = o.AccessCredential
+	}
+	if !IsNil(o.Privileges) {
+		toSerialize["privileges"] = o.Privileges
 	}
 	return toSerialize, nil
 }

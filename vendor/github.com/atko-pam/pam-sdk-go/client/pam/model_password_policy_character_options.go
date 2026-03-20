@@ -26,10 +26,8 @@ type PasswordPolicyCharacterOptions struct {
 	LowerCase *bool `json:"lower_case,omitempty"`
 	// If `true`, passwords can include one or more numbers
 	Digits *bool `json:"digits,omitempty"`
-	// If `true`, passwords can include one or more symbols.
+	// If `true`, passwords can include one or more symbols
 	Punctuation *bool `json:"punctuation,omitempty"`
-	// If `true`, passwords must contain at least one character from each set selected above.
-	RequireFromEachSet *bool `json:"require_from_each_set,omitempty"`
 	// A string of symbols to exclude from the set of allowed punctuation. This field is only applicable if `punctuation` is set to `true`.
 	ExcludeCertainSymbols []string `json:"exclude_certain_symbols,omitempty"`
 }
@@ -183,39 +181,6 @@ func (o *PasswordPolicyCharacterOptions) SetPunctuation(v bool) *PasswordPolicyC
 	return o
 }
 
-// GetRequireFromEachSet returns the RequireFromEachSet field value if set, zero value otherwise.
-func (o *PasswordPolicyCharacterOptions) GetRequireFromEachSet() bool {
-	if o == nil || IsNil(o.RequireFromEachSet) {
-		var ret bool
-		return ret
-	}
-	return *o.RequireFromEachSet
-}
-
-// GetRequireFromEachSetOk returns a tuple with the RequireFromEachSet field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *PasswordPolicyCharacterOptions) GetRequireFromEachSetOk() (*bool, bool) {
-	if o == nil || IsNil(o.RequireFromEachSet) {
-		return nil, false
-	}
-	return o.RequireFromEachSet, true
-}
-
-// HasRequireFromEachSet returns a boolean if a field has been set.
-func (o *PasswordPolicyCharacterOptions) HasRequireFromEachSet() bool {
-	if o != nil && !IsNil(o.RequireFromEachSet) {
-		return true
-	}
-
-	return false
-}
-
-// SetRequireFromEachSet gets a reference to the given bool and assigns it to the RequireFromEachSet field.
-func (o *PasswordPolicyCharacterOptions) SetRequireFromEachSet(v bool) *PasswordPolicyCharacterOptions {
-	o.RequireFromEachSet = &v
-	return o
-}
-
 // GetExcludeCertainSymbols returns the ExcludeCertainSymbols field value if set, zero value otherwise.
 func (o *PasswordPolicyCharacterOptions) GetExcludeCertainSymbols() []string {
 	if o == nil || IsNil(o.ExcludeCertainSymbols) {
@@ -270,9 +235,6 @@ func (o PasswordPolicyCharacterOptions) ToMap() (map[string]interface{}, error) 
 	}
 	if !IsNil(o.Punctuation) {
 		toSerialize["punctuation"] = o.Punctuation
-	}
-	if !IsNil(o.RequireFromEachSet) {
-		toSerialize["require_from_each_set"] = o.RequireFromEachSet
 	}
 	if !IsNil(o.ExcludeCertainSymbols) {
 		toSerialize["exclude_certain_symbols"] = o.ExcludeCertainSymbols

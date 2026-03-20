@@ -146,7 +146,6 @@ const (
 	RemovedAt                         = "removed_at"
 	RequestTypeId                     = "request_type_id"
 	RequestTypeName                   = "request_type_name"
-	RequireFromEachSet                = "require_from_each_set"
 	RequirePreauthForCreds            = "require_preauth_for_creds"
 	ResourceGroup                     = "resource_group"
 	ResourceGroupID                   = "resource_group_id"

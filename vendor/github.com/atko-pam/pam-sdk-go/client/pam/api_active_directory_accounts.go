@@ -15,6 +15,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -109,13 +110,18 @@ func (a *ActiveDirectoryAccountsAPIService) ConfigureActiveDirectoryAccountRuleS
 			return nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -123,7 +129,7 @@ func (a *ActiveDirectoryAccountsAPIService) ConfigureActiveDirectoryAccountRuleS
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return localVarHTTPResponse, err
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -135,7 +141,7 @@ func (a *ActiveDirectoryAccountsAPIService) ConfigureActiveDirectoryAccountRuleS
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return localVarHTTPResponse, err
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -144,7 +150,7 @@ func (a *ActiveDirectoryAccountsAPIService) ConfigureActiveDirectoryAccountRuleS
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarHTTPResponse, err
+			return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarHTTPResponse, apiError
 	}
@@ -239,13 +245,18 @@ func (a *ActiveDirectoryAccountsAPIService) CreateActiveDirectoryAccountRuleExec
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -253,7 +264,7 @@ func (a *ActiveDirectoryAccountsAPIService) CreateActiveDirectoryAccountRuleExec
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -265,7 +276,7 @@ func (a *ActiveDirectoryAccountsAPIService) CreateActiveDirectoryAccountRuleExec
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -274,7 +285,7 @@ func (a *ActiveDirectoryAccountsAPIService) CreateActiveDirectoryAccountRuleExec
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -359,13 +370,18 @@ func (a *ActiveDirectoryAccountsAPIService) DeleteActiveDirectoryAccountRuleExec
 			return nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -373,7 +389,7 @@ func (a *ActiveDirectoryAccountsAPIService) DeleteActiveDirectoryAccountRuleExec
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return localVarHTTPResponse, err
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -385,7 +401,7 @@ func (a *ActiveDirectoryAccountsAPIService) DeleteActiveDirectoryAccountRuleExec
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return localVarHTTPResponse, err
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -394,7 +410,7 @@ func (a *ActiveDirectoryAccountsAPIService) DeleteActiveDirectoryAccountRuleExec
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarHTTPResponse, err
+			return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarHTTPResponse, apiError
 	}
@@ -482,13 +498,18 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountExecute(r A
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -496,7 +517,7 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountExecute(r A
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -508,7 +529,7 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountExecute(r A
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -517,7 +538,7 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountExecute(r A
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -539,7 +560,7 @@ func (r ApiGetActiveDirectoryAccountDetailsRequest) Execute() (*ActiveDirectoryA
 }
 
 /*
-GetActiveDirectoryAccountDetails Retrieve an Active Directory account
+GetActiveDirectoryAccountDetails Retrieve an Active Directory account in a resource group
 
 	Retrieves an Active Directory account in a resource group project
 
@@ -609,13 +630,18 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountDetailsExec
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -623,7 +649,7 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountDetailsExec
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -635,7 +661,7 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountDetailsExec
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -644,7 +670,7 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountDetailsExec
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -732,18 +758,23 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountEndUserExec
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -832,13 +863,18 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountMatchExecut
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -846,7 +882,7 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountMatchExecut
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -858,7 +894,7 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountMatchExecut
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -867,7 +903,7 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountMatchExecut
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -955,18 +991,23 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountRuleExecute
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1050,13 +1091,18 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountRuleSetting
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -1064,7 +1110,7 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountRuleSetting
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1076,7 +1122,7 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountRuleSetting
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1085,7 +1131,7 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountRuleSetting
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1169,13 +1215,18 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountSyncStatusE
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -1183,7 +1234,7 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountSyncStatusE
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1195,7 +1246,7 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountSyncStatusE
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1204,7 +1255,7 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryAccountSyncStatusE
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1288,18 +1339,23 @@ func (a *ActiveDirectoryAccountsAPIService) GetActiveDirectoryDomainEndUserExecu
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1383,13 +1439,18 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountRulesExecu
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -1397,7 +1458,7 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountRulesExecu
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1409,7 +1470,7 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountRulesExecu
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1418,7 +1479,7 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountRulesExecu
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1427,10 +1488,52 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountRulesExecu
 }
 
 type ApiListActiveDirectoryAccountsRequest struct {
-	ctx            context.Context
-	ApiService     *ActiveDirectoryAccountsAPIService
-	teamName       string
-	adConnectionId string
+	ctx                                  context.Context
+	ApiService                           *ActiveDirectoryAccountsAPIService
+	teamName                             string
+	adConnectionId                       string
+	count                                *int32
+	descending                           *bool
+	offset                               *string
+	prev                                 *bool
+	containsAccountNameOrAssignedOpaUser *string
+	includeUserAccessMethods             *bool
+}
+
+// The number of objects per page
+func (r ApiListActiveDirectoryAccountsRequest) Count(count int32) ApiListActiveDirectoryAccountsRequest {
+	r.count = &count
+	return r
+}
+
+// The object order
+func (r ApiListActiveDirectoryAccountsRequest) Descending(descending bool) ApiListActiveDirectoryAccountsRequest {
+	r.descending = &descending
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListActiveDirectoryAccountsRequest) Offset(offset string) ApiListActiveDirectoryAccountsRequest {
+	r.offset = &offset
+	return r
+}
+
+// The direction of paging
+func (r ApiListActiveDirectoryAccountsRequest) Prev(prev bool) ApiListActiveDirectoryAccountsRequest {
+	r.prev = &prev
+	return r
+}
+
+// Filters for AD accounts where the User Principal Name (UPN), Security Account Manager (SAM) name, or assigned user name that contains the search string
+func (r ApiListActiveDirectoryAccountsRequest) ContainsAccountNameOrAssignedOpaUser(containsAccountNameOrAssignedOpaUser string) ApiListActiveDirectoryAccountsRequest {
+	r.containsAccountNameOrAssignedOpaUser = &containsAccountNameOrAssignedOpaUser
+	return r
+}
+
+// If &#x60;true&#x60;, the response includes the user access methods for the resource
+func (r ApiListActiveDirectoryAccountsRequest) IncludeUserAccessMethods(includeUserAccessMethods bool) ApiListActiveDirectoryAccountsRequest {
+	r.includeUserAccessMethods = &includeUserAccessMethods
+	return r
 }
 
 func (r ApiListActiveDirectoryAccountsRequest) Execute() (*ListActiveDirectoryAccountsResponse, *http.Response, error) {
@@ -1478,6 +1581,24 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountsExecute(r
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.count != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
+	}
+	if r.descending != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
+	if r.prev != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
+	}
+	if r.containsAccountNameOrAssignedOpaUser != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains_account_name_or_assigned_opa_user", r.containsAccountNameOrAssignedOpaUser, "")
+	}
+	if r.includeUserAccessMethods != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "include_user_access_methods", r.includeUserAccessMethods, "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -1502,13 +1623,18 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountsExecute(r
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -1516,7 +1642,7 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountsExecute(r
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1528,7 +1654,7 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountsExecute(r
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1537,7 +1663,7 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountsExecute(r
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1550,6 +1676,13 @@ type ApiListActiveDirectoryAccountsEndUserRequest struct {
 	ApiService     *ActiveDirectoryAccountsAPIService
 	teamName       string
 	adConnectionId string
+	accountName    *string
+}
+
+// Active Directory account name
+func (r ApiListActiveDirectoryAccountsEndUserRequest) AccountName(accountName string) ApiListActiveDirectoryAccountsEndUserRequest {
+	r.accountName = &accountName
+	return r
 }
 
 func (r ApiListActiveDirectoryAccountsEndUserRequest) Execute() (*ListActiveDirectoryAccountsEndUserResponse, *http.Response, error) {
@@ -1597,6 +1730,9 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountsEndUserEx
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.accountName != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "account_name", r.accountName, "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -1621,18 +1757,23 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryAccountsEndUserEx
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1644,6 +1785,20 @@ type ApiListActiveDirectoryDomainsRequest struct {
 	ctx        context.Context
 	ApiService *ActiveDirectoryAccountsAPIService
 	teamName   string
+	domain     *string
+	contains   *string
+}
+
+// Filter by domain name
+func (r ApiListActiveDirectoryDomainsRequest) Domain(domain string) ApiListActiveDirectoryDomainsRequest {
+	r.domain = &domain
+	return r
+}
+
+// &lt;x-lifecycle-container&gt;&lt;x-lifecycle class&#x3D;\&quot;ea\&quot;&gt;&lt;/x-lifecycle&gt;&lt;/x-lifecycle-container&gt;Filters for domain name where the name contains the search string
+func (r ApiListActiveDirectoryDomainsRequest) Contains(contains string) ApiListActiveDirectoryDomainsRequest {
+	r.contains = &contains
+	return r
 }
 
 func (r ApiListActiveDirectoryDomainsRequest) Execute() (*ListActiveDirectoryDomainsResponse, *http.Response, error) {
@@ -1688,6 +1843,12 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryDomainsExecute(r 
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.domain != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "domain", r.domain, "")
+	}
+	if r.contains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -1712,18 +1873,23 @@ func (a *ActiveDirectoryAccountsAPIService) ListActiveDirectoryDomainsExecute(r 
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1741,7 +1907,7 @@ type ApiListAllActiveDirectoryAccountsForDelegatedSecurityAdminRequest struct {
 	adConnectionId  *[]string
 }
 
-// Only return results that include the specified value
+// Only returns results that include the specified value
 func (r ApiListAllActiveDirectoryAccountsForDelegatedSecurityAdminRequest) Contains(contains string) ApiListAllActiveDirectoryAccountsForDelegatedSecurityAdminRequest {
 	r.contains = &contains
 	return r
@@ -1845,13 +2011,18 @@ func (a *ActiveDirectoryAccountsAPIService) ListAllActiveDirectoryAccountsForDel
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -1859,7 +2030,7 @@ func (a *ActiveDirectoryAccountsAPIService) ListAllActiveDirectoryAccountsForDel
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1871,7 +2042,7 @@ func (a *ActiveDirectoryAccountsAPIService) ListAllActiveDirectoryAccountsForDel
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1880,7 +2051,7 @@ func (a *ActiveDirectoryAccountsAPIService) ListAllActiveDirectoryAccountsForDel
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1897,7 +2068,7 @@ type ApiListAllActiveDirectoryAccountsForSecurityAdminRequest struct {
 	adConnectionId *[]string
 }
 
-// Only return results that include the specified value
+// Only returns results that include the specified value
 func (r ApiListAllActiveDirectoryAccountsForSecurityAdminRequest) Contains(contains string) ApiListAllActiveDirectoryAccountsForSecurityAdminRequest {
 	r.contains = &contains
 	return r
@@ -1998,13 +2169,18 @@ func (a *ActiveDirectoryAccountsAPIService) ListAllActiveDirectoryAccountsForSec
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -2012,7 +2188,7 @@ func (a *ActiveDirectoryAccountsAPIService) ListAllActiveDirectoryAccountsForSec
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -2024,7 +2200,7 @@ func (a *ActiveDirectoryAccountsAPIService) ListAllActiveDirectoryAccountsForSec
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -2033,7 +2209,7 @@ func (a *ActiveDirectoryAccountsAPIService) ListAllActiveDirectoryAccountsForSec
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -2047,6 +2223,13 @@ type ApiListUAMForActiveDirectoryAccountRequest struct {
 	teamName       string
 	adConnectionId string
 	adAccountId    string
+	privilegeType  *string
+}
+
+// Filters user access methods to only return those with privilege matching the specified privilege type
+func (r ApiListUAMForActiveDirectoryAccountRequest) PrivilegeType(privilegeType string) ApiListUAMForActiveDirectoryAccountRequest {
+	r.privilegeType = &privilegeType
+	return r
 }
 
 func (r ApiListUAMForActiveDirectoryAccountRequest) Execute() (*ListUAMForActiveDirectoryAccountResponse, *http.Response, error) {
@@ -2097,6 +2280,9 @@ func (a *ActiveDirectoryAccountsAPIService) ListUAMForActiveDirectoryAccountExec
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.privilegeType != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "privilege_type", r.privilegeType, "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -2121,18 +2307,23 @@ func (a *ActiveDirectoryAccountsAPIService) ListUAMForActiveDirectoryAccountExec
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -2224,13 +2415,18 @@ func (a *ActiveDirectoryAccountsAPIService) ReorderActiveDirectoryAccountRulesEx
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 400 {
@@ -2238,7 +2434,7 @@ func (a *ActiveDirectoryAccountsAPIService) ReorderActiveDirectoryAccountRulesEx
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v BadRequestResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into BadRequestResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -2250,7 +2446,7 @@ func (a *ActiveDirectoryAccountsAPIService) ReorderActiveDirectoryAccountRulesEx
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -2262,7 +2458,7 @@ func (a *ActiveDirectoryAccountsAPIService) ReorderActiveDirectoryAccountRulesEx
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -2274,7 +2470,7 @@ func (a *ActiveDirectoryAccountsAPIService) ReorderActiveDirectoryAccountRulesEx
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v ConflictResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into ConflictResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -2283,7 +2479,7 @@ func (a *ActiveDirectoryAccountsAPIService) ReorderActiveDirectoryAccountRulesEx
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -2382,13 +2578,18 @@ func (a *ActiveDirectoryAccountsAPIService) RevealActiveDirectoryAccountPassword
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -2396,7 +2597,7 @@ func (a *ActiveDirectoryAccountsAPIService) RevealActiveDirectoryAccountPassword
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -2408,7 +2609,7 @@ func (a *ActiveDirectoryAccountsAPIService) RevealActiveDirectoryAccountPassword
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -2417,7 +2618,7 @@ func (a *ActiveDirectoryAccountsAPIService) RevealActiveDirectoryAccountPassword
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -2513,13 +2714,18 @@ func (a *ActiveDirectoryAccountsAPIService) RotateActiveDirectoryAccountPassword
 			return nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -2527,7 +2733,7 @@ func (a *ActiveDirectoryAccountsAPIService) RotateActiveDirectoryAccountPassword
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return localVarHTTPResponse, err
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -2539,7 +2745,7 @@ func (a *ActiveDirectoryAccountsAPIService) RotateActiveDirectoryAccountPassword
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return localVarHTTPResponse, err
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -2548,7 +2754,7 @@ func (a *ActiveDirectoryAccountsAPIService) RotateActiveDirectoryAccountPassword
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarHTTPResponse, err
+			return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarHTTPResponse, apiError
 	}
@@ -2645,13 +2851,18 @@ func (a *ActiveDirectoryAccountsAPIService) UpdateActiveDirectoryAccountMatchExe
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -2659,7 +2870,7 @@ func (a *ActiveDirectoryAccountsAPIService) UpdateActiveDirectoryAccountMatchExe
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -2671,7 +2882,7 @@ func (a *ActiveDirectoryAccountsAPIService) UpdateActiveDirectoryAccountMatchExe
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -2680,7 +2891,7 @@ func (a *ActiveDirectoryAccountsAPIService) UpdateActiveDirectoryAccountMatchExe
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -2773,18 +2984,23 @@ func (a *ActiveDirectoryAccountsAPIService) UpdateActiveDirectoryAccountRuleExec
 			return nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarHTTPResponse, err
+			return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarHTTPResponse, apiError
 	}
