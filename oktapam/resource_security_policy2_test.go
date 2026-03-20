@@ -389,6 +389,56 @@ func TestSecurityPolicyImportRevealPasswordPrivilege(t *testing.T) {
 	})
 }
 
+// TestSecurityPolicyLoopback_ResourceGroup tests creating a security policy with a resource_group set.
+func TestSecurityPolicyLoopback_ResourceGroup(t *testing.T) {
+	var entities = make(map[string]any)
+
+	setupHTTPMock(t, entities)
+	resource.Test(t, resource.TestCase{
+		IsUnitTest:               true,
+		ProtoV6ProviderFactories: httpMockTestV6ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				ConfigFile: config.StaticFile("testdata/resource_group_policy.tf"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("oktapam_security_policy_v2.resource_group_policy", "name", "resource group test policy"),
+					resource.TestCheckResourceAttr("oktapam_security_policy_v2.resource_group_policy", "resource_group", "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"),
+				),
+			},
+			{
+				ConfigFile: config.StaticFile("testdata/resource_group_policy.tf"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+	checkSecurityPolicyJSON(t, entities, "testdata/resource_group_policy.json")
+}
+
+// TestSecurityPolicyImport_ResourceGroup tests importing a security policy with a resource_group set.
+func TestSecurityPolicyImport_ResourceGroup(t *testing.T) {
+	var entities = make(map[string]any)
+
+	setupHTTPMock(t, entities)
+	resource.Test(t, resource.TestCase{
+		IsUnitTest:               true,
+		ProtoV6ProviderFactories: httpMockTestV6ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				ConfigFile: config.StaticFile("testdata/resource_group_policy.tf"),
+			},
+			{
+				ResourceName:      "oktapam_security_policy_v2.resource_group_policy",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 // checkSecurityPolicyJSON digs through the entities to find the first pam.SecurityPolicy and ensures
 // its contents match the contents of the specified file. This is a bit brittle, do expect things to break
 // if you change the .tf file.

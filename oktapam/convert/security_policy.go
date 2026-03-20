@@ -9,18 +9,20 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-oktapam/oktapam/constants/descriptions"
 )
 
 //type SecurityPolicyTypeModel types.String
 
 type SecurityPolicyResourceModel struct {
-	ID          types.String                   `tfsdk:"id"`
-	Name        types.String                   `tfsdk:"name"`
-	Type        types.String                   `tfsdk:"type"`
-	Description types.String                   `tfsdk:"description"`
-	Active      types.Bool                     `tfsdk:"active"`
-	Principals  *SecurityPolicyPrincipalsModel `tfsdk:"principals"`
-	Rules       types.List/*SecurityPolicyRuleModel*/ `tfsdk:"rules"`
+	ID            types.String                   `tfsdk:"id"`
+	Name          types.String                   `tfsdk:"name"`
+	Type          types.String                   `tfsdk:"type"`
+	Description   types.String                   `tfsdk:"description"`
+	Active        types.Bool                     `tfsdk:"active"`
+	ResourceGroup types.String                   `tfsdk:"resource_group"`
+	Principals    *SecurityPolicyPrincipalsModel `tfsdk:"principals"`
+	Rules         types.List/*SecurityPolicyRuleModel*/ `tfsdk:"rules"`
 }
 
 func SecurityPolicySchema() map[string]schema.Attribute {
@@ -40,6 +42,11 @@ func SecurityPolicySchema() map[string]schema.Attribute {
 		},
 		"active": schema.BoolAttribute{
 			Required: true,
+		},
+		"resource_group": schema.StringAttribute{
+			Optional:      true,
+			Description:   descriptions.SecurityPolicyResouceGroup,
+			PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 		},
 		"principals": SecurityPolicyPrincipalsSchema(),
 		"rules": schema.ListNestedAttribute{
@@ -73,6 +80,13 @@ func SecurityPolicyFromModelToSDK(ctx context.Context, in *SecurityPolicyResourc
 
 	if !in.Active.IsNull() && !in.Active.IsUnknown() {
 		out.Active = in.Active.ValueBool()
+	}
+
+	if !in.ResourceGroup.IsNull() && !in.ResourceGroup.IsUnknown() {
+		rgID := in.ResourceGroup.ValueString()
+		rgType := pam.NamedObjectType_RESOURCE_GROUP
+		rg := pam.NamedObject{Id: &rgID, Type: &rgType}
+		out.ResourceGroup = &rg
 	}
 
 	var principals *pam.SecurityPolicyPrincipals
@@ -130,6 +144,16 @@ func SecurityPolicyFromSDKToModel(ctx context.Context, in *pam.SecurityPolicy) (
 
 	if val, ok := in.GetActiveOk(); ok {
 		out.Active = types.BoolPointerValue(val)
+	}
+
+	if rg, ok := in.GetResourceGroupOk(); ok {
+		if id, idOk := rg.GetIdOk(); idOk {
+			out.ResourceGroup = types.StringPointerValue(id)
+		} else {
+			out.ResourceGroup = types.StringNull()
+		}
+	} else {
+		out.ResourceGroup = types.StringNull()
 	}
 
 	principals, d := SecurityPolicyPrincipalFromSDKToModel(ctx, &in.Principals)

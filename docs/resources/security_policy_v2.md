@@ -25,6 +25,7 @@ A policy which defines how users can gain access to resources. For details, see 
 ### Optional
 
 - `description` (String)
+- `resource_group` (String) The UUID of a specific Resource Group associated with the Security Policy. If undefined, the Security Policy applies to all resources for your Team. This value must be defined if the current user has the Delegated Security Admin role.
 - `type` (String)
 
 ### Read-Only
