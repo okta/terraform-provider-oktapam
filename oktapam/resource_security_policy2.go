@@ -2,13 +2,10 @@ package oktapam
 
 import (
 	"context"
-	"fmt"
-
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-go/tftypes"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -18,7 +15,8 @@ import (
 
 var _ resource.Resource = &SecurityPolicyResource{}
 var _ resource.ResourceWithImportState = &SecurityPolicyResource{}
-var _ resource.ResourceWithUpgradeState = &SecurityPolicyResource{}
+
+//var _ resource.ResourceWithUpgradeState = &SecurityPolicyResource{}
 
 type SecurityPolicyResource struct {
 	teamName string
@@ -37,7 +35,7 @@ func (s *SecurityPolicyResource) Schema(_ context.Context, _ resource.SchemaRequ
 	response.Schema = schema.Schema{
 		Description: descriptions.ResourceSecurityPolicy,
 		Attributes:  convert.SecurityPolicySchema(),
-		Version:     1,
+		//Version:     1,
 	}
 }
 
@@ -190,6 +188,9 @@ func (s *SecurityPolicyResource) ImportState(ctx context.Context, req resource.I
 // and causes "unsupported attribute" errors. Each upgrader migrates state from one schema version to the next.
 //
 // When is a state upgrade needed vs not:
+// If a state upgrader is needed in the future, the implementation below can be uncommented.
+// It re-parses the stored raw state JSON against the current schema with IgnoreUndefinedAttributes
+// enabled, which silently drops any attribute present in the old state but absent from the current schema.
 //
 //   - REMOVING an attribute from the schema  → state upgrade required (old state still has the attribute as null, TF rejects it)
 //   - ADDING a new Optional/Computed attribute → state upgrade NOT needed (TF treats missing attributes in old state as null automatically)
@@ -200,50 +201,50 @@ func (s *SecurityPolicyResource) ImportState(ctx context.Context, req resource.I
 //  1. Bump the Version in Schema() (e.g., 1 → 2).
 //  2. Add a new entry to this map keyed by the OLD version (e.g., 1 → upgradeV1ToV2).
 //  3. The upgrader function can reuse upgradeSecurityPolicyState — it is version-agnostic and strips any attributes absent from the current schema.
-func (s *SecurityPolicyResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	return map[int64]resource.StateUpgrader{
-		0: {
-			StateUpgrader: upgradeSecurityPolicyState,
-		},
-	}
-}
-
-// upgradeSecurityPolicyState parses the stored raw state JSON against the current schema with IgnoreUndefinedAttributes enabled,
-// which silently drops any attribute present in the old state but absent from the current schema. Terraform already handles new attributes
-// (missing from old state) by treating them as null.
-func upgradeSecurityPolicyState(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	if req.RawState == nil {
-		return
-	}
-
-	rawJSON := req.RawState.JSON
-	if len(rawJSON) == 0 {
-		return
-	}
-
-	// Build the current schema type for unmarshalling
-	currentSchema := schema.Schema{
-		Attributes: convert.SecurityPolicySchema(),
-	}
-	resourceSchemaType := currentSchema.Type().TerraformType(ctx)
-
-	// Parse the old state JSON, ignoring attributes that no longer exist in the current schema. This covers any attribute removal at any nesting level
-	// (top-level fields, nested privilege types, condition attributes, etc.)
-	upgradedStateValue, err := tftypes.ValueFromJSONWithOpts(
-		rawJSON,
-		resourceSchemaType,
-		tftypes.ValueFromJSONOpts{IgnoreUndefinedAttributes: true},
-	)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Unable to Upgrade Resource State",
-			fmt.Sprintf("An unexpected error occurred reading the prior resource state for upgrade. This needs to be reported to the provider developer: %s", err.Error()),
-		)
-		return
-	}
-
-	resp.State.Raw = upgradedStateValue
-}
+//func (s *SecurityPolicyResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+//	return map[int64]resource.StateUpgrader{
+//		0: {
+//			StateUpgrader: upgradeSecurityPolicyState,
+//		},
+//	}
+//}
+//
+//// upgradeSecurityPolicyState parses the stored raw state JSON against the current schema with IgnoreUndefinedAttributes enabled,
+//// which silently drops any attribute present in the old state but absent from the current schema. Terraform already handles new attributes
+//// (missing from old state) by treating them as null.
+//func upgradeSecurityPolicyState(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+//	if req.RawState == nil {
+//		return
+//	}
+//
+//	rawJSON := req.RawState.JSON
+//	if len(rawJSON) == 0 {
+//		return
+//	}
+//
+//	// Build the current schema type for unmarshalling
+//	currentSchema := schema.Schema{
+//		Attributes: convert.SecurityPolicySchema(),
+//	}
+//	resourceSchemaType := currentSchema.Type().TerraformType(ctx)
+//
+//	// Parse the old state JSON, ignoring attributes that no longer exist in the current schema. This covers any attribute removal at any nesting level
+//	// (top-level fields, nested privilege types, condition attributes, etc.)
+//	upgradedStateValue, err := tftypes.ValueFromJSONWithOpts(
+//		rawJSON,
+//		resourceSchemaType,
+//		tftypes.ValueFromJSONOpts{IgnoreUndefinedAttributes: true},
+//	)
+//	if err != nil {
+//		resp.Diagnostics.AddError(
+//			"Unable to Upgrade Resource State",
+//			fmt.Sprintf("An unexpected error occurred reading the prior resource state for upgrade. This needs to be reported to the provider developer: %s", err.Error()),
+//		)
+//		return
+//	}
+//
+//	resp.State.Raw = upgradedStateValue
+//}
 
 func (s *SecurityPolicyResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {
 	// Add a nil check when handling ProviderData because Terraform

@@ -13,11 +13,12 @@ import (
 //type SecurityPolicyRulePrivilegeTypeModel types.String
 
 type SecurityPolicyRulePrivilegeContainerModel struct {
-	PrincipalAccountSSHPrivilege *PrincipalAccountSSHPrivilegeModel `tfsdk:"principal_account_ssh"`
-	PasswordCheckoutSSHPrivilege *PasswordCheckoutSSHPrivilegeModel `tfsdk:"password_checkout_ssh"`
-	RevealPasswordPrivilege      *RevealPasswordPrivilegeModel      `tfsdk:"reveal_password"`
-	PasswordCheckoutRDPPrivilege *PasswordCheckoutRDPPrivilegeModel `tfsdk:"password_checkout_rdp"`
-	PrincipalAccountRDPPrivilege *PrincipalAccountRDPPrivilegeModel `tfsdk:"principal_account_rdp"`
+	PrincipalAccountSSHPrivilege      *PrincipalAccountSSHPrivilegeModel      `tfsdk:"principal_account_ssh"`
+	PasswordCheckoutSSHPrivilege      *PasswordCheckoutSSHPrivilegeModel      `tfsdk:"password_checkout_ssh"`
+	RevealPasswordPrivilege           *RevealPasswordPrivilegeModel           `tfsdk:"reveal_password"`
+	PasswordCheckoutRDPPrivilege      *PasswordCheckoutRDPPrivilegeModel      `tfsdk:"password_checkout_rdp"`
+	PrincipalAccountRDPPrivilege      *PrincipalAccountRDPPrivilegeModel      `tfsdk:"principal_account_rdp"`
+	PasswordCheckoutDatabasePrivilege *PasswordCheckoutDatabasePrivilegeModel `tfsdk:"password_checkout_database"`
 	//SecurityPolicySecretPrivilege                   *SecurityPolicySecretPrivilegeModel                   `tfsdk:"secret"`
 	//SecurityPolicyUpdatePasswordPrivilege           *SecurityPolicyUpdatePasswordPrivilegeModel           `tfsdk:"update_password"`
 }
@@ -29,7 +30,8 @@ func SecurityPolicyRulePrivilegeContainerSchema() schema.NestedAttributeObject {
 			"password_checkout_ssh": PasswordCheckoutSSHPrivilegeSchema(),
 			"reveal_password":       RevealPasswordPrivilegeSchema(),
 			"password_checkout_rdp": PasswordCheckoutRDPPrivilegeSchema(),
-			"principal_account_rdp": PrincipalAccountRDPPrivilegeSchema(),
+			"principal_account_rdp":      PrincipalAccountRDPPrivilegeSchema(),
+			"password_checkout_database": PasswordCheckoutDatabasePrivilegeSchema(),
 			// "secret":
 			// "update_password":
 			// "rotate_password":
@@ -43,7 +45,8 @@ func SecurityPolicyRulePrivilegeContainerAttrTypes() map[string]attr.Type {
 		"password_checkout_ssh": types.ObjectType{AttrTypes: PasswordCheckoutSSHPrivilegeAttrTypes()},
 		"reveal_password":       types.ObjectType{AttrTypes: RevealPasswordPrivilegeAttrTypes()},
 		"password_checkout_rdp": types.ObjectType{AttrTypes: PasswordCheckoutRDPPrivilegeAttrTypes()},
-		"principal_account_rdp": types.ObjectType{AttrTypes: PrincipalAccountRDPPrivilegeAttrTypes()},
+		"principal_account_rdp":      types.ObjectType{AttrTypes: PrincipalAccountRDPPrivilegeAttrTypes()},
+		"password_checkout_database": types.ObjectType{AttrTypes: PasswordCheckoutDatabasePrivilegeAttrTypes()},
 	}
 }
 
