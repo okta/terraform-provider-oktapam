@@ -1,6 +1,7 @@
 package oktapam
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
@@ -12,10 +13,15 @@ import (
 	"testing"
 
 	"github.com/atko-pam/pam-sdk-go/client/pam"
+	fwresource "github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
+	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/jarcoal/httpmock"
+	"github.com/okta/terraform-provider-oktapam/oktapam/convert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -553,4 +559,126 @@ resource "oktapam_security_policy_v2" "test_acc_security_policy_v2" {
 
 func createTestAccSecurityPolicyV2CreateConfig(groupName, securityPolicyName string, serverID string) string {
 	return fmt.Sprintf(testAccSecurityPolicyV2CreateConfigFormat, groupName, securityPolicyName, serverID)
+}
+
+// TestUpgradeSecurityPolicyState_RemovesUnknownAttributes verifies that the state upgrader correctly handles old state
+// that contains attributes removed from the schema.
+//
+// Note: The Terraform Plugin Framework stores all schema-defined attributes in state, including optional ones that were
+// never configured (as null). When an attribute is later removed from the schema, the stored null entry becomes orphaned
+// and causes "unsupported attribute" errors during plan. The state upgrader must strip these.
+func TestUpgradeSecurityPolicyState_RemovesUnknownAttributes(t *testing.T) {
+	rawStateJSON := `{
+		"id": "test-policy-id",
+		"name": "test-policy",
+		"type": "default",
+		"description": "test description",
+		"active": true,
+		"resource_group": null,
+		"principals": {
+			"user_groups": ["group1"]
+		},
+		"rules": [
+			{
+				"name": "test rule",
+				"resource_type": "server_based_resource",
+				"override_checkout_duration_in_seconds": null,
+				"resource_selector": {
+					"server_based_resource": {
+						"selectors": [
+							{
+								"individual_server": null,
+								"individual_server_account": null,
+								"server_label": {
+									"server_selector": {
+										"labels": {"system.os_type": "linux"}
+									},
+									"account_selector_type": "none",
+									"account_selector": {
+										"usernames": null
+									}
+								}
+							}
+						]
+					}
+				},
+				"privileges": [
+					{
+						"principal_account_ssh": {
+							"principal_account_ssh": true,
+							"admin_level_permissions": false,
+							"sudo_display_name": null,
+							"sudo_command_bundles": null
+						},
+						"password_checkout_ssh": null,
+						"reveal_password": null,
+						"password_checkout_rdp": null,
+						"principal_account_rdp": null,
+						"password_checkout_database": null
+					}
+				],
+				"conditions": null
+			}
+		]
+	}`
+
+	ctx := context.Background()
+
+	// First, prove the old state is invalid for the current schema.
+	// This is the exact error users would see without the state upgrader.
+	currentSchema := schema.Schema{
+		Attributes: convert.SecurityPolicySchema(),
+	}
+	resourceSchemaType := currentSchema.Type().TerraformType(ctx)
+
+	_, err := tftypes.ValueFromJSON([]byte(rawStateJSON), resourceSchemaType)
+	require.Error(t, err, "old state with removed attribute should fail without IgnoreUndefinedAttributes")
+	require.Contains(t, err.Error(), "unsupported attribute \"password_checkout_database\"")
+
+	// Now run the state upgrader — it should succeed
+	req := fwresource.UpgradeStateRequest{
+		RawState: &tfprotov6.RawState{
+			JSON: []byte(rawStateJSON),
+		},
+	}
+	resp := fwresource.UpgradeStateResponse{}
+
+	upgradeSecurityPolicyState(ctx, req, &resp)
+
+	require.False(t, resp.Diagnostics.HasError(), "state upgrade should not produce errors: %v", resp.Diagnostics.Errors())
+	require.NotNil(t, resp.State.Raw.Type(), "upgraded state should have a valid type")
+
+	// Navigate into the upgraded state to verify the privilege container
+	var topLevel map[string]tftypes.Value
+	require.NoError(t, resp.State.Raw.As(&topLevel))
+
+	var rules []tftypes.Value
+	require.NoError(t, topLevel["rules"].As(&rules))
+	require.Len(t, rules, 1)
+
+	var rule map[string]tftypes.Value
+	require.NoError(t, rules[0].As(&rule))
+
+	var privileges []tftypes.Value
+	require.NoError(t, rule["privileges"].As(&privileges))
+	require.Len(t, privileges, 1)
+
+	var privilegeContainer map[string]tftypes.Value
+	require.NoError(t, privileges[0].As(&privilegeContainer))
+
+	// The removed attribute must be gone
+	_, hasRemoved := privilegeContainer["password_checkout_database"]
+	require.False(t, hasRemoved, "removed attribute 'password_checkout_database' should have been stripped from state")
+
+	// Valid attributes must be preserved
+	_, hasPrincipalSSH := privilegeContainer["principal_account_ssh"]
+	require.True(t, hasPrincipalSSH, "principal_account_ssh should be preserved")
+	require.False(t, privilegeContainer["principal_account_ssh"].IsNull(), "principal_account_ssh was set and should not be null")
+
+	// The other known privilege types should still be present (as null, since they weren't set)
+	for _, knownType := range []string{"password_checkout_ssh", "reveal_password", "password_checkout_rdp", "principal_account_rdp"} {
+		val, exists := privilegeContainer[knownType]
+		require.True(t, exists, "%s should still be present in state", knownType)
+		require.True(t, val.IsNull(), "%s should be null since it was not set", knownType)
+	}
 }
