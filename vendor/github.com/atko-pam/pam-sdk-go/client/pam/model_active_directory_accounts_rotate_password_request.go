@@ -20,14 +20,14 @@ var _ MappedNullable = &ActiveDirectoryAccountsRotatePasswordRequest{}
 
 // ActiveDirectoryAccountsRotatePasswordRequest struct for ActiveDirectoryAccountsRotatePasswordRequest
 type ActiveDirectoryAccountsRotatePasswordRequest struct {
-	UserAccessMethod UserAccessMethod `json:"user_access_method"`
+	UserAccessMethod UserAccessMethodWithRuleIds `json:"user_access_method"`
 }
 
 // NewActiveDirectoryAccountsRotatePasswordRequest instantiates a new ActiveDirectoryAccountsRotatePasswordRequest object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewActiveDirectoryAccountsRotatePasswordRequest(userAccessMethod UserAccessMethod) *ActiveDirectoryAccountsRotatePasswordRequest {
+func NewActiveDirectoryAccountsRotatePasswordRequest(userAccessMethod UserAccessMethodWithRuleIds) *ActiveDirectoryAccountsRotatePasswordRequest {
 	this := ActiveDirectoryAccountsRotatePasswordRequest{}
 	this.UserAccessMethod = userAccessMethod
 	return &this
@@ -42,9 +42,9 @@ func NewActiveDirectoryAccountsRotatePasswordRequestWithDefaults() *ActiveDirect
 }
 
 // GetUserAccessMethod returns the UserAccessMethod field value
-func (o *ActiveDirectoryAccountsRotatePasswordRequest) GetUserAccessMethod() UserAccessMethod {
+func (o *ActiveDirectoryAccountsRotatePasswordRequest) GetUserAccessMethod() UserAccessMethodWithRuleIds {
 	if o == nil {
-		var ret UserAccessMethod
+		var ret UserAccessMethodWithRuleIds
 		return ret
 	}
 
@@ -53,7 +53,7 @@ func (o *ActiveDirectoryAccountsRotatePasswordRequest) GetUserAccessMethod() Use
 
 // GetUserAccessMethodOk returns a tuple with the UserAccessMethod field value
 // and a boolean to check if the value has been set.
-func (o *ActiveDirectoryAccountsRotatePasswordRequest) GetUserAccessMethodOk() (*UserAccessMethod, bool) {
+func (o *ActiveDirectoryAccountsRotatePasswordRequest) GetUserAccessMethodOk() (*UserAccessMethodWithRuleIds, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -61,7 +61,7 @@ func (o *ActiveDirectoryAccountsRotatePasswordRequest) GetUserAccessMethodOk() (
 }
 
 // SetUserAccessMethod sets field value
-func (o *ActiveDirectoryAccountsRotatePasswordRequest) SetUserAccessMethod(v UserAccessMethod) *ActiveDirectoryAccountsRotatePasswordRequest {
+func (o *ActiveDirectoryAccountsRotatePasswordRequest) SetUserAccessMethod(v UserAccessMethodWithRuleIds) *ActiveDirectoryAccountsRotatePasswordRequest {
 	o.UserAccessMethod = v
 	return o
 }

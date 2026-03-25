@@ -24,6 +24,7 @@ type SecurityPolicyRuleActiveDirectoryResourceSelector struct {
 	IndividualAccounts *SecurityPolicyRuleActiveDirectoryIndividualAccountsSelector `json:"individual_accounts,omitempty"`
 	SharedAccounts     *SecurityPolicyRuleActiveDirectorySharedAccountsSelector     `json:"shared_accounts,omitempty"`
 	Servers            *SecurityPolicyRuleActiveDirectoryServersSelector            `json:"servers,omitempty"`
+	SshServers         *SecurityPolicyRuleActiveDirectoryServersSelector            `json:"ssh_servers,omitempty"`
 }
 
 // NewSecurityPolicyRuleActiveDirectoryResourceSelector instantiates a new SecurityPolicyRuleActiveDirectoryResourceSelector object
@@ -168,6 +169,39 @@ func (o *SecurityPolicyRuleActiveDirectoryResourceSelector) SetServers(v Securit
 	return o
 }
 
+// GetSshServers returns the SshServers field value if set, zero value otherwise.
+func (o *SecurityPolicyRuleActiveDirectoryResourceSelector) GetSshServers() SecurityPolicyRuleActiveDirectoryServersSelector {
+	if o == nil || IsNil(o.SshServers) {
+		var ret SecurityPolicyRuleActiveDirectoryServersSelector
+		return ret
+	}
+	return *o.SshServers
+}
+
+// GetSshServersOk returns a tuple with the SshServers field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecurityPolicyRuleActiveDirectoryResourceSelector) GetSshServersOk() (*SecurityPolicyRuleActiveDirectoryServersSelector, bool) {
+	if o == nil || IsNil(o.SshServers) {
+		return nil, false
+	}
+	return o.SshServers, true
+}
+
+// HasSshServers returns a boolean if a field has been set.
+func (o *SecurityPolicyRuleActiveDirectoryResourceSelector) HasSshServers() bool {
+	if o != nil && !IsNil(o.SshServers) {
+		return true
+	}
+
+	return false
+}
+
+// SetSshServers gets a reference to the given SecurityPolicyRuleActiveDirectoryServersSelector and assigns it to the SshServers field.
+func (o *SecurityPolicyRuleActiveDirectoryResourceSelector) SetSshServers(v SecurityPolicyRuleActiveDirectoryServersSelector) *SecurityPolicyRuleActiveDirectoryResourceSelector {
+	o.SshServers = &v
+	return o
+}
+
 func (o SecurityPolicyRuleActiveDirectoryResourceSelector) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -187,6 +221,9 @@ func (o SecurityPolicyRuleActiveDirectoryResourceSelector) ToMap() (map[string]i
 	}
 	if !IsNil(o.Servers) {
 		toSerialize["servers"] = o.Servers
+	}
+	if !IsNil(o.SshServers) {
+		toSerialize["ssh_servers"] = o.SshServers
 	}
 	return toSerialize, nil
 }

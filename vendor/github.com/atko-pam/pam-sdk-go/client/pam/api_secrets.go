@@ -15,6 +15,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -112,13 +113,18 @@ func (a *SecretsAPIService) CreateSecretExecute(r ApiCreateSecretRequest) (*Secr
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 403 {
@@ -126,7 +132,7 @@ func (a *SecretsAPIService) CreateSecretExecute(r ApiCreateSecretRequest) (*Secr
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v CreateSecretForbiddenResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into CreateSecretForbiddenResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -135,7 +141,7 @@ func (a *SecretsAPIService) CreateSecretExecute(r ApiCreateSecretRequest) (*Secr
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -231,13 +237,18 @@ func (a *SecretsAPIService) CreateSecretFolderExecute(r ApiCreateSecretFolderReq
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 403 {
@@ -245,7 +256,7 @@ func (a *SecretsAPIService) CreateSecretFolderExecute(r ApiCreateSecretFolderReq
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v CreateSecretFolderForbiddenResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into CreateSecretFolderForbiddenResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -254,7 +265,7 @@ func (a *SecretsAPIService) CreateSecretFolderExecute(r ApiCreateSecretFolderReq
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -343,13 +354,18 @@ func (a *SecretsAPIService) DeleteSecretExecute(r ApiDeleteSecretRequest) (*http
 			return nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 403 {
@@ -357,7 +373,7 @@ func (a *SecretsAPIService) DeleteSecretExecute(r ApiDeleteSecretRequest) (*http
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v DeleteSecretForbiddenResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return localVarHTTPResponse, err
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into DeleteSecretForbiddenResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -366,7 +382,7 @@ func (a *SecretsAPIService) DeleteSecretExecute(r ApiDeleteSecretRequest) (*http
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarHTTPResponse, err
+			return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarHTTPResponse, apiError
 	}
@@ -455,13 +471,18 @@ func (a *SecretsAPIService) DeleteSecretFolderExecute(r ApiDeleteSecretFolderReq
 			return nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 403 {
@@ -469,7 +490,7 @@ func (a *SecretsAPIService) DeleteSecretFolderExecute(r ApiDeleteSecretFolderReq
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v DeleteSecretFolderForbiddenResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return localVarHTTPResponse, err
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into DeleteSecretFolderForbiddenResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -478,7 +499,7 @@ func (a *SecretsAPIService) DeleteSecretFolderExecute(r ApiDeleteSecretFolderReq
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarHTTPResponse, err
+			return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarHTTPResponse, apiError
 	}
@@ -500,7 +521,7 @@ func (r ApiGetSecretRequest) Execute() (*Secret, *http.Response, error) {
 }
 
 /*
-GetSecret Retrieve a Secret
+GetSecret Retrieve a secret
 
 	Retrieves the specified secret. Users must be authorized to perform this action by an existing security policy.
 
@@ -570,13 +591,18 @@ func (a *SecretsAPIService) GetSecretExecute(r ApiGetSecretRequest) (*Secret, *h
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 403 {
@@ -584,7 +610,7 @@ func (a *SecretsAPIService) GetSecretExecute(r ApiGetSecretRequest) (*Secret, *h
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v GetSecretForbiddenResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into GetSecretForbiddenResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -593,7 +619,7 @@ func (a *SecretsAPIService) GetSecretExecute(r ApiGetSecretRequest) (*Secret, *h
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -685,13 +711,18 @@ func (a *SecretsAPIService) GetSecretFolderExecute(r ApiGetSecretFolderRequest) 
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 403 {
@@ -699,7 +730,7 @@ func (a *SecretsAPIService) GetSecretFolderExecute(r ApiGetSecretFolderRequest) 
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v GetSecretFolderForbiddenResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into GetSecretFolderForbiddenResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -708,7 +739,7 @@ func (a *SecretsAPIService) GetSecretFolderExecute(r ApiGetSecretFolderRequest) 
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -840,13 +871,18 @@ func (a *SecretsAPIService) ListSecretFolderItemsExecute(r ApiListSecretFolderIt
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 403 {
@@ -854,7 +890,7 @@ func (a *SecretsAPIService) ListSecretFolderItemsExecute(r ApiListSecretFolderIt
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v ListSecretFolderItemsForbiddenResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into ListSecretFolderItemsForbiddenResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -863,7 +899,127 @@ func (a *SecretsAPIService) ListSecretFolderItemsExecute(r ApiListSecretFolderIt
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiListSecretTemplatesRequest struct {
+	ctx        context.Context
+	ApiService *SecretsAPIService
+	teamName   string
+}
+
+func (r ApiListSecretTemplatesRequest) Execute() (*ListSecretTemplatesResponse, *http.Response, error) {
+	return r.ApiService.ListSecretTemplatesExecute(r)
+}
+
+/*
+ListSecretTemplates List all secret templates
+
+	Lists all secret templates
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+
+@return ApiListSecretTemplatesRequest
+*/
+func (a *SecretsAPIService) ListSecretTemplates(ctx context.Context, teamName string) ApiListSecretTemplatesRequest {
+	return ApiListSecretTemplatesRequest{
+		ApiService: a,
+		ctx:        ctx,
+		teamName:   teamName,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ListSecretTemplatesResponse
+func (a *SecretsAPIService) ListSecretTemplatesExecute(r ApiListSecretTemplatesRequest) (*ListSecretTemplatesResponse, *http.Response, error) {
+	var (
+		traceKey            = "secretsapi.listSecretTemplates"
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ListSecretTemplatesResponse
+	)
+
+	localVarPath := "/v1/teams/{team_name}/templates"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		originalErr := err
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -951,13 +1107,18 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForProjectExecute(r ApiList
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 403 {
@@ -965,7 +1126,7 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForProjectExecute(r ApiList
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v ListTopLevelSecretFoldersForProjectForbiddenResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into ListTopLevelSecretFoldersForProjectForbiddenResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -974,7 +1135,7 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForProjectExecute(r ApiList
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1054,18 +1215,23 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForTeamExecute(r ApiListTop
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1109,7 +1275,7 @@ func (r ApiListTopLevelSecretFoldersForUserRequest) Prev(prev bool) ApiListTopLe
 	return r
 }
 
-// Search term to search for secrets and folders by name or description
+// Search term to find secrets and folders by &#x60;name&#x60; or &#x60;description&#x60; properties: * Only secrets and folders are returned if you have access to them and if they&#39;re not protected by MFA or Access Requests. * If you have the &#x60;security_admin&#x60; role, then all secret and folder search results are returned (even if you don&#39;t have explicit access to them). * If you have the &#x60;resource_admin&#x60; role and you don&#39;t have permission to access the secret in the results, then only the top-level folders are returned.  The returned results are ordered by a closest-similar matching score: exact string matches are ranked higher than partial matches.  &gt; **Note:** The search term is case-insensitive.
 func (r ApiListTopLevelSecretFoldersForUserRequest) Search(search string) ApiListTopLevelSecretFoldersForUserRequest {
 	r.search = &search
 	return r
@@ -1205,18 +1371,23 @@ func (a *SecretsAPIService) ListTopLevelSecretFoldersForUserExecute(r ApiListTop
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1241,7 +1412,7 @@ func (r ApiResolveSecretOrFolderRequest) Execute() (*ResolveSecretOrFolderRespon
 }
 
 /*
-	ResolveSecretOrFolder Resolve Secret or Folder
+	ResolveSecretOrFolder Resolve a secret or folder
 
 	    Resolves the ID or path for a secret or secret folder. Users must be authorized to perform this action by an existing security policy.
 
@@ -1304,18 +1475,23 @@ func (a *SecretsAPIService) ResolveSecretOrFolderExecute(r ApiResolveSecretOrFol
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1343,7 +1519,7 @@ func (r ApiRevealSecretRequest) Execute() (*SecretRevealResponse, *http.Response
 }
 
 /*
-	RevealSecret Reveal a Secret
+	RevealSecret Reveal a secret
 
 Reveals the specified secret. Users must be authorized to perform this action by an existing security policy.
 
@@ -1413,13 +1589,18 @@ func (a *SecretsAPIService) RevealSecretExecute(r ApiRevealSecretRequest) (*Secr
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 403 {
@@ -1427,7 +1608,7 @@ func (a *SecretsAPIService) RevealSecretExecute(r ApiRevealSecretRequest) (*Secr
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v RevealSecretForbiddenResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into RevealSecretForbiddenResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1436,7 +1617,7 @@ func (a *SecretsAPIService) RevealSecretExecute(r ApiRevealSecretRequest) (*Secr
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1536,13 +1717,18 @@ func (a *SecretsAPIService) UpdateSecretExecute(r ApiUpdateSecretRequest) (*Secr
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 403 {
@@ -1550,7 +1736,7 @@ func (a *SecretsAPIService) UpdateSecretExecute(r ApiUpdateSecretRequest) (*Secr
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UpdateSecretForbiddenResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UpdateSecretForbiddenResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1559,7 +1745,7 @@ func (a *SecretsAPIService) UpdateSecretExecute(r ApiUpdateSecretRequest) (*Secr
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -1659,13 +1845,18 @@ func (a *SecretsAPIService) UpdateSecretFolderExecute(r ApiUpdateSecretFolderReq
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 403 {
@@ -1673,7 +1864,7 @@ func (a *SecretsAPIService) UpdateSecretFolderExecute(r ApiUpdateSecretFolderReq
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UpdateSecretFolderForbiddenResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UpdateSecretFolderForbiddenResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -1682,7 +1873,7 @@ func (a *SecretsAPIService) UpdateSecretFolderExecute(r ApiUpdateSecretFolderReq
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}

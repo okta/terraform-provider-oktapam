@@ -62,9 +62,6 @@ func (w CharacterOptionsWrapper) ToResourceMap(overrides attributeOverrides) map
 	if w.Punctuation != nil {
 		m[attributes.Punctuation] = *w.Punctuation
 	}
-	if w.RequireFromEachSet != nil {
-		m[attributes.RequireFromEachSet] = *w.RequireFromEachSet
-	}
 
 	return m
 }

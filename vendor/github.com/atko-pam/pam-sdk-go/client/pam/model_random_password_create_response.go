@@ -20,7 +20,7 @@ var _ MappedNullable = &RandomPasswordCreateResponse{}
 
 // RandomPasswordCreateResponse struct for RandomPasswordCreateResponse
 type RandomPasswordCreateResponse struct {
-	// The encrypted Password as a fully serialized JWE
+	// The encrypted password as a fully serialized JWE
 	PasswordJwe string `json:"password_jwe"`
 }
 

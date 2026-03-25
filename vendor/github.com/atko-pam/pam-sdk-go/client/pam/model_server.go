@@ -52,6 +52,8 @@ type Server struct {
 	OsType string `json:"os_type"`
 	// The name of the project where the server is enrolled
 	ProjectName string `json:"project_name"`
+	// The UUID of the project where the server is enrolled
+	ProjectId *string `json:"project_id,omitempty"`
 	// The timestamp when the server was enrolled in the project
 	RegisteredAt time.Time `json:"registered_at"`
 	// The service that clients use to connect to the server. Possible values: `ssh` or `rdp`.
@@ -540,6 +542,39 @@ func (o *Server) SetProjectName(v string) *Server {
 	return o
 }
 
+// GetProjectId returns the ProjectId field value if set, zero value otherwise.
+func (o *Server) GetProjectId() string {
+	if o == nil || IsNil(o.ProjectId) {
+		var ret string
+		return ret
+	}
+	return *o.ProjectId
+}
+
+// GetProjectIdOk returns a tuple with the ProjectId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Server) GetProjectIdOk() (*string, bool) {
+	if o == nil || IsNil(o.ProjectId) {
+		return nil, false
+	}
+	return o.ProjectId, true
+}
+
+// HasProjectId returns a boolean if a field has been set.
+func (o *Server) HasProjectId() bool {
+	if o != nil && !IsNil(o.ProjectId) {
+		return true
+	}
+
+	return false
+}
+
+// SetProjectId gets a reference to the given string and assigns it to the ProjectId field.
+func (o *Server) SetProjectId(v string) *Server {
+	o.ProjectId = &v
+	return o
+}
+
 // GetRegisteredAt returns the RegisteredAt field value
 func (o *Server) GetRegisteredAt() time.Time {
 	if o == nil {
@@ -755,6 +790,9 @@ func (o Server) ToMap() (map[string]interface{}, error) {
 	toSerialize["os"] = o.Os
 	toSerialize["os_type"] = o.OsType
 	toSerialize["project_name"] = o.ProjectName
+	if !IsNil(o.ProjectId) {
+		toSerialize["project_id"] = o.ProjectId
+	}
 	toSerialize["registered_at"] = o.RegisteredAt
 	toSerialize["services"] = o.Services
 	toSerialize["sftd_version"] = o.SftdVersion

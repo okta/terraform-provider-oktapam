@@ -13,6 +13,7 @@ package pam
 
 import (
 	"encoding/json"
+	"time"
 )
 
 // checks if the ActiveDirectoryAccountEndUserAccount type satisfies the MappedNullable interface at compile time
@@ -26,6 +27,22 @@ type ActiveDirectoryAccountEndUserAccount struct {
 	AccountType         *ActiveDirectoryAccountType   `json:"account_type,omitempty"`
 	AvailabilityStatus  *ActiveDirectoryAccountStatus `json:"availability_status,omitempty"`
 	AccountStatusDetail *ServiceAccountStatusDetail   `json:"account_status_detail,omitempty"`
+	// The first name of this Active Directory user
+	FirstName *string `json:"first_name,omitempty"`
+	// The last name of this Active Directory user
+	LastName *string `json:"last_name,omitempty"`
+	// The email of this Active Directory user
+	Email *string `json:"email,omitempty"`
+	// The display name of this Active Directory user
+	DisplayName *string `json:"display_name,omitempty"`
+	// The `sAMAccountName` field for this Active Directory account
+	SamAccountName *string `json:"sam_account_name,omitempty"`
+	// Timestamp when the Active Directory account was managed by Okta Privileged Access
+	BroughtUnderManagementAt *time.Time `json:"brought_under_management_at,omitempty"`
+	// The Distinguished Name (DN) referencing the Active Directory account
+	DistinguishedName *string `json:"distinguished_name,omitempty"`
+	// The Security Identifier (SID) for the Active Directory account
+	Sid *string `json:"sid,omitempty"`
 }
 
 // NewActiveDirectoryAccountEndUserAccount instantiates a new ActiveDirectoryAccountEndUserAccount object
@@ -210,6 +227,270 @@ func (o *ActiveDirectoryAccountEndUserAccount) SetAccountStatusDetail(v ServiceA
 	return o
 }
 
+// GetFirstName returns the FirstName field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountEndUserAccount) GetFirstName() string {
+	if o == nil || IsNil(o.FirstName) {
+		var ret string
+		return ret
+	}
+	return *o.FirstName
+}
+
+// GetFirstNameOk returns a tuple with the FirstName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountEndUserAccount) GetFirstNameOk() (*string, bool) {
+	if o == nil || IsNil(o.FirstName) {
+		return nil, false
+	}
+	return o.FirstName, true
+}
+
+// HasFirstName returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountEndUserAccount) HasFirstName() bool {
+	if o != nil && !IsNil(o.FirstName) {
+		return true
+	}
+
+	return false
+}
+
+// SetFirstName gets a reference to the given string and assigns it to the FirstName field.
+func (o *ActiveDirectoryAccountEndUserAccount) SetFirstName(v string) *ActiveDirectoryAccountEndUserAccount {
+	o.FirstName = &v
+	return o
+}
+
+// GetLastName returns the LastName field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountEndUserAccount) GetLastName() string {
+	if o == nil || IsNil(o.LastName) {
+		var ret string
+		return ret
+	}
+	return *o.LastName
+}
+
+// GetLastNameOk returns a tuple with the LastName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountEndUserAccount) GetLastNameOk() (*string, bool) {
+	if o == nil || IsNil(o.LastName) {
+		return nil, false
+	}
+	return o.LastName, true
+}
+
+// HasLastName returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountEndUserAccount) HasLastName() bool {
+	if o != nil && !IsNil(o.LastName) {
+		return true
+	}
+
+	return false
+}
+
+// SetLastName gets a reference to the given string and assigns it to the LastName field.
+func (o *ActiveDirectoryAccountEndUserAccount) SetLastName(v string) *ActiveDirectoryAccountEndUserAccount {
+	o.LastName = &v
+	return o
+}
+
+// GetEmail returns the Email field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountEndUserAccount) GetEmail() string {
+	if o == nil || IsNil(o.Email) {
+		var ret string
+		return ret
+	}
+	return *o.Email
+}
+
+// GetEmailOk returns a tuple with the Email field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountEndUserAccount) GetEmailOk() (*string, bool) {
+	if o == nil || IsNil(o.Email) {
+		return nil, false
+	}
+	return o.Email, true
+}
+
+// HasEmail returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountEndUserAccount) HasEmail() bool {
+	if o != nil && !IsNil(o.Email) {
+		return true
+	}
+
+	return false
+}
+
+// SetEmail gets a reference to the given string and assigns it to the Email field.
+func (o *ActiveDirectoryAccountEndUserAccount) SetEmail(v string) *ActiveDirectoryAccountEndUserAccount {
+	o.Email = &v
+	return o
+}
+
+// GetDisplayName returns the DisplayName field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountEndUserAccount) GetDisplayName() string {
+	if o == nil || IsNil(o.DisplayName) {
+		var ret string
+		return ret
+	}
+	return *o.DisplayName
+}
+
+// GetDisplayNameOk returns a tuple with the DisplayName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountEndUserAccount) GetDisplayNameOk() (*string, bool) {
+	if o == nil || IsNil(o.DisplayName) {
+		return nil, false
+	}
+	return o.DisplayName, true
+}
+
+// HasDisplayName returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountEndUserAccount) HasDisplayName() bool {
+	if o != nil && !IsNil(o.DisplayName) {
+		return true
+	}
+
+	return false
+}
+
+// SetDisplayName gets a reference to the given string and assigns it to the DisplayName field.
+func (o *ActiveDirectoryAccountEndUserAccount) SetDisplayName(v string) *ActiveDirectoryAccountEndUserAccount {
+	o.DisplayName = &v
+	return o
+}
+
+// GetSamAccountName returns the SamAccountName field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountEndUserAccount) GetSamAccountName() string {
+	if o == nil || IsNil(o.SamAccountName) {
+		var ret string
+		return ret
+	}
+	return *o.SamAccountName
+}
+
+// GetSamAccountNameOk returns a tuple with the SamAccountName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountEndUserAccount) GetSamAccountNameOk() (*string, bool) {
+	if o == nil || IsNil(o.SamAccountName) {
+		return nil, false
+	}
+	return o.SamAccountName, true
+}
+
+// HasSamAccountName returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountEndUserAccount) HasSamAccountName() bool {
+	if o != nil && !IsNil(o.SamAccountName) {
+		return true
+	}
+
+	return false
+}
+
+// SetSamAccountName gets a reference to the given string and assigns it to the SamAccountName field.
+func (o *ActiveDirectoryAccountEndUserAccount) SetSamAccountName(v string) *ActiveDirectoryAccountEndUserAccount {
+	o.SamAccountName = &v
+	return o
+}
+
+// GetBroughtUnderManagementAt returns the BroughtUnderManagementAt field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountEndUserAccount) GetBroughtUnderManagementAt() time.Time {
+	if o == nil || IsNil(o.BroughtUnderManagementAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.BroughtUnderManagementAt
+}
+
+// GetBroughtUnderManagementAtOk returns a tuple with the BroughtUnderManagementAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountEndUserAccount) GetBroughtUnderManagementAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.BroughtUnderManagementAt) {
+		return nil, false
+	}
+	return o.BroughtUnderManagementAt, true
+}
+
+// HasBroughtUnderManagementAt returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountEndUserAccount) HasBroughtUnderManagementAt() bool {
+	if o != nil && !IsNil(o.BroughtUnderManagementAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetBroughtUnderManagementAt gets a reference to the given time.Time and assigns it to the BroughtUnderManagementAt field.
+func (o *ActiveDirectoryAccountEndUserAccount) SetBroughtUnderManagementAt(v time.Time) *ActiveDirectoryAccountEndUserAccount {
+	o.BroughtUnderManagementAt = &v
+	return o
+}
+
+// GetDistinguishedName returns the DistinguishedName field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountEndUserAccount) GetDistinguishedName() string {
+	if o == nil || IsNil(o.DistinguishedName) {
+		var ret string
+		return ret
+	}
+	return *o.DistinguishedName
+}
+
+// GetDistinguishedNameOk returns a tuple with the DistinguishedName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountEndUserAccount) GetDistinguishedNameOk() (*string, bool) {
+	if o == nil || IsNil(o.DistinguishedName) {
+		return nil, false
+	}
+	return o.DistinguishedName, true
+}
+
+// HasDistinguishedName returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountEndUserAccount) HasDistinguishedName() bool {
+	if o != nil && !IsNil(o.DistinguishedName) {
+		return true
+	}
+
+	return false
+}
+
+// SetDistinguishedName gets a reference to the given string and assigns it to the DistinguishedName field.
+func (o *ActiveDirectoryAccountEndUserAccount) SetDistinguishedName(v string) *ActiveDirectoryAccountEndUserAccount {
+	o.DistinguishedName = &v
+	return o
+}
+
+// GetSid returns the Sid field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountEndUserAccount) GetSid() string {
+	if o == nil || IsNil(o.Sid) {
+		var ret string
+		return ret
+	}
+	return *o.Sid
+}
+
+// GetSidOk returns a tuple with the Sid field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountEndUserAccount) GetSidOk() (*string, bool) {
+	if o == nil || IsNil(o.Sid) {
+		return nil, false
+	}
+	return o.Sid, true
+}
+
+// HasSid returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountEndUserAccount) HasSid() bool {
+	if o != nil && !IsNil(o.Sid) {
+		return true
+	}
+
+	return false
+}
+
+// SetSid gets a reference to the given string and assigns it to the Sid field.
+func (o *ActiveDirectoryAccountEndUserAccount) SetSid(v string) *ActiveDirectoryAccountEndUserAccount {
+	o.Sid = &v
+	return o
+}
+
 func (o ActiveDirectoryAccountEndUserAccount) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -234,6 +515,30 @@ func (o ActiveDirectoryAccountEndUserAccount) ToMap() (map[string]interface{}, e
 	}
 	if !IsNil(o.AccountStatusDetail) {
 		toSerialize["account_status_detail"] = o.AccountStatusDetail
+	}
+	if !IsNil(o.FirstName) {
+		toSerialize["first_name"] = o.FirstName
+	}
+	if !IsNil(o.LastName) {
+		toSerialize["last_name"] = o.LastName
+	}
+	if !IsNil(o.Email) {
+		toSerialize["email"] = o.Email
+	}
+	if !IsNil(o.DisplayName) {
+		toSerialize["display_name"] = o.DisplayName
+	}
+	if !IsNil(o.SamAccountName) {
+		toSerialize["sam_account_name"] = o.SamAccountName
+	}
+	if !IsNil(o.BroughtUnderManagementAt) {
+		toSerialize["brought_under_management_at"] = o.BroughtUnderManagementAt
+	}
+	if !IsNil(o.DistinguishedName) {
+		toSerialize["distinguished_name"] = o.DistinguishedName
+	}
+	if !IsNil(o.Sid) {
+		toSerialize["sid"] = o.Sid
 	}
 	return toSerialize, nil
 }

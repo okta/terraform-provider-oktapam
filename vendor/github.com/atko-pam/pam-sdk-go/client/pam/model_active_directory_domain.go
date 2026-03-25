@@ -23,7 +23,7 @@ type ActiveDirectoryDomain struct {
 	Id string `json:"id"`
 	// The name of the Active Directory domain
 	Domain string `json:"domain"`
-	// The instance ID of the Active Directory app in your Okta org.
+	// The instance ID of the Active Directory app in your Okta org
 	OktaAppInstanceId string             `json:"okta_app_instance_id"`
 	Status            ADConnectionStatus `json:"status"`
 }

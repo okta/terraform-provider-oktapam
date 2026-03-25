@@ -2,7 +2,7 @@ NAMESPACE=okta
 NAME=oktapam
 BINARY=terraform-provider-${NAME}
 
-VERSION=0.6.3
+VERSION=0.7.0
 
 OS_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
 PLUGIN_DIR=~/.terraform.d/plugins

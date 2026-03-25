@@ -26,11 +26,11 @@ type ActiveDirectoryPasswordPolicy struct {
 	PeriodicRotationAccountSelectorMode *AccountSelectorMode `json:"periodic_rotation_account_selector_mode,omitempty"`
 	// If `periodic_rotation_account_selector_mode` is set to `INCLUDE`, only the actively managed accounts listed will have their password periodically rotated
 	PeriodicRotationAccountIncludeList []ActiveDirectorySettingNameObject `json:"periodic_rotation_account_include_list,omitempty"`
-	// If `periodic_rotation_account_selector_mode` is set to `EXCLUDE`, all of the actively managed accounts in the project except those listed will have their password periodically rotated
+	// If `periodic_rotation_account_selector_mode` is set to `EXCLUDE`, all of the actively managed accounts in the project, except those listed, will have their password periodically rotated
 	PeriodicRotationAccountExcludeList []ActiveDirectorySettingNameObject `json:"periodic_rotation_account_exclude_list,omitempty"`
 	// Specifies how often the Okta Privileged Access platform rotates account passwords
-	PeriodicRotationDurationInSeconds *int32                                        `json:"periodic_rotation_duration_in_seconds,omitempty"`
-	CharacterOptions                  ActiveDirectoryPasswordPolicyCharacterOptions `json:"character_options"`
+	PeriodicRotationDurationInSeconds *int32                         `json:"periodic_rotation_duration_in_seconds,omitempty"`
+	CharacterOptions                  PasswordPolicyCharacterOptions `json:"character_options"`
 	// The minimum length allowed for the password
 	MinLengthInBytes int32 `json:"min_length_in_bytes"`
 	// The maximum length allowed for the password
@@ -43,7 +43,7 @@ type ActiveDirectoryPasswordPolicy struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewActiveDirectoryPasswordPolicy(enablePeriodicRotation bool, characterOptions ActiveDirectoryPasswordPolicyCharacterOptions, minLengthInBytes int32, maxLengthInBytes int32) *ActiveDirectoryPasswordPolicy {
+func NewActiveDirectoryPasswordPolicy(enablePeriodicRotation bool, characterOptions PasswordPolicyCharacterOptions, minLengthInBytes int32, maxLengthInBytes int32) *ActiveDirectoryPasswordPolicy {
 	this := ActiveDirectoryPasswordPolicy{}
 	this.EnablePeriodicRotation = enablePeriodicRotation
 	this.CharacterOptions = characterOptions
@@ -218,9 +218,9 @@ func (o *ActiveDirectoryPasswordPolicy) SetPeriodicRotationDurationInSeconds(v i
 }
 
 // GetCharacterOptions returns the CharacterOptions field value
-func (o *ActiveDirectoryPasswordPolicy) GetCharacterOptions() ActiveDirectoryPasswordPolicyCharacterOptions {
+func (o *ActiveDirectoryPasswordPolicy) GetCharacterOptions() PasswordPolicyCharacterOptions {
 	if o == nil {
-		var ret ActiveDirectoryPasswordPolicyCharacterOptions
+		var ret PasswordPolicyCharacterOptions
 		return ret
 	}
 
@@ -229,7 +229,7 @@ func (o *ActiveDirectoryPasswordPolicy) GetCharacterOptions() ActiveDirectoryPas
 
 // GetCharacterOptionsOk returns a tuple with the CharacterOptions field value
 // and a boolean to check if the value has been set.
-func (o *ActiveDirectoryPasswordPolicy) GetCharacterOptionsOk() (*ActiveDirectoryPasswordPolicyCharacterOptions, bool) {
+func (o *ActiveDirectoryPasswordPolicy) GetCharacterOptionsOk() (*PasswordPolicyCharacterOptions, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -237,7 +237,7 @@ func (o *ActiveDirectoryPasswordPolicy) GetCharacterOptionsOk() (*ActiveDirector
 }
 
 // SetCharacterOptions sets field value
-func (o *ActiveDirectoryPasswordPolicy) SetCharacterOptions(v ActiveDirectoryPasswordPolicyCharacterOptions) *ActiveDirectoryPasswordPolicy {
+func (o *ActiveDirectoryPasswordPolicy) SetCharacterOptions(v PasswordPolicyCharacterOptions) *ActiveDirectoryPasswordPolicy {
 	o.CharacterOptions = v
 	return o
 }

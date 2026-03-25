@@ -22,9 +22,9 @@ var _ MappedNullable = &SecurityPolicyPasswordCheckoutRDPPrivilege{}
 type SecurityPolicyPasswordCheckoutRDPPrivilege struct {
 	SecurityPolicyPrivilege
 	PasswordCheckoutRdp bool `json:"password_checkout_rdp"`
-	// If enabled, AD accounts are added to the local administrators group when RDPing to the target server
+	// If enabled, AD accounts are added to the local administrators group when you connect using RDP to the target server
 	AdminLevelPermissions *bool `json:"admin_level_permissions,omitempty"`
-	// If enabled, AD accounts are added to the remote desktop group when RDPing to the target server
+	// If enabled, AD accounts are added to the remote desktop group when you connect using RDP to the target server
 	RemoteAccessPermissions *bool `json:"remote_access_permissions,omitempty"`
 }
 

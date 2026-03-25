@@ -22,6 +22,7 @@ var _ MappedNullable = &ActiveDirectoryAccountEndUser{}
 type ActiveDirectoryAccountEndUser struct {
 	Account         *ActiveDirectoryAccountEndUserAccount  `json:"account,omitempty"`
 	CheckoutDetails *ActiveDirectoryAccountCheckoutDetails `json:"checkout_details,omitempty"`
+	Rotation        *ActiveDirectoryAccountEndUserRotation `json:"rotation,omitempty"`
 }
 
 // NewActiveDirectoryAccountEndUser instantiates a new ActiveDirectoryAccountEndUser object
@@ -107,6 +108,39 @@ func (o *ActiveDirectoryAccountEndUser) SetCheckoutDetails(v ActiveDirectoryAcco
 	return o
 }
 
+// GetRotation returns the Rotation field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountEndUser) GetRotation() ActiveDirectoryAccountEndUserRotation {
+	if o == nil || IsNil(o.Rotation) {
+		var ret ActiveDirectoryAccountEndUserRotation
+		return ret
+	}
+	return *o.Rotation
+}
+
+// GetRotationOk returns a tuple with the Rotation field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountEndUser) GetRotationOk() (*ActiveDirectoryAccountEndUserRotation, bool) {
+	if o == nil || IsNil(o.Rotation) {
+		return nil, false
+	}
+	return o.Rotation, true
+}
+
+// HasRotation returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountEndUser) HasRotation() bool {
+	if o != nil && !IsNil(o.Rotation) {
+		return true
+	}
+
+	return false
+}
+
+// SetRotation gets a reference to the given ActiveDirectoryAccountEndUserRotation and assigns it to the Rotation field.
+func (o *ActiveDirectoryAccountEndUser) SetRotation(v ActiveDirectoryAccountEndUserRotation) *ActiveDirectoryAccountEndUser {
+	o.Rotation = &v
+	return o
+}
+
 func (o ActiveDirectoryAccountEndUser) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -122,6 +156,9 @@ func (o ActiveDirectoryAccountEndUser) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.CheckoutDetails) {
 		toSerialize["checkout_details"] = o.CheckoutDetails
+	}
+	if !IsNil(o.Rotation) {
+		toSerialize["rotation"] = o.Rotation
 	}
 	return toSerialize, nil
 }

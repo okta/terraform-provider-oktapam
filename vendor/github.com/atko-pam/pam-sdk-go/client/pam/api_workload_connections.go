@@ -15,6 +15,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -71,7 +72,7 @@ func (a *WorkloadConnectionsAPIService) CreateWorkloadConnectionExecute(r ApiCre
 		localVarReturnValue *WorkloadConnection
 	)
 
-	localVarPath := "/v1/teams/{team_name}/workload_connections"
+	localVarPath := "/v1/teams/{team_name}/connections/workloads"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -107,13 +108,18 @@ func (a *WorkloadConnectionsAPIService) CreateWorkloadConnectionExecute(r ApiCre
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 400 {
@@ -121,7 +127,7 @@ func (a *WorkloadConnectionsAPIService) CreateWorkloadConnectionExecute(r ApiCre
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v BadRequestResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into BadRequestResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -133,7 +139,7 @@ func (a *WorkloadConnectionsAPIService) CreateWorkloadConnectionExecute(r ApiCre
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -142,7 +148,7 @@ func (a *WorkloadConnectionsAPIService) CreateWorkloadConnectionExecute(r ApiCre
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -191,7 +197,7 @@ func (a *WorkloadConnectionsAPIService) DeleteWorkloadConnectionExecute(r ApiDel
 		formFiles          []formFile
 	)
 
-	localVarPath := "/v1/teams/{team_name}/workload_connections/{workload_connection_id}"
+	localVarPath := "/v1/teams/{team_name}/connections/workloads/{workload_connection_id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"workload_connection_id"+"}", url.PathEscape(parameterValueToString(r.workloadConnectionId, "workloadConnectionId")), -1)
 
@@ -223,13 +229,18 @@ func (a *WorkloadConnectionsAPIService) DeleteWorkloadConnectionExecute(r ApiDel
 			return nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -237,7 +248,7 @@ func (a *WorkloadConnectionsAPIService) DeleteWorkloadConnectionExecute(r ApiDel
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return localVarHTTPResponse, err
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -249,7 +260,7 @@ func (a *WorkloadConnectionsAPIService) DeleteWorkloadConnectionExecute(r ApiDel
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return localVarHTTPResponse, err
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -258,7 +269,7 @@ func (a *WorkloadConnectionsAPIService) DeleteWorkloadConnectionExecute(r ApiDel
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarHTTPResponse, err
+			return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarHTTPResponse, apiError
 	}
@@ -310,7 +321,7 @@ func (a *WorkloadConnectionsAPIService) GetWorkloadConnectionExecute(r ApiGetWor
 		localVarReturnValue *WorkloadConnection
 	)
 
-	localVarPath := "/v1/teams/{team_name}/workload_connections/{workload_connection_id}"
+	localVarPath := "/v1/teams/{team_name}/connections/workloads/{workload_connection_id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"workload_connection_id"+"}", url.PathEscape(parameterValueToString(r.workloadConnectionId, "workloadConnectionId")), -1)
 
@@ -342,13 +353,18 @@ func (a *WorkloadConnectionsAPIService) GetWorkloadConnectionExecute(r ApiGetWor
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -356,7 +372,7 @@ func (a *WorkloadConnectionsAPIService) GetWorkloadConnectionExecute(r ApiGetWor
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -368,7 +384,7 @@ func (a *WorkloadConnectionsAPIService) GetWorkloadConnectionExecute(r ApiGetWor
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -377,7 +393,7 @@ func (a *WorkloadConnectionsAPIService) GetWorkloadConnectionExecute(r ApiGetWor
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -386,14 +402,14 @@ func (a *WorkloadConnectionsAPIService) GetWorkloadConnectionExecute(r ApiGetWor
 }
 
 type ApiGetWorkloadConnectionAuthzDetailsRequest struct {
-	ctx                    context.Context
-	ApiService             *WorkloadConnectionsAPIService
-	teamName               string
-	workloadConnectionName string
-	ifNoneMatch            *string
+	ctx                  context.Context
+	ApiService           *WorkloadConnectionsAPIService
+	teamName             string
+	workloadConnectionId string
+	ifNoneMatch          *string
 }
 
-// ETag value to determine if the resource has changed. If it matches the current ETag on the server, a 304 Not Modified will be returned.
+// The ETag value determines if the resource has changed. If the value matches the current ETag on the server, a &#x60;304 Not Modified&#x60; response is returned.
 func (r ApiGetWorkloadConnectionAuthzDetailsRequest) IfNoneMatch(ifNoneMatch string) ApiGetWorkloadConnectionAuthzDetailsRequest {
 	r.ifNoneMatch = &ifNoneMatch
 	return r
@@ -411,16 +427,16 @@ GetWorkloadConnectionAuthzDetails Retrieve workload connection authorization det
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
 	@param teamName The name of your team
-	@param workloadConnectionName The name of the workload connection
+	@param workloadConnectionId The ID of the workload connection
 
 @return ApiGetWorkloadConnectionAuthzDetailsRequest
 */
-func (a *WorkloadConnectionsAPIService) GetWorkloadConnectionAuthzDetails(ctx context.Context, teamName string, workloadConnectionName string) ApiGetWorkloadConnectionAuthzDetailsRequest {
+func (a *WorkloadConnectionsAPIService) GetWorkloadConnectionAuthzDetails(ctx context.Context, teamName string, workloadConnectionId string) ApiGetWorkloadConnectionAuthzDetailsRequest {
 	return ApiGetWorkloadConnectionAuthzDetailsRequest{
-		ApiService:             a,
-		ctx:                    ctx,
-		teamName:               teamName,
-		workloadConnectionName: workloadConnectionName,
+		ApiService:           a,
+		ctx:                  ctx,
+		teamName:             teamName,
+		workloadConnectionId: workloadConnectionId,
 	}
 }
 
@@ -436,9 +452,9 @@ func (a *WorkloadConnectionsAPIService) GetWorkloadConnectionAuthzDetailsExecute
 		localVarReturnValue *WorkloadConnectionAuthzDetails
 	)
 
-	localVarPath := "/v1/internal/teams/{team_name}/workload_connections/{workload_connection_name}/authz_details"
+	localVarPath := "/v1/_internal/teams/{team_name}/connections/workloads/{workload_connection_id}/authz-details"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"workload_connection_name"+"}", url.PathEscape(parameterValueToString(r.workloadConnectionName, "workloadConnectionName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"workload_connection_id"+"}", url.PathEscape(parameterValueToString(r.workloadConnectionId, "workloadConnectionId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -471,33 +487,26 @@ func (a *WorkloadConnectionsAPIService) GetWorkloadConnectionAuthzDetailsExecute
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
-		if localVarHTTPResponse.StatusCode == 304 {
-
-			var nonDefaultResponse ErrNonDefaultResponse
-			var v NotModifiedResponse
-			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
-			}
-			nonDefaultResponse.Result = v
-			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
-			return nil, localVarHTTPResponse, nonDefaultResponse
-
-		}
 		if localVarHTTPResponse.StatusCode == 401 {
 
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -509,7 +518,7 @@ func (a *WorkloadConnectionsAPIService) GetWorkloadConnectionAuthzDetailsExecute
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -518,7 +527,7 @@ func (a *WorkloadConnectionsAPIService) GetWorkloadConnectionAuthzDetailsExecute
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -530,6 +539,41 @@ type ApiListWorkloadConnectionsRequest struct {
 	ctx        context.Context
 	ApiService *WorkloadConnectionsAPIService
 	teamName   string
+	contains   *string
+	count      *int32
+	descending *bool
+	offset     *string
+	prev       *bool
+}
+
+// Only returns results that include the specified value
+func (r ApiListWorkloadConnectionsRequest) Contains(contains string) ApiListWorkloadConnectionsRequest {
+	r.contains = &contains
+	return r
+}
+
+// The number of objects per page
+func (r ApiListWorkloadConnectionsRequest) Count(count int32) ApiListWorkloadConnectionsRequest {
+	r.count = &count
+	return r
+}
+
+// The object order
+func (r ApiListWorkloadConnectionsRequest) Descending(descending bool) ApiListWorkloadConnectionsRequest {
+	r.descending = &descending
+	return r
+}
+
+// The offset value for pagination. The **rel&#x3D;\&quot;next\&quot;** and **rel&#x3D;\&quot;prev\&quot;** &#x60;Link&#x60; headers define the offset for subsequent or previous pages.
+func (r ApiListWorkloadConnectionsRequest) Offset(offset string) ApiListWorkloadConnectionsRequest {
+	r.offset = &offset
+	return r
+}
+
+// The direction of paging
+func (r ApiListWorkloadConnectionsRequest) Prev(prev bool) ApiListWorkloadConnectionsRequest {
+	r.prev = &prev
+	return r
 }
 
 func (r ApiListWorkloadConnectionsRequest) Execute() (*ListWorkloadConnectionsResponse, *http.Response, error) {
@@ -539,7 +583,7 @@ func (r ApiListWorkloadConnectionsRequest) Execute() (*ListWorkloadConnectionsRe
 /*
 ListWorkloadConnections List all workload connections
 
-	Lists all workload connections
+	Lists all workload connections. The `contains` URL parameter filters by connection name.
 
 @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
@@ -567,13 +611,28 @@ func (a *WorkloadConnectionsAPIService) ListWorkloadConnectionsExecute(r ApiList
 		localVarReturnValue *ListWorkloadConnectionsResponse
 	)
 
-	localVarPath := "/v1/teams/{team_name}/workload_connections"
+	localVarPath := "/v1/teams/{team_name}/connections/workloads"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.contains != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contains", r.contains, "")
+	}
+	if r.count != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "count", r.count, "")
+	}
+	if r.descending != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "descending", r.descending, "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "")
+	}
+	if r.prev != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "prev", r.prev, "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -598,13 +657,18 @@ func (a *WorkloadConnectionsAPIService) ListWorkloadConnectionsExecute(r ApiList
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 401 {
@@ -612,7 +676,7 @@ func (a *WorkloadConnectionsAPIService) ListWorkloadConnectionsExecute(r ApiList
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -621,7 +685,7 @@ func (a *WorkloadConnectionsAPIService) ListWorkloadConnectionsExecute(r ApiList
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}
@@ -679,7 +743,7 @@ func (a *WorkloadConnectionsAPIService) UpdateWorkloadConnectionExecute(r ApiUpd
 		localVarReturnValue *WorkloadConnection
 	)
 
-	localVarPath := "/v1/teams/{team_name}/workload_connections/{workload_connection_id}"
+	localVarPath := "/v1/teams/{team_name}/connections/workloads/{workload_connection_id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"workload_connection_id"+"}", url.PathEscape(parameterValueToString(r.workloadConnectionId, "workloadConnectionId")), -1)
 
@@ -716,13 +780,18 @@ func (a *WorkloadConnectionsAPIService) UpdateWorkloadConnectionExecute(r ApiUpd
 			return localVarReturnValue, nil, err
 		}
 
+		originalErr := err
 		// read and unmarshal error response into right struct
 		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
 		if err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
 		}
 		if err := localVarHTTPResponse.Body.Close(); err != nil {
-			return localVarReturnValue, nil, err
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
 		}
 		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
 		if localVarHTTPResponse.StatusCode == 400 {
@@ -730,7 +799,7 @@ func (a *WorkloadConnectionsAPIService) UpdateWorkloadConnectionExecute(r ApiUpd
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v BadRequestResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into BadRequestResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -742,7 +811,7 @@ func (a *WorkloadConnectionsAPIService) UpdateWorkloadConnectionExecute(r ApiUpd
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v UnauthorizedAccessResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -754,7 +823,7 @@ func (a *WorkloadConnectionsAPIService) UpdateWorkloadConnectionExecute(r ApiUpd
 			var nonDefaultResponse ErrNonDefaultResponse
 			var v NotFoundResponse
 			if err := json.Unmarshal(bodyBytes, &v); err != nil {
-				return nil, localVarHTTPResponse, err
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
 			}
 			nonDefaultResponse.Result = v
 			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
@@ -763,7 +832,331 @@ func (a *WorkloadConnectionsAPIService) UpdateWorkloadConnectionExecute(r ApiUpd
 		}
 		var apiError APIError
 		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
+		}
+		return localVarReturnValue, localVarHTTPResponse, apiError
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, err
+}
+
+type ApiUpdateWorkloadConnectionStatusRequest struct {
+	ctx                                   context.Context
+	ApiService                            *WorkloadConnectionsAPIService
+	teamName                              string
+	workloadConnectionId                  string
+	ifMatch                               *string
+	updateWorkloadConnectionStatusRequest *UpdateWorkloadConnectionStatusRequest
+}
+
+// The ETag value returned by the **GET /connections/workloads/{workload_connection_id}** call.
+func (r ApiUpdateWorkloadConnectionStatusRequest) IfMatch(ifMatch string) ApiUpdateWorkloadConnectionStatusRequest {
+	r.ifMatch = &ifMatch
+	return r
+}
+
+func (r ApiUpdateWorkloadConnectionStatusRequest) UpdateWorkloadConnectionStatusRequest(updateWorkloadConnectionStatusRequest UpdateWorkloadConnectionStatusRequest) ApiUpdateWorkloadConnectionStatusRequest {
+	r.updateWorkloadConnectionStatusRequest = &updateWorkloadConnectionStatusRequest
+	return r
+}
+
+func (r ApiUpdateWorkloadConnectionStatusRequest) Execute() (*http.Response, error) {
+	return r.ApiService.UpdateWorkloadConnectionStatusExecute(r)
+}
+
+/*
+UpdateWorkloadConnectionStatus Update the status of a workload connection
+
+	Updates the status of a workload connection.
+
+@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+	@param teamName The name of your team
+	@param workloadConnectionId The ID of the workload connection
+
+@return ApiUpdateWorkloadConnectionStatusRequest
+*/
+func (a *WorkloadConnectionsAPIService) UpdateWorkloadConnectionStatus(ctx context.Context, teamName string, workloadConnectionId string) ApiUpdateWorkloadConnectionStatusRequest {
+	return ApiUpdateWorkloadConnectionStatusRequest{
+		ApiService:           a,
+		ctx:                  ctx,
+		teamName:             teamName,
+		workloadConnectionId: workloadConnectionId,
+	}
+}
+
+// Execute executes the request
+func (a *WorkloadConnectionsAPIService) UpdateWorkloadConnectionStatusExecute(r ApiUpdateWorkloadConnectionStatusRequest) (*http.Response, error) {
+	var (
+		traceKey           = "workloadconnectionsapi.updateWorkloadConnectionStatus"
+		localVarHTTPMethod = http.MethodPut
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localVarPath := "/v1/teams/{team_name}/connections/workloads/{workload_connection_id}/status"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"workload_connection_id"+"}", url.PathEscape(parameterValueToString(r.workloadConnectionId, "workloadConnectionId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.ifMatch == nil {
+		return nil, reportError("ifMatch is required and must be specified")
+	}
+	if r.updateWorkloadConnectionStatusRequest == nil {
+		return nil, reportError("updateWorkloadConnectionStatusRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "If-Match", r.ifMatch, "")
+	// body params
+	localVarPostBody = r.updateWorkloadConnectionStatusRequest
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, nil)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return nil, err
+		}
+
+		originalErr := err
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarHTTPResponse, originalErr
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 400 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v BadRequestResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into BadRequestResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 412 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v PreconditionFailedResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into PreconditionFailedResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 428 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v PreconditionRequiredResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into PreconditionRequiredResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
+		}
+		return localVarHTTPResponse, apiError
+	}
+
+	return localVarHTTPResponse, err
+}
+
+type ApiWorkloadConnectionBecomeIssuerRequest struct {
+	ctx                                   context.Context
+	ApiService                            *WorkloadConnectionsAPIService
+	teamName                              string
+	workloadConnectionName                string
+	workloadConnectionBecomeIssuerRequest *WorkloadConnectionBecomeIssuerRequest
+	ifNoneMatch                           *string
+}
+
+func (r ApiWorkloadConnectionBecomeIssuerRequest) WorkloadConnectionBecomeIssuerRequest(workloadConnectionBecomeIssuerRequest WorkloadConnectionBecomeIssuerRequest) ApiWorkloadConnectionBecomeIssuerRequest {
+	r.workloadConnectionBecomeIssuerRequest = &workloadConnectionBecomeIssuerRequest
+	return r
+}
+
+// The ETag value determines if the resource has changed. If the value matches the current ETag on the server, a &#x60;304 Not Modified&#x60; response is returned.
+func (r ApiWorkloadConnectionBecomeIssuerRequest) IfNoneMatch(ifNoneMatch string) ApiWorkloadConnectionBecomeIssuerRequest {
+	r.ifNoneMatch = &ifNoneMatch
+	return r
+}
+
+func (r ApiWorkloadConnectionBecomeIssuerRequest) Execute() (*WorkloadConnectionBecomeIssuerResponse, *http.Response, error) {
+	return r.ApiService.WorkloadConnectionBecomeIssuerExecute(r)
+}
+
+/*
+	WorkloadConnectionBecomeIssuer Become issuer for workload connection
+
+	    Become issuer for workload connection by its name. If the connection is in draft status, token issuers public key will not be signed.
+
+If the connection is active, token issuers public key will be signed by Workload Connection's Private key.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	    @param teamName The name of your team
+	    @param workloadConnectionName The name of the workload connection
+	@return ApiWorkloadConnectionBecomeIssuerRequest
+*/
+func (a *WorkloadConnectionsAPIService) WorkloadConnectionBecomeIssuer(ctx context.Context, teamName string, workloadConnectionName string) ApiWorkloadConnectionBecomeIssuerRequest {
+	return ApiWorkloadConnectionBecomeIssuerRequest{
+		ApiService:             a,
+		ctx:                    ctx,
+		teamName:               teamName,
+		workloadConnectionName: workloadConnectionName,
+	}
+}
+
+// Execute executes the request
+//
+//	@return WorkloadConnectionBecomeIssuerResponse
+func (a *WorkloadConnectionsAPIService) WorkloadConnectionBecomeIssuerExecute(r ApiWorkloadConnectionBecomeIssuerRequest) (*WorkloadConnectionBecomeIssuerResponse, *http.Response, error) {
+	var (
+		traceKey            = "workloadconnectionsapi.workloadConnectionBecomeIssuer"
+		localVarHTTPMethod  = http.MethodPost
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *WorkloadConnectionBecomeIssuerResponse
+	)
+
+	localVarPath := "/v1/_internal/teams/{team_name}/connections/workloads/{workload_connection_name}/become-issuer"
+	localVarPath = strings.Replace(localVarPath, "{"+"team_name"+"}", url.PathEscape(parameterValueToString(r.teamName, "teamName")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"workload_connection_name"+"}", url.PathEscape(parameterValueToString(r.workloadConnectionName, "workloadConnectionName")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.workloadConnectionBecomeIssuerRequest == nil {
+		return localVarReturnValue, nil, reportError("workloadConnectionBecomeIssuerRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.ifNoneMatch != nil {
+		parameterAddToHeaderOrQuery(localVarHeaderParams, "If-None-Match", r.ifNoneMatch, "")
+	}
+	// body params
+	localVarPostBody = r.workloadConnectionBecomeIssuerRequest
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx, traceKey, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles, &localVarReturnValue)
+
+	if err != nil {
+		if localVarHTTPResponse == nil {
+			return localVarReturnValue, nil, err
+		}
+
+		originalErr := err
+		// read and unmarshal error response into right struct
+		bodyBytes, err := io.ReadAll(localVarHTTPResponse.Body)
+		if err != nil {
+			return localVarReturnValue, nil, fmt.Errorf("%w: error reading response body: %w", originalErr, err)
+		}
+		if err := localVarHTTPResponse.Body.Close(); err != nil {
+			return localVarReturnValue, nil, fmt.Errorf("%w: error closing response body: %w", originalErr, err)
+		}
+		// if bodyBytes is empty, we will face unmarshalling error later anyway
+		if len(bodyBytes) == 0 {
+			return localVarReturnValue, localVarHTTPResponse, originalErr
+		}
+		localVarHTTPResponse.Body = io.NopCloser(bytes.NewReader(bodyBytes)) //Reset body for the caller
+		if localVarHTTPResponse.StatusCode == 401 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v UnauthorizedAccessResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into UnauthorizedAccessResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+
+			var nonDefaultResponse ErrNonDefaultResponse
+			var v NotFoundResponse
+			if err := json.Unmarshal(bodyBytes, &v); err != nil {
+				return nil, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into NotFoundResponse: %w", originalErr, err)
+			}
+			nonDefaultResponse.Result = v
+			nonDefaultResponse.StatusCode = localVarHTTPResponse.StatusCode
+			return nil, localVarHTTPResponse, nonDefaultResponse
+
+		}
+		var apiError APIError
+		if err := json.Unmarshal(bodyBytes, &apiError); err != nil {
+			return localVarReturnValue, localVarHTTPResponse, fmt.Errorf("%w: error unmarshalling response body into APIError: %w", originalErr, err)
 		}
 		return localVarReturnValue, localVarHTTPResponse, apiError
 	}

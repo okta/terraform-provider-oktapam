@@ -20,18 +20,18 @@ type ResourceAvailabilityStatus string
 
 // List of ResourceAvailabilityStatus
 const (
-	ResourceAvailabilityStatus_CHECKED_OUT         ResourceAvailabilityStatus = "checked_out"
-	ResourceAvailabilityStatus_IN_PROGRESS_CHECKIN ResourceAvailabilityStatus = "in_progress_checkin"
-	ResourceAvailabilityStatus_CHECKIN_COMPLETE    ResourceAvailabilityStatus = "checkin_complete"
-	ResourceAvailabilityStatus_CHECKIN_FAILED      ResourceAvailabilityStatus = "checkin_failed"
+	ResourceAvailabilityStatus_AVAILABLE                 ResourceAvailabilityStatus = "available"
+	ResourceAvailabilityStatus_CHECKED_OUT               ResourceAvailabilityStatus = "checked_out"
+	ResourceAvailabilityStatus_CHECKED_OUT_BY_OTHER_USER ResourceAvailabilityStatus = "checked_out_by_other_user"
+	ResourceAvailabilityStatus_UNAVAILABLE               ResourceAvailabilityStatus = "unavailable"
 )
 
 // All allowed values of ResourceAvailabilityStatus enum
 var AllowedResourceAvailabilityStatusEnumValues = []ResourceAvailabilityStatus{
+	"available",
 	"checked_out",
-	"in_progress_checkin",
-	"checkin_complete",
-	"checkin_failed",
+	"checked_out_by_other_user",
+	"unavailable",
 }
 
 func (v *ResourceAvailabilityStatus) UnmarshalJSON(src []byte) error {

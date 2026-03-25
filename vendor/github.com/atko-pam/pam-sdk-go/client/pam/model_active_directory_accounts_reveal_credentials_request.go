@@ -20,15 +20,15 @@ var _ MappedNullable = &ActiveDirectoryAccountsRevealCredentialsRequest{}
 
 // ActiveDirectoryAccountsRevealCredentialsRequest struct for ActiveDirectoryAccountsRevealCredentialsRequest
 type ActiveDirectoryAccountsRevealCredentialsRequest struct {
-	PublicKey        RawJSONWebKey    `json:"public_key"`
-	UserAccessMethod UserAccessMethod `json:"user_access_method"`
+	PublicKey        RawJSONWebKey               `json:"public_key"`
+	UserAccessMethod UserAccessMethodWithRuleIds `json:"user_access_method"`
 }
 
 // NewActiveDirectoryAccountsRevealCredentialsRequest instantiates a new ActiveDirectoryAccountsRevealCredentialsRequest object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewActiveDirectoryAccountsRevealCredentialsRequest(publicKey RawJSONWebKey, userAccessMethod UserAccessMethod) *ActiveDirectoryAccountsRevealCredentialsRequest {
+func NewActiveDirectoryAccountsRevealCredentialsRequest(publicKey RawJSONWebKey, userAccessMethod UserAccessMethodWithRuleIds) *ActiveDirectoryAccountsRevealCredentialsRequest {
 	this := ActiveDirectoryAccountsRevealCredentialsRequest{}
 	this.PublicKey = publicKey
 	this.UserAccessMethod = userAccessMethod
@@ -69,9 +69,9 @@ func (o *ActiveDirectoryAccountsRevealCredentialsRequest) SetPublicKey(v RawJSON
 }
 
 // GetUserAccessMethod returns the UserAccessMethod field value
-func (o *ActiveDirectoryAccountsRevealCredentialsRequest) GetUserAccessMethod() UserAccessMethod {
+func (o *ActiveDirectoryAccountsRevealCredentialsRequest) GetUserAccessMethod() UserAccessMethodWithRuleIds {
 	if o == nil {
-		var ret UserAccessMethod
+		var ret UserAccessMethodWithRuleIds
 		return ret
 	}
 
@@ -80,7 +80,7 @@ func (o *ActiveDirectoryAccountsRevealCredentialsRequest) GetUserAccessMethod() 
 
 // GetUserAccessMethodOk returns a tuple with the UserAccessMethod field value
 // and a boolean to check if the value has been set.
-func (o *ActiveDirectoryAccountsRevealCredentialsRequest) GetUserAccessMethodOk() (*UserAccessMethod, bool) {
+func (o *ActiveDirectoryAccountsRevealCredentialsRequest) GetUserAccessMethodOk() (*UserAccessMethodWithRuleIds, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -88,7 +88,7 @@ func (o *ActiveDirectoryAccountsRevealCredentialsRequest) GetUserAccessMethodOk(
 }
 
 // SetUserAccessMethod sets field value
-func (o *ActiveDirectoryAccountsRevealCredentialsRequest) SetUserAccessMethod(v UserAccessMethod) *ActiveDirectoryAccountsRevealCredentialsRequest {
+func (o *ActiveDirectoryAccountsRevealCredentialsRequest) SetUserAccessMethod(v UserAccessMethodWithRuleIds) *ActiveDirectoryAccountsRevealCredentialsRequest {
 	o.UserAccessMethod = v
 	return o
 }

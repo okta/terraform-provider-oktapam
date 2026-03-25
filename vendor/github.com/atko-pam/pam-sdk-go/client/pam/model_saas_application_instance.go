@@ -13,34 +13,49 @@ package pam
 
 import (
 	"encoding/json"
+	"time"
 )
 
 // checks if the SaasApplicationInstance type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &SaasApplicationInstance{}
 
-// SaasApplicationInstance SaaS Application
+// SaasApplicationInstance An Okta app instance connected to Okta Privileged Access
 type SaasApplicationInstance struct {
-	// The unique identifier of the SaaS Application Instance
+	// The unique identifier of the app instance
 	AppInstanceId string `json:"app_instance_id"`
-	// The name of the SaaS Application Instance
+	// The name of the app instance
 	AppInstanceName string `json:"app_instance_name"`
-	// Name of the global app that instance belong to. It comes from the application definition in the OIN app catalog.
+	// Name of the global app that the instance belongs to. This name is obtained from the app definition in the [OIN catalog](https://www.okta.com/integrations/).
 	GlobalAppName string `json:"global_app_name"`
-	// The URL of the logo for the global SaaD application. It comes from the application definition in the OIN app catalog.
+	// The URL of the logo for the global app that the instance belongs to. This URL is obtained from the app definition in the [OIN catalog](https://www.okta.com/integrations/).
 	AppLogoUrl *string `json:"app_logo_url,omitempty"`
-	// The URL pointing to the login page of the SaaS application
+	// The URL pointing to the login page of the app instance
 	AppLoginUrl *string `json:"app_login_url,omitempty"`
+	// The Okta resource name (ORN) for the app instance
+	AppInstanceOrn           string                      `json:"app_instance_orn"`
+	PasswordRotationStrategy AppPasswordRotationStrategy `json:"password_rotation_strategy"`
+	// The UUID of the team associated with the app instance
+	TeamId string `json:"team_id"`
+	// A timestamp indicating when the app instance was created
+	CreatedAt time.Time `json:"created_at"`
+	// A timestamp indicating when the app instance was last updated
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // NewSaasApplicationInstance instantiates a new SaasApplicationInstance object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSaasApplicationInstance(appInstanceId string, appInstanceName string, globalAppName string) *SaasApplicationInstance {
+func NewSaasApplicationInstance(appInstanceId string, appInstanceName string, globalAppName string, appInstanceOrn string, passwordRotationStrategy AppPasswordRotationStrategy, teamId string, createdAt time.Time, updatedAt time.Time) *SaasApplicationInstance {
 	this := SaasApplicationInstance{}
 	this.AppInstanceId = appInstanceId
 	this.AppInstanceName = appInstanceName
 	this.GlobalAppName = globalAppName
+	this.AppInstanceOrn = appInstanceOrn
+	this.PasswordRotationStrategy = passwordRotationStrategy
+	this.TeamId = teamId
+	this.CreatedAt = createdAt
+	this.UpdatedAt = updatedAt
 	return &this
 }
 
@@ -193,6 +208,131 @@ func (o *SaasApplicationInstance) SetAppLoginUrl(v string) *SaasApplicationInsta
 	return o
 }
 
+// GetAppInstanceOrn returns the AppInstanceOrn field value
+func (o *SaasApplicationInstance) GetAppInstanceOrn() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.AppInstanceOrn
+}
+
+// GetAppInstanceOrnOk returns a tuple with the AppInstanceOrn field value
+// and a boolean to check if the value has been set.
+func (o *SaasApplicationInstance) GetAppInstanceOrnOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.AppInstanceOrn, true
+}
+
+// SetAppInstanceOrn sets field value
+func (o *SaasApplicationInstance) SetAppInstanceOrn(v string) *SaasApplicationInstance {
+	o.AppInstanceOrn = v
+	return o
+}
+
+// GetPasswordRotationStrategy returns the PasswordRotationStrategy field value
+func (o *SaasApplicationInstance) GetPasswordRotationStrategy() AppPasswordRotationStrategy {
+	if o == nil {
+		var ret AppPasswordRotationStrategy
+		return ret
+	}
+
+	return o.PasswordRotationStrategy
+}
+
+// GetPasswordRotationStrategyOk returns a tuple with the PasswordRotationStrategy field value
+// and a boolean to check if the value has been set.
+func (o *SaasApplicationInstance) GetPasswordRotationStrategyOk() (*AppPasswordRotationStrategy, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.PasswordRotationStrategy, true
+}
+
+// SetPasswordRotationStrategy sets field value
+func (o *SaasApplicationInstance) SetPasswordRotationStrategy(v AppPasswordRotationStrategy) *SaasApplicationInstance {
+	o.PasswordRotationStrategy = v
+	return o
+}
+
+// GetTeamId returns the TeamId field value
+func (o *SaasApplicationInstance) GetTeamId() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.TeamId
+}
+
+// GetTeamIdOk returns a tuple with the TeamId field value
+// and a boolean to check if the value has been set.
+func (o *SaasApplicationInstance) GetTeamIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.TeamId, true
+}
+
+// SetTeamId sets field value
+func (o *SaasApplicationInstance) SetTeamId(v string) *SaasApplicationInstance {
+	o.TeamId = v
+	return o
+}
+
+// GetCreatedAt returns the CreatedAt field value
+func (o *SaasApplicationInstance) GetCreatedAt() time.Time {
+	if o == nil {
+		var ret time.Time
+		return ret
+	}
+
+	return o.CreatedAt
+}
+
+// GetCreatedAtOk returns a tuple with the CreatedAt field value
+// and a boolean to check if the value has been set.
+func (o *SaasApplicationInstance) GetCreatedAtOk() (*time.Time, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.CreatedAt, true
+}
+
+// SetCreatedAt sets field value
+func (o *SaasApplicationInstance) SetCreatedAt(v time.Time) *SaasApplicationInstance {
+	o.CreatedAt = v
+	return o
+}
+
+// GetUpdatedAt returns the UpdatedAt field value
+func (o *SaasApplicationInstance) GetUpdatedAt() time.Time {
+	if o == nil {
+		var ret time.Time
+		return ret
+	}
+
+	return o.UpdatedAt
+}
+
+// GetUpdatedAtOk returns a tuple with the UpdatedAt field value
+// and a boolean to check if the value has been set.
+func (o *SaasApplicationInstance) GetUpdatedAtOk() (*time.Time, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.UpdatedAt, true
+}
+
+// SetUpdatedAt sets field value
+func (o *SaasApplicationInstance) SetUpdatedAt(v time.Time) *SaasApplicationInstance {
+	o.UpdatedAt = v
+	return o
+}
+
 func (o SaasApplicationInstance) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -212,6 +352,11 @@ func (o SaasApplicationInstance) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.AppLoginUrl) {
 		toSerialize["app_login_url"] = o.AppLoginUrl
 	}
+	toSerialize["app_instance_orn"] = o.AppInstanceOrn
+	toSerialize["password_rotation_strategy"] = o.PasswordRotationStrategy
+	toSerialize["team_id"] = o.TeamId
+	toSerialize["created_at"] = o.CreatedAt
+	toSerialize["updated_at"] = o.UpdatedAt
 	return toSerialize, nil
 }
 

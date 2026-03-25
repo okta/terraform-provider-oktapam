@@ -18,7 +18,7 @@ import (
 // checks if the SecurityPolicyPasswordCheckoutSSHPrivilege type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &SecurityPolicyPasswordCheckoutSSHPrivilege{}
 
-// SecurityPolicyPasswordCheckoutSSHPrivilege SecurityPolicyPasswordCheckoutSSHPrivilege lets the user sign in via SSH by checking out a vaulted password. It  indicates that the principal will be allowed to check out passwords to sign in with SSH to servers for accounts specified via a  ServerBasedResourceSelector.
+// SecurityPolicyPasswordCheckoutSSHPrivilege SecurityPolicyPasswordCheckoutSSHPrivilege lets the user sign in via SSH by checking out a vaulted password. It indicates that the principal will be allowed to check out passwords to sign in with SSH to servers for accounts specified via a ServerBasedResourceSelector.
 type SecurityPolicyPasswordCheckoutSSHPrivilege struct {
 	SecurityPolicyPrivilege
 	PasswordCheckoutSsh bool `json:"password_checkout_ssh"`

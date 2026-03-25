@@ -22,8 +22,6 @@ var _ MappedNullable = &RandomPasswordCreateRequest{}
 type RandomPasswordCreateRequest struct {
 	PublicKey        RawJSONWebKey                  `json:"public_key"`
 	CharacterOptions RandomPasswordCharacterOptions `json:"character_options"`
-	// Symbols that aren't allowed in the password
-	ExcludeSymbols *string `json:"exclude_symbols,omitempty"`
 	// The desired length for the password
 	NumChars int32 `json:"num_chars"`
 }
@@ -98,39 +96,6 @@ func (o *RandomPasswordCreateRequest) SetCharacterOptions(v RandomPasswordCharac
 	return o
 }
 
-// GetExcludeSymbols returns the ExcludeSymbols field value if set, zero value otherwise.
-func (o *RandomPasswordCreateRequest) GetExcludeSymbols() string {
-	if o == nil || IsNil(o.ExcludeSymbols) {
-		var ret string
-		return ret
-	}
-	return *o.ExcludeSymbols
-}
-
-// GetExcludeSymbolsOk returns a tuple with the ExcludeSymbols field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *RandomPasswordCreateRequest) GetExcludeSymbolsOk() (*string, bool) {
-	if o == nil || IsNil(o.ExcludeSymbols) {
-		return nil, false
-	}
-	return o.ExcludeSymbols, true
-}
-
-// HasExcludeSymbols returns a boolean if a field has been set.
-func (o *RandomPasswordCreateRequest) HasExcludeSymbols() bool {
-	if o != nil && !IsNil(o.ExcludeSymbols) {
-		return true
-	}
-
-	return false
-}
-
-// SetExcludeSymbols gets a reference to the given string and assigns it to the ExcludeSymbols field.
-func (o *RandomPasswordCreateRequest) SetExcludeSymbols(v string) *RandomPasswordCreateRequest {
-	o.ExcludeSymbols = &v
-	return o
-}
-
 // GetNumChars returns the NumChars field value
 func (o *RandomPasswordCreateRequest) GetNumChars() int32 {
 	if o == nil {
@@ -168,9 +133,6 @@ func (o RandomPasswordCreateRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["public_key"] = o.PublicKey
 	toSerialize["character_options"] = o.CharacterOptions
-	if !IsNil(o.ExcludeSymbols) {
-		toSerialize["exclude_symbols"] = o.ExcludeSymbols
-	}
 	toSerialize["num_chars"] = o.NumChars
 	return toSerialize, nil
 }

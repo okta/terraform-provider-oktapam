@@ -20,7 +20,9 @@ var _ MappedNullable = &GatewayAgent{}
 
 // GatewayAgent struct for GatewayAgent
 type GatewayAgent struct {
-	Labels map[string]string `json:"labels,omitempty"`
+	// Key-value pairs for gateway proxy routing.
+	Labels                     map[string]string                              `json:"labels,omitempty"`
+	InfrastructureOrchestrator NullableGatewayAgentInfrastructureOrchestrator `json:"infrastructure_orchestrator,omitempty"`
 }
 
 // NewGatewayAgent instantiates a new GatewayAgent object
@@ -74,6 +76,52 @@ func (o *GatewayAgent) SetLabels(v map[string]string) *GatewayAgent {
 	return o
 }
 
+// GetInfrastructureOrchestrator returns the InfrastructureOrchestrator field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *GatewayAgent) GetInfrastructureOrchestrator() GatewayAgentInfrastructureOrchestrator {
+	if o == nil || IsNil(o.InfrastructureOrchestrator.Get()) {
+		var ret GatewayAgentInfrastructureOrchestrator
+		return ret
+	}
+	return *o.InfrastructureOrchestrator.Get()
+}
+
+// GetInfrastructureOrchestratorOk returns a tuple with the InfrastructureOrchestrator field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *GatewayAgent) GetInfrastructureOrchestratorOk() (*GatewayAgentInfrastructureOrchestrator, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.InfrastructureOrchestrator.Get(), o.InfrastructureOrchestrator.IsSet()
+}
+
+// HasInfrastructureOrchestrator returns a boolean if a field has been set.
+func (o *GatewayAgent) HasInfrastructureOrchestrator() bool {
+	if o != nil && o.InfrastructureOrchestrator.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetInfrastructureOrchestrator gets a reference to the given NullableGatewayAgentInfrastructureOrchestrator and assigns it to the InfrastructureOrchestrator field.
+func (o *GatewayAgent) SetInfrastructureOrchestrator(v GatewayAgentInfrastructureOrchestrator) *GatewayAgent {
+	o.InfrastructureOrchestrator.Set(&v)
+	return o
+}
+
+// SetInfrastructureOrchestratorNil sets the value for InfrastructureOrchestrator to be an explicit nil
+func (o *GatewayAgent) SetInfrastructureOrchestratorNil() *GatewayAgent {
+	o.InfrastructureOrchestrator.Set(nil)
+	return o
+}
+
+// UnsetInfrastructureOrchestrator ensures that no value is present for InfrastructureOrchestrator, not even an explicit nil
+func (o *GatewayAgent) UnsetInfrastructureOrchestrator() *GatewayAgent {
+	o.InfrastructureOrchestrator.Unset()
+	return o
+}
+
 func (o GatewayAgent) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -86,6 +134,9 @@ func (o GatewayAgent) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Labels != nil {
 		toSerialize["labels"] = o.Labels
+	}
+	if o.InfrastructureOrchestrator.IsSet() {
+		toSerialize["infrastructure_orchestrator"] = o.InfrastructureOrchestrator.Get()
 	}
 	return toSerialize, nil
 }

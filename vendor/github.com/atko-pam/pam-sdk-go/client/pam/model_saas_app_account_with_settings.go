@@ -36,15 +36,15 @@ type SaasAppAccountWithSettings struct {
 	Status       *ServiceAccountStatus       `json:"status,omitempty"`
 	StatusDetail *ServiceAccountStatusDetail `json:"status_detail,omitempty"`
 	SyncStatus   *ServiceAccountSyncStatus   `json:"sync_status,omitempty"`
-	// Whether the password for the SaaS app account can be rotated using Okta Lifecycle Management
+	// Indicates whether the password for the SaaS app account can be rotated using Okta Lifecycle Management
 	LcmSyncPossible *bool `json:"lcm_sync_possible,omitempty"`
-	// A URL pointing to the logo of the SaaS Application
+	// A URL pointing to the logo of the SaaS app
 	LogoUrl *string `json:"logo_url,omitempty"`
-	// The name of the SaaS Application instance
+	// The name of the SaaS app instance
 	ApplicationInstanceName *string `json:"application_instance_name,omitempty"`
-	// A URL pointing to the login page of the SaaS Application
+	// A URL pointing to the login page of the SaaS app
 	LoginUrl *string `json:"login_url,omitempty"`
-	// The Okta app instance ID of the SaaS Application
+	// The Okta app instance ID of the SaaS app
 	ApplicationInstanceId *string `json:"application_instance_id,omitempty"`
 	// A timestamp that indicates when the Okta Privileged Access managed SaaS app account was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`

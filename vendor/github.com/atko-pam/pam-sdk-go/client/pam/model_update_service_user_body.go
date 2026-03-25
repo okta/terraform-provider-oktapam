@@ -20,6 +20,8 @@ var _ MappedNullable = &UpdateServiceUserBody{}
 
 // UpdateServiceUserBody struct for UpdateServiceUserBody
 type UpdateServiceUserBody struct {
+	// The name of the service user
+	Name string `json:"name"`
 	// The status of the user: `ACTIVE`, `DISABLED`, or `DELETED`. Users can't disable or delete their own account.
 	Status string `json:"status"`
 }
@@ -28,8 +30,9 @@ type UpdateServiceUserBody struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewUpdateServiceUserBody(status string) *UpdateServiceUserBody {
+func NewUpdateServiceUserBody(name string, status string) *UpdateServiceUserBody {
 	this := UpdateServiceUserBody{}
+	this.Name = name
 	this.Status = status
 	return &this
 }
@@ -40,6 +43,31 @@ func NewUpdateServiceUserBody(status string) *UpdateServiceUserBody {
 func NewUpdateServiceUserBodyWithDefaults() *UpdateServiceUserBody {
 	this := UpdateServiceUserBody{}
 	return &this
+}
+
+// GetName returns the Name field value
+func (o *UpdateServiceUserBody) GetName() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.Name
+}
+
+// GetNameOk returns a tuple with the Name field value
+// and a boolean to check if the value has been set.
+func (o *UpdateServiceUserBody) GetNameOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Name, true
+}
+
+// SetName sets field value
+func (o *UpdateServiceUserBody) SetName(v string) *UpdateServiceUserBody {
+	o.Name = v
+	return o
 }
 
 // GetStatus returns the Status field value
@@ -77,6 +105,7 @@ func (o UpdateServiceUserBody) MarshalJSON() ([]byte, error) {
 
 func (o UpdateServiceUserBody) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	toSerialize["name"] = o.Name
 	toSerialize["status"] = o.Status
 	return toSerialize, nil
 }

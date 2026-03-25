@@ -37,17 +37,20 @@ type WorkloadConnection struct {
 	UpdatedAt time.Time   `json:"updated_at"`
 	UpdatedBy NamedObject `json:"updated_by"`
 	// A timestamp indicating when the workload connection was last activated
-	LastActivatedAt       *time.Time                               `json:"last_activated_at,omitempty"`
-	LastActivatedBy       *NamedObject                             `json:"last_activated_by,omitempty"`
-	AttributeRequirements []WorkloadConnectionAttributeRequirement `json:"attribute_requirements"`
-	JwtConfig             *WorkloadConnectionJwtConfig             `json:"jwt_config,omitempty"`
+	LastActivatedAt *time.Time   `json:"last_activated_at,omitempty"`
+	LastActivatedBy *NamedObject `json:"last_activated_by,omitempty"`
+	// Conditions defines the identity attribute requirements that a workload must satisfy to authenticate via this connection and obtain an OPA Access token.
+	Conditions []WorkloadCondition          `json:"conditions"`
+	JwtConfig  *WorkloadConnectionJWTConfig `json:"jwt_config,omitempty"`
+	// The claim in the incoming identity document that represents the workload identity (e.g., 'sub', 'email', etc.)
+	WorkloadIdentityClaim string `json:"workload_identity_claim"`
 }
 
 // NewWorkloadConnection instantiates a new WorkloadConnection object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewWorkloadConnection(id string, name string, description string, status WorkloadConnectionStatus, tokenTtlInSeconds int64, createdAt time.Time, createdBy NamedObject, updatedAt time.Time, updatedBy NamedObject, attributeRequirements []WorkloadConnectionAttributeRequirement) *WorkloadConnection {
+func NewWorkloadConnection(id string, name string, description string, status WorkloadConnectionStatus, tokenTtlInSeconds int64, createdAt time.Time, createdBy NamedObject, updatedAt time.Time, updatedBy NamedObject, conditions []WorkloadCondition, workloadIdentityClaim string) *WorkloadConnection {
 	this := WorkloadConnection{}
 	this.Id = id
 	this.Name = name
@@ -58,7 +61,8 @@ func NewWorkloadConnection(id string, name string, description string, status Wo
 	this.CreatedBy = createdBy
 	this.UpdatedAt = updatedAt
 	this.UpdatedBy = updatedBy
-	this.AttributeRequirements = attributeRequirements
+	this.Conditions = conditions
+	this.WorkloadIdentityClaim = workloadIdentityClaim
 	return &this
 }
 
@@ -394,35 +398,35 @@ func (o *WorkloadConnection) SetLastActivatedBy(v NamedObject) *WorkloadConnecti
 	return o
 }
 
-// GetAttributeRequirements returns the AttributeRequirements field value
-func (o *WorkloadConnection) GetAttributeRequirements() []WorkloadConnectionAttributeRequirement {
+// GetConditions returns the Conditions field value
+func (o *WorkloadConnection) GetConditions() []WorkloadCondition {
 	if o == nil {
-		var ret []WorkloadConnectionAttributeRequirement
+		var ret []WorkloadCondition
 		return ret
 	}
 
-	return o.AttributeRequirements
+	return o.Conditions
 }
 
-// GetAttributeRequirementsOk returns a tuple with the AttributeRequirements field value
+// GetConditionsOk returns a tuple with the Conditions field value
 // and a boolean to check if the value has been set.
-func (o *WorkloadConnection) GetAttributeRequirementsOk() ([]WorkloadConnectionAttributeRequirement, bool) {
+func (o *WorkloadConnection) GetConditionsOk() ([]WorkloadCondition, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.AttributeRequirements, true
+	return o.Conditions, true
 }
 
-// SetAttributeRequirements sets field value
-func (o *WorkloadConnection) SetAttributeRequirements(v []WorkloadConnectionAttributeRequirement) *WorkloadConnection {
-	o.AttributeRequirements = v
+// SetConditions sets field value
+func (o *WorkloadConnection) SetConditions(v []WorkloadCondition) *WorkloadConnection {
+	o.Conditions = v
 	return o
 }
 
 // GetJwtConfig returns the JwtConfig field value if set, zero value otherwise.
-func (o *WorkloadConnection) GetJwtConfig() WorkloadConnectionJwtConfig {
+func (o *WorkloadConnection) GetJwtConfig() WorkloadConnectionJWTConfig {
 	if o == nil || IsNil(o.JwtConfig) {
-		var ret WorkloadConnectionJwtConfig
+		var ret WorkloadConnectionJWTConfig
 		return ret
 	}
 	return *o.JwtConfig
@@ -430,7 +434,7 @@ func (o *WorkloadConnection) GetJwtConfig() WorkloadConnectionJwtConfig {
 
 // GetJwtConfigOk returns a tuple with the JwtConfig field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *WorkloadConnection) GetJwtConfigOk() (*WorkloadConnectionJwtConfig, bool) {
+func (o *WorkloadConnection) GetJwtConfigOk() (*WorkloadConnectionJWTConfig, bool) {
 	if o == nil || IsNil(o.JwtConfig) {
 		return nil, false
 	}
@@ -446,9 +450,34 @@ func (o *WorkloadConnection) HasJwtConfig() bool {
 	return false
 }
 
-// SetJwtConfig gets a reference to the given WorkloadConnectionJwtConfig and assigns it to the JwtConfig field.
-func (o *WorkloadConnection) SetJwtConfig(v WorkloadConnectionJwtConfig) *WorkloadConnection {
+// SetJwtConfig gets a reference to the given WorkloadConnectionJWTConfig and assigns it to the JwtConfig field.
+func (o *WorkloadConnection) SetJwtConfig(v WorkloadConnectionJWTConfig) *WorkloadConnection {
 	o.JwtConfig = &v
+	return o
+}
+
+// GetWorkloadIdentityClaim returns the WorkloadIdentityClaim field value
+func (o *WorkloadConnection) GetWorkloadIdentityClaim() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.WorkloadIdentityClaim
+}
+
+// GetWorkloadIdentityClaimOk returns a tuple with the WorkloadIdentityClaim field value
+// and a boolean to check if the value has been set.
+func (o *WorkloadConnection) GetWorkloadIdentityClaimOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.WorkloadIdentityClaim, true
+}
+
+// SetWorkloadIdentityClaim sets field value
+func (o *WorkloadConnection) SetWorkloadIdentityClaim(v string) *WorkloadConnection {
+	o.WorkloadIdentityClaim = v
 	return o
 }
 
@@ -480,10 +509,11 @@ func (o WorkloadConnection) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.LastActivatedBy) {
 		toSerialize["last_activated_by"] = o.LastActivatedBy
 	}
-	toSerialize["attribute_requirements"] = o.AttributeRequirements
+	toSerialize["conditions"] = o.Conditions
 	if !IsNil(o.JwtConfig) {
 		toSerialize["jwt_config"] = o.JwtConfig
 	}
+	toSerialize["workload_identity_claim"] = o.WorkloadIdentityClaim
 	return toSerialize, nil
 }
 

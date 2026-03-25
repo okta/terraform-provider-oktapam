@@ -23,6 +23,7 @@ const (
 	SecurityPolicyRulePrivilegeTypeForActiveDirectoryAccounts_REVEAL_PASSWORD       SecurityPolicyRulePrivilegeTypeForActiveDirectoryAccounts = "reveal_password"
 	SecurityPolicyRulePrivilegeTypeForActiveDirectoryAccounts_PASSWORD_CHECKOUT_RDP SecurityPolicyRulePrivilegeTypeForActiveDirectoryAccounts = "password_checkout_rdp"
 	SecurityPolicyRulePrivilegeTypeForActiveDirectoryAccounts_ROTATE_PASSWORD       SecurityPolicyRulePrivilegeTypeForActiveDirectoryAccounts = "rotate_password"
+	SecurityPolicyRulePrivilegeTypeForActiveDirectoryAccounts_PASSWORD_CHECKOUT_SSH SecurityPolicyRulePrivilegeTypeForActiveDirectoryAccounts = "password_checkout_ssh"
 )
 
 // All allowed values of SecurityPolicyRulePrivilegeTypeForActiveDirectoryAccounts enum
@@ -30,6 +31,7 @@ var AllowedSecurityPolicyRulePrivilegeTypeForActiveDirectoryAccountsEnumValues =
 	"reveal_password",
 	"password_checkout_rdp",
 	"rotate_password",
+	"password_checkout_ssh",
 }
 
 func (v *SecurityPolicyRulePrivilegeTypeForActiveDirectoryAccounts) UnmarshalJSON(src []byte) error {

@@ -21,6 +21,8 @@ var _ MappedNullable = &ActiveDirectoryAccountCheckoutDetails{}
 
 // ActiveDirectoryAccountCheckoutDetails Checkout details for an Active Directory account that the current user has some level of access to.
 type ActiveDirectoryAccountCheckoutDetails struct {
+	// The user who last checked out this Active Directory account
+	LastCheckedOutBy *string `json:"last_checked_out_by,omitempty"`
 	// If `true`, account will be checked out and no other users will be able to reveal/update credentials until it's checked in back
 	CheckoutRequired bool `json:"checkout_required"`
 	// A timestamp when the checkout expires for the current user (in UTC)
@@ -43,6 +45,39 @@ func NewActiveDirectoryAccountCheckoutDetails(checkoutRequired bool) *ActiveDire
 func NewActiveDirectoryAccountCheckoutDetailsWithDefaults() *ActiveDirectoryAccountCheckoutDetails {
 	this := ActiveDirectoryAccountCheckoutDetails{}
 	return &this
+}
+
+// GetLastCheckedOutBy returns the LastCheckedOutBy field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccountCheckoutDetails) GetLastCheckedOutBy() string {
+	if o == nil || IsNil(o.LastCheckedOutBy) {
+		var ret string
+		return ret
+	}
+	return *o.LastCheckedOutBy
+}
+
+// GetLastCheckedOutByOk returns a tuple with the LastCheckedOutBy field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccountCheckoutDetails) GetLastCheckedOutByOk() (*string, bool) {
+	if o == nil || IsNil(o.LastCheckedOutBy) {
+		return nil, false
+	}
+	return o.LastCheckedOutBy, true
+}
+
+// HasLastCheckedOutBy returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccountCheckoutDetails) HasLastCheckedOutBy() bool {
+	if o != nil && !IsNil(o.LastCheckedOutBy) {
+		return true
+	}
+
+	return false
+}
+
+// SetLastCheckedOutBy gets a reference to the given string and assigns it to the LastCheckedOutBy field.
+func (o *ActiveDirectoryAccountCheckoutDetails) SetLastCheckedOutBy(v string) *ActiveDirectoryAccountCheckoutDetails {
+	o.LastCheckedOutBy = &v
+	return o
 }
 
 // GetCheckoutRequired returns the CheckoutRequired field value
@@ -113,6 +148,9 @@ func (o ActiveDirectoryAccountCheckoutDetails) MarshalJSON() ([]byte, error) {
 
 func (o ActiveDirectoryAccountCheckoutDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.LastCheckedOutBy) {
+		toSerialize["last_checked_out_by"] = o.LastCheckedOutBy
+	}
 	toSerialize["checkout_required"] = o.CheckoutRequired
 	if !IsNil(o.CurrentUserCheckoutExpiresAt) {
 		toSerialize["current_user_checkout_expires_at"] = o.CurrentUserCheckoutExpiresAt

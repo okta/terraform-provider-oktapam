@@ -25,11 +25,12 @@ type ResolveSecretOrFolderResponse struct {
 	// The name of the secret or secret folder
 	Name string `json:"name"`
 	// A description of the secret or secret folder
-	Description   NullableString `json:"description,omitempty"`
-	Path          []SecretPath   `json:"path,omitempty"`
-	ResourceGroup NamedObject    `json:"resource_group"`
-	Project       NamedObject    `json:"project"`
-	Type          *SecretType    `json:"type,omitempty"`
+	Description   NullableString          `json:"description,omitempty"`
+	Path          []SecretPath            `json:"path,omitempty"`
+	ResourceGroup NamedObject             `json:"resource_group"`
+	Project       NamedObject             `json:"project"`
+	Type          *SecretType             `json:"type,omitempty"`
+	Template      *SecretTemplateResponse `json:"template,omitempty"`
 }
 
 // NewResolveSecretOrFolderResponse instantiates a new ResolveSecretOrFolderResponse object
@@ -265,6 +266,39 @@ func (o *ResolveSecretOrFolderResponse) SetType(v SecretType) *ResolveSecretOrFo
 	return o
 }
 
+// GetTemplate returns the Template field value if set, zero value otherwise.
+func (o *ResolveSecretOrFolderResponse) GetTemplate() SecretTemplateResponse {
+	if o == nil || IsNil(o.Template) {
+		var ret SecretTemplateResponse
+		return ret
+	}
+	return *o.Template
+}
+
+// GetTemplateOk returns a tuple with the Template field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ResolveSecretOrFolderResponse) GetTemplateOk() (*SecretTemplateResponse, bool) {
+	if o == nil || IsNil(o.Template) {
+		return nil, false
+	}
+	return o.Template, true
+}
+
+// HasTemplate returns a boolean if a field has been set.
+func (o *ResolveSecretOrFolderResponse) HasTemplate() bool {
+	if o != nil && !IsNil(o.Template) {
+		return true
+	}
+
+	return false
+}
+
+// SetTemplate gets a reference to the given SecretTemplateResponse and assigns it to the Template field.
+func (o *ResolveSecretOrFolderResponse) SetTemplate(v SecretTemplateResponse) *ResolveSecretOrFolderResponse {
+	o.Template = &v
+	return o
+}
+
 func (o ResolveSecretOrFolderResponse) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -287,6 +321,9 @@ func (o ResolveSecretOrFolderResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize["project"] = o.Project
 	if !IsNil(o.Type) {
 		toSerialize["type"] = o.Type
+	}
+	if !IsNil(o.Template) {
+		toSerialize["template"] = o.Template
 	}
 	return toSerialize, nil
 }

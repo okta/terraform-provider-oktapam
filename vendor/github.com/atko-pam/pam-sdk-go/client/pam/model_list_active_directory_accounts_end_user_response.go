@@ -20,7 +20,7 @@ var _ MappedNullable = &ListActiveDirectoryAccountsEndUserResponse{}
 
 // ListActiveDirectoryAccountsEndUserResponse struct for ListActiveDirectoryAccountsEndUserResponse
 type ListActiveDirectoryAccountsEndUserResponse struct {
-	List []ActiveDirectoryAccountEndUser `json:"list,omitempty"`
+	List []ActiveDirectoryAccountEndUserList `json:"list,omitempty"`
 }
 
 // NewListActiveDirectoryAccountsEndUserResponse instantiates a new ListActiveDirectoryAccountsEndUserResponse object
@@ -41,9 +41,9 @@ func NewListActiveDirectoryAccountsEndUserResponseWithDefaults() *ListActiveDire
 }
 
 // GetList returns the List field value if set, zero value otherwise.
-func (o *ListActiveDirectoryAccountsEndUserResponse) GetList() []ActiveDirectoryAccountEndUser {
+func (o *ListActiveDirectoryAccountsEndUserResponse) GetList() []ActiveDirectoryAccountEndUserList {
 	if o == nil || IsNil(o.List) {
-		var ret []ActiveDirectoryAccountEndUser
+		var ret []ActiveDirectoryAccountEndUserList
 		return ret
 	}
 	return o.List
@@ -51,7 +51,7 @@ func (o *ListActiveDirectoryAccountsEndUserResponse) GetList() []ActiveDirectory
 
 // GetListOk returns a tuple with the List field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ListActiveDirectoryAccountsEndUserResponse) GetListOk() ([]ActiveDirectoryAccountEndUser, bool) {
+func (o *ListActiveDirectoryAccountsEndUserResponse) GetListOk() ([]ActiveDirectoryAccountEndUserList, bool) {
 	if o == nil || IsNil(o.List) {
 		return nil, false
 	}
@@ -67,8 +67,8 @@ func (o *ListActiveDirectoryAccountsEndUserResponse) HasList() bool {
 	return false
 }
 
-// SetList gets a reference to the given []ActiveDirectoryAccountEndUser and assigns it to the List field.
-func (o *ListActiveDirectoryAccountsEndUserResponse) SetList(v []ActiveDirectoryAccountEndUser) *ListActiveDirectoryAccountsEndUserResponse {
+// SetList gets a reference to the given []ActiveDirectoryAccountEndUserList and assigns it to the List field.
+func (o *ListActiveDirectoryAccountsEndUserResponse) SetList(v []ActiveDirectoryAccountEndUserList) *ListActiveDirectoryAccountsEndUserResponse {
 	o.List = v
 	return o
 }

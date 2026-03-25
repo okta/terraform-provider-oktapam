@@ -28,9 +28,9 @@ type ActiveDirectoryAccountRuleRequest struct {
 	OrganizationalUnits []string `json:"organizational_units,omitempty"`
 	// If `true`, the initial password rotation is enabled for discovered Active Directory accounts
 	EnableInitialPasswordRotation *bool `json:"enable_initial_password_rotation,omitempty"`
-	// If `false`, the Active Directory accounts in the OU targeted by this rule are no longer active Okta users. If `true` and Okta Active Directory integration is configured, then the accounts can become active Okta users. See [Import Active Directory users on demand](https://help.okta.com/okta_help.htm?type=oie&id=ext-ad-agent-import-users).
+	// If `false`, the Active Directory accounts in the organizational unit (OU) targeted by this rule are no longer active Okta users. If `true` and Okta Active Directory integration is configured, then the accounts can become active Okta users. See [Import Active Directory users on demand](https://help.okta.com/okta_help.htm?type=oie&id=ext-ad-agent-import-users).
 	EnableImportOktaUsers *bool `json:"enable_import_okta_users,omitempty"`
-	// One list per OU. Index aligns with 'organizational_units'. Each inner list contains field-based filter expressions. If omitted or empty, no per-OU conditions are applied.
+	// One list per OU. The index aligns with 'organizational_units'. Each inner list contains field-based filter expressions. If it's omitted or empty, no per-OU conditions are applied.
 	EnhancedFilters [][]ActiveDirectoryAccountFieldNameFilter `json:"enhanced_filters,omitempty"`
 	ResourceGroup   *NamedObject                              `json:"resource_group,omitempty"`
 	Project         *NamedObject                              `json:"project,omitempty"`

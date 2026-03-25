@@ -21,6 +21,8 @@ var _ MappedNullable = &ActiveDirectoryAccount{}
 
 // ActiveDirectoryAccount struct for ActiveDirectoryAccount
 type ActiveDirectoryAccount struct {
+	// The UUID of the Active Directory account
+	Id *string `json:"id,omitempty"`
 	// The name of the Active Directory account
 	AccountName *string `json:"account_name,omitempty"`
 	// The type of Active Directory account
@@ -52,7 +54,7 @@ type ActiveDirectoryAccount struct {
 	// The email of this Active Directory user, if set
 	Email               *string                     `json:"email,omitempty"`
 	AccountStatusDetail *ServiceAccountStatusDetail `json:"account_status_detail,omitempty"`
-	// Additional information about this account's status, if set
+	// Optional additional information about the account status
 	AccountStatusDetailMessage *string `json:"account_status_detail_message,omitempty"`
 }
 
@@ -71,6 +73,39 @@ func NewActiveDirectoryAccount() *ActiveDirectoryAccount {
 func NewActiveDirectoryAccountWithDefaults() *ActiveDirectoryAccount {
 	this := ActiveDirectoryAccount{}
 	return &this
+}
+
+// GetId returns the Id field value if set, zero value otherwise.
+func (o *ActiveDirectoryAccount) GetId() string {
+	if o == nil || IsNil(o.Id) {
+		var ret string
+		return ret
+	}
+	return *o.Id
+}
+
+// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ActiveDirectoryAccount) GetIdOk() (*string, bool) {
+	if o == nil || IsNil(o.Id) {
+		return nil, false
+	}
+	return o.Id, true
+}
+
+// HasId returns a boolean if a field has been set.
+func (o *ActiveDirectoryAccount) HasId() bool {
+	if o != nil && !IsNil(o.Id) {
+		return true
+	}
+
+	return false
+}
+
+// SetId gets a reference to the given string and assigns it to the Id field.
+func (o *ActiveDirectoryAccount) SetId(v string) *ActiveDirectoryAccount {
+	o.Id = &v
+	return o
 }
 
 // GetAccountName returns the AccountName field value if set, zero value otherwise.
@@ -710,6 +745,9 @@ func (o ActiveDirectoryAccount) MarshalJSON() ([]byte, error) {
 
 func (o ActiveDirectoryAccount) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.Id) {
+		toSerialize["id"] = o.Id
+	}
 	if !IsNil(o.AccountName) {
 		toSerialize["account_name"] = o.AccountName
 	}

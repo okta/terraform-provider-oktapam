@@ -22,6 +22,8 @@ var _ MappedNullable = &SecurityPolicyPrincipals{}
 type SecurityPolicyPrincipals struct {
 	// The User Groups associated with the Security Policy. Each User Group is defined in a separate object.
 	UserGroups []NamedObject `json:"user_groups,omitempty"`
+	// The Workload Roles associated with the Security Policy. Each Workload Role is defined in a separate object.
+	WorkloadRoles []NamedObject `json:"workload_roles,omitempty"`
 }
 
 // NewSecurityPolicyPrincipals instantiates a new SecurityPolicyPrincipals object
@@ -74,6 +76,39 @@ func (o *SecurityPolicyPrincipals) SetUserGroups(v []NamedObject) *SecurityPolic
 	return o
 }
 
+// GetWorkloadRoles returns the WorkloadRoles field value if set, zero value otherwise.
+func (o *SecurityPolicyPrincipals) GetWorkloadRoles() []NamedObject {
+	if o == nil || IsNil(o.WorkloadRoles) {
+		var ret []NamedObject
+		return ret
+	}
+	return o.WorkloadRoles
+}
+
+// GetWorkloadRolesOk returns a tuple with the WorkloadRoles field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecurityPolicyPrincipals) GetWorkloadRolesOk() ([]NamedObject, bool) {
+	if o == nil || IsNil(o.WorkloadRoles) {
+		return nil, false
+	}
+	return o.WorkloadRoles, true
+}
+
+// HasWorkloadRoles returns a boolean if a field has been set.
+func (o *SecurityPolicyPrincipals) HasWorkloadRoles() bool {
+	if o != nil && !IsNil(o.WorkloadRoles) {
+		return true
+	}
+
+	return false
+}
+
+// SetWorkloadRoles gets a reference to the given []NamedObject and assigns it to the WorkloadRoles field.
+func (o *SecurityPolicyPrincipals) SetWorkloadRoles(v []NamedObject) *SecurityPolicyPrincipals {
+	o.WorkloadRoles = v
+	return o
+}
+
 func (o SecurityPolicyPrincipals) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -86,6 +121,9 @@ func (o SecurityPolicyPrincipals) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if !IsNil(o.UserGroups) {
 		toSerialize["user_groups"] = o.UserGroups
+	}
+	if !IsNil(o.WorkloadRoles) {
+		toSerialize["workload_roles"] = o.WorkloadRoles
 	}
 	return toSerialize, nil
 }

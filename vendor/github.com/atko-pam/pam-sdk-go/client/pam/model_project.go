@@ -57,7 +57,8 @@ type Project struct {
 	// The team associated with the project
 	Team string `json:"team"`
 	// The time period in seconds before an on-demand user account expires and is removed from a server. `0` if disabled. This is the default,
-	UserOnDemandPeriod NullableInt64 `json:"user_on_demand_period,omitempty"`
+	UserOnDemandPeriod             NullableInt64                   `json:"user_on_demand_period,omitempty"`
+	ServerAccountDiscoverySettings *ServerAccountDiscoverySettings `json:"server_account_discovery_settings,omitempty"`
 }
 
 // NewProject instantiates a new Project object
@@ -787,6 +788,39 @@ func (o *Project) UnsetUserOnDemandPeriod() *Project {
 	return o
 }
 
+// GetServerAccountDiscoverySettings returns the ServerAccountDiscoverySettings field value if set, zero value otherwise.
+func (o *Project) GetServerAccountDiscoverySettings() ServerAccountDiscoverySettings {
+	if o == nil || IsNil(o.ServerAccountDiscoverySettings) {
+		var ret ServerAccountDiscoverySettings
+		return ret
+	}
+	return *o.ServerAccountDiscoverySettings
+}
+
+// GetServerAccountDiscoverySettingsOk returns a tuple with the ServerAccountDiscoverySettings field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Project) GetServerAccountDiscoverySettingsOk() (*ServerAccountDiscoverySettings, bool) {
+	if o == nil || IsNil(o.ServerAccountDiscoverySettings) {
+		return nil, false
+	}
+	return o.ServerAccountDiscoverySettings, true
+}
+
+// HasServerAccountDiscoverySettings returns a boolean if a field has been set.
+func (o *Project) HasServerAccountDiscoverySettings() bool {
+	if o != nil && !IsNil(o.ServerAccountDiscoverySettings) {
+		return true
+	}
+
+	return false
+}
+
+// SetServerAccountDiscoverySettings gets a reference to the given ServerAccountDiscoverySettings and assigns it to the ServerAccountDiscoverySettings field.
+func (o *Project) SetServerAccountDiscoverySettings(v ServerAccountDiscoverySettings) *Project {
+	o.ServerAccountDiscoverySettings = &v
+	return o
+}
+
 func (o Project) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -847,6 +881,9 @@ func (o Project) ToMap() (map[string]interface{}, error) {
 	toSerialize["team"] = o.Team
 	if o.UserOnDemandPeriod.IsSet() {
 		toSerialize["user_on_demand_period"] = o.UserOnDemandPeriod.Get()
+	}
+	if !IsNil(o.ServerAccountDiscoverySettings) {
+		toSerialize["server_account_discovery_settings"] = o.ServerAccountDiscoverySettings
 	}
 	return toSerialize, nil
 }

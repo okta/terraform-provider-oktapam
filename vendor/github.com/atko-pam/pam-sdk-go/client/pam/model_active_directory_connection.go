@@ -21,8 +21,6 @@ var _ MappedNullable = &ActiveDirectoryConnection{}
 // ActiveDirectoryConnection struct for ActiveDirectoryConnection
 type ActiveDirectoryConnection struct {
 	Id string `json:"id"`
-	// The name of the Active Directory connection
-	Name string `json:"name"`
 	// The name of the domain
 	Domain string `json:"domain"`
 	// The instance ID of the Active Directory app in your Okta org. This is a unique identifier assigned to each app in your Okta org.
@@ -34,10 +32,9 @@ type ActiveDirectoryConnection struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewActiveDirectoryConnection(id string, name string, domain string, appInstanceId string, status ADConnectionStatus) *ActiveDirectoryConnection {
+func NewActiveDirectoryConnection(id string, domain string, appInstanceId string, status ADConnectionStatus) *ActiveDirectoryConnection {
 	this := ActiveDirectoryConnection{}
 	this.Id = id
-	this.Name = name
 	this.Domain = domain
 	this.AppInstanceId = appInstanceId
 	this.Status = status
@@ -74,31 +71,6 @@ func (o *ActiveDirectoryConnection) GetIdOk() (*string, bool) {
 // SetId sets field value
 func (o *ActiveDirectoryConnection) SetId(v string) *ActiveDirectoryConnection {
 	o.Id = v
-	return o
-}
-
-// GetName returns the Name field value
-func (o *ActiveDirectoryConnection) GetName() string {
-	if o == nil {
-		var ret string
-		return ret
-	}
-
-	return o.Name
-}
-
-// GetNameOk returns a tuple with the Name field value
-// and a boolean to check if the value has been set.
-func (o *ActiveDirectoryConnection) GetNameOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.Name, true
-}
-
-// SetName sets field value
-func (o *ActiveDirectoryConnection) SetName(v string) *ActiveDirectoryConnection {
-	o.Name = v
 	return o
 }
 
@@ -188,7 +160,6 @@ func (o ActiveDirectoryConnection) MarshalJSON() ([]byte, error) {
 func (o ActiveDirectoryConnection) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["id"] = o.Id
-	toSerialize["name"] = o.Name
 	toSerialize["domain"] = o.Domain
 	toSerialize["app_instance_id"] = o.AppInstanceId
 	toSerialize["status"] = o.Status

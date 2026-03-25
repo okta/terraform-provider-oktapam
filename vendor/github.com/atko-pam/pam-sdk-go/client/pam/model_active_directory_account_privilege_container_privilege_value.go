@@ -19,6 +19,7 @@ import (
 // ActiveDirectoryAccountPrivilegeContainerPrivilegeValue - The value of the privilege
 type ActiveDirectoryAccountPrivilegeContainerPrivilegeValue struct {
 	SecurityPolicyPasswordCheckoutRDPPrivilege *SecurityPolicyPasswordCheckoutRDPPrivilege
+	SecurityPolicyPasswordCheckoutSSHPrivilege *SecurityPolicyPasswordCheckoutSSHPrivilege
 	SecurityPolicyRevealPasswordPrivilege      *SecurityPolicyRevealPasswordPrivilege
 	SecurityPolicyRotatePasswordPrivilege      *SecurityPolicyRotatePasswordPrivilege
 	Unknown                                    map[string]interface{} // holds unknown types for round-tripping
@@ -28,6 +29,13 @@ type ActiveDirectoryAccountPrivilegeContainerPrivilegeValue struct {
 func SecurityPolicyPasswordCheckoutRDPPrivilegeAsActiveDirectoryAccountPrivilegeContainerPrivilegeValue(v *SecurityPolicyPasswordCheckoutRDPPrivilege) ActiveDirectoryAccountPrivilegeContainerPrivilegeValue {
 	return ActiveDirectoryAccountPrivilegeContainerPrivilegeValue{
 		SecurityPolicyPasswordCheckoutRDPPrivilege: v,
+	}
+}
+
+// SecurityPolicyPasswordCheckoutSSHPrivilegeAsActiveDirectoryAccountPrivilegeContainerPrivilegeValue is a convenience function that returns SecurityPolicyPasswordCheckoutSSHPrivilege wrapped in ActiveDirectoryAccountPrivilegeContainerPrivilegeValue
+func SecurityPolicyPasswordCheckoutSSHPrivilegeAsActiveDirectoryAccountPrivilegeContainerPrivilegeValue(v *SecurityPolicyPasswordCheckoutSSHPrivilege) ActiveDirectoryAccountPrivilegeContainerPrivilegeValue {
+	return ActiveDirectoryAccountPrivilegeContainerPrivilegeValue{
+		SecurityPolicyPasswordCheckoutSSHPrivilege: v,
 	}
 }
 
@@ -67,6 +75,18 @@ func (dst *ActiveDirectoryAccountPrivilegeContainerPrivilegeValue) UnmarshalJSON
 		}
 	}
 
+	// check if the discriminator value is 'SecurityPolicyPasswordCheckoutSSHPrivilege'
+	if jsonDict["_type"] == "SecurityPolicyPasswordCheckoutSSHPrivilege" {
+		// try to unmarshal JSON data into SecurityPolicyPasswordCheckoutSSHPrivilege
+		err = json.Unmarshal(data, &dst.SecurityPolicyPasswordCheckoutSSHPrivilege)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyPasswordCheckoutSSHPrivilege, return on the first match
+		} else {
+			dst.SecurityPolicyPasswordCheckoutSSHPrivilege = nil
+			return fmt.Errorf("failed to unmarshal ActiveDirectoryAccountPrivilegeContainerPrivilegeValue as SecurityPolicyPasswordCheckoutSSHPrivilege: %s", err.Error())
+		}
+	}
+
 	// check if the discriminator value is 'SecurityPolicyRevealPasswordPrivilege'
 	if jsonDict["_type"] == "SecurityPolicyRevealPasswordPrivilege" {
 		// try to unmarshal JSON data into SecurityPolicyRevealPasswordPrivilege
@@ -100,6 +120,18 @@ func (dst *ActiveDirectoryAccountPrivilegeContainerPrivilegeValue) UnmarshalJSON
 		} else {
 			dst.SecurityPolicyPasswordCheckoutRDPPrivilege = nil
 			return fmt.Errorf("failed to unmarshal ActiveDirectoryAccountPrivilegeContainerPrivilegeValue as SecurityPolicyPasswordCheckoutRDPPrivilege: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'password_checkout_ssh'
+	if jsonDict["_type"] == "password_checkout_ssh" {
+		// try to unmarshal JSON data into SecurityPolicyPasswordCheckoutSSHPrivilege
+		err = json.Unmarshal(data, &dst.SecurityPolicyPasswordCheckoutSSHPrivilege)
+		if err == nil {
+			return nil // data stored in dst.SecurityPolicyPasswordCheckoutSSHPrivilege, return on the first match
+		} else {
+			dst.SecurityPolicyPasswordCheckoutSSHPrivilege = nil
+			return fmt.Errorf("failed to unmarshal ActiveDirectoryAccountPrivilegeContainerPrivilegeValue as SecurityPolicyPasswordCheckoutSSHPrivilege: %s", err.Error())
 		}
 	}
 
@@ -143,6 +175,10 @@ func (src ActiveDirectoryAccountPrivilegeContainerPrivilegeValue) MarshalJSON() 
 		return json.Marshal(&src.SecurityPolicyPasswordCheckoutRDPPrivilege)
 	}
 
+	if src.SecurityPolicyPasswordCheckoutSSHPrivilege != nil {
+		return json.Marshal(&src.SecurityPolicyPasswordCheckoutSSHPrivilege)
+	}
+
 	if src.SecurityPolicyRevealPasswordPrivilege != nil {
 		return json.Marshal(&src.SecurityPolicyRevealPasswordPrivilege)
 	}
@@ -165,6 +201,10 @@ func (obj *ActiveDirectoryAccountPrivilegeContainerPrivilegeValue) GetActualInst
 	}
 	if obj.SecurityPolicyPasswordCheckoutRDPPrivilege != nil {
 		return obj.SecurityPolicyPasswordCheckoutRDPPrivilege
+	}
+
+	if obj.SecurityPolicyPasswordCheckoutSSHPrivilege != nil {
+		return obj.SecurityPolicyPasswordCheckoutSSHPrivilege
 	}
 
 	if obj.SecurityPolicyRevealPasswordPrivilege != nil {

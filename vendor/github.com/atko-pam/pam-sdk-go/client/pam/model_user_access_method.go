@@ -32,7 +32,7 @@ type UserAccessMethod struct {
 	// This text displays in the user interface (CLI) to show resource availability status with checkout requirements and checkout expiry time. The availability status displays only for the CLI user who previously checked out the resource.
 	AvailabilityDetailsText *string `json:"availability_details_text,omitempty"`
 	// The ID of the resource
-	ServerId string `json:"server_id"`
+	ServerId *string `json:"server_id,omitempty"`
 	// Server host name
 	ServerHostName string `json:"server_host_name"`
 	// A list of required conditions to use the user access method
@@ -58,12 +58,11 @@ type UserAccessMethod struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewUserAccessMethod(identity string, accessCredential string, brokered bool, serverId string, serverHostName string, userAccessType string, resourceStatus string, sudoDisplayName string) *UserAccessMethod {
+func NewUserAccessMethod(identity string, accessCredential string, brokered bool, serverHostName string, userAccessType string, resourceStatus string, sudoDisplayName string) *UserAccessMethod {
 	this := UserAccessMethod{}
 	this.Identity = identity
 	this.AccessCredential = accessCredential
 	this.Brokered = brokered
-	this.ServerId = serverId
 	this.ServerHostName = serverHostName
 	this.UserAccessType = userAccessType
 	this.ResourceStatus = resourceStatus
@@ -220,28 +219,36 @@ func (o *UserAccessMethod) SetAvailabilityDetailsText(v string) *UserAccessMetho
 	return o
 }
 
-// GetServerId returns the ServerId field value
+// GetServerId returns the ServerId field value if set, zero value otherwise.
 func (o *UserAccessMethod) GetServerId() string {
-	if o == nil {
+	if o == nil || IsNil(o.ServerId) {
 		var ret string
 		return ret
 	}
-
-	return o.ServerId
+	return *o.ServerId
 }
 
-// GetServerIdOk returns a tuple with the ServerId field value
+// GetServerIdOk returns a tuple with the ServerId field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *UserAccessMethod) GetServerIdOk() (*string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.ServerId) {
 		return nil, false
 	}
-	return &o.ServerId, true
+	return o.ServerId, true
 }
 
-// SetServerId sets field value
+// HasServerId returns a boolean if a field has been set.
+func (o *UserAccessMethod) HasServerId() bool {
+	if o != nil && !IsNil(o.ServerId) {
+		return true
+	}
+
+	return false
+}
+
+// SetServerId gets a reference to the given string and assigns it to the ServerId field.
 func (o *UserAccessMethod) SetServerId(v string) *UserAccessMethod {
-	o.ServerId = v
+	o.ServerId = &v
 	return o
 }
 
@@ -595,7 +602,9 @@ func (o UserAccessMethod) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.AvailabilityDetailsText) {
 		toSerialize["availability_details_text"] = o.AvailabilityDetailsText
 	}
-	toSerialize["server_id"] = o.ServerId
+	if !IsNil(o.ServerId) {
+		toSerialize["server_id"] = o.ServerId
+	}
 	toSerialize["server_host_name"] = o.ServerHostName
 	if !IsNil(o.Conditionals) {
 		toSerialize["conditionals"] = o.Conditionals

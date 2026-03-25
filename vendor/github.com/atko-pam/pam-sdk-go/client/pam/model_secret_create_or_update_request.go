@@ -28,6 +28,10 @@ type SecretCreateOrUpdateRequest struct {
 	Description NullableString `json:"description,omitempty"`
 	// The UUID of the secret's parent folder
 	ParentFolderId string `json:"parent_folder_id"`
+	// The ID of the template
+	TemplateId *string `json:"template_id,omitempty"`
+	// The version of the template
+	TemplateVersion *int32 `json:"template_version,omitempty"`
 }
 
 // NewSecretCreateOrUpdateRequest instantiates a new SecretCreateOrUpdateRequest object
@@ -171,6 +175,72 @@ func (o *SecretCreateOrUpdateRequest) SetParentFolderId(v string) *SecretCreateO
 	return o
 }
 
+// GetTemplateId returns the TemplateId field value if set, zero value otherwise.
+func (o *SecretCreateOrUpdateRequest) GetTemplateId() string {
+	if o == nil || IsNil(o.TemplateId) {
+		var ret string
+		return ret
+	}
+	return *o.TemplateId
+}
+
+// GetTemplateIdOk returns a tuple with the TemplateId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecretCreateOrUpdateRequest) GetTemplateIdOk() (*string, bool) {
+	if o == nil || IsNil(o.TemplateId) {
+		return nil, false
+	}
+	return o.TemplateId, true
+}
+
+// HasTemplateId returns a boolean if a field has been set.
+func (o *SecretCreateOrUpdateRequest) HasTemplateId() bool {
+	if o != nil && !IsNil(o.TemplateId) {
+		return true
+	}
+
+	return false
+}
+
+// SetTemplateId gets a reference to the given string and assigns it to the TemplateId field.
+func (o *SecretCreateOrUpdateRequest) SetTemplateId(v string) *SecretCreateOrUpdateRequest {
+	o.TemplateId = &v
+	return o
+}
+
+// GetTemplateVersion returns the TemplateVersion field value if set, zero value otherwise.
+func (o *SecretCreateOrUpdateRequest) GetTemplateVersion() int32 {
+	if o == nil || IsNil(o.TemplateVersion) {
+		var ret int32
+		return ret
+	}
+	return *o.TemplateVersion
+}
+
+// GetTemplateVersionOk returns a tuple with the TemplateVersion field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SecretCreateOrUpdateRequest) GetTemplateVersionOk() (*int32, bool) {
+	if o == nil || IsNil(o.TemplateVersion) {
+		return nil, false
+	}
+	return o.TemplateVersion, true
+}
+
+// HasTemplateVersion returns a boolean if a field has been set.
+func (o *SecretCreateOrUpdateRequest) HasTemplateVersion() bool {
+	if o != nil && !IsNil(o.TemplateVersion) {
+		return true
+	}
+
+	return false
+}
+
+// SetTemplateVersion gets a reference to the given int32 and assigns it to the TemplateVersion field.
+func (o *SecretCreateOrUpdateRequest) SetTemplateVersion(v int32) *SecretCreateOrUpdateRequest {
+	o.TemplateVersion = &v
+	return o
+}
+
 func (o SecretCreateOrUpdateRequest) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -187,6 +257,12 @@ func (o SecretCreateOrUpdateRequest) ToMap() (map[string]interface{}, error) {
 		toSerialize["description"] = o.Description.Get()
 	}
 	toSerialize["parent_folder_id"] = o.ParentFolderId
+	if !IsNil(o.TemplateId) {
+		toSerialize["template_id"] = o.TemplateId
+	}
+	if !IsNil(o.TemplateVersion) {
+		toSerialize["template_version"] = o.TemplateVersion
+	}
 	return toSerialize, nil
 }
 
