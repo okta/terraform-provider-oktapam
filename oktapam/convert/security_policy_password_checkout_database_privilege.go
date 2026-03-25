@@ -17,10 +17,11 @@ func PasswordCheckoutDatabasePrivilegeSchema() schema.Attribute {
 	return schema.SingleNestedAttribute{
 		Attributes: map[string]schema.Attribute{
 			"password_checkout_database": schema.BoolAttribute{
-				Optional: true,
+				Required: true,
 			},
 		},
-		Optional: true,
+		Optional:           true,
+		DeprecationMessage: "The attribute is deprecated and will be removed in a future major version.",
 	}
 }
 
