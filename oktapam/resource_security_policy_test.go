@@ -37,6 +37,50 @@ func TestAccSecurityPolicy(t *testing.T) {
 	sudoCommandBundle1Name := fmt.Sprintf("scb-test_acc_sudo_command_bundle1_%s", randSeq())
 	validServerID := getValidServerID()
 
+	inactiveSecurityPolicy := &client.SecurityPolicy{
+		Name:        &securityPolicyName,
+		Active:      utils.AsBoolPtrZero(false, true),
+		Description: utils.AsStringPtr("test description"),
+		Principals: &client.SecurityPolicyPrincipals{
+			UserGroups: []client.NamedObject{
+				{
+					Name: utils.AsStringPtr(group1Name),
+				},
+			},
+		},
+		Rules: []*client.SecurityPolicyRule{
+			{
+				Name:         utils.AsStringPtr("first rule"),
+				ResourceType: client.ServerBasedResourceSelectorType,
+				ResourceSelector: &client.ServerBasedResourceSelector{
+					Selectors: []client.ServerBasedResourceSubSelectorContainer{
+						{
+							SelectorType: client.ServerLabelServerSubSelectorType,
+							Selector: &client.ServerLabelBasedSubSelector{
+								ServerSelector: &client.ServerLabelServerSelector{
+									Labels: map[string]string{
+										"system.os_type": "linux",
+									},
+								},
+								AccountSelectorType: client.NoneAccountSelectorType,
+								AccountSelector:     &client.NoneAccountSelector{},
+							},
+						},
+					},
+				},
+				Privileges: []*client.SecurityPolicyRulePrivilegeContainer{
+					{
+						PrivilegeType: client.PrincipalAccountSSHPrivilegeType,
+						PrivilegeValue: &client.PrincipalAccountSSHPrivilege{
+							Enabled:               utils.AsBoolPtr(true),
+							AdminLevelPermissions: utils.AsBoolPtrZero(false, false),
+						},
+					},
+				},
+			},
+		},
+	}
+
 	initialSecurityPolicy := &client.SecurityPolicy{
 		Name:        &securityPolicyName,
 		Active:      utils.AsBoolPtr(true),
@@ -292,6 +336,18 @@ func TestAccSecurityPolicy(t *testing.T) {
 				// Ensure that we get an error when we try to create a policy with invalid config.
 				Config:      createTestAccSecurityPolicyInvalidRDPAndSSHConfig(group1Name, securityPolicyName, validServerID),
 				ExpectError: regexp.MustCompile("cannot mix SSH and RDP privileges within a Security Policy Rule"),
+			},
+			{
+				Config: createTestAccSecurityPolicyInactiveConfig(group1Name, securityPolicyName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccSecurityPolicyCheckExists(resourceName, inactiveSecurityPolicy),
+					resource.TestCheckResourceAttr(
+						resourceName, attributes.Name, securityPolicyName,
+					),
+					resource.TestCheckResourceAttr(
+						resourceName, attributes.Active, "false",
+					),
+				),
 			},
 			{
 				Config: createTestAccSecurityPolicyCreateConfig(group1Name, group2Name, sudoCommandBundle1Name, securityPolicyName, validServerID),
@@ -818,6 +874,42 @@ resource "oktapam_security_policy" "test_acc_secrets_security_policy" {
 	}
 }
 `
+
+const testAccSecurityPolicyInactiveConfigFormat = `
+resource "oktapam_group" "test_security_policy_group1" {
+	name = "%s"
+}
+resource "oktapam_security_policy" "test_acc_security_policy" {
+	name = "%s"
+	description = "test description"
+	active = false
+	principals {
+		groups = [oktapam_group.test_security_policy_group1.id]
+	}
+	rule {
+		name = "first rule"
+		resources {
+			servers {
+				label_selectors {
+					server_labels = {
+						"system.os_type" = "linux"
+					}
+				}
+			}
+		}
+		privileges {
+			principal_account_ssh {
+				enabled = true
+				admin_level_permissions = false
+			}
+		}
+	}
+}
+`
+
+func createTestAccSecurityPolicyInactiveConfig(groupName, securityPolicyName string) string {
+	return fmt.Sprintf(testAccSecurityPolicyInactiveConfigFormat, groupName, securityPolicyName)
+}
 
 func createTestAccSecurityPolicyUpdateConfig(group1Name, sudoCommandBundleName string, securityPolicyName string, serverID string) string {
 	return fmt.Sprintf(testAccSecurityPolicyUpdateConfigFormat, group1Name, sudoCommandBundleName, securityPolicyName, serverID)
