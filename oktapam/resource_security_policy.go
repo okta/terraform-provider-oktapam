@@ -526,7 +526,7 @@ func readPolicyFromResourceData(d *schema.ResourceData) (client.SecurityPolicy, 
 	policy := client.SecurityPolicy{
 		ID:          id,
 		Name:        GetStringPtrFromResource(attributes.Name, d, false),
-		Active:      GetBoolPtrFromResource(attributes.Active, d, false),
+		Active:      GetBoolPtrFromResource(attributes.Active, d, true),
 		Description: GetStringPtrFromResource(attributes.Description, d, false),
 	}
 
