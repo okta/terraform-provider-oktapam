@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  general-platform-helpers: okta/general-platform-helpers@1.9
+  general-platform-helpers: okta/general-platform-helpers@1
   platform-helpers: okta/platform-helpers@1
   python: circleci/python@2.0.3
   aws-cli: circleci/aws-cli@5.1
@@ -9,14 +9,29 @@ orbs:
 parameters:
   go-version:
     type: string
-    default: "1.24"
+    default: "1.26.4"
+  go-sha256:
+    type: string
+    default: "1153d3d50e0ac764b447adfe05c2bcf08e889d42a02e0fe0259bd47f6733ad7f"
+  python-version:
+    type: string
+    default: "3.11.5"
 
 jobs:
   snyk-scan:
     docker:
-      - image: cimg/go:<< pipeline.parameters.go-version >>
+      - image: cimg/python:<< pipeline.parameters.python-version >>
     steps:
       - checkout
+      # Download Go, check its checksum, and install it
+      - run:
+          name: Install Go
+          command: |
+            curl -L -O https://go.dev/dl/go<< pipeline.parameters.go-version >>.linux-amd64.tar.gz
+            echo "<< pipeline.parameters.go-sha256 >>  go<< pipeline.parameters.go-version >>.linux-amd64.tar.gz" | sha256sum -c -
+            sudo tar -C /usr/local -xzf go<< pipeline.parameters.go-version >>.linux-amd64.tar.gz
+            echo 'export PATH=$PATH:/usr/local/go/bin' >> "$BASH_ENV"
+  
       - general-platform-helpers/step-load-dependencies
       - general-platform-helpers/step-run-snyk-monitor:
           scan-all-projects: true
@@ -25,7 +40,7 @@ jobs:
 
   reversing-labs:
     docker:
-      - image: cimg/go:1.23.2
+      - image: cimg/python:<< pipeline.parameters.python-version >>
     steps:
       - checkout
       - run:
@@ -51,6 +66,13 @@ jobs:
       - run: >-
           eval "$(aws configure export-credentials --profile default --format env)" 2> /dev/null
       - run:
+          name: Install Go
+          command: |
+            curl -L -O https://go.dev/dl/go<< pipeline.parameters.go-version >>.linux-amd64.tar.gz
+            echo "<< pipeline.parameters.go-sha256 >>  go<< pipeline.parameters.go-version >>.linux-amd64.tar.gz" | sha256sum -c -
+            sudo tar -C /usr/local -xzf go<< pipeline.parameters.go-version >>.linux-amd64.tar.gz
+            echo 'export PATH=$PATH:/usr/local/go/bin' >> "$BASH_ENV"
+      - run:
           name: Build binary to scan
           command: |
             make build
@@ -75,6 +97,7 @@ jobs:
           name: Run Unit Tests
           command: |
             make test
+
 workflows:
   tests:
     jobs:
