@@ -1,7 +1,5 @@
-//go:build !go1.24
-
-/*-
- * Copyright 2014 Square Inc.
+/*
+ * Copyright 2024 gRPC authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
-package jose
+// Package internal contains code internal to the pickfirst package.
+package internal
 
 import (
-	"hash"
-
-	"golang.org/x/crypto/pbkdf2"
+	rand "math/rand/v2"
+	"time"
 )
 
-func pbkdf2Key(h func() hash.Hash, password string, salt []byte, iter, keyLen int) ([]byte, error) {
-	return pbkdf2.Key([]byte(password), salt, iter, keyLen, h), nil
-}
+var (
+	// RandShuffle pseudo-randomizes the order of addresses.
+	RandShuffle = rand.Shuffle
+	// RandFloat64 returns, as a float64, a pseudo-random number in [0.0,1.0).
+	RandFloat64 = rand.Float64
+	// TimeAfterFunc allows mocking the timer for testing connection delay
+	// related functionality.
+	TimeAfterFunc = func(d time.Duration, f func()) func() {
+		timer := time.AfterFunc(d, f)
+		return func() { timer.Stop() }
+	}
+)
