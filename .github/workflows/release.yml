@@ -47,3 +47,15 @@ jobs:
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           # GitHub sets this automatically
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  # TODO
+  # rl-scanner:
+  #   uses: ./.github/workflows/rl-scanner.yml
+  #   secrets:
+  #     RLSECURE_LICENSE: ${{ secrets.RLSECURE_LICENSE }}
+  #     RLSECURE_SITE_KEY: ${{ secrets.RLSECURE_SITE_KEY }}
+  #     SIGNAL_HANDLER_TOKEN: ${{ secrets.SIGNAL_HANDLER_TOKEN }}
+  #     PRODSEC_TOOLS_USER: ${{ secrets.PRODSEC_TOOLS_USER }}
+  #     PRODSEC_TOOLS_TOKEN: ${{ secrets.PRODSEC_TOOLS_TOKEN }}
+  #     PRODSEC_TOOLS_ARN: ${{ secrets.PRODSEC_TOOLS_ARN }}
+  #   needs: goreleaser
